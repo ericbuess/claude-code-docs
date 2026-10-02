@@ -537,6 +537,22 @@ The command exits `1` and prints the reason when it can't tag safely. Common rea
 * The tag already exists
 * The working tree is dirty
 
+### plugin test
+
+Run the tests for a [mod](/docs/en/plugins/mods/overview), a plugin whose code registers event handlers. The command needs no session, sign-in, or network. For how to write a test, see [Test a mod](/docs/en/plugins/mods/test).
+
+```bash theme={null}
+claude plugin test [directory]
+```
+
+The `[directory]` is the mod's directory, defaulting to the current directory. The command runs every file under it whose name ends in `.test.ts` or `.test.tsx`, and exits with status 1 when a test fails.
+
+Run the tests for a mod in `./first-mod`:
+
+```bash theme={null}
+claude plugin test ./first-mod
+```
+
 ### plugin validate
 
 Validate a plugin manifest, a marketplace manifest, or the skills, agents, and commands in a directory, and exit with a code a CI job can act on. For the create, test, and edit workflow, see [Create a plugin](/docs/en/plugins/create). For what the validator checks in each manifest, see the [plugin manifest reference](/docs/en/plugins/manifest-reference) and the [marketplace reference](/docs/en/plugins/marketplace-reference).
@@ -754,7 +770,7 @@ For which surfaces have `/plugin`, how to install without it, and what each pane
 
 A `<plugin>` is a plugin `name` or `name@marketplace`.
 
-The table below lists every session form. The shell subcommands `init`, `update`, `details`, `prune`, `eval`, and `eval init` have no session form.
+The table below lists every session form. The shell subcommands `init`, `update`, `details`, `prune`, `eval`, `eval init`, and `test` have no session form.
 
 | Command | Aliases | What it does |
 | :- | :- | :- |

@@ -137,7 +137,7 @@ Claude Code asks you to confirm usage-credits billing once per conversation: whe
 
 ## Track a running review
 
-A review typically takes 5 to 10 minutes. The review runs as a background task, so you can keep working in your session, start other commands, or close the terminal entirely. If you chose to [post the findings to the pull request](#post-findings-to-the-pull-request), keep the session open until the review finishes; if the session ends first, Claude Code posts nothing.
+A review typically takes 5 to 10 minutes. The review runs as a background task, so you can keep working in your session or start other commands. If you chose to [post the findings to the pull request](#post-findings-to-the-pull-request), keep the session open until the review finishes; if the session ends first, Claude Code posts nothing.
 
 Use `/tasks` to see running and completed reviews, open the detail view for a review, or stop a review that is in progress. If you stop a review, Claude Code archives the cloud session and doesn't return partial findings.
 
@@ -163,9 +163,9 @@ Without arguments, the subcommand reviews the diff between your current branch a
 
 You consent to the whole-repository fallback and to the billing and terms prompt when you run the subcommand, so the run starts without waiting for input. Running it yourself is what counts as consent. When Claude runs the subcommand for you instead, for example through the Bash tool, Claude Code refuses the whole-repository review.
 
-On Claude Code v2.1.218 or later, you can also start the cloud review by running `/code-review ultra` in a non-interactive session, for example `claude -p '/code-review ultra'`. Claude Code launches the review and prints a tracking link without waiting for the findings, unlike `claude ultrareview`, which blocks until they arrive. When the review would bill usage credits, Claude Code stops before launching and points you to `claude ultrareview`, because the billing confirmation needs an interactive session. Before v2.1.218, `/code-review ultra` in a non-interactive session ran a local review.
+`claude -p '/code-review ultra'` doesn't get you the findings, so use `claude ultrareview` in scripts. The `-p` run launches the cloud review and exits without waiting for it. When the review would bill usage credits, the `-p` run stops without launching it. Before v2.1.218, `/code-review ultra` in a non-interactive session ran a local review.
 
-Progress messages and the live session URL go to stderr so stdout stays parseable. Use these flags to control the output, the timeout, and whether to post the findings:
+`claude ultrareview` writes its progress messages to stderr so stdout stays parseable. Use these flags to control its output, the timeout, and whether to post the findings:
 
 | Flag | Description |
 | - | - |
@@ -182,11 +182,11 @@ The subcommand exits with one of three codes:
 * **1**: the review failed to launch or was stopped before it finished, the cloud session errored, or the timeout elapsed
 * **130**: you interrupted the subcommand with Ctrl-C
 
-If you interrupt the subcommand, the remote review keeps running; follow the session URL printed to stderr to watch it in the browser.
+If the subcommand exits before the findings arrive, they never reach your terminal, and running it again starts a new review rather than resuming that one. The new review [counts as a run](#pricing-and-free-runs) of its own.
 
 With `--post`, the subcommand starts the post right after printing the findings, and prints the link to stderr.
 
-* If the run fails, is stopped, or times out, or if you interrupt it, the subcommand posts nothing.
+* If the run fails, is stopped, or times out, the subcommand posts nothing.
 * If the review completes but the comment isn't posted, Claude Code prints the reason to stderr, and the findings stay on stdout so you can post them by hand.
 
 For automatic reviews on GitHub pull requests, [Code Review](/docs/en/code-review) integrates with your repository directly and posts findings as inline PR comments without a CLI step.

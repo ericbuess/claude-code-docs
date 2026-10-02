@@ -155,6 +155,53 @@ Mods built into Claude Code, such as `AGENTS.md` support, aren't affected by the
 
 A user whose mod didn't load finds the reason in their debug log. [Refusal messages](/docs/en/plugins/mods/troubleshoot#refusal-messages) lists the lines for `allowManagedHooksOnly` and `disableAllHooks`, and [Messages from the built-in guard](/docs/en/plugins/mods/troubleshoot#messages-from-the-built-in-guard) has the line for `allowManagedModsOnly`.
 
+### Allow only your organization's mods
+
+To run your organization's mods and block the ones users bring, deploy the settings from the **Only your organization's mods** row of the [policy table](#choose-how-much-to-allow), plus `disableSideloadFlags`. With this complete `managed-settings.json`, Claude Code refuses users' own mods, so none of their hooks run, and your policy mod runs ahead of other mods:
+
+```json managed-settings.json theme={null}
+{
+  "extraKnownMarketplaces": {
+    "acme-tools": {
+      "source": { "source": "directory", "path": "/opt/acme/claude-plugins" }
+    }
+  },
+  "enabledPlugins": { "acme-guard@acme-tools": true },
+  "prependPlugins": ["acme-guard@acme-tools", "sec-default@builtin"],
+  "pluginConfigs": {
+    "cc-plugin-sec-default@builtin": {
+      "options": { "allowManagedModsOnly": true }
+    }
+  },
+  "disableSideloadFlags": true
+}
+```
+
+Each group of keys does one job:
+
+* **`extraKnownMarketplaces`, `enabledPlugins`, and `prependPlugins`**: install your mod so that it counts as yours, and run it first with the guard after it. [Install your organization's mods and set the order](#install-your-organizations-mods) covers the directory these keys point at.
+* **`pluginConfigs`**: sets the guard's `allowManagedModsOnly` option, so Claude Code refuses users' own mods. Their settings hooks, status lines, and `/goal` keep working.
+* **`disableSideloadFlags`**: see [`disableSideloadFlags`](/docs/en/settings-reference#disablesideloadflags) for the flags it rejects at startup
+
+To confirm the policy on a test machine, in your shell start a session with `claude --debug` and read the debug log:
+
+* **Your mod**: its `hooks module` line has `tier prepend`
+* **A mod the user installed**: a line reads `refused by cc-plugin-sec-default: mods are limited to your organization's by policy (allowManagedModsOnly)`. An earlier line says that mod's hooks module `loaded`, so look for the refusal.
+* **A plugin directory**: `claude --plugin-dir ./any-mod` exits with a message that starts `--plugin-dir is disabled by your organization's managed settings (disableSideloadFlags)`
+
+To also limit which marketplaces users can add, combine this file with your [marketplace restrictions](/docs/en/plugins/org#restrict-what-users-can-install).
+
+### Apply your plugin controls to mods
+
+A mod is a plugin, so the ways you [manage plugins for your organization](/docs/en/plugins/org) also apply to a plugin that holds a mod:
+
+* **See which plugins load across your fleet**: [Audit and review](/docs/en/plugins/org#audit-and-review)
+* **Decide when a plugin you reviewed can update**: [Set update policy](/docs/en/plugins/org#set-update-policy)
+* **Give one group a different policy, such as a pilot**: [Plan for what managed settings can't enforce](/docs/en/plugins/org#plan-for-what-managed-settings-can’t-enforce)
+* **Check which apps and session kinds apply the plugin keys**: [When each surface applies the plugin keys](/docs/en/plugins/org#when-each-surface-applies-the-plugin-keys)
+* **Set up CI and containers**: [Seed containers and CI](/docs/en/plugins/org#seed-containers-and-ci)
+* **Offer mods your users may install**: [Host a marketplace](/docs/en/plugins/host-marketplace). A mod that Claude Code copies from a GitHub, git, URL, or npm source counts as a user's, not as [your organization's](#install-your-organizations-mods).
+
 ### Set options on the built-in guard
 
 The built-in guard takes two options. Set them in managed settings under `pluginConfigs`, keyed by `cc-plugin-sec-default@builtin`, as the example in [Stop user-installed mods from loading](#stop-user-installed-mods-from-loading) does.

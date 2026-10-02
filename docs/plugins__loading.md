@@ -210,7 +210,7 @@ This section covers the npm and Bun packages a plugin declares in its own `packa
 
 #### When the dependency install runs
 
-Claude Code runs the install inside the copied version directory each time it creates one:
+Claude Code installs the dependencies into the copied version directory each time it creates one:
 
 * When you install a plugin
 * When Claude Code updates a plugin to a new version
@@ -218,19 +218,22 @@ Claude Code runs the install inside the copied version directory each time it cr
 
 For a relative-path plugin [loaded in place](#in-place-and-copied-plugins) from a local-directory marketplace, Claude Code doesn't install the dependencies into the source directory. Install them there yourself, or from a hook into [`${CLAUDE_PLUGIN_DATA}`](/docs/en/plugins/components#path-variables-and-persistent-data).
 
-The install runs only when the plugin's root directory contains both a `package.json` and a supported lockfile. The lockfile decides which command Claude Code runs:
+The install runs only when the plugin's root directory contains both a `package.json` and a supported lockfile.
 
-| Lockfile | Command |
+The lockfile decides which package manager Claude Code runs:
+
+| Lockfile | Package manager |
 | :- | :- |
-| `bun.lock` or `bun.lockb` | `bun install --frozen-lockfile --ignore-scripts` |
-| `npm-shrinkwrap.json` or `package-lock.json` | `npm ci --ignore-scripts` |
+| `bun.lock` | Bun |
+| `npm-shrinkwrap.json` or `package-lock.json` | npm |
 
-If a plugin contains more than one of these lockfiles, Claude Code uses the first match, checking in order: `bun.lock`, `bun.lockb`, `npm-shrinkwrap.json`, `package-lock.json`.
+If a plugin contains more than one of these lockfiles, Claude Code uses the first match, checking in order: `bun.lock`, `npm-shrinkwrap.json`, `package-lock.json`.
 
-Claude Code skips the install for Yarn and pnpm lockfiles and for a `bunfig.toml` beside the Bun lockfile:
+Claude Code skips the install in these lockfile cases:
 
-* If your plugin has only a `yarn.lock` or `pnpm-lock.yaml`, replace it with an npm lockfile
-* If a `bunfig.toml` is in the same directory as the Bun lockfile, remove the `bunfig.toml`, or replace the Bun lockfile with an npm lockfile
+* **`bun.lockb`**: Bun's binary lockfile can't be checked. Ship a text `bun.lock` or an npm lockfile instead
+* **`yarn.lock` or `pnpm-lock.yaml`**: replace it with an npm lockfile
+* **A lockfile in a format Claude Code doesn't read**: an npm lockfile needs a `lockfileVersion` of `2` or `3`, which npm 7 or later writes, and a `bun.lock` needs a `lockfileVersion` no higher than `2`
 
 Include an npm lockfile to reach the most users. Claude Code runs the matched lockfile's package manager from the user's PATH and doesn't try the other lockfile instead if that package manager is missing.
 
@@ -240,8 +243,12 @@ For a plugin distributed through an npm source, use `npm-shrinkwrap.json`, becau
 
 Claude Code constrains this dependency install so that no code from the plugin or its packages executes during it, and bounds how long it can run:
 
-* **Frozen resolution**: Bun and npm install exactly what the lockfile pins, and fail rather than re-resolve versions when `package.json` and the lockfile disagree
+* **Registry packages only**: every dependency must be a registry package pinned in the lockfile to an exact version. A plugin with a git, GitHub, folder, workspace, or linked dependency gets no install.
+* **`https` downloads**: a download link in the lockfile must use `https`, unless it points at the installing user's own default npm registry.
+* **A separate install folder**: the package manager runs in a folder of its own that holds only a copy of the checked dependency list, so npm and Bun don't read the plugin's `.npmrc`, `.env`, or `bunfig.toml`. When the install succeeds, Claude Code moves the resulting `node_modules` into the plugin.
+* **Frozen resolution**: the install uses exactly the versions the lockfile pins, and Claude Code skips it when `package.json` and the lockfile don't list the same dependencies
 * **No lifecycle scripts**: `--ignore-scripts` keeps `preinstall`, `install`, and `postinstall` scripts from running, so dependencies that build native modules in those scripts download but don't compile during this install
+* **No overrides or patches**: a plugin whose `package.json` sets npm `overrides` gets no install from an npm lockfile, and a plugin that sets Bun `patchedDependencies` gets no install from `bun.lock`
 * **60-second timeout**: Claude Code stops an install that runs longer and treats it as failed
 
 Claude Code fetches an npm-source plugin before this dependency install, and none of the package's own install scripts run during the fetch. See [npm plugin source](/docs/en/plugins/marketplace-reference#npm-plugin-source).
@@ -252,13 +259,12 @@ In restricted networks, see the [network access requirements](/docs/en/network-c
 
 #### When the dependency install fails or is skipped
 
-A failed or skipped install never blocks the plugin, and each case leaves a different sign:
+A failed or skipped install never blocks the plugin, which then loads without the dependencies. Each case leaves a different sign:
 
-* A failed install, or one skipped because of a Yarn or pnpm lockfile or a `bunfig.toml`, appears as a warning in the `claude --debug` output
+* A failed install, or one skipped because of its lockfile or one of the [limits on the install](#limits-on-the-dependency-install), appears in the `claude --debug` output as a `Plugin dependency install warning` line that states the reason
 * A plugin with a `package.json` and no lockfile is skipped without a log entry
-* A timed-out install can leave a partial `node_modules` tree in the cached copy
 
-When the automatic install can't provide a dependency, install it from a hook into the [persistent data directory](/docs/en/plugins/components#path-variables-and-persistent-data). That includes packages that need their lifecycle scripts to build, Python dependencies, and plugins locked with Yarn or pnpm.
+When the automatic install can't provide a dependency, install it from a hook into the [persistent data directory](/docs/en/plugins/components#path-variables-and-persistent-data). That includes packages that need their lifecycle scripts to build, Python dependencies, plugins locked with Yarn or pnpm, and dependencies that aren't registry packages, such as git dependencies.
 
 ## Versions and updates
 

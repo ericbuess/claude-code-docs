@@ -46,6 +46,8 @@ Nothing the mod adds appears, and the [`mods active` line](/docs/en/plugins/mods
 
 Read the reason after the colon. The [refusal messages](#refusal-messages) section lists each one. If the log has no such line, work through the other entries in this group.
 
+Some settings stop a mod and leave the rest of its plugin working. [Turn mods on or off](/docs/en/plugins/mods/overview#turn-mods-on-or-off) names them.
+
 ### A `claude -p` run prints `hooks module not loaded`
 
 The line starts with the mod's name and goes to stderr. The hooks module was refused. A non-interactive run has no transcript, so the message goes to stderr.

@@ -264,7 +264,7 @@ Model changes that Claude Code makes on your behalf are checked the same way:
 * **[Fallback model chains](#fallback-model-chains)**: entries outside the allowlist are dropped
 * **Plan-mode upgrades**: on the Anthropic API and Claude Platform on AWS, an upgrade such as [`opusplan`](#opusplan-model-setting) to an excluded model uses the newest permitted version of the upgrade family. On providers with provider-specific model IDs, and when no version is permitted, the upgrade is skipped and planning continues on the session's model
 * **[Automatic model fallback](#automatic-model-fallback)**: a fallback whose target is excluded does not run, so the flagged request ends with a refusal instead
-* **[Auto mode classifier](/docs/en/permission-modes#eliminate-prompts-with-auto-mode)**: the classifier's Claude Sonnet 5 default applies only when the allowlist permits Sonnet 5. When it's excluded, the classifier runs on the session's model, which the allowlist already governs, or on an Opus model when the session runs on a [Fable model](#work-with-fable). On providers other than the Anthropic API, that Opus fallback runs on the provider's default Opus model without consulting the allowlist. Requires Claude Code v2.1.210 or later
+* **[Auto mode classifier](/docs/en/permission-modes#eliminate-prompts-with-auto-mode)**: the classifier's Claude Sonnet 5 default applies only when the allowlist permits Sonnet 5. When it's excluded, the classifier runs on the session's model, which the allowlist already governs, or on an Opus model when the session runs on a [Fable model](#work-with-fable). On providers other than the Anthropic API, that Opus fallback runs on the model you set in `ANTHROPIC_DEFAULT_OPUS_MODEL` or otherwise on Opus 5, without consulting the allowlist. Requires Claude Code v2.1.210 or later
 * **[Fast mode](/docs/en/fast-mode)**: enabling fast mode is refused when the model the session would run on afterward is outside the allowlist
 
 ```json theme={null}
@@ -524,6 +524,18 @@ Category-based fallback requires Claude Code v2.1.219 or later. Before v2.1.219,
 
 The fallback model is checked against [`availableModels`](#restrict-model-selection). When it is blocked, no fallback occurs. The refusal is shown as a normal error and the session's model is unchanged.
 
+#### Effort level after a fallback
+
+When Claude Code switches your session to the fallback model, it keeps the effort level the flagged request ran at in place of that model's default effort. For example, a session on Opus 5.5 at its default `medium` that falls back to Opus 4.8 stays at `medium`, although Opus 4.8 defaults to `high`.
+
+A different level applies in cases such as these:
+
+* **Settings or organization default**: a level in your settings that applies to the fallback model, or a default effort your organization set for it, applies instead.
+* **Your own change**: once you choose an effort level, pick a model in `/model`, or resume the session later, the flagged request's level no longer carries over.
+* **Skill effort**: a level that a skill's `effort` frontmatter set for the flagged request applies to that turn, and later turns run at the level the [effort resolution order](#adjust-effort-level) gives the fallback model.
+
+The session header shows the level in effect next to the model name. To change it, run `/effort` in the session.
+
 #### Check what triggered fallback
 
 Fallback can trigger on the first request of a session, before you send anything unusual, because the first request carries workspace context such as your CLAUDE.md content and git status. A repository that contains security or biology material can trip the classifier on that context alone.
@@ -580,7 +592,7 @@ Claude Code resolves the session's effort level in this order, taking the first 
 
 1. An explicit choice: the [`CLAUDE_CODE_EFFORT_LEVEL`](/docs/en/env-vars#variables) environment variable, launching with `--effort`, or `/effort` in the session ([a non-interactive `/effort` has narrower effect](#non-interactive-effort))
 2. Your settings: the level you saved for the model or an [`effortLevel`](/docs/en/settings-reference#effortlevel) key, with the precedence between them and across settings files stated at [`modelSettings`](/docs/en/settings-reference#modelsettings)
-3. The model's default effort: `high` on every model that supports effort, except that Opus 5.5 and Sonnet 5.5 default to `medium`, Opus 4.7 defaults to `xhigh`, and, when your organization sets a default effort level for its [organization default model](#organization-default-model), that level is the default when you run that model
+3. The model's default effort: `high` on every model that supports effort, except that Opus 5.5 and Sonnet 5.5 default to `medium`, Opus 4.7 defaults to `xhigh`, and, when your organization sets a default effort level for its [organization default model](#organization-default-model), that level is the default when you run that model. After an automatic model fallback, see [Effort level after a fallback](#effort-level-after-a-fallback) for the level that applies.
 
 Opus 5.5 starts at `medium` unless one of the sources above sets a level for it, and a top-level `effortLevel` in your user settings file doesn't count for Opus 5.5. That key is the older form `/effort` wrote before Claude Code saved levels per model: it keeps applying where it applied before, on Opus 5, Fable 5.1, and earlier models, while Opus 5.5 and models released after it start at their own default until you choose a level for them with `/effort` or the `/model` picker. A top-level `effortLevel` in project, local, or managed settings, or one passed with `--settings`, applies to every model.
 

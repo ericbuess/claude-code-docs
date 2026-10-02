@@ -174,6 +174,31 @@ When Claude tries a command such as `rm -rf build`, the question appears with th
 
 Keep the wait inside a mods API call such as `$.ui.ask`, because that time doesn't count against the hook's [10-second time limit](/docs/en/plugins/mods/reference#limits). Time spent awaiting a promise of your own does count. Claude Code skips a hook that times out, so the held command would run.
 
+#### Approve or refuse a tool call before the user is asked
+
+To decide whether a tool call may run, handle [`tool.check`](/docs/en/plugins/mods/reference#tools), the event where Claude Code makes that decision. It fires after the permission rules and the settings hooks have decided, and `next(e)` resolves to their decision: `allow`, `ask`, or `deny`. Your hook returns that decision or a different one. `e.input` holds the tool's arguments, such as `command` for Bash.
+
+For a fixed command or path, use a [permission rule](/docs/en/permissions#permission-rule-syntax) such as `Bash(npm test)`, which takes no code. Handle `tool.check` when the decision depends on what's true at that moment, such as the current Git branch or a value another hook recorded.
+
+This hook refuses `git push` while the current branch is `main`:
+
+```javascript theme={null}
+on('tool.check', { tool: 'Bash' }, async ($, e, next) => {
+  // What the permission rules and settings hooks decided: 'allow', 'ask', or 'deny'
+  const decided = await next(e)
+  if (!e.input.command.includes('git push')) return decided
+  const branch = await $.process.run(['git', 'branch', '--show-current'])
+  if (branch.stdout.trim() !== 'main') return decided
+  return { decision: 'deny', reason: 'Push from a branch other than main' }
+})
+```
+
+On `main`, the hook returns `deny`, even when a rule allows `git push`. On another branch, and for other commands, the call gets the decision it would get without the mod.
+
+The hook matches the text of the command, so treat it as a reminder for Claude. To block pushes to `main` for everyone, protect the branch on your Git host.
+
+A hook can return any of the three decisions, so it can also approve a call that a `PreToolUse` hook outside managed settings blocked. [Extend permissions with hooks](/docs/en/permissions#extend-permissions-with-hooks) lists which decisions hold over a mod.
+
 ### Rewrite or add to a prompt
 
 A `prompt.submit` hook sees each prompt before the turn starts, so it can rewrite the text or add to it. `e.text` is what was typed.
@@ -273,7 +298,7 @@ The `PreToolUse` hooks configured in settings files also run during a tool call,
 * **`PreToolUse` hooks from managed settings**: run before the first mod's `tool.call` hook, and a block from one of them is final, so no mod sees the call.
 * **`PreToolUse` hooks from every other settings file and from plugins' `hooks/hooks.json`**: run after the last mod calls `next`, as part of Claude Code's own behavior. A mod that answers `tool.call` without calling `next` keeps them from running, and a mod that calls `next` sees their decision in the result it returns.
 
-[`tool.check`](/docs/en/plugins/mods/reference#tools) is the event where Claude Code decides whether a tool call may run. It fires after those hooks and the permission rules have decided, and `next(e)` resolves to their decision. A hook on `tool.check` can return a different decision, such as `{ decision: 'allow' }`, so it can approve a call that a hook in the second group blocked. [Extend permissions with hooks](/docs/en/permissions#extend-permissions-with-hooks) lists which decisions hold over a mod.
+[`tool.check`](#approve-or-refuse-a-tool-call-before-the-user-is-asked) fires after those hooks and the permission rules have decided, so a hook on it can approve a call that a hook in the second group blocked.
 
 ### Handle a hook that fails
 

@@ -206,7 +206,7 @@ When you stop `claude remote-control` with Ctrl+C, the sessions it was serving s
 
 These commands work for about four hours after the server stopped. After that, run `claude remote-control` to start a new session. If you archived a session in the meantime, `--continue` and `--session-id` unarchive it on Claude Code v2.1.228 or later.
 
-To bring back a session you started with `claude --remote-control` or `/remote-control`, resume the conversation with `claude --continue` or `claude --resume`. If Remote Control doesn't reconnect, see [Couldn't reconnect to your Remote Control session](#couldnt-reconnect-to-your-remote-control-session).
+To bring back a session you started with `claude --remote-control` or `/remote-control`, resume the conversation with `claude --continue` or `claude --resume`. For the permission mode that the resumed conversation starts in, see [permission mode on resume](/docs/en/sessions#permission-mode-on-resume). If Remote Control doesn't reconnect, see [Couldn't reconnect to your Remote Control session](#couldnt-reconnect-to-your-remote-control-session).
 
 If you resume the conversation in a second terminal while the first one still has Remote Control on, Claude Code prints a `Remote Control not started here` notice in the second terminal and leaves Remote Control off there instead of taking the session away from the first. Run `/remote-control` in the second terminal to move Remote Control to it.
 
@@ -339,6 +339,7 @@ Claude Code skips mobile push notifications while you are typing in or focused o
 * **Extended network outage**: if your machine is awake but can't reach the network, what you do next depends on the mode:
   * **Server mode**: Claude Code gives up after roughly 10 minutes and the `claude remote-control` process exits. Run `claude remote-control` again to start a new session.
   * **Interactive session**: keep working locally. Claude Code retries for as long as the outage lasts and reconnects on its own when the network returns.
+* **Attachments that don't download**: if a file you attach from your phone or browser can't be downloaded to your machine, Claude still receives your message and the files that were downloaded. In place of the missing files, Claude Code adds a note such as `[1 of 3 attachments did not arrive]` to the message.
 * **Presence heartbeats failing**: if an interactive session disconnects with `could not reach the Remote Control server for about 30 minutes`, run `/remote-control` to reconnect.
 * **Forwarded dialogs expire**: Claude Code keeps permission prompts and `AskUserQuestion` questions open until you answer them. When Claude Code forwards another kind of dialog to the remote session, such as the model-choice prompt shown after a safety refusal, it waits five minutes by default, then closes the dialog and continues with the dialog's no-action default. Set [`dialogExpiry`](/docs/en/settings-reference#dialogexpiry) to adjust or disable the deadline. Requires Claude Code v2.1.224 or later.
 * **The Fable usage-credits consent prompt isn't forwarded**: Claude Code shows the mid-session [Fable usage-credits consent prompt](/docs/en/model-config#fable-and-usage-credits) only where the session runs, not on your device. When the session runs in a terminal and nobody there answers before Claude Code closes the prompt, the turn ends without sending the request; see [The prompt to confirm went unanswered](/docs/en/errors#the-prompt-to-confirm-went-unanswered).
@@ -398,7 +399,9 @@ The session isn't talking to the Anthropic API directly, which Remote Control re
 
 The message names what routed the session away from the Anthropic API, such as `CLAUDE_CODE_USE_BEDROCK` or a custom `ANTHROPIC_BASE_URL`. If you have an eligible claude.ai login, unset the named variable, remove it from the `env` key in [settings](/docs/en/settings) if you set it there, and restart the session.
 
-### "Remote Control is disabled by your organization's policy"
+<h3 id="remote-control-is-disabled-by-your-organizations-policy">
+  "Remote Control is disabled by your organization's policy"
+</h3>
 
 A policy blocks Remote Control. Check these causes in order:
 
@@ -408,6 +411,19 @@ A policy blocks Remote Control. Check these causes in order:
 * **Otherwise, an Owner hasn't enabled it for your organization**: Remote Control is off by default on Team and Enterprise plans. An Owner can enable it at [claude.ai/admin-settings/claude-code](https://claude.ai/admin-settings/claude-code) by turning on the **Remote Control** toggle. This toggle is a server-side organization setting.
 
 Before v2.1.281, this message also appeared when Claude Code hadn't loaded your organization's policy on this machine, for example after starting offline. Later versions report that state as [`Couldn't verify your organization's policy for remote control`](#couldnt-verify-your-organizations-policy-for-remote-control) instead.
+
+<h3 id="remote-control-was-turned-off-by-your-organizations-policy">
+  "Remote Control was turned off by your organization's policy"
+</h3>
+
+Your organization's policy stopped allowing Remote Control while a session was connected, so Claude Code disconnected it. What happens to the session depends on how you started Remote Control:
+
+* **With `/remote-control`, `claude --remote-control`, or [auto-connect](#enable-remote-control-for-all-sessions)**: the session keeps running without Remote Control, and Claude Code archives it at claude.ai
+* **With `claude remote-control`**: the server stops and archives the sessions it was serving, then exits
+
+You can still find an archived session by [filtering for archived sessions](/docs/en/claude-code-on-the-web#archive-sessions).
+
+Remote Control doesn't reconnect on its own. To turn it back on after your organization allows it again, run `/remote-control` in the session or `claude remote-control` in your shell. Either command fails with [`Remote Control is disabled by your organization's policy`](#remote-control-is-disabled-by-your-organizations-policy) until Claude Code on this machine has fetched the changed policy. An open session fetches it about once an hour. To find out what is blocking Remote Control, match the full text the command prints against that entry.
 
 <h3 id="couldnt-verify-your-organizations-policy-for-remote-control">
   "Couldn't verify your organization's policy for remote control"

@@ -350,7 +350,7 @@ The skill's name also appears in the init message's `slash_commands` array.
 ## Pre-approve tools for skills
 
 <Note>
-  For project and personal skills, Claude Code applies the [`allowed-tools`](/docs/en/skills#pre-approve-tools-for-a-skill) frontmatter field in SDK sessions. You can also pre-approve tools for these skills through the `allowedTools` option (`allowed_tools` in Python) in your query configuration. Skills [synced from claude.ai](/docs/en/skills#how-claude-code-handles-the-frontmatter-of-a-synced-skill) follow their own frontmatter rules.
+  In SDK sessions, you can pre-approve tools for a project or personal skill with the skill's [`allowed-tools`](/docs/en/skills#pre-approve-tools-for-a-skill) frontmatter or with the `allowedTools` option (`allowed_tools` in Python) in your query configuration. If your organization sets [`allowManagedPermissionRulesOnly`](/docs/en/settings-reference#allowmanagedpermissionrulesonly) in managed settings, Claude Code ignores both. Skills [synced from claude.ai](/docs/en/skills#how-claude-code-handles-the-frontmatter-of-a-synced-skill) follow their own frontmatter rules.
 </Note>
 
 Skills run with the session's tools. The example below pre-approves `Read`, `Grep`, and `Glob` with `allowedTools` (`allowed_tools` in Python), so Claude can inspect files while running the [security-check skill](#create-and-dispatch-your-first-skill) without stopping for approval:

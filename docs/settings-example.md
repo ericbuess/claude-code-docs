@@ -214,7 +214,7 @@ One team's shared settings, committed to the repository so everyone who clones i
       "enabledPlugins": {
         "code-formatter@acme-tools": true
       },
-      // Sandbox commands: writable build dir; npm and example.com pre-allowed, other hosts still prompt
+      // Sandbox commands: writable build dir; npm and example.com pre-allowed
       "sandbox": {
         "enabled": true,
         "filesystem": {
@@ -248,7 +248,7 @@ A `managed-settings.json` file that shows the shape of the managed keys, with on
 * [`allowManagedPermissionRulesOnly`](/docs/en/settings-reference#allowmanagedpermissionrulesonly) and [`allowManagedMcpServersOnly`](/docs/en/settings-reference#allowmanagedmcpserversonly) make the managed permission and MCP allowlists the only ones that apply
 * `allowedMcpServers` pins the MCP server by URL
 * `strictKnownMarketplaces` allows one plugin marketplace
-* `sandbox` sandboxes commands with a fixed network allowlist and no unsandboxed retry
+* `sandbox` sandboxes commands with a fixed network allowlist and no unsandboxed retry. Its `failIfUnavailable` key [stops Claude Code from starting where the sandbox can't run](/docs/en/sandboxing#enforce-sandboxing-with-managed-settings)
 * `requiredMinimumVersion` sets a minimum Claude Code version
 * `cleanupPeriodDays` shortens retention of session transcripts and other local data to seven days
 * `companyAnnouncements` shows a message at startup

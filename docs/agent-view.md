@@ -210,7 +210,17 @@ Any pull requests linked to the session are listed next. For a session that's wa
 
 Most of the time the peek panel is enough and you don't need to open the full transcript.
 
-Type a reply in the peek panel and press `Enter` to send it to that session. When the session asks a question with predefined choices, the peek panel shows them as a numbered list and you can press a number key to pick one. A permission prompt shows as text describing what the session wants to run, without numbered options. Type a reply to answer it, or attach to answer with the standard prompt. For other blocked sessions, press `Tab` to fill the input with a suggested reply you can edit before sending. Prefix a reply with `!` to send a Bash command instead.
+Type a reply in the peek panel and press `Enter` to send it to that session. Prefix a reply with `!` to send a Bash command instead. What happens to the reply depends on the session and on what you send:
+
+* A session that's working: the reply joins the session's [message queue](/docs/en/interactive-mode#queue-messages-while-claude-works) instead of interrupting the response, and takes effect [when queued input does](/docs/en/interactive-mode#when-claude-code-sends-what-you-queued). A [command](/docs/en/commands) waits for the turn to end, even one that runs as soon as you type it at a session's own prompt
+* A reply that is exactly `/stop`: stops the session at once instead of being delivered to it, whether the session is working or waiting on you
+* A [shell job](#run-a-shell-command): the reply, `/stop` included, goes to the command's terminal as typed input
+
+When the session is waiting on you, how you answer from the peek panel depends on what it's waiting for:
+
+* A question with predefined choices: the panel lists the choices by number. With the reply input empty, press a choice's number to fill it in, then `Enter` to send it, or type your own answer instead
+* A question without predefined choices: type your answer. When the empty input shows a suggested reply, press `Tab` to fill it in and edit it before sending
+* A permission prompt or another dialog, such as a [sandbox](/docs/en/sandboxing) prompt or an MCP server's [request for input](/docs/en/mcp#respond-to-mcp-elicitation-requests): replying doesn't answer it. Your reply waits in the queue. To answer the dialog, attach with `→`
 
 When a [`PermissionRequest`](/docs/en/hooks#permissionrequest) or [`PreToolUse`](/docs/en/hooks#pretooluse) hook returns output Claude Code can't validate for the call the session is asking about, the row shows the hook event and `hook output invalid:` with the validation error before the pending request's text. For a hook that fails another way, the row says the hook failed. The session still waits on the same request.
 
@@ -281,7 +291,7 @@ Within a group:
 * Press `Ctrl+T` to pin a session to the top and [keep its process running](#the-supervisor-process) while idle
 * Press `Shift+↑` or `Shift+↓` to reorder sessions
 * Press `Ctrl+R` to rename a session
-* Press `Enter` on a group header to collapse it
+* Press `Enter` on a group header to collapse it, except while a [filter](#filter-sessions) is active, when every group stays expanded
 
 To remove a session from the list, press `Ctrl+X` to stop it and `Ctrl+X` again within two seconds to delete it. Pressing `Ctrl+X` on a group header deletes every session in that group after confirmation.
 
@@ -302,14 +312,20 @@ Completed sessions that don't fit on screen fold into a `… N more` row. Failur
 
 ### Filter sessions
 
-Type in the dispatch input to filter instead of dispatching:
+Start the dispatch input with one of these filters to narrow the list as you type:
 
 | Filter | Shows |
 | :- | :- |
 | `a:<name>` | Sessions running the named agent |
-| `s:<state>` | Sessions in the given state, such as `s:working`. Also accepts `s:blocked` for everything waiting on you |
-| `#<number>` or a pull or merge request URL | The session working on that pull request or merge request |
+| `s:<state>` | Sessions in the given state, such as `s:working`, or under the given group header, such as `s:ready` for `Ready for review`. `s:blocked` lists everything waiting on you |
+| `n:<text>` | Sessions whose name or first prompt contains the text, such as `n:login`. Requires Claude Code v2.1.287 or later |
+| `o:<text>` | Sessions whose result contains the text, such as `o:merged`. A bare `o:` lists every session that has reported a result |
+| A pull or merge request number, such as `#1234`, or its URL | The session working on that pull request or merge request |
 | Any other URL | The session whose first prompt contained that URL |
+
+To combine filters, start with `a:`, `s:`, `n:`, or `o:` and add more, separated by spaces. The list shows the sessions that match all of them. For example, `s:blocked a:reviewer` lists the `reviewer` sessions that are waiting on you.
+
+While a filter is active, groups you collapsed expand to show their matches and the first match is selected, so pressing `Enter` opens it. Clear the input to remove the filter, and those groups collapse again.
 
 ### Keyboard shortcuts
 
@@ -318,7 +334,9 @@ Press `?` in agent view to see every shortcut in context. The table below summar
 | Shortcut | Action |
 | :- | :- |
 | `↑` / `↓` | Move between rows |
-| `Enter` | Attach to the selected session, or dispatch if there's text in the input |
+| `PgUp` / `PgDn` | Move up or down by a screenful of rows |
+| `Home` / `End` | Jump to the first or last row |
+| `Enter` | Attach to the selected session, or submit the input's text if it isn't a [filter](#filter-sessions) |
 | `Space` | Open or close the peek panel for the selected session |
 | `Shift+Enter` | Insert a newline in the dispatch input, [as in the main prompt](/docs/en/terminal-config#enter-multiline-prompts) |
 | `Ctrl+Enter` | Dispatch and attach immediately, in terminals where the `?` overlay lists `ctrl+enter to start and open` |
@@ -956,6 +974,8 @@ Agent view has evolved quickly during research preview. If you are on an older C
 
 | Version | Change |
 | - | - |
+| v2.1.287 | The [`n:<text>` filter](#filter-sessions) finds sessions by name or first prompt. While any filter is active, groups you collapsed expand to show their matches and the first match is selected, so `Enter` opens it. |
+| v2.1.287 | A command sent as a [peek reply](#peek-and-reply) runs when the session's current turn ends, including the commands that run as soon as you type them at a session's own prompt. A reply that is exactly `/stop` stops the session at once. |
 | v2.1.281 | A [`--setting-sources`](/docs/en/cli-reference#cli-flags) restriction [carries over](#what-carries-over-when-you-background) to a session you background with `←` or `/bg` and to the sessions you dispatch from agent view. Before this release, the spawned session loaded every settings source. |
 | v2.1.281 | `claude --bg`, and the commands that restart a session, check workspace trust for the session's directory first. From a terminal in that directory, [the trust dialog appears](#from-your-shell) if you haven't accepted it; where no dialog can appear, such as in a script, the command exits with a [`Workspace not trusted`](/docs/en/errors#workspace-not-trusted-when-dispatching-a-background-session) error. |
 | v2.1.274 | After an auto-update, an agent view you've been away from for about an hour can relaunch itself onto the new build. When it does, it keeps the [dispatch defaults](#dispatch-defaults) you opened it with: `--model`, `--effort`, `--permission-mode`, `--allow-dangerously-skip-permissions`, and `--agent`. Before this release, the relaunched view kept only `--cwd` and configuration flags such as `--settings` and `--mcp-config`, so sessions you dispatched afterward started without those defaults. |

@@ -1171,7 +1171,12 @@ Use these keys to interact with the panel:
 | `x` | Stop the selected fork if it's running, or dismiss its row if it's no longer running. On the main session row, or on the row of the fork whose transcript you opened with `Enter`, `x` types into the prompt instead |
 | `Esc` | Return focus to the prompt input |
 
-With a fork's or subagent's transcript open, follow-up messages and [skills](/docs/en/skills) go to that agent, but built-in commands still run in your main conversation. As of v2.1.199, typing `/model` or `/fast` in that view shows a notice that it changes the main conversation's model or fast mode, not the viewed agent's, instead of running it silently.
+With a fork's or subagent's transcript open, follow-up messages and [skills](/docs/en/skills) go to that agent, and built-in commands go to your main conversation, with these safeguards:
+
+* `/compact`, `/clear`, and `/rewind` act on the main conversation, so Claude Code asks you to confirm before running one of them from this view.
+* `/model` and `/fast` set the main conversation's model and fast mode, not the viewed agent's, so they don't run from this view. A notice tells you why.
+
+To have the viewed agent read your message before the work it's waiting on finishes, send it with [`Ctrl+Enter` or `Ctrl+X Ctrl+S`](/docs/en/keybindings#chat-actions). Any shell command or subagent the agent is waiting on that can move to the [background](/docs/en/tools-reference#background-commands) moves there and keeps running. When the agent is writing a response, or waiting on work that can't move to the background, it keeps going and reads your message once that finishes. Requires Claude Code v2.1.286 or later.
 
 ### How forks differ from other subagents
 

@@ -454,6 +454,21 @@ The fix differs for the publisher and the installer:
 * **You publish the plugin**: recompute the digest of the exact file the URL serves and update the `sha256` in the marketplace entry. Use `shasum -a 256 my-plugin.zip`, or `Get-FileHash -Algorithm SHA256 my-plugin.zip` in PowerShell
 * **You install the plugin**: run `/plugin marketplace update <name>` in a session to refresh the catalog in case the entry was corrected, then retry the install. If the digests still disagree after the refresh, ask the marketplace owner which file they pinned before installing
 
+<h3 id="an-npm-plugin-source-must-name-a-registry-package">
+  `An npm plugin source must name a registry package`
+</h3>
+
+A plugin whose marketplace entry uses an [`npm` source](/docs/en/plugins/marketplace-reference#npm-plugin-source) failed to install, update, or load, and the message includes this sentence. Claude Code checked the entry's `package` value before fetching anything and refused it. The message names the value and the reason:
+
+```text theme={null}
+"github:acme/formatter" was not installed: it is not an http or https link. An npm plugin source must name a registry package (name or name@version) or link to a tarball file. For a plugin in a git repository, use a "github", "url" or "git-subdir" source.
+```
+
+The marketplace's owner has to change the entry:
+
+* **If that's you**: change `package` to a value the [npm plugin source reference](/docs/en/plugins/marketplace-reference#npm-plugin-source) accepts, or switch the entry to a `github`, `url`, or `git-subdir` source
+* **If it isn't you**: report the message to the marketplace owner
+
 <h3 id="marketplace-is-registered-from-an-untrusted-source">
   `Marketplace "<name>" is registered from an untrusted source`
 </h3>
@@ -474,6 +489,35 @@ The fix differs for users and publishers:
 * **You publish a third-party marketplace that used the name before it became reserved**: rename it and ask users to re-add it from your source
 
 Before v2.1.205, Claude Code checked the name only when you added the marketplace, so an entry registered before its name became reserved kept loading.
+
+<h3 id="marketplace-is-added-but-ignored">
+  `Marketplace "<name>" is added but ignored`
+</h3>
+
+The marketplace has an entry in `~/.claude/plugins/known_marketplaces.json`, but the entry failed a check Claude Code runs every time it reads that file, so the marketplace and the plugins installed from it stop loading. In your shell, `claude plugin list` reports each affected plugin with a line that names the reason and the fix:
+
+```text theme={null}
+Marketplace team-tools is added but ignored. Its location is on a network drive, has "." or ".." in its path, or couldn't be checked. Re-add the marketplace (one added from a folder or file must be re-added from a copy on this computer), or, to trust a folder on a network drive, declare it under extraKnownMarketplaces in user or managed settings.
+```
+
+In a session, the `/plugin` **Errors** tab puts the marketplace name in quotation marks, ends the line after the reason, and shows the fix on the line under it.
+
+The sentence after `is added but ignored` names the check the entry failed:
+
+* `Its location is on a network drive, has "." or ".." in its path, or couldn't be checked`, or the same sentence about `The folder or file it was added from`: the marketplace's directory, or the local path it was added from, is on a network location, has a `.` or `..` segment in its path, or couldn't be checked
+* `Its git URL can't be used: <reason>` or `Its URL can't be read as an https:// or http:// address`: the entry's recorded source URL is one Claude Code refuses to clone or fetch from
+* `Its source doesn't match its extraKnownMarketplaces entry in user or managed settings`: the entry doesn't match the [`extraKnownMarketplaces`](/docs/en/settings-reference#extraknownmarketplaces) declaration of the same name
+
+When `(see the debug log)` follows `is added but ignored` in place of a reason, Claude Code refuses the marketplace's name, such as [another spelling of a reserved name](/docs/en/errors#marketplace-name-is-another-spelling-of-a-reserved-name). The [debug log](/docs/en/debug-your-config) names the entry.
+
+**What to do:**
+
+* Follow the fix in the message. In your shell, run `claude plugin marketplace remove <name>`, then add the marketplace again from a supported source or a local path and reinstall its plugins, which the remove command uninstalls. The remove command works on an ignored entry
+* To keep a marketplace on a network location, declare it under [`extraKnownMarketplaces`](/docs/en/settings-reference#extraknownmarketplaces) in your user or managed settings; a declaration in a repository's `.claude/settings.json` or `.claude/settings.local.json` doesn't count
+* For a source that differs from its settings declaration, re-add the marketplace from the declared source or change the declaration. `claude plugin marketplace add` refuses the same mismatch; see [the matching `Cannot add marketplace` entry](#cannot-add-marketplace-its-network-source-differs)
+* For a refused name, remove the marketplace, using the command after `Remove it:` when the line gives one; adding it again under the same name is refused again
+
+Before v2.1.286, whatever the reason, `claude plugin list` reported such a marketplace as `Marketplace <name> not found`, and the `/plugin` **Errors** tab reported it as `Marketplace "<name>" is registered but was refused (see the debug log)`. The reason appeared only in the debug log. In v2.1.286, the reason and fix sentences used different wording, such as `Its recorded location is network-shaped or unclassifiable (never probed)`.
 
 <h3 id="plugin-has-a-corrupt-manifest-file-or-has-an-invalid-manifest-file">
   `Plugin <name> has a corrupt manifest file` or `has an invalid manifest file`
@@ -975,7 +1019,7 @@ The table covers the messages that stop validation and two warnings, `No frontma
 | `Path is a file; skills entries must be directories containing SKILL.md` | A `skills` entry points at `SKILL.md` instead of its directory. | Point at the parent directory, or `.` for a root-level `SKILL.md`. |
 | `No frontmatter block found` or `YAML frontmatter failed to parse: <error>` | A skill, agent, or command file has missing or invalid YAML frontmatter. | Add or fix the frontmatter between `---` delimiters. Reported when validating a plugin directory. |
 | `Plugin name "<name>" is reserved: it passes as one of Anthropic's own` | The plugin's `name` is one of the [reserved names](/docs/en/plugins/manifest-reference#name). | Rename the plugin for what it does. |
-| `Unknown field '<key>'` | The manifest has a field the schema doesn't define. | Remove it, or use the name the message suggests. Claude Code ignores unknown fields at load time. |
+| `Unknown field '<key>'` | The manifest has a field the schema doesn't define. | Remove it, or use the name the message suggests. Claude Code ignores unknown fields at load time. For `privacyPolicyUrl` and the other directory listing fields in `plugin.json`, see [Directory listing fields](/docs/en/plugins/manifest-reference#directory-listing-fields). |
 
 Run the command again after each fix until it prints no errors.
 

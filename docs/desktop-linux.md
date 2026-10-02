@@ -95,7 +95,7 @@ sudo apt install ./claude-desktop_*.deb
 
 If apt reports `E: Unsupported file ./claude-desktop_*.deb given on commandline`, the pattern didn't match a `.deb` file in the current directory. Confirm the download completed, then run the command again from the directory that contains the file.
 
-Installing the `.deb` also registers Anthropic's apt repository at `/etc/apt/sources.list.d/claude-desktop.list`, so future updates arrive with your system's [regular package updates](#update).
+The `.deb` contains Anthropic's signing key and installs it at `/usr/share/keyrings/claude-desktop-archive-keyring.asc`, so you don't need to download the key yourself. Unless you turned registration off with `CLAUDE_DESKTOP_ADD_REPO`, the package also registers the apt repository at `/etc/apt/sources.list.d/claude-desktop.list`, so future updates arrive with your system's [regular package updates](#update).
 
 ## Update
 

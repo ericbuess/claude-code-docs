@@ -217,7 +217,7 @@ A tree taller than the pane scrolls as a whole.
 
 ## Elements
 
-Elements are the building blocks of a tree a `ui.render` hook returns, and you get them from `$.ui.resolve(e)`. [Build a tree from elements](/docs/en/plugins/mods/interface#build-a-tree-from-elements) shows the common ones with how the terminal draws them. A check mark means the app can draw the element.
+Elements are the building blocks of a tree a `ui.render` hook returns, and you get them from `$.ui.resolve(e)`. [Build a tree from elements](/docs/en/plugins/mods/interface#build-a-tree-from-elements) shows the common ones with how the terminal draws them, and the [interface gallery](/docs/en/plugins/mods/gallery) has screenshots of most. A check mark means the app can draw the element.
 
 | Element | Main props | Terminal | Desktop |
 | :- | :- | :-: | :-: |

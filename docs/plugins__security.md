@@ -35,7 +35,7 @@ A plugin can carry content that runs code on your machine with your user privile
 
 Claude Code's [permission rules](/docs/en/permissions) and [sandbox](/docs/en/sandboxing) cover the tool calls Claude makes, not the code a plugin runs by itself:
 
-* **Hooks and server processes**: command hooks execute shell commands with your full user permissions. Claude Code runs hooks and MCP servers outside the sandbox.
+* **Hooks and server processes**: command hooks execute shell commands with your full user permissions. Claude Code runs hooks, MCP servers, and the processes a [mod](/docs/en/plugins/mods/overview#what-a-mod-can-reach) starts outside the sandbox.
 * **Claude's tool calls**: a call to one of the plugin's MCP tools, and a Bash command that runs an executable from the plugin's `bin/`, are tool calls, so your permission rules apply to them. For what a mod can do to a tool call, see [Decide whether to trust a mod](/docs/en/plugins/mods/overview#decide-whether-to-trust-a-mod).
 
 Installing a plugin also enables it, unless its manifest or marketplace entry sets [`defaultEnabled: false`](/docs/en/plugins/install#choose-an-install-scope) and you haven't enabled it yourself.

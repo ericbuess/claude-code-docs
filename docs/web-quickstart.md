@@ -69,6 +69,8 @@ Connecting GitHub is a one-time step. If you already use the GitHub CLI, you can
 
     With this connection, a session can clone any public repository, but can work in a private repository only when the Claude GitHub App is installed on it. [Install the Claude GitHub App](https://github.com/apps/claude/installations/new) on each GitHub account or organization whose private repositories you want to use. On a GitHub organization, an organization owner may need to approve the installation. Installing it also enables [Auto-fix](/docs/en/claude-code-on-the-web#auto-fix-pull-requests), which lets Claude respond to CI failures and review comments on pull requests in those repositories.
 
+    When you connect, Claude also links the GitHub accounts you own to your Claude organization, if they have the Claude GitHub App installed. On Team and Enterprise plans, admins see those accounts in the [connected GitHub accounts list](/docs/en/admin-setup#connected-github-accounts).
+
     If onboarding prompts you to install the Claude GitHub App at this point and you'd rather do it later, click **Skip**.
   </Step>
 

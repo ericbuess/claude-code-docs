@@ -52,6 +52,14 @@ Three bundled skills work together to launch your app and confirm changes agains
 
 Claude edits the recorded file only when it steered a run wrong, such as a command that failed or a missing step, so you can commit the file without per-session diffs. Before v2.1.205, the bundled skill told Claude to fold in anything a run learned, which caused frequent merge conflicts.
 
+### Run your checks before each commit
+
+When a session starts with a skill named `verify` or `simplify` in place, Claude Code's commit instructions tell Claude to run it right before each commit, except for changes to docs or tests. This requires Claude Code v2.1.286 or later. Claude gets that instruction when these conditions hold at the start of the session:
+
+* **Location**: the skill loads from the enterprise, personal, project, or additional-directory [location](#where-skills-live), or from a `.claude/commands/` file with that name. The recipe that `/verify` records at your repo root is a project skill, so it counts. The bundled `/verify` and `/simplify`, plugin skills, and skills from your claude.ai account don't count.
+* **Invocation**: Claude can invoke the skill. If you've [stopped Claude from invoking it](#control-who-invokes-a-skill), for example with `disable-model-invocation: true`, Claude doesn't get the instruction.
+* **Git instructions**: you haven't turned off [`includeGitInstructions`](/docs/en/settings-reference#includegitinstructions). Turning it off removes this instruction together with the rest of the built-in commit and PR instructions.
+
 ### Work on Claude API projects
 
 The bundled `/claude-api` skill loads [Claude API](https://platform.claude.com/docs/en/api/overview) and [Managed Agents](https://platform.claude.com/docs/en/managed-agents/overview) reference material for your project's language. Claude also activates it automatically when your code imports `anthropic` or `@anthropic-ai/sdk`.
@@ -272,7 +280,7 @@ Claude Code reserves the name `anthropic-skills`, and every name inside that nam
 
 Claude Code applies two rules to a synced skill's frontmatter:
 
-* Claude Code honors the frontmatter in every kind of session, so an `allowed-tools` grant goes through the normal [permission flow](/docs/en/permissions).
+* The frontmatter applies in every kind of session, so an `allowed-tools` grant goes through the normal [permission flow](/docs/en/permissions). If your organization sets `allowManagedPermissionRulesOnly`, the grant [doesn't apply](#when-only-managed-permission-rules-apply).
 * Claude Code sanitizes the display text the skill supplies, such as its description. It removes control characters, and in text that reaches Claude, such as the description, it also escapes angle brackets so the text can't imitate Claude Code's internal formatting. This sanitization requires Claude Code v2.1.228 or later.
 
 #### How Claude Code handles the body of a synced skill
@@ -561,7 +569,7 @@ If Claude stops following a skill partway through a session, see [Claude stops f
 
 The `allowed-tools` field grants permission for the listed tools during the turn that invokes the skill, so Claude can use them without prompting you for approval. The grant clears when you send your next message, even though the skill content [stays in context](#skill-content-lifecycle); invoking the skill again re-applies it for that turn. It does not restrict which tools are available: every tool remains callable, and your [permission settings](/docs/en/permissions) still govern tools that are not listed. To pre-approve tools for the whole session rather than a single turn, add allow rules to those permission settings instead.
 
-Workspace trust doesn't gate this field. Claude Code applies a project skill's `allowed-tools` whenever you or Claude invoke the skill, including in a `-p` run in a folder you've never trusted. A skill can grant itself broad tool access, so review the `allowed-tools` of skills checked into a repository before you run Claude Code there.
+Workspace trust doesn't gate this field. Claude Code applies a project skill's `allowed-tools` even in a `-p` run in a folder you've never trusted. A skill can grant itself broad tool access, so review the `allowed-tools` of skills checked into a repository before you run Claude Code there. To withhold the field from repository skills across your organization, see [When only managed permission rules apply](#when-only-managed-permission-rules-apply).
 
 This skill lets Claude run git commands without per-use approval whenever you invoke it:
 
@@ -575,6 +583,12 @@ allowed-tools: Bash(git add *) Bash(git commit *) Bash(git status *)
 ```
 
 To remove tools from Claude's available pool while a skill is active, list them in `disallowed-tools` in the skill's frontmatter. The restriction clears when you send your next message. Like deny rules, the field can't remove [`EndConversation`](/docs/en/tools-reference#endconversation-tool-behavior) while any other tool remains. To block tools across all skills and prompts, add deny rules in your [permission settings](/docs/en/permissions).
+
+#### When only managed permission rules apply
+
+When your organization sets `allowManagedPermissionRulesOnly` in managed settings, Claude Code ignores `allowed-tools` in project and personal skills and in the [other sources the setting's entry lists](/docs/en/settings-reference#allowmanagedpermissionrulesonly). This requires Claude Code v2.1.282 or later.
+
+The tools an affected skill lists go through your organization's managed rules and the normal permission prompt instead. Run `/status` to list each skill whose `allowed-tools` Claude Code has ignored so far in the session. An injected command in the skill that no managed rule allows follows [Permission checks on injected commands](#permission-checks-on-injected-commands).
 
 ### Pass arguments to skills
 
@@ -712,7 +726,7 @@ With the default `bash` shell, append `|| true` to any other command you expect 
 
 Injected commands never prompt for permission while the skill renders. Claude Code checks each one against your [permission rules](/docs/en/permissions) first. A command a deny rule matches aborts the invocation with `Shell command permission check failed for pattern "..."`.
 
-Outside [auto mode](/docs/en/permission-modes#eliminate-prompts-with-auto-mode), when a command's permission check returns anything other than allow, Claude Code aborts the invocation with the same error. This includes a rule that would normally ask you. To keep an unmatched command from aborting here, pre-approve it with [`allowed-tools`](#pre-approve-tools-for-a-skill). Deny and ask rules still override `allowed-tools`. See [Manage permissions](/docs/en/permissions#manage-permissions).
+Outside [auto mode](/docs/en/permission-modes#eliminate-prompts-with-auto-mode), when a command's permission check returns anything other than allow, Claude Code aborts the invocation with the same error. This includes a rule that would normally ask you. To keep an unmatched command from aborting here, pre-approve it with [`allowed-tools`](#pre-approve-tools-for-a-skill). If your organization restricts permission rules to managed settings, see [When only managed permission rules apply](#when-only-managed-permission-rules-apply). Deny and ask rules still override `allowed-tools`. See [Manage permissions](/docs/en/permissions#manage-permissions).
 
 In auto mode, a command that would otherwise need your approval doesn't abort the invocation. The skill loads with an instruction telling Claude to run the command first, and Claude's own call then goes through [auto mode's usual checks](/docs/en/permission-modes#how-the-classifier-evaluates-actions). The invocation still aborts in a [forked skill](#run-skills-in-a-subagent) that sets `agent`, and in a session where Claude doesn't have the [shell tool that runs injected commands](#how-injected-commands-run).
 
@@ -780,7 +794,7 @@ The `agent` field specifies which subagent configuration to use. Options include
 
 ### Restrict Claude's skill access
 
-By default, Claude can invoke any skill that doesn't have `disable-model-invocation: true` set. Skills that define `allowed-tools` grant Claude access to those tools without per-use approval during the turn that invokes the skill; the grant clears when you send your next message. Your [permission settings](/docs/en/permissions) still govern baseline approval behavior for all other tools. A few built-in commands are also available through the Skill tool, including `/init` and `/security-review`. Other built-in commands such as `/compact` are not.
+By default, Claude can invoke any skill that doesn't have `disable-model-invocation: true` set. Skills that define [`allowed-tools`](#pre-approve-tools-for-a-skill) grant Claude access to those tools without per-use approval during the turn that invokes the skill; the grant clears when you send your next message. Your [permission settings](/docs/en/permissions) still govern baseline approval behavior for all other tools. A few built-in commands are also available through the Skill tool, including `/init` and `/security-review`. Other built-in commands such as `/compact` are not.
 
 Three ways to control which skills Claude can invoke:
 

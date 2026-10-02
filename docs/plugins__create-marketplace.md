@@ -126,9 +126,7 @@ Every plugin you distribute is one object in the `plugins` array of `marketplace
 * `source`: where Claude Code fetches the plugin from. Write a relative path string for a plugin inside the marketplace directory, as in [the walkthrough](#create-a-marketplace), or a source object for a plugin outside it. See [Choose a plugin source](#choose-a-plugin-source).
 * `description`: the line people see next to the plugin when they browse your marketplace in `/plugin`.
 
-For the full field list, see [Plugin entries](/docs/en/plugins/marketplace-reference#plugin-entries).
-
-An entry can also set any [`plugin.json`](/docs/en/plugins/manifest-reference) field. For when an entry's `plugin.json` fields apply to a plugin that has its own `plugin.json`, see [Entry and plugin.json](/docs/en/plugins/marketplace-reference#entry-and-plugin-json).
+For the full field list, see [Plugin entries](/docs/en/plugins/marketplace-reference#plugin-entries), which also covers the [`plugin.json`](/docs/en/plugins/manifest-reference) fields an entry can set and when they apply.
 
 ## Rules for plugin entries
 

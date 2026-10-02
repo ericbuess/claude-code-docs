@@ -76,7 +76,7 @@ Different isolation technologies offer different tradeoffs between security stre
 
 ### Sandbox runtime
 
-For lightweight isolation without containers, [sandbox-runtime](https://github.com/anthropic-experimental/sandbox-runtime) enforces filesystem and network restrictions at the OS level.
+For lightweight isolation without containers, [sandbox-runtime](https://github.com/anthropics/sandbox-runtime) enforces filesystem and network restrictions at the OS level.
 
 The main advantage is simplicity: no Docker configuration, container images, or networking setup required. The proxy and filesystem restrictions are built in.
 
@@ -146,7 +146,7 @@ Here's what each option does:
 
 With `--network none`, the container has no network interfaces at all. The only way for the agent to reach the outside world is through the mounted Unix socket, which connects to a proxy running on the host. This proxy can enforce domain allowlists, inject credentials, and log all traffic.
 
-This is the same architecture used by [sandbox-runtime](https://github.com/anthropic-experimental/sandbox-runtime). Even if the agent is compromised via prompt injection, it cannot exfiltrate data to arbitrary servers. It can only communicate through the proxy, which controls what domains are reachable. For more details, see the [Claude Code sandboxing blog post](https://www.anthropic.com/engineering/claude-code-sandboxing).
+This is the same architecture used by [sandbox-runtime](https://github.com/anthropics/sandbox-runtime). Even if the agent is compromised via prompt injection, it cannot exfiltrate data to arbitrary servers. It can only communicate through the proxy, which controls what domains are reachable. For more details, see the [Claude Code sandboxing blog post](https://www.anthropic.com/engineering/claude-code-sandboxing).
 
 **Additional hardening options:**
 
@@ -339,7 +339,7 @@ If you want to review changes before persisting them, an overlay filesystem lets
 * [Claude Code security documentation](/docs/en/security)
 * [Hosting the Agent SDK](/docs/en/agent-sdk/hosting)
 * [Handling permissions](/docs/en/agent-sdk/permissions)
-* [Sandbox runtime](https://github.com/anthropic-experimental/sandbox-runtime)
+* [Sandbox runtime](https://github.com/anthropics/sandbox-runtime)
 * [The Lethal Trifecta for AI Agents](https://simonwillison.net/2025/Jun/16/the-lethal-trifecta/)
 * [OWASP Top 10 for LLM Applications](https://owasp.org/www-project-top-10-for-large-language-model-applications/)
 * [Docker Security Best Practices](https://docs.docker.com/engine/security/)

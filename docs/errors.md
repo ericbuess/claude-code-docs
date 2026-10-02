@@ -73,6 +73,8 @@ Match the message you see to a section below.
 | `Remote Control stopped — the app running this session is now signed in to a different Claude account` | [Authentication](#remote-control-stopped-because-the-app-running-the-session-signed-out-or-switched-accounts) |
 | `Remote Control stopped — the app running this session is signed out of Claude` | [Authentication](#remote-control-stopped-because-the-app-running-the-session-signed-out-or-switched-accounts) |
 | `Couldn't verify your organization's policy for remote control` | [Troubleshoot Remote Control](/docs/en/remote-control#couldnt-verify-your-organizations-policy-for-remote-control) |
+| `Remote Control is disabled by your organization's policy` | [Troubleshoot Remote Control](/docs/en/remote-control#remote-control-is-disabled-by-your-organizations-policy) |
+| `Remote Control was turned off by your organization's policy` | [Troubleshoot Remote Control](/docs/en/remote-control#remote-control-was-turned-off-by-your-organizations-policy) |
 | `OAuth token revoked` / `OAuth token has expired` | [Authentication](#oauth-token-revoked-or-expired) |
 | `API Error: 401 Invalid authentication credentials` | [Authentication](#api-error-401-invalid-authentication-credentials) |
 | `Login expired · Please run /login` | [Authentication](#login-expired) |
@@ -245,10 +247,13 @@ Match the message you see to a section below.
 | `Marketplace name impersonates an official Anthropic/Claude marketplace` | [Plugin errors](#claude-code-refuses-the-marketplace-name) |
 | `Marketplace "<name>" is already added from a different source` | [Plugin errors](#marketplace-is-already-added-from-a-different-source) |
 | `"<name>" is another spelling of "<reserved>", a reserved marketplace name` | [Plugin errors](#marketplace-name-is-another-spelling-of-a-reserved-name) |
+| `Marketplace "<name>" is added but ignored` | [Plugin troubleshooting](/docs/en/plugins/troubleshooting#marketplace-is-added-but-ignored) |
+| `Marketplace "<name>" is registered but was refused (see the debug log)` | [Plugin troubleshooting](/docs/en/plugins/troubleshooting#marketplace-is-added-but-ignored) |
 | `references ${user_config.*} in a shell-form command` | [Plugin errors](#plugin-command-references-user-config) |
 | `Monitor "<name>" from plugin <plugin> references ${user_config.*} in its command` | [Plugin errors](#plugin-command-references-user-config) |
 | `headersHelper for MCP server '<name>' references ${user_config.*}` | [Plugin errors](#plugin-command-references-user-config) |
 | `Plugin archive integrity check failed` | [Plugin errors](#plugin-archive-integrity-check-failed) |
+| `An npm plugin source must name a registry package` | [Plugin troubleshooting](/docs/en/plugins/troubleshooting#an-npm-plugin-source-must-name-a-registry-package) |
 | `path escapes plugin directory` | [Plugin errors](#path-escapes-plugin-directory) |
 | `path could not be checked` | [Plugin errors](#path-could-not-be-checked) |
 | `its marketplace entry path does not stay inside the marketplace directory` | [Plugin errors](#marketplace-entry-path-does-not-stay-inside-the-marketplace-directory) |
@@ -856,6 +861,10 @@ Not logged in · Please run /login
 
 In a session the Claude Desktop app runs, such as the Code tab or Cowork, the message reads `Authentication required · Sign in again to continue`, and you sign in again from the app.
 
+If you sign in with your claude.ai account in another Claude Code window that uses the same [configuration directory](/docs/en/claude-directory), an interactive session showing this message starts using that login on its own. You don't need to restart it.
+
+Before v2.1.286 on macOS, the session could keep showing the message after you signed in from another window. On those versions, restart the session that shows the message.
+
 **What to do:**
 
 * Run `/login` to authenticate with your Claude subscription or Console account
@@ -1197,6 +1206,7 @@ You can check for this state before a request fails: [`/status`](/docs/en/comman
 **What to do:**
 
 * Run `/login` to sign in again. Retrying without signing in shows the same message on every request.
+* If you sign in with your claude.ai account in another Claude Code window, see [Not logged in](#not-logged-in) for when this session starts using that login on its own.
 * In non-interactive mode, run `claude` in the same environment, complete `/login`, then rerun your command. For automation that can't sign in interactively, authenticate with `ANTHROPIC_API_KEY` or [generate a long-lived token with `claude setup-token`](/docs/en/authentication#generate-a-long-lived-token).
 * If signing in keeps failing, see [Login and authentication](/docs/en/troubleshoot-install#login-and-authentication)
 
@@ -4600,6 +4610,8 @@ Two variants name a different cause:
 
 * **`The home directory is trusted one session at a time`**: the session's directory is your home directory. Claude Code never saves trust for the home directory, so accepting the dialog there in an earlier session doesn't count.
 * **`<path> could not be resolved on disk`**: Claude Code couldn't find the session's directory on disk.
+
+Before v2.1.286, on Windows, this message could also appear in a directory you had already trusted, if its trust record was saved with the path in a different letter case. Update to v2.1.286 or later.
 
 **What to do:**
 

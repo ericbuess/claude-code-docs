@@ -395,12 +395,12 @@ Most drawings use four elements. Select a tab to see each one and how the termin
     ```
 
     ```text theme={null}
-    Note: Type a note and press Enter ⏎ add
+    Note: Type a note and press Enter
     ```
   </Tab>
 </Tabs>
 
-This table lists every element:
+The [interface gallery](/docs/en/plugins/mods/gallery) has samples and screenshots of most elements. This table lists every element:
 
 | Element | What it draws | Where |
 | :- | :- | :- |

@@ -493,6 +493,7 @@ The following sections cover the order Claude Code evaluates an action in, how t
     2. Read-only actions and file edits in your working directory are auto-approved, except writes to [protected paths](#protected-paths) and [the first read outside the working directories](#first-read-outside-the-working-directories), which prompts you
        * In a session with [server-side classifier review](#server-side-classifier-review), read-only and [sandboxed](/docs/en/sandboxing#sandbox-modes) shell commands wait for that review and are blocked if it flags them
        * A write inside your working directory that the [symlink check](/docs/en/permissions#symlinks) resolves to a location outside it prompts you
+       * When Claude reads an [artifact someone else made](/docs/en/artifacts#read-an-artifact-shared-with-you), the approval cases listed in that section apply
     3. Everything else goes to the classifier, apart from [critical-path removals](#critical-paths) under their default handling. The connector tools and `requiresUserInteraction` MCP tools that prompt you directly in step 1 never reach the classifier either, so neither an org-required approval nor a consent step is auto-approved
     4. If the classifier blocks, Claude receives the reason. In most sessions the reason names the rule the classifier matched, such as `[Data Exfiltration]`, rather than giving a written explanation; see [Review denials](/docs/en/auto-mode-config#review-denials)
 
@@ -526,7 +527,7 @@ The following sections cover the order Claude Code evaluates an action in, how t
   </Accordion>
 
   <Accordion title="Cost and latency">
-    The classifier runs on Claude Sonnet 5 by default rather than on your `/model` selection. A classifier model that Anthropic configures server-side takes precedence over that default. When your session's model is Claude Sonnet 4.6, or when [`availableModels`](/docs/en/model-config#restrict-model-selection) excludes Sonnet 5, the classifier runs on the session's model instead, or on an Opus model when the session runs on a [Fable model](/docs/en/model-config#work-with-fable); on providers other than the Anthropic API, that Opus fallback is the provider's default Opus model.
+    The classifier runs on Claude Sonnet 5 by default rather than on your `/model` selection. A classifier model that Anthropic configures server-side takes precedence over that default. When your session's model is Claude Sonnet 4.6, or when [`availableModels`](/docs/en/model-config#restrict-model-selection) excludes Sonnet 5, the classifier runs on the session's model instead, or on an Opus model when the session runs on a [Fable model](/docs/en/model-config#work-with-fable). On providers other than the Anthropic API, that Opus fallback is the model you set in [`ANTHROPIC_DEFAULT_OPUS_MODEL`](/docs/en/model-config#environment-variables), or Opus 5 if you haven't set one.
 
     The session's first auto-mode request validates the Sonnet 5 default: if the request succeeds, Sonnet 5 stays the session's classifier model, and if it fails because the model isn't available, the session uses the fallback instead.
 
@@ -556,7 +557,7 @@ claude --permission-mode dontAsk
 
 `bypassPermissions` mode disables permission prompts and safety checks so tool calls execute immediately, including writes to [protected paths](#protected-paths).
 
-The [actions no mode auto-approves](#actions-no-mode-auto-approves) still prompt in this mode. The [Remove-Item in PowerShell](#remove-item-in-powershell) denies also apply in this mode.
+The [actions no mode auto-approves](#actions-no-mode-auto-approves) still prompt in this mode. Reading [another organization's public artifact](/docs/en/artifacts#read-an-artifact-shared-with-you) needs your approval, and this mode doesn't ask for it, so Claude can't read one. The [Remove-Item in PowerShell](#remove-item-in-powershell) denies also apply in this mode.
 
 Two [cross-session messaging](/docs/en/cross-session-messaging) safeguards still apply in this mode, and in interactive terminal plan-mode sessions where bypass permissions are available:
 

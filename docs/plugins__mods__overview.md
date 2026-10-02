@@ -62,6 +62,8 @@ A mod runs with your permissions, so before you install one, know what it has ac
 * **Act without asking you**: approve a tool call before you're asked
 * **Spend your usage**: call a model on your plan or API key
 
+Mods aren't sandboxed. If you turn on [sandboxing](/docs/en/sandboxing), the sandbox isolates the Bash commands Claude runs, and a process that a mod starts runs outside it.
+
 A mod that approves tool calls can approve one that an `ask` rule would prompt for, or that one of your own `PreToolUse` hooks blocked. [Extend permissions with hooks](/docs/en/permissions#extend-permissions-with-hooks) lists what such a mod can approve, including when it can approve a call that a `deny` rule refuses.
 
 A mod can restyle much of Claude Code's interface, but not the permission prompt. It can't change what a prompt shows you.
@@ -87,6 +89,8 @@ To turn mods off, choose how many to stop, and for how long. To turn them back o
 * **Every mod you installed, in every session**: set [`"disableAllHooks": true`](/docs/en/settings-reference#disableallhooks) in `~/.claude/settings.json`. Your settings hooks and custom status line stop too. What your organization manages keeps running.
 
 If you use Claude Code through an organization, an administrator can also limit which mods load. Administrators start at [Stop user-installed mods from loading](/docs/en/plugins/mods/admin#stop-user-installed-mods-from-loading).
+
+`disableAllHooks` and your organization's `allowManagedModsOnly` stop a mod and leave the rest of its plugin in place: the plugin stays installed, and its skills, commands, agents, and MCP servers load. Other settings and flags reach further. [`disableAllHooks`](/docs/en/settings-reference#disableallhooks) and [What runs under `allowManagedHooksOnly`](/docs/en/settings-reference#what-runs-under-allowmanagedhooksonly) list what each one does to a plugin and its settings hooks.
 
 To find out whether mods can load for you, see [Check whether mods can load](/docs/en/plugins/mods/troubleshoot#check-whether-mods-can-load).
 

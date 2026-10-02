@@ -177,9 +177,12 @@ Each teammate is a full, independent Claude Code session. You can message any te
 * **In-process mode**: use the up and down arrow keys in the agent panel to select a teammate, then press Enter to view its session and type to send it a message. Press `x` on a selected teammate to stop it. Press Ctrl+T to toggle the task list.
 * **Split-pane mode**: click into a teammate's pane to interact with their session directly. Each teammate has a full view of their own terminal.
 
-While you're viewing an in-process teammate, plain text and [skills](/docs/en/skills) go to that teammate, but built-in commands still run in the lead's session.
+While you're viewing an in-process teammate, plain text and [skills](/docs/en/skills) go to that teammate, and built-in commands go to the lead's session, with these safeguards:
 
-A teammate's model and fast mode are fixed when it spawns, so `/model` and `/fast` only change the lead's settings. As of v2.1.199, typing either command while viewing a teammate shows a notice that the change applies to the lead; earlier versions applied it to the lead with no indication. `/effort` still applies to the viewed teammate's later turns, because teammates follow the lead's [effort level](/docs/en/model-config#adjust-effort-level).
+* `/compact`, `/clear`, and `/rewind` act on the lead's conversation, so Claude Code asks you to confirm before running one of them from this view.
+* `/model` and `/fast` set the lead's model and fast mode, not the teammate's, so they don't run from this view. A notice tells you why.
+
+A teammate's model and fast mode are fixed when it spawns. `/effort` still applies to the viewed teammate's later turns, because teammates follow the lead's [effort level](/docs/en/model-config#adjust-effort-level).
 
 ### Assign and claim tasks
 

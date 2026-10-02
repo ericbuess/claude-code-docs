@@ -434,7 +434,9 @@ The table covers the permission, plugin, and delivery controls. For any key not 
 | [`wslInheritsWindowsSettings`](/docs/en/settings-reference#wslinheritswindowssettings) | When set in the HKLM registry or a file under `C:\Program Files\ClaudeCode`, have WSL read the Windows policy chain, and read `/etc/claude-code` only when [no Windows admin document is present](#present-admin-documents); the entry gives the order |
 
 <Note>
-  On Team and Enterprise plans, an Owner enables or disables [Remote Control](/docs/en/remote-control) and [cloud sessions](/docs/en/claude-code-on-the-web) organization-wide in [Claude Code admin settings](https://claude.ai/admin-settings/claude-code). Remote Control can additionally be disabled per device with the [`disableRemoteControl`](/docs/en/settings-reference#disableremotecontrol) setting. Cloud sessions have no per-device managed settings key.
+  On Team and Enterprise plans, an Owner enables or disables [Remote Control](/docs/en/remote-control) and [cloud sessions](/docs/en/claude-code-on-the-web) organization-wide in [Claude Code admin settings](https://claude.ai/admin-settings/claude-code). When an Owner turns Remote Control off, already-connected sessions that run Claude Code v2.1.286 or later disconnect too. Each one disconnects the next time it refreshes your organization's policy, about once an hour. For what happens in those sessions, see [`Remote Control was turned off by your organization's policy`](/docs/en/remote-control#remote-control-was-turned-off-by-your-organizations-policy).
+
+  Remote Control can additionally be disabled per device with the [`disableRemoteControl`](/docs/en/settings-reference#disableremotecontrol) setting. Cloud sessions have no per-device managed settings key.
 
   To check whether these organization settings reached a given machine, run `claude doctor` there and read the `Organization policy` line, which says where Claude Code loaded the policy from or why it didn't load. Requires Claude Code v2.1.261 or later. In a running session, `/status` shows the same line when the policy didn't load.
 </Note>

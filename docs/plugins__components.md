@@ -13,7 +13,6 @@ export const PluginExplorer = ({children}) => {
     id: 'manifest',
     name: 'Manifest',
     path: '.claude-plugin/plugin.json',
-    required: "Required by Anthropic's directory",
     lines: [{
       depth: 0,
       kind: 'folder',
@@ -434,7 +433,7 @@ Each file is the smallest valid example of its format, there to show the shape r
 
 <PluginExplorer>
   <Piece id="manifest">
-    The [manifest](/docs/en/plugins/manifest-reference) is the `plugin.json` file in a plugin's `.claude-plugin/` directory. It contains the plugin's metadata and the `userConfig` values that Claude Code prompts the user for. Claude Code loads a plugin without one, but [Anthropic's directory](/docs/en/plugins/publish#submit-to-anthropics-directory) requires it. Inside the file, only `name` is required. In this one, `description` is the text users see for the plugin in `/plugin`, and `version` keeps users on that version until you change it:
+    The [manifest](/docs/en/plugins/manifest-reference) is the `plugin.json` file in a plugin's `.claude-plugin/` directory. It contains the plugin's metadata and the `userConfig` values that Claude Code prompts the user for. Claude Code loads a plugin without one. Inside the file, only `name` is required. In this one, `description` is the text users see for the plugin in `/plugin`, and `version` keeps users on that version until you change it:
 
     ```json theme={null}
     {

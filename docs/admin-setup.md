@@ -115,11 +115,30 @@ If your members sign in through claude.ai or the Anthropic API and you're on a C
 
 None of these controls reach sessions on Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry, or [Claude Platform on AWS](/docs/en/claude-platform-on-aws). On those providers, use managed settings instead: `availableModels` for restrictions, `model` for a default, and [`maxEffortLevel`](/docs/en/settings-reference#maxeffortlevel) for an effort cap.
 
-[Cloud sessions](/docs/en/claude-code-on-the-web) have their own admin surface: on the Cloud environments page in admin settings, Owners create [organization-shared environments](/docs/en/cloud-environments#organization-shared-environments) that set the [network access level](/docs/en/cloud-environments#network-access), environment variables, and setup script for members' cloud sessions. Owners choose the organization's default environment separately, at [claude.ai/admin-settings/claude-code](https://claude.ai/admin-settings/claude-code).
+[Cloud sessions](/docs/en/claude-code-on-the-web) have their own admin surfaces on claude.ai:
+
+* **Cloud environments page**: Owners create [organization-shared environments](/docs/en/cloud-environments#organization-shared-environments) that set the [network access level](/docs/en/cloud-environments#network-access), environment variables, and setup script for members' cloud sessions.
+* **Default environment**: Owners choose the organization's default environment separately, at [claude.ai/admin-settings/claude-code](https://claude.ai/admin-settings/claude-code).
+* **GitHub page**: see [Connected GitHub accounts](#connected-github-accounts) for the GitHub accounts linked to your organization.
 
 Permission rules and sandboxing cover different layers. Denying WebFetch blocks Claude's fetch tool, but if Bash is allowed, `curl` and `wget` can still reach any URL. Sandboxing closes that gap with a network domain allowlist enforced at the OS level.
 
 For the threat model these controls defend against, see [Security](/docs/en/security).
+
+### Connected GitHub accounts
+
+On Team and Enterprise plans, [**Admin settings > GitHub**](https://claude.ai/admin-settings/github) lists the GitHub organizations and personal accounts linked to your Claude organization through the [Claude GitHub App](https://github.com/apps/claude). Claude Code, [Claude Tag](https://claude.com/docs/claude-tag/admins/configure-github), and Claude Security share the list. Opening it requires an admin role in your Claude organization.
+
+An admin or a member can link an account:
+
+* **Admin connection**: an admin clicks **Connect** on that page and installs the Claude GitHub App on a GitHub organization. Linking an organization this way requires someone who is both an owner of the GitHub organization and an admin of your Claude organization.
+* **Member connection**: when a member connects their GitHub account to Claude, for example while [setting up cloud sessions](/docs/en/web-quickstart#connect-github), Claude links the GitHub accounts that member owns where the Claude GitHub App is already installed. That can include their personal account and GitHub organizations they own.
+
+A row marked **Not linked** comes from your own GitHub sign-in. It's an account you can see on GitHub where the Claude GitHub App is installed.
+
+To unlink an account from your Claude organization, open its row's menu and select **Unlink from this workspace**. Unlinking leaves the Claude GitHub App installed on GitHub, and the account is linked again the next time one of its owners connects GitHub to Claude. To keep it from being linked again, uninstall the Claude GitHub App from that account on GitHub.
+
+On Enterprise plans, the [Compliance API](https://platform.claude.com/docs/en/api/compliance/activities/list) activity types for linking and unlinking are `github_app_installation_linked` and `github_app_installation_unlinked`.
 
 ## Set up usage visibility
 

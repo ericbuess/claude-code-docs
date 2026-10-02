@@ -329,11 +329,7 @@ If your GitHub connection is missing or expired when a run is due, the routine s
 
 Each repository you add is cloned on every run. Claude starts from the repository's default branch unless your prompt specifies otherwise.
 
-Claude pushes its work to branches prefixed with `claude/`, which are always accepted. When your prompt directs Claude to push to another branch, Claude Code checks the push first and rejects it if any of the following is true:
-
-* The branch is protected on GitHub
-* Someone else has an open pull request from that branch
-* The branch carries commits authored by someone other than you
+Claude pushes its work to a branch prefixed with `claude/` unless your prompt directs it to push to another branch. To control which branches a run can push to, use branch protection rules or rulesets on GitHub. For runs on Anthropic-managed infrastructure, and for self-hosted runs that push through [Anthropic's git proxy](/docs/en/self-hosted-environments-deploy#use-the-anthropic-git-proxy), GitHub applies them to the GitHub access you connected, so a rule that access can bypass doesn't block a run's push. A self-hosted run that pushes with the git credentials your deployment provides is checked against those instead. See [Configure git](/docs/en/self-hosted-environments-deploy#configure-git).
 
 ### Connectors
 

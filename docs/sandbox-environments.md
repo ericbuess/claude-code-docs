@@ -81,7 +81,7 @@ To put built-in tools, MCP servers, and hooks all behind one OS boundary, run th
 
 ## Sandbox runtime
 
-The [`@anthropic-ai/sandbox-runtime`](https://github.com/anthropic-experimental/sandbox-runtime) package wraps an entire process in the same Seatbelt or bubblewrap isolation that the built-in Bash sandbox uses. Running Claude Code through the runtime constrains every tool, hook, and MCP server in the session, not only shell commands. The runtime is a beta research preview, and its configuration format may change as the package evolves.
+The [`@anthropic-ai/sandbox-runtime`](https://github.com/anthropics/sandbox-runtime) package wraps an entire process in the same Seatbelt or bubblewrap isolation that the built-in Bash sandbox uses. Running Claude Code through the runtime constrains the session's tools, hooks, and MCP servers as well as shell commands. The runtime is a beta research preview, and its configuration format may change as the package evolves.
 
 This section covers what you configure and what the runtime enforces on its own. For deploying the runtime in Agent SDK applications, see the [secure deployment guide](/docs/en/agent-sdk/secure-deployment#sandbox-runtime).
 
@@ -89,13 +89,15 @@ This section covers what you configure and what the runtime enforces on its own.
 
 On Linux and WSL2, the runtime relies on the same `bubblewrap` and `socat` packages as the built-in sandbox, plus `ripgrep`, which Claude Code bundles but the standalone runtime resolves from your PATH. Install `bubblewrap` and `socat` as described in [Set up Linux and WSL2](/docs/en/sandboxing#set-up-linux-and-wsl2), and `ripgrep` from your distribution's package manager. On macOS you need no additional packages. The runtime uses the built-in Seatbelt sandbox there.
 
-By default the runtime denies network access and confines writes to a small set of built-in runtime paths, so configure it before launching Claude Code through it. Put your configuration in `~/.srt-settings.json`, or in a file you pass with `--settings`. The package [README](https://github.com/anthropic-experimental/sandbox-runtime) documents the full configuration schema.
+By default the runtime denies network access and confines writes to a small set of built-in runtime paths, so configure it before launching Claude Code through it. Put your configuration in `~/.srt-settings.json`, or in a file you pass with `--settings`. The package [README](https://github.com/anthropics/sandbox-runtime) documents the configuration schema.
 
 Allow write access to at least:
 
 * Your project directory.
 * Claude Code's configuration paths `~/.claude` and `~/.claude.json`.
-* `/tmp`, where Claude Code writes runtime files.
+* The directory where Claude Code writes runtime files. Unless you set [`CLAUDE_CODE_TMPDIR`](/docs/en/env-vars), that directory is:
+  * **Linux and WSL2**: `/tmp`
+  * **macOS**: `/private/tmp`. `/tmp` is a symlink to that directory, and Seatbelt checks the resolved path.
 
 Allow the network domains your session needs:
 
@@ -145,7 +147,7 @@ You can run Claude Code in any Docker or OCI container image with your own netwo
 
 Several managed sandbox and remote execution services can host the container for you. The same checklist applies as for any container you operate: review what is mounted writable, what credentials and tokens are reachable inside it, and what the network egress policy allows.
 
-You can layer the built-in Bash sandbox inside the container for per-command restrictions. Unprivileged containers need the nested-sandbox setting described in [Sandboxing troubleshooting](/docs/en/sandboxing#troubleshooting).
+You can layer the built-in Bash sandbox inside the container for per-command restrictions. Unprivileged containers need `enableWeakerNestedSandbox`, described in [Bubblewrap fails to start inside a container](/docs/en/sandboxing#bubblewrap-fails-to-start-inside-a-container).
 
 ## Virtual machine
 
