@@ -6,7 +6,7 @@
 
 > Have Claude write a Claude Code mod from a description, or write one yourself that counts tool calls and adds a command. Learn the reload and validate loop.
 
-A mod is a Claude Code [plugin](/docs/en/plugins/overview) with an entry file, called the hooks module: a JavaScript or TypeScript file whose functions Claude Code calls when events happen. There are two ways to make one:
+A mod is a Claude Code [plugin](/docs/en/plugins/overview) with an entry file, called the hooks module: a JavaScript or TypeScript file whose functions Claude Code calls when events happen. To make one:
 
 * **Ask Claude to write it**: [describe what you want](#ask-claude-for-a-mod) in a Claude Code session
 * **Write it yourself**: [follow the tutorial](#write-a-mod-yourself) to learn how a mod's code works. You don't need Node.js, a bundler, or a build step, because Claude Code loads `.js` and `.ts` files directly.
@@ -65,7 +65,7 @@ A mod Claude writes loads only after you approve it, in a trusted workspace wher
 
 * **Nobody is there to approve**: the session can't show you a prompt, as in a `claude -p` run or [`dontAsk` mode](/docs/en/permission-modes)
 * **The workspace isn't trusted**: you haven't accepted the trust prompt for the directory
-* **Mods are stopped**: you started with `--safe-mode` or `--bare`, you set `disableAllHooks`, or your organization's [managed settings block it](/docs/en/plugins/mods/admin#choose-how-much-to-allow)
+* **Mods are disabled**: you started with `--safe-mode` or `--bare`, you set `disableAllHooks`, or your organization's [managed settings block it](/docs/en/plugins/mods/admin#choose-how-much-to-allow)
 
 ## Write a mod yourself
 
@@ -241,13 +241,13 @@ Each function you pass to `on` is a hook, which is an event handler. Claude Code
 * **The event**, named `e`: the [event's input](/docs/en/plugins/mods/reference#events) as plain data, such as a tool call's name and arguments
 * **The next handler**, named [`next`](/docs/en/plugins/mods/events#how-a-hook-handles-an-event): a function that passes the event on to the other mods and then to Claude Code's own behavior, and returns the result
 
-The hooks in `first-mod` handle their events in the three ways a hook can:
+The hooks in `first-mod` handle their events in these ways:
 
 * **Observe**: the `session.start` hook registers the command, and the `tool.call` hook counts the call and asks for a redraw. Both return `next(e)`, so the session starts and the tool runs as usual.
 * **Answer**: the `command.run` hook returns its own result and never calls `next`. The second argument to `on`, `{ command: 'tally' }`, is a filter, called a [matcher](/docs/en/plugins/mods/events#filter-which-events-a-hook-handles), so the hook runs only for `/tally`.
 * **Rewrite**: the `ui.render` hook calls `next` with a copy of `e` whose `suffix` holds the count, so Claude Code draws its usual spinner with your text after the word
 
-Claude Code watches a directory loaded with `--plugin-dir` and hot-reloads the hooks module when a file in it changes. Each reload runs `register` again, so `calls` goes back to `0` and `/tally` starts counting again. To keep a value across reloads, see [Keep state](/docs/en/plugins/mods/interface#keep-state).
+Claude Code watches a directory loaded with `--plugin-dir` and hot-reloads the hooks module when a file in it changes. Each reload runs `register` again, so `calls` resets to `0` and `/tally` starts counting again. To keep a value across reloads, see [Keep state](/docs/en/plugins/mods/interface#keep-state).
 
 ## Keep working on a mod
 
@@ -304,11 +304,11 @@ For `first-mod`, the output includes these lines.
 
 The `hooks:` line lists the events your module hooks, each with its filter in braces. The `calls:` line lists every mods API method it calls. A module that reads or sets environment variables also gets `env reads:` and `env writes:` lines, and one that uses [`$.state`](/docs/en/plugins/mods/interface#keep-state) gets `state reads:` and `state writes:`.
 
-If an event you meant to hook is missing from the first line, Claude Code won't call that hook either. The usual cause is a misspelled event name, which the command reports as an error such as `"tool.calls" is not an event`.
+If an event you meant to handle is missing from the first line, Claude Code won't call that hook either. The usual cause is a misspelled event name, which the command reports as an error such as `"tool.calls" is not an event`.
 
 Follow these rules so that static analysis can find every hook and call:
 
-* Spell each mods API call in full: `$`, the namespace, then the method, as in `$.store.get('notes')`. You can pass `$` to a function declared at the top level of the same file, and for a function of yours named `loadNotes`, the `calls:` line then reads `$.store.get (via loadNotes)`. Passing `$` to a method, a function defined inside the hook, or a function you import from another of your files fails validation. The `read` and `update` functions that [`$.state`](/docs/en/plugins/mods/interface#keep-state) uses are the imports that can take it. Don't assign `$` or one of its namespaces to a variable, destructure it, or index it with a computed name. `const ui = $.ui` fails with `$.ui is used as a value`.
+* Write each mods API call in full: `$`, the namespace, then the method, as in `$.store.get('notes')`. You can pass `$` to a function declared at the top level of the same file, and for a function of yours named `loadNotes`, the `calls:` line then reads `$.store.get (via loadNotes)`. Passing `$` to a method, a function defined inside the hook, or a function you import from another of your files fails validation. The `read` and `update` functions that [`$.state`](/docs/en/plugins/mods/interface#keep-state) uses are the imports that can take it. Don't assign `$` or one of its namespaces to a variable, destructure it, or index it with a computed name. `const ui = $.ui` fails with `$.ui is used as a value`.
 * Write the event name in each `on` call as a string literal, such as `'tool.call'`. A variable, or a loop over a list of names, fails with `the event name passed to on() is not a string literal`.
 * Inside `register`, don't declare a second variable or parameter named `on`. Validation fails with `"on" is declared again (shadowed)`.
 * Import only from files inside the plugin directory, by relative path. The one bare import allowed is `claude-code`, for types and a few helpers.
@@ -317,9 +317,9 @@ Follow these rules so that static analysis can find every hook and call:
 
 ### Test the mod
 
-You can write automated tests for a mod and run them from your shell with `claude plugin test`, with no session, sign-in, or network. A test raises the events your hooks handle and checks what the hooks did.
+You can write automated tests for a mod and run them from your shell with `claude plugin test`, with no session, sign-in, or network. A test fires the events your hooks handle and checks what the hooks did.
 
-This test raises two tool calls, runs `/tally`, and checks that the reply counts both. Save it as `first-mod/tests/first-mod.test.ts`:
+This test fires two tool calls, runs `/tally`, and checks that the reply counts both. Save it as `first-mod/tests/first-mod.test.ts`:
 
 ```typescript first-mod/tests/first-mod.test.ts theme={null}
 import { expect, test } from 'claude-code/testing'
@@ -328,7 +328,7 @@ test('/tally reports the tool calls the mod has seen', async ($, on) => {
   // Answer each tool call in Claude Code's place, so no tool runs
   on('tool.call', () => ({ result: 'ok' }))
 
-  // Raise two tool calls, which the mod's tool.call hook counts
+  // Fire two tool calls, which the mod's tool.call hook counts
   await $.tool.call({ tool: 'Bash', command: 'ls' })
   await $.tool.call({ tool: 'Read', file_path: 'README.md' })
 
@@ -363,7 +363,7 @@ A mod is a plugin, so you version it in the manifest and people install and upda
 
 Before you do, check the plugin's `name`: `claude plugin validate` fails a name that [looks like one of Anthropic's own](/docs/en/plugins/manifest-reference#name), such as one that starts with `claude-`. The events and methods can change between releases, so your README is the place to say which Claude Code version you tested with.
 
-Keep developing against the directory with `--plugin-dir`, not against an installed copy. Claude Code caches an installed plugin by version, so your edits don't reach the installed copy until you raise the version and install again.
+Keep developing against the directory with `--plugin-dir`, not against an installed copy. Claude Code caches an installed plugin by version, so your edits don't reach the installed copy until you increment the version and install again.
 
 ## Next steps
 

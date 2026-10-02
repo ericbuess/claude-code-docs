@@ -6,7 +6,7 @@
 
 > Draw panes, a band above the prompt, buttons, and text fields from a Claude Code mod, handle presses and input, and keep state between redraws and sessions.
 
-A mod can draw its own interface in Claude Code and change parts of the interface Claude Code already draws. Each place a mod can draw is called a [render site](/docs/en/plugins/mods/reference#render-sites), such as a pane, the band above the prompt, or the spinner. Claude Code raises the [`ui.render`](/docs/en/plugins/mods/reference#interface) event each time it's about to draw a render site, and your hook for that event returns what to draw there.
+A mod can draw its own interface in Claude Code and change parts of the interface Claude Code already draws. Each place a mod can draw is called a [render site](/docs/en/plugins/mods/reference#render-sites), such as a pane, the band above the prompt, or the spinner. Claude Code fires the [`ui.render`](/docs/en/plugins/mods/reference#interface) event each time it's about to draw a render site, and your hook for that event returns what to draw there.
 
 This map shows where a mod can draw in a terminal session:
 
@@ -34,7 +34,7 @@ The finished mod looks like this. The recording opens the pane, switches to the 
   <video autoPlay muted loop playsInline controls className="w-full hidden dark:block" src="https://mintcdn.com/claude-code/dgiVO_Od1X1faduV/images/mods-hello-tabs-dark.mp4?fit=max&auto=format&n=dgiVO_Od1X1faduV&q=85&s=ff7a14d713d6e5d3b0000efa8522ea4b" aria-label="The /hello-tabs command is typed at the Claude Code prompt and a framed pane opens above it, with '1: One' and '2: Two' across the top and the text 'This is the first tab.' The second tab shows an 'Add one' button beside 'Count: 1', and the count rises to 3. The pane then returns to the first tab." data-path="images/mods-hello-tabs-dark.mp4" />
 </Frame>
 
-Claude Code has no built-in tabs element, so the tabs are two buttons in a row. The mod keeps track of which one is active and draws that tab's content under the row.
+The tabs are two buttons in a row. The mod keeps track of which one is active and draws that tab's content under the row.
 
 <Steps>
   <Step title="Create the plugin">
@@ -61,9 +61,9 @@ Claude Code has no built-in tabs element, so the tabs are two buttons in a row. 
   </Step>
 
   <Step title="Write the code">
-    The code does three jobs, one in each hook:
+    This list says what each hook does, in the order they appear in the code:
 
-    * Adds the `/hello-tabs` command
+    * Adds the `/hello-tabs` command, and loads the count an earlier session saved
     * Opens the pane when you run that command
     * Draws the pane's content: the row of tabs and the open tab's body
 
@@ -166,7 +166,7 @@ Claude Code has no built-in tabs element, so the tabs are two buttons in a row. 
     Each hook also does something the code doesn't make plain:
 
     * **[`session.start`](/docs/en/plugins/mods/reference#session)** also reads the saved count from [`$.store`](#keep-state), a key-value store that persists between sessions.
-    * **[`command.run`](/docs/en/plugins/mods/api#add-a-command)** only tells Claude Code the pane exists. Opening a pane draws nothing by itself: Claude Code then raises `ui.render` to ask what goes in it.
+    * **[`command.run`](/docs/en/plugins/mods/api#add-a-command)** only tells Claude Code the pane exists. Opening a pane draws nothing by itself: Claude Code then fires `ui.render` to ask what goes in it.
     * **`ui.render`** returns the element tree, a `Box` that holds other boxes, text, and buttons, and builds it again from `tab` and `count` each time it runs.
 
     Pressing a button runs its `onPress` callback, which changes a variable and calls `redraw`. Claude Code then runs the `ui.render` hook again, and the hook builds a new tree from the new values. Every interactive drawing uses that render cycle: a callback changes state, and the hook renders again from the new state.
@@ -187,7 +187,7 @@ Claude Code has no built-in tabs element, so the tabs are two buttons in a row. 
 
 A `ui.render` hook runs for every render site unless you narrow it to the one you want to draw in. To choose the render site, pass a filter, called a [matcher](/docs/en/plugins/mods/events#filter-which-events-a-hook-handles), as the second argument to `on`. `{ component: 'Pane' }` runs the hook only for panes. In the hook, `e.component` names the site, `e.surface` says which app is drawing, and `e.props` holds the site's own data. For a pane, `e.requestId` is the `id` you opened it with.
 
-Two sites are empty until a mod fills them, the pane and the band. Select a tab to see what each one is and how to draw in it:
+The pane and the band are empty until a mod fills them. Select a tab to see what each one is and how to draw in it:
 
 <Tabs>
   <Tab title="Pane">
@@ -214,13 +214,13 @@ Claude Code draws most of its interface itself: messages, tool call rows, the sp
 | Site | What it is |
 | :- | :- |
 | `UserMessage`, `AssistantMessage` | A message in the transcript |
-| `ToolUse`, `ToolResult`, `ToolGroup` | A tool call's row, its result, and a folded run of calls |
+| `ToolUse`, `ToolResult`, `ToolGroup` | A tool call's row, its result, and a collapsed group of calls |
 | `CommandOutput` | The row a command printed |
 | `AskUserQuestion` | The dialog Claude opens to ask you a question |
 | `Spinner`, `ToolProgress`, `TurnDuration` | Status lines for a turn: the line that animates while Claude works, a running tool's live progress line, and the line that closes a turn |
 | `InfoNotice`, `SessionMode`, `PromptHint` | Status lines under the logo, the mode labels in the footer, and the hint line under the prompt |
 
-At a site Claude Code already draws, your hook has three choices: change a detail, replace the drawing, or leave it alone. Select a tab to see each one applied to the spinner. The examples read a `calls` variable that another hook counts, as in the [tutorial mod](/docs/en/plugins/mods/create#write-a-mod-yourself).
+At a site Claude Code already draws, your hook can change a detail, replace the drawing, or leave it alone. Select a tab to see each one applied to the spinner. The examples read a `calls` variable that another hook counts, as in the [tutorial mod](/docs/en/plugins/mods/create#write-a-mod-yourself).
 
 <Tabs>
   <Tab title="Change a detail">
@@ -277,7 +277,19 @@ At a site Claude Code already draws, your hook has three choices: change a detai
   </Tab>
 </Tabs>
 
-The permission prompt isn't a render site, so a mod can't change what it shows. The question dialog, `AskUserQuestion`, is one, so a mod can change that.
+At these sites, `next(e)` returns a reference to Claude Code's drawing, `{ type: 'engine', ref }`, unless a mod that runs after yours returned a tree of its own. To change what's in that drawing, pass `next` a copy of the event with different props, as the **Change a detail** tab does. You can return the reference as it is, or place it in a `Box` beside elements of your own:
+
+```javascript theme={null}
+on('ui.render', { component: 'Spinner' }, async ($, e, next) => {
+  const { Box, Text } = $.ui.resolve(e)
+  const theirs = await next(e)
+  return Box({ flexDirection: 'column', children: [theirs, Text({ children: ['under the spinner'] })] })
+})
+```
+
+While Claude works, the spinner animates as before, and `under the spinner` appears below it.
+
+The permission prompt isn't a render site, so a mod can't change what it shows. The question dialog, `AskUserQuestion`, is one, so a mod can change that. A tree for the dialog has to hold the reference exactly once, with your elements above it. Otherwise, Claude Code draws its own dialog.
 
 The terminal and the Desktop app don't raise all the same sites. `Pane`, `AbovePrompt`, `Spinner`, and the transcript sites work in both. A few other status lines are raised in the terminal only. The [render sites table](/docs/en/plugins/mods/reference#render-sites) lists where each one is raised.
 
@@ -324,7 +336,7 @@ A pane your mod opens without being asked doesn't appear in a narrow terminal, s
 * **Opened by something the user did**, such as a command they ran or a button they pressed, the pane appears at any width
 * **Opened by your mod acting by itself**, such as from a timer or a [`turn.start`](/docs/en/plugins/mods/events#follow-a-turn) hook, the pane appears only in a terminal at least 144 columns wide. After the user has opened that pane once themselves, 110 columns is enough.
 
-When the pane appears, `$.ui.open` resolves to `{ isPlaced: true }`. When the pane is waiting, `isPlaced` is `false` and `reason` is a string that says why. A waiting pane appears when the user opens it or widens the terminal. To say something is available without opening a pane, call `$.ui.toast('Your message')`, which shows a small notice that disappears after a few seconds.
+When the pane appears, `$.ui.open` resolves to `{ isPlaced: true }`. When the pane is waiting, `isPlaced` is `false` and `reason` is a string that says why. A waiting pane appears when the user opens it or widens the terminal. To say something is available without opening a pane, call `$.ui.toast('Your message')`, which shows a toast notification.
 
 ## Build a tree from elements
 
@@ -332,7 +344,7 @@ What a `ui.render` hook returns is an element tree: a description of what to dra
 
 To get the elements, call `$.ui.resolve(e)` in your hook, as in `const { Box, Text, Button } = $.ui.resolve(e)`. Each element is a function. You pass it props, and you put the elements and strings that go inside it in `children`.
 
-Most drawings use four elements. Select a tab to see each one and how the terminal draws it:
+Select a tab to see each of the most common elements and how the terminal draws it:
 
 <Tabs>
   <Tab title="Text">
@@ -408,12 +420,12 @@ The [interface gallery](/docs/en/plugins/mods/gallery) has samples and screensho
 | `Text` | Styled text. Takes `color`, `bold`, `dimColor`, `italic`, and `wrap`. A `color` is a theme key or a color such as `'red'`. A `wrap` is `'wrap'`, `'truncate'`, `'truncate-start'`, `'truncate-middle'`, or `'truncate-end'`. | Everywhere |
 | `Button` | A control that calls `onPress` | Everywhere |
 | `Link`, `Code`, `Markdown` | A link with `href` and an optional `label`, a code block, and text formatted the way Claude's replies are. `Markdown` takes its content in a `text` prop, not in `children`, and needs a `key` when you pass `onLinkPress`. | Everywhere |
-| `Input`, `Select` | A text field and a picker | Terminal, Desktop |
+| `Input`, `Select` | A text field and a dropdown | Terminal, Desktop |
 | `Svg` | An SVG document | Desktop |
 | `Client` | A region drawn by a second file of yours, for animation and pointer input. That file gets no mods API. It reaches your hooks only by posting data, which arrives as a `ui.message` event. | Terminal, Desktop |
 | `Raster`, `Image` | A [grid of colored cells](#draw-a-grid-of-colored-cells), and a picture | Terminal |
 
-If your module is a `.tsx` or `.jsx` file, you can write the tree as JSX. Destructure the elements from `$.ui.resolve(e)` first, because a hooks module has no element globals.
+If your module is a `.tsx` or `.jsx` file, you can write the tree as JSX. Destructure the elements from `$.ui.resolve(e)` first.
 
 If a tree uses an element the app doesn't have, a prop an element doesn't take, or a child where none goes, Claude Code draws its own version of the site.
 
@@ -421,7 +433,7 @@ In a session started with `--plugin-dir`, a transcript line says so, such as `ui
 
 ### Draw a grid of colored cells
 
-For a heat map, a sparkline, or a game board in the terminal, draw one `Raster` and not a `Box` for each cell. A `Raster` takes a `key`, its size in `columns` and `rows`, and `cells`, which packs every cell into one string. Each cell is three numbers: the character's code point, its color, and its background color. A color is a hexadecimal number with two digits each for red, green, and blue, such as `0xc62828` for a red, or `0x01000000` for the terminal's default.
+For a heat map, a sparkline, or a game board in the terminal, draw one `Raster` and not a `Box` for each cell. A `Raster` takes a `key`, its size in `columns` and `rows`, and `cells`, a base64 string that packs every cell. Each cell is three numbers: the character's code point, its color, and its background color. A color is a 24-bit RGB value in hexadecimal, such as `0xc62828` for a red. The value `0x01000000`, one above that range, means the terminal's default.
 
 The Desktop app has no `Raster`, so check `e.surface` and draw text there. This pane body draws a three by two heat map:
 
@@ -465,13 +477,13 @@ Each character has to be one cell wide. To animate a `Raster` that's already on 
 
 ## Respond to presses and typing
 
-When the user presses a button, types into a field, or picks from a list your mod drew, Claude Code calls the function you gave that control, and it runs in your module. Each control takes its own callbacks:
+When the user presses a button, types into a field, or picks from a list your mod drew, Claude Code calls that control's callback, which runs in your module. Each control takes its own callbacks:
 
 * **`Button`**: takes `onPress(e)`, where `e.surface` is the app the press came from
 * **`Input`**: takes `onSubmit(value)` and `onInput(value)`
 * **`Select`**: takes `onSelect(value)` with its choices in `options`, a list of at least one choice with unique values, such as `[{ value: 'sm', label: 'Small' }, { value: 'lg', label: 'Large' }]`
 
-A test presses or types into a control by its `key`, so give each control one. Each use of a control also fires [`ui.press`, `ui.input`, or `ui.select`](/docs/en/plugins/mods/reference#interface) with the `key` in `e.element`, and another mod can hook those events. Its hook runs before your callback, so it sees what the user types into your `Input` and can change it or answer in place of your callback. The mods API has no method that presses another mod's button.
+A test presses or types into a control by its `key`, so give each control one. Each use of a control also fires [`ui.press`, `ui.input`, or `ui.select`](/docs/en/plugins/mods/reference#interface) with the `key` in `e.element`, and another mod can handle those events. Its hook runs before your callback, so it sees what the user types into your `Input` and can change it or answer in place of your callback. The mods API has no method that presses another mod's button.
 
 <h3 id="know-which-keys-your-mod-can-receive">
   Keyboard focus and hotkeys
@@ -481,7 +493,7 @@ Your mod never reads the keyboard itself. The user presses a key, Claude Code de
 
 #### How a pane gets keyboard focus
 
-A pane gets keyboard focus in one of three ways:
+A pane gets keyboard focus when:
 
 * Your mod opens it with `focus: true` from a command or a press
 * The user presses Ctrl+X then Tab
@@ -505,10 +517,10 @@ A mod can't bind Tab or the arrow keys to anything else, so a game steers with `
 
 #### Set a hotkey and the first focus
 
-Two props on a control decide how the keyboard reaches it:
+These props on a control decide how the keyboard reaches it:
 
 * **`hotkey`**: to let the user press a `Button` with one key, give it a `hotkey` of one digit or one lowercase letter, as in `hotkey: 'a'`
-* **`autoFocus`**: to choose which control has the focus when the pane opens, add `autoFocus: true` to it. Leave the prop off the others, because Claude Code refuses `autoFocus: false`.
+* **`autoFocus`**: to choose which control has the focus when the pane opens, add `autoFocus: true` to it. The prop accepts only `true`, so omit it on the other controls.
 
 How a hotkey shows depends on the button and the app:
 
@@ -531,7 +543,7 @@ Many panes are a text field with a list under it. The example in this section is
 ╰──────────────────────────────────────────────────────────╯
 ```
 
-The example uses two techniques:
+The example uses these techniques:
 
 * **Take typed input**: an `Input` calls `onSubmit(value)` with the field's text when the user presses Enter, and `onInput(value)` on every change
 * **Draw a list**: map your data to one row each, and give every row's button its own `key`
@@ -605,7 +617,7 @@ The field empties after each submit because of its `value` prop. `value` is the 
 
 The example saves the notes and doesn't load them. To bring them back in the next session, read them in a `session.start` hook, the way `hello-tabs` reads `count`.
 
-Three props make up the field's line, `Note: Type a note and press Enter ⏎ add`:
+These props make up the field's line, `Note: Type a note and press Enter ⏎ add`:
 
 | Prop | In the example | What it is |
 | :- | :- | :- |
@@ -670,17 +682,17 @@ on('session.start', async ($, e, next) => {
 })
 ```
 
-Claude Code now runs your `ui.render` hook once a second. The timer stops when the module reloads, and the new copy of the module starts its own.
+Claude Code now runs your `ui.render` hook once a second. The timer stops when the module reloads, and the new instance of the module starts its own.
 
 ### How often a site can redraw
 
-Claude Code limits how often it redraws a site, so your mod can call `$.ui.invalidate` as often as its data changes. The visible pane and the band have a higher limit than other sites, and the [limits table](/docs/en/plugins/mods/reference#limits) has the numbers.
+Claude Code throttles redraws of a site, so your mod can call `$.ui.invalidate` as often as its data changes. For how often each site can redraw, see the [limits table](/docs/en/plugins/mods/reference#limits).
 
-Calls that come faster than the limit are combined into one redraw. That redraw runs your hook once, and the hook reads your data as it is at that moment, so the latest value shows and the values in between don't. An animation can't run faster than the limit.
+Calls that come faster than the limit are coalesced into one redraw. That redraw runs your hook once, and the hook reads your data as it is at that moment, so the latest value shows and the values in between don't. An animation can't run faster than the limit.
 
 ## Keep state
 
-A mod has three places to keep a value, and they differ in how long the value lasts: until the module reloads, until the session ends, or from one session to the next. Choose by how long the value has to last:
+Where a mod keeps a value decides how long the value lasts: until the module reloads, until the session ends, or from one session to the next. Choose by how long the value has to last:
 
 | Keep it in | It lasts until | Use it for |
 | :- | :- | :- |
@@ -698,7 +710,7 @@ To set it up, declare your values, point your manifest at the declaration, then 
 
 #### Declare the values
 
-Declare the values in a types file. The outer key is your plugin's name, and each entry under it is a value and its type. Save this as `hello-tabs/types/index.d.ts`:
+Declare the values in a type declaration file. The outer key is your plugin's name, and each entry under it is a value and its type. Save this as `hello-tabs/types/index.d.ts`:
 
 ```typescript hello-tabs/types/index.d.ts theme={null}
 declare module 'claude-code' {
@@ -744,10 +756,10 @@ onPress: () => update($, count, (value) => value + 1)
 
 Because the `ui.render` hook read `count`, Claude Code runs the hook again each time the button writes it.
 
-Three rules apply to the code:
+These rules apply to the code:
 
-* **Write `plugin` and `key` as literal strings**: `claude plugin validate` reads them from your source
-* **Declare every value in the types file**: otherwise validation fails with `hello-tabs.count is not declared`
+* **Write `plugin` and `key` as string literals**: `claude plugin validate` reads them from your source
+* **Declare every value in the type declaration file**: otherwise validation fails with `hello-tabs.count is not declared`
 * **Write from a callback or another event's hook**: a `ui.render` hook can read state and can't write it, so write from `onPress`, `onSubmit`, or a hook for another event
 
 #### Change `hello-tabs` to use `$.state`
@@ -765,7 +777,7 @@ Keep `redraw` for the tab buttons, because `tab` is still a variable.
   Load a saved value again after `/clear`
 </h3>
 
-If your mod copies a saved value from `$.store` into `$.state` at `session.start`, it has to copy it again after `/clear`, `/resume`, or `/branch`. Those commands put every `$.state` value back to its default, and `session.start` doesn't fire again. [`classic.SessionStart`](/docs/en/plugins/mods/events#hook-the-settings-hook-events) does fire after each of them, with `e.source` set to `clear`, `resume`, or `fork`, so copy the value again in a hook on it. Otherwise your drawing shows the default, and a callback that saves the `$.state` value writes the default over what you stored.
+If your mod copies a saved value from `$.store` into `$.state` at `session.start`, it has to copy it again after `/clear`, `/resume`, or `/branch`. Those commands reset every `$.state` value to its default, and `session.start` doesn't fire again. [`classic.SessionStart`](/docs/en/plugins/mods/events#hook-the-settings-hook-events) does fire after each of them, with `e.source` set to `clear`, `resume`, or `fork`, so copy the value again in a hook on it. Otherwise your drawing shows the default, and a callback that saves the `$.state` value writes the default over what you stored.
 
 This code loads `count` from both hooks. It builds on the `$.state` version of `hello-tabs`, where `count` is an atom and `update` is imported. Put `loadCount` above `register`, and add the `loadCount` call to the `session.start` hook you already have. `classic.SessionStart` also fires at startup and after compaction, which doesn't reset `$.state`, so the filter on `source` keeps the hook to the three resets:
 
@@ -799,7 +811,7 @@ To check the reload without a session, [test the drawing after `/clear`](/docs/e
 
 Every session on your machine that runs your mod shares one `$.store`. A `get` followed by a `set` isn't atomic. When two sessions each read a value, change it, and write it back, they race, and the second write replaces the first.
 
-Two choices make that less likely:
+To make that less likely:
 
 * **Give each item its own key**: a `set` changes only its own key, so sessions that write different keys don't overwrite each other
 * **Read again right before you write**: for a value that several sessions change, `get` the key in the callback and build the new value from that, not from a copy you loaded at `session.start`. Another session's write is still lost if it lands between your `get` and your `set`.

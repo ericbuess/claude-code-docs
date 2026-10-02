@@ -622,7 +622,9 @@ export const PromptLibrary = ({text = {}, labels = {}, tagLabels = {}, phaseLabe
     const m = p.slice(base.length).match(/^\/([a-z]{2}(?:-[A-Z]{2})?)\//);
     const locale = m ? m[1] : 'en';
     return href => {
-      if (!href || href[0] !== '/' || href[1] === '/') return href;
+      if (!href) return undefined;
+      if (href[0] === '#' || href.startsWith('https://')) return href;
+      if (!(/^\/[A-Za-z0-9]/).test(href)) return undefined;
       return base + (href.startsWith('/en/') ? '/' + locale + href.slice(3) : href);
     };
   }, []);
@@ -671,7 +673,11 @@ export const PromptLibrary = ({text = {}, labels = {}, tagLabels = {}, phaseLabe
   const assemble = p => p.prompt.replace(/\{(\w+)\}/g, (_, k) => fillOf(p, k) || p.slots && p.slots[k] || k);
   const preview = p => p.prompt.replace(/\{(\w+)\}/g, (_, k) => p.slots && p.slots[k] || k);
   const bodyText = p => preview(p) + ' ' + p.teaches.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1') + ' ' + (p.next || '');
-  const widthFor = s => (s || '').length + 3 + 'ch';
+  const WIDE_RE = /[\u1100-\u115F\u2E80-\uA4CF\uAC00-\uD7A3\uF900-\uFAFF\uFE30-\uFE4F\uFF00-\uFF60\uFFE0-\uFFE6]/g;
+  const widthFor = s => {
+    const t = typeof s === 'string' ? s : '';
+    return t.length + (t.match(WIDE_RE) || []).length + 3 + 'ch';
+  };
   const ql = q.trim().toLowerCase();
   const toggleTag = k => {
     setStart(false);
@@ -1098,233 +1104,450 @@ export const text = {
   "get-oriented-in-a": {
     title: "Get oriented in a new repository",
     teaches: "Describe what you want to know, not which files to read. Claude explores the project on its own and returns a summary of how it fits together.",
-    next: "Run `/init` to set up `CLAUDE.md` so Claude remembers this every session"
+    next: "Run `/init` to set up `CLAUDE.md` so Claude remembers this every session",
+    prompt: "give me an overview of this codebase: architecture, key directories, and how the pieces connect"
   },
   "explain-unfamiliar-code": {
     title: "Explain unfamiliar code",
     teaches: "Name the file and say what format you want the answer in. Swap the HTML page for a diagram, bullet points, or whatever fits how you learn.",
-    next: "Set an output style so Claude always explains in your preferred format"
+    next: "Set an output style so Claude always explains in your preferred format",
+    prompt: "explain what {path} does and how data flows through it. write it up as {format}",
+    slots: {
+      path: "src/scheduler/queue.ts",
+      format: "an HTML page with a diagram, then open it in my browser"
+    }
   },
   "find-where-something-happens": {
     title: "Find where something happens",
-    teaches: "Search by behavior instead of by filename. The search works even when you don't know what the file is called or which directory it lives in."
+    teaches: "Search by behavior instead of by filename. The search works even when you don't know what the file is called or which directory it lives in.",
+    prompt: "where do we {behavior}?",
+    slots: {
+      behavior: "validate uploaded file types"
+    }
   },
   "see-what-depends-on": {
     title: "Check what breaks before you delete",
-    teaches: "Ask before you remove anything. The list of callers and downstream effects tells you whether you're looking at a one-line cleanup or a change you need to coordinate."
+    teaches: "Ask before you remove anything. The list of callers and downstream effects tells you whether you're looking at a one-line cleanup or a change you need to coordinate.",
+    prompt: "what would break if I deleted {target}?",
+    slots: {
+      target: "the retryWithBackoff helper"
+    }
   },
   "trace-how-code-evolved": {
     title: "Trace how code evolved",
-    teaches: "Point at commit history when the question is why, not what. Claude reads the log and blame for whatever version control you use and explains the decisions behind the current implementation."
+    teaches: "Point at commit history when the question is why, not what. Claude reads the log and blame for whatever version control you use and explains the decisions behind the current implementation.",
+    prompt: "look through the commit history of {path} and summarize how it evolved and why",
+    slots: {
+      path: "internal/auth/session.go"
+    }
   },
   "scope-a-change-before": {
     title: "Scope a change before you start",
-    teaches: "Size the work before you commit it to a roadmap. The file list tells you whether you're looking at one component or a cross-cutting change."
+    teaches: "Size the work before you commit it to a roadmap. The file list tells you whether you're looking at one component or a cross-cutting change.",
+    prompt: "which files would I need to touch to {change}?",
+    slots: {
+      change: "add a dark mode toggle to settings"
+    }
   },
   "ask-the-codebase-a": {
     title: "Ask the codebase a product question",
     teaches: "State your role so the answer is pitched at the right level. Claude explains what the product actually does from the source code, without you needing to read it.",
-    next: "Set an output style so Claude always pitches answers at this level"
+    next: "Set an output style so Claude always pitches answers at this level",
+    prompt: "I am a {role}. walk me through what happens when a user {action}, from the UI down to the result",
+    slots: {
+      role: "PM",
+      action: "clicks Export to PDF"
+    }
   },
   "plan-a-multi-file": {
     title: "Plan a multi-file change before touching code",
-    teaches: "Adding \"don't edit yet\" separates exploration from changes, so you see the approach before any code moves. To make plan-first the default on every prompt, press Shift+Tab for [plan mode](/docs/en/permission-modes#analyze-before-you-edit-with-plan-mode)."
+    teaches: "Adding \"don't edit yet\" separates exploration from changes, so you see the approach before any code moves. To make plan-first the default on every prompt, press Shift+Tab for [plan mode](/docs/en/permission-modes#analyze-before-you-edit-with-plan-mode).",
+    prompt: "plan how to refactor the {target} to {goal}. list the files you would change, but don't edit anything yet",
+    slots: {
+      target: "payment module",
+      goal: "support multiple currencies"
+    }
   },
   "draft-a-spec-by": {
     title: "Draft a spec by interview",
     teaches: "Ask to be interviewed instead of writing the spec yourself. Claude asks you structured questions until the requirements are complete, then writes the result to a file.",
-    next: "Save your interview questions as a `/spec` skill so every spec starts the same way"
+    next: "Save your interview questions as a `/spec` skill so every spec starts the same way",
+    prompt: "I want to build {feature}. interview me about implementation, UX, edge cases, and tradeoffs until we have covered everything, then write the spec to SPEC.md",
+    slots: {
+      feature: "per-workspace rate limits"
+    }
   },
   "turn-a-meeting-into": {
     title: "Turn a meeting into tickets",
     teaches: "Skip the transcription step. Claude pulls action items from the unstructured input and writes them straight into your tracker via [MCP](/docs/en/mcp), so you review the tickets, not the transcript.",
-    next: "Save this as a `/tickets` skill"
+    next: "Save this as a `/tickets` skill",
+    prompt: "read {input} and write up the action items, then create a {tracker} ticket for each with acceptance criteria",
+    slots: {
+      input: "@meeting-notes.md",
+      tracker: "Linear"
+    }
   },
   "map-edge-cases-before": {
     title: "Map edge cases before building",
-    teaches: "Ask for what's missing, not what's there. Claude lists the error states, empty states, and edge cases a happy-path design tends to skip."
+    teaches: "Ask for what's missing, not what's there. Claude lists the error states, empty states, and edge cases a happy-path design tends to skip.",
+    prompt: "list the error states, empty states, and edge cases for {feature} that the design needs to cover",
+    slots: {
+      feature: "the file upload flow"
+    }
   },
   "turn-a-mockup-into": {
     title: "Turn a mockup into a working prototype",
-    teaches: "A clickable prototype answers questions a static mockup can't. Hand the working code to engineering instead of explaining the interactions in a doc."
+    teaches: "A clickable prototype answers questions a static mockup can't. Hand the working code to engineering instead of explaining the interactions in a doc.",
+    prompt: "here is a mockup. build a working prototype I can click through, matching the layout and states shown"
   },
   "implement-from-a-screenshot": {
     title: "Implement from a screenshot and self-check",
     teaches: "This gives Claude a verification loop: it renders, compares against the source image, and iterates without you pointing out each gap.",
-    next: "Use `/goal` to keep Claude iterating toward matching screenshots"
+    next: "Use `/goal` to keep Claude iterating toward matching screenshots",
+    prompt: "implement this design, then take a screenshot of the result, compare it to the original, and fix any differences"
   },
   "follow-an-existing-pattern": {
     title: "Follow an existing pattern",
     teaches: "Point at code you already like. Without a reference, Claude defaults to general best practices. With one, it matches the conventions your codebase actually uses.",
-    next: "Ask Claude to write the pattern it followed into `CLAUDE.md` so future sessions match it without the reference"
+    next: "Ask Claude to write the pattern it followed into `CLAUDE.md` so future sessions match it without the reference",
+    prompt: "look at how {example} is implemented to understand the pattern, then build {new} the same way",
+    slots: {
+      example: "the GitHub webhook handler",
+      new: "a Stripe webhook handler"
+    }
   },
   "add-a-small-well": {
     title: "Add a small, well-defined feature",
-    teaches: "State the inputs and outputs, not how to build it. Claude finds where similar code lives and adds yours alongside it."
+    teaches: "State the inputs and outputs, not how to build it. Claude finds where similar code lives and adds yours alongside it.",
+    prompt: "add a {endpoint} endpoint that returns {payload}",
+    slots: {
+      endpoint: "/health",
+      payload: "the app version and uptime"
+    }
   },
   "build-a-small-internal": {
     title: "Build a small internal tool from scratch",
-    teaches: "You don't need a project, a framework, or a build step. Describe the tool and ask Claude to open it so you see it working immediately."
+    teaches: "You don't need a project, a framework, or a build step. Describe the tool and ask Claude to open it so you see it working immediately.",
+    prompt: "create a {tool} using HTML, CSS, and vanilla JavaScript, then open it in my browser",
+    slots: {
+      tool: "drag-and-drop Kanban board with three columns"
+    }
   },
   "work-an-issue-end": {
     title: "Work an issue end to end",
-    teaches: "Give the issue number, not a summary. Claude reads the full ticket itself, so requirements you'd forget to mention come through, and it validates the change before reporting back."
+    teaches: "Give the issue number, not a summary. Claude reads the full ticket itself, so requirements you'd forget to mention come through, and it validates the change before reporting back.",
+    prompt: "read issue #{issue}, implement the fix, and run the tests",
+    slots: {
+      issue: "312"
+    }
   },
   "find-and-update-copy": {
     title: "Find and update copy across the codebase",
-    teaches: "Ask for variants and say what to skip. Claude finds phrasings a literal search would miss and leaves test fixtures and history untouched, so you review only the copy users actually see."
+    teaches: "Ask for variants and say what to skip. Claude finds phrasings a literal search would miss and leaves test fixtures and history untouched, so you review only the copy users actually see.",
+    prompt: "find every place we say \"{copy}\" or a close variant, show me each one in context, then update them all to \"{new}\". leave tests and the changelog alone",
+    slots: {
+      copy: "Sign up free",
+      new: "Start free trial"
+    }
   },
   "draft-from-past-examples": {
     title: "Draft a document from past examples",
     teaches: "Point at a folder of finished work instead of describing your style. Claude learns the structure and voice from what you've already shipped, so the first draft reads like one of yours.",
-    next: "Save the voice as a skill so every draft starts there"
+    next: "Save the voice as a skill so every draft starts there",
+    prompt: "read the {examples} in {folder} to learn the structure and voice, then draft a new one for {topic}",
+    slots: {
+      examples: "privacy impact assessments",
+      folder: "legal/pia/",
+      topic: "the new analytics integration"
+    }
   },
   "write-tests-run-them": {
     title: "Write tests, run them, fix failures",
     teaches: "Ask for write, run, and fix together so Claude iterates without stopping for instructions.",
-    next: "Run `/init` so Claude learns your test command automatically"
+    next: "Run `/init` so Claude learns your test command automatically",
+    prompt: "write tests for {path}, run them, and fix any failures",
+    slots: {
+      path: "app/parsers/feed.py"
+    }
   },
   "drive-implementation-from-tests": {
     title: "Drive implementation from tests",
-    teaches: "Test-driven development: the tests define when the work is complete, and Claude iterates on the implementation until they pass."
+    teaches: "Test-driven development: the tests define when the work is complete, and Claude iterates on the implementation until they pass.",
+    prompt: "write tests for {feature} first, then implement it until they pass",
+    slots: {
+      feature: "the password reset flow"
+    }
   },
   "fill-gaps-from-a": {
     title: "Fill gaps from a coverage report",
     teaches: "Point at the coverage report instead of guessing what's untested. Claude reads the actual numbers and writes tests for the files that need them most.",
-    next: "Set this as a `/goal` so Claude keeps writing tests toward the coverage target"
+    next: "Set this as a `/goal` so Claude keeps writing tests toward the coverage target",
+    prompt: "read {report} and add tests for the lowest-covered files until each is above {target}%",
+    slots: {
+      report: "coverage/coverage-summary.json",
+      target: "80"
+    }
   },
   "port-code-between-languages": {
     title: "Port code to another language",
-    teaches: "Say what to preserve, not just the target language. Naming the API or behavior that must stay the same gives Claude a contract to check the port against."
+    teaches: "Say what to preserve, not just the target language. Naming the API or behavior that must stay the same gives Claude a contract to check the port against.",
+    prompt: "port {source} to {target}, keeping the same {keep}",
+    slots: {
+      source: "this Python module",
+      target: "Rust",
+      keep: "public API and test behavior"
+    }
   },
   "generate-docs-for-code": {
     title: "Generate docs for undocumented code",
-    teaches: "Name the scope and the format. Claude finds what's missing and matches the comment style already in the file, so the new docs read like the rest."
+    teaches: "Name the scope and the format. Claude finds what's missing and matches the comment style already in the file, so the new docs read like the rest.",
+    prompt: "find {scope} without {format} comments and add them, matching the style already used in the file",
+    slots: {
+      scope: "the public functions in src/auth/",
+      format: "JSDoc"
+    }
   },
   "migrate-a-pattern-across": {
     title: "Migrate a pattern across the codebase",
-    teaches: "Describe the old pattern and the new one. Asking Claude to identify every place first means the call sites are listed in the response, so you can check none were missed. For a migration across many files, run [/batch](/docs/en/commands). Claude splits the work into units for you to approve, then background subagents make the changes."
+    teaches: "Describe the old pattern and the new one. Asking Claude to identify every place first means the call sites are listed in the response, so you can check none were missed. For a migration across many files, run [/batch](/docs/en/commands). Claude splits the work into units for you to approve, then background subagents make the changes.",
+    prompt: "migrate everything from {from} to {to}: identify every place that needs to change, then make the changes",
+    slots: {
+      from: "the old logging API",
+      to: "the structured logger"
+    }
   },
   "optimize-against-a-measurable": {
     title: "Optimize against a measurable target",
     teaches: "Stating the metric and target gives Claude a clear definition of done.",
-    next: "Set this as a `/goal` so Claude keeps measuring and iterating toward the number"
+    next: "Set this as a `/goal` so Claude keeps measuring and iterating toward the number",
+    prompt: "optimize {target} to bring {metric} from {current} down to under {goal}",
+    slots: {
+      target: "the search query",
+      metric: "p95 latency",
+      current: "2s",
+      goal: "500ms"
+    }
   },
   "fix-a-precise-visual": {
     title: "Fix a precise visual bug",
     teaches: "Precise visual feedback gets a precise fix. State the exact element, measurement, and viewport.",
-    next: "Add a preview tool so Claude screenshots and verifies the fix itself"
+    next: "Add a preview tool so Claude screenshots and verifies the fix itself",
+    prompt: "the {element} extends {amount} beyond the {container} on {viewport}. fix it.",
+    slots: {
+      element: "login button",
+      amount: "20px",
+      container: "card border",
+      viewport: "mobile"
+    }
   },
   "review-your-changes-before": {
     title: "Review your changes before you commit",
     teaches: "Catch problems while they're still cheap to fix. Claude reads the changed files in full, not just the diff lines, so it spots issues a quick self-review misses.",
-    next: "Run `/code-review` for the same check in one command"
+    next: "Run `/code-review` for the same check in one command",
+    prompt: "review my uncommitted changes and flag anything that looks risky before I commit"
   },
   "review-a-pull-request": {
     title: "Review a pull request",
     teaches: "Claude reviews with the whole codebase in context, not just the diff. It reads the changed code and what it calls, so it catches problems a diff-only review would miss.",
-    next: "Run `/code-review <pr#>` in one command, or turn on Code Review for every PR"
+    next: "Run `/code-review <pr#>` in one command, or turn on Code Review for every PR",
+    prompt: "review PR #{pr} and summarize what changed, then list any concerns",
+    slots: {
+      pr: "247"
+    }
   },
   "review-infrastructure-changes-before": {
     title: "Review infrastructure changes before applying",
-    teaches: "Plan output is dense and hard to scan. Pasting it gets you a plain-language summary of what's actually going to change before you apply it."
+    teaches: "Plan output is dense and hard to scan. Pasting it gets you a plain-language summary of what's actually going to change before you apply it.",
+    prompt: "here is my Terraform plan output. what is this going to do, and is anything here going to cause problems?"
   },
   "run-a-security-review": {
     title: "Run a security review with a subagent",
     teaches: "A [subagent](/docs/en/sub-agents) runs the audit in its own context window and reports back a summary, so a long security review doesn't fill up your main session. The built-in general-purpose subagent handles this without extra setup.",
-    next: "Set up a dedicated security-review subagent your whole team can use"
+    next: "Set up a dedicated security-review subagent your whole team can use",
+    prompt: "use a subagent to review {path} for security issues and report what it finds",
+    slots: {
+      path: "src/api/"
+    }
   },
   "review-content-before-sending": {
     title: "Catch issues before formal review",
     teaches: "Get a first pass before a human spends time on it. Name the concerns you want checked so the review is focused, then fix what it finds and send a cleaner draft.",
-    next: "Capture your review checklist as a skill your whole team can run"
+    next: "Capture your review checklist as a skill your whole team can run",
+    prompt: "review {file} for {concerns} and list anything I should fix before it goes to {reviewer}",
+    slots: {
+      file: "launch-post.md",
+      concerns: "unsupported claims, missing attributions, and brand-guideline issues",
+      reviewer: "legal"
+    }
   },
   "course-correct-a-wrong": {
     title: "Course-correct a wrong approach",
     teaches: "Name the constraint Claude missed, not just that it's wrong. A specific reason gives Claude a concrete constraint to satisfy on the retry, instead of guessing again.",
-    next: "Press `Esc` twice to open the rewind menu and restore code and conversation so the retry starts clean"
+    next: "Press `Esc` twice to open the rewind menu and restore code and conversation so the retry starts clean",
+    prompt: "that is not right: {feedback}. try a different approach",
+    slots: {
+      feedback: "the function signature needs to stay backward-compatible"
+    }
   },
   "narrow-the-scope-of": {
     title: "Narrow the scope of a change",
-    teaches: "When the direction is right but the change went too broad, ask Claude to keep part of it rather than rewinding everything. A stated boundary keeps a small fix from becoming a refactor."
+    teaches: "When the direction is right but the change went too broad, ask Claude to keep part of it rather than rewinding everything. A stated boundary keeps a small fix from becoming a refactor.",
+    prompt: "that is too much. keep only the changes to {scope} and undo your other edits",
+    slots: {
+      scope: "the validation logic in src/forms/"
+    }
   },
   "turn-a-correction-into": {
     title: "Turn a correction into a rule",
     teaches: "A correction in chat isn't shared with your team. A rule in the project's [CLAUDE.md](/docs/en/memory) is shared once you commit it, and Claude reads it at the start of every session.",
-    next: "Open `/memory` to review what Claude wrote"
+    next: "Open `/memory` to review what Claude wrote",
+    prompt: "you keep {mistake}. add a rule to CLAUDE.md so this stops happening",
+    slots: {
+      mistake: "using default exports when this project uses named exports"
+    }
   },
   "resolve-merge-conflicts": {
     title: "Resolve merge conflicts",
-    teaches: "Say what state you want, not which markers to keep. Asking for the reasoning makes the merge reviewable instead of a black box."
+    teaches: "Say what state you want, not which markers to keep. Asking for the reasoning makes the merge reviewable instead of a black box.",
+    prompt: "resolve the merge conflicts in this branch and explain what you kept from each side"
   },
   "commit-with-a-generated": {
     title: "Commit with a generated message",
-    teaches: "Let Claude derive the message from the diff. It matches your repository's existing commit style."
+    teaches: "Let Claude derive the message from the diff. It matches your repository's existing commit style.",
+    prompt: "commit these changes with a message that summarizes what I did"
   },
   "open-a-pull-request": {
     title: "Open a pull request from a ticket",
-    teaches: "Skip the context switch between tracker, editor, and GitHub. One prompt reads the spec, makes the change, and opens the PR."
+    teaches: "Skip the context switch between tracker, editor, and GitHub. One prompt reads the spec, makes the change, and opens the PR.",
+    prompt: "find the {tracker} ticket about {topic} and open a PR that implements it",
+    slots: {
+      tracker: "Linear",
+      topic: "the login timeout"
+    }
   },
   "draft-release-notes-from": {
     title: "Draft release notes from git history",
     teaches: "Give two reference points and the structure you want. Claude reads the commit log between them and drafts a changelog you can edit.",
-    next: "Save this as a `/changelog` skill"
+    next: "Save this as a `/changelog` skill",
+    prompt: "compare {from} to {to} and draft release notes grouped by feature, fix, and breaking change",
+    slots: {
+      from: "v2.3.0",
+      to: "v2.4.0"
+    }
   },
   "write-a-ci-workflow": {
     title: "Write a CI workflow",
-    teaches: "Describe when it should run and what it should do; the YAML is generated for you, matched to your project's build and test commands."
+    teaches: "Describe when it should run and what it should do; the YAML is generated for you, matched to your project's build and test commands.",
+    prompt: "write a GitHub Actions workflow that {steps} on every push to {branch}",
+    slots: {
+      steps: "runs the tests and deploys to staging",
+      branch: "main"
+    }
   },
   "find-and-fix-a": {
     title: "Find and fix a failing test",
-    teaches: "Describe the symptom; you don't need to know which file is broken. Claude runs the test to see the failure, traces it into source, and fixes it."
+    teaches: "Describe the symptom; you don't need to know which file is broken. Claude runs the test to see the failure, traces it into source, and fixes it.",
+    prompt: "the {test} test is failing, find out why and fix it",
+    slots: {
+      test: "UserAuth"
+    }
   },
   "investigate-a-reported-error": {
     title: "Investigate a reported error",
     teaches: "Describe the symptom and location; Claude reads the relevant code path and traces likely causes. Paste stack traces or logs if you have them.",
-    next: "Put a deeplink in your runbook that opens Claude with this prompt pre-filled"
+    next: "Put a deeplink in your runbook that opens Claude with this prompt pre-filled",
+    prompt: "users are seeing {symptom} on {where}. investigate and tell me what is going on",
+    slots: {
+      symptom: "500 errors",
+      where: "/api/settings"
+    }
   },
   "fix-a-build-error": {
     title: "Fix a build error at the root",
-    teaches: "Asking for root cause and verification prevents surface-level patches that suppress the error without fixing it."
+    teaches: "Asking for root cause and verification prevents surface-level patches that suppress the error without fixing it.",
+    prompt: "here is a build error. fix the root cause and verify the build succeeds"
   },
   "investigate-a-production-incident": {
     title: "Investigate a production incident",
     teaches: "List the evidence sources to correlate, not the steps to take. Claude reads logs, git history, and config together to narrow the cause.",
-    next: "Connect Sentry or your log store via MCP"
+    next: "Connect Sentry or your log store via MCP",
+    prompt: "{symptom}. check the logs, recent deploys, and config changes, then tell me the most likely cause",
+    slots: {
+      symptom: "the checkout endpoint started returning 500s an hour ago"
+    }
   },
   "query-logs-in-plain": {
     title: "Query logs in plain English",
-    teaches: "Ask the question instead of writing the SQL. Claude builds the query, runs it against your connected logs, and shows both the query and the result so you can check what ran."
+    teaches: "Ask the question instead of writing the SQL. Claude builds the query, runs it against your connected logs, and shows both the query and the result so you can check what ran.",
+    prompt: "show me all {events} for {scope} over {timeframe}. write the query, run it, and tell me what stands out",
+    slots: {
+      events: "failed logins",
+      scope: "the auth service",
+      timeframe: "the past 24 hours"
+    }
   },
   "diagnose-from-a-console": {
     title: "Diagnose from a console screenshot",
-    teaches: "Cloud consoles show you the problem but not the commands to fix it. Claude reads the screenshot and translates the dashboard into the kubectl, gcloud, or aws commands to run."
+    teaches: "Cloud consoles show you the problem but not the commands to fix it. Claude reads the screenshot and translates the dashboard into the kubectl, gcloud, or aws commands to run.",
+    prompt: "here is a screenshot of {console}. walk me through why {resource} is failing and give me the exact commands to fix it",
+    slots: {
+      console: "the GCP Kubernetes dashboard",
+      resource: "this pod"
+    }
   },
   "analyze-a-data-file": {
     title: "Analyze a data file",
     teaches: "A one-off question doesn't need a one-off script. Point at a file in your project folder and Claude reads it directly, finds the patterns, and writes the output where you ask.",
-    next: "Connect the data source via MCP instead of exporting files"
+    next: "Connect the data source via MCP instead of exporting files",
+    prompt: "read {file}, summarize the key patterns, and write the results to {output}",
+    slots: {
+      file: "@reports/q1-signups.csv",
+      output: "an HTML page with charts, then open it in my browser"
+    }
   },
   "generate-variations-from-performance": {
     title: "Generate variations from performance data",
     teaches: "State the constraint at the start so generation stays within the limit. Claude reads the metrics, picks what to replace, and produces alternatives that fit.",
-    next: "Connect the ad platform via MCP instead of exporting a file"
+    next: "Connect the ad platform via MCP instead of exporting a file",
+    prompt: "read {file}, find the underperforming {items}, and generate {n} new variations that stay under {limit} characters",
+    slots: {
+      file: "@ads-performance.csv",
+      items: "headlines",
+      n: "20",
+      limit: "90"
+    }
   },
   "turn-a-recurring-task": {
     title: "Turn a recurring task into a skill",
-    teaches: "Name the steps once; reuse them as a command. Claude writes a [skill](/docs/en/skills) anyone on your team can run."
+    teaches: "Name the steps once; reuse them as a command. Claude writes a [skill](/docs/en/skills) anyone on your team can run.",
+    prompt: "create a /{name} skill for this project that {steps}",
+    slots: {
+      name: "ship",
+      steps: "runs the linter and tests, then drafts a commit message"
+    }
   },
   "add-a-hook-for": {
     title: "Add a hook for repeat behavior",
-    teaches: "Hooks make a behavior automatic instead of something you have to remember to ask for. Describe the trigger and action and Claude writes the [hook](/docs/en/hooks) configuration."
+    teaches: "Hooks make a behavior automatic instead of something you have to remember to ask for. Describe the trigger and action and Claude writes the [hook](/docs/en/hooks) configuration.",
+    prompt: "write a hook that {action} after every {event}",
+    slots: {
+      action: "runs prettier",
+      event: "edit to a .ts or .tsx file"
+    }
   },
   "connect-a-tool-with": {
     title: "Connect a tool with MCP",
-    teaches: "Connect the source once instead of pasting data every session. After [MCP](/docs/en/mcp) setup, Claude reads from the tool directly when you ask about it."
+    teaches: "Connect the source once instead of pasting data every session. After [MCP](/docs/en/mcp) setup, Claude reads from the tool directly when you ask about it.",
+    prompt: "set up the {server} MCP server so you can read my {data} directly",
+    slots: {
+      server: "Sentry",
+      data: "error reports"
+    }
   },
   "capture-what-to-remember": {
     title: "Capture what to remember for next time",
-    teaches: "Ask before you forget. Claude knows what it had to figure out this session and proposes [CLAUDE.md](/docs/en/memory) entries so the next session starts with that context."
+    teaches: "Ask before you forget. Claude knows what it had to figure out this session and proposes [CLAUDE.md](/docs/en/memory) entries so the next session starts with that context.",
+    prompt: "summarize what we did this session and suggest what to add to CLAUDE.md"
   }
 };
 

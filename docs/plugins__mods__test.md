@@ -4,9 +4,9 @@
 
 # Test a mod
 
-> Write automated tests for a Claude Code mod that raise events, stub Claude Code's answers, and press buttons, with no session, sign-in, or network.
+> Write automated tests for a Claude Code mod that fire events, stub Claude Code's answers, and press buttons, with no session, sign-in, or network.
 
-You can write automated tests for a mod and run them from your shell with [`claude plugin test`](/docs/en/plugins/mods/reference#commands). A test raises the events your hooks handle and checks what the hooks did, so you catch a problem before it reaches a session. The first example tests the mod from [Create a mod](/docs/en/plugins/mods/create).
+You can write automated tests for a mod and run them from your shell with [`claude plugin test`](/docs/en/plugins/mods/reference#commands). A test fires the events your hooks handle and checks what the hooks did, so you catch a problem before it reaches a session. The first example tests the mod from [Create a mod](/docs/en/plugins/mods/create).
 
 ## Write a test
 
@@ -14,7 +14,7 @@ A test loads your mod, sends events through its hooks the way Claude Code would,
 
 Give each test file a name that ends in `.test.ts`, such as `first-mod.test.ts`, and save it anywhere in the plugin directory. Every test file needs at least one `test()`, or the run fails with `declares no test(): nothing ran`. A test file can import your mod's own files and sibling `.ts` helpers, so you can unit test plain functions, such as a game's rules, without the kit.
 
-This test raises two tool calls, runs the `/tally` command from [Create a mod](/docs/en/plugins/mods/create), and checks that the reply counts both. Its first line is a [stub](#stub-what-claude-code-would-answer), which answers the tool calls in Claude Code's place. Save it as `first-mod/tests/first-mod.test.ts`:
+This test fires two tool calls, runs the `/tally` command from [Create a mod](/docs/en/plugins/mods/create), and checks that the reply counts both. Its first line is a [stub](#stub-what-claude-code-would-answer), which answers the tool calls in Claude Code's place. Save it as `first-mod/tests/first-mod.test.ts`:
 
 ```typescript first-mod/tests/first-mod.test.ts theme={null}
 import { expect, test } from 'claude-code/testing'
@@ -23,7 +23,7 @@ test('/tally reports the tool calls the mod has seen', async ($, on) => {
   // Answer each tool call in Claude Code's place, so no tool runs
   on('tool.call', () => ({ result: 'ok' }))
 
-  // Raise two tool calls, which the mod's tool.call hook counts
+  // Fire two tool calls, which the mod's tool.call hook counts
   await $.tool.call({ tool: 'Bash', command: 'ls' })
   await $.tool.call({ tool: 'Read', file_path: 'README.md' })
 
@@ -58,7 +58,7 @@ The command exits with status 1 when a test fails, so it works in CI. If your ow
 
 No model, store, or tool runs in a test, so wherever your mod expects Claude Code to answer, the test supplies the answer with a stub. A test function receives two arguments for that:
 
-* **`$`**: the test's own `$`, which stands where Claude Code does. It isn't the [mods API](/docs/en/plugins/mods/reference#mods-api-methods) that a hook receives. Each of its methods raises the event of the same name, sends it through your mod's hooks, and resolves to the result: `$.tool.call({ tool: 'Bash', command: 'ls' })` raises `tool.call`. `$.command.run`, `$.prompt.submit`, `$.session.start`, and `$.turn.complete` work the same way, and `$.classic.Stop` and the other `$.classic` methods raise a [settings hook event](/docs/en/plugins/mods/events#hook-the-settings-hook-events). A test can't raise a mods API call such as `ui.close` directly. Trigger it through your mod, for example by pressing the button that closes the pane.
+* **`$`**: the test's own `$`, which acts as Claude Code. It isn't the [mods API](/docs/en/plugins/mods/reference#mods-api-methods) that a hook receives. Each of its methods fires the event of the same name, sends it through your mod's hooks, and resolves to the result: `$.tool.call({ tool: 'Bash', command: 'ls' })` fires `tool.call`. `$.command.run`, `$.prompt.submit`, `$.session.start`, and `$.turn.complete` work the same way, and `$.classic.Stop` and the other `$.classic` methods fire a [settings hook event](/docs/en/plugins/mods/events#hook-the-settings-hook-events). A test can't fire a mods API call such as `ui.close` directly. Trigger it through your mod, for example by pressing the button that closes the pane.
 * **`on`**: call it to register stubs, which are hooks that answer in Claude Code's place. Name a stub for a mods API call without the `$.`, so a stub registered as `store.get` answers your mod's `$.store.get`. When your mod calls [`$.model.complete`](/docs/en/plugins/mods/api#call-a-model) or [`$.store.get`](/docs/en/plugins/mods/interface#keep-state), a stub supplies the answer.
 
 This example stubs a model call. The hook belongs to a mod named `grader`, and handles a `/grade` command that sends a sentence to a model and reports whether the reply starts with `PASS`. The file holds only the hook under test, so the mod also needs a `plugin.json` and a `hooks.json`, as in [Create a mod](/docs/en/plugins/mods/create#write-a-mod-yourself). To type `/grade` in a session, the mod also has to [register the command](/docs/en/plugins/mods/api#add-a-command):
@@ -101,7 +101,7 @@ test('a passing grade is reported', async ($, on) => {
 
 The test passes because the hook's `reply` is the object under `value`, whose `text` starts with `PASS`. To check the other branch, add a second test whose stub returns a `text` that starts with `FAIL`, and expect `Try again`.
 
-A stub for a mods API call returns an object with a `value` field, which holds what the call resolves to in your mod: `{ value: 7 }` makes `$.store.get` resolve to `7`. A stub for one of Claude Code's events, such as [`turn.step`](/docs/en/plugins/mods/reference#turns) or `tool.call`, returns that event's own result, such as `{ result: 'ok' }`. `$.session.send` and `$.prompt.fill` take their event's result too, as the table shows. [Look up what a stub returns](#look-up-what-a-stub-returns) shows which form each common name takes. Two errors mean a stub is wrong or missing. A failed test's output includes a block headed `the engine reported:`, and each error appears there:
+A stub for a mods API call returns an object with a `value` field, which holds what the call resolves to in your mod: `{ value: 7 }` makes `$.store.get` resolve to `7`. A stub for one of Claude Code's events, such as [`turn.step`](/docs/en/plugins/mods/reference#turns) or `tool.call`, returns that event's own result, such as `{ result: 'ok' }`. `$.session.send` and `$.prompt.fill` take their event's result too, as the table shows. [Look up what a stub returns](#look-up-what-a-stub-returns) shows which form each common name takes. These errors mean a stub is wrong or missing. A failed test's output includes a block headed `the engine reported:`, and each error appears there:
 
 * `returned neither { value } nor { deny }`: a stub for a mods API call returned a bare value
 * `no implementation for` followed by a name: your mod made that call and no stub answers it
@@ -114,14 +114,14 @@ The test kit has a few rules of its own, and breaking one produces the errors ne
 
 * **Register every stub before the test's first call on `$`.** Calling `on` after that throws an error such as `on("ui.render") after the test first called $`.
 
-* **[`session.start`](/docs/en/plugins/mods/reference#session) doesn't run by itself.** Each test starts with your module freshly loaded and none of its hooks called, so module-level variables hold their initial values. If a hook depends on what `session.start` sets up, raise it first:
+* **[`session.start`](/docs/en/plugins/mods/reference#session) doesn't run by itself.** Each test starts with your module freshly loaded and none of its hooks called, so module-level variables hold their initial values. If a hook depends on what `session.start` sets up, fire it first:
 
   ```typescript theme={null}
   // Answer the event after your hook passes it on with next(e)
   on('session.start', () => ({ cwd: '/work' }))
   // Answer the $.command.register call your hook makes
   on('command.register', () => ({ value: undefined }))
-  // Raise the event, which runs your session.start hook
+  // Fire the event, which runs your session.start hook
   await $.session.start({ surface: 'terminal', isInteractive: true, cwd: '/work' })
   ```
 
@@ -146,7 +146,7 @@ The test kit has a few rules of its own, and breaking one produces the errors ne
     return { turnId: e.turnId, index: e.index, answer: 'ok', toolUses: [], stopReason: 'end_turn', usage: null }
   })
 
-  // Raise one request to the model, which runs your turn.step hook
+  // Fire one request to the model, which runs your turn.step hook
   const stream = $.turn.step({ turnId: 't', index: 0, model: 'claude-test', messageCount: 1 })
   // Read every piece until the stream says it's done
   let step = await stream.next()
@@ -156,7 +156,7 @@ The test kit has a few rules of its own, and breaking one produces the errors ne
 
   When the loop ends, `result` is the object the stub returned, after your `turn.step` hook has had the chance to change it. Here `result.answer` is `'ok'`.
 
-* **Raise a tool call with the tool's name and arguments as fields**, such as `await $.tool.call({ tool: 'Bash', command: 'ls' })`, and register a `tool.call` stub that returns `{ result }`.
+* **Fire a tool call with the tool's name and arguments as fields**, such as `await $.tool.call({ tool: 'Bash', command: 'ls' })`, and register a `tool.call` stub that returns `{ result }`.
 
 ### Look up what a stub returns
 
@@ -177,7 +177,7 @@ This table lists the ones mods use most. The first column is the call your mod m
 | `session.start` | `() => ({ cwd: '/work' })` |
 | `turn.start` | `($, e) => ({ turnId: e.turnId })` |
 | `tool.call` | `() => ({ result: '...' })` |
-| `turn.complete` | `() => ({ text: '' })`. Raise it with `$.turn.complete({ turnId, answer, durationMs, isAborted: false, usage: null })`. |
+| `turn.complete` | `() => ({ text: '' })`. Fire it with `$.turn.complete({ turnId, answer, durationMs, isAborted: false, usage: null })`. |
 | `prompt.submit` | `($, e) => ({ text: e.text })` |
 | `prompt.fill` | `() => ({ isFilled: true })` |
 | `$.prompt.read` | `() => ({ value: { text: '...', cursor: 0 } })` |
@@ -185,7 +185,7 @@ This table lists the ones mods use most. The first column is the call your mod m
 | `$.session.messages` | `() => ({ value: [{ role: 'assistant', text: '...', toolUses: [] }] })` |
 | `$.session.id`, `$.agent.list` | `() => ({ value: 'abc123' })`, `() => ({ value: [] })` |
 | `session.send` | `() => ({ isDelivered: true })`. `e.to` arrives as a string even when your mod passed `{ sessionId }`. |
-| `session.receive` | `($, e) => ({ text: e.text })`. Raise it with `$.session.receive({ origin: { kind: 'peer-send-message' }, text })`. |
+| `session.receive` | `($, e) => ({ text: e.text })`. Fire it with `$.session.receive({ origin: { kind: 'peer-send-message' }, text })`. |
 | `ui.render` | `() => ({ type: 'Text', props: {}, children: ['...'] })` |
 
 `expect` has the assertions `toBe`, `toEqual`, `toMatch`, `toMatchObject`, `toContain`, `toBeDefined`, `toBeUndefined`, and `toThrow`, and `.not` before any of them.
@@ -317,7 +317,7 @@ A drawing test checks the tree your hook returns and whether it's valid for that
   Test a drawing after `/clear`
 </h3>
 
-Each test starts with every `$.state` value at its default, which is how `/clear` leaves them. To test what your mod does next, skip `session.start`, raise `classic.SessionStart` with `source: 'clear'`, and check what your mod draws.
+Each test starts with every `$.state` value at its default, which is how `/clear` leaves them. To test what your mod does next, skip `session.start`, fire `classic.SessionStart` with `source: 'clear'`, and check what your mod draws.
 
 This test checks the module from [Load a saved value again after `/clear`](/docs/en/plugins/mods/interface#load-a-saved-value-again-after-clear). Add it to the file from [Test a drawing](#test-a-drawing), where `PANE` is defined. That file's first test expects the button to save the count, as the button in [Save from more than one session](/docs/en/plugins/mods/interface#save-from-more-than-one-session) does:
 
@@ -328,7 +328,7 @@ test('the saved count comes back after /clear', async ($, on) => {
   // Answer the event after your hook passes it on with next(e)
   on('classic.SessionStart', () => ({}))
 
-  // Raise the event that fires after /clear, which runs your hook
+  // Fire the event that follows /clear, which runs your hook
   await $.classic.SessionStart({ source: 'clear' })
 
   const ui = await $.ui.mount({ ...PANE, surface: 'terminal' })
@@ -340,14 +340,16 @@ test('the saved count comes back after /clear', async ($, on) => {
 
 The test passes when your `classic.SessionStart` hook has copied the stored `7` into `$.state` before the pane draws. Without that hook in your module, the pane draws `Count: 0`, `find` returns `undefined`, and the test fails at `toBeDefined`.
 
-## Test a mod that judges other mods
+<h2 id="test-a-mod-that-judges-other-mods">
+  Test a policy mod
+</h2>
 
-A mod your organization lists in [`prependPlugins`](/docs/en/plugins/mods/admin) can refuse another mod before it loads. To test one, set your mod's tier and give the test a second mod for yours to admit or refuse:
+A mod your organization lists in [`prependPlugins`](/docs/en/plugins/mods/admin) can refuse another mod before it loads. To test one, set your mod's tier and give the test a second mod for yours to allow or refuse:
 
 * **`tier`**: call it once at the top of the test file, as in `tier('prepend')`, to load your mod as `prepend`, `append`, or `builtin`, its place in the [order mods run in](/docs/en/plugins/mods/events#the-order-mods-run-in). Without it, your mod loads as `user`.
 * **`plugins`**: pass `test` an options object ahead of the test body. Its `plugins` array holds mods you write inline, each with a `name` and a `register` function. To load one somewhere other than `user`, add `tier` to it.
 
-This test file loads the [policy mod from the admin page](/docs/en/plugins/mods/admin#enforce-a-policy-with-a-mod-of-your-own) first. It checks that the policy mod refuses a mod that starts a process and admits one that doesn't:
+This test file loads the [policy mod from the admin page](/docs/en/plugins/mods/admin#enforce-a-policy-with-a-mod-of-your-own) first. It checks that the policy mod refuses a mod that starts a process and allows one that doesn't:
 
 ```typescript acme-guard/tests/guard.test.ts theme={null}
 import { expect, test, tier } from 'claude-code/testing'

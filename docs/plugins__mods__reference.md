@@ -4,9 +4,9 @@
 
 # Mods reference
 
-> Complete reference for Claude Code mods: hooks module layout, every event, every mods API method, render sites, elements by surface, limits, and settings.
+> Complete reference for Claude Code mods: hooks module layout, events, mods API methods, render sites, elements by surface, limits, and settings.
 
-Look up any event a [mod](/docs/en/plugins/mods/overview) can hook, mods API method it can call, or render site it can draw in, for the Claude Code CLI and the Desktop app as of v2.1.287. Each entry gives the name and a one-line description, and links to the guide section that explains it where there is one.
+Look up any event a [mod](/docs/en/plugins/mods/overview) can handle, mods API method it can call, or render site it can draw in, for the Claude Code CLI and the Desktop app as of v2.1.287. Each entry gives the name and a one-line description, and links to the guide section that explains it where there is one.
 
 <Note>
   The complete reference is Claude Code's [TypeScript declarations for mods](https://github.com/anthropics/claude-code/blob/main/mods/types/claude-code.d.ts), which describe every event, method, and element, with examples. The copy on GitHub can be older than the Claude Code version you have installed. When the two disagree, trust [the copy Claude Code writes for your version](/docs/en/plugins/mods/create#get-the-types-for-your-build).
@@ -35,15 +35,15 @@ A mod registers each of its hooks, which are event handlers, by calling `on` ins
 | [`$`](/docs/en/plugins/mods/events#how-a-hook-handles-an-event) | The mods API: every method in [mods API methods](#mods-api-methods). Write each call in full, namespace then method, as in `$.fs.read('notes.md')`. |
 | [`e`](/docs/en/plugins/mods/events#how-a-hook-handles-an-event) | The event's input, as deeply frozen plain data. To change it, pass a copy to `next`. |
 | [`next(e)`](/docs/en/plugins/mods/events#how-a-hook-handles-an-event) | The next handler, as in middleware. Runs the hooks after this one, then Claude Code's behavior. Resolves to the event's result. |
-| [`next.signal`](/docs/en/plugins/mods/api#stop-background-work) | An `AbortSignal` that fires when the event is abandoned |
-| `next.origin` | `{ plugin, tier }` of whoever raised the event. Claude Code itself is `{ plugin: 'engine', tier: 'core' }`. A mod's `tier` is its priority group in the [order mods run in](/docs/en/plugins/mods/events#the-order-mods-run-in): `prepend`, `user`, `append`, or `builtin`. |
+| [`next.signal`](/docs/en/plugins/mods/api#stop-background-work) | An `AbortSignal` that aborts when the event is abandoned |
+| `next.origin` | `{ plugin, tier }` of whoever fired the event. Claude Code itself is `{ plugin: 'engine', tier: 'core' }`. A mod's `tier` is its priority group in the [order mods run in](/docs/en/plugins/mods/events#the-order-mods-run-in): `prepend`, `user`, `append`, or `builtin`. |
 | `next.budget` | The hook's time limit in milliseconds: `next.budget.ms` is the whole limit, and `next.budget.remainingMs` is what's left now |
 | `next.to(e, tier)` | Skips to a later tier, which is `append`, `builtin`, or `core`. `next.to(e, 'append')` skips the mods a user installed. Only a mod in `prependPlugins` or `appendPlugins` can call it. |
 | `next.error`, `next.called` | In a `.catch` handler only. `next.error.kind` is `throw` or `timeout`, `next.error.message` is the error's text, and `next.called` is `true` when the failed hook had called `next`. |
 
 ## Events
 
-Every event a mod can hook is listed here, grouped by what it concerns, with when it fires and what a hook on it can return. Hooks on `turn.step` and `process.spawn` are async generators, and every other hook is an async function.
+Events are grouped by what they concern, each with when it fires and what a hook on it can return. Hooks on `turn.step` and `process.spawn` are async generators, and other hooks are async functions.
 
 The last column of each table uses shorthand. `next(e)` passes the event on unchanged. `next({ ...e, text })` passes on a copy with the named field changed, as in `next({ ...e, text: e.text.trim() })`. An object answers the event without calling `next`, and a word such as `reason` stands for a string you write, as in `{ deny: 'Use the file tools.' }`.
 
@@ -67,9 +67,9 @@ Prompt events cover the text the user types and the text Claude Code sends to Cl
 | `prompt.fill`, `prompt.suggest` | Text is about to go into the prompt box as a draft, or as a dim suggestion | `next(e)` with changed text |
 | `prompt.edit` | The user edits the prompt box | `next(e)` |
 | `prompt.compose` | Claude Code renders a system prompt | `{ sections }`, a list of `{ id, text, scope }` in the order they're sent |
-| [`prompt.section`](/docs/en/plugins/mods/events#rewrite-or-add-to-a-prompt) | Once for each named section of the system prompt. `e.name` is the section's `id` in `prompt.compose`. | `{ text }`, or `{ text: null }` to leave the section out |
+| [`prompt.section`](/docs/en/plugins/mods/events#rewrite-or-add-to-a-prompt) | Once for each named section of the system prompt. `e.name` is the section's `id` in `prompt.compose`. | `{ text }`, or `{ text: null }` to omit the section |
 | [`prompt.context`](/docs/en/plugins/mods/events#rewrite-or-add-to-a-prompt) | Once for each conversation, for the context sent with the first message | `{ blocks }` |
-| `prompt.attachment` | Claude Code adds a message of its own for Claude, such as a reminder. `e.type` names the kind, and for the kinds the types declare, `e.detail` holds the facts the text was written from. | `{ text }`, or `{ text: null }` to leave it out |
+| `prompt.attachment` | Claude Code adds a message of its own for Claude, such as a reminder. `e.type` names the kind, and for the kinds the types declare, `e.detail` holds the facts the text was written from. | `{ text }`, or `{ text: null }` to omit it |
 | [`skill.prompt`](/docs/en/plugins/mods/events#rewrite-or-add-to-a-prompt) | A skill's text is expanded for Claude | `{ text }` |
 | `attribution.text` | Claude Code composes commit or pull request attribution text | `{ text }` |
 
@@ -134,11 +134,11 @@ Interface events fire when Claude Code draws a render site and when the user use
 
 ### Other mods
 
-Two events let a mod act on other mods as they load, to refuse one or change the mods API it receives:
+These events let a mod act on other mods as they load, to refuse one or change the mods API it receives:
 
 | Event | Fires when | A hook can return |
 | :- | :- | :- |
-| [`plugin.register`](/docs/en/plugins/mods/admin#enforce-a-policy-with-a-mod-of-your-own) | A hooks module is about to load. `e.uses` lists its events, mods API calls, environment variables, and state, as `claude plugin validate` prints them. Each call is spelled without the `$.` prefix, such as `fs.read`. | `{ refuse: reason }` |
+| [`plugin.register`](/docs/en/plugins/mods/admin#enforce-a-policy-with-a-mod-of-your-own) | A hooks module is about to load. `e.uses` lists its events, mods API calls, environment variables, and state, as `claude plugin validate` prints them. Each call is written without the `$.` prefix, such as `fs.read`. | `{ refuse: reason }` |
 | `engine.create` | The mods API is being built for this mod | A changed mods API, to add a namespace or withhold one |
 
 ### Telemetry
@@ -147,7 +147,7 @@ Telemetry events fire for the usage records Claude Code logs:
 
 | Event | Fires when | A hook can return |
 | :- | :- | :- |
-| `telemetry.log`, `telemetry.mark` | A telemetry record is about to be logged, or one use of a feature is marked. Hook them by name or as `telemetry.*`, because `*` in a mod you install doesn't select them. | `next(e)`, or `{ deny: reason }` |
+| `telemetry.log`, `telemetry.mark` | A telemetry record is about to be logged, or one use of a feature is marked. In a mod you install, give a telemetry hook the filter `{ to: 'collector' }`, as in `on('telemetry.log', { to: 'collector' }, hook)`. Without the filter, the mod fails `claude plugin validate`. `*` doesn't match these events. | `next(e)`, or `{ deny: reason }` |
 
 ### Settings hook events
 
@@ -183,13 +183,13 @@ The mods API is the `$` argument every hook receives. Its methods are grouped in
 | [`$.process`](/docs/en/plugins/mods/api#reach-files-processes-and-the-network) | `run`, `spawn` |
 | [`$.mcp`](/docs/en/plugins/mods/api#reach-files-processes-and-the-network) | `call`, `connect`. `connect(server)` connects an MCP server that your own plugin's manifest lists. |
 | `$.audio` | `play`, `speak` |
-| `$.telemetry` | `log`, `mark`. A record is sent only when Claude Code or a built-in mod raised it. |
+| `$.telemetry` | `log`, `mark`. A record is sent only when Claude Code or a built-in mod makes the call. |
 
 ## Render sites
 
-A render site is an extension point in Claude Code's interface. Each row is a value of `e.component` in a `ui.render` hook, with the fields of `e.props` and the apps that raise it. `e.surface` is `terminal` or `desktop`. [Change what Claude Code already draws](/docs/en/plugins/mods/interface#change-what-claude-code-already-draws) shows what a hook can do at a site, with an example of each choice.
+A render site is an extension point in Claude Code's interface. Each row is a value of `e.component` in a `ui.render` hook, with the fields of `e.props` and the apps that render it. `e.surface` is `terminal` or `desktop`. [Change what Claude Code already draws](/docs/en/plugins/mods/interface#change-what-claude-code-already-draws) shows what a hook can do at a site, with an example of each choice.
 
-| Site | `e.props` | `e.requestId` | Raised on |
+| Site | `e.props` | `e.requestId` | Rendered on |
 | :- | :- | :- | :- |
 | [`Pane`](/docs/en/plugins/mods/interface#pick-where-to-draw) | `title`, `isFocused`, `bodyColumns`, `placement`, `scroll`, `view` | The pane's `id` | Terminal, Desktop |
 | [`AbovePrompt`](/docs/en/plugins/mods/interface#pick-where-to-draw) | `hasSurvey`, `isWorking`, `maxRows`, `bodyColumns`, `scroll`, `view` | One instance | Terminal, Desktop |
@@ -234,16 +234,16 @@ Elements are the building blocks of a tree a `ui.render` hook returns, and you g
 | [`Raster`](/docs/en/plugins/mods/interface#draw-a-grid-of-colored-cells) | `key`, `columns` up to 512, `rows` up to 256, `cells`. See [Draw a grid of colored cells](/docs/en/plugins/mods/interface#draw-a-grid-of-colored-cells). | ✓ | |
 | `Image` | PNG or RGBA bytes up to 2 MiB, or a file path | ✓ | |
 
-Three more `Button` rules: `action` names one of Claude Code's own [keybinding actions](/docs/en/keybindings), and the user's binding for it presses the button when that binding is a chord or a modified key. A digit `hotkey` on a button in the band also fires when the user types that digit alone into an empty prompt and pauses. When two buttons in one drawing name the same `hotkey`, the later one gets it. Claude Code refuses `autoFocus: false` on any control, so leave the prop off instead.
+More `Button` rules: `action` names one of Claude Code's own [keybinding actions](/docs/en/keybindings), and the user's binding for it presses the button when that binding is a chord or a modified key. A digit `hotkey` on a button in the band also fires when the user types that digit alone into an empty prompt and pauses. When two buttons in one drawing name the same `hotkey`, the later one gets it. `autoFocus` accepts only `true` on any control, so omit the prop to leave it off.
 
 ## Limits
 
-Hooks and mods API calls run under time and size limits. Claude Code skips a hook that runs past a time limit and rejects a call that passes a size limit.
+Hooks and mods API calls run under time and size limits. Claude Code skips a hook that exceeds a time limit and rejects a call that exceeds a size limit.
 
 | Limit | Value |
 | :- | :- |
-| A hook's own running time for one event, not counting time inside `next` or a mods API call other than `$.clock.sleep` | 10 seconds |
-| A `.catch` handler's running time | 1 second |
+| A hook's own execution time for one event, not counting time inside `next` or a mods API call other than `$.clock.sleep` | 10 seconds |
+| A `.catch` handler's execution time | 1 second |
 | All `session.end` hooks together | 1.5 seconds |
 | `$.process.run` timeout | 30 seconds by default, 10 minutes at most |
 | `$.model.complete` `maxTokens` | 1024 by default, up to 64,000 or the model's output limit |
@@ -251,7 +251,7 @@ Hooks and mods API calls run under time and size limits. Claude Code skips a hoo
 | One string child of a `Text` | 10,000 characters |
 | `$.store` | 4 MiB of JSON in total |
 | `$.session.messages()` | The newest 4,096 entries |
-| `$.ui.invalidate('ui.render')` redraws | Throttled to 10 a second, 30 for the visible pane and the band. Calls that come sooner are coalesced. |
+| `$.ui.invalidate('ui.render')` redraws | Throttled to 10 a second, or 30 in the terminal for the visible pane, the expanded band, and the hint line under the prompt. Calls that come sooner are coalesced. |
 | `$.ui.toast` | Shown for 4 seconds unless you pass `{ timeoutMs }` |
 | A pane opened without the user asking | Placed from 144 terminal columns, 110 after they've opened it once |
 | Command, tool, subagent type, and pane names | Letters, digits, `_`, and `-`, up to 64 characters |
@@ -277,12 +277,12 @@ These are the settings and environment variables that affect mods. The Where col
 
 ## Commands
 
-These commands and flags load, inspect, and test a mod. The `claude` commands run in your shell and the `/` commands at the Claude Code prompt. In the table, `<directory>` stands for a path you type, as in `claude plugin validate ./first-mod`. Square brackets mark an argument you can leave out.
+These commands and flags load, inspect, and test a mod. The `claude` commands run in your shell and the `/` commands at the Claude Code prompt. In the table, `<directory>` stands for a path you type, as in `claude plugin validate ./first-mod`. Square brackets mark an optional argument.
 
 | Command | What it does |
 | :- | :- |
 | [`/plugin`](/docs/en/plugins/mods/overview#see-which-mods-a-session-loaded) | Shows a line such as `1 mod active · first-mod` under its tabs when a mod that isn't built in has loaded |
-| [`claude plugin validate <directory>`](/docs/en/plugins/mods/create#check-what-claude-code-reads-from-your-mod) | Reads a plugin's manifest and hooks module and reports errors, the events it hooks, and the mods API calls it makes. `--strict` treats warnings as errors and `--json` prints a machine-readable report. |
+| [`claude plugin validate <directory>`](/docs/en/plugins/mods/create#check-what-claude-code-reads-from-your-mod) | Reads a plugin's manifest and hooks module and reports errors, the events it handles, and the mods API calls it makes. `--strict` treats warnings as errors and `--json` prints a machine-readable report. |
 | [`claude plugin test [directory]`](/docs/en/plugins/mods/test#write-a-test) | Runs every file under the directory, or the current directory when you give none, whose name ends in `.test.ts` or `.test.tsx`. Exits with status 1 when a test fails. |
 | [`claude --plugin-dir <directory>`](/docs/en/plugins/mods/create#write-a-mod-yourself) | Loads a plugin directory for one session and reloads its hooks module when you save. Repeat the flag to load several. |
 | `/reload-plugins` | Reloads plugins when you run it |

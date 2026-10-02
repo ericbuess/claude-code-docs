@@ -259,7 +259,9 @@ This map declares one command from a file and one from inline content:
 
 `hooks` takes a `.json` file path, an inline hooks object in the same shape as [`hooks` in `settings.json`](/docs/en/hooks#configuration), or an array mixing both. For hook events and handler fields, see the [hooks reference](/docs/en/hooks#hook-events).
 
-Claude Code merges whatever you declare with `hooks/hooks.json` when that file exists.
+A hooks file wraps the event map in a top-level `"hooks"` key, the shape [`hooks/hooks.json`](/docs/en/plugins/components#hooks) uses. A file that contains only the event map, without that wrapper, fails to load. An inline object is the event map itself, with no wrapper.
+
+Claude Code merges whatever you declare with `hooks/hooks.json` when that file exists. This array loads one hooks file and declares one inline `PostToolUse` hook:
 
 ```json theme={null}
 {
@@ -276,6 +278,23 @@ Claude Code merges whatever you declare with `hooks/hooks.json` when that file e
       ]
     }
   ]
+}
+```
+
+The file that array names carries the `"hooks"` wrapper around its own event map:
+
+```json config/extra-hooks.json theme={null}
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          { "type": "command", "command": "\"${CLAUDE_PLUGIN_ROOT}\"/scripts/check-command.sh" }
+        ]
+      }
+    ]
+  }
 }
 ```
 
@@ -374,6 +393,8 @@ Every component path in a manifest is relative to the plugin root and must start
 
 * **`skills`**: also accepts `"."`. Both `"."` and `"./"` denote the plugin root. Before v2.1.221, `"."` failed manifest validation, so use `"./"` when the plugin must load on earlier versions
 * **`mcpServers`**: also accepts an `https://` bundle URL
+
+`experimental.evals` isn't a component path, so the rules in this section don't cover it, and `claude plugin eval` checks the value when it runs instead. It names a directory below the plugin root, such as `"quality/evals"`, with or without the `./` prefix. With an array, only the first entry is used. For what the value accepts and what happens with an unusable one, see [Use a different eval directory](/docs/en/plugin-evals#use-a-different-eval-directory).
 
 ### Containment and existence
 

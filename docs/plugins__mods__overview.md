@@ -26,11 +26,11 @@ Mods work in the Claude Code CLI and in the Code tab of the Claude Desktop app. 
 
 ## Get a mod
 
-You can start with a mod in one of three ways:
+To start with a mod:
 
 * **Use one you already have**: some of Claude Code's own features are mods, such as `/diff`. See [Mods built into Claude Code](#mods-built-into-claude-code).
 * **Make one**: describe what you want in a Claude Code session, and Claude writes the mod. See [Ask Claude for a mod](/docs/en/plugins/mods/create#ask-claude-for-a-mod). To learn how a mod's code works, [write one yourself](/docs/en/plugins/mods/create#write-a-mod-yourself).
-* **Install one**: see [Install or update a mod](#install-or-update-a-mod)
+* **Install one**: see [Install or update a mod](#install-or-update-a-mod), or [try a sample mod](#try-a-sample-mod)
 
 ### Install or update a mod
 
@@ -46,6 +46,20 @@ A mod installs as a plugin, from a marketplace. Give the plugin's name, an `@`, 
 [Install plugins](/docs/en/plugins/install) covers marketplaces, scopes, the VS Code extension and the Desktop app, and [keeping plugins updated](/docs/en/plugins/install#keep-plugins-updated), all of which apply to a plugin that contains a mod without changes.
 
 If you install or update a mod from your shell while a session is open, run `/reload-plugins` in that session to load it. Otherwise it loads the next time you start Claude Code.
+
+### Try a sample mod
+
+Anthropic shares sample mods in the [`claude-code/mods` directory of the `claude-code-playground` repository](https://github.com/anthropics/claude-code-playground/tree/main/claude-code/mods). Each one is a complete plugin, and its README says how it was built. The repository shares them as they are, without support.
+
+* [`token-weather`](https://github.com/anthropics/claude-code-playground/tree/main/claude-code/mods/token-weather): draws a forecast of your context window above the prompt
+* [`blast-radius`](https://github.com/anthropics/claude-code-playground/tree/main/claude-code/mods/blast-radius): holds a risky shell command, such as `rm -rf` or a force push, and shows what it would change, with buttons to proceed or cancel
+* [`replay-theater`](https://github.com/anthropics/claude-code-playground/tree/main/claude-code/mods/replay-theater): adds a `/replay` command that steps through the file edits Claude made in the last turn
+
+A sample mod runs with your permissions. To see what one does before you load it, [list its hooks and calls](#list-what-a-mod-does-before-you-install-one).
+
+To try one, clone the repository and [load the mod's directory for one session](/docs/en/plugins/create#load-a-directory-or-archive-for-one-session) with `--plugin-dir`. To confirm the mod loaded, [check which mods the session loaded](#see-which-mods-a-session-loaded).
+
+To keep one, [add the clone's `claude-code/mods` directory as a marketplace](/docs/en/plugins/install#add-a-marketplace), then install the mod from `claude-code-playground-mods`. The marketplace points at your clone, so the mod stops loading if you move or delete it.
 
 ## Decide whether to trust a mod
 
@@ -70,7 +84,7 @@ A mod can restyle much of Claude Code's interface, but not the permission prompt
 
 ### List what a mod does before you install one
 
-Before you install a mod, you can list which events it hooks and what it asks Claude Code to do, such as read a file or make a network request, without running it. Get the plugin's files first, for example by cloning its repository. Then, in your shell, run `claude plugin validate` on the plugin's directory:
+Before you install a mod, you can list which events it handles and what it asks Claude Code to do, such as read a file or make a network request, without running it. Get the plugin's files first, for example by cloning its repository. Then, in your shell, run `claude plugin validate` on the plugin's directory:
 
 ```bash theme={null}
 claude plugin validate ./some-mod
@@ -85,7 +99,7 @@ Mods require Claude Code v2.1.287 or later, and they're on by default. In your s
 To turn mods off, choose how many to stop, and for how long. To turn them back on, undo the same change:
 
 * **One mod**: disable or uninstall its plugin from the [**Installed** tab in `/plugin`](/docs/en/plugins/install#manage-installed-plugins)
-* **Every installed mod, for one session**: start Claude Code with [`--safe-mode`](/docs/en/cli-reference#cli-flags), which also leaves out your other customizations
+* **Every installed mod, for one session**: start Claude Code with [`--safe-mode`](/docs/en/cli-reference#cli-flags), which also disables your other customizations
 * **Every mod you installed, in every session**: set [`"disableAllHooks": true`](/docs/en/settings-reference#disableallhooks) in `~/.claude/settings.json`. Your settings hooks and custom status line stop too. What your organization manages keeps running.
 
 If you use Claude Code through an organization, an administrator can also limit which mods load. Administrators start at [Stop user-installed mods from loading](/docs/en/plugins/mods/admin#stop-user-installed-mods-from-loading).
@@ -159,7 +173,7 @@ This recording shows the mod at work. Watch the spinner line above the prompt bo
 
 ### What a hook can do with an event
 
-Claude Code runs your hook before it acts on the event, so the hook decides what happens next. It has three choices:
+Claude Code runs your hook before it acts on the event, so the hook decides what happens next. It can:
 
 * **Observe**: note what's happening and let it continue unchanged, as the `tool.call` hook in the example does
 * **Rewrite**: change the event before it continues, as the `ui.render` hook does when it adds the count to the spinner
@@ -201,11 +215,11 @@ Mods, settings hooks, skills, and MCP servers overlap. This table shows what eac
 | What you write | JavaScript or TypeScript | A script and a `settings.json` entry | Markdown | A server in any language |
 | Pick it when | You want a pane, a band above the prompt, a custom command, or to rewrite an event | You want to block, allow, or log an event with a script you already have | You keep pasting the same instructions into chat | Claude needs to reach an external system |
 
-Each of the others has its own page: [Hooks](/docs/en/hooks), [Skills](/docs/en/skills), and [MCP](/docs/en/mcp). A plugin can hold all four, so a mod can ship in the same plugin as a skill and an MCP server.
+Each of the others has its own page: [Hooks](/docs/en/hooks), [Skills](/docs/en/skills), and [MCP](/docs/en/mcp). A plugin can hold all of them, so a mod can ship in the same plugin as a skill and an MCP server.
 
 ## Mods built into Claude Code
 
-Some of Claude Code's own features are mods. To see the ones your session has, run `/plugin` at the Claude Code prompt and go to the **Installed** tab, which lists them under **Built-in**. You can't update or uninstall a built-in mod, and the table's last column says how to turn each one off. The [`mods active` line](#see-which-mods-a-session-loaded) leaves built-in mods out.
+Some of Claude Code's own features are mods. To see the ones your session has, run `/plugin` at the Claude Code prompt and go to the **Installed** tab, which lists them under **Built-in**. You can't update or uninstall a built-in mod, and the table's last column says how to turn each one off. The [`mods active` line](#see-which-mods-a-session-loaded) omits built-in mods.
 
 This table lists each entry by the name `/plugin` shows:
 
@@ -222,7 +236,7 @@ The settings and flags that stop installed mods, such as `disableAllHooks`, `--b
 
 ### Read the source of built-in mods
 
-The source of four of these mods is public in the [`mods` directory of the Claude Code repository](https://github.com/anthropics/claude-code/tree/main/mods). Each one is a complete plugin with its hooks module and tests:
+The source of some of these mods is public in the [`mods` directory of the Claude Code repository](https://github.com/anthropics/claude-code/tree/main/mods). Each one is a complete plugin with its hooks module and tests:
 
 * [`diff`](https://github.com/anthropics/claude-code/tree/main/mods/diff): the `/diff` pane, with buttons bound to keyboard actions and scrolling the mod handles itself
 * [`agents-md`](https://github.com/anthropics/claude-code/tree/main/mods/agents-md): loads `AGENTS.md` as project instructions, with a [`userConfig`](/docs/en/plugins/components#user-configuration) option
@@ -238,4 +252,4 @@ The source of four of these mods is public in the [`mods` directory of the Claud
 * [Test a mod](/docs/en/plugins/mods/test): automated tests that run without a session
 * [Troubleshoot a mod](/docs/en/plugins/mods/troubleshoot): the reasons a mod does nothing, and the debug log
 * [Manage mods for your organization](/docs/en/plugins/mods/admin): defaults, managed settings, reviewing a mod, and policy mods
-* [Mods reference](/docs/en/plugins/mods/reference): every event, method, element, and limit
+* [Mods reference](/docs/en/plugins/mods/reference): events, methods, elements, and limits

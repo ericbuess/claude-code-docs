@@ -33,6 +33,7 @@ Match the error message or symptom you're seeing to a fix:
 | `Error loading shared library` | [Wrong binary variant for your system](#linux-musl-or-glibc-binary-mismatch) |
 | `Illegal instruction` | [Architecture or CPU instruction set mismatch](#illegal-instruction) |
 | `cannot execute binary file: Exec format error` in WSL | [WSL1 native-binary regression](#exec-format-error-on-wsl1) |
+| `Bus error` or `oh no: Bun has crashed` while a session is running | [Keep the executable readable](#bus-error-while-a-session-is-running) |
 | PowerShell installer completes but `claude` is not found or shows an old version | [Add the install directory to your PATH](#verify-your-path), then open a new terminal |
 | `dyld: Symbol not found`, `dyld: cannot load`, or `Abort trap` on macOS | [Binary incompatibility](#dyld-cannot-load-on-macos) |
 | `claude update` hangs after `Checking for updates`, or `claude doctor` hangs with no output | [Move the directory at a shell config path](#claude-update-or-claude-doctor-hangs) |
@@ -806,6 +807,14 @@ Abort trap: 6
 1. **Check your macOS version**: Claude Code requires macOS 13.0 or later. Open the Apple menu and select About This Mac to check your version.
 
 2. **Update macOS** if you're on an older version. The binary uses load commands and system libraries that older macOS versions don't support. Alternative install methods like Homebrew download the same binary and won't resolve this error.
+
+### `Bus error` while a session is running
+
+If a running session exits and your shell prints `Bus error`, one cause is that Claude Code could no longer read its own executable file from disk. For example, the file was truncated, or deleted on network storage, while the session ran.
+
+Before the shell's message, Claude Code's runtime can print a crash report that includes `panic(main thread): Bus error at address` and `oh no: Bun has crashed. This indicates a bug in Bun, not your code.` When the executable became unreadable, the crash comes from the unreadable file, not from a bug in Bun. The report can also be missing, if the runtime couldn't read the code that prints it either.
+
+Start a new session to continue. If Claude Code is installed on network storage, follow [Install on network storage](/docs/en/setup#install-on-network-storage) so upgrades don't remove a binary that running sessions still need.
 
 ### `Exec format error` on WSL1
 

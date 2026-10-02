@@ -34,7 +34,7 @@ On a third-party provider, the `sonnet` alias can resolve to a different version
 
 ## Install the plugin
 
-In a Claude Code session, install from the [official Anthropic marketplace](/docs/en/plugins/anthropic-marketplaces):
+In the VS Code extension or the desktop app, install it by following [Install a plugin](/docs/en/plugins/install#install-a-plugin). In a terminal, start Claude Code by running `claude`, then enter this at its prompt to install from the [official Anthropic marketplace](/docs/en/plugins/anthropic-marketplaces):
 
 ```text theme={null}
 /plugin install claude-security@claude-plugins-official

@@ -175,10 +175,10 @@ The checks map directly onto standard JWT libraries. The examples below implemen
 
 [Wrapper scripts](/docs/en/self-hosted-environments-configuration#wrapper-scripts) run inside the session, before Claude starts. Instead of calling a JWT library, they can run the runner binary's `self-hosted-runner decode-token` subcommand. The subcommand reads the token from a positional argument, from `CLAUDE_CODE_SESSION_ACCESS_TOKEN`, or from piped stdin, in that order, then strips the prefix, verifies the signature against the JWKS endpoint, checks expiry, and prints the claims as JSON. The subcommand performs the signature and expiry checks only; it doesn't check `iss`, `aud`, or `ccr:role`. When your wrapper's auth decision depends on those claims, read them from the printed JSON and compare them explicitly.
 
-This command extracts the creator identity, preferring the SSO provider's subject, then the email address, then the creator's `act.sub` subject, `user:<id>` or `agent:<id>`:
+This command extracts the creator identity, preferring the email address, then the creator's `act.sub` subject, `user:<id>` or `agent:<id>`:
 
 ```bash theme={null}
-"$CLAUDE_RUNNER_CLAUDE_BIN" self-hosted-runner decode-token | jq -re '.act.attested_by.sub // .act.email // .act.sub'
+"$CLAUDE_RUNNER_CLAUDE_BIN" self-hosted-runner decode-token | jq -re '.act.email // .act.sub'
 ```
 
 Wrappers receive the absolute path to the runner's own binary in `CLAUDE_RUNNER_CLAUDE_BIN`; use that path rather than a PATH-resolved `claude` so the decode runs on the same binary the runner itself uses.
@@ -215,7 +215,7 @@ The `act` claim records the full delegation path from the user or service identi
 | :- | :- |
 | `act.sub` | The creating user's Anthropic user ID, in the form `user:<id>`, or `agent:<id>` when your organization's service identity created the session, as it does for Claude Tag channel sessions. |
 | `act.email` | The creating user's email address, when one was recorded at session creation. Don't require it; key on `act.sub`. |
-| `act.attested_by` | The upstream identity provider's attestation for the creating user, when available. `act.attested_by.sub` is the subject your SSO provider, such as Google or Okta, issued. Prefer this over `act.email` when mapping to identities in your own systems. |
+| `act.attested_by` | Reserved for the upstream identity provider's attestation for the creating user. Expect it to be absent, and don't depend on it. Key on `act.sub`. If you need an address, read `act.email` when it's present. |
 | `act.act` | The runner that spawned the session. `act.act.sub` is `ccr:runner:<runner_id>`. |
 | `act.act.act` | The environment. `act.act.act.sub` is `ccr:pool:<pool_id>`. |
 | `act.act.act.act` | The identity that created the environment secret the runner registered with. The chain ends here. |

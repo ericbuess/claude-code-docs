@@ -355,9 +355,13 @@ For when auto-update runs, which plugins it skips, and the environment variables
 
 In a Claude Code session, run `/plugin` and go to the **Marketplaces** tab. Select the marketplace, then select **Enable auto-update** or **Disable auto-update**.
 
-### Update one plugin now
+### Update plugins now
 
-In a session, open the plugin on the **Installed** tab in `/plugin` and select **Update now**, or in your shell run `claude plugin update <plugin>@<marketplace>`.
+To update one plugin, open it on the **Installed** tab in `/plugin` during a session and select **Update now**, or run `claude plugin update <plugin>@<marketplace>` in your shell.
+
+There's no command that updates every plugin at once. To update the plugins you installed from one marketplace at once, go to the **Marketplaces** tab in `/plugin`, select the marketplace, and choose **Update marketplace**. That refreshes the marketplace's listing, updates the plugins you installed from it, and reports any plugin it left for you to update yourself. A plugin with a [`command` source](/docs/en/plugins/marketplace-reference#command-plugin-source) or with a marketplace entry that sets a `headersHelper` command isn't updated this way, so you update it from its view on the **Installed** tab or with `claude plugin update <plugin>@<marketplace>`.
+
+If you run `claude plugin marketplace update` in your shell with no name, it refreshes every marketplace's listing but leaves your installed plugins at their current versions.
 
 ### Auto-update from a private marketplace
 

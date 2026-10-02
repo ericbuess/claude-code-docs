@@ -288,7 +288,7 @@ When an update installs, the command reports `Successfully updated from <old ver
 
 ## Advanced installation options
 
-These options are for version pinning, Linux package managers, npm, and verifying binary integrity.
+These options are for version pinning, Linux package managers, npm, network storage, and verifying binary integrity.
 
 ### Install a specific version
 
@@ -477,6 +477,19 @@ To upgrade an npm installation, run `npm install -g @anthropic-ai/claude-code@la
 <Warning>
   Do NOT use `sudo npm install -g` as this can lead to permission issues and security risks. If you encounter permission errors, see [troubleshooting permission errors](/docs/en/troubleshoot-install#permission-errors-during-installation).
 </Warning>
+
+### Install on network storage
+
+A running session reads parts of the Claude Code executable from disk as it works, not only at startup. If the file becomes unreadable mid-session, for example because it was truncated or deleted on network storage, the session crashes. On Linux, your shell reports this as a `Bus error`.
+
+When home directories live on network storage, such as an NFS home mounted on several machines, lay out installs so that each session's executable stays readable until the session ends:
+
+* **Install on local disk**: put the binary on each machine's local filesystem, for example with a [Linux package manager](#install-with-linux-package-managers) or your own deployment tooling. A per-user npm prefix and the native installer's default `~/.local/share/claude/versions/` directory both sit in the home directory.
+* **Keep each version in its own directory**: upgrading an npm installation in place with `npm install -g` deletes the previous binary. On storage that several machines share, that removes the file that sessions on the other machines are still running. Install each new version next to the old ones and move users to it.
+* **Delete an old version only when no machine can still be running it**: a machine can't see processes running on other machines, so checking for running processes before you delete isn't enough.
+* **Turn off Claude Code's own updates**: set [`DISABLE_UPDATES`](/docs/en/env-vars) and install new versions with your own tooling. Otherwise an auto-update of an npm installation on one machine runs the same in-place upgrade and removes the binary that sessions on other machines are running. Setting `DISABLE_AUTOUPDATER` alone isn't enough, because users can still run `claude update` and `claude install`. See [Disable auto-updates](#disable-auto-updates).
+
+The native installer deletes old versions from `~/.local/share/claude/versions/` on its own, which matters when that directory is on shared storage. Besides the version the launcher points to and any version a session on the same machine is running, it keeps the two newest versions and deletes the rest. A session on another machine that is running a deleted version loses its binary. With a [custom launcher](#auto-updates), Claude Code keeps every installed version and leaves cleanup to you.
 
 ### Binary integrity and code signing
 

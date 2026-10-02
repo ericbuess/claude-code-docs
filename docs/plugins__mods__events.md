@@ -46,7 +46,7 @@ The line now appears after each tool finishes. Claude reads the same result eith
 
 ### Rewrite an event
 
-To change what Claude Code acts on, such as the text of a prompt, call `next` with a modified copy of the event. The event itself is immutable: it's frozen at every depth, and assigning to a field throws. This hook trims each prompt before it's sent:
+To change what Claude Code acts on, such as the text of a prompt, call `next` with a modified copy of the event. The event itself is immutable: it's deeply frozen, and assigning to a field throws. This hook trims each prompt before it's sent:
 
 ```javascript theme={null}
 on('prompt.submit', async ($, e, next) => {
@@ -87,13 +87,13 @@ on('tool.call', { tool: /^mcp__github__/ }, hook)
 
 `hook` runs once for a Bash, Edit, or Write call, and once for a call to a tool whose name starts with `mcp__github__`. A call to any other tool, such as Read, matches none of the three, so `hook` doesn't run for it.
 
-The event name can be a wildcard. `'classic.*'` matches every [settings hook event](#hook-the-settings-hook-events). `'*'` matches every event except the [telemetry events](/docs/en/plugins/mods/reference#telemetry), which you hook by name or as `'telemetry.*'`.
+The event name can be a wildcard. `'classic.*'` matches every [settings hook event](#hook-the-settings-hook-events). `'*'` matches every event except the [telemetry events](/docs/en/plugins/mods/reference#telemetry), which take their own name and a `{ to: 'collector' }` filter.
 
 Register each event once per matcher. If you call `on` twice for `session.start` with no matcher, the module fails to load with `on("session.start") is registered twice without a matcher`. Put everything your mod does at session start in one hook.
 
 ## Hook what Claude is doing
 
-Hook these events to see or change a tool call, a prompt, or a turn as it happens. For every event and what a hook can return, see the [events reference](/docs/en/plugins/mods/reference#events).
+Handle these events to see or change a tool call, a prompt, or a turn as it happens. For every event and what a hook can return, see the [events reference](/docs/en/plugins/mods/reference#events).
 
 ### Guard or change a tool call
 
@@ -172,7 +172,7 @@ When Claude tries a command such as `rm -rf build`, the question appears with th
 * **The user types an answer**: `$.ui.ask` resolves to the typed text. The hook compares it with `Run it`, so any other text refuses the command.
 * **Nobody answers**: `$.ui.ask` rejects when the user dismisses the question or picks **Chat about this**, and in a `claude -p` run, so the `catch` block leaves the answer at `Refuse`
 
-Keep the wait inside a mods API call such as `$.ui.ask`, because that time doesn't count against the hook's [10-second time limit](/docs/en/plugins/mods/reference#limits). Time spent awaiting a promise of your own does count. Claude Code skips a hook that times out, so the held command would run.
+Keep the wait inside a mods API call such as `$.ui.ask`, because that time doesn't count against the hook's [time limit](/docs/en/plugins/mods/reference#limits). Time spent awaiting a promise of your own does count. Claude Code skips a hook that times out, so the held command would run.
 
 #### Approve or refuse a tool call before the user is asked
 
@@ -197,7 +197,7 @@ On `main`, the hook returns `deny`, even when a rule allows `git push`. On anoth
 
 The hook matches the text of the command, so treat it as a reminder for Claude. To block pushes to `main` for everyone, protect the branch on your Git host.
 
-A hook can return any of the three decisions, so it can also approve a call that a `PreToolUse` hook outside managed settings blocked. [Extend permissions with hooks](/docs/en/permissions#extend-permissions-with-hooks) lists which decisions hold over a mod.
+A hook can return `allow`, `ask`, or `deny`, so it can also approve a call that a `PreToolUse` hook outside managed settings blocked. [Extend permissions with hooks](/docs/en/permissions#extend-permissions-with-hooks) lists which decisions hold over a mod.
 
 ### Rewrite or add to a prompt
 
@@ -229,7 +229,7 @@ When you send a prompt such as `open a PR for this change`, your message looks t
 
 ### Follow a turn
 
-A turn is everything Claude does in answer to one prompt. Hook `turn.start`, `turn.step`, and `turn.complete` to follow one:
+A turn is everything Claude does in answer to one prompt. Handle `turn.start`, `turn.step`, and `turn.complete` to follow one:
 
 | Event | When it fires | What a hook can do |
 | :- | :- | :- |
@@ -255,9 +255,11 @@ on('turn.step', async function* ($, e, next) {
 
 Claude's response streams to the screen as it does without the mod. After each request finishes, a dim line in the transcript gives the number of tokens read from the cache and the number written to it. A turn with tool calls has several requests, so it adds several lines.
 
-`result.usage` holds the four token counts the Claude API reports for a request, plus the `model` that answered: `input_tokens`, `output_tokens`, `cache_read_input_tokens`, and `cache_creation_input_tokens`. The hook runs for subagents' requests too, so check `e.agentId` when you want only the main conversation.
+`result.usage` holds the token counts the Claude API reports for a request, plus the `model` that answered: `input_tokens`, `output_tokens`, `cache_read_input_tokens`, and `cache_creation_input_tokens`. The hook runs for subagents' requests too, so check `e.agentId` when you want only the main conversation.
 
-### Hook the settings hook events
+<h3 id="hook-the-settings-hook-events">
+  Handle the settings hook events
+</h3>
 
 Settings hooks are the command, HTTP, prompt, and agent hooks you configure in settings files. Each [settings hook event](/docs/en/hooks#hook-events), such as `Stop`, `SessionEnd`, or `PostToolUse`, is also an event named `classic.` followed by the settings hook event's name, such as `classic.Stop`. `e` is the JSON a settings hook receives on stdin, including `transcript_path`.
 
@@ -276,7 +278,7 @@ Each time Claude finishes responding, a dim line in the transcript gives the pat
 
 ## Run alongside other mods
 
-Several mods can hook the same event, and any one of them can fail. If your mod blocks tool calls, check its position in the chain and what happens when its hook fails.
+Several mods can handle the same event, and any one of them can fail. If your mod blocks tool calls, check its position in the chain and what happens when its hook fails.
 
 ### The order mods run in
 
@@ -319,11 +321,11 @@ on('tool.call', { tool: 'Bash' }, guard).catch(async ($, e, next) => {
 })
 ```
 
-While `guard` works, the handler never runs. When `guard` throws or times out on a Bash call, Claude Code calls the handler with the same event. The handler returns `{ deny }`, so the command doesn't run, and Claude reads the text with `throw` or `timeout` at the end. Without the handler, Claude Code would skip `guard` and run the command. The handler has [one second](/docs/en/plugins/mods/reference#limits) to answer.
+While `guard` works, the handler never runs. When `guard` throws or times out on a Bash call, Claude Code calls the handler with the same event. The handler returns `{ deny }`, so the command doesn't run, and Claude reads the text with `throw` or `timeout` at the end. Without the handler, Claude Code would skip `guard` and run the command. The handler has a shorter [time limit](/docs/en/plugins/mods/reference#limits) of its own.
 
 ## Next steps
 
 * [Use the mods API](/docs/en/plugins/mods/api): add commands and tools, call a model, and run work on a timer
 * [Draw in the interface](/docs/en/plugins/mods/interface): show what your hooks collect in a pane or above the prompt
-* [Test a mod](/docs/en/plugins/mods/test): raise any of these events from a test
+* [Test a mod](/docs/en/plugins/mods/test): fire any of these events from a test
 * [Mods reference](/docs/en/plugins/mods/reference): every event, every mods API method, and the limits

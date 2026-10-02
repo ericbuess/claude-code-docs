@@ -90,7 +90,7 @@ on('command.run', { command: 'triage' }, async ($, e) => {
 
 When you run `/triage the export button does nothing`, the mod sends that text to the model and prints its answer, such as `Label: bug`. Claude's conversation isn't part of the request. When the model doesn't answer, the label is `unknown`.
 
-A Claude API failure doesn't reject the call, so check `r.isAnswered`, and read `r.reason` when it's `false`. The call rejects only for a request Claude Code won't send, such as a model your organization blocks. [The types for your build](/docs/en/plugins/mods/create#get-the-types-for-your-build) list the other options, such as `effort`, and the [limits](/docs/en/plugins/mods/reference#limits) give the `maxTokens` default.
+A Claude API failure doesn't reject the call, so check `r.isAnswered`, and read `r.reason` when it's `false`. The call rejects for a request Claude Code won't send, such as a model your organization blocks. [The types for your build](/docs/en/plugins/mods/create#get-the-types-for-your-build) list the other options, such as `effort`, and the [limits](/docs/en/plugins/mods/reference#limits) give the `maxTokens` default.
 
 `$.model.fork({ prompt })` asks one question over the current conversation instead, with the same model and system prompt, so the Claude API serves most of it from the prompt cache.
 
@@ -98,7 +98,7 @@ These calls use the user's plan or API key.
 
 ## Run work in the background
 
-Work that outlives one event, such as checking on something once a minute, runs on a timer you start from `session.start`. A hook itself runs for one event and has a time limit of 10 seconds of its own running time. Time spent waiting on `next` or on a mods API call doesn't count, except a `$.clock.sleep`. `$.clock.every` and `$.clock.after` take the place of `setInterval` and `setTimeout`, with the delay in milliseconds first: `$.clock.after(5000, fn)` calls `fn` once, five seconds from now. Each returns a timer with a `cancel()` method, and `await $.clock.now()` gives the time in milliseconds.
+Work that outlives one event, such as checking on something once a minute, runs on a timer you start from `session.start`. A hook itself runs for one event and has a [time limit](/docs/en/plugins/mods/reference#limits) on its own execution time. Time spent waiting on `next` or on a mods API call doesn't count, except a `$.clock.sleep`. `$.clock.every` and `$.clock.after` take the place of `setInterval` and `setTimeout`, with the delay in milliseconds first: `$.clock.after(5000, fn)` calls `fn` once, five seconds from now. Each returns a timer with a `cancel()` method, and `await $.clock.now()` gives the time in milliseconds.
 
 This hook looks up a pull request's checks once a minute and shows the result under the prompt. `summarize` is a function of your own that turns the command's JSON output into a few words:
 
@@ -124,7 +124,7 @@ A background job can show the user something without starting a turn. Each of th
 | Call | What the user sees |
 | :- | :- |
 | `$.ui.status(text)` | One line under the prompt that stays until you change it. It starts with `⚠` and the mod's name, as in `⚠ my-mod: checks: 3 passing`. |
-| `$.ui.toast(text)` | A small box at the top right, with the mod's name above the text, that disappears after a few seconds |
+| `$.ui.toast(text)` | A toast notification at the top right, with the mod's name above the text, that disappears after a few seconds |
 | `$.ui.log(text)` | A dim line in the transcript that Claude doesn't read. It starts with `●` and the mod's name, as in `● my-mod: build finished`. |
 
 ### Start a turn from a background job
@@ -133,7 +133,7 @@ When a background job finds something that needs Claude's attention, it can star
 
 ### Stop background work
 
-Background work stops in two ways. Timers stop when the module reloads. For long-running work inside a hook, [`next.signal`](/docs/en/plugins/mods/reference#the-hook-function) is an `AbortSignal` that aborts when the event your hook is handling is abandoned, for example when the user interrupts, so pass it to anything long-running.
+Timers stop when the module reloads. For long-running work inside a hook, [`next.signal`](/docs/en/plugins/mods/reference#the-hook-function) is an `AbortSignal` that aborts when the event your hook is handling is abandoned, for example when the user interrupts, so pass it to anything long-running.
 
 ## Send and receive messages between sessions
 
@@ -152,9 +152,9 @@ on('command.run', { command: 'ping' }, async ($, e) => {
 })
 ```
 
-When the message is queued, nothing appears in your session, and the other session's Claude reads `Status? One line.` When nothing was delivered, a small box at the top right gives the reason and disappears after a few seconds.
+When the message is queued, nothing appears in your session, and the other session's Claude reads `Status? One line.` When nothing was delivered, a toast notification gives the reason.
 
-Two events let a mod observe the messages. Return `next(e)` from both to pass each message through unchanged:
+`session.receive` and `session.send` let a mod observe the messages. Return `next(e)` from both to pass each message through unchanged:
 
 | Event | Fires when | Useful fields |
 | :- | :- | :- |
@@ -175,15 +175,15 @@ A mod reaches the file system, processes, and the network through the mods API, 
 | `$.process` | `run(['git', 'status'])` starts a command and resolves when it exits. `spawn` streams a long-running command's output. |
 | `$.http` | `fetch(url, init)` over `http` or `https`. It resolves to `{ status, ok, headers, text }` once the body is read. |
 | `$.store` | A JSON key-value store of your plugin's own, kept between sessions |
-| `$.env` | `get` and `set` environment variables. Write the name as a literal string. |
+| `$.env` | `get` and `set` environment variables. Write the name as a string literal. |
 | `$.settings` | `read` what the settings files and managed policy hold |
 | `$.session` | `messages()` returns the transcript as a list of `{ role, text, toolUses }`. Also the working directory, model, and more. [`usage()`](/docs/en/plugins/mods/reference#mods-api-methods) returns context window use and plan limits. |
 | `$.mcp` | `call` a tool on a connected MCP server |
 
 Files and processes have a few rules of their own:
 
-* **Paths**: a relative path is under the session's working directory
-* **`$.fs.list`**: returns one directory's entries as `{ name, kind, size, isLink }` and doesn't descend into subdirectories
+* **Paths**: a relative path resolves against the session's working directory
+* **`$.fs.list`**: returns one directory's entries as `{ name, kind, size, isLink }` and isn't recursive
 * **`$.process.run`**: takes an argument list and uses no shell. It resolves to `{ exitCode, stdout, stderr }` whatever the exit code. It rejects if the program can't start or is still running at the timeout, which is 30 seconds by default, so wrap it in `try` and `catch`.
 
 Every one of these calls is itself an event, named for its namespace and method without the `$.`, such as `fs.read` for `$.fs.read`. A mod [earlier in the chain](/docs/en/plugins/mods/events#the-order-mods-run-in) can observe, rewrite, or refuse your call, which is how an organization restricts what mods reach.
@@ -193,4 +193,4 @@ Every one of these calls is itself an event, named for its namespace and method 
 * [React to events](/docs/en/plugins/mods/events): hook tool calls, prompts, and turns
 * [Draw in the interface](/docs/en/plugins/mods/interface): show what your mod collects in a pane or above the prompt
 * [Test a mod](/docs/en/plugins/mods/test): stub any of these calls in a test
-* [Mods reference](/docs/en/plugins/mods/reference): every event, every mods API method, and the limits
+* [Mods reference](/docs/en/plugins/mods/reference): events, mods API methods, and limits

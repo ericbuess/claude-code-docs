@@ -63,7 +63,7 @@ With no mod settings of your own, this is what your users get:
   A user who authenticates with an API key, or through Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry, gets the guard only on a machine that has managed settings.
 * **The guard protects what you manage.** A user's mod can't change what your managed hooks receive or decide, the system prompt, your managed `CLAUDE.md` and other managed instructions, what any mod reads as settings, or the tools and descriptions of your managed MCP servers.
 * **Everything else is allowed.** The guard adds no other restrictions. A user's mod can still read and write files, start processes, make network requests, rewrite tool calls and prompts, deny a tool call, approve one that would otherwise prompt, and draw in the interface, all with that user's permissions.
-* **Deny rules and your managed hooks take precedence.** Where the guard loads, a user's mod can't approve a call that a `deny` rule refuses, whichever settings file holds the rule. A block from a `PreToolUse` hook in managed settings is final too. Both apply to Claude's tool calls. Neither applies to a mod's own [`$.fs` and `$.process` calls](/docs/en/plugins/mods/api#reach-files-processes-and-the-network): with `Read(.env)` denied, a mod can still read that file with `$.fs.read` or start a program that does. To limit those calls, keep the mod from loading or hook the call in a [policy mod](#enforce-a-policy-with-a-mod-of-your-own).
+* **Deny rules and your managed hooks take precedence.** Where the guard loads, a user's mod can't approve a call that a `deny` rule refuses, whichever settings file holds the rule. A block from a `PreToolUse` hook in managed settings is final too. Both apply to Claude's tool calls. Neither applies to a mod's own [`$.fs` and `$.process` calls](/docs/en/plugins/mods/api#reach-files-processes-and-the-network): with `Read(.env)` denied, a mod can still read that file with `$.fs.read` or start a program that does. To limit those calls, keep the mod from loading or handle the call in a [policy mod](#enforce-a-policy-with-a-mod-of-your-own).
 * **Other permission checks can be overridden.** A user's mod that approves tool calls can approve a call that an `ask` rule would prompt for, or that a `PreToolUse` hook outside managed settings blocked. In auto mode, a call the mod approves runs without a classifier check.
 
 The guard's source is public in the [`mods/sec-default` directory of the Claude Code repository](https://github.com/anthropics/claude-code/tree/main/mods/sec-default).
@@ -95,7 +95,7 @@ What a user can load as a mod depends on the plugin controls you already have:
 | A marketplace allowlist | A mod from the marketplaces you allow, or from any directory with `--plugin-dir`. A mod Claude writes during a session loads only when the allowlist [includes `skills-dir`](/docs/en/plugins/org#keep-skills-directory-plugins-loading). |
 | A marketplace allowlist and `disableSideloadFlags` | A mod from the marketplaces you allow |
 
-[Manage plugins for your organization](/docs/en/plugins/org) lists every way a plugin loads and the setting that controls each.
+[Manage plugins for your organization](/docs/en/plugins/org) lists the ways a plugin loads and the setting that controls each.
 
 To check the mods in a marketplace before your users install them, see [Review what a mod can do](#review-what-a-mod-can-do). To keep users' mods out until you've done that, see [Stop user-installed mods from loading](#stop-user-installed-mods-from-loading).
 
@@ -149,7 +149,7 @@ What each setting does:
 * **`allowManagedModsOnly`**: an option on the built-in guard. Users' own mods don't load, and their settings hooks, status lines, and `/goal` keep working. [Stop user-installed mods from loading](#stop-user-installed-mods-from-loading) lists what it covers.
 * **`allowManagedHooksOnly`**: a wider setting. Only [your organization's mods](#install-your-organizations-mods) and the mods built into Claude Code load. A mod a user installed themselves doesn't. The setting also blocks hooks in users' own settings files. Read [What runs under `allowManagedHooksOnly`](/docs/en/settings-reference#what-runs-under-allowmanagedhooksonly) before you set it.
 * **`disableAllHooks`**: the widest setting. In managed settings, it stops the mods in every installed plugin, yours included, and turns off every hook in settings files, so a `PreToolUse` hook in your managed settings no longer blocks anything. Custom status lines and `/goal` stop working too. Read [`disableAllHooks`](/docs/en/settings-reference#disableallhooks) before you set it.
-* **`disableSideloadFlags`**: rejects `--plugin-dir` and `--plugin-url` at startup, so nobody loads a mod from a directory, and keeps mods Claude writes during a session from loading. The setting also rejects `--agents` and `--mcp-config`. Read [`disableSideloadFlags`](/docs/en/settings-reference#disablesideloadflags) before you set it.
+* **`disableSideloadFlags`**: rejects `--plugin-dir` and `--plugin-url` at startup, and keeps mods Claude writes during a session from loading. The setting also rejects `--agents` and `--mcp-config`. Read [`disableSideloadFlags`](/docs/en/settings-reference#disablesideloadflags) before you set it.
 
 Mods built into Claude Code, such as `AGENTS.md` support, aren't affected by these settings. Each has [its own switch](/docs/en/plugins/mods/overview#mods-built-into-claude-code).
 
@@ -204,7 +204,7 @@ A mod is a plugin, so the ways you [manage plugins for your organization](/docs/
 
 ### Set options on the built-in guard
 
-The built-in guard takes two options. Set them in managed settings under `pluginConfigs`, keyed by `cc-plugin-sec-default@builtin`, as the example in [Stop user-installed mods from loading](#stop-user-installed-mods-from-loading) does.
+The built-in guard takes options. Set them in managed settings under `pluginConfigs`, keyed by `cc-plugin-sec-default@builtin`, as the example in [Stop user-installed mods from loading](#stop-user-installed-mods-from-loading) does.
 
 The table gives what your users get with each option unset and with it set to `true`:
 
@@ -215,7 +215,7 @@ The table gives what your users get with each option unset and with it set to `t
 
 These rules decide whether an option takes effect:
 
-* **The id has one spelling here**: Claude Code reads the options only under `cc-plugin-sec-default@builtin`. `prependPlugins` accepts `sec-default@builtin` as well, and `pluginConfigs` doesn't.
+* **The id has one form here**: Claude Code reads the options only under `cc-plugin-sec-default@builtin`. `prependPlugins` accepts `sec-default@builtin` as well, and `pluginConfigs` doesn't.
 * **Only managed settings count**: the same entry in a user, project, or local settings file, or in a file passed with `--settings`, neither sets an option nor loosens one
 * **The guard has to load**: if you set `prependPlugins`, [name the guard in the list](#install-your-organizations-mods). Where the guard doesn't load, neither option applies.
 * **The guard fails closed**: if the guard can't read managed settings, it refuses every user's mod at load. If it can't check the deny rules for a call that a user's mod approved, it refuses the call.
@@ -267,7 +267,7 @@ The manifest lists the plugin by its path relative to that directory:
 
 A plugin that Claude Code copies into its cache counts as a user's, even when managed `enabledPlugins` enables it. That covers every plugin from a GitHub, git, URL, or npm source. Its mod runs among users' mods, `prependPlugins` and `appendPlugins` skip it, and it doesn't load under `allowManagedModsOnly` or `allowManagedHooksOnly`. The user's debug log has a line that starts with the plugin's id and `is enabled by managed settings, but`.
 
-Claude Code raises an event each time it's about to act, such as run a tool, and passes it to each mod in turn. A mod that counts as yours [runs before users' mods](/docs/en/plugins/mods/events#the-order-mods-run-in) even when you list it nowhere. To set its place, list its id in one of two settings. The id is the plugin's name, `@`, and the marketplace's name, such as `acme-guard@acme-tools`.
+Claude Code fires an event each time it's about to act, such as run a tool, and passes it to each mod in turn. A mod that counts as yours [runs before users' mods](/docs/en/plugins/mods/events#the-order-mods-run-in) even when you list it nowhere. To set its place, list its id in one of two settings. The id is the plugin's name, `@`, and the marketplace's name, such as `acme-guard@acme-tools`.
 
 * **`prependPlugins`**: your mod sees every event before any user's mod and every result after. It can change the event, refuse it, or skip the users' mods.
 * **`appendPlugins`**: your mod runs after every user's mod, so it sees only the events those mods pass on, in the form they pass them
@@ -302,14 +302,14 @@ To confirm where the mod runs, start a session on that machine with `claude --de
 These rules decide which ids in the two lists take effect:
 
 * **The list replaces the default**: when you set `prependPlugins` in managed settings, name `sec-default@builtin` in it to keep the built-in guard. The guard is built in and needs no `enabledPlugins` entry.
-* **Your own ids must count as yours**: in managed settings, Claude Code skips an id whose plugin doesn't meet the three conditions for an organization's mod
+* **Your own ids must count as yours**: in managed settings, Claude Code skips an id whose plugin doesn't meet the conditions for an organization's mod
 * **Repositories can't set them**: Claude Code reads both settings from managed settings and never from a repository's settings file. A user can set them in `~/.claude/settings.json` to order their own mods only on a machine with no managed settings, and only when they aren't signed in with a Team or Enterprise plan. Anywhere else, Claude Code ignores both keys in user settings. A list there neither adds nor removes the built-in guard.
 
 ### Enforce a policy with a mod of your own
 
-To keep every user's mod out, you don't need a mod of your own. Set [`allowManagedModsOnly`](#stop-user-installed-mods-from-loading). Write a policy mod when you want to admit some users' mods and refuse others, or to record what mods do.
+To keep every user's mod out, you don't need a mod of your own. Set [`allowManagedModsOnly`](#stop-user-installed-mods-from-loading). Write a policy mod when you want to allow some users' mods and refuse others, or to record what mods do.
 
-Each time another mod is about to load, your mod receives the list that `claude plugin validate` prints, in an event named [`plugin.register`](/docs/en/plugins/mods/reference#other-mods). A mod in `prependPlugins` can read that list and refuse the mod. It can also [hook any mods API call by name](/docs/en/plugins/mods/api#reach-files-processes-and-the-network) to record or refuse that call for every other mod. The name is the method without the `$.`, so a hook on `fs.write` sees every `$.fs.write` call.
+Each time another mod is about to load, your mod receives the list that `claude plugin validate` prints, in an event named [`plugin.register`](/docs/en/plugins/mods/reference#other-mods). A mod in `prependPlugins` can read that list and refuse the mod. It can also [handle any mods API call by name](/docs/en/plugins/mods/api#reach-files-processes-and-the-network) to record or refuse that call for every other mod. The name is the method without the `$.`, so a hook on `fs.write` sees every `$.fs.write` call.
 
 This policy mod refuses any user's mod whose own code calls `$.process.run` or `$.process.spawn`. It also keeps an audit log, writing each tool call and each file a mod writes to the debug log. Because it runs first, the log records what was requested, before any user's mod changes it. Save it as `acme-guard/hooks/register.js`:
 
@@ -353,7 +353,7 @@ The file registers three hooks:
 The `plugin.register` hook reads two fields of the event:
 
 * **`e.tier`**: where the mod would run, one of `prepend`, `user`, `append`, or `builtin`. Every mod a person installs is `user`.
-* **`e.uses.calls`**: the mods API methods the mod calls, each spelled `namespace.method` such as `process.run`, without the `$.` that `claude plugin validate` prints
+* **`e.uses.calls`**: the mods API methods the mod calls, each written `namespace.method` such as `process.run`, without the `$.` that `claude plugin validate` prints
 
 When a user installs a mod that calls `$.process.run`, the mod doesn't load, and their debug log has a line that ends with `refused by acme-guard:` and your reason. The refusal also reaches the transcript in a [session that hot-reloads a plugin directory](/docs/en/plugins/mods/troubleshoot#find-out-why-a-mod-does-nothing). To block a call without refusing the whole mod, return `{ deny: 'your reason' }` from a hook on that call's name.
 
@@ -361,11 +361,11 @@ To send the audit lines somewhere other than the debug log, call `$.http.fetch` 
 
 A session can run without your mod. If the worker thread that runs installed mods [crashes three times](/docs/en/plugins/mods/troubleshoot#mods-that-run-in-the-hooks-worker-are-off-for-this-session), Claude Code unloads every mod that isn't built in, including yours, until the user runs `/reload-plugins` or starts a new session. And a user who starts Claude Code with `--safe-mode` runs without installed mods, yours included.
 
-[Create a mod](/docs/en/plugins/mods/create) covers the files a mod needs. [Test a mod that judges other mods](/docs/en/plugins/mods/test#test-a-mod-that-judges-other-mods) has a test file for this policy mod.
+[Create a mod](/docs/en/plugins/mods/create) covers the files a mod needs. [Test a policy mod](/docs/en/plugins/mods/test#test-a-mod-that-judges-other-mods) has a test file for this policy mod.
 
 #### Refuse mods when your check fails
 
-If your `plugin.register` hook throws or runs past its time limit, Claude Code skips the hook, so the check fails open and the mod it was checking loads. To fail closed and refuse users' mods, move the check into a named function and add a `.catch` handler that returns the refusal. This version of the file shows the `plugin.register` hook only, so keep the two audit hooks from the first version in `register`:
+If your `plugin.register` hook throws or exceeds its time limit, Claude Code skips the hook, so the check fails open and the mod it was checking loads. To fail closed and refuse users' mods, move the check into a named function and add a `.catch` handler that returns the refusal. This version of the file shows the `plugin.register` hook only, so keep the two audit hooks from the first version in `register`:
 
 ```javascript acme-guard/hooks/register.js theme={null}
 const BLOCKED_CALLS = ['process.run', 'process.spawn']
@@ -380,7 +380,7 @@ async function checkMod($, e, next) {
 }
 
 export function register(on) {
-  // The handler runs only when checkMod throws or runs past its time limit
+  // The handler runs only when checkMod throws or exceeds its time limit
   on('plugin.register', checkMod).catch(async ($, e, next) => {
     // Let your organization's mods and built-in mods load
     if (e.tier !== 'user') return next(e)

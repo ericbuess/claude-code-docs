@@ -88,7 +88,7 @@ When a developer starts a session and selects your environment, Anthropic's cont
 1. A runner with free capacity claims the session and holds a lease on it.
 2. The runner clones the repository into its working directory and spawns a child Claude Code process.
 3. The child streams events back over HTTPS while the runner keeps polling; each poll refreshes the lease and doubles as the heartbeat.
-4. If the runner stops polling for about 60 seconds, the server requeues the session for another runner.
+4. If the runner stops polling, its lease lapses after about 60 seconds, and the server requeues the session for another runner within a few minutes.
 
 The runner gives each poll request 10 seconds. When a request times out, is lost, or gets a response the runner can't parse, the runner keeps serving its live sessions and retries after a second or two instead of waiting for the next scheduled poll. For example, an intercepting proxy that answers the poll with its own page produces a response the runner can't parse. Each time another request fails in one of those ways, the runner doubles the gap before the next retry, up to 20 seconds, and shortens the gap whenever the lease is close to expiring.
 
@@ -105,7 +105,7 @@ How your infrastructure stops a runner decides whether you need `--retire-at`. A
 
 1. The runner stops taking new work.
 2. The runner releases each active session through the same release path the [`--release-idle-session-min`](/docs/en/self-hosted-environments-reference#runner-cli-flags) flag uses, so the session resumes on a fresh runner when the user sends their next message. When the runner releases each session depends on its state:
-   * The runner releases a session that's mid-turn as soon as that turn finishes.
+   * The runner releases a session that's mid-turn after that turn finishes. It first waits for the session's process to report the turn's end to Anthropic, for no longer than [`SELF_HOSTED_RUNNER_POST_TURN_SETTLE_MS`](/docs/en/self-hosted-environments-reference#environment-variable-only-settings). Before v2.1.280, the runner released the session as soon as the turn finished.
    * When a turn finishes and leaves background tasks running, the runner waits up to 60 seconds for them, then releases the session even if they're still running. If the tasks have finished but the follow-up turn that reads their results hasn't run yet, the runner keeps the session until that turn finishes, and waits no longer than [`SELF_HOSTED_RUNNER_BG_RESULT_GRACE_MS`](/docs/en/self-hosted-environments-reference#environment-variable-only-settings) for that turn to start.
 3. The runner exits 0 once all its sessions are released.
 

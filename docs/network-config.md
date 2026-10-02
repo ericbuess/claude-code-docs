@@ -257,6 +257,10 @@ For self-hosted [GitHub Enterprise Server](/docs/en/github-enterprise-server) in
 
 The preceding table covers the standalone CLI. The Claude Desktop app and claude.ai in a browser load their application code and user content from additional Anthropic CDN hosts, including `assets-proxy.anthropic.com` and the other `*.claudeusercontent.com` origins that serve [artifacts](/docs/en/artifacts) in those apps. Allowing `claude.ai` while blocking those hosts produces a blank page rather than an error. See [network access requirements](/docs/en/desktop#network-access-requirements) on the Desktop page.
 
+Claude Desktop and claude.ai also render some tool results inside a conversation as interactive widgets, such as the [MCP Apps](https://claude.com/docs/connectors/building/mcp-apps/getting-started) some connectors provide. Those widgets load from generated subdomains of `claudemcpcontent.com`, so allow `*.claudemcpcontent.com` with the wildcard intact. If you block it, the rest of the app keeps working, but those widgets don't load.
+
+#### Third-party hosts for artifact fonts and libraries
+
 An [artifact](/docs/en/artifacts) that loads a typeface from [Google Fonts](/docs/en/artifacts#improve-the-visual-design) also requests `fonts.googleapis.com` and `fonts.gstatic.com`. Both hosts are optional. If you block them, artifacts render in fallback typefaces. Block with a fast rejection rather than a silent drop so the font request fails immediately instead of delaying the page's first render.
 
 Artifacts can also load JavaScript libraries, such as React or a charting package, from `cdnjs.cloudflare.com`, `cdn.jsdelivr.net`, `cdn.tailwindcss.com`, `code.jquery.com`, and `unpkg.com`, and from no other external host. If you block those hosts, the parts of an artifact that depend on a library don't work, and unlike a blocked font, a blocked library has no fallback. Block with a fast rejection here too, so a blocked library request fails at once rather than hanging until it times out.

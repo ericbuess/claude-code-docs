@@ -653,29 +653,32 @@ Session recap is on by default for every plan and provider. The recap is always 
 
 When a claude.ai [usage limit](/docs/en/errors#youve-hit-your-session-limit) stops Claude mid-task, Claude Code waits in the open session and continues the task on its own after the limit resets. Automatic continue is on by default in interactive sessions signed in with a claude.ai subscription. Requires Claude Code v2.1.234 or later.
 
-While Claude Code waits, a line at the bottom of the session shows when it will continue:
+While Claude Code waits, the lines at the bottom of the session show when your limit resets and when Claude will continue:
 
 ```text theme={null}
-Usage limit reached · continuing automatically at 3:45pm · esc to cancel
+Usage limit reached · limit resets 3:45pm
+Continuing automatically at 3:45pm · esc to cancel
 ```
+
+Either line can carry more after these words, such as a help link on the first or `/usage-credits to continue now` on the second. When the wait starts on its own, the conversation also records it with a line that reads `Usage limit reached · continuing automatically at 3:45pm · esc to cancel`.
 
 Keep the session open. What happens next depends on how the wait ends:
 
-* **At the reset**: the line reads `continuing shortly`, then `Usage limit reset · continuing automatically`, and Claude Code sends Claude a fixed prompt to pick the task up where it stopped. It doesn't resend your last message.
-* **After your computer slept**: if it slept for more than about 30 minutes and the limit reset while it slept, the line reads `Your usage limit has reset · press enter to continue`. Press `Enter` to continue. After a shorter sleep, Claude Code continues on its own.
+* **At the reset**: the second line changes to `Continuing shortly · esc to cancel`. Then `Usage limit reset · continuing automatically` appears in the conversation, and Claude Code prompts Claude to pick the task up where it stopped. It doesn't resend your last message.
+* **After your computer slept**: if it slept for more than about 30 minutes and the limit reset while it slept, the first line reads `Your usage limit has reset` and the second reads `Press enter to continue`. Press `Enter` to continue. After a shorter sleep, or one that ended before the reset, Claude Code continues on its own.
 * **Early**: when you finish adding [usage credits](/docs/en/costs#add-usage-credits-to-your-subscription) with `/usage-credits`, sign back in after `/upgrade`, or switch models with `/model` during the wait, Claude Code checks whether usage is available again and continues right away if it is. It doesn't check after an upgrade or purchase you make in a browser on your own. Under [`opusplan`](/docs/en/model-config#opusplan-model-setting) and other model settings that run plan mode on a different model, Claude Code waits for the reset instead.
 
 The continued task runs like any other turn. Claude Code still asks for [permissions](/docs/en/permissions) as usual, so the task can stop on a prompt while you're away. If it hits the limit again, Claude Code re-arms the wait on its own at most twice in a row, then stops and shows `Automatic continue stopped after repeated usage-limit hits · /rate-limit-options to try again`.
 
 ### Cancel the wait
 
-Press `Esc` at an empty prompt, or `Ctrl+C`, while the line shows, or run [`/rate-limit-options`](/docs/en/commands#all-commands) and pick **Don't continue automatically**. Claude Code confirms with a line that starts `Automatic continue cancelled`.
+Press `Esc` at an empty prompt, or `Ctrl+C`, while the lines show, or run [`/rate-limit-options`](/docs/en/commands#all-commands) and pick **Don't continue automatically**. Claude Code confirms with a line that starts `Automatic continue cancelled`.
 
 After a cancel, nothing continues until you send a prompt or pick the row that starts **Wait here, then continue automatically** from `/rate-limit-options` again. Claude Code doesn't start a wait on its own again for that reset window; the next reset window starts fresh.
 
 The wait also ends without continuing the task in these cases:
 
-* **You send a prompt**: Claude Code runs your prompt instead of waiting.
+* **You send a prompt**: Claude Code sends your prompt instead of waiting. If your prompt hits the limit too, it stays in the conversation and Claude Code starts the wait again.
 * **You exit Claude Code**: the wait doesn't restart when you resume the session.
 * **The conversation changes hands**: you switch accounts with `/login`, clear or rewind the conversation, `/resume` another session, pull one with `/teleport`, relaunch with `/tui`, or hand the session to Claude Desktop, a background session, or the cloud.
 * **The setting turns off, or the reset moves past 24 hours**: this ends only a wait Claude Code started on its own. A wait you picked from `/rate-limit-options` keeps counting down.

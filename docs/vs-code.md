@@ -336,6 +336,7 @@ In the Plugins tab:
 
 * **Installed plugins** appear at the top with toggle switches to enable or disable them.
   * If you turn off a plugin that your project's shared `.claude/settings.json` turns on, the extension asks first: **Disable for me** turns it off only for you, while **Disable for everyone** changes the shared file.
+  * A plugin that failed to load shows a short reason on its row. Click the reason for what you can do about it, including copying the full error message to look up in [Troubleshoot plugins](/docs/en/plugins/troubleshooting).
 * **Available plugins** from your configured marketplaces appear below
 * Search to filter plugins by name or description
 * Click **Install** on any available plugin
@@ -374,14 +375,21 @@ The URL takes two query parameters:
 | Parameter | Description |
 | - | - |
 | `plugin` | The plugin's name as its marketplace lists it. Required. |
-| `marketplace` | Where the plugin comes from: a GitHub `owner/repo`, an `https://` URL, or a git SSH URL such as `git@github.com:owner/repo.git`. Defaults to `anthropics/claude-plugins-official` when omitted. |
+| `marketplace` | The marketplace's [source](/docs/en/plugins/install#add-a-marketplace): a GitHub `owner/repo`, an `https://` URL, or a git SSH address such as `git@github.com:owner/repo.git`. Defaults to `anthropics/claude-plugins-official` when omitted. |
 
-Some values that the [Marketplaces tab](#manage-marketplaces) accepts don't work in a link, such as a local path or an `http://` address. For those, VS Code shows an error message and the dialog doesn't open.
+The extension checks both values before it opens anything:
 
-Two cases end at a message in the dialog instead of the scope choice:
+* **Plugin name**: at most 100 characters, starting with an ASCII letter or digit and otherwise using only ASCII letters, digits, `.`, `_`, and `-`.
+* **Marketplace source**: only the forms the `marketplace` parameter lists, so not a local path, an `http://` address, or the marketplace's name, such as `claude-plugins-official`. An `https://` URL can't contain a user name, password, or query string.
+* **Git ref**: to pin the marketplace to a branch or tag, append the ref to the source after `%23`, the encoded form of `#`, as in `marketplace=owner/repo%23v1.0`. A link with an unencoded `#` fails. Marketplaces in the `anthropics` GitHub organization can't be pinned in a link.
+
+Someone who opens a link that breaks these rules sees an error that starts with `Invalid plugin installation URL`. The Claude Code panel and the dialog don't open, and nothing installs. If your plugin's name or marketplace can't go in a link, tell people to add the marketplace in the **Marketplaces** tab and then install the plugin from the **Plugins** tab.
+
+These cases end at a message in the dialog instead of the scope choice:
 
 * **The marketplace doesn't list a plugin by that name**: the dialog reports that the plugin wasn't found. Check the `plugin` value against the marketplace's listing.
 * **The plugin is already installed**: the dialog says so, and nothing changes.
+* **A different marketplace with the same name is already added**: the dialog says the link's marketplace wasn't added, and nothing installs.
 
 GitHub READMEs, issues, and some other Markdown hosts strip links whose scheme isn't `http` or `https`, so a `vscode://` link there renders as plain text. Put the URL in a code block on those hosts, as [The link renders as plain text instead of being clickable](/docs/en/deep-links#the-link-renders-as-plain-text-instead-of-being-clickable) describes for `claude-cli://` links.
 

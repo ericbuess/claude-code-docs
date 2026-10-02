@@ -235,7 +235,7 @@ Every span carries the [standard attributes](#standard-attributes) plus a `span.
 | `duration_ms` | Wall-clock duration including retries | |
 | `ttft_ms` | Time to first token in milliseconds | |
 | `first_content_ms` | Time from request start to the first content block of the successful attempt, in milliseconds. Absent on requests that fell back to the non-streaming path. Requires Claude Code v2.1.268 or later | |
-| `input_tokens` | Input token count from the API usage block | |
+| `input_tokens` | Input token count from the API usage block. Excludes tokens read from or written to the prompt cache, which are reported in `cache_read_tokens` and `cache_creation_tokens` | |
 | `output_tokens` | Output token count | |
 | `cache_read_tokens` | Tokens read from prompt cache | |
 | `cache_creation_tokens` | Tokens written to prompt cache | |
@@ -661,7 +661,7 @@ Incremented after each API request.
 **Attributes**:
 
 * All [standard attributes](#standard-attributes)
-* `type`: (`"input"`, `"output"`, `"cacheRead"`, `"cacheCreation"`)
+* `type`: (`"input"`, `"output"`, `"cacheRead"`, `"cacheCreation"`). The `"input"` type excludes tokens read from or written to the prompt cache, which are counted under `"cacheRead"` and `"cacheCreation"`
 * `model`: Model identifier (for example, "claude-sonnet-5")
 * `query_source`: Category of the subsystem that issued the request. One of `"main"`, `"subagent"`, or `"auxiliary"`
 * `speed`: `"fast"` when the request used fast mode. Absent otherwise
@@ -800,7 +800,7 @@ Logged for each API request to Claude.
 * `cost_usd`: Estimated cost in USD
 * `cost_usd_micros`: Estimated cost in millionths of a US dollar, emitted as an integer
 * `duration_ms`: Request duration in milliseconds
-* `input_tokens`: Number of input tokens
+* `input_tokens`: Number of input tokens, excluding tokens read from or written to the prompt cache
 * `output_tokens`: Number of output tokens
 * `cache_read_tokens`: Number of tokens read from cache
 * `cache_creation_tokens`: Number of tokens used for cache creation
@@ -1349,7 +1349,7 @@ The exported metrics and events support a range of analyses:
 
 | Metric | Analysis Opportunity |
 | - | - |
-| `claude_code.token.usage` | Break down by `type` (input/output), user, team, model, `skill.name`, `plugin.name`, or `agent.name` |
+| `claude_code.token.usage` | Break down by token [`type`](#token-counter), user, team, model, `skill.name`, `plugin.name`, or `agent.name` |
 | `claude_code.session.count` | Track adoption and engagement over time |
 | `claude_code.lines_of_code.count` | Measure productivity by tracking code additions and removals, broken down by model |
 | `claude_code.commit.count` & `claude_code.pull_request.count` | Understand impact on development workflows |
@@ -1402,6 +1402,23 @@ The event data describes each Claude Code interaction in detail:
 * Error patterns by tool type
 
 **Performance monitoring**: track API request durations and tool execution times to identify performance bottlenecks.
+
+### Map input tokens to OpenTelemetry GenAI semantic conventions
+
+Claude Code exports input token counts as they appear in the API response's usage block, so these values exclude tokens read from or written to the [prompt cache](/docs/en/prompt-caching):
+
+* `input_tokens` on the [`claude_code.llm_request`](#span-attributes) span and the [`api_request`](#api-request-event) event
+* The `"input"` type of the [`claude_code.token.usage`](#token-counter) metric
+
+Claude Code doesn't set `gen_ai.usage.*` attributes. The [OpenTelemetry GenAI semantic conventions](https://github.com/open-telemetry/semantic-conventions-genai) say `gen_ai.usage.input_tokens` should include tokens read from and written to the cache. To compute that total:
+
+* From the span or event: add `input_tokens`, `cache_read_tokens`, and `cache_creation_tokens`
+* From the `claude_code.token.usage` metric: add its `"input"`, `"cacheRead"`, and `"cacheCreation"` types
+
+The conventions also define separate attributes for cache reads and cache writes:
+
+* `cache_read_tokens` maps to `gen_ai.usage.cache_read.input_tokens`
+* `cache_creation_tokens` maps to `gen_ai.usage.cache_write.input_tokens`. Older versions of the conventions name the cache write attribute `gen_ai.usage.cache_creation.input_tokens`, so use the name your backend expects.
 
 ## Audit security events
 

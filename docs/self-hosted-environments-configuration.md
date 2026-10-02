@@ -28,7 +28,7 @@ The runner sets the following in the wrapper's environment:
 
 | Variable | Description |
 | :- | :- |
-| `CLAUDE_CODE_SESSION_ACCESS_TOKEN` | The session JWT, prefixed `sk-ant-cc-`. Its `act` claim identifies the session creator, with the creator's email and upstream identity-provider subject when the creating surface recorded them. The value is the token at spawn time; refreshes arrive over the child's stdin, so a wrapper sees only the initial value. See [Verify session identity](/docs/en/self-hosted-environments-identity). |
+| `CLAUDE_CODE_SESSION_ACCESS_TOKEN` | The session JWT, prefixed `sk-ant-cc-`. Its `act` claim identifies the session creator, with the creator's email when the creating surface recorded it. The value is the token at spawn time; refreshes arrive over the child's stdin, so a wrapper sees only the initial value. See [Verify session identity](/docs/en/self-hosted-environments-identity). |
 | `CCR_SESSION_ACCOUNT_EMAIL` | The session creator's email, pre-extracted by the runner from the token's `act.email` claim without signature verification. Suitable for labelling, such as commit trailers. When the email gates credential issuance, verify the token and read the claim from it instead; see [Provision credentials scoped to the session creator](#provision-credentials-scoped-to-the-session-creator). Unset when the token carries no creator email. Treat as personally identifiable information. |
 | `CLAUDE_RUNNER_CLIENT_PLATFORM` | The client surface that created the session, such as `web_claude_ai`, `desktop_app`, `ios`, `claude_code_cli`, or `scheduled_trigger`. Anthropic records the value once at session creation, so the wrapper and every lifecycle hook see the same value. Use it for adoption analytics and labelling only, not as an authorization signal. Unset when the session has no recorded or recognized surface, so reference it as `${CLAUDE_RUNNER_CLIENT_PLATFORM:-}` under `set -u`. Requires Claude Code v2.1.229 or later. |
 | `CLAUDE_RUNNER_CLAUDE_BIN` | Absolute path to the runner's own Claude Code binary. End your wrapper with `exec "$CLAUDE_RUNNER_CLAUDE_BIN" "$@"` to pass control to the pinned binary without hardcoding an install path. |
@@ -86,7 +86,7 @@ eval "$creds"
 exec "$CLAUDE_RUNNER_CLAUDE_BIN" "$@"
 ```
 
-Use `jq -re` rather than `jq -r` when the extracted claim gates an auth decision, so an absent claim exits non-zero instead of passing the literal string `null` downstream. Sessions created by an organization service identity, such as bot and agent sessions, carry an `agent:` subject rather than `user:`, so this example refuses them; if your environment serves those sessions, decide explicitly whether the wrapper falls back to a default credential for them instead of exiting. When your credential exchange needs the SSO subject or email instead, read `.act.attested_by.sub` or `.act.email` and handle their absence: the token carries them only when the creating surface recorded them, and a [CLI-dispatched session](/docs/en/self-hosted-environments-testing#run-the-test-loop) can lack both. For the full claim reference and verification from services outside the runner, see [Verify session identity](/docs/en/self-hosted-environments-identity).
+Use `jq -re` rather than `jq -r` when the extracted claim gates an auth decision, so an absent claim exits non-zero instead of passing the literal string `null` downstream. Sessions created by an organization service identity, such as bot and agent sessions, carry an `agent:` subject rather than `user:`, so this example refuses them; if your environment serves those sessions, decide explicitly whether the wrapper falls back to a default credential for them instead of exiting. When your credential exchange needs the email instead, read `.act.email` and handle its absence: the token carries it only when the creating surface recorded it, and a [CLI-dispatched session](/docs/en/self-hosted-environments-testing#run-the-test-loop) can lack it. For the full claim reference and verification from services outside the runner, see [Verify session identity](/docs/en/self-hosted-environments-identity).
 
 ## Lifecycle hooks
 
@@ -96,7 +96,7 @@ These hooks are distinct from [Claude Code hooks](/docs/en/hooks), which run ins
 
 ### checkout
 
-Runs once per repository, in place of the runner's built-in clone and fetch. Use the hook to clone from a read-through mirror, seed a working tree from an archive, or apply per-session git auth. The runner sets:
+Runs once per repository, in place of the runner's built-in clone and fetch. Use the hook to clone from a read-through mirror, seed a working tree from an archive, or apply per-session git auth. The runner sets these variables, and may set other `CLAUDE_RUNNER_` variables that the table doesn't list:
 
 | Variable | Description |
 | :- | :- |
@@ -108,6 +108,7 @@ Runs once per repository, in place of the runner's built-in clone and fetch. Use
 | `CLAUDE_RUNNER_API_BASE_URL` | Anthropic API base URL for session-scoped calls |
 | `CLAUDE_RUNNER_CLIENT_PLATFORM` | The client surface that created the session, such as `web_claude_ai`, `desktop_app`, or `ios`. Unset when the session has no recorded or recognized surface. |
 | `CLAUDE_CODE_SESSION_ACCESS_TOKEN` | The session access token, for session-scoped API calls |
+| `GIT_CONFIG_COUNT`, `GIT_CONFIG_KEY_n`, `GIT_CONFIG_VALUE_n` | Git settings the runner fixes for the git your hook runs. [Git configuration inside lifecycle hooks](#git-configuration-inside-lifecycle-hooks) describes them. Requires Claude Code v2.1.280 or later. |
 
 The script must leave a working tree at `CLAUDE_RUNNER_CHECKOUT_PATH` checked out at the requested revision. Detached HEAD is fine; the runner creates the session's working branch on top. The runner verifies the path contains a `.git` afterwards; if your hook materializes a non-git source such as Perforce or an unpacked tarball, set `CLAUDE_RUNNER_SKIP_GIT_VERIFY=1` in the runner's environment to skip that check. Git-based flows such as working-branch creation and pushing results require a git checkout, so export outcomes from non-git trees with a [`post-session` hook](#post-session).
 
@@ -138,6 +139,7 @@ The hook fires on every session end where a child process was spawned, whatever 
 | `CLAUDE_RUNNER_API_BASE_URL` | Anthropic API base URL for session-scoped calls |
 | `CLAUDE_RUNNER_CLIENT_PLATFORM` | The client surface that created the session, such as `web_claude_ai`, `desktop_app`, or `ios`. Unset when the session has no recorded or recognized surface. Requires Claude Code v2.1.229 or later. |
 | `CLAUDE_CODE_SESSION_ACCESS_TOKEN` | The session access token, for session-scoped API calls |
+| `GIT_CONFIG_COUNT`, `GIT_CONFIG_KEY_n`, `GIT_CONFIG_VALUE_n` | Git settings the runner fixes for the git your hook runs. [Git configuration inside lifecycle hooks](#git-configuration-inside-lifecycle-hooks) describes them. Requires Claude Code v2.1.280 or later. |
 
 `CLAUDE_RUNNER_EXIT_REASON` takes one of four values:
 
@@ -154,12 +156,13 @@ The hook's exit status never affects the session outcome; a failure is logged an
 #!/usr/bin/env bash
 set -u
 IFS=':'
-# Pin config the session could have planted in the checkout's .git/config:
 # -c overrides beat repo-local settings, blocking session-written fsmonitor,
 # hook-path, and gpg-program config from executing code with the hook's
-# privileges. Repo-local credential.helper, core.sshCommand, and pushurl
-# still apply; if the hook holds credentials the session didn't, pin the
-# push URL and helper too (see the note below the script).
+# privileges. -c commit.gpgsign=false also leaves these rescue commits
+# unsigned under --configure-git.
+# Repo-local credential.helper and pushurl still apply, and on a runner
+# before v2.1.280 so does core.sshCommand; if the hook holds credentials
+# the session didn't, see the note below the script.
 g() { git -c core.fsmonitor=false -c core.hooksPath=/dev/null \
         -c commit.gpgsign=false "$@"; }
 for ws in $CLAUDE_RUNNER_WORKSPACE_PATHS; do
@@ -171,7 +174,7 @@ for ws in $CLAUDE_RUNNER_WORKSPACE_PATHS; do
 done
 ```
 
-The hook pushes with whatever git credentials are available in its own environment on the runner host. Under the [no-credentials-in-the-image posture](/docs/en/self-hosted-environments-deploy#configure-git), including when the built-in clone goes through the Anthropic git proxy, there are none, so mint a short-lived push credential inside the hook before pushing: exchange the session token the hook receives in `CLAUDE_CODE_SESSION_ACCESS_TOKEN` with your own token service, verifying it as [Verify session identity](/docs/en/self-hosted-environments-identity) describes. When the hook holds a credential the session didn't, also pin where it pushes: replace `origin` with an operator-supplied URL and pass `-c credential.helper=` plus your own helper, so repo-local config the session wrote can't redirect the credentialed push.
+The hook pushes with whatever git credentials are available in its own environment on the runner host. Under the [no-credentials-in-the-image posture](/docs/en/self-hosted-environments-deploy#configure-git), including when the built-in clone goes through the Anthropic git proxy, there are none, so mint a short-lived push credential inside the hook before pushing: exchange the session token the hook receives in `CLAUDE_CODE_SESSION_ACCESS_TOKEN` with your own token service, verifying it as [Verify session identity](/docs/en/self-hosted-environments-identity) describes. When the hook holds a credential the session didn't, replace `origin` with an operator-supplied URL and pass `-c credential.helper=` plus your own helper. [Git configuration inside lifecycle hooks](#git-configuration-inside-lifecycle-hooks) describes what session-written configuration can still affect.
 
 #### Hook timing when the runner releases a session
 
@@ -183,6 +186,27 @@ A released session can resume on another runner. On a runner on v2.1.236 or late
 This applies whenever the runner releases a session: at the idle timeout, at the [`--retire-at`](/docs/en/self-hosted-environments-reference#runner-cli-flags) time, and, on a runner on v2.1.260 or later, at a session's [`--kill-session-after-min`](/docs/en/self-hosted-environments-reference#runner-cli-flags) limit. A session whose turn has ended and that holds only background tasks counts as idle here. Before v2.1.236, the runner released the session first and then ran this hook in both cases.
 
 During a `SIGTERM` drain, the runner holds the session lease until the hook finishes; see [Shutdown timing](/docs/en/self-hosted-environments-deploy#shutdown-timing).
+
+### Git configuration inside lifecycle hooks
+
+The `checkout` and `post-session` hooks run with the session's access token in their environment, and the git they run reads configuration files that sessions can write, such as `~/.gitconfig` and a checkout's `.git/config`. Before either hook runs, the runner sets git settings in the hook's environment, including the ones below, as `GIT_CONFIG_COUNT`/`GIT_CONFIG_KEY_n`/`GIT_CONFIG_VALUE_n` pairs and git environment variables. Git ranks those above every configuration file, and they apply only to the git your hooks run, not to the session's own git. At startup, the runner prints a `[runner:git] lifecycle hooks:` line that shows the hooks path, allowed protocols, gpg programs, and signing mode in effect. Requires Claude Code v2.1.280 or later.
+
+* **Git hooks**: unless you supply a value, `core.hooksPath` is `/dev/null`, so git skips the hooks in a repository's `.git/hooks` and any hooks directory that `~/.gitconfig` names. To supply one, export `core.hooksPath` as a `GIT_CONFIG_KEY_n`/`GIT_CONFIG_VALUE_n` pair in the runner's environment. The runner also reads `core.hooksPath` from the system git configuration, and uses it only when the runner's user can't write that file, the directory it names, or the hook files in it. When the runner ignores a value, a `[runner:warn]` line at startup names the value and the reason.
+* **File system monitor**: `core.fsmonitor` is empty, so git in your hook doesn't run a monitor program that a configuration file names.
+* **Remote protocols**: `GIT_ALLOW_PROTOCOL` is `https:http:ssh`. A clone, fetch, or push that uses a local path, a `file://` URL, or a `git://` URL fails with `fatal: transport 'file' not allowed` or `fatal: transport 'git' not allowed`.
+* **SSH command and credential prompt**: git in your hook ignores `core.sshCommand` and `core.askPass` from configuration files. To use your own SSH command, set `GIT_SSH_COMMAND` in the runner's environment. To use a credential prompt program, set `GIT_ASKPASS` there. Sessions inherit the runner's environment, so both variables also reach the session's own git. Don't put a credential in either.
+* **gpg programs**: `gpg.program`, `gpg.openpgp.program`, `gpg.x509.program`, and `gpg.ssh.program` are paths the runner sets, never values from a configuration file.
+* **Commit signing**: with [`--configure-git`](/docs/en/self-hosted-environments-deploy#let-the-runner-configure-git), commits you make from a hook are signed as the session. Without the flag, `commit.gpgsign` and `tag.gpgsign` are `false`.
+
+To change one of these settings, use the runner's environment or a `git -c` option inside the hook:
+
+* **Configuration pairs**: a `GIT_CONFIG_KEY_n`/`GIT_CONFIG_VALUE_n` pair you export in the runner's environment replaces the runner's value for the same key. Number your pairs from `0` and set `GIT_CONFIG_COUNT` to how many there are. When the last pair the count announces is missing, the runner ignores all of your pairs and logs a `[runner:warn]` line at startup.
+* **Git environment variables**: the runner leaves `GIT_ALLOW_PROTOCOL`, `GIT_SSH_COMMAND`, and `GIT_ASKPASS` as you set them in its environment.
+* **`git -c` options**: a `git -c` option inside the hook overrides a `GIT_CONFIG_KEY_n` pair, the runner's or yours. It doesn't change `GIT_ALLOW_PROTOCOL`, `GIT_SSH_COMMAND`, or `GIT_ASKPASS`, which git reads ahead of any configuration.
+
+Git in your hook still reads every setting the runner doesn't set, such as credential helpers, `url.*.insteadOf` rewrites, and filter drivers, from every configuration file, including the ones sessions can write. A credential helper or filter driver named in one of those files runs as a program with your hook's privileges, and configuration in those files can still change where a push from your hook goes, including a push to a URL you pass on the command line.
+
+Before v2.1.280, the runner set none of these settings, and under `--configure-git` a commit made from a hook failed unless the hook passed `-c commit.gpgsign=false`.
 
 ### command
 

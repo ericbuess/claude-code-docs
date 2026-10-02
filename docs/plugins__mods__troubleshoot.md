@@ -10,7 +10,7 @@ When a mod's module or one of its hooks fails, Claude Code skips it and the sess
 
 ## Find out why a mod does nothing
 
-When a mod does nothing, two checks find the reason: what Claude Code reads from the mod's files, and the line it writes when it skips something. For the first, in your shell run [`claude plugin validate`](/docs/en/plugins/mods/create#check-what-claude-code-reads-from-your-mod) with the mod's directory, as in `claude plugin validate ./first-mod`. It catches a misspelled event, a bad manifest, and a module Claude Code can't read, without starting a session.
+When a mod does nothing, check what Claude Code reads from the mod's files, and the line it writes when it skips something. For the first, in your shell run [`claude plugin validate`](/docs/en/plugins/mods/create#check-what-claude-code-reads-from-your-mod) with the mod's directory, as in `claude plugin validate ./first-mod`. It catches a misspelled event, a bad manifest, and a module Claude Code can't read, without starting a session.
 
 When a module doesn't load, a hook is skipped, or another mod refuses yours, Claude Code writes one line that names your mod. Where you read that line depends on the session:
 
@@ -25,7 +25,7 @@ To check whether your setup lets mods load at all, without installing one, run `
 | Message includes | What it means |
 | :- | :- |
 | `no hooks module to load` | Mods can load. The command found no mod to test in this directory. |
-| `hooks modules are turned off here` | A setting is keeping your mods out: `disableAllHooks` in your own settings, or your organization's policy |
+| `hooks modules are turned off here` | A setting is blocking your mods: `disableAllHooks` in your own settings, or your organization's policy |
 | `hooks modules are turned off in this process` | Anthropic has turned installed mods off remotely. No setting on your machine turns them back on. |
 
 An organization can also set `allowManagedModsOnly` to allow only its own mods, which this command doesn't report. In that case a mod you install doesn't load, and [a message says why](/docs/en/plugins/mods/troubleshoot#messages-from-the-built-in-guard).
@@ -90,7 +90,7 @@ Fix the error the reason names.
 
 ### `options do not fit plugin.json userConfig`
 
-The line starts with the mod's name, then `hooks module did not load: options do not fit plugin.json userConfig:` and a reason. An option doesn't fit its [`userConfig`](/docs/en/plugins/components#user-configuration) field, such as a number above the field's `max`, or a required field has no value.
+The line starts with the mod's name, then `hooks module did not load: options do not fit plugin.json userConfig:` and a reason. An option fails validation against its [`userConfig`](/docs/en/plugins/components#user-configuration) field, such as a number above the field's `max`, or a required field has no value.
 
 Set or change the value. The end of the line names its `pluginConfigs` entry in `settings.json`.
 
@@ -112,7 +112,7 @@ The mod loaded, and then Claude Code skipped one of its hooks or unloaded it.
 
 ### `hook skipped`
 
-The line names the mod and the event, then says `hook skipped:` and a reason, as in `first-mod: tool.call hook skipped: threw Error: boom`. A hook threw, ran past its [10-second time limit](/docs/en/plugins/mods/reference#limits), or returned a result of the wrong shape. The line appears once for each event and kind of failure until the mod reloads.
+The line names the mod and the event, then says `hook skipped:` and a reason, as in `first-mod: tool.call hook skipped: threw Error: boom`. A hook threw, exceeded its [time limit](/docs/en/plugins/mods/reference#limits), or returned a result of the wrong shape. The line appears once for each event and kind of failure until the mod reloads.
 
 Fix the error. The debug log has a line for every occurrence.
 
@@ -165,7 +165,7 @@ Read the reason on that line. Common causes are a prop the element doesn't take 
 
 ### `$.ui.open` runs and no pane appears
 
-The call didn't come from something the user did, and the terminal is narrower than 144 columns.
+The call didn't come from something the user did, and the terminal is narrower than [the width that pane needs](/docs/en/plugins/mods/interface#when-a-pane-waits-for-a-wider-terminal).
 
 Open the pane from a command or a button, or check the call's `isPlaced` result. See [Open a pane at the right time](/docs/en/plugins/mods/interface#open-a-pane-at-the-right-time).
 
@@ -217,7 +217,7 @@ In another terminal, follow the file and filter for your mod's name:
 tail -f ./mod-debug.log | grep first-mod
 ```
 
-A mod that loaded has a line that names it and lists the events it hooks. A mod loaded with `--plugin-dir` appears under its name followed by `@inline`:
+A mod that loaded has a line that names it and lists the events it handles. A mod loaded with `--plugin-dir` appears under its name followed by `@inline`:
 
 ```text theme={null}
 hooks module first-mod@inline loaded (worker, environment 2, tier user); events: session.start,tool.call,command.run,ui.render
