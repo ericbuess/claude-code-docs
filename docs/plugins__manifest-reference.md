@@ -335,6 +335,7 @@ Each server config is a strict object with these fields. An unknown key fails va
 | `workspaceFolder` | No | Workspace folder path for the server |
 | `startupTimeout` | No | Milliseconds to wait for startup, a positive integer |
 | `shutdownTimeout` | No | Milliseconds to wait for a graceful shutdown, a positive integer. When the timeout elapses, Claude Code terminates the server process. When unset, no timeout applies |
+| `requestTimeout` | No | Milliseconds to wait for the server to answer a request, a positive integer. Defaults to `60000`, so a request the server never answers fails after 60 seconds. Requires v2.1.288 or later |
 | `restartOnCrash` | No | Whether to restart the server after it crashes. Defaults to `true`. Set to `false` to leave a crashed server stopped instead of restarting it |
 | `maxRestarts` | No | Restart attempts before giving up, zero or more |
 | `diagnostics` | No | Whether to push diagnostics into context after edits. Defaults to `true` |

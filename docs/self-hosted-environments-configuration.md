@@ -36,7 +36,7 @@ The runner sets the following in the wrapper's environment:
 | `CLAUDE_CODE_REMOTE_SESSION_UUID` | The same session ID in canonical UUID form, for systems that key on UUIDs. |
 | `CLAUDE_SESSION_INGRESS_TOKEN_FILE` | Absolute path to a per-session file holding the current session JWT, kept fresh across token refreshes. Shell subprocesses read it for their `Authorization` header when downloading attachments the user added to the session. `exec` preserves the variable automatically; a wrapper that rebuilds the child's environment must carry the variable over, or attachment downloads silently stop working. |
 | `CLAUDE_CONFIG_DIR` | Per-session Claude config directory, written at session start from the snapshot of the runner host's config that the runner captures at startup; see [Permissions and tool approval](#permissions-and-tool-approval). Writes here are isolated to this session. The directory stays under `<base-dir>/_sessions/` after the session ends unless you start the runner with [`--remove-session-state`](/docs/en/self-hosted-environments-reference#runner-cli-flags); see [Reuse a pre-warmed checkout](/docs/en/self-hosted-environments-deploy#reuse-a-pre-warmed-checkout). |
-| `ANTHROPIC_BASE_URL` | The API base URL the child will use, delivered by the control plane per session and normally `https://api.anthropic.com`. Don't override it: the session's inference credential is an Anthropic-issued OAuth token that other providers don't accept, so inference in self-hosted environments isn't routable elsewhere. |
+| `ANTHROPIC_BASE_URL` | The API base URL the child will use, delivered by the control plane per session and normally `https://api.anthropic.com`. Don't override it: the session's inference credential is an Anthropic-issued OAuth token that other providers don't accept. |
 | `CLAUDE_CODE_OAUTH_TOKEN` | The short-lived OAuth access token the child uses for model inference, scoped to model inference and file upload only, with a lifetime of about 30 minutes. The runner re-mints it before expiry and delivers the rotation over the child's stdin, so a wrapper that doesn't [keep stdin attached](#keep-stdin-and-file-descriptor-3-attached) sees only the initial value. Don't rely on your organization's IP allowlist to bound this token's use: treat it as a bearer credential that stays usable for roughly 30 minutes if it leaks, and don't log it, write it to disk, or forward it outside the session container. |
 
 The wrapper also inherits the rest of the child's managed environment, including any server-provided environment variables. `exec` propagates all of it automatically; if your wrapper spawns the child another way, forward the full environment.
@@ -269,6 +269,95 @@ Everything the hook writes to stdout or stderr appears in the orchestrator's log
 
 A session that stays queued with no spawn error in the **Activity** tab can mean the hook is keyed on the session ID. To confirm, check whether your platform has a workload for that session's first spawn request and none for the re-requests. If so, key the workload on `CLAUDE_RUNNER_ORDER_ID` instead.
 
+## Send model requests to Bedrock or Agent Platform
+
+If your organization needs model requests to go through its own AWS or Google Cloud account, configure the runner for [Amazon Bedrock](/docs/en/amazon-bedrock) or [Google Cloud's Agent Platform, formerly Vertex AI](/docs/en/google-vertex-ai). Every session that runner starts then calls the model in your cloud account, with your cloud credentials. Without this configuration, sessions send model requests to the Anthropic API.
+
+The runner still polls Anthropic for sessions, and each session still sends its event stream to `api.anthropic.com`. The event stream carries prompts, responses, and tool results. The plan requirement and the Zero Data Retention exclusion in [Availability and limitations](/docs/en/self-hosted-environments#availability-and-limitations) still apply.
+
+Sessions are routed to an environment, not to a runner, and a requeued or resumed session can run on a different runner. Configure every runner in the environment the same way. Before you start, read [what differs on these providers](#what-differs-from-sessions-on-the-anthropic-api).
+
+<Steps>
+  <Step title="Prepare the cloud account and your egress rules">
+    Set up model access, a narrowly scoped policy or role, and network access:
+
+    * **Amazon Bedrock**: [submit use case details](/docs/en/amazon-bedrock#1-submit-use-case-details), then create the policy in [IAM configuration](/docs/en/amazon-bedrock#iam-configuration), limiting `bedrock:InvokeModel` and `bedrock:InvokeModelWithResponseStream` to the inference profiles your sessions use and the foundation models behind them
+    * **Agent Platform**: [enable the API](/docs/en/google-vertex-ai#1-enable-agent-platform-api) and [request model access](/docs/en/google-vertex-ai#2-request-model-access), then create the custom role that [IAM configuration](/docs/en/google-vertex-ai#iam-configuration) describes, with only `aiplatform.endpoints.predict`
+    * **Egress**: allow your provider's endpoints through your egress rules. See [Network requirements](/docs/en/self-hosted-environments-deploy#network-requirements). If sessions can't reach them, Claude Code can keep retrying for hours before the session shows an error.
+  </Step>
+
+  <Step title="Give sessions narrowly scoped credentials">
+    Attach the policy or role from step 1 to an identity that can do nothing else. For the methods Claude Code accepts, see [Configure AWS credentials](/docs/en/amazon-bedrock#2-configure-aws-credentials) and [Configure GCP credentials](/docs/en/google-vertex-ai#3-configure-gcp-credentials).
+
+    <Warning>
+      Anyone who can get code to run in a session, including through prompt injection, can use these credentials at your cost for as long as the credentials are valid. Claude Code runs inside the session, so the credential it calls the model with has to be readable there.
+
+      The shell commands Claude runs, your [Claude Code hooks](/docs/en/hooks), and stdio MCP servers inherit the session's environment and run as the same user as Claude Code. As a result, they can read credential variables and credential files.
+
+      When you [harden your deployment](/docs/en/self-hosted-environments-deploy#harden-your-deployment), you keep host credentials out of sessions, but you can't keep this credential out. Give the identity behind it nothing beyond the policy or role from step 1.
+    </Warning>
+
+    Check the method you choose against these runner behaviors:
+
+    * **Metadata endpoint**: if you deny sessions the [cloud metadata endpoint](/docs/en/self-hosted-environments-deploy#harden-your-deployment) outright, credentials served from it, such as an instance profile, don't reach Claude Code either. A file-based web identity, such as IAM Roles for Service Accounts (IRSA) on Amazon EKS or a Workload Identity Federation credential file, doesn't depend on it.
+    * **Renewal**: a session can outlive a credential, so use a method that renews itself, such as a file-based web identity
+    * **Wrapper script**: the runner starts your [wrapper script](#provision-credentials-scoped-to-the-session-creator) once per session, so credentials it exports aren't renewed. Claude Code reads AWS credentials from its environment, so if your wrapper already exports AWS credentials for other work, Claude Code can sign model requests with them.
+  </Step>
+
+  <Step title="Set one provider's variables in the runner's environment">
+    Set exactly one provider's variables where you set the runner's other environment variables, such as the container spec or service unit, then restart the runner. The examples show them as shell exports. With [on-demand runners](#on-demand-runners), set them on the workload your `spawn-runner` hook starts.
+
+    Start these runners with [`--confine-repo-settings enforce`](/docs/en/self-hosted-environments-deploy#harden-your-deployment). It refuses sessions on repositories whose committed settings it flags, so run in the default `warn` mode first and clear what it logs.
+
+    <Tabs>
+      <Tab title="Amazon Bedrock">
+        Replace the region with your own:
+
+        ```bash theme={null}
+        export CLAUDE_CODE_USE_BEDROCK=1
+        export AWS_REGION=us-east-1
+        ```
+
+        For how Claude Code resolves the region, see [Configure Claude Code](/docs/en/amazon-bedrock#3-configure-claude-code). For which inference profile prefix Claude Code uses for your region, see [Cross-region inference profile prefixes](/docs/en/amazon-bedrock#cross-region-inference-profile-prefixes).
+      </Tab>
+
+      <Tab title="Google Cloud's Agent Platform">
+        Replace the region and project ID with your own:
+
+        ```bash theme={null}
+        export CLAUDE_CODE_USE_VERTEX=1
+        export CLOUD_ML_REGION=global
+        export ANTHROPIC_VERTEX_PROJECT_ID=YOUR-PROJECT-ID
+        ```
+
+        To choose a region, see [Region configuration](/docs/en/google-vertex-ai#region-configuration).
+      </Tab>
+    </Tabs>
+  </Step>
+
+  <Step title="Check that the variables reached a session">
+    Your own shell on the host is a different process, so check from inside a session. Start one in the environment and ask Claude to run this command:
+
+    ```bash theme={null}
+    env | grep -E 'CLAUDE_CODE_USE_(BEDROCK|VERTEX)'
+    ```
+
+    A line that sets `CLAUDE_CODE_USE_BEDROCK` or `CLAUDE_CODE_USE_VERTEX` to `1` means the variable reached the session. If both appear, Claude Code uses Amazon Bedrock. No output means neither reached it.
+
+    The command shows configuration, not traffic. To confirm the requests themselves, look for them in your cloud account's own metrics or request logs. If the first message fails instead, see troubleshooting for [Amazon Bedrock](/docs/en/amazon-bedrock#troubleshooting) or [Agent Platform](/docs/en/google-vertex-ai#troubleshooting).
+  </Step>
+</Steps>
+
+### What differs from sessions on the Anthropic API
+
+A session that sends model requests to Amazon Bedrock or Google Cloud's Agent Platform differs from a session on the Anthropic API in these ways:
+
+* **Policy from claude.ai**: [server-managed settings](/docs/en/server-managed-settings) don't reach these sessions. Neither do the organization policies an Owner sets in Claude Code admin settings, so Claude Code doesn't enforce them inside the session. Put the rules you rely on in the runner image's [managed settings file](/docs/en/managed-settings#delivery-mechanisms).
+* **Files**: files that people attach to a session in claude.ai or the mobile or desktop app don't reach it, and Claude can't send files back with the [`SendUserFile` tool](/docs/en/tools-reference). Put input files in the repository or on the runner instead.
+* **Model selection**: Anthropic's control plane sends each session's model, and when a session starts without one, Claude Code uses its default for the provider. The runner removes `ANTHROPIC_MODEL` and `ANTHROPIC_DEFAULT_MODEL` from the environment it passes to sessions. The provider pages' examples set `ANTHROPIC_MODEL`, but in the runner's environment neither variable has any effect. The per-family variables in Pin model versions for [Amazon Bedrock](/docs/en/amazon-bedrock#4-pin-model-versions) and [Agent Platform](/docs/en/google-vertex-ai#5-pin-model-versions) do reach sessions. They decide what an alias such as `opus` resolves to, not what a full model ID resolves to.
+* **Models your account doesn't serve**: a session can fail on a message with an error that names the model. Enable the models your developers can choose, the background model described in Pin model versions, and the classifier model that [auto mode](/docs/en/permission-modes#enable-auto-mode-on-bedrock-agent-platform-or-foundry) uses. On Amazon Bedrock, allow each of them in your policy.
+* **Web search and fast mode**: [web search](/docs/en/tools-reference#websearch-tool-behavior) isn't available on Amazon Bedrock, and [fast mode](/docs/en/fast-mode) isn't available on either provider. For other capabilities that differ by provider, see [CLI capabilities that vary by provider](/docs/en/feature-availability#cli-capabilities-that-vary-by-provider).
+
 ## MCP servers
 
 To make [MCP servers](/docs/en/mcp) available in every session, add them at image build time with the same `claude mcp add` command used on a desktop install. If your runner is a bare process rather than a container, run the same command as the runner's user on the host, then restart the runner: it reads host config once at startup. The `--scope user` flag is required; the default local scope writes under a per-directory key that the runner doesn't seed into sessions. For example, in your Dockerfile:
@@ -312,7 +401,7 @@ To turn off the whole server, add a [server-level deny rule](/docs/en/permission
 
 A rule that names the whole server covers tools the server gains later too. To turn off one tool and keep the rest, append two more underscores and the tool name to each rule, as in `mcp__Claude_Code_Remote__add_repo`. To block the server from connecting at all rather than removing its tools, add the three names without the `mcp__` prefix as `serverName` entries under [`deniedMcpServers`](/docs/en/managed-mcp#policy-based-control-with-allowlists-and-denylists) instead.
 
-Put the rules in [server-managed settings](/docs/en/server-managed-settings) to reach every session with no change to the runner, or in `~/.claude/settings.json` on the runner. [Permissions and tool approval](#permissions-and-tool-approval) explains how settings on the runner reach sessions.
+Put the rules in [server-managed settings](/docs/en/server-managed-settings) to reach sessions with no change to the runner, or in `~/.claude/settings.json` on the runner. On a runner that [sends model requests to Bedrock or Agent Platform](#send-model-requests-to-bedrock-or-agent-platform), use that file, because server-managed settings don't reach those sessions. [Permissions and tool approval](#permissions-and-tool-approval) explains how settings on the runner reach sessions.
 
 To confirm the rules took effect, start a session on the environment and ask Claude to list its MCP tools. Claude Code removes a denied tool from Claude's context, so the denied tools are absent from its answer.
 

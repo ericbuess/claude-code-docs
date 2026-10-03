@@ -204,13 +204,15 @@ When no value applies, Claude Code decides per message from the two sessions' pe
 * **The receiving session prompts for permissions**: Claude Code delivers each message. It holds one for your approval only when the sending session identifies itself as bypassing permission prompts.
 * **The receiving session bypasses permission prompts**: Claude Code holds each message for your approval. It delivers one only when the sending session identifies itself as also bypassing.
 
-When the default holds a message, Claude Code opens an approval dialog in the receiving session. The dialog shows the sender and a preview:
+When the default holds a message in an interactive terminal session, Claude Code opens an approval dialog there. The dialog shows the sender and a preview:
 
 * **Approve** delivers that one message to Claude.
 * **Deny**, or dismissing the dialog, drops it.
 * When the dialog stays unanswered past the [`dialogExpiry`](/docs/en/settings-reference#dialogexpiry) deadline, Claude Code closes it and drops the message. The deadline defaults to five minutes.
 * While no terminal is attached to a [background session](/docs/en/agent-view), Claude Code leaves the dialog open past the deadline. After you attach, if the dialog stays unanswered for a full deadline period, Claude Code closes it and drops the message.
 * If this session's permission-mode class changes while messages are held, Claude Code re-applies the inbound rules, delivers the messages they now accept, and shows a notice.
+
+A session in the VS Code extension or the Desktop app can't show the dialog. Claude Code keeps a held message there until the same deadline, as [Non-interactive sessions](#non-interactive-sessions) describes.
 
 Claude Code holds at most 100 messages, and past that drops the oldest.
 

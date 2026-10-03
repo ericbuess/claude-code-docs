@@ -127,23 +127,38 @@ Users receive a release when they ask for it or when auto-update is on for your 
   Submit to Anthropic's directory
 </h2>
 
-Anthropic's directory is the catalog people browse on claude.ai and in Cowork to add plugins and connectors. One listing there reaches people on claude.ai, in Cowork, and in Claude Code. You submit from the developer portal at [claude.ai/directory/manage](https://claude.ai/directory/manage); [Prepare for review](https://claude.com/docs/directory/publish#prepare-for-review) on claude.com describes what happens to each version before it's published.
-
-Submitting requires a paid claude.ai plan. On Pro and Max you submit from your own account. On Team and Enterprise, an Owner can submit, and on Enterprise an Owner can also grant the **Directory** permission to other members through a custom role under **Organization settings > Roles**. See [Confirm you can submit to the directory](https://claude.com/docs/directory/publish#confirm-you-can-submit-to-the-directory).
-
-The submission steps, the checks each version must pass, and what happens after you publish are documented on claude.com, because they're the same whichever surface your users are on:
-
-* [Publish to the directory](https://claude.com/docs/directory/publish#before-you-submit-to-the-directory): what you can submit and who can submit it
-* [Submit a plugin](https://claude.com/docs/plugins/submit#submit-a-plugin): the portal steps and [updating a published plugin](https://claude.com/docs/plugins/submit#update-a-published-plugin)
-* [Plugin pre-submission checklist](https://claude.com/docs/plugins/pre-submission-checklist#run-the-checks-before-you-submit): the checks to run and fix before you submit
-* [Move an earlier submission to the developer portal](https://claude.com/docs/directory/publish#move-an-earlier-submission-to-the-developer-portal): what to do if you submitted a plugin through one of the earlier submission forms, before the portal existed
-
-Before you open the portal, validate locally and check which of your components load outside Claude Code:
-
-* **Run `claude plugin validate ./your-plugin --strict` in your shell**: replace `./your-plugin` with the path to your plugin directory. The command catches manifest errors locally; [plugin validate](/docs/en/plugins/cli-reference#plugin-validate) lists which files each run reads. The portal applies additional directory rules that the CLI doesn't check, so a clean local run doesn't guarantee a clean portal validation.
-* **Check what loads where**: some plugin components are Claude Code-only and don't load on claude.ai or in Cowork. The [component support table](https://claude.com/docs/plugins/platform-support#compare-component-support-by-app) lists each component by app, so you know what users outside Claude Code will get.
+[Anthropic's directory](https://claude.ai/directory) is the catalog people browse on claude.ai and in Cowork to add plugins and connectors. One listing there reaches people on claude.ai, in Cowork, and in Claude Code. You submit from the developer portal at [claude.ai/directory/manage](https://claude.ai/directory/manage), and [Submit a plugin](https://claude.com/docs/plugins/submit#submit-a-plugin) on claude.com walks through the portal.
 
 Anthropic's official marketplace, `claude-plugins-official`, doesn't take submissions through the directory portal. If you work with an Anthropic partner contact, ask them about an official-marketplace listing.
+
+To submit a plugin:
+
+<Steps>
+  <Step title="Confirm you can submit">
+    Submitting requires a paid claude.ai plan. On Pro and Max you submit from your own account. On Team and Enterprise, an Owner can submit, and on Enterprise an Owner can also grant the **Directory** permission to other members through a custom role under **Organization settings > Roles**. See [Confirm you can submit to the directory](https://claude.com/docs/directory/publish#confirm-you-can-submit-to-the-directory).
+  </Step>
+
+  <Step title="Validate the plugin locally">
+    Run `claude plugin validate ./your-plugin --strict` in your shell. Replace `./your-plugin` with the path to your plugin directory. The command catches manifest errors locally; [plugin validate](/docs/en/plugins/cli-reference#plugin-validate) lists which files each run reads. The portal applies additional directory rules that the CLI doesn't check, so a clean local run doesn't guarantee a clean portal validation.
+
+    The [plugin pre-submission checklist](https://claude.com/docs/plugins/pre-submission-checklist#run-the-checks-before-you-submit) on claude.com has the checks to run and fix before you submit.
+  </Step>
+
+  <Step title="Check what loads where">
+    Some plugin components are Claude Code-only and don't load on claude.ai or in Cowork. The [component support table](https://claude.com/docs/plugins/platform-support#compare-component-support-by-app) lists each component by app, so you know what users outside Claude Code will get.
+  </Step>
+
+  <Step title="Submit in the developer portal">
+    Open the developer portal at [claude.ai/directory/manage](https://claude.ai/directory/manage) and follow [Submit a plugin](https://claude.com/docs/plugins/submit#submit-a-plugin) on claude.com.
+  </Step>
+</Steps>
+
+The rest of the process is documented on claude.com:
+
+* [Prepare for review](https://claude.com/docs/directory/publish#prepare-for-review): what happens to each version before it's published
+* [Update a published plugin](https://claude.com/docs/plugins/submit#update-a-published-plugin): how a new version reaches the people who have your plugin
+* [Submit your plugin, and your MCP server as a connector](https://claude.com/docs/directory/publish#submit-your-plugin-and-your-mcp-server-as-a-connector): what you can submit
+* [Move an earlier submission to the developer portal](https://claude.com/docs/directory/publish#move-an-earlier-submission-to-the-developer-portal): what to do if you submitted a plugin through one of the earlier submission forms, before the portal existed
 
 ### How a listed plugin reaches Claude Code users
 

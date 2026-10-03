@@ -257,7 +257,10 @@ Claude Code handles any other blocked selection according to where the model was
 * **`advisorModel` setting**: the advisor is disabled for the session
 * **`--advisor` flag**: Claude Code exits with an error at launch. In a [background session](/docs/en/agent-view), it starts the session without the advisor instead of exiting
 
-Claude Code hides excluded models from the `/model` picker. A full model ID in the list that has no built-in picker row, such as an older version that the list pins, appears in the `/model` picker as its own labeled row, unless Claude Code replaces the built-in options with a [`modelPicker`](/docs/en/settings-reference#modelpicker) lineup. Before v2.1.199, such an ID was selectable only by typing `/model <id>`.
+Claude Code hides excluded models from the `/model` picker. Whether a model ID you list also gets a row of its own differs by provider:
+
+* **Anthropic API, [Claude Platform on AWS](/docs/en/claude-platform-on-aws), [Claude apps gateway](/docs/en/claude-apps-gateway), or an [LLM gateway](/docs/en/llm-gateway) set through `ANTHROPIC_BASE_URL`**: an Anthropic model ID you list that has no built-in picker row appears as its own labeled row. Claude Code adds such a row for Opus, Sonnet, and Haiku versions, such as an older version that the list pins. If you set `replaceBuiltInOptions` in a [`modelPicker`](/docs/en/settings-reference#modelpicker) lineup, that row doesn't appear. Before v2.1.199, such an ID was selectable only by typing `/model <id>`.
+* **Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry**: unless a model ID you list starts with `anthropic.`, Claude Code doesn't add a row for it, whether it's an Anthropic model ID or a provider-specific one. [Mantle model IDs](#mantle-model-ids) carry that prefix. To show a listed version that has no built-in row, also add it to a [`modelPicker`](/docs/en/settings-reference#modelpicker) lineup, which accepts IDs in your provider's format.
 
 Model changes that Claude Code makes on your behalf are checked the same way:
 
@@ -348,7 +351,7 @@ Within the effective list, an entry naming a specific model in a family, whether
 
 ### Mantle model IDs
 
-When the [Amazon Bedrock Mantle endpoint](/docs/en/amazon-bedrock#use-the-mantle-endpoint) is enabled, entries in `availableModels` that start with `anthropic.` are added to the `/model` picker as custom options and routed to the Mantle endpoint. This is an exception to the alias matching described in [Pin models for third-party deployments](#pin-models-for-third-party-deployments). The setting still restricts the picker to listed entries, and a Mantle ID embeds a family name, so it counts as a specific entry and disables that family's wildcard: alongside any Mantle IDs, list the version prefixes or full IDs you want to keep selectable. See [Merge behavior](#merge-behavior).
+Entries in `availableModels` that start with `anthropic.` are added to the `/model` picker as custom options. This is an exception to the alias matching described in [Pin models for third-party deployments](#pin-models-for-third-party-deployments). With the [Amazon Bedrock Mantle endpoint](/docs/en/amazon-bedrock#use-the-mantle-endpoint) enabled, Claude Code routes the entries that match the Mantle format to that endpoint. The setting still restricts the picker to listed entries, and a Mantle ID embeds a family name, so it counts as a specific entry and disables that family's wildcard: alongside any Mantle IDs, list the version prefixes or full IDs you want to keep selectable. See [Merge behavior](#merge-behavior).
 
 ### Block specific models or versions
 
@@ -721,7 +724,7 @@ Claude Code checks these plan requirements only when it connects to the Anthropi
 
 <span id="context-window-behind-a-gateway" />
 
-If you set `ANTHROPIC_BASE_URL` to an [LLM gateway](/docs/en/llm-gateway) or another proxy, Claude Code gives each model it recognizes the same context window the model has on the Anthropic API. Fable 5.1, Fable 5, Sonnet 5 and later, and Opus 4.7 and later get the 1M window with no `[1m]` variant to select, and a model that reaches 1M only through its `[1m]` variant, such as Opus 4.6, runs at 200K without it. Claude Code can't detect a lower limit that the gateway or the server behind it enforces. If your gateway rejects requests above 200K tokens, run [`/autocompact 200k`](#set-the-auto-compact-window) so sessions compact at that boundary.
+If you set `ANTHROPIC_BASE_URL` to an [LLM gateway](/docs/en/llm-gateway) or another proxy, Claude Code gives each model it recognizes the same context window the model has on the Anthropic API. Fable 5.1, Fable 5, Sonnet 5 and later, and Opus 4.7 and later get the 1M window with no `[1m]` variant to select, and a model that reaches 1M only through its `[1m]` variant, such as Opus 4.6, runs at 200K without it. Claude Code can't detect a lower limit that the gateway or the server behind it enforces. If your gateway rejects requests above 200K tokens, set [`CLAUDE_CODE_AUTO_COMPACT_WINDOW=200000`](/docs/en/env-vars) in the environment that starts Claude Code, so sessions on every model [compact at that boundary](#set-the-auto-compact-window).
 
 To turn off 1M context, set `CLAUDE_CODE_DISABLE_1M_CONTEXT=1`. Claude Code removes 1M model variants from the model picker. On models with a native 1M window, such as Sonnet 5 and the Fable models, it also treats the model as having a 200K context window:
 
@@ -761,9 +764,10 @@ The auto-compact window is how full the context window can get before Claude Cod
 
 ### Set the auto-compact window
 
-You can set the auto-compact window in three places:
+You can set the auto-compact window in these places:
 
-* **For this session and later ones**: run `/autocompact` with a value, like `/autocompact 500k`. Claude Code saves it to your user settings as [`autoCompactWindow`](/docs/en/settings-reference#autocompactwindow) and applies it to the current session; if a higher-priority [settings scope](/docs/en/settings#settings-precedence) such as managed settings sets the key, the command saves your value but the session keeps that scope's window, and the command says so. Run `/autocompact auto` to return to the window tuned for your model.
+* **For the current model, in this session and later ones**: run `/autocompact` with a value, like `/autocompact 500k`. Claude Code saves it to your user settings under the current model in [`modelSettings`](/docs/en/settings-reference#modelsettings) and applies it to the current session. If a higher-priority [settings scope](/docs/en/settings#settings-precedence) such as managed settings sets its own window for that model or for every model, the command saves your value but the session keeps that scope's window, and the command says so. Run `/autocompact auto` to return to the window tuned for your model. Before v2.1.288, the command saved one window for every model, as the top-level `autoCompactWindow`.
+* **For every model**: set [`autoCompactWindow`](/docs/en/settings-reference#autocompactwindow) in a settings file, such as `"autoCompactWindow": 200000` in `~/.claude/settings.json`. A window you saved for a model with `/autocompact` takes precedence over this key in the same file for that model.
 * **For one launch**: pass [`--autocompact`](/docs/en/cli-reference#cli-flags) when starting Claude Code. The flag overrides your saved setting for that launch without changing it, and `claude --autocompact auto` runs the session at the tuned window even if your saved setting has a value. Unlike `/autocompact`, the flag isn't preempted by a higher-priority settings scope such as managed settings.
 * **In scripts and cloud environments**: set [`CLAUDE_CODE_AUTO_COMPACT_WINDOW`](/docs/en/env-vars). While it's set, it takes precedence over the command, the flag, and the setting, and `/autocompact` reports the override instead of changing the window.
 

@@ -532,10 +532,11 @@ To see the output, attach to the row, press `Space` to peek without attaching, o
 
 ### How file edits are isolated
 
-Every background session, whether started from agent view, `/bg`, or `claude --bg`, starts in your working directory. Before editing files, Claude moves the session into an isolated [git worktree](/docs/en/worktrees) under `.claude/worktrees/`, so parallel sessions can read the same checkout but each writes to its own. Once the session is in its worktree, Claude Code [enforces worktree isolation](/docs/en/worktrees#how-claude-code-enforces-isolation) for the session and for any subagents it spawns.
+When you dispatch a background session from agent view or start one with `claude --bg`, the session starts in your working directory. Before editing files, Claude moves the session into an isolated [git worktree](/docs/en/worktrees) under `.claude/worktrees/`, so parallel sessions can read the same checkout but each writes to its own. Once the session is in its worktree, Claude Code [enforces worktree isolation](/docs/en/worktrees#how-claude-code-enforces-isolation) for the session and for any subagents it spawns.
 
 Claude skips the worktree when:
 
+* You [moved a session you already had open to the background](#from-inside-a-session) with `←` or `/background`. That session keeps editing files where it was already working
 * The session is already inside a linked git worktree, whether Claude created it under `.claude/worktrees/` or you created it with `git worktree add` somewhere else
 * The file that Claude is editing is inside a linked git worktree, such as one that the session or its subagent created with `git worktree add`
 * The working directory isn't a git repository and no [`WorktreeCreate` hook](/docs/en/hooks#worktreecreate) is configured
@@ -553,11 +554,11 @@ To turn off worktree isolation for a repository where git worktrees are impracti
 
 Outside a git repository, sessions write to the working directory directly and aren't isolated from each other, so avoid dispatching parallel sessions that edit the same files. If you use a different version control system, configure a [`WorktreeCreate` hook](/docs/en/worktrees#non-git-version-control) and Claude isolates edits the same way it does for git.
 
-When the hook fails in a directory that isn't a git repository, Claude skips isolation for that directory and edits the working directory in place. Inside a git repository, Claude Code blocks writes to the shared checkout until Claude moves the session into a worktree.
+When the hook fails in a directory that isn't a git repository, Claude skips isolation for that directory and edits the working directory in place. Inside a git repository, a session that Claude moves into a worktree before editing can't edit files in the shared checkout until that move happens.
 
 To find a session's worktree path, peek the session or attach and check its working directory.
 
-A [subagent](/docs/en/sub-agents) the background session spawns inherits the session's working directory, so its file edits land in the session's worktree rather than your working copy. To give a subagent its own separate worktree instead, set [`isolation: worktree`](/docs/en/sub-agents#supported-frontmatter-fields) in its frontmatter or pass `isolation: "worktree"` when spawning it.
+A [subagent](/docs/en/sub-agents) the background session spawns inherits the session's working directory. Once the session is in a worktree, the subagent's file edits land in that worktree rather than in your working copy. To give a subagent its own separate worktree instead, set [`isolation: worktree`](/docs/en/sub-agents#supported-frontmatter-fields) in its frontmatter or pass `isolation: "worktree"` when spawning it.
 
 When a background session has made code changes in a worktree Claude entered, Claude Code instructs Claude to preserve the work before finishing, so it survives if you delete the session and its worktree:
 

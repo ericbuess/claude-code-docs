@@ -511,6 +511,9 @@ This table lists what a key does while your pane or band has keyboard focus:
 | Up and Down | Move between controls while your drawing fits. When the pane or band has more rows than it can show, they scroll it. |
 | Enter | Presses the focused `Button`, submits the focused `Input`, or picks in a `Select` |
 | A button's hotkey | Presses that button. While an `Input` has the focus, every printable key goes to the field. |
+| Page Up, Page Down, Home, and End | Scroll your pane or band when it has more rows than it can show |
+| Ctrl+X then an arrow key | Resizes your pane. Left or Up gives it more room, and Right or Down gives the room back. |
+| Ctrl+X then X | Closes your pane, even while one of its fields has the focus |
 | Esc | Returns keyboard focus to the prompt. With `closeOnEscape: true`, it also closes the pane. |
 
 A mod can't bind Tab or the arrow keys to anything else, so a game steers with `w`, `a`, `s`, and `d`.

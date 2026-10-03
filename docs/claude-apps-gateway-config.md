@@ -69,7 +69,8 @@ OpenID Connect (OIDC) is the SSO protocol the gateway uses with your identity pr
 | Field | Required | Description |
 | - | - | - |
 | `issuer` | Yes | OIDC discovery base. Must serve discovery at `/.well-known/openid-configuration`. Use HTTPS in production; the gateway accepts an `http://` issuer. A loopback issuer such as `http://localhost:8081` is rejected by the [SSRF guard](/docs/en/claude-apps-gateway-deploy#threat-model-summary) unless `CLAUDE_GATEWAY_ALLOW_LOOPBACK=1` is set in the gateway's environment. |
-| `client_id` / `client_secret` | Yes | From your OAuth client registration |
+| `client_id` | Yes | From your OAuth client registration |
+| `client_secret` | Unless `token_endpoint_auth_method` is `private_key_jwt` | From your OAuth client registration. Leave it out when you use [certificate client authentication](#certificate-client-authentication). |
 | `allowed_email_domains` | No | Reject id\_tokens whose `email` claim isn't in one of these domains, case-insensitive. Defense-in-depth against multi-tenant IdP misconfiguration. Independent of this setting, an id\_token whose `email_verified` claim is explicitly `false` is always rejected. |
 | `allowed_groups` | No | Restrict sign-in to members of these IdP groups, matched against `groups_claim`. A user in an allowed email domain but in none of these groups is rejected. Requires the IdP to emit the groups claim. Matching is an exact, case-sensitive string comparison against the values in that claim, and the gateway doesn't expand nested groups: to admit members of a sub-group, list the sub-group here or configure the IdP to emit flattened membership. |
 | `groups_claim` | No | Which id\_token claim carries group membership. Default `groups`. Microsoft Entra emits app roles under `roles`. Accepts a flat key or an RFC 6901 JSON Pointer such as `/resource_access/gateway/roles` for nested claims. |
@@ -81,13 +82,70 @@ OpenID Connect (OIDC) is the SSO protocol the gateway uses with your identity pr
 | `userinfo_fallback` | No | When the id\_token omits email or groups, fetch them from `/userinfo`. Needed for Keycloak lightweight access tokens, the Okta org server, and ADFS minimal tokens. The id\_token stays authoritative; userinfo only fills gaps. Default `false`. |
 | `use_pkce` | No | Send a PKCE (S256) challenge on the authorization request. Default `true`. Set `false` only if your IdP rejects PKCE for this confidential client. |
 | `clock_skew_seconds` | No | Tolerate clock drift when validating id\_token time claims. Default `0`, which is strict. Raise if you see "token expired / not yet valid" errors right after sign-in due to host/IdP clock skew. |
-| `token_endpoint_auth_method` | No | Override the token-endpoint auth method. Accepts `client_secret_basic` or `client_secret_post`. Auto-negotiated by default. |
+| `token_endpoint_auth_method` | No | How the gateway authenticates to the IdP's token endpoint: `client_secret_basic`, `client_secret_post`, or `private_key_jwt` for [certificate client authentication](#certificate-client-authentication). By default the gateway picks one of the two `client_secret` methods from what the IdP advertises. |
+| `client_assertion` | With `private_key_jwt` | A block with `private_key_pem` and `certificate_pem`: the private key and certificate for [certificate client authentication](#certificate-client-authentication). Requires v2.1.284 or later. |
 | `id_token_signed_response_alg` | No | Expected id\_token signing algorithm. Default `RS256`. Set for IdPs that sign with ES256, PS256, or EdDSA. |
 | `additional_authorized_parties` | No | Extra `azp` values to accept beyond `client_id`, for Keycloak broker and token-exchange flows |
 | `discovery_url` | No | Fetch the discovery document from this URL instead of deriving it from `issuer`, for IdPs behind a proxy that rewrites the issuer host. The path must contain `/.well-known/`. |
 | `use_proxy` | No | Send the gateway's own IdP requests through the forward proxy in `HTTPS_PROXY` or `HTTP_PROXY`, honoring `NO_PROXY`. `false` keeps those requests direct. Requires v2.1.227 or later; see [IdP requests through a forward proxy](#idp-requests-through-a-forward-proxy) below. |
 | `form_action_origins` | No | Additional origins for the `/device` page's `Content-Security-Policy: form-action` directive. The gateway already allows `'self'` and the discovered `authorization_endpoint` origin, but Chrome enforces `form-action` against the entire redirect chain. If your IdP redirects through a second host, such as Azure AD federated to ADFS, hub-spoke Okta, or a corporate SSO interceptor, list every origin the authorization request may redirect through. |
 | `ca_cert_pem` | No | The PEM-encoded CA certificate itself, not a path to a file. It replaces the system trust store for IdP requests only. To load a mounted file, write `${file:/etc/gateway/idp-ca.pem}`. Use for Keycloak or Dex behind corporate PKI. |
+
+#### Certificate client authentication
+
+If your identity provider authenticates OAuth clients with a certificate instead of a client secret, as Microsoft Entra does with certificate credentials, set `token_endpoint_auth_method: private_key_jwt`. Requires Claude Code v2.1.284 or later on the gateway server.
+
+With this configuration the gateway sends no secret. It authenticates to the IdP's token endpoint with a short-lived JWT signed with the certificate's private key when a developer signs in and each time the gateway refreshes their session. The JWT is signed with RS256 and identifies the certificate by `x5t` and `x5t#S256` thumbprint headers rather than a `kid`. Your IdP must be able to find the registered certificate by thumbprint.
+
+<Steps>
+  <Step title="Create the key and certificate">
+    Create an unencrypted RSA private key of at least 2048 bits, in PKCS#8 or PKCS#1 PEM form, and a certificate for it. The gateway refuses to start with any key that doesn't meet these conditions. This `openssl` command creates such a key with a self-signed certificate that is valid for one year:
+
+    ```bash theme={null}
+    openssl req -x509 -newkey rsa:2048 -nodes -keyout idp-client.key -out idp-client.crt -days 365 -subj "/CN=claude-gateway"
+    ```
+
+    It writes `idp-client.key` and `idp-client.crt` to the current directory. Copy or mount both files where the gateway can read them. The example in step 3 uses `/etc/gateway/`.
+  </Step>
+
+  <Step title="Upload the certificate to the IdP">
+    Upload the certificate, not the private key, to the gateway's app registration at the IdP.
+  </Step>
+
+  <Step title="Add the key and certificate to gateway.yaml">
+    Give the gateway the private key and the certificate in a `client_assertion` block. Leave `client_secret` out, because the gateway refuses to start when one is set together with `private_key_jwt`. This `oidc` block authenticates the gateway to a Microsoft Entra tenant with a certificate:
+
+    ```yaml theme={null}
+    oidc:
+      issuer: https://login.microsoftonline.com/<tenant-id>/v2.0
+      client_id: <application-id>
+      token_endpoint_auth_method: private_key_jwt
+      client_assertion:
+        private_key_pem: ${file:/etc/gateway/idp-client.key}
+        certificate_pem: ${file:/etc/gateway/idp-client.crt}
+    ```
+
+    Both values are the PEM contents, not file paths, so load mounted files with `${file:/path}` as the example does. The gateway refuses to start unless `certificate_pem` is a single PEM certificate, without the rest of its chain, whose public key matches `private_key_pem`.
+  </Step>
+
+  <Step title="Restart the gateway and check the boot log">
+    Restart the gateway and find this line in the boot log:
+
+    ```text theme={null}
+    [gateway] 2026-10-01T23:07:40.512Z info oidc: client authentication private_key_jwt; certificate CN=claude-gateway, SHA-1 thumbprint DE92821854EE8BAA1D98C758FAA04AABE80B9F57, expires Oct  1 23:07:31 2027 GMT
+    ```
+
+    Compare the SHA-1 thumbprint with the one the IdP shows for the certificate you uploaded. If the certificate has expired or isn't valid yet, the gateway still starts but logs a warning that sign-ins and refreshes will fail until you replace it. To confirm that the IdP accepts the certificate, have one developer sign in through the gateway.
+  </Step>
+</Steps>
+
+#### Rotate the client certificate
+
+The gateway reads the key and certificate once at boot, so a changed file takes effect only after a restart. Rotate in this order so that no token request presents a certificate the IdP doesn't have:
+
+1. Upload the new certificate to the IdP alongside the old one.
+2. Replace the key and certificate files that `gateway.yaml` loads, then restart the gateway.
+3. Remove the old certificate from the IdP.
 
 #### IdP requests through a forward proxy
 
@@ -1138,7 +1196,7 @@ Four optional top-level blocks, `access_control`, `limits`, `timeouts`, and `rat
 | - | - | - | - |
 | `access_control` | `allow_cidrs` / `deny_cidrs` | empty | Inbound IP allow/deny by client address, after `trusted_proxies` resolution. `deny_cidrs` is checked first; a client it matches is rejected even if `allow_cidrs` also matches. If `allow_cidrs` is non-empty the gateway is default-deny. `/healthz` and `/readyz` are exempt from `allow_cidrs`. When a trusted proxy sends an `X-Forwarded-For` entry that isn't an IP address, the real client is unknown and the gateway logs a warning once naming what to check. Where either list applies to the request, it refuses it with `403` and audit reason `xff_unparseable`. Where neither does, it serves the request and uses the proxy's own address as the client IP for per-IP rate limits and audit. |
 | `limits` | `max_request_bytes` | 32 MiB | Max inbound request body; oversize requests get `413` before the body is buffered. Raise for large file or image requests. |
-| `limits` | `max_request_header_bytes` | unset | When set, oversize headers return `431` |
+| `limits` | `max_request_header_bytes` | unset | Lowers the gateway's 256 KiB limit on a request's total headers. A request over the limit returns `431`, and a value above 256 KiB has no effect. If developers get `431` after signing in, see [Request headers too large after sign-in](/docs/en/claude-apps-gateway-deploy#request-headers-too-large-after-sign-in). |
 | `limits` | `max_url_length` | unset | When set, an over-long URL returns `414` |
 | `timeouts` | `upstream_ttfb_ms` | 120000 | Max wait for the upstream's response headers (time to first byte). The response body then streams with no wall-clock cap. Applies to the direct Anthropic upstream path; on every other provider the gateway waits up to one hour for the response to start. |
 | `rate_limits` | `device_authorization.max` / `.window_seconds` | 30 / 600 | Per-IP rate limit on the unauthenticated device-authorization endpoint. Raise for a large org behind a shared egress IP or NAT. [Large rollouts](/docs/en/claude-apps-gateway-deploy#large-rollouts) shows how to size it. These limits apply only to the device-grant sign-in flow, not to `/v1/messages` inference. See [User-code brute-force resistance](/docs/en/claude-apps-gateway-deploy#user-code-brute-force-resistance). |

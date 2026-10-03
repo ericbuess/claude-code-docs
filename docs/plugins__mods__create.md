@@ -359,7 +359,12 @@ Ran 1 test across 1 file. [0.19s]
 
 ## Share your mod
 
-A mod is a plugin, so you version it in the manifest and people install and update it with the `/plugin` commands. To give it to other people, [add it to a marketplace](/docs/en/plugins/publish).
+A mod is a plugin, so you version it in the manifest and people install and update it with the `/plugin` commands. How you share it depends on who it's for:
+
+* **A few people**: send them the plugin's directory or a `.zip` of it. See [Share a plugin without a marketplace](/docs/en/plugins/publish#share-a-plugin-without-a-marketplace)
+* **Your team**: list it in [your own marketplace](/docs/en/plugins/publish#publish-through-your-own-marketplace), such as a private repository with one directory for each plugin. To add that marketplace for everyone who works in a repository, [register it in the repository's settings](/docs/en/plugins/host-marketplace#register-the-marketplace-for-everyone-in-a-repository)
+* **Your whole organization**: an administrator can [install your organization's mods](/docs/en/plugins/mods/admin#install-your-organizations-mods) through managed settings
+* **Anyone**: make your marketplace's repository public, or [submit the plugin to Anthropic's directory](/docs/en/plugins/publish#submit-to-anthropics-directory)
 
 Before you do, check the plugin's `name`: `claude plugin validate` fails a name that [looks like one of Anthropic's own](/docs/en/plugins/manifest-reference#name), such as one that starts with `claude-`. The events and methods can change between releases, so your README is the place to say which Claude Code version you tested with.
 

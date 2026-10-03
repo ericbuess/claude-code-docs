@@ -106,11 +106,11 @@ Two of these decide whether you can add a credential, and two decide whether the
 
 #### Add a credential
 
-You add credentials one at a time from the editor of an environment that already exists. The dialog for a new environment doesn't offer them. There's no edit, either. To change a credential's hosts or value, delete it and add it again.
+You add credentials one at a time, and you can't edit a credential after you add it. To change a credential's hosts or value, delete it and add it again.
 
 <Steps>
   <Step title="Open the environment's API credentials">
-    [Open the environment for editing](#configure-your-environment) at [claude.ai/code](https://claude.ai/code). In the **Edit cloud environment** dialog, find **API credentials** below **Environment variables**. You see the credentials already on the environment, each with the hosts it applies to.
+    [Open the environment for editing](#configure-your-environment) at [claude.ai/code](https://claude.ai/code). In the **Edit environment** dialog, find the **API credentials** section. You see the credentials already on the environment, each with the hosts it applies to.
   </Step>
 
   <Step title="Add the credential">

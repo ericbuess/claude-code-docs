@@ -120,16 +120,12 @@ Ultrareview is a premium feature that bills against usage credits rather than yo
 | - | - | - |
 | Pro | 3 free runs | billed as [usage credits](https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans) |
 | Max | 3 free runs | billed as [usage credits](https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans) |
-| Team and Enterprise | none | billed as [usage credits](https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans) |
 
 * **Free runs**: the three Pro and Max runs are a one-time allotment per account and don't refresh.
 * **Cost per review**: after you use the free runs, typically \$5 to \$25 in usage credits depending on the size of the change, matching the estimate the launch dialog shows before each run.
 * **When a run counts**: once the cloud session starts. A review you stop early or that fails to complete still uses a free run; a paid review bills only for the portion that ran.
 
-Because ultrareview always bills as usage credits outside the free runs, your account or organization must have usage credits turned on before you can launch a paid review. If usage credits aren't turned on, Claude Code blocks the launch, and how you turn them on depends on your billing access:
-
-* If you can manage billing for your account, Claude Code links you to the billing settings where you can turn on usage credits.
-* On Team and Enterprise plans, members without billing access send a request from the CLI asking their admin to turn on usage credits.
+Because ultrareview always bills as usage credits outside the free runs, your account or organization must have usage credits turned on before you can launch a paid review. If usage credits aren't turned on, Claude Code blocks the launch. If you can manage billing for your account, Claude Code links you to the billing settings where you can turn on usage credits.
 
 You can also run `/usage-credits` to check or change your usage-credits setting.
 

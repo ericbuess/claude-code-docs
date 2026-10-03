@@ -273,7 +273,7 @@ The location, retention, and write behavior are configurable:
 
 ### Delete session data
 
-Transcripts age out under the [retention sweep rules](/docs/en/claude-directory#cleaned-up-automatically). To delete a project's transcripts and related state sooner, run [`claude project purge`](/docs/en/claude-directory#clear-local-data). If you delete a [background session](/docs/en/agent-view) with [`claude rm <id>`](/docs/en/agent-view#what-deleting-a-session-removes), its transcript stays on disk and remains available through `claude --resume`.
+Transcripts age out under the [retention sweep rules](/docs/en/claude-directory#cleaned-up-automatically). To delete a project's transcripts and related state sooner, run [`claude purge`](/docs/en/claude-directory#clear-local-data). If you delete a [background session](/docs/en/agent-view) with [`claude rm <id>`](/docs/en/agent-view#what-deleting-a-session-removes), its transcript stays on disk and remains available through `claude --resume`.
 
 ### Name the project directory yourself
 
