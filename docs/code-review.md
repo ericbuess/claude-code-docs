@@ -273,9 +273,12 @@ When a review fails or exceeds its time limit, the check run completes with a ti
 
 To run the review again, comment `@claude review` on the PR. This starts a fresh review without subscribing the PR to future pushes. If the PR isn't [from a fork](#review-pull-requests-from-forks), you can instead click **Re-run** on the **Claude Code Review** check in GitHub's Checks tab. A re-run also starts a fresh review without subscribing the PR.
 
-### Review didn't run and the PR shows a spend-cap message
+### Review didn't run and the PR shows a budget message
 
-When your organization's monthly spend cap is reached, Code Review posts a single comment on the PR explaining that the review was skipped. Reviews resume automatically at the start of the next billing period, or immediately when an admin raises the cap at [claude.ai/admin-settings/usage](https://claude.ai/admin-settings/usage).
+When your organization's monthly spend cap for Code Review is reached or its usage-credits balance is used up, Code Review skips the review and posts a single comment on the PR. The comment and the check-run card both name the cause and link the admin page where an admin fixes it:
+
+* **Spend cap reached**: reviews resume at the start of the next billing period, or immediately after an admin raises the cap at [claude.ai/admin-settings/usage](https://claude.ai/admin-settings/usage)
+* **Usage credits used up**: reviews resume once an admin adds more [usage credits](https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans) at [claude.ai/admin-settings/usage](https://claude.ai/admin-settings/usage)
 
 ### Find issues that aren't showing as inline comments
 
@@ -287,7 +290,7 @@ If the check run title says issues were found but you don't see inline review co
 
 ## Review a diff locally
 
-The [`/code-review` command](/docs/en/commands) reviews a diff in your terminal without installing the GitHub App. It reports correctness bugs and reuse, simplification, and efficiency cleanups.
+The [`/code-review` command](/docs/en/commands) reviews a diff in your terminal without installing the GitHub App. It reports correctness bugs. Depending on your model and effort level, the review also covers reuse, simplification, and efficiency cleanups.
 
 `/review` is an alias of `/code-review`; before v2.1.223, it was a separate command that ran a single-pass, read-only review of a GitHub pull request.
 

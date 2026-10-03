@@ -286,7 +286,7 @@ Computer use is off by default. If you ask Claude to do something that needs it 
   </Step>
 
   <Step title="Turn on the toggle">
-    In the desktop app, go to **Settings > General** (under **Desktop app**). Find the **Computer use** toggle and turn it on. On Windows, the toggle takes effect immediately and setup is complete. On macOS, continue to the next step.
+    In the desktop app, go to **Settings > This computer > System**. Under **Computer use**, turn on **Enable computer use**. On Windows, the toggle takes effect immediately and setup is complete. On macOS, continue to the next step.
 
     If you don't see the toggle, confirm you're on macOS or Windows with a Pro or Max plan, then update and restart the app.
   </Step>
@@ -315,7 +315,7 @@ The prompt also shows what level of control Claude gets for that app. These tier
 
 Apps with broad reach, like terminals, Finder or File Explorer, and System Settings or Settings, show an extra warning in the prompt so you know what approving them grants.
 
-You can configure two settings in **Settings > General** (under **Desktop app**):
+The **Computer use** section in **Settings > This computer > System** includes these options:
 
 * **Denied apps**: add apps here to reject them without prompting. Claude may still affect a denied app indirectly through actions in an allowed app, but it can't interact with the denied app directly.
 * **Unhide apps when Claude finishes**: when computer use isn't running in the background, Claude hides your other windows while it works so it interacts with only the approved app. When Claude finishes, hidden windows are restored unless you turn this setting off.
