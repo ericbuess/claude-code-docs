@@ -717,7 +717,7 @@ For message-level reconstruction, each event class carries a key that matches a 
 
 #### User prompt event
 
-Logged when a user submits a prompt.
+Logged when a prompt is submitted, including on turns Claude Code starts on its own.
 
 **Event Name**: `claude_code.user_prompt`
 

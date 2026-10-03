@@ -2023,7 +2023,7 @@ HookEvent = Literal[
     "PreToolUse",  # Called before tool execution
     "PostToolUse",  # Called after tool execution
     "PostToolUseFailure",  # Called when a tool execution fails
-    "UserPromptSubmit",  # Called when user submits a prompt
+    "UserPromptSubmit",  # Called when a prompt is submitted
     "Stop",  # Called when stopping execution
     "SubagentStop",  # Called when a subagent stops
     "PreCompact",  # Called before message compaction
@@ -2207,7 +2207,7 @@ class UserPromptSubmitHookInput(BaseHookInput):
 | Field | Type | Description |
 | :- | :- | :- |
 | `hook_event_name` | `Literal["UserPromptSubmit"]` | Always "UserPromptSubmit" |
-| `prompt` | `str` | The user's submitted prompt |
+| `prompt` | `str` | The submitted prompt |
 
 ### `StopHookInput`
 
