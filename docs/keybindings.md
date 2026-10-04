@@ -106,7 +106,7 @@ Actions available in the `Chat` context:
 | `chat:cancel` | Escape | Cancel current input |
 | `chat:clearInput` | Ctrl+L | Force a full screen redraw, preserving input and conversation |
 | `chat:clearScreen` | Cmd+K | Same as `chat:clearInput`. See [Clear the conversation](/docs/en/fullscreen#clear-the-conversation) for how Cmd+K behaves on iTerm2 and Terminal.app |
-| `chat:killAgents` | Ctrl+X Ctrl+K | Stop all running [background subagents](/docs/en/sub-agents#run-subagents-in-foreground-or-background) in this session and turn off [artifact auto-replies](/docs/en/artifacts#let-claude-reply-to-comments-on-its-own) for the rest of it |
+| `chat:killAgents` | Ctrl+X Ctrl+K | Stop all running [background subagents](/docs/en/sub-agents#run-subagents-in-foreground-or-background) in this session and turn off [artifact auto-replies](/docs/en/artifacts#let-claude-reply-to-comments-on-its-own) for the rest of it. Press the shortcut twice within 3 seconds to confirm. You can press it while a background subagent's permission prompt is open |
 | `chat:cycleMode` | Shift+Tab\* | Cycle permission modes |
 | `chat:modelPicker` | Meta+P | Open model picker |
 | `chat:fastMode` | Meta+O | Toggle fast mode |
