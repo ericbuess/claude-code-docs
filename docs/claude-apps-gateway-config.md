@@ -218,7 +218,7 @@ For local development, point `postgres_url` at a throwaway Postgres container, f
 
 `upstreams` is an ordered list. The gateway forwards inference to the first upstream that resolves the requested model.
 
-On `5xx`, `429`, `401`, `403`, `404`, or timeout the gateway fails over to the next upstream; other `4xx` doesn't, because those errors are attributable to the request rather than the upstream. A `401` or `403` means the credential the gateway used against that upstream failed. A `404` means that upstream doesn't serve the requested model, so a later upstream in the list still can.
+On `5xx`, `429`, `401`, `403`, `404`, or timeout the gateway fails over to the next upstream; other `4xx` doesn't, because those errors are attributable to the request rather than the upstream. A `401` or `403` means the upstream rejected the credential the gateway used, or denied it access, for example to the requested model. A `404` means that upstream doesn't serve the requested model, so a later upstream in the list still can.
 
 If you set `forward_user_identity: true` on an upstream, a `429` it returns to a request that carried the developer's email doesn't fail over. See [how a per-user limit denial reaches the developer](#per-user-identity-headers-for-a-proxy-you-run).
 

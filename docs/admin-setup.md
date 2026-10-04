@@ -127,7 +127,7 @@ For the threat model these controls defend against, see [Security](/docs/en/secu
 
 ### Connected GitHub accounts
 
-On Team and Enterprise plans, [**Admin settings > GitHub**](https://claude.ai/admin-settings/github) lists the GitHub organizations and personal accounts linked to your Claude organization through the [Claude GitHub App](https://github.com/apps/claude). Claude Code, [Claude Tag](https://claude.com/docs/claude-tag/admins/configure-github), and Claude Security share the list. Opening it requires an admin role in your Claude organization.
+On Team and Enterprise plans, [**Organization settings > GitHub**](https://claude.ai/admin-settings/github) lists the GitHub organizations and personal accounts linked to your Claude organization through the [Claude GitHub App](https://github.com/apps/claude). Claude Code, [Claude Tag](https://claude.com/docs/claude-tag/admins/configure-github), and Claude Security share the list. Opening it requires an admin role in your Claude organization.
 
 An admin or a member can link an account:
 
@@ -149,7 +149,7 @@ Choose monitoring based on what you need to report on. The dashboards, APIs, and
 | Usage monitoring | OpenTelemetry export of sessions, tools, and tokens | All providers | [Monitoring usage](/docs/en/monitoring-usage) |
 | Analytics dashboard | Adoption and contribution metrics with a leaderboard on Teams / Enterprise; per-user usage and spend metrics on Console | Teams / Enterprise at [claude.ai/analytics](https://claude.ai/analytics/claude-code), Console at [platform.claude.com/claude-code](https://platform.claude.com/claude-code) | [Analytics](/docs/en/analytics) |
 | Programmatic reporting | Per-user usage and cost data over an API | [Enterprise Analytics API](https://platform.claude.com/docs/en/api/admin/analytics) for Enterprise, [Claude Code Analytics API](https://platform.claude.com/docs/en/build-with-claude/claude-code-analytics-api) for Console | [Costs](/docs/en/costs#manage-costs-for-your-organization) |
-| Spend controls | Spend limits and rate limits | Admin settings for Teams / Enterprise, workspace limits for Console; on third-party clouds, cloud budget controls or a [Claude apps gateway](/docs/en/claude-apps-gateway) with per-user [spend limits](/docs/en/claude-apps-gateway-spend-limits) | [Costs](/docs/en/costs#manage-costs-for-your-organization) |
+| Spend controls | Spend limits and rate limits | Organization settings for Teams / Enterprise, workspace limits for Console; on third-party clouds, cloud budget controls or a [Claude apps gateway](/docs/en/claude-apps-gateway) with per-user [spend limits](/docs/en/claude-apps-gateway-spend-limits) | [Costs](/docs/en/costs#manage-costs-for-your-organization) |
 
 On Teams and Enterprise, per-user usage and spend numbers come from the [spend report](https://support.claude.com/en/articles/12883420-view-usage-analytics-for-team-and-enterprise-plans) in your organization's analytics settings, not the analytics dashboard. Cloud providers expose spend through AWS Cost Explorer, GCP Billing, or Azure Cost Management. For planning enterprise budgets across Claude chat, Claude Code, and Cowork, see the [Claude Enterprise consumption guide](https://support.claude.com/en/articles/14782391-claude-enterprise-consumption-guide).
 

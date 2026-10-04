@@ -208,7 +208,7 @@ Right-click any file path in the chat, diff viewer, or file pane to open a conte
 
 ### Switch view modes
 
-View modes control how much detail appears in the chat transcript. Switch modes from the **Transcript view** dropdown next to the send button, or press **Ctrl+O** on macOS or Windows to cycle through them. The Thinking mode appears in the dropdown only after Claude has produced thinking in the session you're viewing.
+View modes control how much detail appears in the chat transcript. To switch view modes, open the session menu from the caret beside the session title and select **Transcript view**, or press **Ctrl+O** on macOS or Windows to cycle through them. The Thinking mode appears in the menu only after Claude has produced thinking in the session you're viewing.
 
 | Mode | What it shows |
 | - | - |
@@ -885,7 +885,7 @@ This table shows the desktop app equivalent for common CLI flags. Flags not list
 | `--dangerously-skip-permissions` | Bypass permissions mode. On Pro and Max plans, enable it in Settings → Claude Code → "Allow bypass permissions mode"; on Team and Enterprise plans, organization policy controls it |
 | `--add-dir` | Add multiple repos with the **+** button in cloud sessions |
 | `--allowedTools`, `--disallowedTools` | No per-session equivalent. Permission rules in [settings files](/docs/en/settings) still apply. |
-| `--verbose` | [Verbose view mode](#switch-view-modes) in the Transcript view dropdown |
+| `--verbose` | [Verbose view mode](#switch-view-modes) |
 | `--print`, `--output-format` | Not available. Desktop is interactive only. |
 | `ANTHROPIC_MODEL` env var | Model dropdown next to the send button |
 | `MAX_THINKING_TOKENS` env var | Set in the local environment editor. See [environment configuration](#environment-configuration). |

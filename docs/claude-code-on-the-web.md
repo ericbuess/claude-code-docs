@@ -63,9 +63,9 @@ See [Connect from your terminal](/docs/en/web-quickstart#connect-from-your-termi
   Organizations with [Zero Data Retention](/docs/en/zero-data-retention) enabled can't use `/web-setup` or other cloud session features.
 </Note>
 
-### Quick web setup for Team and Enterprise
+### Quick setup for Team and Enterprise
 
-Quick web setup is an organization setting that removes steps from members' GitHub and environment setup. On Team and Enterprise plans it's off by default.
+Quick setup is an organization setting that removes steps from members' GitHub and environment setup. On Team and Enterprise plans it's off by default.
 
 Here's what changes for members when it's on:
 
@@ -73,7 +73,7 @@ Here's what changes for members when it's on:
 * **GitHub App prompt**: browser onboarding skips the Claude GitHub App install prompt
 * **First environment**: browser onboarding creates the [**Default** environment](/docs/en/cloud-environments#the-default-environment) for members instead of showing the environment form
 
-An [Owner](/docs/en/server-managed-settings#access-control) turns it on with the **Quick web setup** toggle at [**Admin settings > Claude Code**](https://claude.ai/admin-settings/claude-code).
+An [Owner](/docs/en/server-managed-settings#access-control) turns it on with the **Quick setup** toggle at [**Organization settings > Claude Code**](https://claude.ai/admin-settings/claude-code).
 
 ## Move tasks between terminal and cloud
 

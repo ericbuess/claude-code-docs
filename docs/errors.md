@@ -811,7 +811,7 @@ If you connect through a Claude apps gateway and see lowercase `spend limit reac
 **What to do:**
 
 * On Pro and Max, increase your monthly spend limit in [**Settings > Usage**](https://claude.ai/settings/usage) on claude.ai, or run `/usage-credits`
-* On Team and Enterprise, increase the limit in [**Admin settings > Usage**](https://claude.ai/admin-settings/usage) if you manage billing, or ask an admin to. `/usage-credits` sends that request to your admin for you
+* On Team and Enterprise, increase the limit in [**Organization settings > Usage**](https://claude.ai/admin-settings/usage) if you manage billing, or ask an admin to. `/usage-credits` sends that request to your admin for you
 * For a channel's limit, ask an org owner or the channel's manager to raise it on claude.ai. See [Per-channel limits](https://claude.com/docs/claude-tag/admins/set-spend-limit#per-channel-limits) in the Claude Tag documentation
 * If the message names a reset time for your plan's window, you can wait for it instead
 * Run `/usage` to see your plan's windows and when each resets
