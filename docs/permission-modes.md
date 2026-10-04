@@ -85,7 +85,7 @@ The built-in default depends on how you run Claude Code. The first row that matc
 | `claude -p` or the [Agent SDK](/docs/en/agent-sdk/permissions#permission-modes) | `default` in sessions that [fetch feature flags](/docs/en/env-vars#features-that-need-feature-flag-fetching). In sessions that don't, such as on a third-party provider or with telemetry off, `auto` with Claude Code v2.1.285 or later and `default` on earlier versions. A session in an organization whose policy withholds the `auto` default starts in `default` instead |
 | In a terminal or through the [VS Code extension](/docs/en/vs-code) | `auto` with Claude Code v2.1.283 or later; on earlier versions, `auto` on Pro, Max, or Team plans in sessions that [fetch feature flags](/docs/en/env-vars#features-that-need-feature-flag-fetching), and `default` otherwise |
 
-In your [first session after an install or upgrade](/docs/en/env-vars#first-session-after-an-install-or-upgrade), Claude Code can choose the starting permission mode before its feature flags arrive. That session can start in a different permission mode than the table gives, and your next session matches the table.
+In your [first session after an install or upgrade](/docs/en/env-vars#first-session-after-an-install-or-upgrade), Claude Code can choose the starting permission mode before its feature flags arrive. That session can start in a different permission mode than the table gives.
 
 When the flag, a settings file, or the built-in default selects `auto` but auto mode isn't available to the session, Claude Code starts the session in Manual instead. Auto mode is unavailable when the session doesn't meet the [availability requirements](#eliminate-prompts-with-auto-mode), such as a settings file turning it off or a model that doesn't support it, or when Anthropic has temporarily turned it off server-side.
 
@@ -642,7 +642,7 @@ Protected directories:
 * `.devcontainer`
 * `.yarn`
 * `.mvn`
-* `.claude`, except for `.claude/worktrees` where Claude stores its own git worktrees
+* `.claude`, except for `.claude/worktrees` where Claude stores its own git worktrees, and except for the markdown files in Claude's own [auto memory](/docs/en/memory#storage-location) directory in a session started without `--restricted`
 * A directory you loaded with [`--plugin-dir`](/docs/en/plugins/mods/create#change-a-mod-with-claude), because Claude Code reloads and runs a mod's code from it when a file changes
 
 Protected files:
@@ -697,9 +697,11 @@ To turn off the check on a target that is only command substitution output, set 
 Claude Code also looks inside these constructs:
 
 * **Nested commands**: a subshell with `(...)`, a brace group with `{ ...; }`, command substitution with `$(...)` or backticks, or process substitution with `<(...)`. Claude Code finds a critical-path removal whether it sits inside the nested form, as in `(rm -rf ~)` or `echo "$(rm -rf ~)"`, or elsewhere in the same command.
-* **Inline scripts**: Claude Code checks a script passed to a shell such as `sh -c` or `bash -c` for the shell variable and positional parameter [targets](#other-targets-that-count-as-critical-paths).
+* **Inline scripts**: a script passed to `sh`, `bash`, `zsh`, or a similar POSIX shell with `-c`, as in `bash -c 'rm -rf ~'`.
   * When the script is double-quoted, the invoking shell expands its variables before the inner shell receives the script. In `find . -name '*.tmp' -exec sh -c "rm -rf \"$1\"/*" _ {} \;`, the command expands to a removal from the filesystem root once per match, and Claude Code treats it as a critical-path removal.
   * A single-quoted script that binds `$1` to a real value, as `sh -c 'rm -rf "$1"/*' _ {}` does, isn't flagged.
+
+To turn off the check on a critical path typed directly in a `-c` script, such as `~`, set [`CLAUDE_CODE_DISABLE_INLINE_SHELL_RM_PROMPT=1`](/docs/en/env-vars#variables) in the environment that launches Claude Code.
 
 ### Rewrite a flagged command
 

@@ -765,6 +765,14 @@ type SDKControlInitializeResponse = {
   fast_mode_state?: "off" | "cooldown" | "on";
   fast_mode_disabled_reason?: FastModeDisabledReason;
   hooks_applied?: boolean;
+  sdk_mcp_manifests_parked?: Record<
+    string,
+    | "parked"
+    | "already_connected"
+    | "protocol_version_mismatch"
+    | "malformed"
+    | "not_honoured"
+  >;
 };
 ```
 
@@ -776,6 +784,8 @@ Claude Code omits the field when the request carried no hooks. When the request 
 * `false`: Claude Code ignored the hooks. A repeated initialize sent to a remote session returns this value, so a second client that joins a session can't replace the hooks the first client registered.
 
 Before Agent SDK v0.3.238, the response never carried the field, and Claude Code ignored `hooks` on every repeated initialize.
+
+The request's `sdkMcpServerManifests` field and the response's `sdk_mcp_manifests_parked` field are for the in-process [SDK MCP servers](/docs/en/agent-sdk/custom-tools) you created with [`createSdkMcpServer()`](#createsdkmcpserver). Your application doesn't set or read either field.
 
 The response always reports `fast_mode_state`, and when something blocks [fast mode](/docs/en/fast-mode), `fast_mode_disabled_reason` carries the reason code alongside it, so you can explain the blocked state instead of re-deriving availability. Both behaviors require Claude Code v2.1.219 or later. Before v2.1.219, the response omitted `fast_mode_state` when fast mode wasn't available and never carried a reason. For the reason codes and their meanings, see [`fast_mode_disabled_reason`](#sdkresultmessage) on the result message.
 
@@ -1785,6 +1795,8 @@ The `capabilities` array names the protocol behaviors this CLI implements, so yo
 | - | - |
 | `interrupt_receipt_v1` | [`interrupt()`](#query-object) resolves with an [`SDKControlInterruptResponse`](#sdkcontrolinterruptresponse) receipt listing the messages that were pending when the interrupt arrived |
 | `interrupt_cancel_queued_v1` | The `interrupt` control request honors `cancel_queued: true`, cancelling the messages the receipt would otherwise list under `still_queued` and listing them under `cancelled` instead. See [`SDKControlInterruptResponse`](#sdkcontrolinterruptresponse). Requires Claude Code v2.1.219 or later |
+| `sdk_mcp_manifests` | The `initialize` control request accepts `sdkMcpServerManifests`, MCP handshake results captured from your in-process [SDK MCP servers](/docs/en/agent-sdk/custom-tools). Claude Code advertises this capability in v2.1.286 or later |
+| `sdk_mcp_tools_list_changed` | A `tools/list_changed` notification from an [SDK MCP server](/docs/en/agent-sdk/custom-tools) makes Claude Code list that server's tools again, so a tool the server adds mid-session reaches Claude. Claude Code advertises this capability in v2.1.286 or later |
 
 The `plugin_errors` array lists plugin load failures. An entry describes either a plugin that didn't load and is absent from `plugins`, or a plugin that loaded without one of its parts, such as its hooks file. The key is omitted when nothing failed. `SDKSystemMessage` declares `plugin_errors` in Agent SDK v0.3.283 or later.
 

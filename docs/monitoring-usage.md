@@ -338,13 +338,26 @@ In interactive CLI sessions, detailed beta tracing also requires your organizati
 
 <span id="new-context-gates" />
 
+**Content attributes under detailed beta tracing**
+
 <Note>
-  Additional content-bearing attributes such as `new_context`, `system_prompt_preview`, `user_system_prompt`, `tool_input`, and `response.model_output` are emitted only when detailed beta tracing is active. They are not part of the stable span schema.
-
-  The gate on `new_context` depends on which span carries it, and each copy is truncated at the content limit (60 KB by default). On the `claude_code.tool` span it carries that tool call's result, whatever the tool, and requires `OTEL_LOG_TOOL_CONTENT=1`. On the `claude_code.interaction` span it carries the user prompt, and on the `claude_code.llm_request` span the new user messages and tool results of that request. Both of those require `OTEL_LOG_USER_PROMPTS=1`.
-
-  `user_system_prompt` additionally requires `OTEL_LOG_USER_PROMPTS=1`. It carries only the system prompt text you provide via the `systemPrompt` SDK option or `--system-prompt` and `--append-system-prompt` flags, truncated at the content limit (60 KB by default), and is emitted once per session rather than per request.
+  Additional content-bearing attributes such as `new_context`, `system_reminders`, `system_prompt_preview`, `user_system_prompt`, `tool_input`, and `response.model_output` are emitted only when detailed beta tracing is active. They are not part of the stable span schema.
 </Note>
+
+These attributes appear on the spans below, and `Gated by` names the variable an attribute needs on top of detailed beta tracing. Values longer than the content limit (60 KB by default) are truncated.
+
+| Attribute | Span | Description | Gated by |
+| - | - | - | - |
+| `new_context` | `claude_code.interaction` | The user prompt | `OTEL_LOG_USER_PROMPTS` |
+| `new_context` | `claude_code.llm_request` | The new user messages and tool results sent with the request | `OTEL_LOG_USER_PROMPTS` |
+| `system_reminders` | `claude_code.llm_request` | The text of the [system reminders](/docs/en/glossary#system-reminder) among the request's new messages | `OTEL_LOG_USER_PROMPTS` |
+| `system_prompt_preview` | `claude_code.llm_request` | First 500 characters of the complete system prompt sent with the request | `OTEL_LOG_USER_PROMPTS` |
+| `user_system_prompt` | `claude_code.llm_request` | Only the system prompt text you provide via the `systemPrompt` SDK option or `--system-prompt` and `--append-system-prompt` flags. Emitted once per session rather than per request | `OTEL_LOG_USER_PROMPTS` |
+| `response.model_output` | `claude_code.llm_request` | Text of the model's response to the request | `OTEL_LOG_USER_PROMPTS` |
+| `new_context` | `claude_code.tool` | The tool call's result, whatever the tool | `OTEL_LOG_TOOL_CONTENT` |
+| `tool_input` | `claude_code.tool` | The tool call's serialized input | `OTEL_LOG_TOOL_DETAILS` |
+
+Under detailed beta tracing with `OTEL_LOG_USER_PROMPTS=1`, Claude Code also emits a `claude_code.system_prompt` event that carries the complete system prompt, truncated at the content limit. It arrives the first time a session sends each distinct system prompt, and again after compaction.
 
 ### Dynamic headers
 
@@ -729,6 +742,7 @@ Logged when a prompt is submitted, including on turns Claude Code starts on its 
 * `event.sequence`: per-process counter for ordering events, described under [Event correlation attributes](#event-correlation-attributes)
 * `prompt_length`: Length of the prompt
 * `prompt`: Prompt content. Redacted by default. Set `OTEL_LOG_USER_PROMPTS=1` to include it
+* `prompt_text`: Same value as `prompt`, redacted under the same gate. A backend that stores dotted attribute names as nested objects reads `prompt.id` as `id` inside an object named `prompt` and can lose the prompt string. Read `prompt_text` there instead. Requires Claude Code v2.1.287 or later
 * `message.uuid`: UUID of the resulting user message, matching the persisted transcript entry. Absent on command dispatches, which can produce zero or many messages. Requires Claude Code v2.1.214 or later
 * `command_name`: Command name when the prompt invokes one. Built-in and bundled command names such as `compact` or `debug` are emitted as-is; aliases such as `reset` emit as typed rather than the canonical name. Custom, plugin, and MCP command names collapse to `custom` or `mcp` unless `OTEL_LOG_TOOL_DETAILS=1` is set
 * `command_source`: Origin of the command when present: `builtin`, `custom`, or `mcp`. Plugin-provided commands report as `custom`
@@ -1536,14 +1550,31 @@ For a comprehensive guide on measuring return on investment for Claude Code, inc
 * OpenTelemetry export to your backend is opt-in and requires explicit configuration. For Anthropic's separate operational telemetry and how to disable it, see [Data usage](/docs/en/data-usage#telemetry-services)
 * Raw file contents and code snippets are not included in metrics or events. Trace spans are a separate data path: see the `OTEL_LOG_TOOL_CONTENT` bullet below
 * When authenticated via OAuth, `user.email` is included in telemetry attributes, sent only to the OTel endpoint you configure, never to Anthropic. If this is a concern for your organization, work with your telemetry backend to filter or redact this field
-* User prompt content is not collected by default. Only prompt length is recorded. To include prompt content, set `OTEL_LOG_USER_PROMPTS=1`. Under detailed beta tracing this variable reaches further than prompt text: it also gates the [`new_context` span attribute](#new-context-gates), which carries tool results on the `claude_code.llm_request` span
-* Assistant response text is not collected by default. Only response length is recorded. To include response text, set `OTEL_LOG_ASSISTANT_RESPONSES=1`. Like all OpenTelemetry data from Claude Code, the response text is sent only to the OTel endpoint you configure, never to Anthropic. When this variable is unset, `OTEL_LOG_USER_PROMPTS` is used as a fallback, so set `OTEL_LOG_ASSISTANT_RESPONSES=0` if you want prompt content without response content
+* User prompt content is not collected by default. Only prompt length is recorded. To include prompt content, set `OTEL_LOG_USER_PROMPTS=1`. When enabled:
+  * `user_prompt` events carry the prompt text in two attributes, `prompt` and [`prompt_text`](#user-prompt-event). If you drop or mask the event's prompt text by attribute name in your collector, name both attributes in the rule
+
+    This OpenTelemetry Collector `attributes` processor deletes both attributes in the pipelines that list it:
+
+    ```yaml theme={null}
+    processors:
+      attributes/drop-prompt-text:
+        actions:
+          - key: prompt
+            action: delete
+          - key: prompt_text
+            action: delete
+    ```
+
+  * With [tracing](#traces-beta) on, the `claude_code.interaction` span carries the prompt text in its `user_prompt` attribute
+
+  * Under detailed beta tracing, spans also carry the new user messages, tool results, and system reminders sent with each request, system prompt text, and model output. [Content attributes under detailed beta tracing](#new-context-gates) lists each attribute. The `claude_code.system_prompt` event carries the complete system prompt
+* Assistant response text is not collected by default. Only response length is recorded. To include response text, set `OTEL_LOG_ASSISTANT_RESPONSES=1`. Like all OpenTelemetry data from Claude Code, the response text is sent only to the OTel endpoint you configure, never to Anthropic. When this variable is unset, `OTEL_LOG_USER_PROMPTS` is used as a fallback, so set `OTEL_LOG_ASSISTANT_RESPONSES=0` if you want prompt content without response content in events. Under detailed beta tracing, the `claude_code.llm_request` span still carries model output in [`response.model_output`](#new-context-gates), which follows `OTEL_LOG_USER_PROMPTS` rather than this variable
 * Tool input arguments and parameters are not logged by default. To include them, set `OTEL_LOG_TOOL_DETAILS=1`. For Claude Desktop's built-in servers, in sessions Claude Desktop owns, `tool_decision` and `tool_result` carry the `mcp_server_name`/`mcp_tool_name` pair, host-authored names rather than argument content, even with the flag off. The exception requires Claude Code v2.1.214 or later. This data is sent only to the OTEL endpoint you configure, never to Anthropic. Arguments may still contain sensitive values, so configure your telemetry backend to filter or redact these attributes as needed. When enabled:
   * `tool_result` and `tool_decision` events include a `tool_parameters` attribute with Bash commands, MCP server and tool names, and skill names. Fields such as `full_command` are emitted untruncated
   * `tool_result` events additionally include a `tool_input` attribute with file paths, URLs, search patterns, and other arguments. Individual values over 512 characters are truncated and the total is bounded to \~4 K characters
   * `user_prompt` events include the verbatim `command_name` for custom, plugin, and MCP commands
   * The [cost and token counters](#cost-counter) and the `api_request`, `api_error`, and `api_refusal` events carry real agent, skill, plugin, and MCP server and tool names in their attribution attributes
-  * Trace spans include the same `tool_input` attribute and input-derived attributes such as `file_path`, with the same truncation as `tool_input`
+  * The `claude_code.tool` span carries input-derived attributes such as `file_path`. Under detailed beta tracing it also carries a [`tool_input`](#new-context-gates) attribute
 * Tool content is not logged in trace spans by default. To include it, set `OTEL_LOG_TOOL_CONTENT=1`. The `claude_code.tool` span then carries a [`tool.output` span event](#tool-output-span-event) with raw file contents, Bash command output, and what MCP tools, WebFetch, and WebSearch return, truncated at the content limit (60 KB by default) per attribute. Results from MCP tools, WebFetch, and WebSearch require Claude Code v2.1.283 or later. Tool content also reaches spans through [`new_context`, whose gate differs per span](#new-context-gates). Configure your telemetry backend to filter or redact these attributes as needed
 * Raw Anthropic Messages API request and response bodies are not logged by default. To include them, set `OTEL_LOG_RAW_API_BODIES` in your shell, user settings, or managed settings. It's ignored in [project and local settings](/docs/en/settings-reference#variables-claude-code-ignores-in-env). The bodies contain the full conversation history, including the system prompt, every prior user and assistant turn, and tool results, so enabling this implies consent to everything the other `OTEL_LOG_*` content flags would reveal. Claude Code always redacts Claude's extended-thinking content from these bodies, regardless of other settings. The value you set determines how Claude Code delivers the bodies:
   * With `=1`, Claude Code emits `api_request_body` and `api_response_body` log events for each API call. The events' `body` attribute carries the JSON-serialized payload, truncated at the content limit (60 KB by default)

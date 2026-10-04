@@ -248,7 +248,7 @@ Interactive sessions that are already running apply your edits to the key:
 
 Allowlists and denylists filter which configured servers are allowed to load. They aren't a registry: a server still has to be added by a user, a plugin, or your organization before either list applies to it.
 
-Servers your organization delivers through `managedMcpServers` load without an allowlist entry, and [How a server is evaluated](#how-a-server-is-evaluated) covers `managed-mcp.json` servers. The denylist applies to every server regardless of where it came from, other than in-process `type: "sdk"` entries.
+Servers your organization delivers through `managedMcpServers` load without an allowlist entry, and [Servers that skip the allowlist check](#servers-that-skip-the-allowlist-check) covers `managed-mcp.json` servers. The denylist applies to every server regardless of where it came from, other than in-process `type: "sdk"` entries.
 
 To deploy servers to users, use [`managed-mcp.json`](#exclusive-control-with-managed-mcp-json) or [`managedMcpServers`](#provide-servers-through-managed-settings). Both lists also filter servers a user passes with the [`--mcp-config` CLI flag](/docs/en/cli-reference#cli-flags), other than in-process `type: "sdk"` entries; `--strict-mcp-config` limits which configuration files load and doesn't bypass either list.
 
@@ -272,16 +272,20 @@ Without `allowManagedMcpServersOnly`, allowlists from every settings scope merge
 | :- | :- | :- |
 | `serverUrl` | A remote server URL, exact or with `*` wildcards | HTTP and SSE servers |
 | `serverCommand` | The exact command and arguments that start a stdio server | Stdio servers |
-| `serverName` | The user-assigned label. Exact match only; wildcards are not expanded | Either type, but see the Warning below |
+| `serverName` | The user-assigned label. Exact match only; wildcards are not expanded | Either type, but see [How `serverName` entries match](#how-servername-entries-match) |
 
 Leaving `allowedMcpServers` unset is different from setting it to an empty array:
 
 | Setting | Unset (default) | Empty array `[]` | Populated |
 | :- | :- | :- | :- |
-| `allowedMcpServers` | All servers allowed | No servers allowed, apart from [those that skip the allowlist check](#how-a-server-is-evaluated) | Only matching servers allowed, apart from [those that skip the allowlist check](#how-a-server-is-evaluated) |
+| `allowedMcpServers` | All servers allowed | No servers allowed, apart from [those that skip the allowlist check](#servers-that-skip-the-allowlist-check) | Only matching servers allowed, apart from [those that skip the allowlist check](#servers-that-skip-the-allowlist-check) |
 | `deniedMcpServers` | No servers blocked | No servers blocked | Matching servers blocked |
 
 See [Invalid entries in managed settings](/docs/en/managed-settings#invalid-entries-in-managed-settings) for what happens when an entry fails schema validation.
+
+#### How `serverName` entries match
+
+A `serverName` entry matches the user-assigned label exactly, with no wildcards.
 
 <Warning>
   A `serverName` entry, in either list, is not a security control. The name is the label a user assigns when running `claude mcp add` or editing a config file, not the underlying server, so a user can call any server `github`. For claude.ai connectors the name is the display name returned by claude.ai, which can change. To enforce which servers actually run, add `serverCommand` or `serverUrl` entries.
@@ -294,32 +298,18 @@ The `serverName` validation differs between the two lists:
 
 To turn off all the claude.ai connectors Claude Code fetches itself, see [`disableClaudeAiConnectors`](/docs/en/mcp#disable-claude-ai-connectors).
 
-### How a server is evaluated
+#### How `serverCommand` entries match
 
-Before loading a server, including one from `managed-mcp.json`, Claude Code runs the three checks below in order. It runs them again when a user reconnects a server or turns a disabled one back on in `/mcp`. In-process `type: "sdk"` servers, which the [app that started the session registers](/docs/en/mcp#how-connectors-reach-claude-code), skip all three.
-
-1. **Merge the lists.** Allowlist and denylist entries from every settings scope combine into one allowlist and one denylist. When `allowManagedMcpServersOnly` is `true`, only the managed allowlist is kept; the denylist always merges from every scope. When more than one managed source is present, [Keys read from every admin source](/docs/en/managed-settings#keys-read-from-every-admin-source) says which of them supply the managed scope's lists.
-2. **Check the denylist.** A server that matches any denylist entry, by URL, command, or name, is blocked. Nothing overrides a denylist match.
-3. **Check the allowlist.** If `allowedMcpServers` isn't set anywhere, every server that passed the denylist loads. If it is set, what the server must match depends on its type, shown in the table below.
-
-   Three groups of servers skip this check:
-
-   * The organization's own servers: every `managedMcpServers` entry, and any `managed-mcp.json` entry whose values use no `${VAR}` expansion.
-   * Built-in servers, such as Claude in Chrome, the `ide` server Claude Code connects to in a running VS Code or JetBrains IDE, and servers the CLI itself configures.
-   * A [Claude Tag](/docs/en/claude-tag) session's Slack tools: the servers it uses to read the thread and post its replies load without an allowlist entry.
-
-   A `managed-mcp.json` server that uses `${VAR}` expansion in its command, arguments, `env`, URL, or headers is still checked. So is every server a user, a plugin, or claude.ai adds, and every server a user passes with `--mcp-config`.
-
-| Server type | Allowed when it matches |
-| :- | :- |
-| Remote (HTTP or SSE) | A `serverUrl` entry. A `serverName` match counts only when the allowlist contains no `serverUrl` entries |
-| Stdio | A `serverCommand` entry. A `serverName` match counts only when the allowlist contains no `serverCommand` entries |
-
-Three matching rules apply inside those checks:
+A `serverCommand` entry holds the command and its arguments as one array, as in `{ "serverCommand": ["npx", "-y", "server"] }`. Claude Code compares that array with the command and arguments in the server's configuration:
 
 * **Commands match exactly.** Every argument, in order. `["npx", "-y", "server"]` does not match `["npx", "server"]` or `["npx", "-y", "server", "--flag"]`.
-* **`serverCommand` and `serverUrl` values expand before matching.** Both the policy entry and the server's configured value go through [`${VAR}` and `${VAR:-default}` expansion](/docs/en/mcp#environment-variable-expansion-in-mcp-json), so an entry written as `["${HOME}/bin/server"]` matches a server config that uses either the same reference or the expanded path. On Windows, reference an environment variable that is set there, such as `${USERPROFILE}` instead of `${HOME}`. `serverName` values match literally and never expand. The two sides read different environments; [How policy entries expand](#how-policy-entries-expand) covers which, and how allowlist and denylist entries differ.
-* **URLs support `*` wildcards** anywhere in the pattern, including the scheme. Hostname matching is case-insensitive and ignores a trailing FQDN dot, so `https://Mcp.Example.com/*` matches `https://mcp.example.com/api`. Paths stay case-sensitive.
+* **The `env` block isn't compared.** `["node", "server.js"]` matches a server that runs that command with any `env` values. Some environment variables change what `node` loads at startup. To set the `env` values yourself, define the server in [`managed-mcp.json`](#exclusive-control-with-managed-mcp-json).
+
+#### How `serverUrl` entries match
+
+URLs support `*` wildcards anywhere in the pattern, including the scheme. Hostname matching is case-insensitive and ignores a trailing FQDN dot, so `https://Mcp.Example.com/*` matches `https://mcp.example.com/api`. Paths stay case-sensitive.
+
+The table shows what common patterns allow:
 
 | Pattern | Allows |
 | :- | :- |
@@ -329,16 +319,52 @@ Three matching rules apply inside those checks:
 | `http://localhost:*/*` | Any port on localhost |
 | `*://mcp.example.com/*` | Any scheme to a specific domain |
 
-#### How policy entries expand
+<h4 id="how-policy-entries-expand">
+  Environment variables in `serverCommand` and `serverUrl` entries
+</h4>
 
-The server's configured value expands from the live process environment, like the rest of `.mcp.json`. A policy entry expands from a pinned environment instead, so a variable set by a project or user settings file can't change what an allowlist entry means. Because a policy entry still depends on the launching shell's value for any variable it references, use literal URLs and commands for entries you rely on for enforcement.
+`serverCommand` and `serverUrl` values expand before matching. Both the policy entry and the server's configured value go through [`${VAR}` and `${VAR:-default}` expansion](/docs/en/mcp#environment-variable-expansion-in-mcp-json), so an entry written as `["${HOME}/bin/server"]` matches a server config that uses either the same reference or the expanded path. `serverName` values match literally and never expand.
+
+The two sides read different environments:
+
+* **The server's configured value**: expands from the live process environment, like the rest of `.mcp.json`
+* **A policy entry**: expands from a pinned environment, so a variable set by a project or user settings file can't change what an allowlist entry means
+
+Because a policy entry still depends on the launching shell's value for any variable it references, use literal URLs and commands for entries you rely on for enforcement.
+
+On Windows, reference an environment variable that is set there, such as `${USERPROFILE}` instead of `${HOME}`.
+
+The two lists expand differently:
 
 | Entry list | Expands from | Expansion that would change a URL entry's scheme, host, or path scope |
 | - | - | - |
 | `allowedMcpServers` | The environment Claude Code started with, plus `env` values from managed settings | Claude Code ignores the entry |
 | `deniedMcpServers` | The same, and a variable with no startup value and no `:-default` fills from settings files outside the repository, such as user or managed settings, which only ever widens what the entry matches | The entry still matches |
 
-Requires Claude Code v2.1.219 or later.
+The pinned environment and the rules in this table require Claude Code v2.1.219 or later.
+
+### How a server is evaluated
+
+Before loading a server, including one from `managed-mcp.json`, Claude Code runs the three checks below in order. It runs them again when a user reconnects a server or turns a disabled one back on in `/mcp`. In-process `type: "sdk"` servers, which the [app that started the session registers](/docs/en/mcp#how-connectors-reach-claude-code), skip all three.
+
+1. **Merge the lists.** Allowlist and denylist entries from every settings scope combine into one allowlist and one denylist. When `allowManagedMcpServersOnly` is `true`, only the managed allowlist is kept; the denylist always merges from every scope. When more than one managed source is present, [Keys read from every admin source](/docs/en/managed-settings#keys-read-from-every-admin-source) says which of them supply the managed scope's lists.
+2. **Check the denylist.** A server that matches any denylist entry, by URL, command, or name, is blocked. Nothing overrides a denylist match.
+3. **Check the allowlist.** [Some servers skip this check](#servers-that-skip-the-allowlist-check). If `allowedMcpServers` isn't set anywhere, every server that passed the denylist loads. If it is set, what the server must match depends on its type, shown in the table below.
+
+| Server type | Allowed when it matches |
+| :- | :- |
+| Remote (HTTP or SSE) | A `serverUrl` entry. A `serverName` match counts only when the allowlist contains no `serverUrl` entries |
+| Stdio | A `serverCommand` entry. A `serverName` match counts only when the allowlist contains no `serverCommand` entries |
+
+#### Servers that skip the allowlist check
+
+Three groups of servers skip the allowlist check, in addition to the in-process `type: "sdk"` servers that skip [all three checks](#how-a-server-is-evaluated):
+
+* The organization's own servers: every `managedMcpServers` entry, and any `managed-mcp.json` entry whose values use no `${VAR}` expansion.
+* Built-in servers, such as Claude in Chrome, the `ide` server Claude Code connects to in a running VS Code or JetBrains IDE, and servers the CLI itself configures.
+* A [Claude Tag](/docs/en/claude-tag) session's Slack tools: the servers it uses to read the thread and post its replies load without an allowlist entry.
+
+A `managed-mcp.json` server that uses `${VAR}` expansion in its command, arguments, `env`, URL, or headers is still checked. Claude Code also checks every server a user, a plugin, or claude.ai adds, and every server a user passes with `--mcp-config`.
 
 ### Example configuration
 

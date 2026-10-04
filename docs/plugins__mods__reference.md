@@ -6,7 +6,7 @@
 
 > Complete reference for Claude Code mods: hooks module layout, events, mods API methods, render sites, elements by surface, limits, and settings.
 
-Look up any event a [mod](/docs/en/plugins/mods/overview) can handle, mods API method it can call, or render site it can draw in, for the Claude Code CLI and the Desktop app as of v2.1.287. Each entry gives the name and a one-line description, and links to the guide section that explains it where there is one.
+Look up any event a [mod](/docs/en/plugins/mods/overview) can handle, mods API method it can call, or render site it can draw in, for the Claude Code CLI and the Desktop app as of v2.1.289. Each entry gives the name and a one-line description, and links to the guide section that explains it where there is one.
 
 <Note>
   The complete reference is Claude Code's [TypeScript declarations for mods](https://github.com/anthropics/claude-code/blob/main/mods/types/claude-code.d.ts), which describe every event, method, and element, with examples. The copy on GitHub can be older than the Claude Code version you have installed. When the two disagree, trust [the copy Claude Code writes for your version](/docs/en/plugins/mods/create#get-the-types-for-your-build).
@@ -112,12 +112,12 @@ Session events mark the session starting, ending, compacting, and exchanging mes
 
 ### Subagents
 
-Subagent events fire when a subagent type is offered to Claude and when one is about to start:
+Subagent events fire when a subagent type is offered to Claude and when a subagent or an agent-team teammate is about to start:
 
 | Event | Fires when | A hook can return |
 | :- | :- | :- |
 | `agent.offer` | A subagent type is offered to Claude | `{ isOffered: false }` to withhold it |
-| `agent.spawn` | A subagent is about to start | `{ model }` or `{ deny: reason }` |
+| `agent.spawn` | A subagent or an [agent team](/docs/en/agent-teams) teammate is about to start. For a teammate, `e.isTeammate` is `true`. | `next({ ...e, model })` to choose its model, or `{ deny: reason }` |
 
 ### Interface
 
@@ -131,6 +131,7 @@ Interface events fire when Claude Code draws a render site and when the user use
 | `ui.focus`, `ui.scroll` | The focused control or the scroll position of a pane or the band is about to change |
 | `ui.close` | A pane is about to close. `e.id` is the pane and `e.origin.kind` is `plugin`, `person`, or `unload`. |
 | [`ui.message`](/docs/en/plugins/mods/interface#build-a-tree-from-elements) | A `Client` element posts data to its mod |
+| [`ui.fault`](/docs/en/plugins/mods/interface#redraw-when-something-changes) | A `Client` element your mod drew failed to load, draw, or run. `e.phase` is `load`, `render`, or `run`, and `e.reason` is the error message. Requires Claude Code v2.1.289 or later. |
 
 ### Other mods
 
@@ -164,7 +165,7 @@ The mods API is the `$` argument every hook receives. Its methods are grouped in
 | Namespace | Methods |
 | :- | :- |
 | `$.plugin` | `name`, `root`: this plugin's name and directory |
-| [`$.ui`](/docs/en/plugins/mods/interface#pick-where-to-draw) | `resolve`, `invalidate`, `open`, `close`, `panes`, `focus`, `scroll`, `toast`, `status`, `log`, `notice`, `ask`, `copy`, `blit` |
+| [`$.ui`](/docs/en/plugins/mods/interface#pick-where-to-draw) | `resolve`, `invalidate`, `open`, `close`, `panes`, `focus`, `scroll`, `toast`, `status`, `log`, `notice`, `ask`, `copy`, `selection`, `blit` |
 | [`$.command`](/docs/en/plugins/mods/api#add-a-command) | `register`, `run`, `list` |
 | [`$.tool`](/docs/en/plugins/mods/api#add-a-tool) | `register`, `call`, `check`, `list` |
 | `$.agent` | `register`, `spawn`, `list` |
@@ -242,9 +243,9 @@ Hooks and mods API calls run under time and size limits. Claude Code skips a hoo
 
 | Limit | Value |
 | :- | :- |
-| A hook's own execution time for one event, not counting time inside `next` or a mods API call other than `$.clock.sleep` | 10 seconds |
+| A hook's own execution time for one event, not counting time inside `next` or a mods API call other than `$.clock.sleep` | 10 seconds, or 50 milliseconds for a `prompt.edit` hook |
 | A `.catch` handler's execution time | 1 second |
-| All `session.end` hooks together | 1.5 seconds |
+| All `session.end` hooks together | As long as the [SessionEnd hook budget](/docs/en/hooks#sessionend-input), 1.5 seconds unless you change it, counted from when your settings `SessionEnd` hooks finish |
 | `$.process.run` timeout | 30 seconds by default, 10 minutes at most |
 | `$.model.complete` `maxTokens` | 1024 by default, up to 64,000 or the model's output limit |
 | `$.fs.read` and `$.fs.write` | 4 MiB for one file |

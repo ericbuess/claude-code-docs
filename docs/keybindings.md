@@ -412,6 +412,10 @@ Actions available in the `Agents` context, which applies in [agent view](/docs/e
 | :- | :- | :- |
 | `agents:switchView` | Ctrl+S | Switch [session grouping](/docs/en/agent-view#organize-the-list) between state and directory |
 | `agents:togglePin` | Ctrl+T | [Pin or unpin](/docs/en/agent-view#organize-the-list) the selected session |
+| `agents:find` | Ctrl+F | Find sessions by name, with the [`n:` filter](/docs/en/agent-view#filter-sessions). Requires v2.1.288 or later |
+| `agents:rename` | Ctrl+R | [Rename](/docs/en/agent-view#organize-the-list) the selected session. Requires v2.1.288 or later |
+| `agents:previousGroup` | Ctrl+Up, Meta+Up | Jump to the previous [group header](/docs/en/agent-view#organize-the-list). Requires v2.1.288 or later |
+| `agents:nextGroup` | Ctrl+Down, Meta+Down | Jump to the next group header. Requires v2.1.288 or later |
 
 While agent view is open, Claude Code uses the `Agents` binding for any key the `Agents` context binds, and it ignores a `Chat` or `Global` binding on the same key. For example, pressing Ctrl+S in agent view switches the session grouping rather than triggering the default `chat:stash`.
 

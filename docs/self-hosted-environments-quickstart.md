@@ -105,7 +105,7 @@ Once a session is running on your environment, send it a follow-up from the `cla
 claude -p "your message" --cloud <session-id>
 ```
 
-For `<session-id>`, pass the bare `session_...` or `cse_...` ID or the session's claude.ai/code URL. A successful send prints `Sent to cloud session.` with the session ID and a view link. Accepted ID forms, JSON output, the account and policy requirements, and the error reference are on [Send follow-ups from the CLI](/docs/en/claude-code-on-the-web#send-follow-ups-from-the-cli), since the command works the same against Anthropic-hosted sessions.
+For `<session-id>`, pass the bare `session_...` or `cse_...` ID or the session's claude.ai/code URL. A successful send prints `Sent to cloud session.` with the session ID and a view link. Accepted ID forms, JSON output, and the account and policy requirements are on [Send follow-ups from the CLI](/docs/en/claude-code-on-the-web#send-follow-ups-from-the-cli), since the command works the same against Anthropic-hosted sessions.
 
 ## What's next
 

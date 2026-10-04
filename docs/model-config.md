@@ -269,6 +269,7 @@ Model changes that Claude Code makes on your behalf are checked the same way:
 * **[Automatic model fallback](#automatic-model-fallback)**: a fallback whose target is excluded does not run, so the flagged request ends with a refusal instead
 * **[Auto mode classifier](/docs/en/permission-modes#eliminate-prompts-with-auto-mode)**: the classifier's Claude Sonnet 5 default applies only when the allowlist permits Sonnet 5. When it's excluded, the classifier runs on the session's model, which the allowlist already governs, or on an Opus model when the session runs on a [Fable model](#work-with-fable). On providers other than the Anthropic API, that Opus fallback runs on the model you set in `ANTHROPIC_DEFAULT_OPUS_MODEL` or otherwise on Opus 5, without consulting the allowlist. Requires Claude Code v2.1.210 or later
 * **[Fast mode](/docs/en/fast-mode)**: enabling fast mode is refused when the model the session would run on afterward is outside the allowlist
+* **Availability fallback on Amazon Bedrock and Google Cloud's Agent Platform**: when your account loses access to a model mid-session, the switch to another model skips excluded models. The startup model checks on [Amazon Bedrock](/docs/en/amazon-bedrock#when-your-organization-enforces-a-model-allowlist) and [Google Cloud's Agent Platform](/docs/en/google-vertex-ai#when-your-organization-enforces-a-model-allowlist) skip excluded models only when managed settings also set [`enforceAvailableModels`](#enforce-the-allowlist-for-the-default-model)
 
 ```json theme={null}
 {
@@ -698,7 +699,7 @@ Extended thinking is the reasoning Claude emits before responding. On models tha
 | :- | :- |
 | Toggle for the current session | Press `Option+T` on macOS or `Alt+T` on Windows and Linux |
 | Set the global default | Run `/config` and toggle thinking mode. Saved as `alwaysThinkingEnabled` in `~/.claude/settings.json` |
-| Disable through an environment variable | Set [`MAX_THINKING_TOKENS=0`](/docs/en/env-vars), which turns thinking off on the Anthropic API except on Opus 5.5, Sonnet 5.5, and Fable models. On [third-party providers](/docs/en/third-party-integrations), Claude Code omits the `thinking` parameter instead, and adaptive-reasoning models may still think. Other values apply only with a [fixed thinking budget](#adaptive-reasoning-and-fixed-thinking-budgets) |
+| Disable through an environment variable | Set [`MAX_THINKING_TOKENS=0`](/docs/en/env-vars), which turns thinking off on the Anthropic API except on Opus 5.5, Sonnet 5.5, and Fable models. On [third-party providers](/docs/en/third-party-integrations), Claude Code omits the `thinking` parameter instead, and adaptive-reasoning models may still think |
 
 You can't turn thinking off on Opus 5.5, Sonnet 5.5, or the Fable models. The session toggle and the `/config` row show `Thinking can't be turned off` for these models instead of offering the switch, and a saved `alwaysThinkingEnabled: false` or `MAX_THINKING_TOKENS=0` has no effect there. On these models, the model decides per step how much to think based on the effort level. The saved setting applies again when you switch to a model that accepts it.
 

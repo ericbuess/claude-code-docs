@@ -364,6 +364,7 @@ Match the message you see to a section below.
 | `Invalid permission rule "..." was skipped: Malformed Tool(content) rule` | [Configuration warnings](#malformed-tool-content-rule) |
 | `... is not matched by file permission checks` | [Configuration warnings](#is-not-matched-by-file-permission-checks) |
 | `... has a wildcard before the rest of the command` | [Configuration warnings](#has-a-wildcard-before-the-rest-of-the-command) |
+| `Denying Bash also turns off the PowerShell tool, so Claude has neither` | [Configuration warnings](#denying-bash-also-turns-off-the-powershell-tool) |
 | `CLAUDE_CODE_DISABLE_1M_CONTEXT is set, but the 200K limit isn't enforced` | [Configuration warnings](#the-200k-limit-isnt-enforced) |
 | `[claude-code:unrecognized_model]` | [Configuration warnings](#unrecognized-model-id-on-a-request) |
 | `Stale sandbox mask files left by a killed session` | [Configuration warnings](#stale-sandbox-mask-files-left-by-a-killed-session) |
@@ -5337,6 +5338,21 @@ Permission allow rule (.claude/settings.json): Bash(git -C * status *) has a wil
 * If the source reads `managed policy settings`, forward the warning to whoever maintains your managed settings, since you can't clear it yourself.
 
 In a [background session](/docs/en/agent-view) or with `--output-format json` or `stream-json`, Claude Code writes the warning to the debug log instead of stderr, so machine-read output stays clean. Run with `--debug` to capture it at `~/.claude/debug/<session-id>.txt`. Before v2.1.246, Claude Code accepted these rules without a warning.
+
+### Denying Bash also turns off the PowerShell tool
+
+You removed the whole Bash tool, for example with `--disallowedTools Bash` or with a bare `Bash` or `Bash(*)` [deny rule](/docs/en/permissions#match-all-uses-of-a-tool) in one of your settings files. On Windows with Git Bash installed, [denying Bash also turns the PowerShell tool off](/docs/en/tools-reference#bash-deny-rules-also-turn-off-the-powershell-tool), so the session starts with no shell tool. Claude Code prints this warning at startup:
+
+```text theme={null}
+Denying Bash also turns off the PowerShell tool, so Claude has neither. To use PowerShell, set CLAUDE_CODE_USE_POWERSHELL_TOOL=1.
+```
+
+**What to do:**
+
+* To have Claude use PowerShell, set [`CLAUDE_CODE_USE_POWERSHELL_TOOL`](/docs/en/env-vars) to `1` in your environment or in the `env` block of a settings file, as [Enable the PowerShell tool](/docs/en/tools-reference#enable-the-powershell-tool) shows. The PowerShell tool then stays on alongside your Bash deny rule.
+* To block particular commands instead of the whole tool, replace the bare `Bash` entry with scoped rules such as `Bash(git push *)` in the same settings file or flag. Claude keeps the Bash tool, and the PowerShell tool stays off until you also set the variable or add a scoped [`PowerShell` permission rule](/docs/en/permissions#powershell).
+
+In a [background session](/docs/en/agent-view) or with `--output-format json` or `stream-json`, Claude Code writes the warning to the debug log instead of stderr. Run with `--debug` to capture it at `~/.claude/debug/<session-id>.txt`. Before v2.1.287, Claude Code turned the PowerShell tool off the same way without printing a warning.
 
 <h3 id="crosssessioninbound-must-be-one-of-accept-hold-refuse">
   crossSessionInbound must be one of accept, hold, refuse

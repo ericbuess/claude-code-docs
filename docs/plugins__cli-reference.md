@@ -308,7 +308,9 @@ With `--json`, Claude Code prints an array with one object per installation. Eac
 | `version` | string | For a marketplace install, the [version Claude Code computed](/docs/en/plugins/loading#versions-and-updates) at install. For a session-only, skills-directory, or synced plugin, the manifest's `version`, or `unknown` when it declares none |
 | `scope` | string | `user`, `project`, `local`, or `managed` for installs; `user` or `project` for skills-directory plugins; `session` for session-only plugins; `synced` for plugins synced from claude.ai |
 | `enabled` | boolean | Whether the plugin is enabled in your merged settings |
-| `installPath` | string | Directory the plugin loads from |
+| `installPath` | string | Directory the plugin loads from, except for a plugin that sessions [load in place](/docs/en/plugins/loading#in-place-and-copied-plugins) from its marketplace's folder |
+| `readFromFolder` | string | For a plugin that sessions [load in place](/docs/en/plugins/loading#in-place-and-copied-plugins) from its marketplace's folder, the plugin's source directory inside that folder. Requires Claude Code v2.1.289 or later |
+| `folderVersion` | string | With `readFromFolder`, the plugin's `version` as Claude Code loaded it from that folder, which can differ from the `version` field above. Absent when the plugin didn't load or declares no version. Requires Claude Code v2.1.289 or later |
 | `installedAt` | string | ISO timestamp of the install. Marketplace installs only |
 | `lastUpdated` | string | ISO timestamp of the last update. Marketplace installs only |
 | `projectPath` | string | Project the install belongs to. `project` and `local` scope only |
@@ -591,6 +593,8 @@ The `<path>` is a manifest file or a directory. Given a directory, Claude Code p
   * A directory named `.claude`: the `skills`, `agents`, and `commands` directories inside it
   * Any other directory: those three directories under its `.claude`
 
+When the directory holds both a `.claude-plugin/marketplace.json` and a `.claude-plugin/plugin.json`, Claude Code validates the marketplace and also the plugin's manifest and component files. This requires Claude Code v2.1.289 or later.
+
 Claude Code doesn't follow symlinks inside the directory you name. What it does depends on where the link is:
 
 * **A linked `skills`, `agents`, or `commands` directory under the plugin or `.claude` root**: Claude Code warns that nothing in it was read.
@@ -601,7 +605,7 @@ A few files are not read by a validation run:
 
 * **A `SKILL.md` at the plugin root**: when you run `claude plugin validate` against a plugin directory, Claude Code doesn't check a `SKILL.md` at the plugin root
 * **A `CLAUDE.md` at the plugin root**: in a plugin run, Claude Code also warns about a `CLAUDE.md` at the plugin root
-* **Plugin files in a marketplace run**: from a marketplace directory, Claude Code doesn't open the plugins' skill, agent, command, or hook files, or the MCP server files they bundle. To find errors in those files, validate each plugin directory
+* **Plugin files in a marketplace run**: from a marketplace directory, Claude Code doesn't open the skill, agent, command, or hook files of plugins the marketplace lists in other directories, or the MCP server files they bundle. To find errors in those files, validate each plugin directory
 
 #### Output and exit codes
 

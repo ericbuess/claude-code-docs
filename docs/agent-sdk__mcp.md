@@ -869,6 +869,18 @@ If Claude sees tools but doesn't use them, check that you've granted permission 
   ```
 </CodeGroup>
 
+### A tool is missing from an SDK MCP server
+
+In the TypeScript SDK, when a tool's input schema can't be converted to JSON Schema, the server you created with [`createSdkMcpServer()`](/docs/en/agent-sdk/typescript#createsdkmcpserver) leaves that tool out when it lists its tools. The SDK emits a warning at that point. Under Node.js the warning is a process warning with code `CLAUDE_SDK_MCP_TOOL_SCHEMA_UNCONVERTIBLE`, and it starts with this text:
+
+```text theme={null}
+Tool "<name>" on SDK MCP server "<server>" was left out of the server's tool list, because its input schema cannot be converted to JSON Schema
+```
+
+The rest of the warning gives the conversion error's message when it has one, then says what to check and change.
+
+Before TypeScript Agent SDK v0.3.286, one unconvertible schema made the server's whole tool listing fail without this warning, so none of that server's tools reached Claude.
+
 ### Connection timeouts
 
 MCP server connections time out after 30 seconds by default. To change how long a running tool call may take, set [`MCP_TOOL_TIMEOUT`](/docs/en/env-vars). If your server takes longer to start, the connection fails. Raise the connection limit with the [`MCP_TIMEOUT`](/docs/en/env-vars) environment variable, in milliseconds. For servers that need more startup time, also consider:

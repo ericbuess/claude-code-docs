@@ -268,6 +268,7 @@ The location, retention, and write behavior are configurable:
 | [Name the `<project>` directory yourself](#name-the-project-directory-yourself) | [`CLAUDE_CODE_PROJECT_DIR_NAME`](/docs/en/env-vars) | Environment variable |
 | Change the 30-day retention | [`cleanupPeriodDays`](/docs/en/settings-reference#cleanupperioddays) | `settings.json` |
 | Set an age limit for [Claude Desktop and Cowork transcripts](/docs/en/claude-directory#cleaned-up-automatically) | [`desktopSessionCleanupPeriodDays`](/docs/en/settings-reference#desktopsessioncleanupperioddays) | User settings, managed settings, or `--settings` |
+| Limit how large a `-p` or Agent SDK session's transcript file grows | [`CLAUDE_CODE_TRANSCRIPT_LOCAL_GC`](/docs/en/env-vars) | Environment variable |
 | Suppress transcript writes in all modes | [`CLAUDE_CODE_SKIP_PROMPT_HISTORY`](/docs/en/env-vars) | Environment variable |
 | Suppress writes for one non-interactive run | [`--no-session-persistence`](/docs/en/cli-reference) | CLI flag with `claude -p` |
 

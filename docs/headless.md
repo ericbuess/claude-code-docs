@@ -55,7 +55,7 @@ In bare mode Claude has access to the Bash, file read, and file edit tools. Pass
 | System prompt additions | `--append-system-prompt`, `--append-system-prompt-file` |
 | Settings | `--settings <file-or-json>` |
 | MCP servers | `--mcp-config <file-or-json>` |
-| Custom agents | `--agents <json>` |
+| [Custom agents](/docs/en/sub-agents#choose-the-subagent-scope) | `--agents <file-or-json>` |
 | A plugin | `--plugin-dir <path>`, `--plugin-url <url>` |
 
 Bare mode also limits what happens while the session runs:

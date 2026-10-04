@@ -173,6 +173,23 @@ The proxy requires `--capacity 1` because the proxy URL is per-session, and git 
 
 The runner also reports the opt-in to Anthropic when it registers, printing `Registering as opted in to Anthropic-managed git (--use-anthropic-git-proxy)` at startup. Reporting the opt-in requires Claude Code v2.1.267 or later, and earlier versions accept the flag without reporting it or printing that line. Each session on an opted-in runner then uses either Anthropic-managed git or the per-session proxy URL. When a session uses the per-session proxy URL, the runner logs one `[runner:warn]` line saying so.
 
+#### GitHub API access without the GitHub CLI
+
+If your runner image doesn't include the GitHub CLI, Claude Code can provide a built-in `gh`, so Claude can still open pull requests, comment, and read CI results. The built-in `gh` is for runners that use Anthropic-managed git. It supports one command, `gh api`, which calls GitHub's REST API. Requires Claude Code v2.1.287 or later in the runner image.
+
+This command opens a pull request in place of `gh pr create`. The built-in `gh` fills in `{owner}` and `{repo}` for the current repository:
+
+```bash theme={null}
+gh api repos/{owner}/{repo}/pulls -f title='Fix' -f head='my-branch' -f base='main'
+```
+
+* **Credentials**: the built-in `gh` sends its REST requests through Anthropic-managed git, which supplies the GitHub credential on Anthropic's side, so the image needs no GitHub token for it
+* **Which sessions get it**: Anthropic decides per session whether Anthropic-managed git serves the session's `gh`. When it does, the `[runner:session] governed git ACTIVE` line that the runner logs for the session shows `gh_path_shim=true`. When it doesn't, the session has no `gh`
+* **`jq`**: install `jq` in the image if you want `--jq` to work
+* **[`CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC`](/docs/en/env-vars)**: if the session environment sets it, Claude Code doesn't provide the built-in `gh`, and the session has no `gh`
+
+When the image includes the GitHub CLI, sessions use it.
+
 #### Trust a private certificate authority with Anthropic-managed git
 
 This section applies if you set `GIT_SSL_CAINFO` or `GIT_SSL_NO_VERIFY` in the environment of a runner whose sessions use Anthropic-managed git. The handling it describes requires the runner to run Claude Code v2.1.283 or later.

@@ -367,7 +367,7 @@ Also grant `bedrock:ApplyGuardrail` on the guardrail to the principal that signs
 
 Set `guardrail` on every `bedrock` upstream or on none. The gateway refuses to start on a mix, because [failover](#multiple-upstreams) could otherwise send a request to a Bedrock upstream that has no guardrail.
 
-The guardrail covers Bedrock upstreams only. If you list another provider in `upstreams`, the gateway sends requests to that provider without the guardrail.
+The guardrail covers Bedrock upstreams only. If you list another provider in `upstreams`, the gateway sends requests to that provider without the guardrail, or refuses to start if that provider is [`mantle`](#amazon-bedrock-mantle-endpoint).
 
 When a `/v1/messages` request whose body carries an `amazon-bedrock-*` field, such as `amazon-bedrock-guardrailConfig`, reaches a Bedrock upstream that has `guardrail` set, the gateway answers 400 instead of forwarding it.
 
@@ -415,7 +415,7 @@ The role's trust policy names the gateway's own principal, such as its IRSA or E
 * If STS refuses or is unreachable, the gateway doesn't send the request with the upstream's own credentials. It logs the STS error with what to check, then tries the next upstream you listed. [Upstream error messages](#upstream-error-messages) covers what the client receives when no upstream succeeds. A later upstream without `assume_role` would serve the request with its own credentials, so list one only if that is what you want.
 * The gateway calls the regional STS endpoint `sts.<region>.amazonaws.com`, which its network must reach. For the FIPS endpoint, set `AWS_USE_FIPS_ENDPOINT=true` in the gateway's environment rather than `use_fips_endpoint` in an AWS config file.
 * `assume_role` applies to `provider: bedrock` only and needs SigV4 source credentials: the gateway refuses to start when it's set beside `aws_bearer_token`.
-* Every developer the gateway admits can use this upstream; [`managed`](#managed) governs which developers may use which models. To keep a model served through the role from also being served from another account, give it a custom id whose `upstream_model` map has only this upstream's name. For such an id the gateway skips every other upstream, so neither the request nor the token count for an aborted request can fail over to another account. Built-in model names are still tried on every upstream in order, this one included, and a request that reaches it is signed with the same role, so list this upstream last unless its account should also serve them.
+* Every developer the gateway admits can use this upstream; [`managed`](#managed) governs which developers may use which models. To keep a model served through the role from also being served from another account, give it a custom id whose `upstream_model` map has only this upstream's name. For such an id the gateway skips every other upstream, so neither the request nor the token count for an aborted request can fail over to another account. A request for a built-in model name can still [reach this upstream](#multiple-upstreams), and the gateway signs it with the same role. List this upstream last unless its account should also serve those models.
 
 This example gives one model a custom id that only the isolated upstream serves:
 
@@ -451,6 +451,43 @@ An active developer costs one STS call per hour per gateway replica, and concurr
 The gateway also makes one call of its own on this role: the token count for a request the client abandoned, so that [spend limits](/docs/en/claude-apps-gateway-spend-limits) stay accurate. That count and its [one-token fallback request](#amazon-bedrock) are signed by the shared `claude-apps-gateway` session, so AWS attributes the fallback to `claude-apps-gateway` rather than to the developer.
 
 For strict per-developer attribution, set `assume_role` with `session_name` on every Bedrock upstream you list. An upstream without it signs the requests it serves with its own credentials.
+
+#### Amazon Bedrock Mantle endpoint
+
+The `mantle` provider sends inference to Amazon Bedrock's [Mantle endpoint](/docs/en/amazon-bedrock#use-the-mantle-endpoint). It requires Claude Code v2.1.283 or later on the gateway server. Earlier gateway releases reject it at boot, so upgrade every replica before adding it.
+
+The example below puts Mantle first, with an Amazon Bedrock upstream behind it to serve every model the `models` field leaves out:
+
+```yaml theme={null}
+upstreams:
+  - provider: mantle
+    region: us-east-1
+    models: [claude-opus-4-7, claude-haiku-4-5]   # required
+    auth: {}                           # AWS default credential chain
+  - provider: bedrock
+    region: us-east-1
+    auth: {}
+```
+
+The table below lists the fields specific to a `mantle` upstream.
+
+| Field | Required | Description |
+| - | - | - |
+| `region` | Yes | AWS region. The gateway derives the endpoint from it as `https://bedrock-mantle.<region>.api.aws/anthropic`. |
+| `models` | Yes | The models your AWS account has been granted on Mantle, named as clients send them, such as `claude-haiku-4-5`. Only these go to this upstream, and every other model skips to the next one. |
+| `auth` | No | Takes the same keys as the [Amazon Bedrock](#amazon-bedrock) upstream's `auth` block, under the same rules. |
+| `base_url` | No | Override the derived endpoint. Keep the `/anthropic` path at the end. |
+
+Grant the upstream's AWS identity Mantle's own IAM actions for inference and token counting, which [Use the Mantle endpoint](/docs/en/amazon-bedrock#use-the-mantle-endpoint) lists.
+
+For a Mantle model ID that the gateway doesn't know, add an entry to the top-level [`models:`](#models) block whose `upstream_model` maps this upstream's name to that ID. Then put that entry's `id` in this upstream's `models` field too.
+
+A `bedrock` upstream's `guardrail` and `assume_role` settings don't extend to the requests Mantle serves:
+
+* **`guardrail`**: the gateway applies no [Bedrock guardrail](#apply-an-amazon-bedrock-guardrail) to requests it sends to Mantle, so it refuses to start when a `mantle` upstream is listed while any `bedrock` upstream sets `guardrail`.
+* **`assume_role`**: a `mantle` upstream takes no [`assume_role`](#bedrock-in-another-aws-account). Requests that Mantle serves are sent with the `mantle` upstream's own `auth` credentials, and aren't [attributed per developer](#per-developer-aws-cost-attribution).
+
+For what Mantle's own error responses mean, see [Mantle endpoint errors](/docs/en/amazon-bedrock#mantle-endpoint-errors).
 
 #### Claude Platform on AWS
 
@@ -644,7 +681,7 @@ models:
 | Different accounts | One Amazon Bedrock upstream per account. The default chain (`auth: {}`) uses the pod's identity; for a second account, add [`assume_role`](#bedrock-in-another-aws-account) to reach it with short-lived credentials, or set explicit credentials or a bearer token in `auth:`. |
 | Provisioned throughput | Map the model to the provisioned-throughput ARN in `models:` for that upstream's name. Other upstreams keep the on-demand ID, so PT capacity is exhausted before failing over. |
 | VPC / FIPS endpoints | Set `base_url:` on the upstream to your VPC endpoint or FIPS endpoint URL |
-| Model-scoped routing | Only a custom model `id`, one that isn't a built-in Claude model, skips the upstreams absent from its `upstream_model:` map. The gateway tries built-in models on every upstream in order and uses the provider's default ID where the map has no entry, so for built-in models the map changes which ID an upstream receives rather than whether it is tried; an upstream that rejects the ID follows the same [failover rules](#upstreams) as any other upstream error. |
+| Model-scoped routing | Only a custom model `id`, one that isn't a built-in Claude model, skips the upstreams absent from its `upstream_model:` map. A `mantle` upstream is tried only for the models listed in its [`models` field](#amazon-bedrock-mantle-endpoint). On every other upstream the gateway tries built-in models in order and uses the provider's default ID where the map has no entry, so for built-in models the map changes which ID an upstream receives rather than whether it is tried; an upstream that rejects the ID follows the same [failover rules](#upstreams) as any other upstream error. |
 
 Failing over between cloud providers, or to the direct Anthropic API, changes which agreement, geography, and other terms govern the request.
 
@@ -784,6 +821,9 @@ managed:
     - match: {}
       cli:
         availableModels: [claude-opus-4-8, claude-sonnet-4-6, claude-haiku-4-5]
+        # Make the Default option in /model resolve inside each policy's
+        # list. The eng-contractors policy inherits enforceAvailableModels.
+        enforceAvailableModels: true
 ```
 
 A `match: {}` catch-all, conventionally listed last, is treated as a base layer. Every other policy inherits any key it doesn't set from the catch-all, so per-role entries only need to list what differs from the org default. The merge rules depend on the key type:
@@ -792,7 +832,7 @@ A `match: {}` catch-all, conventionally listed last, is treated as a base layer.
 * **Deny-lists and hook arrays**: `permissions.deny`, `permissions.ask`, `disabledMcpjsonServers`, `deniedMcpServers`, `blockedMarketplaces`, and every `hooks` event-type array. These take the union of base and policy, so an org-wide deny or audit hook can't be accidentally dropped by a per-role override.
 * **Record-typed keys**: `env`, `modelOverrides`, and `skillOverrides`. These shallow-merge, so a per-role `env` block overrides keys it sets and inherits the rest from the base.
 
-`availableModels` is also enforced server-side at `/v1/messages`, so a denied model returns `400` regardless of what the client sends.
+`availableModels` is also enforced server-side at `/v1/messages`, so a denied model returns `400` regardless of what the client sends. An empty list denies every model. The check also covers the model a session starts on before the developer picks one, so [start sessions on a model the policy allows](#start-sessions-on-a-model-the-policy-allows).
 
 The gateway validates the `model` value itself before it relays a request, so a malformed value never reaches an upstream. It rejects the request with a `400` in two cases:
 
@@ -818,6 +858,27 @@ An authenticated user who matches no policy gets the gateway's defaults, which m
   * **Policy contents**: editing a policy and redeploying reaches connected clients on their next managed-settings poll, within an hour, apart from the [changes that apply only at the next launch](/docs/en/server-managed-settings#fetch-and-caching-behavior)
   * **Group membership**: changing a user's group membership changes which policy matches them. This takes effect on the next session re-mint, meaning the next silent refresh, bounded by `session.ttl_hours`.
 </Note>
+
+#### Start sessions on a model the policy allows
+
+If `availableModels` leaves out Claude Code's default model, sessions get `400` responses until the developer picks a listed model, for example with `/model`. In gateway sessions the default is the Opus model the `opus` alias resolves to, and `availableModels` on its own doesn't change it.
+
+To fix this, set [`enforceAvailableModels: true`](/docs/en/model-config#enforce-the-allowlist-for-the-default-model) in the same `cli` block, then check which kind of entry the list has:
+
+* **An alias such as `sonnet`, or a built-in ID such as `claude-sonnet-4-6`**: sessions start on one of those models, and the Default option in `/model` resolves to it
+* **No alias or built-in ID in the list**: sessions can keep starting on the built-in default, so also set [`model`](/docs/en/model-config#control-the-model-users-run-on) to one of the listed IDs in that policy's `cli` block
+
+This policy lists one custom ID that [`models`](#models) defines, and starts sessions on that ID:
+
+```yaml theme={null}
+managed:
+  policies:
+    - match: { groups: [restricted-projects] }
+      cli:
+        availableModels: [claude-opus-restricted]
+        enforceAvailableModels: true
+        model: claude-opus-restricted
+```
 
 #### Matcher values that stop the gateway at boot
 
@@ -852,6 +913,7 @@ managed:
       cli:
         # Model access (also enforced server-side at /v1/messages)
         availableModels: [claude-opus-4-8, claude-sonnet-4-6, claude-haiku-4-5]
+        enforceAvailableModels: true              # Default resolves inside the list
 
         # Permission policy
         permissions:
@@ -967,6 +1029,7 @@ managed:
     - match: { groups: [eng-contractors] }
       cli:
         availableModels: [claude-sonnet-4-6]
+        enforceAvailableModels: true
       desktop:
         isLocalDevMcpEnabled: false
         disableAutoUpdates: true
@@ -1340,6 +1403,11 @@ upstreams:
   #   region: us-east-1
   #   auth: {}
 
+  # - provider: mantle
+  #   region: us-east-1
+  #   models: [claude-opus-4-8, claude-opus-4-7, claude-haiku-4-5]
+  #   auth: {}
+
   # - provider: anthropicAws
   #   region: us-east-1
   #   workspace_id: wrkspc_...
@@ -1362,6 +1430,7 @@ models:
     upstream_model:
       anthropic: claude-opus-4-8
       # bedrock: us.anthropic.claude-opus-4-8
+      # mantle: anthropic.claude-opus-4-8
       # anthropicAws: claude-opus-4-8
       # vertex: claude-opus-4-8
       # foundry: <your-opus-deployment-name>
@@ -1379,15 +1448,16 @@ managed:
     - match: { groups: [contractors] }
       cli:
         availableModels: [claude-haiku-4-5]
-        # Constrain the Default picker option to availableModels instead of
-        # the tier default, so contractors don't get a 400 on the default.
-        enforceAvailableModels: true
         # allow auto-approves these tools; it does not block the rest.
         # Add deny rules to restrict tools.
         permissions: { allow: [Read, Grep] }
     - match: {}
       cli:
         availableModels: [claude-opus-4-8, claude-sonnet-4-6, claude-haiku-4-5]
+        # Constrain the Default picker option to each policy's availableModels
+        # instead of the built-in default, so no role gets a 400 on Default.
+        # The contractors policy inherits this key.
+        enforceAvailableModels: true
         permissions:
           allow: [Read, Grep, Bash, Edit]
           deny: ["WebFetch"]

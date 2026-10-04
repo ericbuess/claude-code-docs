@@ -439,6 +439,17 @@ On Windows, Claude Code auto-detects `pwsh.exe` for PowerShell 7+ with a fallbac
 
 Claude Code spawns PowerShell with `-ExecutionPolicy Bypass` at process scope only, so `.ps1` scripts and module imports work on default Windows installs without changing the machine's policy. Process-scope bypass doesn't override Group Policy `MachinePolicy` or `UserPolicy`, so enterprise policies still apply. To respect the machine's effective execution policy instead, set `CLAUDE_CODE_POWERSHELL_RESPECT_EXECUTION_POLICY=1`.
 
+### Bash deny rules also turn off the PowerShell tool
+
+On Windows with Git Bash installed, denying Bash also turns the PowerShell tool off for the session. This applies to scoped rules such as `Bash(git push *)` as well as a bare `Bash`, and to rules from one of your settings files or `--disallowedTools`. Claude Code does this because a `Bash` rule doesn't restrict the PowerShell tool, which has [its own permission rules](/docs/en/permissions#powershell). With PowerShell left on, Claude could run there what your rule denies in Bash.
+
+To keep the PowerShell tool on alongside a Bash deny rule, do either of these:
+
+* Set `CLAUDE_CODE_USE_POWERSHELL_TOOL=1` in your environment or in the `env` block of a settings file, as shown in [Enable the PowerShell tool](#enable-the-powershell-tool).
+* Add a scoped [`PowerShell` permission rule](/docs/en/permissions#powershell) to a settings file, such as a `PowerShell(git push *)` deny rule.
+
+Without one of these, a scoped Bash deny rule leaves the Bash tool available, and Claude Code turns PowerShell off without a warning. A rule that removes the whole Bash tool leaves Claude with no shell tool for the session.
+
 ### Shell selection in settings, hooks, and skills
 
 Three additional settings control where PowerShell is used:

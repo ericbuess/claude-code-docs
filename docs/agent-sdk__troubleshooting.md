@@ -13,7 +13,7 @@ Symptoms tied to a feature, such as a hook not firing or a skill not being used,
 | Symptom | Go to |
 | :- | :- |
 | Skills not found, a skill not being used, `Invalid skill name` error | [Skills troubleshooting](/docs/en/agent-sdk/skills#troubleshooting) |
-| MCP server shows `failed` status, tools not being called, connection timeouts, tool output that exceeds the maximum allowed tokens | [MCP troubleshooting](/docs/en/agent-sdk/mcp#troubleshooting) |
+| MCP server shows `failed` status, tools not being called, a tool missing from an SDK MCP server, connection timeouts, tool output that exceeds the maximum allowed tokens | [MCP troubleshooting](/docs/en/agent-sdk/mcp#troubleshooting) |
 | Plugin not loading, plugin skills not appearing | [Plugins troubleshooting](/docs/en/agent-sdk/plugins#troubleshooting) |
 | Claude not delegating to subagents, filesystem-based agents not loading | [Subagents troubleshooting](/docs/en/agent-sdk/subagents#troubleshooting) |
 | Checkpointing options not recognized, user messages without UUIDs, `No file checkpoint found`, `File rewinding is not enabled`, `ProcessTransport is not ready for writing` | [File checkpointing troubleshooting](/docs/en/agent-sdk/file-checkpointing#troubleshooting) |

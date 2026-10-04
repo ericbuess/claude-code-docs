@@ -182,7 +182,7 @@ Because `${CLAUDE_PLUGIN_ROOT}` points at a version directory, a plugin's root p
 Claude Code loads some plugins in place from where you keep them and copies the rest into the cache, according to their origin:
 
 * **`--plugin-dir` and skills-directory plugins**: the directory loads in place and is never copied. A `--plugin-url` archive or a `--plugin-dir` `.zip` is extracted into a session temp directory first
-* **Relative-path plugins in a marketplace you added from a local directory**: the plugin loads in place from its path inside the marketplace folder. Your edits to the source directory take effect at the next session start or `/reload-plugins`, and you don't need to increase the version. The plugin's hook processes and MCP and LSP servers receive a `CLAUDE_PLUGIN_ROOT` that points at the source directory. For its Node.js package dependencies, see [When the dependency install runs](#when-the-dependency-install-runs)
+* **Relative-path plugins in a marketplace you added from a local path**: the plugin loads in place from its path inside the marketplace folder. Your edits to the source directory take effect at the next session start or `/reload-plugins`, and you don't need to increase the version. The plugin's hook processes and MCP and LSP servers receive a `CLAUDE_PLUGIN_ROOT` that points at the source directory. For its Node.js package dependencies, see [When the dependency install runs](#when-the-dependency-install-runs)
 * **`command`-source plugins in [link mode](/docs/en/plugins/marketplace-reference#command-plugin-source)**: the directory the command printed loads in place, through links in the cache entry
 * **Every other marketplace plugin**: Claude Code copies the plugin into `cache/<marketplace>/<plugin>/<version>/` at install and loads that copy. Files outside the plugin directory aren't copied, so when a script inside a copied plugin reads a path above the plugin root, such as `../shared`, it doesn't find them
 
@@ -216,7 +216,7 @@ Claude Code installs the dependencies into the copied version directory each tim
 * When Claude Code updates a plugin to a new version
 * At session start when an enabled plugin isn't cached yet, such as on a new machine
 
-For a relative-path plugin [loaded in place](#in-place-and-copied-plugins) from a local-directory marketplace, Claude Code doesn't install the dependencies into the source directory. Install them there yourself, or from a hook into [`${CLAUDE_PLUGIN_DATA}`](/docs/en/plugins/components#path-variables-and-persistent-data).
+For a relative-path plugin [loaded in place](#in-place-and-copied-plugins) from a marketplace you added from a local path, Claude Code doesn't install the dependencies into the source directory. Install them there yourself, or from a hook into [`${CLAUDE_PLUGIN_DATA}`](/docs/en/plugins/components#path-variables-and-persistent-data).
 
 The install runs only when the plugin's root directory contains both a `package.json` and a supported lockfile.
 
@@ -275,7 +275,7 @@ The version also names the plugin's cache directory.
 
 A manifest that pins `"version"` is one way the computed version stays the same across commits. See [How Claude Code computes the version](#how-claude-code-computes-the-version) for the resolution order.
 
-A plugin [loaded in place](#in-place-and-copied-plugins) from a local-directory marketplace loads its current source files at every session start, whatever its version string says. For a plugin from a [marketplace hosted on claude.ai](/docs/en/plugins/install#add-from-claude-ai), the version claude.ai records for the plugin is its version, and the manifest's `version` isn't read.
+A plugin [loaded in place](#in-place-and-copied-plugins) from a marketplace you added from a local path loads its current source files at every session start, whatever its version string says. For a plugin from a [marketplace hosted on claude.ai](/docs/en/plugins/install#add-from-claude-ai), the version claude.ai records for the plugin is its version, and the manifest's `version` isn't read.
 
 ### How Claude Code computes the version
 

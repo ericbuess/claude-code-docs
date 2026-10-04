@@ -325,7 +325,7 @@ Start the dispatch input with one of these filters to narrow the list as you typ
 
 To combine filters, start with `a:`, `s:`, `n:`, or `o:` and add more, separated by spaces. The list shows the sessions that match all of them. For example, `s:blocked a:reviewer` lists the `reviewer` sessions that are waiting on you.
 
-While a filter is active, groups you collapsed expand to show their matches and the first match is selected, so pressing `Enter` opens it. Clear the input to remove the filter, and those groups collapse again.
+While a filter is active, groups you collapsed expand to show their matches and a match is selected, so pressing `Enter` opens it. Clear the input to remove the filter, and those groups collapse again.
 
 ### Keyboard shortcuts
 
@@ -345,6 +345,8 @@ Press `?` in agent view to see every shortcut in context. The table below summar
 | `Tab` | On an empty input, browse all subagents. Otherwise apply the highlighted suggestion |
 | `Ctrl+S` | Switch grouping between state and directory |
 | `Ctrl+T` | Pin or unpin the selected session |
+| `Ctrl+F` | Find sessions by name, with the [`n:` filter](#filter-sessions) |
+| `Alt+↑` / `Alt+↓` | Jump to the previous or next group header |
 | `Ctrl+R` | Rename the selected session |
 | `Ctrl+G` | Open the dispatch prompt in your `$VISUAL` or `$EDITOR` |
 | `Ctrl+J` | Insert a newline in the dispatch input |
@@ -354,7 +356,7 @@ Press `?` in agent view to see every shortcut in context. The table below summar
 | `Ctrl+C` | Clear the input; press twice to exit |
 | `?` | Show all shortcuts |
 
-`Ctrl+S`, `Ctrl+T`, and `Ctrl+G` follow your [`keybindings.json`](/docs/en/keybindings). Rebind or unbind `Ctrl+S` and `Ctrl+T` with the `agents:switchView` and `agents:togglePin` actions in the [`Agents` context](/docs/en/keybindings#agents-actions), and `Ctrl+G` through the `Chat` context's `chat:externalEditor` binding. The other shortcuts in the table can't be rebound.
+The shortcuts that have an action in the [`Agents` context](/docs/en/keybindings#agents-actions) follow your [`keybindings.json`](/docs/en/keybindings). So does `Ctrl+G`, through the `Chat` context's `chat:externalEditor` binding.
 
 ## Dispatch new agents
 
@@ -975,6 +977,7 @@ Agent view has evolved quickly during research preview. If you are on an older C
 
 | Version | Change |
 | - | - |
+| v2.1.288 | `Ctrl+F` finds sessions by name, and `Alt+↑` / `Alt+↓` jump between group headers. Both, and `Ctrl+R`, can be [rebound](/docs/en/keybindings#agents-actions). |
 | v2.1.287 | The [`n:<text>` filter](#filter-sessions) finds sessions by name or first prompt. While any filter is active, groups you collapsed expand to show their matches and the first match is selected, so `Enter` opens it. |
 | v2.1.287 | A command sent as a [peek reply](#peek-and-reply) runs when the session's current turn ends, including the commands that run as soon as you type them at a session's own prompt. A reply that is exactly `/stop` stops the session at once. |
 | v2.1.281 | A [`--setting-sources`](/docs/en/cli-reference#cli-flags) restriction [carries over](#what-carries-over-when-you-background) to a session you background with `←` or `/bg` and to the sessions you dispatch from agent view. Before this release, the spawned session loaded every settings source. |
