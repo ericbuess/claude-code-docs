@@ -689,6 +689,7 @@ Claude Code also treats the following `rm` and `rmdir` targets as critical paths
 | A target that is only the output of a command substitution, when the `rm` is recursive | `rm -rf "$(pwd)"` | Claude Code can't check the target before the command runs |
 | A trailing command substitution after a critical path | `rm -rf ~/$(cmd)` | Claude Code checks the path that would remain if the substitution expanded empty, here your home directory |
 | A target that is only backslashes | `rm -rf "\\"` | Git Bash on Windows reads a lone backslash as the current drive's root, so the check applies on every platform |
+| Some targets that end in `/*` or `/*/` | `rm -rf logs/*/*`, `rm -rf logs/*/`, `cd logs && rm -rf a/*` | Claude Code can't tell before the command runs which directories they reach |
 
 To turn off the check on a target that is only command substitution output, set [`CLAUDE_CODE_DISABLE_SUBSTITUTION_RM_PROMPT=1`](/docs/en/env-vars#variables) in the environment that launches Claude Code.
 

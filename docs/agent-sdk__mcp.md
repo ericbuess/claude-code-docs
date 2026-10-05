@@ -893,9 +893,9 @@ In TypeScript, you can set the tool-call limit for a single [SDK MCP server](#sd
 
 ### Tool output exceeds maximum allowed tokens
 
-The SDK applies the same MCP output limit as Claude Code. When a tool result with no image content is larger than 25,000 tokens, Claude Code saves the output to a file and replaces the tool result with an error message that names the file path, so the agent can read the output back in portions.
+The SDK applies the same MCP output limits as Claude Code. When a successful tool result with no image content is larger than 25,000 tokens, Claude Code saves the output to a file and replaces the tool result with an error message that names the file path, so the agent can read the output back in portions.
 
-Raise the limit with the [`MAX_MCP_OUTPUT_TOKENS`](/docs/en/env-vars) environment variable. See [MCP output limits and warnings](/docs/en/mcp#mcp-output-limits-and-warnings) for the full behavior, including how a server can declare a higher per-tool limit with the `anthropic/maxResultSizeChars` annotation.
+To change the token limit, set the [`MAX_MCP_OUTPUT_TOKENS`](/docs/en/env-vars) environment variable. Unless the tool declares `anthropic/maxResultSizeChars`, a successful text result longer than 50,000 characters is saved to a file regardless of the token limit. See [MCP output limits and warnings](/docs/en/mcp#mcp-output-limits-and-warnings) for the full behavior, including how a server declares that annotation.
 
 ## Related resources
 

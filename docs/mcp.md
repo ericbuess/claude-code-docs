@@ -415,7 +415,7 @@ Claude Code asks stdio servers for that revision when you set [`MCP_PROTOCOL_NEG
   * The `--transport` and `--header` flags also accept `-t` and `-H` short forms
   * Configure MCP server startup timeout using the `MCP_TIMEOUT` environment variable (for example, `MCP_TIMEOUT=10000 claude` sets a 10-second timeout)
   * Set a per-server tool execution timeout by adding a `timeout` field in milliseconds to that server's `.mcp.json` entry, for example `"timeout": 600000` for ten minutes. This overrides the `MCP_TOOL_TIMEOUT` environment variable for that server only
-  * Claude Code displays a warning when MCP tool output exceeds 10,000 tokens and limits output to 25,000 tokens by default. To raise the limit, set the `MAX_MCP_OUTPUT_TOKENS` environment variable (for example, `MAX_MCP_OUTPUT_TOKENS=50000`); the warning threshold is fixed. See [MCP output limits and warnings](#mcp-output-limits-and-warnings)
+  * Claude Code displays a warning when MCP tool output exceeds 10,000 tokens and limits output to 25,000 tokens by default. To change the token limit, set the `MAX_MCP_OUTPUT_TOKENS` environment variable, for example `MAX_MCP_OUTPUT_TOKENS=50000`. The warning threshold is fixed. Unless the server raises a tool's own limit, successful text results longer than 50,000 characters are saved to a file regardless of this variable. See [MCP output limits and warnings](#mcp-output-limits-and-warnings)
   * Use `/mcp` to authenticate with remote servers that require OAuth 2.0 authentication
 </Tip>
 
@@ -761,7 +761,7 @@ When the server rejects the stored refresh token, Claude Code immediately shows 
 
 A custom server that returns a `WWW-Authenticate` header pointing to its authorization server gets the same automatic discovery as any other remote server.
 
-Claude Code also shows a startup notice when one or more configured servers need authentication, so you don't have to open `/mcp` to discover which servers need sign-in. The notice requires Claude Code v2.1.193 or later. It counts only servers you can sign in to from Claude Code. Before v2.1.218, it also counted [claude.ai connectors](#use-mcp-servers-from-claude-ai) that weren't connected in claude.ai, which you can connect only from claude.ai settings.
+Claude Code also shows a startup notice when one or more configured servers need authentication, so you don't have to open `/mcp` to discover which servers need sign-in. The notice counts only servers you can sign in to from Claude Code. Before v2.1.218, it also counted [claude.ai connectors](#use-mcp-servers-from-claude-ai) that weren't connected in claude.ai, which you can connect only from claude.ai settings.
 
 The notice announces each server once and leaves it out of the count at later launches until that server has connected and needs sign-in again. `/mcp` still lists every server that needs sign-in.
 
@@ -1280,9 +1280,14 @@ When MCP tools produce large outputs, Claude Code helps manage the token usage t
 * **Configurable limit**: you can adjust the maximum allowed MCP output tokens using the `MAX_MCP_OUTPUT_TOKENS` environment variable
 * **Default limit**: the default maximum is 25,000 tokens
 * **Scope**: the environment variable applies to tools that don't declare their own limit. Tools that set [`anthropic/maxResultSizeChars`](#raise-the-limit-for-a-specific-tool) use that value instead for text content, regardless of what `MAX_MCP_OUTPUT_TOKENS` is set to. Tools that return image data are still subject to `MAX_MCP_OUTPUT_TOKENS`
-* **Over the limit**: when a result with no image content exceeds the limit, Claude Code saves it to a file and replaces it in the conversation with a message that names the file path, so Claude reads the file when it needs the content. The file goes in the session's `tool-results` directory under [`~/.claude/projects/`](/docs/en/claude-directory#cleaned-up-automatically).
+* **Over the limit**: when a successful result with no image content exceeds the token limit, Claude Code saves it to a file and replaces it in the conversation with a message that names the file path, so Claude reads the file when it needs the content. The file goes in the session's `tool-results` directory under [`~/.claude/projects/`](/docs/en/claude-directory#cleaned-up-automatically).
 
-To increase the limit for tools that produce large outputs:
+A call that Claude Code has [moved to a background task](#automatic-backgrounding-of-long-tool-calls) reports its result through the task notification. Two more limits apply to a call that completes in the foreground:
+
+* **Character limit for text results**: for a tool that doesn't declare [`anthropic/maxResultSizeChars`](#raise-the-limit-for-a-specific-tool), Claude Code saves a successful result with no image content to a file once it's longer than 50,000 characters, whatever its token count. Setting `MAX_MCP_OUTPUT_TOKENS` doesn't change this threshold
+* **Error results**: when a tool returns a result marked `isError: true`, Claude receives the result's text as the tool's error message. Error text longer than about 11,000 characters keeps only its first 5,000 and last 5,000 characters, with a marker between them that says how many characters were removed
+
+To change the token limit, set `MAX_MCP_OUTPUT_TOKENS` in your shell before starting Claude Code:
 
 ```bash theme={null}
 export MAX_MCP_OUTPUT_TOKENS=50000
@@ -1291,9 +1296,9 @@ claude
 
 ### Raise the limit for a specific tool
 
-If you're building an MCP server, you can allow individual tools to return results larger than the default persist-to-disk threshold by setting `_meta["anthropic/maxResultSizeChars"]` in the tool's `tools/list` response entry. Claude Code raises that tool's threshold to the annotated value, up to a hard ceiling of 500,000 characters.
+If you're building an MCP server, you can allow individual tools to return results larger than the default persist-to-disk threshold of 50,000 characters by setting `_meta["anthropic/maxResultSizeChars"]` in the tool's `tools/list` response entry. Claude Code raises that tool's threshold to the annotated value, up to a hard ceiling of 500,000 characters.
 
-This is useful for tools that return inherently large but necessary outputs, such as database schemas or full file trees. Without the annotation, results that exceed the default threshold are persisted to disk and replaced with a file reference in the conversation.
+This is useful for tools that return inherently large but necessary outputs, such as database schemas or full file trees. Without the annotation, successful results that exceed the default threshold are persisted to disk and replaced with a file reference in the conversation.
 
 ```json theme={null}
 {

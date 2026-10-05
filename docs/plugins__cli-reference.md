@@ -81,7 +81,7 @@ Most plugins install without a prompt. For a plugin whose marketplace entry [run
 | Flag | Description |
 | :- | :- |
 | `-s, --scope <scope>` | Installation scope: `user`, `project`, or `local`. Defaults to `user` |
-| `--config <key=value>` | Set a [`userConfig`](/docs/en/plugins/manifest-reference) option the plugin's manifest declares. Repeat the flag for each option. Requires Claude Code v2.1.147 or later. A key written `<server>.<key>` sets a setting that a [bundled MCP server](/docs/en/plugins/components#include-a-packaged-mcpb-server) declares in its own `user_config` instead, for a bundle file shipped inside the plugin. The `<server>.<key>` form requires Claude Code v2.1.285 or later |
+| `--config <key=value>` | Set a [`userConfig`](/docs/en/plugins/manifest-reference) option the plugin's manifest declares. Repeat the flag for each option. A key written `<server>.<key>` sets a setting that a [bundled MCP server](/docs/en/plugins/components#include-a-packaged-mcpb-server) declares in its own `user_config` instead, for a bundle file shipped inside the plugin. The `<server>.<key>` form requires Claude Code v2.1.285 or later |
 | `-y, --yes` | Accept the displayed install command without the `Run this command now?` prompt. Ignored when the command runs inside a Claude Code session, such as from the Bash tool or a hook. Requires Claude Code v2.1.229 or later |
 | `--accept-command <sha256>` | Accept the displayed install command whose `sha256` a previous [`--json` run](#plugin-json-result) reported in `shownCommand`, in place of `-y`. Can't be combined with `-y`. See [Accept a displayed install command](#accept-a-displayed-install-command). Requires Claude Code v2.1.271 or later |
 | `--json` | Print the result as one JSON object on the last line of stdout instead of the human-readable message, for use in scripts. See [JSON result format](#plugin-json-result). Requires Claude Code v2.1.268 or later |
@@ -573,7 +573,7 @@ claude plugin validate <path> [options]
 
 | Flag | Description |
 | :- | :- |
-| `--strict` | Treat warnings as errors, so unrecognized fields and missing metadata that the runtime tolerates fail the run. Requires Claude Code v2.1.145 or later |
+| `--strict` | Treat warnings as errors, so unrecognized fields and missing metadata that the runtime tolerates fail the run |
 | `--json` | Output the validation report as one JSON object with the same exit codes. Requires Claude Code v2.1.259 or later |
 
 Validate a plugin before committing it:
@@ -788,7 +788,7 @@ The table below lists every session form. The shell subcommands `init`, `update`
 | :- | :- | :- |
 | `/plugin` | | Opens the panel on the **Discover** tab. Any unrecognized first word after `/plugin` does the same |
 | `/plugin help` | `/plugin --help`, `/plugin -h` | Shows the usage list of `/plugin` subcommands |
-| `/plugin list [--enabled\|--disabled]` | `ls` | Prints your marketplace-installed plugins inline, with version, scope, and status. A filter flag shows only that state. A plugin whose enable state hasn't been applied yet is marked `— run /reload-plugins to apply`. Requires Claude Code v2.1.163 or later |
+| `/plugin list [--enabled\|--disabled]` | `ls` | Prints your marketplace-installed plugins inline, with version, scope, and status. A filter flag shows only that state. A plugin whose enable state hasn't been applied yet is marked `— run /reload-plugins to apply` |
 | `/plugin install` | `i` | Opens the **Discover** tab |
 | `/plugin install <plugin>` | `i` | Opens the plugin's details in the **Discover** tab. With `name@marketplace`, opens them in that marketplace's list |
 | `/plugin install <source>` | `i` | Reports a [marketplace not found](/docs/en/plugins/troubleshooting#marketplace-not-found) error and installs nothing when the target is a path, URL, or `owner/repo`, even a source you've already added. To install from a source, see [Add a marketplace and install in one command](/docs/en/plugins/install#add-a-marketplace-and-install-in-one-command) |
@@ -798,7 +798,7 @@ The table below lists every session form. The shell subcommands `init`, `update`
 | `/plugin enable <plugin>` | | Opens the **Installed** tab at the plugin and enables it |
 | `/plugin disable <plugin>` | | Opens the **Installed** tab at the plugin and disables it |
 | `/plugin uninstall <plugin>` | | Opens the **Installed** tab at the plugin and uninstalls it |
-| `/plugin configure <plugin>` | `config` | Opens the plugin's [`userConfig`](/docs/en/plugins/manifest-reference) dialog, or reports that the plugin declares none. Requires Claude Code v2.1.147 or later |
+| `/plugin configure <plugin>` | `config` | Opens the plugin's [`userConfig`](/docs/en/plugins/manifest-reference) dialog, or reports that the plugin declares none |
 | `/plugin validate <path>` | | Prints the same report as `claude plugin validate`, inline |
 | `/plugin tag [path] [--push] [--dry-run] [--force]` | | Creates the release tag as `claude plugin tag` does. Accepts `--push`, `--dry-run`, and `--force` or `-f`; with any other flag or an extra argument, Claude Code prints usage instead |
 | `/plugin marketplace` | `market` | Does nothing visible. Pass `add`, `list`, `update`, or `remove` |

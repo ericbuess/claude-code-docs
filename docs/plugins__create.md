@@ -232,7 +232,7 @@ Your personal skills directory is `~/.claude/skills/`. Claude Code loads any fol
 
 #### Scaffold the plugin with `claude plugin init`
 
-`claude plugin init` writes a starter plugin under `~/.claude/skills/`. Requires Claude Code v2.1.157 or later. Scaffold one from your shell:
+`claude plugin init` writes a starter plugin under `~/.claude/skills/`. Scaffold one from your shell:
 
 ```bash theme={null}
 claude plugin init my-tool

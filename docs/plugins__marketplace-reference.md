@@ -67,7 +67,7 @@ The table lists every key Claude Code reads from `marketplace.json`. `name`, `ow
 | `metadata.pluginRoot` | string | Directory that bare plugin source names resolve under. See [Relative path plugin source](#relative-path-plugin-source). Requires Claude Code v2.1.239 or later |
 | `forceRemoveDeletedPlugins` | boolean | When `true`, a plugin you remove from `plugins` is uninstalled on users' machines. See [Host and maintain a marketplace](/docs/en/plugins/host-marketplace) |
 | `allowCrossMarketplaceDependenciesOn` | array of strings | Marketplace names whose plugins may be installed as dependencies of this marketplace's plugins. When you install a plugin, only the list in that plugin's own marketplace applies, for its whole dependency chain. See [Plugin dependencies](/docs/en/plugins/dependencies) |
-| `renames` | object | Map from a former plugin `name` to its current name, or to `null` for a plugin you removed. Requires Claude Code v2.1.193 or later. See [Host and maintain a marketplace](/docs/en/plugins/host-marketplace) |
+| `renames` | object | Map from a former plugin `name` to its current name, or to `null` for a plugin you removed. See [Host and maintain a marketplace](/docs/en/plugins/host-marketplace) |
 
 ## Plugin entries
 

@@ -255,7 +255,7 @@ To change the label users see in `/plugin` without breaking anything, set `displ
 
 ### Migrate users with a renames map
 
-When you must change a `name`, add a top-level `renames` map to `marketplace.json` so Claude Code migrates existing users instead of reporting [`Plugin "<name>" not found in marketplace`](/docs/en/plugins/troubleshooting#plugin-not-found-in-marketplace). Do the same when you remove an entry from `plugins`. Automatic migration requires Claude Code v2.1.193 or later.
+When you must change a `name`, add a top-level `renames` map to `marketplace.json` so Claude Code migrates existing users instead of reporting [`Plugin "<name>" not found in marketplace`](/docs/en/plugins/troubleshooting#plugin-not-found-in-marketplace). Do the same when you remove an entry from `plugins`.
 
 Map each former name to its current name, or to `null` when the plugin is gone. This marketplace renames `formatter` to `code-formatter` and records that `legacy-linter` was removed:
 
