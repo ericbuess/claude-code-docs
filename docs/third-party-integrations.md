@@ -219,11 +219,11 @@ If your organization uses [customer-managed encryption keys](https://platform.cl
 
 ### Invest in documentation and memory
 
-We strongly recommend investing in documentation so that Claude Code understands your codebase. Organizations can deploy CLAUDE.md files at multiple levels. See [where CLAUDE.md files can live](/docs/en/memory#choose-where-to-put-claude-md-files) and [how to deploy an organization-wide CLAUDE.md](/docs/en/memory#deploy-organization-wide-claude-md).
+Invest in documentation so that Claude Code understands your codebase. Organizations can deploy CLAUDE.md files at multiple levels. See [where CLAUDE.md files can live](/docs/en/memory#choose-where-to-put-claude-md-files) and [how to deploy an organization-wide CLAUDE.md](/docs/en/memory#deploy-organization-wide-claude-md).
 
 ### Simplify deployment
 
-If you have a custom development environment, we find that creating a "one click" way to install Claude Code is key to growing adoption across an organization.
+If you have a custom development environment, creating a "one click" way to install Claude Code is key to growing adoption across an organization.
 
 ### Start with guided usage
 
@@ -243,7 +243,7 @@ To limit which of these deployment options a managed machine may use, set [`allo
   Use MCP for integrations
 </h3>
 
-MCP is a great way to give Claude Code more information, such as connecting to ticket management systems or error logs. We recommend that one central team configures MCP servers and checks a `.mcp.json` configuration into the codebase so that all users benefit. [Learn more](/docs/en/mcp).
+MCP is a great way to give Claude Code more information, such as connecting to ticket management systems or error logs. Have one central team configure MCP servers and check a `.mcp.json` configuration into the codebase so that all users benefit. [Learn more](/docs/en/mcp).
 
 ## Next steps
 

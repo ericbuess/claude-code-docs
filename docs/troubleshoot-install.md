@@ -957,7 +957,7 @@ These sections address login failures, OAuth errors, and token issues.
 
 ### Reset your login
 
-When login fails and the cause isn't obvious, a clean re-authentication resolves most cases:
+When login fails and the cause isn't clear, a clean re-authentication resolves most cases:
 
 1. Run `/logout` to sign out completely
 2. Close Claude Code

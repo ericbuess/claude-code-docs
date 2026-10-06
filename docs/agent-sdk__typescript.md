@@ -2101,7 +2101,7 @@ A `peer` origin identifies which agent sent the message: an in-process [teammate
 
 ## Hook Types
 
-For a comprehensive guide on using hooks with examples and common patterns, see the [Hooks guide](/docs/en/agent-sdk/hooks).
+For a guide on using hooks with examples and common patterns, see the [Hooks guide](/docs/en/agent-sdk/hooks).
 
 ### `HookEvent`
 
@@ -3061,7 +3061,7 @@ type GrepInput = {
 };
 ```
 
-Powerful search tool built on ripgrep with regex support.
+Search tool built on ripgrep with regex support.
 
 ### TaskStop
 

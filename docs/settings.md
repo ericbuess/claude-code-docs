@@ -398,7 +398,7 @@ Claude Code reads settings from JSON settings files such as `~/.claude/settings.
 
 ## Settings files and who they affect
 
-Claude Code reads settings from four files, and an organization can also deliver managed settings from the claude.ai console. Each source has a scope: the set of people and projects a setting saved in it applies to, whether that's just you, everyone in a project, or everyone in your organization.
+Claude Code reads settings from four files, and an organization can also deliver managed settings from the claude.ai console. Each source has a scope: the set of people and projects a setting saved in it applies to, whether that's only you, everyone in a project, or everyone in your organization.
 
 | Scope | File | Who it affects | Use it for |
 | :- | :- | :- | :- |

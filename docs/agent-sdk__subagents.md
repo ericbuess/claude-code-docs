@@ -724,6 +724,6 @@ For the file format, see [how to write subagent files](/docs/en/sub-agents#write
 
 ## Related documentation
 
-* [Claude Code subagents](/docs/en/sub-agents): comprehensive subagent documentation including filesystem-based definitions
+* [Claude Code subagents](/docs/en/sub-agents): subagent documentation including filesystem-based definitions
 * [Dynamic workflows](/docs/en/workflows): orchestrate many subagents from a script for jobs too large for one conversation
 * [SDK overview](/docs/en/agent-sdk/overview): getting started with the Claude Agent SDK

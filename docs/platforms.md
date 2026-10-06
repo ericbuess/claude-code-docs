@@ -35,7 +35,7 @@ Integrations let Claude work with services outside your codebase.
 | [GitHub Actions](/docs/en/github-actions) | Runs Claude in your CI pipeline | Automated PR reviews, issue triage, scheduled maintenance |
 | [GitLab CI/CD](/docs/en/gitlab-ci-cd) | Same as GitHub Actions for GitLab | CI-driven automation on GitLab |
 | [Code Review](/docs/en/code-review) | Reviews every PR automatically | Catching bugs before human review |
-| [Slack](/docs/en/slack) | Responds to `@Claude` mentions in your channels | Turning bug reports into pull requests from team chat |
+| [Slack](/docs/en/slack) | Responds to `@Claude` mentions in your channels, under your own account | Turning bug reports into pull requests from team chat on Pro and Max plans |
 | [Claude Tag](https://claude.com/docs/claude-tag) | Runs `@Claude` as your organization's shared identity with admin-configured access | Shared team access on Team and Enterprise plans, instead of per-user Slack sessions |
 
 For integrations not listed here, [MCP servers](/docs/en/mcp) and [connectors](/docs/en/desktop#connect-external-tools) let you connect almost anything: Linear, Notion, Google Drive, or your own internal APIs.
@@ -49,7 +49,7 @@ Claude Code offers several ways to work when you're not at your terminal. They d
 | [Dispatch](/docs/en/desktop#sessions-from-dispatch) | Message a task from the Claude mobile app | Your machine (Desktop) | [Pair the mobile app with Desktop](https://support.claude.com/en/articles/13947068) | Delegating work while you're away, minimal setup |
 | [Remote Control](/docs/en/remote-control) | Drive a running session from [claude.ai/code](https://claude.ai/code) or the Claude mobile app | Your machine (CLI, Desktop, or VS Code) | Run [`claude remote-control` or `/remote-control`](/docs/en/remote-control#start-a-remote-control-session) | Steering in-progress work from another device |
 | [Channels](/docs/en/channels) | Push events from a chat app like Telegram or Discord, or your own server | Your machine (CLI) | [Install a channel plugin](/docs/en/channels#quickstart) or [build your own](/docs/en/channels-reference) | Reacting to external events like CI failures or chat messages |
-| [Slack](/docs/en/slack) | Mention `@Claude` in a team channel | Anthropic cloud | [Install the Slack app](/docs/en/slack#setting-up-claude-code-in-slack) with [Claude Code on the web](/docs/en/claude-code-on-the-web) enabled | PRs and reviews from team chat |
+| [Slack](/docs/en/slack) | Mention `@Claude` in a team channel | Anthropic cloud | [Install the Slack app](/docs/en/slack#setting-up-claude-code-in-slack) with [Claude Code on the web](/docs/en/claude-code-on-the-web) enabled, on Pro and Max plans | PRs and reviews from team chat |
 | [Self-hosted environments](/docs/en/self-hosted-environments) | Start a [cloud session](/docs/en/claude-code-on-the-web) and pick your organization's environment | Your organization's infrastructure | [Deploy runners](/docs/en/self-hosted-environments-quickstart), on Team and Enterprise plans | Cloud sessions that must run inside your network |
 | [Scheduled tasks](/docs/en/scheduled-tasks) | Set a schedule | [CLI](/docs/en/scheduled-tasks), [Desktop](/docs/en/desktop-scheduled-tasks), or [cloud](/docs/en/routines) | Pick a frequency | Recurring automation like daily reviews |
 
@@ -74,7 +74,7 @@ If you're not sure where to start, [install the CLI](/docs/en/quickstart) and ru
 * [GitHub Actions](/docs/en/github-actions): run Claude in your CI pipeline
 * [GitLab CI/CD](/docs/en/gitlab-ci-cd): the same for GitLab
 * [Code Review](/docs/en/code-review): automatic review on every pull request
-* [Slack](/docs/en/slack): send tasks from team chat, get PRs back
+* [Slack](/docs/en/slack): send tasks from team chat and get PRs back, on Pro and Max plans
 * [Claude Tag](https://claude.com/docs/claude-tag): run `@Claude` as your organization's shared identity on Team and Enterprise plans
 
 ### Remote access

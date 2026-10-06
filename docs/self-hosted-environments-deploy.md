@@ -136,13 +136,13 @@ RUN git config --system user.name "Claude" && \
 
 Without an identity, `git commit` fails with `Please tell me who you are` and sessions can't make progress. You can use your own bot identity instead; the runner doesn't override these values.
 
-Don't bake long-lived or broadly-scoped push credentials into a shared runner image: a credential in the image is available to every session the image runs, whoever started it. Instead, mint a short-lived, least-scoped token per session from your [wrapper script](/docs/en/self-hosted-environments-configuration#wrapper-scripts), using the session creator's identity decoded from the session JWT. Pair it with an ephemeral per-session container, which requires `--capacity 1`, so no credential outlives the session that minted it; see the [hardening section](#harden-your-deployment).
+Don't bake long-lived or broadly scoped push credentials into a shared runner image: a credential in the image is available to every session the image runs, whoever started it. Instead, mint a short-lived, least-scoped token per session from your [wrapper script](/docs/en/self-hosted-environments-configuration#wrapper-scripts), using the session creator's identity decoded from the session JWT. Pair it with an ephemeral per-session container, which requires `--capacity 1`, so no credential outlives the session that minted it; see the [hardening section](#harden-your-deployment).
 
 If you must configure push credentials at the image level, for example for a read-only deploy key, scope them as tightly as your git host allows:
 
 * An SSH deploy key limited to one repository with a `url.<base>.insteadOf` rewrite
-* A `credential.helper` that returns a minimally-scoped token
-* `GIT_SSH_COMMAND` pointing at a narrowly-scoped key
+* A `credential.helper` that returns a minimally scoped token
+* `GIT_SSH_COMMAND` pointing at a narrowly scoped key
 
 Whichever mechanism you configure must work without a prompt, because the runner's built-in clone and fetch disable the prompts that git, SSH, and Git Credential Manager would otherwise show:
 

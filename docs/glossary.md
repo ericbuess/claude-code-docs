@@ -367,7 +367,7 @@ Learn more: [How Claude Code works](/docs/en/how-claude-code-works#the-agentic-l
 
 ### Verification loop
 
-How a session knows the work is actually done rather than just plausible. You give Claude a check it can run, such as a test suite, a build, or a screenshot comparison, and Claude iterates until the check passes instead of stopping after one attempt. A verification loop is the prerequisite for [`/goal`](/docs/en/goal), unattended runs, and [dynamic workflows](/docs/en/workflows): without one, the only thing deciding the agent is finished is the agent itself.
+How a session knows the work is actually done instead of accepting a result that looks plausible. You give Claude a check it can run, such as a test suite, a build, or a screenshot comparison, and Claude iterates until the check passes instead of stopping after one attempt. A verification loop is the prerequisite for [`/goal`](/docs/en/goal), unattended runs, and [dynamic workflows](/docs/en/workflows): without one, the only thing deciding the agent is finished is the agent itself.
 
 Learn more: [Give Claude a way to verify its work](/docs/en/best-practices#give-claude-a-way-to-verify-its-work)
 

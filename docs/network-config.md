@@ -61,7 +61,7 @@ export HTTPS_PROXY=http://username:password@proxy.example.com:8080
 
 ## CA certificate store
 
-By default, Claude Code trusts both its bundled Mozilla CA certificates and your operating system's certificate store. Reading the OS store requires a runtime with `tls.getCACertificates`: the native installer always has it, and npm installs need Node 22.15 or later. On older Node versions, only the bundled set and `NODE_EXTRA_CA_CERTS` apply. Enterprise TLS-inspection proxies work without additional configuration when their root certificate is installed in the OS trust store and the runtime can read it.
+By default, Claude Code trusts both its bundled Mozilla CA certificates and your operating system's certificate store. Reading the OS store requires a runtime with `tls.getCACertificates`: the native installer always has it, and npm installs need Node 22.15 or later. On older Node versions, only the bundled set and `NODE_EXTRA_CA_CERTS` apply. Enterprise TLS-inspection proxies work without additional configuration when their root certificate is installed in the OS trust store and the runtime can read it. If such a proxy mishandles gzip-compressed request bodies, set [`CLAUDE_CODE_GZIP_REQUEST_BODIES=0`](/docs/en/env-vars) to turn off compression for Claude API, telemetry, and artifact publish requests.
 
 `CLAUDE_CODE_CERT_STORE` accepts a comma-separated list of sources. Recognized values are `bundled` for the Mozilla CA set shipped with Claude Code and `system` for the operating system trust store. The default is `bundled,system`.
 

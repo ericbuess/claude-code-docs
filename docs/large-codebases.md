@@ -264,7 +264,7 @@ For the full worktree settings reference, see [Worktree settings](/docs/en/setti
 
 This section applies when you start Claude from a subdirectory, or when a task spans multiple checkouts. If you start from the repository root in a single large tree, Claude already has access to every file and you can skip this.
 
-When you start Claude from `packages/api/`, it can read and write files within that directory. If a task requires changes across packages, such as updating a shared type that both `api` and `web` import, you need to grant access to the sibling directory. The same mechanism grants access to a separately-checked-out repository.
+When you start Claude from `packages/api/`, it can read and write files within that directory. If a task requires changes across packages, such as updating a shared type that both `api` and `web` import, you need to grant access to the sibling directory. The same mechanism grants access to a separately checked-out repository.
 
 The `additionalDirectories` setting in `.claude/settings.json` gives Claude access to directories outside the working directory. The example below grants access to two sibling packages:
 

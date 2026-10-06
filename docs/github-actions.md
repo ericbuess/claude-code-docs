@@ -296,7 +296,7 @@ Create a `CLAUDE.md` file in your repository root to define code style guideline
 
 Grant the workflow only the permissions it needs, and review Claude's changes before merging.
 
-For comprehensive security guidance including permissions and authentication, see the [Claude Code Action security documentation](https://github.com/anthropics/claude-code-action/blob/main/docs/security.md).
+For security guidance including permissions and authentication, see the [Claude Code Action security documentation](https://github.com/anthropics/claude-code-action/blob/main/docs/security.md).
 
 ### Manage costs
 

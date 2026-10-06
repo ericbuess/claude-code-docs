@@ -186,7 +186,7 @@ The last line of the stream is a `result` message with the final response text, 
 
 If your consumer reads the stream slowly, Claude Code waits for the queued output to drain before exiting, scaling the wait with how much is still queued, capped at 30 seconds. Before v2.1.214 the exit wait was capped at about two seconds, which could cut off the end of a large response.
 
-The following example uses [jq](https://jqlang.org/) to filter for text deltas and display just the streaming text. The `-r` flag outputs raw strings (no quotes) and `-j` joins without newlines so tokens stream continuously:
+The following example uses [jq](https://jqlang.org/) to filter for text deltas and display only the streaming text. The `-r` flag outputs raw strings (no quotes) and `-j` joins without newlines so tokens stream continuously:
 
 ```bash theme={null}
 claude -p "Write a poem" --output-format stream-json --verbose --include-partial-messages | \

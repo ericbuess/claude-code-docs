@@ -36,7 +36,7 @@ Bundled skills are listed alongside built-in commands in the [commands reference
 
 ### Run and verify your app
 
-Three bundled skills work together to launch your app and confirm changes against the running app instead of just tests:
+Three bundled skills work together to launch your app and confirm changes against the running app instead of tests alone:
 
 | Skill | Purpose |
 | :- | :- |

@@ -2072,7 +2072,7 @@ HookCallback = Callable[[HookInput, str | None, HookContext], Awaitable[HookJSON
 
 Parameters:
 
-* `input`: Strongly-typed hook input with discriminated unions based on `hook_event_name` (see [`HookInput`](#hookinput))
+* `input`: Strongly typed hook input with discriminated unions based on `hook_event_name` (see [`HookInput`](#hookinput))
 * `tool_use_id`: Optional tool use identifier (for tool-related hooks)
 * `context`: Hook context with additional information
 

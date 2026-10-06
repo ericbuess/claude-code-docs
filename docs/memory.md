@@ -57,9 +57,9 @@ CLAUDE.md files can live in several locations, each with a different scope. The 
 | Scope | Location | Purpose | Use case examples | Shared with |
 | - | - | - | - | - |
 | **Managed policy** | • macOS: `/Library/Application Support/ClaudeCode/CLAUDE.md`<br />• Linux and WSL: `/etc/claude-code/CLAUDE.md`<br />• Windows: `C:\Program Files\ClaudeCode\CLAUDE.md` | Organization-wide instructions managed by IT/DevOps | Company coding standards, security policies, compliance requirements | All users in organization |
-| **User instructions** | `~/.claude/CLAUDE.md` | Personal preferences for all projects | Code styling preferences, personal tooling shortcuts | Just you (all projects) |
+| **User instructions** | `~/.claude/CLAUDE.md` | Personal preferences for all projects | Code styling preferences, personal tooling shortcuts | Only you (all projects) |
 | **Project instructions** | `./CLAUDE.md` or `./.claude/CLAUDE.md`. See [AGENTS.md](#agents-md) for when `./AGENTS.md` loads instead of or alongside them | Team-shared instructions for the project | Project architecture, coding standards, common workflows | Team members via source control |
-| **Local instructions** | `./CLAUDE.local.md` | Personal project-specific preferences; add to `.gitignore` | Your sandbox URLs, preferred test data | Just you (current project) |
+| **Local instructions** | `./CLAUDE.local.md` | Personal project-specific preferences; add to `.gitignore` | Your sandbox URLs, preferred test data | Only you (current project) |
 
 CLAUDE.md and CLAUDE.local.md files in the directory hierarchy above the working directory are loaded at launch. Files in subdirectories load on demand. See [How CLAUDE.md files load](#how-claude-md-files-load) for when they load and the full resolution order.
 
@@ -389,17 +389,19 @@ To change which files Claude reads, type `/config` in a Claude Code session to o
 | `claude-md` | Your `CLAUDE.md` files only |
 | `managed-only` | Only your organization's managed `CLAUDE.md` and [auto memory](#auto-memory) at launch. Your project, local, and user `CLAUDE.md` files, your `.claude/rules/` files, and every `AGENTS.md` are left out. A subdirectory's `CLAUDE.md` and `.claude/rules/` files, and [path-scoped rules](#path-specific-rules), still load on demand |
 
-You can also set the value in a settings file instead of `/config`. Add it under the built-in `agents-md` plugin's ID in [`pluginConfigs`](/docs/en/settings-reference#pluginconfigs), in `~/.claude/settings.json`, a `--settings` file, or [managed settings](/docs/en/managed-settings). Claude Code ignores it in project and local settings files. This example has Claude read both files:
+You can also set the value in a settings file instead of `/config`. Add it to [`pluginConfigs`](/docs/en/settings-reference#pluginconfigs) under `cc-plugin-agents-md@builtin`, the ID of the built-in plugin that reads `AGENTS.md`. Claude Code reads the entry from `~/.claude/settings.json`, a `--settings` file, or [managed settings](/docs/en/managed-settings), and ignores it in project and local settings files. This example has Claude read both files:
 
 ```json settings.json theme={null}
 {
   "pluginConfigs": {
-    "agents-md@builtin": {
+    "cc-plugin-agents-md@builtin": {
       "options": { "instructionFiles": "claude-md-and-agents-md" }
     }
   }
 }
 ```
+
+Before v2.1.285, the plugin's ID was `agents-md@builtin`, and Claude Code ignored an entry under `cc-plugin-agents-md@builtin`. If earlier versions also read your settings file, use `agents-md@builtin` there. Claude Code v2.1.285 and later reads an entry under either ID.
 
 Your change applies from the next message you send and in every new session.
 
@@ -408,7 +410,7 @@ Your change applies from the next message you send and in every new session.
 In these sessions Claude reads `CLAUDE.md` files only, and **Project instructions** doesn't appear in the `/config` settings panel:
 
 * You're on a Claude Code version before v2.1.277
-* You disabled the built-in `agents-md` plugin in `/plugin`
+* You used `/plugin` to disable the built-in plugin that reads `AGENTS.md`
 * In some cases, it's your [first session after you upgrade](/docs/en/env-vars#first-session-after-an-install-or-upgrade) from v2.1.276 or earlier. Claude reads `AGENTS.md` from your next session on
 
 Before v2.1.281, some sessions, such as those on Amazon Bedrock or with telemetry disabled, read `CLAUDE.md` files only. On those versions, update Claude Code. To give Claude your `AGENTS.md` in any of these sessions, [import it from a `CLAUDE.md`](#share-one-file-with-other-coding-tools).
