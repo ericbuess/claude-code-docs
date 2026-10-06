@@ -187,7 +187,7 @@ Claude Code reads this setting from your user settings file, the `--settings` fl
 | `$` | End of line |
 | `^` | First non-blank character |
 | `gg` | Beginning of input |
-| `G` | End of input |
+| `G` | Beginning of last line |
 | `f{char}` | Jump to next occurrence of character |
 | `F{char}` | Jump to previous occurrence of character |
 | `t{char}` | Jump to just before next occurrence of character |
@@ -313,7 +313,7 @@ When a command reaches its timeout before it finishes, Claude Code automatically
 * Background tasks are automatically cleaned up when Claude Code exits. On macOS and Linux, when you stop a background task from [`/tasks`](/docs/en/commands) or Claude Code stops it at exit, processes that detached from the task's shell, such as ones started under `setsid` or `timeout`, stop too
 * If you background the session instead of exiting it, your background tasks keep running in the background session. See [background a running session](/docs/en/agent-view#from-inside-a-session)
 * Background tasks are automatically terminated if output exceeds 5GB, with a note in stderr explaining why
-* On macOS and Linux, Claude Code stops your running background tasks when the operating system reports critical memory pressure, provided the session has been idle for at least 30 minutes and no turn or subagent is running. Requires Claude Code v2.1.193 or later
+* On macOS and Linux, Claude Code stops your running background tasks when the operating system reports critical memory pressure, provided the session has been idle for at least 30 minutes and no turn or subagent is running
   * The [debug log](/docs/en/debug-your-config) says why tasks were stopped, or why a pressure event left them running
   * Set [`CLAUDE_CODE_DISABLE_BG_SHELL_PRESSURE_REAP`](/docs/en/env-vars) to `1` to turn off memory-pressure stops
 * Background commands in a local session you work in from a terminal, the desktop app, or the VS Code extension have no time limit. In a session that runs unattended, such as a `-p` run or a cloud session, Claude Code stops a background command at its [time limit](/docs/en/tools-reference#time-limit-for-background-commands)
@@ -346,13 +346,13 @@ Shell mode:
 * Supports the same `Ctrl+B` backgrounding for long-running commands
 * Doesn't require Claude to interpret or approve the command
 * Supports history-based autocomplete: type a partial command and press `Tab` to complete from previous `!` commands in the current project
-* Supports live file path autocomplete as of v2.1.193 on all platforms: type a token containing a forward slash, such as `./src/` or `~/`, to see a dropdown of matching files and directories, then press `Tab` to accept. Use forward slashes on Windows too; the dropdown is triggered by `/`, not `\`
+* Supports live file path autocomplete: type a token containing a forward slash, such as `./src/` or `~/`, to see a dropdown of matching files and directories, then press `Tab` to accept. Use forward slashes on Windows too; the dropdown is triggered by `/`, not `\`
 * Exit with `Escape`, `Backspace`, or `Ctrl+U` on an empty prompt
 * Pasting text that starts with `!` into an empty prompt enters shell mode automatically, matching typed `!` behavior
 
 Unless your session is one of those listed under [strict sandbox mode](/docs/en/sandboxing#turn-off-the-retry-with-strict-sandbox-mode), commands you type in shell mode run outside the [sandbox](/docs/en/sandboxing) even when you've enabled sandboxing, because the sandbox applies to the commands Claude runs.
 
-Claude responds to the command output automatically once it lands in the transcript, so you can run `! npm test` and get an explanation of the failures without a second prompt. The response costs the same as sending a normal prompt. To restore the earlier behavior where the output is added to context without a response, set [`respondToBashCommands`](/docs/en/settings-reference#respondtobashcommands) to `false` in `settings.json`. Before v2.1.186, shell mode always added output to context without a response.
+Claude responds to the command output automatically once it lands in the transcript, so you can run `! npm test` and get an explanation of the failures without a second prompt. The response costs the same as sending a normal prompt. To add the output to context without a response instead, set [`respondToBashCommands`](/docs/en/settings-reference#respondtobashcommands) to `false` in `settings.json`.
 
 ## Queue messages while Claude works
 

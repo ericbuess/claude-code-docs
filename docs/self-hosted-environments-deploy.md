@@ -217,7 +217,7 @@ For each session that uses Anthropic-managed git, the runner also logs a `[runne
 
 ### Rewrite git URLs for private networks
 
-Repository URLs arrive from the control plane as HTTPS, with the hostname of your git host; for GitHub Enterprise, that's the hostname you configured for the [GitHub Enterprise integration](/docs/en/github-enterprise-server) in Claude Code admin settings on claude.ai. Two repeatable flags rewrite those URLs before clone:
+Repository URLs arrive from the control plane as HTTPS, with the hostname of your git host; for GitHub Enterprise, that's the hostname you configured for the [GitHub Enterprise integration](/docs/en/github-enterprise-server) on claude.ai. Two repeatable flags rewrite those URLs before clone:
 
 * `--git-host-rewrite <from>=<to>`: for split-horizon DNS, where Anthropic reaches your git host via an external hostname but runners must use an internal one
 * `--git-ssh-rewrite <host>`: for git hosts that only accept SSH, rewriting `https://<host>/owner/repo` to `git@<host>:owner/repo`

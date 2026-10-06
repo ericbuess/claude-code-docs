@@ -5361,6 +5361,28 @@ type SDKThinkingTokensMessage = {
 };
 ```
 
+### `SDKSessionStateChangedMessage`
+
+Emitted when Claude Code reports the session's state. To receive these messages, set [`CLAUDE_CODE_EMIT_SESSION_STATE_EVENTS=1`](/docs/en/env-vars#variables). Claude Code can report the same state more than once, so read a message as the session's current state rather than as a transition.
+
+The `state` field carries one of these values:
+
+* `running`: the session is working.
+* `idle`: Claude Code is waiting for your next prompt.
+* `requires_action`: the session is blocked on an answer to a request it sent your host, such as a permission prompt.
+
+A turn's `idle` message and its `result` message can arrive in either order. To change whether `idle` waits for background work such as a background subagent or a [workflow](/docs/en/workflows) run, see [`CLAUDE_CODE_BG_TASKS_REPORT_RUNNING`](/docs/en/env-vars#variables).
+
+```typescript theme={null}
+type SDKSessionStateChangedMessage = {
+  type: "system";
+  subtype: "session_state_changed";
+  state: "idle" | "running" | "requires_action";
+  uuid: UUID;
+  session_id: string;
+};
+```
+
 ### `SDKFilesPersistedEvent`
 
 Emitted when file checkpoints are persisted to disk.

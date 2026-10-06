@@ -118,7 +118,7 @@ On machines with managed settings, see [How managed settings lock the OTLP desti
 | `OTEL_METRIC_EXPORT_INTERVAL` | Export interval in milliseconds (default: 60000) | `5000`, `60000` |
 | `OTEL_LOGS_EXPORT_INTERVAL` | Logs export interval in milliseconds (default: 5000) | `1000`, `10000` |
 | `OTEL_LOG_USER_PROMPTS` | Enable logging of user prompt content (default: disabled) | `1` to enable |
-| `OTEL_LOG_ASSISTANT_RESPONSES` | Enable logging of assistant response text on `assistant_response` events (default: disabled). When unset, falls back to the value of `OTEL_LOG_USER_PROMPTS`. Requires Claude Code v2.1.193 or later | `1` to enable, `0` to keep redacted |
+| `OTEL_LOG_ASSISTANT_RESPONSES` | Enable logging of assistant response text on `assistant_response` events (default: disabled). When unset, falls back to the value of `OTEL_LOG_USER_PROMPTS` | `1` to enable, `0` to keep redacted |
 | `OTEL_LOG_TOOL_DETAILS` | Enable logging of tool parameters and input arguments in tool events and trace span attributes: Bash commands, MCP server and tool names, skill names, user-authored workflow names, and tool input. Also enables custom, plugin, and MCP command names on `user_prompt` events, and real agent, skill, plugin, and MCP server and tool names on the [cost and token counters](#cost-counter) (default: disabled). For Claude Desktop's built-in servers, in sessions Claude Desktop owns, `mcp_server_name`/`mcp_tool_name` emit on `tool_decision`/`tool_result` even with the flag off. The exception requires Claude Code v2.1.214 or later | `1` to enable |
 | `OTEL_LOG_TOOL_CONTENT` | Enable logging of tool content in the [`tool.output` span event](#tool-output-span-event) (default: disabled). Span attributes carry tool content under [their own gates](#new-context-gates). Requires [tracing](#traces-beta). Content is truncated at the content limit (60 KB by default) | `1` to enable |
 | `OTEL_LOG_MANAGED_SETTINGS` | Add the redacted managed settings, and a SHA-256 digest of the settings before redaction, to [managed settings resolved](#managed-settings-resolved-event) events (default: disabled). A value in project or local settings doesn't turn it on. Requires Claude Code v2.1.274 or later | `1` to enable |
@@ -749,7 +749,7 @@ Logged when a prompt is submitted, including on turns Claude Code starts on its 
 
 #### Assistant response event
 
-Logged after each API request that returns text content from the model. Only the response's text blocks are included; thinking blocks and tool-use blocks are excluded. Requires Claude Code v2.1.193 or later.
+Logged after each API request that returns text content from the model. Only the response's text blocks are included; thinking blocks and tool-use blocks are excluded.
 
 **Event Name**: `claude_code.assistant_response`
 
@@ -1061,7 +1061,7 @@ Logged once per enabled plugin at session start. Use this event to inventory whi
 * `plugin_id_hash`: deterministic hash of the plugin name and marketplace, sent only to your configured exporter. Lets you count the distinct third-party plugins loaded across your fleet without recording their names. For [plugins synced from claude.ai](/docs/en/plugins/loading#synced-plugins), Claude Code hashes the plugin name with the marketplace name that claude.ai reports for the plugin, or with `synced` otherwise. Before v2.1.246, Claude Code didn't use the marketplace name claude.ai reports in the hash
 * `has_hooks`: whether the plugin contributes hooks
 * `has_mcp`: whether the plugin contributes MCP servers
-* `host_owned_mcp`: `true` when the SDK host manages this plugin's MCP connections and Claude Code skipped reading the plugin's MCP server configuration, `false` otherwise. Requires Claude Code v2.1.172 or later
+* `host_owned_mcp`: `true` when the SDK host manages this plugin's MCP connections and Claude Code skipped reading the plugin's MCP server configuration, `false` otherwise
 * `skill_path_count`: number of skill directories the plugin declares
 * `command_path_count`: number of command directories the plugin declares
 * `agent_path_count`: number of agent directories the plugin declares
@@ -1224,7 +1224,7 @@ Logged when conversation compaction completes.
 * `pre_tokens`: Approximate token count before compaction
 * `post_tokens`: Approximate token count after compaction
 * `error`: Error message when compaction failed
-* `precompute_reuse`: Only set when `trigger` is `"manual"`. Auto-compaction can prepare a summary in the background before the context window fills, and this attribute records whether `/compact` reused that prepared summary. `"hit"` means it was reused; `"miss_custom_instructions"`, `"miss_hook"`, and `"miss_not_ready"` give the reason a fresh summary was computed instead. Requires Claude Code v2.1.153 or later
+* `precompute_reuse`: Only set when `trigger` is `"manual"`. Auto-compaction can prepare a summary in the background before the context window fills, and this attribute records whether `/compact` reused that prepared summary. `"hit"` means it was reused; `"miss_custom_instructions"`, `"miss_hook"`, and `"miss_not_ready"` give the reason a fresh summary was computed instead
 
 #### Subagent completed event
 
@@ -1390,7 +1390,7 @@ Common alerts to consider:
 * Unusual token consumption
 * High session volume from specific users
 
-All metrics can be segmented by the [standard attributes](#standard-attributes). The `model` attribute is available on `claude_code.token.usage`, `claude_code.cost.usage`, and from v2.1.172, `claude_code.lines_of_code.count`.
+All metrics can be segmented by the [standard attributes](#standard-attributes). The `model` attribute is available on `claude_code.token.usage`, `claude_code.cost.usage`, and `claude_code.lines_of_code.count`.
 
 Per-model breakdowns of commits can only be approximated by joining against the token or cost metrics on `session.id`, since one session can span multiple models. Filter the token or cost side to rows where `query_source` is `"main"` so auxiliary and subagent requests don't attribute the session's commits to a model that didn't make them.
 

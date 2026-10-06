@@ -1561,7 +1561,12 @@ Session files in `sessions/`, auto memory, and Claude Desktop and Cowork transcr
 
 * **`sessions/`**: holds one small file per running session, used to detect concurrent sessions and crashes. It isn't part of the age-based sweep: Claude Code removes each file when its session exits and clears crash leftovers on the next launch.
 * **Auto memory**: the sweep doesn't delete the memory files in a project's [auto memory](/docs/en/memory#auto-memory) directory, `projects/<project>/memory/`. Claude Code removes that directory only if it has been empty for the whole retention period. Before v2.1.228, the sweep treated folders inside the memory directory as session data and could delete old files beneath it.
-* **Claude Desktop and Cowork transcripts**: Claude Code keeps the transcript of a session you started or most recently continued in Claude Desktop or Cowork at any age. To give these transcripts an age limit, set [`desktopSessionCleanupPeriodDays`](/docs/en/settings-reference#desktopsessioncleanupperioddays). When [managed settings](/docs/en/managed-settings) set `cleanupPeriodDays`, Claude Code deletes these transcripts after that period instead. Requires Claude Code v2.1.248 or later; earlier versions delete them after `cleanupPeriodDays`.
+* **Claude Desktop and Cowork transcripts**: Claude Code keeps the transcript of a session you started or most recently continued in Claude Desktop or Cowork at any age. To give these transcripts an age limit, set [`desktopSessionCleanupPeriodDays`](/docs/en/settings-reference#desktopsessioncleanupperioddays). Requires Claude Code v2.1.248 or later; earlier versions delete them after `cleanupPeriodDays`.
+
+  Claude Code deletes these transcripts after `cleanupPeriodDays` instead in either of these cases:
+
+  * [Managed settings](/docs/en/managed-settings) set `cleanupPeriodDays`
+  * The [HIPAA configuration applies to your sessions](/docs/en/hipaa-setup#check-how-developers-sign-in-and-connect)
 
 Claude Code skips the age-based sweep in these cases:
 
@@ -1590,11 +1595,11 @@ A session has a scratchpad only when all of these hold:
 
 ### Kept until you delete them
 
-The retention cleanup sweep doesn't remove the paths below. Claude Code keeps them until you delete them, apart from the two caches it deletes when you log out.
+Apart from the rows that say otherwise, the retention cleanup sweep doesn't remove the paths below, and Claude Code keeps them until you delete them.
 
 | Path under `~/.claude/` | Contents |
 | - | - |
-| `history.jsonl` | Every prompt you've typed, with timestamp and project path. Used for up-arrow recall, `Ctrl+R` history search, and `!` shell-command completion. |
+| `history.jsonl` | Every prompt you've typed, with timestamp and project path. Used for up-arrow recall, `Ctrl+R` history search, and `!` shell-command completion. Each sweep removes the entries older than `cleanupPeriodDays` when the [HIPAA configuration applies to your sessions](/docs/en/hipaa-setup#check-how-developers-sign-in-and-connect). |
 | `stats-cache.json` | Aggregated token and cost counts shown by `/usage` |
 | `remote-settings.json` | Cached copy of [server-managed settings](/docs/en/server-managed-settings) for your organization, or `{}` when your organization has configured none. Only present when the session [fetches them](/docs/en/server-managed-settings#platform-availability). Claude Code checks for updates at startup and hourly during a session. Claude Code deletes it when you log out. |
 | `cache/changelog.md` | Cached copy of the Claude Code changelog, shown by `/release-notes`. Refreshed in the background. |

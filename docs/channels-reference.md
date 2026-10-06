@@ -185,6 +185,8 @@ claude --dangerously-load-development-channels plugin:yourplugin@yourmarketplace
 claude --dangerously-load-development-channels server:webhook
 ```
 
+Run the development flag in an interactive session, where Claude Code can show the confirmation prompt. If you pass it in non-interactive mode with `-p` or through the Agent SDK, Claude Code ignores the flag and the channel doesn't register.
+
 The bypass is per-entry. Combining this flag with `--channels` doesn't extend the bypass to the `--channels` entries. During the research preview, your channel isn't on the approved allowlist, so it stays on the development flag while you build and test.
 
 <Note>

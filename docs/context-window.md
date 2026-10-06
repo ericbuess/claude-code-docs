@@ -1600,8 +1600,8 @@ When a long session compacts, Claude Code summarizes the conversation history to
 | Auto memory | Re-injected from disk |
 | [Git status snapshot](/docs/en/settings-reference#includegitinstructions) | Claude Code reads a fresh one from your repository |
 | The plan Claude wrote in [plan mode](/docs/en/permission-modes#analyze-before-you-edit-with-plan-mode) | Re-injected from disk |
-| Rules with `paths:` frontmatter | Claude Code reloads them as Claude reads files they match |
-| Nested CLAUDE.md in subdirectories | Claude Code reloads them as Claude reads files in that subdirectory |
+| Rules with `paths:` frontmatter | Claude Code reloads them [on demand](/docs/en/memory#path-specific-rules) |
+| Nested CLAUDE.md in subdirectories | Claude Code reloads them [on demand](/docs/en/memory#how-claude-md-files-load) |
 | Files Claude read or edited | Claude Code re-reads up to five, most recently modified first |
 | Invoked skill bodies | Re-injected, capped at 5,000 tokens per skill and 25,000 tokens total; oldest dropped first |
 | [Background commands](/docs/en/interactive-mode#background-bash-commands) and background [subagents](/docs/en/sub-agents#run-subagents-in-foreground-or-background) | Keep running. Claude Code reminds Claude which ones are still running so it doesn't start a duplicate |

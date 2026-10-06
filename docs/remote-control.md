@@ -220,7 +220,7 @@ All traffic travels through the Anthropic API over TLS, the same transport secur
 
 While Remote Control is connected, the session transcript, including your messages, Claude's responses, and tool activity, is stored on Anthropic servers. The stored transcript keeps the conversation in sync across your devices and lets the session reconnect after a network drop. Execution and filesystem access stay on your machine, and stored transcripts are retained under the [Data usage](/docs/en/data-usage) policy.
 
-To turn Remote Control off entirely, use the [`disableRemoteControl`](/docs/en/settings-reference#disableremotecontrol) setting. Organizations with compliance requirements such as Zero Data Retention can't enable Remote Control.
+To turn Remote Control off entirely, use the [`disableRemoteControl`](/docs/en/settings-reference#disableremotecontrol) setting. Organizations with [Zero Data Retention](/docs/en/zero-data-retention) enabled, or with the [HIPAA configuration](/docs/en/hipaa-setup) applied, can't enable Remote Control.
 
 ## Trusted Devices
 
@@ -407,7 +407,7 @@ A policy blocks Remote Control. Check these causes in order:
 
 * **The error mentions `disableRemoteControl`**: your IT administrator has disabled Remote Control on this device through [managed settings](/docs/en/managed-settings), independent of the organization-wide toggle and of how you're signed in.
 * **Your claude.ai plan is Pro or Max**: Claude Code is still signed in under a Team or Enterprise organization from an earlier login, so it checks that organization's Remote Control policy. Run `/status` to see which plan and organization your sign-in uses. Run `claude auth logout` then `claude auth login` to sign in again under your current plan.
-* **The message doesn't say to contact your organization admin**: your organization has a HIPAA configuration that is incompatible with Remote Control, and `/status` lists `HIPAA` in its `Compliance` row. In this state the admin panel's Remote Control toggle is grayed out, so an Owner can't change it there. Contact Anthropic support to discuss options. Before v2.1.267, this case showed "Remote Control isn't available for your organization due to its compliance policy" instead.
+* **The message doesn't say to contact your organization admin**: your organization has the [HIPAA configuration](/docs/en/hipaa-setup) applied, which turns Remote Control off. To confirm, run `/status` and look for `HIPAA` on the `Organization configuration` line. An Owner sees the **Remote Control** toggle grayed out in [admin settings](https://claude.ai/admin-settings/claude-code) and can't turn it on. If you have questions about the configuration, ask an Owner, who can contact your organization's Anthropic account team. Before v2.1.267, this case showed "Remote Control isn't available for your organization due to its compliance policy" instead.
 * **Otherwise, an Owner hasn't enabled it for your organization**: Remote Control is off by default on Team and Enterprise plans. An Owner can enable it at [claude.ai/admin-settings/claude-code](https://claude.ai/admin-settings/claude-code) by turning on the **Remote Control** toggle. This toggle is a server-side organization setting.
 
 Before v2.1.281, this message also appeared when Claude Code hadn't loaded your organization's policy on this machine, for example after starting offline. Later versions report that state as [`Couldn't verify your organization's policy for remote control`](#couldnt-verify-your-organizations-policy-for-remote-control) instead.

@@ -12,6 +12,8 @@ Zero Data Retention (ZDR) for Claude Code is available to qualified accounts on 
   ZDR is not included in the standard Claude for Enterprise plan and cannot be enabled from your admin settings. It is available to qualified accounts and requires separate enablement by Anthropic. If your organization requires ZDR, [contact sales](https://www.anthropic.com/contact-sales?utm_source=claude_code\&utm_medium=docs\&utm_content=zero_data_retention_request) or your Anthropic account team to confirm eligibility.
 </Note>
 
+Claude for Enterprise organizations that have enabled HIPAA can bring the Claude Code CLI and the Code tab in Claude Desktop under their Business Associate Agreement (BAA) without ZDR once the HIPAA configuration is applied to Claude Code (local mode) and Cowork (local mode). See [Set up Claude Code (local mode) for a HIPAA-ready organization](/docs/en/hipaa-setup). Organizations without the HIPAA configuration still need ZDR for BAA coverage of Claude Code. See the [Implementation Guide](https://trust.anthropic.com/resources?s=l1wrssd9hsbi4gak0tp5a6\&name=%5Banthropic%5D-hipaa-ready-offering-implementation-guide) for a list of Eligible Services.
+
 ZDR on Claude for Enterprise gives enterprise customers the ability to use Claude Code with zero data retention and access administrative capabilities:
 
 * Cost controls per user

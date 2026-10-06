@@ -197,7 +197,7 @@ Claude Code sends the following JSON fields to your script via stdin:
 | `prompt_cache` | The session's [prompt cache](/docs/en/prompt-caching) statistics for the main conversation: hit ratio, misses, and whether the cache is warm. See [prompt cache fields](#prompt-cache-fields) for every field. Absent until the main conversation's first API response. Requires Claude Code v2.1.251 or later |
 | `session_id` | Unique session identifier |
 | `session_name` | Session name. Uses the custom name set with the `--name` flag or `/rename` when one exists, otherwise the AI-generated session title. The [default display name](/docs/en/sessions#name-your-sessions), such as `my-app-3f`, doesn't populate this field. Absent when the session has neither a custom name nor an AI-generated title |
-| `prompt_id` | UUID identifying the user prompt currently being processed. Matches the [`prompt.id` attribute on OpenTelemetry events](/docs/en/monitoring-usage#event-correlation-attributes). Absent until the first user input. Requires Claude Code v2.1.196 or later |
+| `prompt_id` | UUID identifying the user prompt currently being processed. Matches the [`prompt.id` attribute on OpenTelemetry events](/docs/en/monitoring-usage#event-correlation-attributes). Absent until the first user input |
 | `transcript_path` | Path to conversation transcript file |
 | `version` | Claude Code version |
 | `output_style.name` | Name of the current output style |

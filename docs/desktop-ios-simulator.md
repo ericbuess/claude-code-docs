@@ -71,7 +71,7 @@ The simulator pane shows whichever device the app actually launched in. To test 
 
 A device Claude boots also appears in Apple's Simulator app, or in Device Hub on Xcode 27. Claude can install the app on a device you already have booted.
 
-You can also open the simulator pane yourself. Once the session has a simulator attached or has edited Swift files, the **Views** menu in the session toolbar shows an **iOS Simulator** entry. If the pane isn't showing a device yet, click **Attach simulator**, or pick a specific device from the device menu next to it; picking a shut-down device boots it. If Xcode or its simulators are missing, the pane shows the setup steps instead and checks them off as you complete them.
+You can also open the simulator pane yourself. Once the session has a simulator attached or Claude Code detects iOS app work, an **iOS Simulator** button appears in the session's title bar. If the pane isn't showing a device yet, click **Attach simulator**, or pick a specific device from the device menu next to it; picking a shut-down device boots it. If Xcode or its simulators are missing, the pane shows the setup steps instead and checks them off as you complete them.
 
 ## Control the simulator yourself
 

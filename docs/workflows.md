@@ -49,13 +49,13 @@ The quickest way to see a workflow in action is to run `/deep-research`, the [bu
   </Step>
 
   <Step title="Watch progress">
-    The run starts in the background. Run `/workflows`, use the arrow keys to select the run, and press Enter to open its progress view:
+    The run starts in the background. Run `/workflows` to open its progress view:
 
     ```text wrap theme={null}
     /workflows
     ```
 
-    The view shows each phase with its agent count, token total, and elapsed time. Drill into any phase to see its agents and what each one found. See [Watch the run](#watch-the-run) for the full set of controls.
+    If `/workflows` shows a list of runs instead, select the run you just started and press Enter. The view shows each phase with its agent count. Drill into any phase to see its agents and what each one found. See [Watch the run](#watch-the-run) for the full set of controls.
 
     You can also watch from the task panel below the input box: a one-line progress summary appears there while the run is going. Press the down arrow to focus it, then Enter to expand.
   </Step>
@@ -83,9 +83,9 @@ Claude Code includes `/deep-research` as a built-in workflow:
 
 ### Watch the run
 
-Workflows run in the background, so the session stays responsive while agents work. Run `/workflows` at any time to list running and completed workflows, then select one to open its progress view. To stop a running workflow without opening it, select it in the list and press `x`.
+Workflows run in the background, so the session stays responsive while agents work. Run `/workflows` at any time to list running and completed workflows, then select one to open its progress view. When the session has only one run, `/workflows` skips the list and opens that run. To stop a running workflow from the list without opening it, select it and press `x`.
 
-The progress view shows each phase with its agent counts, token totals, and elapsed time. The footer lists the key for each action:
+The progress view shows each phase with its agent counts. The footer lists the key for each action:
 
 | Key | Action |
 | :- | :- |
@@ -172,7 +172,7 @@ In the CLI, the per-run prompt shows the planned phases and these options:
 * **View raw script**: read the script before deciding
 * **No**: cancel
 
-`Ctrl+G` opens the script in your editor. `Tab` lets you adjust the prompt before the run starts.
+`Ctrl+G` opens the script in your editor. With **Yes, run it** or **No** selected, press `Tab` to [add a comment](/docs/en/permissions#add-a-comment-when-you-answer-a-permission-prompt) to your answer.
 
 Whether you see this prompt depends on your [permission mode](/docs/en/permission-modes):
 

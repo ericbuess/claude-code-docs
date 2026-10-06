@@ -411,7 +411,9 @@ The install finished but `claude` doesn't work. The exact error varies by platfo
 | Windows CMD | `'claude' is not recognized as an internal or external command` |
 | PowerShell | `claude : The term 'claude' is not recognized as the name of a cmdlet` |
 
-This means the install directory isn't in your shell's search path. See [Verify your PATH](#verify-your-path) for the fix on each platform.
+On Windows, if the error started right after Claude Code updated, see [restore `claude.exe` from its backup](#claude-exe-missing-after-an-update-on-windows).
+
+Otherwise, see [Verify your PATH](#verify-your-path) for the fix on each platform.
 
 ### `curl: (56) Failure writing output to destination`
 
@@ -592,7 +594,7 @@ irm https://claude.ai/install.ps1 | iex
   `claude.exe` missing after an update on Windows
 </h3>
 
-If your terminal reports `'claude' is not recognized` right after Claude Code updated on Windows, check whether `%USERPROFILE%\.local\bin` still contains `claude.exe`. If that directory isn't on your PATH at all, see [Fix your PATH](#command-not-found-claude-after-installation) instead. To update on Windows, Claude Code renames the existing `claude.exe` aside to a backup and moves the new version into its place. If moving the new version into place fails and Claude Code can't rename the backup back either, the directory keeps the backup but has no `claude.exe`.
+If your terminal reports `'claude' is not recognized` right after Claude Code updated on Windows, check whether `%USERPROFILE%\.local\bin` still contains `claude.exe`. If that directory isn't on your PATH at all, see [Verify your PATH](#verify-your-path) instead. To update on Windows, Claude Code renames the existing `claude.exe` aside to a backup and moves the new version into its place. If moving the new version into place fails and Claude Code can't rename the backup back either, the directory keeps the backup but has no `claude.exe`.
 
 The backup is a file in the same directory whose name begins with `claude.exe.old.` followed by a numeric timestamp. Run the following in PowerShell to rename the newest backup back to `claude.exe`:
 

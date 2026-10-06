@@ -7,7 +7,7 @@
 > Set up automated PR reviews that catch logic errors, security vulnerabilities, and regressions using multi-agent analysis of your full codebase
 
 <Note>
-  Code Review is in research preview, available for [Team and Enterprise](https://claude.ai/admin-settings/claude-code) subscriptions. It is not available for organizations with [Zero Data Retention](/docs/en/zero-data-retention) enabled. On other plans, you can still [review a diff locally](#review-a-diff-locally) with the `/code-review` command.
+  Code Review is in research preview, available for [Team and Enterprise](https://claude.ai/admin-settings/claude-code) subscriptions. It is not available for organizations with [Zero Data Retention](/docs/en/zero-data-retention) enabled or with the [HIPAA configuration](/docs/en/hipaa-setup) applied, and is not covered under Anthropic's BAA. On other plans, you can still [review a diff locally](#review-a-diff-locally) with the `/code-review` command.
 </Note>
 
 Code Review analyzes your GitHub pull requests and posts findings as inline comments on the lines of code where it found issues. A fleet of specialized agents examine the code changes in the context of your full codebase, looking for logic errors, security vulnerabilities, broken edge cases, and subtle regressions.
@@ -330,7 +330,7 @@ Claude reports the findings as text in the reply in both of these runs, even whe
 * In a terminal session, where `/code-review` runs the review as a [forked subagent](/docs/en/skills#run-skills-in-a-subagent)
 * In a `-p` run with text or JSON output
 
-In a host application that requests the findings list, such as the [desktop app](/docs/en/desktop), Claude reports the review's findings through the [`ReportFindings` tool](/docs/en/tools-reference) instead. Claude Code renders the report as a findings list, and each entry shows the file location, a one-sentence summary, and a category tag such as `correctness` when the finding carries one. A host request applies at every effort level and requires Claude Code v2.1.218 or later.
+In a host application that requests the findings list, such as the [desktop app](/docs/en/desktop#review-your-code), Claude reports the review's findings through the [`ReportFindings` tool](/docs/en/tools-reference) instead. Claude Code renders the report as a findings list, and each entry shows the file location, a one-sentence summary, and a category tag such as `correctness` when the finding carries one. A host request applies at every effort level and requires Claude Code v2.1.218 or later.
 
 When Claude fixes reported findings later in the session, it reports them again, and Claude Code marks each finding in the updated findings list as fixed, skipped, or no change needed.
 
@@ -384,7 +384,7 @@ Ultrareview uses its own scope: your current branch against the repository's def
 When the target is a `github.com` pull request, you can have Claude [post the finished findings to the PR](/docs/en/ultrareview#post-findings-to-the-pull-request) as a comment from your GitHub account. Requires Claude Code v2.1.227 or later.
 
 <Note>
-  Ultrareview requires authentication with a claude.ai account and is not available on Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry, or to organizations with Zero Data Retention enabled. When ultrareview is not available, `/code-review ultra` runs a local review in your session instead.
+  Ultrareview requires authentication with a claude.ai account and is not available on Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry, or to organizations with Zero Data Retention enabled or with the [HIPAA configuration](/docs/en/hipaa-setup) applied. When ultrareview is not available, `/code-review ultra` runs a local review in your session instead.
 </Note>
 
 To run a cloud review from a script or CI job, use the [`claude ultrareview` subcommand](/docs/en/ultrareview#run-ultrareview-non-interactively), which waits for the findings and prints them to stdout.

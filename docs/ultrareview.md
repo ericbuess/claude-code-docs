@@ -18,7 +18,7 @@ Compared to a local `/code-review`, ultrareview offers:
 * **Broader coverage**: a larger fleet of reviewer agents explores the change in parallel, which surfaces issues that a local review can miss
 * **No local resource use**: the review runs entirely in a cloud sandbox, so your terminal stays free for other work while it runs
 
-Ultrareview requires authentication with a claude.ai account because it runs as a cloud session on Anthropic's infrastructure. If you are signed in with an API key only, run `/login` and authenticate with claude.ai first. Ultrareview is not available when using Claude Code with Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry, and it is not available to organizations that have enabled Zero Data Retention. When ultrareview is not available, `/code-review ultra` runs a local review in your session instead.
+Ultrareview requires authentication with a claude.ai account because it runs as a cloud session on Anthropic's infrastructure. If you are signed in with an API key only, run `/login` and authenticate with claude.ai first. Ultrareview is not available when using Claude Code with Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry, and it is not available to organizations that have enabled Zero Data Retention or have the [HIPAA configuration](/docs/en/hipaa-setup) applied. When ultrareview is not available, `/code-review ultra` runs a local review in your session instead.
 
 ## Run ultrareview from the CLI
 

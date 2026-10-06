@@ -29,7 +29,7 @@ Run `/rewind`, or press `Esc` twice when the prompt input is empty, to open the 
   If the prompt input contains text, double `Esc` clears it instead of opening the menu. The cleared text is saved to your input history, so press `Up` to recall it after you finish in the rewind menu.
 </Note>
 
-The rewind menu lists each prompt you sent during the session, except [messages that joined a running turn](#messages-sent-mid-turn-not-checkpointed). Select the point you want to act on, then choose an action:
+The rewind menu lists the prompts you sent during the session. Select the point you want to act on, then choose an action:
 
 * **Restore code and conversation**: revert both code and conversation to that point
 * **Restore conversation**: rewind to that message while keeping current code
@@ -92,9 +92,9 @@ Checkpointing only tracks files that have been edited within the current session
 
 ### Messages sent mid-turn not checkpointed
 
-When a message you [queue while Claude works](/docs/en/interactive-mode#queue-messages-while-claude-works) reaches Claude within the running turn, it joins that turn instead of starting a new one. The message appears in the conversation, but Claude Code doesn't create a checkpoint for it, and the rewind menu doesn't list it. A queued message that Claude Code sends as part of a new turn gets a checkpoint as usual, including when several queued messages [share that turn](/docs/en/interactive-mode#when-claude-code-sends-what-you-queued).
+When a message you [queue while Claude works](/docs/en/interactive-mode#queue-messages-while-claude-works) reaches Claude within the running turn, it joins that turn instead of starting a new one. The message appears in the conversation, but Claude Code doesn't create a checkpoint for it. A queued message that Claude Code sends as part of a new turn gets a checkpoint as usual, including when several queued messages [share that turn](/docs/en/interactive-mode#when-claude-code-sends-what-you-queued).
 
-To remove such a message, or undo the edits Claude made after it, rewind to the prompt that started the turn. That rewinds the whole turn, including the work Claude did before your message arrived.
+To undo the edits Claude made after such a message, rewind to the prompt that started the turn. That rewinds the whole turn, including the work Claude did before your message arrived.
 
 ### Symlinked and hard-linked paths not restored
 

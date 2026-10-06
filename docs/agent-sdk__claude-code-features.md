@@ -110,7 +110,7 @@ The `cwd` option determines where the SDK looks for project-level inputs. Projec
 | Project (root) | `<cwd>/CLAUDE.md` or `<cwd>/.claude/CLAUDE.md` | `settingSources` includes `"project"` |
 | Project rules | `<cwd>/.claude/rules/*.md` and `.claude/rules/*.md` in every parent directory | `settingSources` includes `"project"` |
 | Project (parent dirs) | `CLAUDE.md` files in directories above `cwd` | `settingSources` includes `"project"`, loaded at session start |
-| Project (child dirs) | `CLAUDE.md` files in subdirectories of `cwd` | `settingSources` includes `"project"`, loaded on demand when the agent reads a file in that subtree |
+| Project (child dirs) | `CLAUDE.md` files in subdirectories of `cwd` | `settingSources` includes `"project"`, loaded [on demand](/docs/en/memory#how-claude-md-files-load) |
 | Local | `<cwd>/CLAUDE.local.md` and `CLAUDE.local.md` in every parent directory | `settingSources` includes `"local"` |
 | User | `~/.claude/CLAUDE.md` | `settingSources` includes `"user"` |
 | User rules | `~/.claude/rules/*.md` | `settingSources` includes `"user"` |

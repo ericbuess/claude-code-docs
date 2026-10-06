@@ -79,7 +79,7 @@ Claude Code supports several permission modes that control how it approves tool 
 
 | Mode | Description |
 | :- | :- |
-| `default` | Prompts for permission on first use of each tool. Labeled Manual in the CLI, the VS Code and JetBrains extensions, and the desktop app, and Claude Code accepts `manual` as an alias. The label and alias require Claude Code v2.1.200 or later. The desktop app's label doesn't depend on your CLI version |
+| `default` | Prompts for permission on first use of each tool. Labeled Manual in the CLI, the VS Code and JetBrains extensions, and the desktop app, and Claude Code accepts `manual` as an alias |
 | `acceptEdits` | Automatically accepts file edits and common filesystem commands such as `mkdir`, `touch`, `mv`, and `cp` for paths in the working directory or `additionalDirectories` |
 | `plan` | Claude reads files and runs read-only shell commands to explore but doesn't edit your source files; with [auto mode](/docs/en/permission-modes#eliminate-prompts-with-auto-mode) available, classifier-approved commands also run. Labeled Plan in the CLI and the VS Code extension |
 | `auto` | Runs without routine prompts; before actions such as shell commands and network requests run, a background [classifier](/docs/en/permission-modes#eliminate-prompts-with-auto-mode) checks that they align with your request |
@@ -703,7 +703,7 @@ Claude Code runs git to tell the two apart, and it runs git only once you've tru
   The configuration-home exception skips only the trust step. `~/.claude/settings.local.json` is still [local scope](/docs/en/settings#compare-the-scope-of-each-settings-file), so Claude Code reads it only in sessions you start in your home directory itself, not in every project. To apply permission rules across all your projects, add them to your user settings instead: `~/.claude/settings.json`, or `$CLAUDE_CONFIG_DIR/settings.json` when `CLAUDE_CONFIG_DIR` is set.
 </Note>
 
-On versions 2.1.196 through 2.1.199, Claude Code held the file's rules in your configuration home and outside git repositories too, and printed the [`this workspace has not been trusted`](/docs/en/errors#workspace-has-not-been-trusted) warning there. Before v2.1.207, Claude Code applied an untracked file's rules before you accepted the dialog.
+Before v2.1.207, Claude Code applied an untracked file's rules before you accepted the dialog.
 
 ### What runs before you trust a folder
 

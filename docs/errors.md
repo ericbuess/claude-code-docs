@@ -185,6 +185,7 @@ Match the message you see to a section below.
 | `<model>'s safeguards flagged this message` | [Request errors](#safety-measures-flagged-a-cybersecurity-topic) |
 | `<model>'s safeguards flagged this session` | [Request errors](#safety-measures-flagged-a-cybersecurity-topic) |
 | `<model> has safety measures that flagged this message for a cybersecurity topic` | [Request errors](#safety-measures-flagged-a-cybersecurity-topic) |
+| `` Details: `[reasoning_extraction]` `` | [Request errors](#safeguards-flagged-a-request-for-claudes-reasoning) |
 | `API Error: Output blocked by content filtering policy` | [Request errors](#output-blocked-by-content-filtering-policy) |
 | `Installation was killed before it could finish (exit code 137)` | [Installation errors](#installation-was-killed-before-it-could-finish) |
 | `The connection dropped while downloading the update` | [Installation errors](#the-connection-dropped-while-downloading-the-update) |
@@ -2659,6 +2660,8 @@ For the three web search wordings, Claude Code leaves the search calls, results,
 
 The API declined to respond because content in the conversation triggered a [Usage Policy](https://www.anthropic.com/legal/aup) check.
 
+If the message includes the line `` Details: `[reasoning_extraction]` ``, see [Safeguards flagged a request for Claude's reasoning](#safeguards-flagged-a-request-for-claudes-reasoning).
+
 The message includes a Request ID and a Message ID you can quote to support if you believe the refusal is incorrect.
 
 ```text theme={null}
@@ -2687,6 +2690,8 @@ The model's safety measures flagged content in the conversation as a cybersecuri
 API Error: Opus 4.8's safeguards flagged this message. Our intentionally broad safeguards allow us to deliver more capabilities faster, but can sometimes flag legitimate cybersecurity work. Apply to the Cyber Verification Program to reduce these interruptions. Send feedback with /feedback or learn more: https://support.claude.com/en/articles/14604842-real-time-cyber-safeguards-on-claude
 ```
 
+If the message includes the line `` Details: `[reasoning_extraction]` ``, see [Safeguards flagged a request for Claude's reasoning](#safeguards-flagged-a-request-for-claudes-reasoning).
+
 The message links to the [Cyber Verification Program](https://support.claude.com/en/articles/14604842-real-time-cyber-safeguards-on-claude), which grants access for legitimate cybersecurity work. On Opus 5.5 and Sonnet 5.5, the message opens with `<model>'s safeguards flagged this session` instead. When the flagged category has a fallback model available, Claude Code [switches models](/docs/en/model-config#automatic-model-fallback) rather than showing this error.
 
 On [Amazon Bedrock](/docs/en/amazon-bedrock), [Google Cloud's Agent Platform](/docs/en/google-vertex-ai), and [Microsoft Foundry](/docs/en/microsoft-foundry), a cybersecurity flag produces the [Usage Policy refusal](#usage-policy-refusal) message instead.
@@ -2700,6 +2705,27 @@ Before v2.1.203, it read `<model>'s safeguards flagged this message for a cybers
 * If your work requires this content, apply for access through the [Cyber Verification Program](https://support.claude.com/en/articles/14604842-real-time-cyber-safeguards-on-claude)
 * If your request wasn't about a cybersecurity topic, run `/feedback` to report the false positive
 * To keep working in the same session, press Esc twice or run `/rewind` to step back to a checkpoint before the turn that triggered the flag, then take a different approach. See [Checkpointing](/docs/en/checkpointing).
+
+<h3 id="safeguards-flagged-a-request-for-claudes-reasoning">
+  Safeguards flagged a request for Claude's reasoning
+</h3>
+
+The API declined the request because safeguards flagged it as asking the model to reproduce its internal reasoning in the response. The API names this [refusal category](https://platform.claude.com/docs/en/build-with-claude/refusals-and-fallback#refusal-response) `reasoning_extraction`, and the refusal message includes this line:
+
+```text theme={null}
+Details: `[reasoning_extraction]`
+```
+
+Before v2.1.234, refusal messages didn't include the `Details` line.
+
+**What to do:**
+
+* Remove or reword any instruction that asks Claude to write out its thinking or reasoning verbatim or in a fixed format, such as a `<thinking>` section, a scratchpad section, or a `reasoning` field in JSON output. The instruction can be in your prompt or in a customization that Claude Code loads with it, such as CLAUDE.md, a skill, a subagent prompt, an output style, or an MCP tool description.
+* To check whether a customization is the trigger, run [`claude --safe-mode`](/docs/en/cli-reference#cli-flags) in your terminal to start a session with customizations disabled, then send the same prompt
+* After you change a customization, start a new session
+* To reword a prompt you already sent, see [Rewind and summarize](/docs/en/checkpointing#rewind-and-summarize)
+* You can still ask Claude to explain its answer. Ask for a short explanation, the evidence behind a result, or a summary of the actions it took. To read summaries of Claude's thinking, see [`showThinkingSummaries`](/docs/en/settings-reference#showthinkingsummaries).
+* For more examples, and what to do if a reworded request is still declined, see [Keep reasoning in thinking blocks](https://platform.claude.com/docs/en/build-with-claude/refusals-and-fallback#keep-reasoning-in-thinking-blocks)
 
 ### Output blocked by content filtering policy
 

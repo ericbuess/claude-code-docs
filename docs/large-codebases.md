@@ -60,7 +60,7 @@ Where you launch `claude` determines which files Claude can read and edit withou
 
 | Start from | File access | CLAUDE.md loaded at launch | Use when |
 | :- | :- | :- | :- |
-| Repository root | Every file | Root only; subdirectory files load on demand when Claude reads there | Tasks span multiple packages or subsystems |
+| Repository root | Every file | Root only; subdirectory files load on demand | Tasks span multiple packages or subsystems |
 | A subdirectory | That subtree only, until you grant more | That directory's plus every ancestor's | Work is scoped to one package or subsystem |
 
 Project settings in `.claude/settings.json` aren't inherited from parent directories the way CLAUDE.md files are. For which directory's `.claude/settings.json` a session reads, see [where Claude Code looks for each file](/docs/en/settings#where-claude-code-looks-for-each-file).
@@ -71,7 +71,7 @@ Each section below states whether its settings file belongs at the repository ro
 
 In a large codebase, a single CLAUDE.md at the repository root tends to either grow to cover every subsystem's conventions, costing context on instructions unrelated to the current task, or stay too generic to be useful. Splitting instructions across per-directory files means Claude loads repository-wide rules plus only the conventions for the code you're working in.
 
-Claude Code loads every [CLAUDE.md](/docs/en/memory) file from your working directory and every parent directory at launch, then loads each subdirectory's file on demand when it reads files there. A root file sets repository-wide rules and each subdirectory adds its own.
+Claude Code loads every [CLAUDE.md](/docs/en/memory) file from your working directory and every parent directory at launch, then loads each subdirectory's file [on demand](/docs/en/memory#how-claude-md-files-load). A root file sets repository-wide rules and each subdirectory adds its own.
 
 A common split is two levels:
 
@@ -112,14 +112,14 @@ Per-directory `CLAUDE.md` files and [path-scoped rules](/docs/en/memory#path-spe
 
 | Approach | File location | Loads when | Use when |
 | :- | :- | :- | :- |
-| Per-directory `CLAUDE.md` | Inside the directory, alongside its code | At launch when started from that directory, or on demand when Claude reads a file there | Directory owners maintain their own conventions; instructions are versioned with the code |
+| Per-directory `CLAUDE.md` | Inside the directory, alongside its code | At launch when started from that directory, or on demand | Directory owners maintain their own conventions; instructions are versioned with the code |
 | Path-scoped rule in `.claude/rules/` | Central `.claude/` at the repo root | When Claude works with a file matching the rule's `paths:` glob | You want all conventions in one place, or the same rule applies to many scattered paths |
 
 For a comparison that also covers skills, see [Compare similar features](/docs/en/features-overview#compare-similar-features).
 
 ### Exclude irrelevant CLAUDE.md files
 
-When you start Claude from the repository root, each subdirectory's CLAUDE.md loads as soon as Claude reads a file in that directory. The `claudeMdExcludes` setting skips specific files by path or glob pattern so they never load.
+When you start Claude from the repository root, each subdirectory's CLAUDE.md can [load on demand](/docs/en/memory#how-claude-md-files-load) during the session. The `claudeMdExcludes` setting skips specific files by path or glob pattern so they never load.
 
 Use this for directories you never work in, such as other teams' packages, legacy code, or vendored subtrees. The exclusion list is static, not a per-task switch. To focus on one package today and another tomorrow, [start Claude from that package's directory](#choose-where-to-start-claude) instead of editing exclusions.
 

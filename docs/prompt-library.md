@@ -108,10 +108,10 @@ export const PromptLibrary = ({text = {}, labels = {}, tagLabels = {}, phaseLabe
     sdlc: 'design',
     cat: 'Plan',
     roles: ['pm'],
-    prompt: 'read {input} and write up the action items, then create a {tracker} ticket for each with acceptance criteria',
+    prompt: 'read {input} and write up the action items, then create a ticket in {tracker} for each one, with acceptance criteria',
     slots: {
       input: '@meeting-notes.md',
-      tracker: 'Linear'
+      tracker: 'our issue tracker'
     },
     needs: 'tracker',
     nextHref: '/en/skills',
@@ -151,8 +151,8 @@ export const PromptLibrary = ({text = {}, labels = {}, tagLabels = {}, phaseLabe
     roles: [],
     prompt: 'look at how {example} is implemented to understand the pattern, then build {new} the same way',
     slots: {
-      example: 'the GitHub webhook handler',
-      new: 'a Stripe webhook handler'
+      example: 'the existing webhook handler',
+      new: 'a payments webhook handler'
     },
     nextHref: '/en/memory',
     src: 'best-practices'
@@ -412,9 +412,9 @@ export const PromptLibrary = ({text = {}, labels = {}, tagLabels = {}, phaseLabe
     sdlc: 'ship',
     cat: 'Git',
     roles: [],
-    prompt: 'find the {tracker} ticket about {topic} and open a PR that implements it',
+    prompt: 'find the ticket about {topic} in {tracker} and open a PR that implements it',
     slots: {
-      tracker: 'Linear',
+      tracker: 'our issue tracker',
       topic: 'the login timeout'
     },
     needs: 'tracker',
@@ -492,7 +492,7 @@ export const PromptLibrary = ({text = {}, labels = {}, tagLabels = {}, phaseLabe
     paste: 'screenshot',
     prompt: 'here is a screenshot of {console}. walk me through why {resource} is failing and give me the exact commands to fix it',
     slots: {
-      console: 'the GCP Kubernetes dashboard',
+      console: 'our Kubernetes dashboard',
       resource: 'this pod'
     },
     src: 'teams'
@@ -564,10 +564,10 @@ export const PromptLibrary = ({text = {}, labels = {}, tagLabels = {}, phaseLabe
     sdlc: 'operate',
     cat: 'Automate',
     roles: [],
-    prompt: 'set up the {server} MCP server so you can read my {data} directly',
+    prompt: 'connect {server} via MCP so you can read its {data} directly',
     slots: {
-      server: 'Sentry',
-      data: 'error reports'
+      server: 'our error tracker',
+      data: 'stack traces'
     },
     src: 'workflows'
   }, {
@@ -1181,10 +1181,10 @@ export const text = {
     title: "Turn a meeting into tickets",
     teaches: "Skip the transcription step. Claude pulls action items from the unstructured input and writes them straight into your tracker via [MCP](/docs/en/mcp), so you review the tickets, not the transcript.",
     next: "Save this as a `/tickets` skill",
-    prompt: "read {input} and write up the action items, then create a {tracker} ticket for each with acceptance criteria",
+    prompt: "read {input} and write up the action items, then create a ticket in {tracker} for each one, with acceptance criteria",
     slots: {
       input: "@meeting-notes.md",
-      tracker: "Linear"
+      tracker: "our issue tracker"
     }
   },
   "map-edge-cases-before": {
@@ -1212,8 +1212,8 @@ export const text = {
     next: "Ask Claude to write the pattern it followed into `CLAUDE.md` so future sessions match it without the reference",
     prompt: "look at how {example} is implemented to understand the pattern, then build {new} the same way",
     slots: {
-      example: "the GitHub webhook handler",
-      new: "a Stripe webhook handler"
+      example: "the existing webhook handler",
+      new: "a payments webhook handler"
     }
   },
   "add-a-small-well": {
@@ -1419,9 +1419,9 @@ export const text = {
   "open-a-pull-request": {
     title: "Open a pull request from a ticket",
     teaches: "Skip the context switch between tracker, editor, and GitHub. One prompt reads the spec, makes the change, and opens the PR.",
-    prompt: "find the {tracker} ticket about {topic} and open a PR that implements it",
+    prompt: "find the ticket about {topic} in {tracker} and open a PR that implements it",
     slots: {
-      tracker: "Linear",
+      tracker: "our issue tracker",
       topic: "the login timeout"
     }
   },
@@ -1470,7 +1470,7 @@ export const text = {
   "investigate-a-production-incident": {
     title: "Investigate a production incident",
     teaches: "List the evidence sources to correlate, not the steps to take. Claude reads logs, git history, and config together to narrow the cause.",
-    next: "Connect Sentry or your log store via MCP",
+    next: "Connect your error tracker or log store via MCP",
     prompt: "{symptom}. check the logs, recent deploys, and config changes, then tell me the most likely cause",
     slots: {
       symptom: "the checkout endpoint started returning 500s an hour ago"
@@ -1491,7 +1491,7 @@ export const text = {
     teaches: "Cloud consoles show you the problem but not the commands to fix it. Claude reads the screenshot and translates the dashboard into the kubectl, gcloud, or aws commands to run.",
     prompt: "here is a screenshot of {console}. walk me through why {resource} is failing and give me the exact commands to fix it",
     slots: {
-      console: "the GCP Kubernetes dashboard",
+      console: "our Kubernetes dashboard",
       resource: "this pod"
     }
   },
@@ -1538,10 +1538,10 @@ export const text = {
   "connect-a-tool-with": {
     title: "Connect a tool with MCP",
     teaches: "Connect the source once instead of pasting data every session. After [MCP](/docs/en/mcp) setup, Claude reads from the tool directly when you ask about it.",
-    prompt: "set up the {server} MCP server so you can read my {data} directly",
+    prompt: "connect {server} via MCP so you can read its {data} directly",
     slots: {
-      server: "Sentry",
-      data: "error reports"
+      server: "our error tracker",
+      data: "stack traces"
     }
   },
   "capture-what-to-remember": {

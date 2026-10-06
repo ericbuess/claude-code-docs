@@ -112,17 +112,18 @@ From the Browser pane, you can:
 
 * Interact with your running app directly in the Browser pane
 * Watch Claude verify its own changes automatically: it takes screenshots, inspects the DOM, clicks elements, fills forms, and fixes issues it finds
-* Start or stop servers from the server dropdown in the session toolbar
-* Persist cookies and local storage across server restarts by selecting **Persist sessions** in the dropdown, so you don't have to re-login during development
-* Edit the server configuration or stop all servers at once
+* Start or stop servers, or stop them all at once, from the **Dev servers** menu in the Browser pane's header
+* Choose whether the Browser keeps cookies after you quit the app with **Keep cookies** in the Browser pane's **⋮** menu, so you don't have to sign in again during development
 
 Claude creates the initial server configuration based on your project. If your app uses a custom dev command, edit `.claude/launch.json` to match your setup. See [Configure preview servers](#configure-preview-servers) for the full reference.
 
-To clear saved session data, or to turn the Browser off entirely, use the toggles in Settings → Claude Code.
+To clear the Browser's saved data, select **Clear browsing data** in the Browser pane's **⋮** menu. To turn the Browser off entirely, turn off **Browser tools** in **Settings > Claude Code**.
 
 ### Browse external sites
 
-The Browser pane is a tabbed browser, so you can open documentation, issue trackers, or any other site next to your running app. To open the Browser, press **Cmd+Shift+B** on macOS or **Ctrl+Shift+B** on Windows, or select it from the **Views** menu. When you click an external link in the chat, a chooser offers **Open in app** to use the Browser pane or **Default browser** to use your own; **Cmd**-click on macOS or **Ctrl**-click on Windows opens a link in your system browser directly. You can sign in to sites in the pane, including popup sign-in flows such as Google OAuth.
+The Browser pane is a tabbed browser, so you can open documentation, issue trackers, or any other site next to your running app. To open the Browser, press **Cmd+Shift+B** on macOS or **Ctrl+Shift+B** on Windows, or click **Browser** in the session's title bar. You can sign in to sites in the pane, including popup sign-in flows such as Google OAuth.
+
+The first time you click an external link in the chat, a dialog asks whether links open in the Browser pane or in your default browser. To change your choice later, use **Open links in built-in browser** in the Browser pane's **⋮** menu. **Cmd**-click on macOS or **Ctrl**-click on Windows opens a link in your default browser directly.
 
 Claude can read and interact with external pages using the same tools it uses to [verify your app](#preview-your-app), with two additional safety checks:
 
@@ -160,18 +161,23 @@ Claude reads your comments and makes the requested changes, which appear as a ne
 
 ### Review your code
 
-In the diff view, click **Review code** in the top-right toolbar to ask Claude to evaluate the changes before you commit. Claude examines the current diffs and leaves comments directly in the diff view. You can respond to any comment or ask Claude to revise.
+To have Claude review your changes before you commit, enter `/code-review` in the [prompt box](#use-the-prompt-box). The findings arrive in the conversation when the review completes.
 
-The review focuses on high-signal issues: compile errors, definite logic errors, security vulnerabilities, and obvious bugs. It does not flag style, formatting, pre-existing issues, or anything a linter would catch.
+In local, [SSH](#ssh-sessions), and [WSL](/docs/en/desktop-wsl) sessions, the findings appear as a **Code review** card, grouped by file. Use the card to act on them:
+
+* Click **Walk through in diff** to open the diff view and step through the findings one at a time. A finding in the current diff appears at its line, where you can click **Fix this one** or dismiss it.
+* Click **Apply fixes** to ask Claude to fix the findings that are still open.
+
+In any session, you can also ask Claude in the prompt box to fix what the review found. For what `/code-review` looks for and the arguments it takes, see [Review a diff locally](/docs/en/code-review#review-a-diff-locally).
 
 ### Monitor pull request status
 
 After you open a pull request, a CI status bar appears in the session. Claude Code uses the GitHub CLI to poll check results and surface failures.
 
-* **Auto-fix**: when enabled, Claude automatically attempts to fix failing CI checks by reading the failure output and iterating.
-* **Auto-merge**: when enabled, Claude merges the PR once all checks pass. The merge method is squash. Enable auto-merge in your [GitHub repository settings](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/configuring-pull-request-merges/managing-auto-merge-for-pull-requests-in-your-repository) first; without it, Claude can't merge the PR.
+* **Auto-fix CI & address comments**: when enabled, Claude automatically attempts to fix failing CI checks by reading the failure output and iterating. In a local session, Claude also addresses new review comments that someone other than you leaves, when the author is the repository's owner, an organization member, a collaborator, or a GitHub App.
+* **Auto-merge when ready**: when enabled, Claude merges the PR once all checks pass. The merge method is squash. Enable auto-merge in your [GitHub repository settings](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/configuring-pull-request-merges/managing-auto-merge-for-pull-requests-in-your-repository) first; without it, Claude can't merge the PR.
 
-Use the **Auto-fix** and **Auto-merge** toggles in the CI status bar to enable either option. Claude Code also sends a desktop notification when CI finishes. To archive the session automatically once the PR merges or closes, turn on [auto-archive](#work-in-parallel-with-sessions) in Settings → Claude Code.
+To turn these on, click **CI** in the status bar. To archive the session automatically once the PR merges or closes, turn on [auto-archive](#work-in-parallel-with-sessions) in **Settings > Claude Code**.
 
 <Note>
   PR monitoring requires the [GitHub CLI (`gh`)](https://cli.github.com/) to be installed and authenticated on your machine. If `gh` is not installed, Desktop prompts you to install it the first time you try to create a PR.
@@ -179,7 +185,7 @@ Use the **Auto-fix** and **Auto-merge** toggles in the CI status bar to enable e
 
 ## Arrange your workspace
 
-The Code tab is built around panes you can arrange in any layout: chat, diff, browser, terminal, file, plan, tasks, and subagent, along with the [iOS Simulator](/docs/en/desktop-ios-simulator) on macOS. Drag a pane by its header to reposition it, or drag a pane edge to resize it. Press **Cmd+\\** on macOS or **Ctrl+\\** on Windows to close the focused pane. Open additional panes from the **Views** menu in the session toolbar.
+The Code tab is built around panes you can arrange in any layout: chat, diff, browser, terminal, file, plan, tasks, and subagent, along with the [iOS Simulator](/docs/en/desktop-ios-simulator) on macOS. Drag a pane by its header to reposition it, or drag a pane edge to resize it. Press **Cmd+\\** on macOS or **Ctrl+\\** on Windows to close the focused pane. Click **Terminal**, **Changes**, or **Browser** in the session's title bar to open the terminal, diff, or Browser pane. The **⋮** menu beside them opens more panes, such as **Files**, and holds those buttons when the window is too narrow to show them.
 
 To work across screens, pop a pane such as the diff or terminal out into its own window, and dock it back when you're done. Claude keeps working in the main window.
 
@@ -189,7 +195,7 @@ To work across screens, pop a pane such as the diff or terminal out into its own
 
 ### Run commands in the terminal
 
-The integrated terminal lets you run commands alongside your session without switching to another app. Open it from the **Views** menu or press **Ctrl+\`** on macOS or Windows. The terminal opens in your session's working directory and shares the same environment as Claude, so commands like `npm test` or `git status` see the same files Claude is editing. To open a second terminal tab, click **+** in the terminal pane header or right-click a folder in the chat to choose **Open in terminal**. The terminal is available in local sessions only.
+The integrated terminal lets you run commands alongside your session without switching to another app. Click **Terminal** in the session's title bar or press **Ctrl+\`** on macOS or Windows. The terminal opens in your session's working directory and shares the same environment as Claude, so commands like `npm test` or `git status` see the same files Claude is editing. To open a second terminal tab, click **+** in the terminal pane header or right-click a folder in the chat to choose **Open in terminal**. The terminal is available in local sessions only.
 
 ### Open and edit files
 
@@ -354,7 +360,7 @@ Side chats are available in local, SSH, and WSL sessions. The desktop app doesn'
 
 ### Watch background tasks
 
-The tasks pane shows the background work running inside the current session: subagents, background shell commands, and [dynamic workflows](/docs/en/workflows). Open it from the **Views** menu or drag it into your layout.
+The tasks pane shows the background work running inside the current session: subagents, background shell commands, and [dynamic workflows](/docs/en/workflows). Once the session has background work, open the pane with **Background tasks** in the title bar's **⋮** menu.
 
 Click any entry to see its output in the subagent pane or stop it. To see what other sessions are doing, use the [sidebar](#work-in-parallel-with-sessions), or ask Claude to [check on them for you](#work-across-sessions).
 
@@ -444,7 +450,7 @@ The plugin browser is not available in cloud sessions, and plugins you install f
 
 Claude automatically detects your dev server setup and stores the configuration in `.claude/launch.json` at the root of the folder you selected when starting the session. Preview uses this folder as its working directory, so if you selected a parent folder, subfolders with their own dev servers won't be detected automatically. To work with a subfolder's server, either start a session in that folder directly or add a configuration manually.
 
-To customize how your server starts, for example to use `yarn dev` instead of `npm run dev` or to change the port, edit the file manually or click **Edit configuration** in the server dropdown to open it in your code editor. The file supports JSON with comments.
+To customize how your server starts, for example to use `yarn dev` instead of `npm run dev` or to change the port, edit `.claude/launch.json`. The file supports JSON with comments.
 
 ```json theme={null}
 {
@@ -466,7 +472,7 @@ You can define multiple configurations to run different servers from the same pr
 
 When `autoVerify` is enabled, Claude automatically verifies code changes after editing files. It takes screenshots, checks for errors, and confirms changes work before completing its response.
 
-Auto-verify is on by default. Disable it per-project by adding `"autoVerify": false` to `.claude/launch.json`, or toggle it from the server dropdown menu.
+Auto-verify is on by default. Disable it per-project by adding `"autoVerify": false` to `.claude/launch.json`, or turn off **Auto-verify changes** in the Browser pane's **⋮** menu.
 
 ```json theme={null}
 {
@@ -670,14 +676,14 @@ See [Configure cloud environments](/docs/en/cloud-environments) for details on c
 
 SSH sessions let you run Claude Code on a remote machine while using the desktop app as your interface. This is useful for working with codebases that live on cloud VMs, dev containers, or servers with specific hardware or dependencies.
 
-To add an SSH connection, click the environment dropdown before starting a session and select **+ Add SSH connection**. The dialog asks for:
+To add an SSH connection, open the environment dropdown in the prompt box before you start a session, then select **SSH > Add SSH connection…** and fill in the connection details:
 
 * **Name**: a friendly label for this connection
-* **SSH Host**: `user@hostname` or a host defined in `~/.ssh/config`
-* **SSH Port**: defaults to 22 if left empty, or uses the port from your SSH config
-* **Identity File**: path to your private key, such as `~/.ssh/id_rsa`. Leave empty to use the default key or your SSH config.
+* **SSH host**: `user@hostname` or a host defined in `~/.ssh/config`
+* **SSH port**: defaults to 22 if left empty, or uses the port from your SSH config
+* **SSH key (optional)**: path to your private key, such as `~/.ssh/id_ed25519`. Leave empty to use your SSH config or SSH agent.
 
-Once added, the connection appears in the environment dropdown. Select it to start a session on that machine. Claude runs on the remote machine with access to its files and tools.
+Once added, the connection appears under **SSH** in the environment dropdown. Select it to start a session on that machine. Claude runs on the remote machine with access to its files and tools.
 
 The remote machine must run Linux or macOS. Desktop installs Claude Code on the remote machine automatically the first time you connect. Once connected, SSH sessions support permission modes, connectors, plugins, and MCP servers.
 
@@ -727,10 +733,11 @@ Organizations on Team or Enterprise plans can manage desktop app behavior throug
 
 These settings are configured through the [admin settings console](https://claude.ai/admin-settings/claude-code):
 
-* **Code in the desktop**: control whether users in your organization can access Claude Code in the desktop app
-* **Code in the web**: enable or disable [cloud sessions](/docs/en/claude-code-on-the-web) for your organization
+* **Desktop**: control whether users in your organization can access Claude Code in the desktop app
+* **Cloud sessions**: enable or disable [cloud sessions](/docs/en/claude-code-on-the-web) for your organization
 * **Remote Control**: enable or disable [Remote Control](/docs/en/remote-control) for your organization
-* **Disable Bypass permissions mode**: prevent users in your organization from enabling bypass permissions mode
+
+In Enterprise organizations that have HIPAA enabled, the **Desktop** toggle is off by default and an [Owner](/docs/en/server-managed-settings#access-control) can turn it on. Applying the [HIPAA configuration](/docs/en/hipaa-setup) turns it off, even if it was on, so an Owner has to turn it on afterward. **Cloud sessions** and **Remote Control** are also off by default, and an Owner can't turn them on once the organization has the HIPAA configuration applied.
 
 <Note>
   The OpenTelemetry form for Cowork under **Monitoring** in the admin console's [Data and privacy settings](https://claude.ai/admin-settings/data-privacy-controls) applies to Cowork sessions only. In a Cowork session on this machine, the desktop app passes that collector to Claude Code as `OTEL_*` environment variables, so the form takes effect even though Claude Code in that session [never fetches admin-console settings](#managed-settings).
@@ -1005,7 +1012,7 @@ If MCP server toggles don't respond or servers fail to connect on Windows, check
 
 ### "Branch doesn't exist yet" when opening in CLI
 
-Cloud sessions can create branches that don't exist on your local machine. Click the branch name in the session toolbar to copy it, then fetch it locally:
+Cloud sessions can create branches that don't exist on your local machine. Click the branch name in the session and select **Copy branch name**, then fetch it locally:
 
 ```bash theme={null}
 git fetch origin <branch-name>

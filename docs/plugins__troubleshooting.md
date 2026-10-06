@@ -83,7 +83,7 @@ Use either of these instead:
 
 You ran `claude plugin install ...` in your shell, and the shell couldn't find `claude` at all. On Windows the message is `'claude' is not recognized as the name of a cmdlet` or `'claude' is not recognized as an internal or external command`.
 
-The cause isn't the plugin command. Either Claude Code isn't installed, or its install directory isn't on your `PATH` in this shell. Follow [`command not found: claude` after installation](/docs/en/troubleshoot-install#command-not-found-claude-after-installation), then retry the plugin command.
+The cause isn't the plugin command. Follow [Verify your PATH](/docs/en/troubleshoot-install#verify-your-path), then retry the plugin command.
 
 <h3 id="unknown-command-and-command-spellings-that-dont-exist">
   `Unknown command` and command spellings that don't exist
@@ -687,10 +687,10 @@ If the plugin loads with no error and its skills still don't appear, the next st
 * **A plugin someone else published**: open **Installed** in `/plugin` and open the plugin's details pane, which lists what the plugin contains. A plugin that lists no skills there has none to offer when you type `/`
 
 <h3 id="run-reload-plugins-to-activate">
-  `Run /reload-plugins to activate.`
+  `Run /reload-plugins to apply.`
 </h3>
 
-The install summary in `/plugin` ended with `Run /reload-plugins to activate.` instead of `Plugin is now active.`
+The install summary in `/plugin` ended with `Run /reload-plugins to apply.` instead of `Plugin is now active.` A `Plugins changed. Run /reload-plugins to activate.` notice can appear above the prompt at the same time.
 
 Claude Code didn't activate the plugin during the install, either because activating it would [invalidate the prompt cache](/docs/en/prompt-caching#enabling-or-disabling-a-plugin) or because the activation attempt failed.
 

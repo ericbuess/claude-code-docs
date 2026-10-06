@@ -95,7 +95,7 @@ When you run `/web-setup`, Claude Code reads the token that `gh auth token` prin
 If you already connected GitHub in the browser, `/web-setup` warns you that continuing replaces that connection for your cloud sessions.
 
 <Note>
-  Organizations with [Zero Data Retention](/docs/en/zero-data-retention) enabled cannot use `/web-setup` or other cloud session features. If the GitHub CLI isn't installed or isn't authenticated, Claude Code opens the browser onboarding flow instead.
+  Organizations with [Zero Data Retention](/docs/en/zero-data-retention) enabled, or with the [HIPAA configuration](/docs/en/hipaa-setup) applied, cannot use `/web-setup` or other cloud session features. If the GitHub CLI isn't installed or isn't authenticated, Claude Code opens the browser onboarding flow instead.
 </Note>
 
 <Steps>
@@ -238,7 +238,7 @@ On Team and Enterprise plans, the command is hidden by default: the [Quick setup
 The command is also hidden in two other cases:
 
 * An administrator has disabled cloud sessions for your organization. In this case, submitting `/web-setup` returns [`Cloud sessions are disabled by your organization's policy`](/docs/en/errors#cloud-sessions-are-disabled-by-your-organizations-policy). Before v2.1.268, this case also returned `Unknown command: /web-setup`.
-* Your Enterprise organization has [Zero Data Retention](/docs/en/zero-data-retention) enabled, which makes cloud sessions unavailable.
+* Your Enterprise organization has [Zero Data Retention](/docs/en/zero-data-retention) enabled, or has the [HIPAA configuration](/docs/en/hipaa-setup) applied. Either one makes cloud sessions unavailable.
 
 ### "Could not create a cloud environment" or "No cloud environment available" when using `--cloud`
 

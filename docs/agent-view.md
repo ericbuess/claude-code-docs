@@ -118,11 +118,11 @@ Needs input
 
 Working
   ✽ collision detection       Adding swept-AABB checks to CollisionSystem   2m
-  ✢ playtest level 3          run 12 · all checkpoints cleared           in 4m
+  ✢ playtest level 3          all checkpoints cleared ×12                in 4m
 
 Completed
-  ✻ title screen              result: menu, options, and credits done       9m
-  ∙ sound effects             result: 14 SFX exported to assets/audio       4h
+  ✻ title screen              menu, options, and credits done               9m
+  ∙ sound effects             14 SFX exported to assets/audio               4h
   … 6 more
 ```
 
@@ -139,11 +139,11 @@ Each row starts with an icon whose color and animation show the session's state:
 | Failed | Red | The task ended with an error |
 | Stopped | Grey | You stopped the session with `Ctrl+X` or `claude stop`, [its process was ended from outside Claude Code](#the-supervisor-process), or [it ended while the background service was off](#sessions-show-as-failed-after-shutdown) |
 
-Separately, the icon's shape shows whether the underlying process is running:
+Separately, the icon's shape has its own meaning:
 
 | Shape | What it means |
 | :- | :- |
-| `✻` or animated `✽` | The session process is alive and replies immediately |
+| `✻` or animated `✽` | The session process is running, or the session needs your input |
 | `∙` | The process has exited. You can still peek at the row, and when you reply or attach, Claude restarts from where it left off |
 | `✢` | A [`/loop`](/docs/en/scheduled-tasks) session sleeping between iterations. The row shows its run count and a countdown |
 
@@ -226,7 +226,7 @@ When a [`PermissionRequest`](/docs/en/hooks#permissionrequest) or [`PreToolUse`]
 
 A reply that can't be delivered, because the background service is unreachable or the send fails, is saved and sent to the session as its next prompt when its process starts again, and the error message says the reply was saved. A reply prefixed with `!` isn't saved, because the saved text would reach the session as a plain prompt rather than run as a Bash command.
 
-With [voice dictation](/docs/en/voice-dictation) enabled, hold or tap your push-to-talk key while the reply input is focused to dictate a reply instead of typing it. The same works in the dispatch input at the bottom of agent view.
+With [voice dictation](/docs/en/voice-dictation) enabled in [hold mode](/docs/en/voice-dictation#hold-to-record), hold your push-to-talk key while the reply input is focused to dictate a reply instead of typing it. The same works in the dispatch input at the bottom of agent view.
 
 Use `↑` and `↓` to peek at adjacent sessions without closing the panel, or `→` to attach.
 
@@ -282,7 +282,7 @@ You can turn this shortcut off for foreground sessions with the [`leftArrowOpens
 
 ### Organize the list
 
-Agent view groups sessions so the ones that need input are at the top, with `Ready for review` and `Needs input` above `Working` and `Completed`. These group names don't map one-to-one to the [states](#read-session-state) above: a session moves to `Ready for review` when it has an open pull request, and `Completed` collects finished, failed, and stopped sessions together.
+Agent view groups sessions so the ones that need input are at the top, with `Ready for review` and `Needs input` above `Working` and `Completed`. These group names don't map one-to-one to the [states](#read-session-state) above: a session moves to `Ready for review` when it has an open pull request that needs review or has failing checks, and `Completed` collects finished, failed, and stopped sessions together.
 
 Press `Ctrl+S` to group by directory instead. Your choice persists across runs.
 
@@ -308,7 +308,7 @@ The picker opens only for a bare `/resume`. A targeted, scoped, or restricted re
 * the view was started with [`--safe-mode`](/docs/en/cli-reference#cli-flags)
 * the view was opened with a flag such as `--permission-mode` or `--settings`
 
-Completed sessions that don't fit on screen fold into a `… N more` row. Failures and sessions with an open pull request always stay visible. The `Completed` group fills the vertical space left after the live groups, and on a short terminal the header compacts to a single summary line so sessions that are working or need input stay visible.
+Completed sessions that don't fit on screen fold into a `… N more` row. The `Completed` group fills the vertical space left after the live groups, and on a short terminal the header compacts to a single summary line so sessions that are working or need input stay visible.
 
 ### Filter sessions
 
@@ -329,7 +329,7 @@ While a filter is active, groups you collapsed expand to show their matches and 
 
 ### Keyboard shortcuts
 
-Press `?` in agent view to see every shortcut in context. The table below summarizes them.
+Press `?` in agent view to see shortcuts in context. The table below summarizes them.
 
 | Shortcut | Action |
 | :- | :- |
@@ -354,7 +354,7 @@ Press `?` in agent view to see every shortcut in context. The table below summar
 | `Shift+↑` / `Shift+↓` | Reorder the selected session |
 | `Esc` | Close the peek panel, clear the input, or exit. When you opened agent view by backgrounding your session with `←`, the final `Esc` returns to that conversation instead of exiting. With [vim editor mode](/docs/en/interactive-mode#vim-editor-mode) on, pressing `Esc` in the input switches from INSERT to NORMAL mode and keeps your text, as in the main prompt |
 | `Ctrl+C` | Clear the input; press twice to exit |
-| `?` | Show all shortcuts |
+| `?` | Show shortcuts |
 
 The shortcuts that have an action in the [`Agents` context](/docs/en/keybindings#agents-actions) follow your [`keybindings.json`](/docs/en/keybindings). So does `Ctrl+G`, through the `Chat` context's `chat:externalEditor` binding.
 
@@ -558,7 +558,7 @@ Outside a git repository, sessions write to the working directory directly and a
 
 When the hook fails in a directory that isn't a git repository, Claude skips isolation for that directory and edits the working directory in place. Inside a git repository, a session that Claude moves into a worktree before editing can't edit files in the shared checkout until that move happens.
 
-To find a session's worktree path, peek the session or attach and check its working directory.
+To find a session's worktree path, attach and check its working directory.
 
 A [subagent](/docs/en/sub-agents) the background session spawns inherits the session's working directory. Once the session is in a worktree, the subagent's file edits land in that worktree rather than in your working copy. To give a subagent its own separate worktree instead, set [`isolation: worktree`](/docs/en/sub-agents#supported-frontmatter-fields) in its frontmatter or pass `isolation: "worktree"` when spawning it.
 
@@ -746,8 +746,8 @@ Every background session has a short ID you can use from the shell. The ID is pr
 | `claude agents` | Open agent view |
 | `claude agents --cwd <path>` | Open agent view scoped to sessions started under `<path>` |
 | `claude agents --json` | Print sessions as a JSON array and exit. See [List sessions as JSON](#list-sessions-as-json) |
-| `claude attach <id>` | Attach to a session in this terminal |
-| `claude logs <id>` | Print the session's recent output |
+| `claude attach <id\|name>` | Attach to a session in this terminal |
+| `claude logs <id\|name>` | Print the session's recent output |
 | `claude stop <id>` | Stop a session. Also accepts `claude kill` |
 | `claude respawn <id>` | Restart a session, running or stopped, e.g. to pick up an updated Claude Code binary. The restarted session resumes its saved conversation; when none is on disk, it runs its original prompt again as a new conversation |
 | `claude respawn --all` | Restart every running session, e.g. to move all sessions onto an updated Claude Code binary at once |
@@ -756,6 +756,8 @@ Every background session has a short ID you can use from the shell. The ID is pr
 | `claude rm <id> --force-remove-worktree <worktree-id>` | Delete a session whose delete was refused because git or the `WorktreeRemove` hook couldn't remove its worktree, deleting the worktree directory anyway and leaving its branch in the repository. Pass the exact value that refusal printed; see [What deleting a session removes](#what-deleting-a-session-removes). Requires v2.1.268 or later |
 | `claude daemon status` | Print the [supervisor's](#the-supervisor-process) state, version, socket directory, and worker count |
 | `claude daemon stop --any` | Stop the supervisor process and the background sessions it hosts. Pass `--keep-workers` to leave background sessions running so the next supervisor reconnects to them. The next `claude agents` or `claude --bg` starts a fresh supervisor |
+
+`claude attach` and `claude logs` can take part of a running session's name in place of the ID, as in `claude logs "auth refactor"`. Passing a name requires Claude Code v2.1.290 or later.
 
 ### List sessions as JSON
 
@@ -977,6 +979,7 @@ Agent view has evolved quickly during research preview. If you are on an older C
 
 | Version | Change |
 | - | - |
+| v2.1.290 | [`claude attach` and `claude logs`](#manage-sessions-from-the-shell) can take part of a running session's name in place of the ID. |
 | v2.1.288 | `Ctrl+F` finds sessions by name, and `Alt+↑` / `Alt+↓` jump between group headers. Both, and `Ctrl+R`, can be [rebound](/docs/en/keybindings#agents-actions). |
 | v2.1.287 | The [`n:<text>` filter](#filter-sessions) finds sessions by name or first prompt. While any filter is active, groups you collapsed expand to show their matches and the first match is selected, so `Enter` opens it. |
 | v2.1.287 | A command sent as a [peek reply](#peek-and-reply) runs when the session's current turn ends, including the commands that run as soon as you type them at a session's own prompt. A reply that is exactly `/stop` stops the session at once. |

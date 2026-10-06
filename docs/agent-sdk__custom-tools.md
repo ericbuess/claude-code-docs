@@ -13,6 +13,7 @@ Custom tools extend the Agent SDK by letting you define your own functions that 
 | What you want to do | Do this |
 | :- | :- |
 | Define a tool | Use [`@tool`](/docs/en/agent-sdk/python#tool) (Python) or [`tool()`](/docs/en/agent-sdk/typescript#tool) (TypeScript) with a name, description, schema, and handler. See [Create a custom tool](#create-a-custom-tool). |
+| Make a parameter optional | Declare it optional in the schema and apply the default in the handler. See [Make a parameter optional](#make-a-parameter-optional). |
 | Register a tool with Claude | Wrap in `create_sdk_mcp_server` / `createSdkMcpServer` and pass to `mcpServers` in `query()`. See [Call a custom tool](#call-a-custom-tool). |
 | Pre-approve a tool | Add to your allowed tools. See [Configure allowed tools](#configure-allowed-tools). |
 | Remove a built-in tool from Claude's context | Pass a `tools` array listing only the built-ins you want. See [Configure allowed tools](#configure-allowed-tools). |
@@ -28,7 +29,9 @@ A tool is defined by four parts, passed as arguments to the [`tool()`](/docs/en/
 
 * **Name:** a unique identifier Claude uses to call the tool.
 * **Description:** what the tool does. Claude reads this to decide when to call it.
-* **Input schema:** the arguments Claude must provide. In TypeScript this is always a [Zod schema](https://zod.dev/), and the handler's `args` are typed from it automatically. In Python this is a dict mapping names to types, like `{"latitude": float}`, which the SDK converts to JSON Schema for you. The Python decorator also accepts a full [JSON Schema](https://json-schema.org/understanding-json-schema/about) dict directly when you need enums, ranges, optional fields, or nested objects.
+* **Input schema:** the arguments the tool accepts, declared per language:
+  * **TypeScript**: a [Zod schema](https://zod.dev/). The handler's `args` take their types from it. Call `.describe()` on a field to give it a description Claude sees.
+  * **Python**: a dict mapping names to types, like `{"latitude": float}`, which the SDK converts to JSON Schema for you. Wrap a type in `Annotated`, like `{"latitude": Annotated[float, "Latitude coordinate"]}`, to give the field a description Claude sees. The decorator also accepts a full [JSON Schema](https://json-schema.org/understanding-json-schema/about) dict directly when you need enums, ranges, optional fields, or nested objects.
 * **Handler:** the async function that runs when Claude calls the tool. It receives the validated arguments and must return an object with:
   * `content` (required): an array of result blocks, each with a `type` of `"text"`, `"image"`, `"audio"`, `"resource"`, or `"resource_link"`. See [Return images and resources](#return-images-and-resources) for non-text blocks.
   * `structuredContent` (optional): a JSON object holding the result as machine-readable data, returned alongside `content`. See [Return structured data](#return-structured-data).
@@ -36,13 +39,29 @@ A tool is defined by four parts, passed as arguments to the [`tool()`](/docs/en/
 
 After defining a tool, wrap it in a server with [`createSdkMcpServer`](/docs/en/agent-sdk/typescript#createsdkmcpserver) (TypeScript) or [`create_sdk_mcp_server`](/docs/en/agent-sdk/python#create_sdk_mcp_server) (Python). The server runs in-process inside your application, not as a separate process.
 
+Python examples on this page that make HTTP requests use [httpx](https://www.python-httpx.org/). Add it with the package manager your project uses:
+
+<Tabs>
+  <Tab title="Python (uv)">
+    ```bash theme={null}
+    uv add httpx
+    ```
+  </Tab>
+
+  <Tab title="Python (pip)">
+    ```bash theme={null}
+    pip install httpx
+    ```
+  </Tab>
+</Tabs>
+
 ### Weather tool example
 
-This example defines a `get_temperature` tool and wraps it in an MCP server. It only sets up the tool; to pass it to `query` and run it, see [Call a custom tool](#call-a-custom-tool) below.
+This example defines a `get_temperature` tool and wraps it in an MCP server, without passing the server to `query`. To run the tool, see [Call a custom tool](#call-a-custom-tool) below.
 
 <CodeGroup>
   ```python Python theme={null}
-  from typing import Any
+  from typing import Annotated, Any
   import httpx
   from claude_agent_sdk import tool, create_sdk_mcp_server
 
@@ -51,7 +70,10 @@ This example defines a `get_temperature` tool and wraps it in an MCP server. It 
   @tool(
       "get_temperature",
       "Get the current temperature at a location",
-      {"latitude": float, "longitude": float},
+      {
+          "latitude": Annotated[float, "Latitude coordinate"],
+          "longitude": Annotated[float, "Longitude coordinate"],
+      },
   )
   async def get_temperature(args: dict[str, Any]) -> dict[str, Any]:
       async with httpx.AsyncClient() as client:
@@ -122,9 +144,14 @@ This example defines a `get_temperature` tool and wraps it in an MCP server. It 
 
 See the [`tool()`](/docs/en/agent-sdk/typescript#tool) TypeScript reference or the [`@tool`](/docs/en/agent-sdk/python#tool) Python reference for full parameter details, including JSON Schema input formats and return value structure.
 
-<Tip>
-  To make a parameter optional: in TypeScript, add `.optional()` to the Zod field and apply the default in the handler. In Python, the dict schema treats every key as required, so leave the parameter out of the schema, mention it in the description string, and read it with `args.get()` in the handler. The [`get_precipitation_chance` tool below](#add-more-tools) shows both patterns.
-</Tip>
+### Make a parameter optional
+
+To make a parameter optional, declare it optional in the schema and apply the default in the handler:
+
+* **TypeScript**: add `.optional()` to the Zod field.
+* **Python**: the dict schema requires every key. Use the JSON Schema form, leave the parameter out of `required`, and read it with `args.get()`. For a typed schema with optional keys, see [TypedDict class](/docs/en/agent-sdk/python#input-schema-options).
+
+The [`get_precipitation_chance` tool below](#add-more-tools) shows both patterns.
 
 ### Call a custom tool
 
@@ -174,7 +201,31 @@ These snippets reuse the `weatherServer` from the [weather tool example](#weathe
   ```
 </CodeGroup>
 
-Combine this snippet with the tool and server definitions from the [weather tool example](#weather-tool-example) in one file, then run it with `python weather.py` for Python or `npx tsx weather.ts` for TypeScript. Claude calls `get_temperature` and the script prints a one-line answer with the current temperature in San Francisco.
+Combine this snippet with the tool and server definitions from the [weather tool example](#weather-tool-example) in one file, `weather.py` or `weather.ts`, then run it from your terminal:
+
+<Tabs>
+  <Tab title="TypeScript">
+    ```bash theme={null}
+    npx tsx weather.ts
+    ```
+  </Tab>
+
+  <Tab title="Python (uv)">
+    ```bash theme={null}
+    uv run weather.py
+    ```
+  </Tab>
+
+  <Tab title="Python (pip)">
+    Activate the virtual environment where you installed the SDK, then run:
+
+    ```bash theme={null}
+    python weather.py
+    ```
+  </Tab>
+</Tabs>
+
+Claude calls `get_temperature` and the script prints a one-line answer with the current temperature in San Francisco.
 
 ### Add more tools
 
@@ -187,12 +238,25 @@ The example below defines a second tool, `get_precipitation_chance`, and replace
   # Define a second tool for the same server
   @tool(
       "get_precipitation_chance",
-      "Get the hourly precipitation probability for a location. "
-      "Optionally pass 'hours' (1-24) to control how many hours to return.",
-      {"latitude": float, "longitude": float},
+      "Get the hourly precipitation probability for a location",
+      {
+          "type": "object",
+          "properties": {
+              "latitude": {"type": "number"},
+              "longitude": {"type": "number"},
+              "hours": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 24,
+                  "description": "How many hours of forecast to return",
+              },
+          },
+          # 'hours' is left out of required, so Claude can omit it
+          "required": ["latitude", "longitude"],
+      },
   )
   async def get_precipitation_chance(args: dict[str, Any]) -> dict[str, Any]:
-      # 'hours' isn't in the schema - read it with .get() to make it optional
+      # 'hours' isn't in required - read it with .get() to fall back to a default
       hours = args.get("hours", 12)
       async with httpx.AsyncClient() as client:
           response = await client.get(

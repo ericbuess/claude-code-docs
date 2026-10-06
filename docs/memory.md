@@ -61,7 +61,7 @@ CLAUDE.md files can live in several locations, each with a different scope. The 
 | **Project instructions** | `./CLAUDE.md` or `./.claude/CLAUDE.md`. See [AGENTS.md](#agents-md) for when `./AGENTS.md` loads instead of or alongside them | Team-shared instructions for the project | Project architecture, coding standards, common workflows | Team members via source control |
 | **Local instructions** | `./CLAUDE.local.md` | Personal project-specific preferences; add to `.gitignore` | Your sandbox URLs, preferred test data | Just you (current project) |
 
-CLAUDE.md and CLAUDE.local.md files in the directory hierarchy above the working directory are loaded at launch. Files in subdirectories load on demand when Claude reads files in those directories. See [How CLAUDE.md files load](#how-claude-md-files-load) for the full resolution order.
+CLAUDE.md and CLAUDE.local.md files in the directory hierarchy above the working directory are loaded at launch. Files in subdirectories load on demand. See [How CLAUDE.md files load](#how-claude-md-files-load) for when they load and the full resolution order.
 
 For large projects, you can break instructions into topic-specific files using [project rules](#organize-rules-with-claude/rules/). Rules let you scope instructions to specific file types or subdirectories.
 
@@ -143,7 +143,7 @@ Claude Code loads `CLAUDE.md` and `CLAUDE.local.md` from your current working di
 
 All discovered files are concatenated into context rather than overriding each other. Across the directory tree, content is ordered from the filesystem root down to your working directory. For the `foo/bar/` example, `foo/CLAUDE.md` appears in context before `foo/bar/CLAUDE.md`, so instructions closer to where you launched Claude are read last. Within each directory, `CLAUDE.local.md` is appended after `CLAUDE.md`, so your personal notes are the last thing Claude reads at that level.
 
-Claude also discovers `CLAUDE.md` and `CLAUDE.local.md` files in subdirectories under your current working directory. Instead of loading them at launch, they are included when Claude reads files in those subdirectories. For files inside a worktree under `.claude/worktrees/`, see [Isolate subagents with worktrees](/docs/en/worktrees#isolate-subagents-with-worktrees).
+Claude also discovers `CLAUDE.md` and `CLAUDE.local.md` files in subdirectories under your current working directory. Instead of loading them at launch, Claude Code includes them when Claude uses the [Read](/docs/en/tools-reference#read-tool-behavior), [Write](/docs/en/tools-reference#write-tool-behavior), or [Edit](/docs/en/tools-reference#edit-tool-behavior) tool on a file in those subdirectories. If Claude already used one of those tools on a subdirectory's `CLAUDE.md` itself, that file isn't loaded this way, because Claude Code treats it as already in the conversation. For files inside a worktree under `.claude/worktrees/`, see [Isolate subagents with worktrees](/docs/en/worktrees#isolate-subagents-with-worktrees).
 
 If you work in a large monorepo where other teams' CLAUDE.md files get picked up, use [`claudeMdExcludes`](#exclude-specific-claude-md-files) to skip them. For the full layout of root and per-directory CLAUDE.md files and rules, see [Monorepos and large repos](/docs/en/large-codebases).
 
@@ -387,7 +387,7 @@ To change which files Claude reads, type `/config` in a Claude Code session to o
 | `claude-md-or-agents-md` | Your `CLAUDE.md` files, or your `AGENTS.md` files when you have no `CLAUDE.md` or `CLAUDE.local.md` in your working directory or above it. This is the default |
 | `claude-md-and-agents-md` | Your `CLAUDE.md` and `AGENTS.md` files together, each directory's `CLAUDE.md` files first and its `AGENTS.md` after them. Claude Code skips an `AGENTS.md` it has already loaded, so one that your `CLAUDE.md` imports or symlinks to isn't read twice |
 | `claude-md` | Your `CLAUDE.md` files only |
-| `managed-only` | Only your organization's managed `CLAUDE.md` and [auto memory](#auto-memory) at launch. Your project, local, and user `CLAUDE.md` files, your `.claude/rules/` files, and every `AGENTS.md` are left out. A subdirectory's `CLAUDE.md` and `.claude/rules/` files, and [path-scoped rules](#path-specific-rules), still load when Claude reads a file there |
+| `managed-only` | Only your organization's managed `CLAUDE.md` and [auto memory](#auto-memory) at launch. Your project, local, and user `CLAUDE.md` files, your `.claude/rules/` files, and every `AGENTS.md` are left out. A subdirectory's `CLAUDE.md` and `.claude/rules/` files, and [path-scoped rules](#path-specific-rules), still load on demand |
 
 You can also set the value in a settings file instead of `/config`. Add it under the built-in `agents-md` plugin's ID in [`pluginConfigs`](/docs/en/settings-reference#pluginconfigs), in `~/.claude/settings.json`, a `--settings` file, or [managed settings](/docs/en/managed-settings). Claude Code ignores it in project and local settings files. This example has Claude read both files:
 
@@ -559,7 +559,7 @@ Auto memory files are plain markdown you can edit or delete at any time. Run [`/
 
 ## View and edit with `/memory`
 
-The `/memory` command lists your CLAUDE.md, CLAUDE.local.md, and other memory file locations across user and project scopes, including user and project CLAUDE.md entries for files that don't exist yet. It also lets you toggle auto memory on or off and provides an option to open the auto memory folder. Select any file to open it in your editor; selecting one that doesn't exist yet creates it first. To check which `CLAUDE.md` and rules files loaded into the current session, run `/context`.
+The `/memory` command lists your CLAUDE.md, CLAUDE.local.md, and other memory file locations across user and project scopes, including user and project CLAUDE.md entries for files that don't exist yet. It also lets you toggle auto memory on or off and provides an option to open the auto memory folder. Select any file to open it in your editor; selecting one that doesn't exist yet creates it first. To check which `CLAUDE.md` and rules files loaded at launch, run `/context`.
 
 GUI editors such as VS Code open the file in a separate window, and you can keep using the session while it's open. Before v2.1.216, `/memory` waited for you to close the file before responding. Terminal editors such as Vim take over the terminal until you exit.
 
@@ -575,7 +575,8 @@ CLAUDE.md content is delivered as a user message after the system prompt, not as
 
 To debug:
 
-* Run `/context` and check the list under **Memory files** to verify your CLAUDE.md and CLAUDE.local.md files loaded. If a `CLAUDE.md` file is missing there, Claude can't see it. Use `/memory` to open and edit the files.
+* Run `/context` and check the list under **Memory files** to verify the CLAUDE.md and CLAUDE.local.md files that should load at launch. If one is missing there, Claude can't see it. Use `/memory` to open and edit the files.
+* A `CLAUDE.md` in a subdirectory of your working directory doesn't appear under **Memory files**, because it loads on demand rather than at launch. When it loads, a `Loaded` line with its path appears in the terminal. To test a new one, create it from your shell rather than asking Claude to write it, then ask Claude to read a file in that subdirectory.
 * Check that the relevant CLAUDE.md is in a location that gets loaded for your session (see [Choose where to put CLAUDE.md files](#choose-where-to-put-claude-md-files)).
 * Make instructions more specific. "Use 2-space indentation" works better than "format code nicely."
 * Look for conflicting instructions across CLAUDE.md files. If two files give different guidance for the same behavior, Claude may pick one arbitrarily.
@@ -617,7 +618,7 @@ The [`/doctor`](/docs/en/commands#all-commands) checkup proposes trims for a che
 
 ### Instructions seem lost after `/compact`
 
-Project-root CLAUDE.md survives compaction: after `/compact`, Claude re-reads it from disk and re-injects it into the session. Nested CLAUDE.md files in subdirectories and rules with [`paths:` frontmatter](#path-specific-rules) reload as Claude reads files they apply to.
+Project-root CLAUDE.md survives compaction: after `/compact`, Claude re-reads it from disk and re-injects it into the session. Nested CLAUDE.md files in subdirectories and rules with [`paths:` frontmatter](#path-specific-rules) load again on demand.
 
 If an instruction disappeared after compaction, it was given only in conversation, lives in a nested CLAUDE.md that hasn't reloaded yet, or is a path-scoped rule that hasn't matched a file since. Add conversation-only instructions to CLAUDE.md to make them persist. See [What survives compaction](/docs/en/context-window#what-survives-compaction) for the full breakdown.
 

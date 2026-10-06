@@ -1679,7 +1679,7 @@ Set the [permission mode](/docs/en/permission-modes) new sessions start in. When
   * `"auto"`: Claude Code runs without routine prompts; before actions such as shell commands and network requests run, a background classifier checks that they align with your request
   * `"dontAsk"`: Claude Code auto-denies every call that would otherwise prompt; reads, other actions that need no approval, and pre-approved tools still run
   * `"bypassPermissions"`: Claude Code runs everything without asking
-  * `"manual"`: an alias for `"default"`, in Claude Code v2.1.200 or later
+  * `"manual"`: an alias for `"default"`
 * **Default**: unset
 * **Per-session overrides**: `--permission-mode`, and its equivalent `--dangerously-skip-permissions` for `bypassPermissions`, take precedence over this key for one session
 
@@ -1691,7 +1691,7 @@ Set the [permission mode](/docs/en/permission-modes) new sessions start in. When
 }
 ```
 
-Permission rules layer on top of every mode: `deny` rules block in every mode, including `bypassPermissions`. See [Permission modes](/docs/en/permission-modes). `manual` names the permission mode labeled Manual in the CLI and the VS Code extension; the alias requires Claude Code v2.1.200 or later. In cloud sessions, Claude Code honors only `acceptEdits`, `plan`, `default`, and `auto` from this key. For conversations the VS Code extension starts, see [which setting the extension reads for the starting permission mode](/docs/en/permission-modes#switch-permission-modes).
+Permission rules layer on top of every mode: `deny` rules block in every mode, including `bypassPermissions`. See [Permission modes](/docs/en/permission-modes). In cloud sessions, Claude Code honors only `acceptEdits`, `plan`, `default`, and `auto` from this key. For conversations the VS Code extension starts, see [which setting the extension reads for the starting permission mode](/docs/en/permission-modes#switch-permission-modes).
 
 ### `permissions.disableBypassPermissionsMode`
 
@@ -3016,7 +3016,7 @@ Change how Claude Code looks and behaves in your terminal: theme, editor mode, s
 
 ### `askUserQuestionTimeout`
 
-Let an unanswered [`AskUserQuestion`](/docs/en/tools-reference) dialog auto-continue after a period of idle time, submitting whatever options you had already selected. Set it when you step away and want Claude to continue without you. With the default, questions wait until you answer them. For when the timer pauses or never starts, see [Question auto-continue timeout](/docs/en/tools-reference#question-auto-continue-timeout). Requires Claude Code v2.1.200 or later.
+Let an unanswered [`AskUserQuestion`](/docs/en/tools-reference) dialog auto-continue after a period of idle time, submitting whatever options you had already selected. Set it when you step away and want Claude to continue without you. With the default, questions wait until you answer them. For when the timer pauses or never starts, see [Question auto-continue timeout](/docs/en/tools-reference#question-auto-continue-timeout).
 
 * **Scope**: [`User or managed`](#scopes)
 * **Type**: string, one of `"60s"`, `"5m"`, `"10m"`, or `"never"`
@@ -3029,7 +3029,7 @@ Let an unanswered [`AskUserQuestion`](/docs/en/tools-reference) dialog auto-cont
 }
 ```
 
-Appears in `/config` as **Question auto-continue timeout**, which writes this key to user settings; Claude Code hides the row while managed settings or the `--settings` flag set the key. Requires Claude Code v2.1.200 or later.
+Appears in `/config` as **Question auto-continue timeout**, which writes this key to user settings; Claude Code hides the row while managed settings or the `--settings` flag set the key.
 
 ### `autoContinueAtUsageLimit`
 
@@ -5852,7 +5852,7 @@ Setting `0` fails validation, so pick a large value such as `3650` for long rete
 
 ### `desktopSessionCleanupPeriodDays`
 
-Set an age limit in days for the transcripts of sessions you started or most recently continued in Claude Desktop or Cowork. Without this key, Claude Code [keeps those transcripts at any age](/docs/en/claude-directory#cleaned-up-automatically). Claude Code deletes each one once it's older than both this limit and [`cleanupPeriodDays`](#cleanupperioddays), so with `cleanupPeriodDays` at its default of 30, a value of `7` still keeps them 30 days. When managed settings set `cleanupPeriodDays`, that period applies instead and this key is ignored. Requires Claude Code v2.1.248 or later.
+Set an age limit in days for the transcripts of sessions you started or most recently continued in Claude Desktop or Cowork. Without this key, Claude Code [keeps those transcripts at any age](/docs/en/claude-directory#cleaned-up-automatically). Claude Code deletes each one once it's older than both this limit and [`cleanupPeriodDays`](#cleanupperioddays), so with `cleanupPeriodDays` at its default of 30, a value of `7` still keeps them 30 days. [Cleaned up automatically](/docs/en/claude-directory#cleaned-up-automatically) lists the cases where `cleanupPeriodDays` applies instead and Claude Code ignores this key. Requires Claude Code v2.1.248 or later.
 
 * **Scope**: [`User or managed`](#scopes). Claude Code also reads the key from a file you pass with `--settings`, and ignores it in project and local settings.
 * **Type**: number of days, a whole number, minimum `0`
