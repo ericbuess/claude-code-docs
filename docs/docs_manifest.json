@@ -9,8 +9,8 @@
     "admin-setup.md": {
       "original_url": "https://code.claude.com/docs/en/admin-setup",
       "original_md_url": "https://code.claude.com/docs/en/admin-setup.md",
-      "hash": "39aa8ab520bc64d67dd6281640b38e31affaa764bda0e9ab32d92a06fe5d4dcc",
-      "last_updated": "2026-10-06T01:34:49.868891"
+      "hash": "91a15ff4f27ffbe7bc37fb9d8659e4cdbc9d71b0612f232fa89da1e238086c0f",
+      "last_updated": "2026-10-06T17:31:28.345608"
     },
     "advisor.md": {
       "original_url": "https://code.claude.com/docs/en/advisor",
@@ -586,8 +586,8 @@
     "hipaa-setup.md": {
       "original_url": "https://code.claude.com/docs/en/hipaa-setup",
       "original_md_url": "https://code.claude.com/docs/en/hipaa-setup.md",
-      "hash": "228d0cbadf01034b3625cfd96793d5f18ffbabcda9cde27ae152b814900a4770",
-      "last_updated": "2026-10-06T01:35:50.972219"
+      "hash": "f445bad7f0d8915dabbf9568c1ced22bf9b070e3c0055bfc2648571153490007",
+      "last_updated": "2026-10-06T17:32:39.053703"
     },
     "hooks.md": {
       "original_url": "https://code.claude.com/docs/en/hooks",
@@ -1323,8 +1323,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-10-06T09:34:08.238443",
-    "fetch_duration_seconds": 143.304794,
+    "last_fetch_completed": "2026-10-06T17:34:06.704999",
+    "fetch_duration_seconds": 160.624198,
     "total_pages_discovered": 220,
     "pages_fetched_successfully": 221,
     "pages_failed": 0,
@@ -1334,7 +1334,7 @@
     "total_files": 220,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-10-06T09:34:08.238462",
+  "last_updated": "2026-10-06T17:34:06.705027",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",

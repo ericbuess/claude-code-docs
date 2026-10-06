@@ -188,7 +188,7 @@ Run this check on one managed computer after the configuration is applied to you
 
 If `HIPAA` is missing from `/status`, check these causes in order:
 
-1. **The wrong account or connection**: confirm that `/status` shows your organization on the `Organization` line, and shows no `API provider` or `Anthropic base URL` line. [Check how developers sign in and connect](#check-how-developers-sign-in-and-connect) lists the connections that aren't eligible for the configuration.
+1. **The wrong account or connection**: confirm that `/status` shows your organization on the `Organization` line, and shows no `API provider` or `Anthropic base URL` line. [Check how developers sign in and connect](#check-how-developers-sign-in-and-connect) lists which sign-in and connection methods aren't eligible for the configuration.
 2. **A blocked policy fetch**: look for an `Organization policy` line in `/status`, which gives the cause. Outside a session, run `claude doctor` and read the same line, which says where Claude Code loaded the policy from or why the policy didn't load. Allow `api.anthropic.com` through your proxy, then restart Claude Code.
 3. **The configuration isn't applied yet**: ask the Primary Owner whether they have applied the configuration.
 
