@@ -177,12 +177,13 @@ Run `/resume` inside a session, or `claude --resume` with no arguments, to open 
 
 | Shortcut | Action |
 | :- | :- |
-| `↑` / `↓` | Navigate between sessions |
+| `↑` / `↓` or `k` / `j` | Navigate between sessions |
 | `→` / `←` | Expand or collapse grouped sessions |
 | `Enter` | Resume the highlighted session |
+| `1` to `9` | Resume the session at that position in the list |
 | `Space` | Preview the session content. `Ctrl+V` also works on terminals that don't capture it as paste |
 | `Ctrl+R` | Rename the highlighted session |
-| `/` or any printable character other than `Space` | Enter search mode and filter sessions. Paste a GitHub, GitHub Enterprise, GitLab, or Bitbucket pull or merge request URL to find the session that created it |
+| `/` or any printable character other than `Space`, `j`, `k`, or a digit | Enter search mode and filter sessions. Paste a GitHub, GitHub Enterprise, GitLab, or Bitbucket pull or merge request URL to find the session that created it |
 | `Ctrl+A` | Show sessions from all projects on this machine. Press again to return to the current repository |
 | `Ctrl+W` | Show sessions from all worktrees of the current repository. Press again to return to the current worktree. Only shown in multi-worktree repositories |
 | `Ctrl+B` | Filter to sessions from the current git branch. Press again to show all branches |

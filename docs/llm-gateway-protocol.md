@@ -59,6 +59,8 @@ Match on the path, not the full URL:
 
 A gateway also sees best-effort startup traffic it can reject without breaking anything. An Anthropic Messages-format gateway receives a `HEAD /api/hello` connection-warming probe, which Claude Code skips when an HTTP proxy or client certificate is configured. An Amazon Bedrock-format gateway receives a `GET /inference-profiles?type=SYSTEM_DEFINED` request and, when the configured model is an inference profile, `GET /inference-profiles/{profile}` lookups.
 
+Sessions that go through a gateway aren't eligible for the HIPAA configuration. [Check how developers sign in and connect](/docs/en/hipaa-setup#check-how-developers-sign-in-and-connect) lists which sign-in and connection methods are. See [The HIPAA configuration behind a gateway](/docs/en/llm-gateway-rollout#the-hipaa-configuration-behind-a-gateway).
+
 The [fast mode](/docs/en/fast-mode) availability check never appears in gateway logs: it calls `api.anthropic.com` directly rather than following `ANTHROPIC_BASE_URL`, so on a network that blocks direct egress to `api.anthropic.com`, fast mode can report a connectivity error while inference through the gateway keeps working. The [WebFetch domain safety check](/docs/en/data-usage#webfetch-domain-safety-check) also calls `api.anthropic.com` directly. [Use fast mode behind proxies and LLM gateways](/docs/en/fast-mode#use-fast-mode-behind-proxies-and-llm-gateways) covers the variables that restore it.
 
 ### Streaming

@@ -1296,7 +1296,7 @@ When Claude Code can't safely determine the retention period, it pauses the swee
 * `session_files_deleted`: Number of artifacts the session-files sweep deleted: transcripts plus per-session companion files such as sidecars, recordings, and tool results
 * `artifacts_deleted`: Total items the sweep deleted across the data directories it covers, including the session files. Some sweeps count a whole removed directory tree as one item and a few cleanup passes don't contribute to the counter, so treat the value as a floor rather than an exact file count
 * `files_retained_fresh`: Files inspected and left in place because they're still within the retention period. Only per-file sweeps count these, so the value is a floor; a nonzero value is the normal steady state
-* `files_past_cutoff`: Files older than the retention period that the sweep failed to delete, for example because of a permission error or a file held open. A value above zero means files outlived the configured retention period; zero isn't proof that none did, because a failed removal of a whole directory counts toward `error_count` instead
+* `files_past_cutoff`: Files older than the retention period that the sweep failed to delete, for example because of a permission error or a file held open. The count also includes each stale folder the sweep finds under `skills/synced/` or `plugins/synced/`, whether or not it moves the folder to the trash. Apart from those folders, a value above zero means files outlived the configured retention period; zero isn't proof that none did, because a failed removal of a whole directory counts toward `error_count` instead
 * `error_count`: Number of errors the sweep encountered while listing or deleting files
 
 #### Managed settings resolved event
@@ -1482,6 +1482,49 @@ When building detection rules, look up the signal you want to monitor and query 
 | Which managed settings sources a machine runs on, whether its policy helper is healthy, and why a machine refused to start | `managed_settings_resolved` | `managed_settings.trigger`, `managed_settings.sources`, `managed_settings.source_behavior`, `managed_settings.helper.state`, `error.type`; `managed_settings.settings` and `managed_settings.resolved_sha256` with `OTEL_LOG_MANAGED_SETTINGS=1` |
 
 Claude Code emits the raw event stream only. Anomaly detection, baselining, correlation across sessions, and alerting are the responsibility of your SIEM or observability backend.
+
+### Map egress paths to managed controls and events
+
+The table pairs paths that can carry session content off a machine, plus local retention, with the [managed settings](/docs/en/managed-settings) keys that restrict them and the events that record them. For what Claude Code itself sends to Anthropic, such as `/feedback` reports, see [Data usage](/docs/en/data-usage). The names link to their reference entries, which give the values and defaults.
+
+| Path | Managed controls | Events |
+| - | - | - |
+| Bash and PowerShell commands | [`sandbox.enabled`](/docs/en/settings-reference#sandbox-enabled), [`sandbox.failIfUnavailable`](/docs/en/settings-reference#sandbox-failifunavailable), [`sandbox.allowUnsandboxedCommands`](/docs/en/settings-reference#sandbox-allowunsandboxedcommands), [`sandbox.network.allowManagedDomainsOnly`](/docs/en/settings-reference#sandbox-network-allowmanageddomainsonly), [`sandbox.network.allowedDomains`](/docs/en/settings-reference#sandbox-network-alloweddomains) | [`tool_decision`](#tool-decision-event), [`tool_result`](#tool-result-event) |
+| MCP servers | [`allowedMcpServers`](/docs/en/settings-reference#allowedmcpservers), [`allowManagedMcpServersOnly`](/docs/en/settings-reference#allowmanagedmcpserversonly), [`deniedMcpServers`](/docs/en/settings-reference#deniedmcpservers), [`managed-mcp.json`](/docs/en/managed-mcp) | [`mcp_server_connection`](#mcp-server-connection-event), `tool_decision`, `tool_result` |
+| Hooks | [`allowManagedHooksOnly`](/docs/en/settings-reference#allowmanagedhooksonly), [`allowedHttpHookUrls`](/docs/en/settings-reference#allowedhttphookurls) | [`hook_registered`](#hook-registered-event), [`hook_execution_start`](#hook-execution-start-event), [`hook_execution_complete`](#hook-execution-complete-event) |
+| Plugins | [`strictKnownMarketplaces`](/docs/en/settings-reference#strictknownmarketplaces), [`disableSideloadFlags`](/docs/en/settings-reference#disablesideloadflags), [`syncClaudeAiPlugins`](/docs/en/settings-reference#syncclaudeaiplugins), [`syncClaudeAiSkills`](/docs/en/settings-reference#syncclaudeaiskills) | [`plugin_installed`](#plugin-installed-event), [`plugin_loaded`](#plugin-loaded-event) |
+| [WebFetch](/docs/en/permissions#webfetch) | [`permissions.deny`](/docs/en/settings-reference#permissions-deny), [`allowManagedPermissionRulesOnly`](/docs/en/settings-reference#allowmanagedpermissionrulesonly) | `tool_decision`, `tool_result` |
+| Tools that upload to claude.ai, such as Artifact | `permissions.deny`, [`enableArtifact`](/docs/en/settings-reference#enableartifact) | `tool_decision`, `tool_result` |
+| Remote Control | [`disableRemoteControl`](/docs/en/settings-reference#disableremotecontrol) | No dedicated event |
+| Local transcript retention | [`cleanupPeriodDays`](/docs/en/settings-reference#cleanupperioddays) | [`retention_sweep`](#retention-sweep-event) |
+
+The `allowedHttpHookUrls`, `managed-mcp.json`, and hook event entries need more than the table shows:
+
+* **`allowedHttpHookUrls`**: entries merge across settings files, so a developer can add to an empty managed list. `allowManagedHooksOnly` decides which hooks run
+* **`managed-mcp.json`**: to turn MCP off, see [Disable MCP entirely](/docs/en/managed-mcp#disable-mcp-entirely). To confirm Claude Code reads the file, see [Validate the configuration](/docs/en/managed-mcp#validate-the-configuration)
+* **Hook events**: Claude Code logs `hook_execution_start` and `hook_execution_complete` once per hook event, covering every matching hook. `OTEL_LOG_TOOL_DETAILS=1` on its own doesn't record an HTTP hook's URL. The hook configuration appears only in `hook_definitions`, which also needs detailed beta tracing
+
+`OTEL_LOG_TOOL_DETAILS=1` adds command strings, server and tool names, and tool input to these events. That detail can contain the same sensitive content as the session itself, so enable it only when your collector is approved to hold that content.
+
+### Check the retention sweep
+
+To give every machine the same retention period, set [`cleanupPeriodDays`](/docs/en/settings-reference#cleanupperioddays) in [managed settings](/docs/en/managed-settings). To check that machines run the sweep with that value, collect the [`retention_sweep`](#retention-sweep-event) event. `period_days` and the counters are strings, so cast them to numbers before you compare them.
+
+| What a machine reports | What it means |
+| - | - |
+| `result` is `"skipped"` | Claude Code paused the sweep. `skip_reason` gives the cause |
+| `used_default` is `"true"`, or `period_days` differs from your managed value | The machine isn't applying your managed `cleanupPeriodDays` |
+| `error_count` is above zero | The sweep hit errors while it listed or deleted files, so data past the retention period can remain |
+| `files_past_cutoff` is above zero | The sweep failed to delete files past the retention period, or it found stale synced skills and plugins folders. Read it with `error_count` |
+| No event | Not a failure on its own |
+
+A machine that works as intended can go without an event for reasons such as these:
+
+* **Nobody starts Claude Code**: no sweep runs, and the machine keeps its data until the next launch
+* **A session stays open**: Claude Code runs the sweep at most once per session
+* **A session ends early**: a sweep that hasn't finished when the session exits emits nothing, and neither does one that stops on an unexpected error
+
+The sweep doesn't cover every path. [Kept until you delete them](/docs/en/claude-directory#kept-until-you-delete-them) lists what stays, and [Clear local data](/docs/en/claude-directory#clear-local-data) shows how to remove it.
 
 ### Send events to a SIEM
 

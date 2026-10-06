@@ -202,6 +202,17 @@ Some environments need separate delivery:
 * CI runners need `ANTHROPIC_BASE_URL` and the credential set in the [runner's environment](/docs/en/llm-gateway-connect#configure-each-surface)
 * WSL on managed Windows machines reads the Windows managed settings only when [`wslInheritsWindowsSettings`](/docs/en/settings-reference#wslinheritswindowssettings) is `true`
 
+#### The HIPAA configuration behind a gateway
+
+Sessions that go through a gateway aren't eligible for the HIPAA configuration. [Check how developers sign in and connect](/docs/en/hipaa-setup#check-how-developers-sign-in-and-connect) lists which sign-in and connection methods are.
+
+To restrict features for those sessions in the managed settings file, use the keys in [Map egress paths to managed controls and events](/docs/en/monitoring-usage#map-egress-paths-to-managed-controls-and-events). These keys don't make a session eligible for the HIPAA configuration, and they don't cover everything the configuration changes. For example:
+
+* **Cloud sessions**: no managed key turns them off. See [Admin console controls](/docs/en/desktop#admin-console-controls)
+* **Anthropic credentials in child processes**: the configuration [removes them](/docs/en/hipaa-setup#anthropic-credentials-in-commands-hooks-and-mcp-servers) from the processes Claude Code starts, and no settings key does only that
+
+Don't use `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` in place of these keys. It turns off some of these features, but it also turns off the auto-updater, and it leaves WebFetch on.
+
 #### Hand developers the values to set themselves
 
 If you don't have managed-settings distribution in place, send each developer what they need to follow the [connect page](/docs/en/llm-gateway-connect#configure-claude-code-yourself):

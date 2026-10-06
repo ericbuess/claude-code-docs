@@ -4,11 +4,11 @@
 
 # Plugin commands reference
 
-> Complete reference for the claude plugin shell commands, /plugin and /reload-plugins in a session, and the flags that load a plugin for one session.
+> Reference for the claude plugin shell commands, /plugin and /reload-plugins in a session, and the flags that load a plugin for one session.
 
 You run plugin commands either as `claude plugin` from your shell or a script, or as `/plugin` and `/reload-plugins` inside a Claude Code session. This reference gives each command's flags, defaults, output, and exit codes, along with the two flags that load a plugin for one session.
 
-Run `claude plugin --help` on your build to confirm which subcommands your version has.
+The tables below list each subcommand's commonly used options, not every option. Run `claude plugin --help` in your shell to see which subcommands your version has, and `claude plugin <subcommand> --help` for a subcommand's full option list.
 
 <Note>
   These cases are covered on other pages:

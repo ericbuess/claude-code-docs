@@ -524,7 +524,7 @@ Set `CLAUDE_CODE_ENABLE_TELEMETRY` and the OpenTelemetry variables that turn on 
 
 ## What the subprocess environment scrub removes
 
-When you set [`CLAUDE_CODE_SUBPROCESS_ENV_SCRUB`](#variables) to `1`, Claude Code removes credentials from the environments of the subprocesses it starts, such as Bash commands, hooks, and stdio MCP servers. This reduces what a prompt injection attack can read through shell expansion. The Claude Code process keeps the credentials for its own API calls.
+When you set [`CLAUDE_CODE_SUBPROCESS_ENV_SCRUB`](#variables) to `1`, Claude Code removes credentials from the environments of the subprocesses it starts, such as Bash commands, hooks, and stdio MCP servers. This reduces what a prompt injection attack can read. The Claude Code process keeps the credentials for its own API calls.
 
 The scrub recognizes a credential by its variable name or by the shape of its value, so use it as one layer alongside narrow [permission rules](/docs/en/permissions) rather than as the only control.
 
@@ -536,7 +536,7 @@ The table shows what the scrub does to example variables:
 | `NPM_TOKEN`, `DB_PASSWORD` | Removes it, because the name looks like a credential |
 | `DATABASE_URL` that contains a password | Removes it, because the value looks like a credential |
 | `PIP_INDEX_URL` or `NPM_CONFIG_REGISTRY` that contains a password | Keeps the URL and cuts the username and password from it |
-| `CLAUDE_CONFIG_DIR` | Removes it. Requires Claude Code v2.1.251 or later |
+| `CLAUDE_CONFIG_DIR` | Removes it |
 | `GITHUB_TOKEN`, `GH_TOKEN`, `GH_ENTERPRISE_TOKEN`, `GITHUB_ENTERPRISE_TOKEN` | Leaves it in place, so that `gh` and scripts that call the GitHub API keep working |
 | `HTTP_PROXY`, `HTTPS_PROXY` | Leaves it in place, including a [username and password in the URL](/docs/en/network-config#basic-authentication). The [sandbox](/docs/en/sandboxing#network-isolation) can set these variables itself for sandboxed commands |
 | `GIT_CONFIG_COUNT`, `GIT_CONFIG_KEY_<n>`, `GIT_CONFIG_VALUE_<n>` | Leaves it in place, whatever it holds |
@@ -547,6 +547,8 @@ Because the scrub leaves `GITHUB_TOKEN` in place, give a GitHub Actions job the 
 Leave the scrub unset if a subprocess needs one of the removed variables.
 
 On Linux, the scrub also runs Bash subprocesses in an isolated PID namespace so they can't read host process environments through `/proc`. As a side effect, `ps`, `pgrep`, and `kill` can't see or signal host processes.
+
+Before v2.1.251, the scrub removed `ANTHROPIC_API_KEY` and `AWS_SECRET_ACCESS_KEY` and left the table's other example variables unchanged.
 
 ## Features that need feature-flag fetching
 
