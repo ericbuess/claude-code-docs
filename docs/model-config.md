@@ -39,14 +39,14 @@ Use a model alias to select model settings without remembering exact version num
 | **`opus[1m]`** | Uses Opus with a [1 million token context window](https://platform.claude.com/docs/en/build-with-claude/context-windows#context-window-sizes-by-model) for long sessions |
 | **`opusplan`** | Special mode that uses `opus` during plan mode, then switches to `sonnet` for execution |
 
-The version that the `opus` and `sonnet` aliases resolve to depends on the provider:
+The `opus`, `sonnet`, and `haiku` aliases resolve to the newest version on the Anthropic API and to an earlier version on some other providers:
 
-| Provider | `opus` | `sonnet` |
-| :- | :- | :- |
-| Anthropic API | Opus 5.5 | Sonnet 5.5 |
-| [Claude Platform on AWS](/docs/en/claude-platform-on-aws) | Opus 5.5 | Sonnet 4.6 |
-| Amazon Bedrock, Google Cloud's Agent Platform | Opus 5.5 | Sonnet 4.5 |
-| Microsoft Foundry | Opus 4.6 | Sonnet 4.5 |
+| Provider | `opus` | `sonnet` | `haiku` |
+| :- | :- | :- | :- |
+| Anthropic API | Opus 5.5 | Sonnet 5.5 | Haiku 5.5 |
+| [Claude Platform on AWS](/docs/en/claude-platform-on-aws) | Opus 5.5 | Sonnet 4.6 | Haiku 4.5 |
+| Amazon Bedrock, Google Cloud's Agent Platform | Opus 5.5 | Sonnet 4.5 | Haiku 4.5 |
+| Microsoft Foundry | Opus 4.6 | Sonnet 4.5 | Haiku 4.5 |
 
 <span id="fable-alias-resolution" />
 
@@ -54,14 +54,14 @@ Unless you set `ANTHROPIC_DEFAULT_FABLE_MODEL`, the `fable` alias resolves to Fa
 
 A gateway that isn't configured to serve `claude-fable-5-1` rejects requests for that model. To use Fable 5.1 through a gateway that serves it, select it with `/model claude-fable-5-1`.
 
-Where an alias resolves to an older model, newer models are available by selecting the full model name explicitly or setting `ANTHROPIC_DEFAULT_OPUS_MODEL` or `ANTHROPIC_DEFAULT_SONNET_MODEL`.
+Where `opus` or `sonnet` resolves to an older model, newer models are available by selecting the full model name explicitly or setting `ANTHROPIC_DEFAULT_OPUS_MODEL` or `ANTHROPIC_DEFAULT_SONNET_MODEL`.
 
 Earlier versions resolve these aliases to older models. For the version at which each alias changed, see [Version history](#version-history).
 
 Aliases point to the recommended version for your provider and update over time. To pin to a specific version, use the full model name, for example `claude-opus-5-5`, or set the corresponding environment variable like `ANTHROPIC_DEFAULT_OPUS_MODEL`.
 
 <Note>
-  Sonnet 5.5 requires Claude Code v2.1.284 or later, and Opus 5.5 requires v2.1.280 or later. If a request for one of them from an older version fails, see [Claude Code does not support this model](/docs/en/errors#claude-code-does-not-support-this-model). Run `claude update` to upgrade.
+  Sonnet 5.5 requires Claude Code v2.1.284 or later, and Opus 5.5 requires v2.1.280 or later. If a request for one of them from an older version fails, see [Claude Code does not support this model](/docs/en/errors#claude-code-does-not-support-this-model). Use v2.1.293 or later with Haiku 5.5. Run `claude update` to upgrade.
 </Note>
 
 ### Work with Fable
@@ -146,7 +146,9 @@ The `--model` flag and `ANTHROPIC_MODEL` environment variable apply only to the 
 
 Prices in the `/model` picker appear when Claude Code talks to the Anthropic API, directly or through an [LLM gateway](/docs/en/llm-gateway) that proxies it, and the price on a row is the price of the model that row selects. On [third-party providers](/docs/en/third-party-integrations) such as Amazon Bedrock and on the [Claude apps gateway](/docs/en/claude-apps-gateway), your provider or gateway determines what you pay, so picker rows show no price. The price is a display label only; it doesn't affect which model a row selects or what your provider bills. Before v2.1.206, [Claude Platform on AWS](/docs/en/claude-platform-on-aws) and gateway sessions showed Anthropic list prices, and a row could show the price of a different model than the one it selected.
 
-Resumed sessions started with `claude --resume`, `--continue`, or the `/resume` picker keep the model they were using when the transcript was saved, regardless of the current `model` setting. If the restored model has been retired or is excluded by [`availableModels`](#restrict-model-selection), the session falls through to the normal precedence order. This prevents another session's `/model` choice from changing the model on resume. On providers that use provider-specific deployment IDs rather than Anthropic model IDs, such as Amazon Bedrock, Google Cloud's Agent Platform, and Microsoft Foundry, the transcript model isn't restored at all and the session resolves its model through the normal precedence order.
+Resumed sessions started with `claude --resume`, `--continue`, or the `/resume` picker keep the model they were using when the transcript was saved. If the restored model has been retired or is excluded by [`availableModels`](#restrict-model-selection), the session falls through to the normal precedence order. On providers that use provider-specific deployment IDs rather than Anthropic model IDs, such as Amazon Bedrock, Google Cloud's Agent Platform, and Microsoft Foundry, the transcript model isn't restored at all and the session resolves its model through the normal precedence order.
+
+If your `model` setting is `haiku`, a session saved on a Haiku model resumes on the model that `haiku` resolves to now. For example, once `haiku` resolves to Haiku 5.5, a session saved on Haiku 4.5 resumes on Haiku 5.5.
 
 A model you pick for the new launch with `--model` or `ANTHROPIC_MODEL` still takes precedence over the restored model. As of v2.1.195, so does an [`ANTHROPIC_DEFAULT_OPUS_MODEL`](#environment-variables) family variable. [`ANTHROPIC_DEFAULT_MODEL`](#set-a-default-model-for-new-sessions) can too, under the conditions listed in its section.
 
@@ -587,7 +589,7 @@ The available effort levels depend on the model. Models not listed here do not s
 | Model | Levels |
 | :- | :- |
 | Fable 5.1 and Fable 5 | `low`, `medium`, `high`, `xhigh`, `max` |
-| Opus 5.5, Sonnet 5.5, Opus 5, Sonnet 5, Opus 4.8, and Opus 4.7 | `low`, `medium`, `high`, `xhigh`, `max` |
+| Opus 5.5, Sonnet 5.5, Haiku 5.5, Opus 5, Sonnet 5, Opus 4.8, and Opus 4.7 | `low`, `medium`, `high`, `xhigh`, `max` |
 | Opus 4.6 and Sonnet 4.6 | `low`, `medium`, `high`, `max` |
 
 If you set a level the active model does not support, Claude Code falls back to the highest supported level at or below the one you set. For example, `xhigh` runs as `high` on Opus 4.6. Your organization or your own settings can also cap the levels a model offers; see [Organization effort limits](#organization-effort-limits).
@@ -596,7 +598,7 @@ Claude Code resolves the session's effort level in this order, taking the first 
 
 1. An explicit choice: the [`CLAUDE_CODE_EFFORT_LEVEL`](/docs/en/env-vars#variables) environment variable, launching with `--effort`, or `/effort` in the session ([a non-interactive `/effort` has narrower effect](#non-interactive-effort))
 2. Your settings: the level you saved for the model or an [`effortLevel`](/docs/en/settings-reference#effortlevel) key, with the precedence between them and across settings files stated at [`modelSettings`](/docs/en/settings-reference#modelsettings)
-3. The model's default effort: `high` on every model that supports effort, except that Opus 5.5 and Sonnet 5.5 default to `medium`, Opus 4.7 defaults to `xhigh`, and, when your organization sets a default effort level for its [organization default model](#organization-default-model), that level is the default when you run that model. After an automatic model fallback, see [Effort level after a fallback](#effort-level-after-a-fallback) for the level that applies.
+3. The model's default effort: `high` on every model that supports effort, except that Opus 5.5, Sonnet 5.5, and Haiku 5.5 default to `medium`, Opus 4.7 defaults to `xhigh`, and, when your organization sets a default effort level for its [organization default model](#organization-default-model), that level is the default when you run that model. After an automatic model fallback, see [Effort level after a fallback](#effort-level-after-a-fallback) for the level that applies.
 
 Opus 5.5 starts at `medium` unless one of the sources above sets a level for it, and a top-level `effortLevel` in your user settings file doesn't count for Opus 5.5. That key is the older form `/effort` wrote before Claude Code saved levels per model: it keeps applying where it applied before, on Opus 5, Fable 5.1, and earlier models, while Opus 5.5 and models released after it start at their own default until you choose a level for them with `/effort` or the `/model` picker. A top-level `effortLevel` in project, local, or managed settings, or one passed with `--settings`, applies to every model.
 
@@ -649,8 +651,8 @@ Each level trades token spend against capability. The default suits most coding 
 | Level | When to use it |
 | :- | :- |
 | `low` | Quick exchanges where you review each result, such as brainstorming, a first sketch, or a small change like a rename |
-| `medium` | The default on Opus 5.5 and Sonnet 5.5, where it fits day-to-day engineering work with a clear scope, such as implementing a new feature. On other models, reduces token usage for cost-sensitive work that can trade off some intelligence |
-| `high` | Work where verification matters or edge cases are likely, such as fixing a bug in an existing codebase. The default on every model except Opus 5.5, Sonnet 5.5, and Opus 4.7 |
+| `medium` | The default on Opus 5.5, Sonnet 5.5, and Haiku 5.5. On Opus 5.5 and Sonnet 5.5, it fits day-to-day engineering work with a clear scope, such as implementing a new feature. On models with a higher default, reduces token usage for cost-sensitive work that can trade off some intelligence |
+| `high` | Work where verification matters or edge cases are likely, such as fixing a bug in an existing codebase. The default on every model except Opus 5.5, Sonnet 5.5, Haiku 5.5, and Opus 4.7 |
 | `xhigh` | Deeper reasoning at higher token spend. The default on Opus 4.7 |
 | `max` | Hard problems you want Claude to work through without you, such as finding security vulnerabilities. `max` may show diminishing returns and is prone to overthinking, so test before adopting it broadly |
 | `ultracode` | A Claude Code setting rather than a level: plans a [dynamic workflow](/docs/en/workflows) for each substantive task at any effort level |
@@ -687,7 +689,7 @@ The effort slider appears in `/model` when a supported model is selected. The cu
 
 Adaptive reasoning makes thinking optional on each step, so Claude can respond faster to routine prompts and reserve deeper thinking for steps that benefit from it. If you want Claude to think more or less often than the current level produces, you can say so directly in your prompt or in `CLAUDE.md`; the model responds to that guidance within its effort setting.
 
-Fable models, Sonnet 5 and later, and Opus 4.7 and later always use adaptive reasoning. The fixed thinking budget mode and `CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING` don't apply to them.
+Fable models, Sonnet 5 and later, Haiku 5.5, and Opus 4.7 and later always use adaptive reasoning. The fixed thinking budget mode and `CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING` don't apply to them.
 
 On Opus 4.6 and Sonnet 4.6, you can set `CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING=1` to revert to the previous fixed thinking budget controlled by `MAX_THINKING_TOKENS`. See [environment variables](/docs/en/env-vars).
 
@@ -699,9 +701,9 @@ Extended thinking is the reasoning Claude emits before responding. On models tha
 | :- | :- |
 | Toggle for the current session | Press `Option+T` on macOS or `Alt+T` on Windows and Linux |
 | Set the global default | Run `/config` and toggle thinking mode. Saved as `alwaysThinkingEnabled` in `~/.claude/settings.json` |
-| Disable through an environment variable | Set [`MAX_THINKING_TOKENS=0`](/docs/en/env-vars), which turns thinking off on the Anthropic API except on Opus 5.5, Sonnet 5.5, and Fable models. On [third-party providers](/docs/en/third-party-integrations), Claude Code omits the `thinking` parameter instead, and adaptive-reasoning models may still think |
+| Disable through an environment variable | Set [`MAX_THINKING_TOKENS=0`](/docs/en/env-vars), which turns thinking off on the Anthropic API except on Opus 5.5, Sonnet 5.5, Haiku 5.5, and Fable models. On [third-party providers](/docs/en/third-party-integrations), Claude Code omits the `thinking` parameter instead, and adaptive-reasoning models may still think |
 
-You can't turn thinking off on Opus 5.5, Sonnet 5.5, or the Fable models. The session toggle and the `/config` row show `Thinking can't be turned off` for these models instead of offering the switch, and a saved `alwaysThinkingEnabled: false` or `MAX_THINKING_TOKENS=0` has no effect there. On these models, the model decides per step how much to think based on the effort level. The saved setting applies again when you switch to a model that accepts it.
+You can't turn thinking off on Opus 5.5, Sonnet 5.5, Haiku 5.5, or the Fable models. The session toggle and the `/config` row show `Thinking can't be turned off` for these models instead of offering the switch, and a saved `alwaysThinkingEnabled: false` or `MAX_THINKING_TOKENS=0` has no effect there. On these models, the model decides per step how much to think based on the effort level. The saved setting applies again when you switch to a model that accepts it.
 
 Claude Code collapses thinking output by default. Press `Ctrl+O` to toggle verbose mode and see the reasoning as gray italic text. Interactive sessions on the Anthropic API receive redacted thinking blocks by default, so set `showThinkingSummaries: true` in [settings](/docs/en/settings) if you want the full summaries available when you expand. You are charged for all thinking tokens generated, even when collapsed or redacted.
 
@@ -709,9 +711,9 @@ Claude Code collapses thinking output by default. Press `Ctrl+O` to toggle verbo
 
 ### Extended context
 
-Fable 5.1, Fable 5, Sonnet 5 and later, Opus 4.6 and later, and Sonnet 4.6 support a [1 million token context window](https://platform.claude.com/docs/en/build-with-claude/context-windows#context-window-sizes-by-model) for long sessions with large codebases.
+Fable 5.1, Fable 5, Sonnet 5 and later, Haiku 5.5, Opus 4.6 and later, and Sonnet 4.6 support a [1 million token context window](https://platform.claude.com/docs/en/build-with-claude/context-windows#context-window-sizes-by-model) for long sessions with large codebases.
 
-On the Anthropic API, Fable 5.1, Fable 5, Sonnet 5 and later, and Opus 4.7 and later run with the 1M window on every plan, including Pro. You don't select a `[1m]` variant or turn on usage credits for the 1M window on these models. Fable usage itself can bill to usage credits on some plans; see [Fable and usage credits](#fable-and-usage-credits).
+On the Anthropic API, Fable 5.1, Fable 5, Sonnet 5 and later, Haiku 5.5, and Opus 4.7 and later run with the 1M window on every plan, including Pro. You don't select a `[1m]` variant or turn on usage credits for the 1M window on these models. Fable usage itself can bill to usage credits on some plans; see [Fable and usage credits](#fable-and-usage-credits).
 
 Opus 4.6 and Sonnet 4.6 reach 1M only through their `[1m]` variant, and access to that variant depends on your plan. On Max, Team, and Enterprise plans, including both Team Standard and Team Premium seats, Opus 4.6 with 1M context is included with your subscription. Sonnet 4.6 with 1M context requires [usage credits](https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans) on every subscription plan, including Max.
 
@@ -725,7 +727,7 @@ Claude Code checks these plan requirements only when it connects to the Anthropi
 
 <span id="context-window-behind-a-gateway" />
 
-If you set `ANTHROPIC_BASE_URL` to an [LLM gateway](/docs/en/llm-gateway) or another proxy, Claude Code gives each model it recognizes the same context window the model has on the Anthropic API. Fable 5.1, Fable 5, Sonnet 5 and later, and Opus 4.7 and later get the 1M window with no `[1m]` variant to select, and a model that reaches 1M only through its `[1m]` variant, such as Opus 4.6, runs at 200K without it. Claude Code can't detect a lower limit that the gateway or the server behind it enforces. If your gateway rejects requests above 200K tokens, set [`CLAUDE_CODE_AUTO_COMPACT_WINDOW=200000`](/docs/en/env-vars) in the environment that starts Claude Code, so sessions on every model [compact at that boundary](#set-the-auto-compact-window).
+If you set `ANTHROPIC_BASE_URL` to an [LLM gateway](/docs/en/llm-gateway) or another proxy, Claude Code gives each model it recognizes the same context window the model has on the Anthropic API. Fable 5.1, Fable 5, Sonnet 5 and later, Haiku 5.5, and Opus 4.7 and later get the 1M window with no `[1m]` variant to select, and a model that reaches 1M only through its `[1m]` variant, such as Opus 4.6, runs at 200K without it. Claude Code can't detect a lower limit that the gateway or the server behind it enforces. If your gateway rejects requests above 200K tokens, set [`CLAUDE_CODE_AUTO_COMPACT_WINDOW=200000`](/docs/en/env-vars) in the environment that starts Claude Code, so sessions on every model [compact at that boundary](#set-the-auto-compact-window).
 
 To turn off 1M context, set `CLAUDE_CODE_DISABLE_1M_CONTEXT=1`. Claude Code removes 1M model variants from the model picker. On models with a native 1M window, such as Sonnet 5 and the Fable models, it also treats the model as having a 200K context window:
 
@@ -734,7 +736,7 @@ To turn off 1M context, set `CLAUDE_CODE_DISABLE_1M_CONTEXT=1`. Claude Code remo
 
 Before v2.1.223, Claude Code held only Sonnet 5, Opus 4.8, and Opus 5 sessions to 200K. See [environment variables](/docs/en/env-vars).
 
-The 1M context window uses standard model pricing with no premium for tokens beyond 200K. For plans where extended context is included with your subscription, usage remains covered by your subscription. For plans that access extended context through usage credits, tokens are billed to usage credits.
+The 1M context window uses standard model pricing with no premium for tokens beyond 200K, except on Haiku 5.5, which [costs more on prompts longer than 100K tokens](#haiku-5-5-context-window-and-pricing). For plans where extended context is included with your subscription, usage remains covered by your subscription. For plans that access extended context through usage credits, tokens are billed to usage credits.
 
 If your account supports 1M context, the option appears in the `/model` picker in the latest versions of Claude Code. If you don't see it, restart your session, and on a third-party provider check whether your deployment [pinned the model](#pin-models-for-third-party-deployments) with an `ANTHROPIC_DEFAULT_*_MODEL` variable.
 
@@ -758,6 +760,14 @@ Claude Code gives Sonnet 5.5 and Sonnet 5 the same 1M window behind an [LLM gate
 This setting budgets the window at 200K instead:
 
 * **`CLAUDE_CODE_DISABLE_1M_CONTEXT=1`**: holds sessions on every model with a native 1M window to a 200K window; see [Extended context](#extended-context) for how the hold is enforced. Useful for deployments that need to cap context.
+
+#### Haiku 5.5 context window and pricing
+
+On the Anthropic API, Haiku 5.5 runs with the 1M context window on every plan, with no `[1m]` suffix to select. Its model ID is `claude-haiku-5-5`. To use it, run `/model claude-haiku-5-5` in a session, or start Claude Code from your shell with `claude --model claude-haiku-5-5`.
+
+A Haiku 5.5 request costs more per token when its prompt is longer than 100K tokens. See [Anthropic pricing](https://platform.claude.com/docs/en/about-claude/pricing) for both rates.
+
+Sessions auto-compact at about 967K tokens by default. To compact earlier, [set a smaller auto-compact window](#set-the-auto-compact-window) for the model.
 
 ## Context window and auto-compaction
 
@@ -787,7 +797,7 @@ If you don't set an auto-compact window, Claude Code compacts when the conversat
 * [Cloud sessions](/docs/en/claude-code-on-the-web) compact as the conversation approaches the model's limit
 * Sonnet 4.6 and Opus 4.6 without [extended context](#extended-context) compact at the 200K boundary, and so do Opus 4.8 and later when they run with a 200K context window, such as on Amazon Bedrock, Google Cloud's Agent Platform, and Microsoft Foundry
 * When you set [`CLAUDE_CODE_DISABLE_1M_CONTEXT=1`](/docs/en/env-vars), models with a native 1M window, such as Sonnet 5 and the Fable models, compact at the 200K boundary
-* Models running with a native 1M window compact before the window fills, at about 967K tokens by default. On the Anthropic API, these include Sonnet 5, the Fable models, and Opus 4.7 and later. On Amazon Bedrock, Google Cloud's Agent Platform, and Microsoft Foundry, see [Pin models for third-party deployments](#pin-models-for-third-party-deployments) for which models run with that window. Behind a custom `ANTHROPIC_BASE_URL`, see [the context window behind a gateway](#context-window-behind-a-gateway)
+* Models running with a native 1M window compact before the window fills, at about 967K tokens by default. On the Anthropic API, these include Sonnet 5, Haiku 5.5, the Fable models, and Opus 4.7 and later. On Amazon Bedrock, Google Cloud's Agent Platform, and Microsoft Foundry, see [Pin models for third-party deployments](#pin-models-for-third-party-deployments) for which models run with that window. Behind a custom `ANTHROPIC_BASE_URL`, see [the context window behind a gateway](#context-window-behind-a-gateway)
 * Sessions on a model ID Claude Code doesn't recognize, such as an [LLM gateway](/docs/en/llm-gateway) alias, compact at the context window Claude Code assumes for the ID; see [Correct the window for a gateway or custom model ID](#correct-the-window-for-a-gateway-or-custom-model-id)
 
 ### Correct the window for a gateway or custom model ID
@@ -998,6 +1008,7 @@ This table lists the Claude Code version at which each model alias changed the m
 
 | Version | Change |
 | :- | :- |
+| v2.1.293 | `haiku` resolves to Haiku 5.5 on the Anthropic API |
 | v2.1.284 | `sonnet` resolves to Sonnet 5.5 on the Anthropic API |
 | v2.1.280 | `opus` resolves to Opus 5.5 on the Anthropic API, Claude Platform on AWS, Amazon Bedrock, and Google Cloud's Agent Platform |
 | v2.1.257 | `fable` resolves to Fable 5.1, except in Claude apps gateway sessions |
@@ -1005,4 +1016,4 @@ This table lists the Claude Code version at which each model alias changed the m
 | v2.1.207 | `opus` resolves to Opus 4.8 on Claude Platform on AWS, Amazon Bedrock, and Agent Platform |
 | v2.1.197 | `sonnet` resolves to Sonnet 5 on the Anthropic API |
 | v2.1.154 | `opus` resolves to Opus 4.8 on the Anthropic API |
-| Earlier | `opus` resolves to Opus 4.7 on Claude Platform on AWS and to Opus 4.6 on Amazon Bedrock and Agent Platform. `fable` resolves to Fable 5 on every provider |
+| Earlier | `opus` resolves to Opus 4.7 on Claude Platform on AWS and to Opus 4.6 on Amazon Bedrock and Agent Platform. `fable` resolves to Fable 5 and `haiku` resolves to Haiku 4.5 on every provider |

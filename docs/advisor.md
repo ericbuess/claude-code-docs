@@ -77,7 +77,7 @@ claude --advisor opus
 Claude Code uses the flag instead of the `advisorModel` setting for that session. It doesn't list `--advisor` in `claude --help`. Claude Code exits with an error at launch if:
 
 * The session's main model doesn't support the advisor
-* The requested model, such as Haiku, can't act as an advisor
+* The requested model, such as Haiku 4.5, can't act as an advisor
 * Your organization's [`availableModels`](/docs/en/model-config#restrict-model-selection) allowlist excludes the requested model
 * You requested Fable and your account still requires the [usage-credits consent](#fable-advisor-and-usage-credits)
 
@@ -91,19 +91,19 @@ Claude Code ranks models by capability for the advisor role, and an advisor must
 
 | Main model | Accepted advisors |
 | - | - |
-| Haiku 4.5 | Fable, Opus, Sonnet |
-| Sonnet 4.6 | Fable, Opus, Sonnet |
-| Opus 4.6 | Fable, Opus, Sonnet 5 or later |
-| Sonnet 5 | Fable, Opus 4.7 or later, Sonnet 5 or later |
+| Haiku 4.5 | Fable, Opus, Sonnet, Haiku 5.5 |
+| Sonnet 4.6 | Fable, Opus, Sonnet, Haiku 5.5 |
+| Opus 4.6 | Fable, Opus, Sonnet 5 or later, Haiku 5.5 |
+| Sonnet 5 or Haiku 5.5 | Fable, Opus 4.7 or later, Sonnet 5 or later, Haiku 5.5 |
 | Opus 4.7 or Opus 4.8 | Fable, Opus 4.7 or later, Sonnet 5.5 |
 | Sonnet 5.5 | Fable, Opus 5 or later, Sonnet 5.5 |
 | Opus 5 or Opus 5.5 | Fable, Opus 5 or later |
 | Fable 5 | Fable 5.1 or Fable 5 |
 | Fable 5.1 | Fable 5.1 |
 
-Fable 5.1 requires Claude Code v2.1.257 or later. Fable models require [Fable access](/docs/en/model-config#work-with-fable). Sonnet 5.5 as the advisor for an Opus 4.7 or Opus 4.8 main model requires Claude Code v2.1.287 or later.
+Fable 5.1 requires Claude Code v2.1.257 or later. Fable models require [Fable access](/docs/en/model-config#work-with-fable). Sonnet 5.5 as the advisor for an Opus 4.7 or Opus 4.8 main model requires Claude Code v2.1.287 or later. Haiku 5.5 as the main model or as the advisor requires Claude Code v2.1.293 or later.
 
-Set the advisor as `fable`, `opus`, or `sonnet`. These aliases resolve to Claude Code's [built-in default version](/docs/en/model-config#model-aliases) for each model family, which advances with new Claude Code releases. You can also pass a full model ID such as `claude-opus-5-5`. Haiku can call the advisor but can't act as one.
+Set the advisor as `fable`, `opus`, or `sonnet`. These aliases resolve to Claude Code's [built-in default version](/docs/en/model-config#model-aliases) for each model family, which advances with new Claude Code releases. You can also pass a full model ID such as `claude-opus-5-5` or `claude-haiku-5-5`. Haiku 4.5 can call the advisor but can't act as one.
 
 Subagents inherit the configured advisor and apply the same pairing check against their own model.
 
@@ -176,7 +176,7 @@ The advisor model's own read of the conversation is not cached. Each advisor cal
 The advisor tool requires all of the following:
 
 * **Anthropic API only**: the advisor is a server-executed tool. It is not available on Amazon Bedrock, Claude Platform on AWS, Google Cloud's Agent Platform, or Microsoft Foundry. Through an [LLM gateway](/docs/en/llm-gateway) configured with `ANTHROPIC_BASE_URL`, availability depends on whether the gateway forwards the request intact to the Anthropic API. If the gateway or its upstream doesn't recognize the advisor tool, see [Automatic retry and error forwarding](/docs/en/llm-gateway-protocol#automatic-retry-and-error-forwarding) for how Claude Code responds.
-* **Supported main model**: Fable, Opus 4.6 or later, Sonnet 4.6 or later, or Haiku 4.5. See [Choose an advisor model](#choose-an-advisor-model) for which advisors each accepts.
+* **Supported main model**: Fable, Opus 4.6 or later, Sonnet 4.6 or later, Haiku 4.5, or Haiku 5.5. See [Choose an advisor model](#choose-an-advisor-model) for which advisors each accepts.
 * **Feature-flag fetching**: Claude Code turns the advisor on through a feature flag it fetches from Anthropic. In a session where a variable that turns flag fetching off is set, such as `DISABLE_TELEMETRY`, the advisor stays off. See [Features that need feature-flag fetching](/docs/en/env-vars#features-that-need-feature-flag-fetching).
 
 ## Turn the advisor off

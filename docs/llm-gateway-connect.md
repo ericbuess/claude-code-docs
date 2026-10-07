@@ -190,7 +190,14 @@ The desktop app reads gateway routing from its [third-party inference configurat
 * **Distributed by an administrator**: if your organization has [deployed the configuration](/docs/en/llm-gateway-rollout#distribute-through-managed-settings), the desktop app routes through the gateway with no setup on your part
 * **Configured locally**: for devices without an administrator-distributed configuration, open Help → Troubleshooting → Enable Developer Mode, which restarts the app with a Developer menu. Then open Developer → Configure Third-Party Inference and enter your gateway base URL. An administrator-distributed configuration takes precedence and makes this form read-only
 
-With the gateway configuration active, the desktop app runs sessions on your local machine only: the environment picker doesn't offer SSH sessions or Anthropic-hosted cloud environments, and [Remote Control](/docs/en/remote-control) is unavailable. To use Claude Code on a remote host through the gateway, run the CLI on that host with [`ANTHROPIC_BASE_URL` and the gateway credential](#set-the-base-url-and-credential) set there.
+With the gateway configuration active, the environment picker doesn't offer Anthropic-hosted cloud environments, and [Remote Control](/docs/en/remote-control) is unavailable.
+
+SSH sessions are in beta with a gateway configuration and require Claude Desktop v1.40609.0 or later. Before you connect, check the allowlist and the gateway's address:
+
+* **Allowed hosts**: SSH sessions are off by default. To turn them on, you or your administrator lists the allowed hosts in the [`sshHostAllowlist`](https://claude.com/docs/third-party/claude-desktop/configuration#sshhostallowlist) key of the third-party inference configuration
+* **Gateway address**: the remote machine connects to the gateway itself, so a gateway at `localhost` on your computer doesn't work for SSH sessions
+
+See [SSH remote sessions in Claude Desktop on 3P](https://claude.com/docs/third-party/claude-desktop/ssh-remote-sessions). You can also run the CLI on the remote host with [`ANTHROPIC_BASE_URL` and the gateway credential](#set-the-base-url-and-credential) set there.
 
 If the desktop app shows `Gateway was unreachable`, the app couldn't reach the configured base URL at startup; check the URL and network path with the [curl test above](#verify-the-connection).
 

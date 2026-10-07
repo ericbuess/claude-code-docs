@@ -1342,7 +1342,7 @@ export const text = {
   },
   "review-your-changes-before": {
     title: "Review your changes before you commit",
-    teaches: "Catch problems while they're still cheap to fix. Claude reads the changed files in full, not just the diff lines, so it spots issues a quick self-review misses.",
+    teaches: "Catch problems while they take less work to fix. Claude reads the changed files in full, not just the diff lines, so it spots issues a quick self-review misses.",
     next: "Run `/code-review` for the same check in one command",
     prompt: "review my uncommitted changes and flag anything that looks risky before I commit"
   },

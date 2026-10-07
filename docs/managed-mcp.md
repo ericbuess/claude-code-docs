@@ -305,17 +305,28 @@ A `serverCommand` entry holds the command and its arguments as one array, as in 
 
 #### How `serverUrl` entries match
 
-URLs support `*` wildcards anywhere in the pattern, including the scheme. Hostname matching is case-insensitive and ignores a trailing FQDN dot, so `https://Mcp.Example.com/*` matches `https://mcp.example.com/api`. Paths stay case-sensitive.
+URLs support `*` wildcards, including `*` as the whole scheme. Hostname matching is case-insensitive and ignores a trailing FQDN dot, so `https://Mcp.Example.com/*` matches `https://mcp.example.com/api`. Paths stay case-sensitive. If you give no port, how you write the hostname decides whether the pattern matches only the scheme's default port or every port:
+
+* **Hostname written out in full**: the default port only, 443 for `https` and 80 for `http`
+* **Hostname with a `*` in it**: every port
 
 The table shows what common patterns allow:
 
 | Pattern | Allows |
 | :- | :- |
-| `https://mcp.example.com/*` | All paths on a specific domain |
-| `https://mcp.example.com` | Also all paths on that domain. A pattern with no path matches any path |
-| `https://*.example.com/*` | Any subdomain of `example.com` |
+| `https://mcp.example.com/*` | All paths on a specific domain, on port 443 only |
+| `https://mcp.example.com` | Also all paths on that domain, on port 443 only. A pattern with no path matches any path |
+| `https://mcp.example.com:8443/*` | All paths on that domain, on port 8443 only |
+| `https://mcp.example.com:*/*` | All paths on that domain, on any port, 443 included |
+| `https://*.example.com/*` | Any subdomain of `example.com`, on any port |
 | `http://localhost:*/*` | Any port on localhost |
-| `*://mcp.example.com/*` | Any scheme to a specific domain |
+| `*://mcp.example.com/*` | Any scheme to a specific domain, each scheme on its default port only |
+
+Entries in `deniedMcpServers` match ports the same way, so choose an entry for `staging.example.com` by the ports and schemes you need to block:
+
+* `https://staging.example.com/*`: blocks `https` servers on that host on port 443 only, so it doesn't block a server at `https://staging.example.com:8443/api`
+* `https://staging.example.com:*/*`: blocks `https` servers on that host on every port
+* `*://staging.example.com:*/*`: blocks that host over any scheme and on any port
 
 <h4 id="how-policy-entries-expand">
   Environment variables in `serverCommand` and `serverUrl` entries
@@ -481,6 +492,7 @@ The accordions below walk through how a server is evaluated against other allowl
   | :- | :- |
   | HTTP server at `https://mcp.example.com/api` | Allowed: matches allowlist URL pattern, no denylist match |
   | HTTP server at `https://staging.example.com/api` | Blocked: matches both, but the denylist takes precedence |
+  | HTTP server at `https://staging.example.com:8443/api` | Allowed: matches allowlist URL pattern, [no denylist match on this port](#how-serverurl-entries-match) |
   | HTTP server at `https://other.com/mcp` | Blocked: doesn't match the allowlist |
 </Accordion>
 

@@ -1610,7 +1610,7 @@ When a long session compacts, Claude Code summarizes the conversation history to
 
 Right after compaction, Claude Code re-reads up to five of the files Claude has read or edited in the session, choosing the ones modified most recently. A file over 5,000 tokens comes back as a path reference without its content, shown as `Referenced file` instead of `Read`.
 
-Path-scoped rules and nested CLAUDE.md files load into message history when their trigger file is read, so compaction summarizes them away with everything else. If a rule must persist across compaction, drop the `paths:` frontmatter or move it to the project-root CLAUDE.md.
+Path-scoped rules and nested CLAUDE.md files load into message history when Claude reads, writes, or edits their trigger file, so compaction summarizes them away with everything else. If a rule must persist across compaction, drop the `paths:` frontmatter or move it to the project-root CLAUDE.md.
 
 Skill bodies are re-injected after compaction, but large skills are truncated to fit the per-skill cap, and the oldest invoked skills are dropped once the total budget is exceeded. Truncation keeps the start of the file, so put the most important instructions near the top of `SKILL.md`.
 
@@ -1626,7 +1626,7 @@ You can also act before the automatic pass runs:
 * **Clear between tasks**: run `/clear` when switching to unrelated work. Old conversation crowds out the files you need next and costs tokens on every message.
 * **Delegate large reads**: send research to a [subagent](/docs/en/sub-agents) so the file contents stay in its context window, not yours.
 
-If you need a larger window rather than a smaller conversation, Fable models, Sonnet 5 and later, Opus 4.6 and later, and Sonnet 4.6 support a 1 million token context window. See [Extended context](/docs/en/model-config#extended-context) for availability by plan and how to select a `[1m]` model variant. Compaction works the same way at the larger limit.
+If you need a larger window rather than a smaller conversation, Fable models, Sonnet 5 and later, Haiku 5.5, Opus 4.6 and later, and Sonnet 4.6 support a 1 million token context window. See [Extended context](/docs/en/model-config#extended-context) for availability by plan and how to select a `[1m]` model variant. Compaction works the same way at the larger limit.
 
 Sonnet 5.5 and Sonnet 5 run with the 1M context window and have no `[1m]` variant to select. See [Sonnet 5.5 and Sonnet 5 context window](/docs/en/model-config#sonnet-5-5-and-sonnet-5-context-window) for their auto-compaction thresholds, and [the context window behind a gateway](/docs/en/model-config#context-window-behind-a-gateway) for how Claude Code sizes the window when you set `ANTHROPIC_BASE_URL` to an [LLM gateway](/docs/en/llm-gateway).
 

@@ -265,10 +265,11 @@ Actions available in the `Footer` context:
 | :- | :- | :- |
 | `footer:next` | Right | Next footer item |
 | `footer:previous` | Left | Previous footer item |
-| `footer:up` | Up | Navigate up in footer (deselects at top) |
-| `footer:down` | Down | Navigate down in footer |
+| `footer:up` | Up, Ctrl+P | Navigate up in footer (deselects at top) |
+| `footer:down` | Down, Ctrl+N | Navigate down in footer |
 | `footer:openSelected` | Enter | Open selected footer item |
 | `footer:clearSelection` | Escape | Clear footer selection |
+| `footer:close` | x | Stop the selected [agent](/docs/en/sub-agents#observe-and-steer-running-forks) or [workflow](/docs/en/workflows#manage-runs), or dismiss its row if it's no longer running |
 | `footer:dismiss` | (unbound) | Binding a key to this action has no effect, and a `keybindings.json` that names it remains valid. Before v2.1.281, Backspace and Delete were bound to it and dismissed the selected artifact link from the footer. |
 
 While a footer item is selected, such as a row in the agent panel below the prompt, `Enter` opens it even when you rebind `Enter` in the `Chat` context to `chat:queueSubmit` or `chat:newline`.

@@ -3032,12 +3032,15 @@ Claude Code refuses an absolute path that contains `.` or `..` segments, and any
 
 Runs when Claude Code cleans up a worktree that your [`WorktreeCreate`](#worktreecreate) hook created. The event fires when:
 
-* You exit a `--worktree` session and choose to remove the worktree
+* You exit an interactive [worktree session](/docs/en/worktrees#start-claude-in-a-worktree) and choose to remove the worktree when Claude Code prompts you
+* You exit an interactive worktree session you haven't [named](/docs/en/sessions#name-your-sessions), Claude Code finds no changed or untracked files, and it removes the worktree without prompting you
 * You delete a [background session](/docs/en/agent-view#what-deleting-a-session-removes) that runs in the worktree
+
+Claude Code uses git to look for changed or untracked files, so it finds none in a worktree that isn't a git checkout or inside one, even when the directory holds uncommitted work. Check for that work in your WorktreeRemove hook before it deletes anything.
 
 For git-based worktrees, Claude Code handles cleanup automatically with `git worktree remove`. If you configured a WorktreeCreate hook, pair it with a WorktreeRemove hook to control cleanup of the worktrees it creates:
 
-* **No WorktreeRemove hook**: when you exit a `--worktree` session and choose removal, Claude Code falls back to `git worktree remove --force` on the path your WorktreeCreate hook returned, so a worktree git recognizes is removed. A worktree git doesn't recognize, for example one your hook created with a non-git version control system, stays on disk. For what deleting a [background session](/docs/en/agent-view#what-deleting-a-session-removes) does with a hook-created worktree, see agent view's delete rules.
+* **No WorktreeRemove hook**: when Claude Code removes the worktree as you exit a worktree session, it falls back to `git worktree remove --force` on the path your WorktreeCreate hook returned, so a worktree git recognizes is removed. A worktree git doesn't recognize, for example one your hook created with a non-git version control system, stays on disk. For what deleting a [background session](/docs/en/agent-view#what-deleting-a-session-removes) does with a hook-created worktree, see agent view's delete rules.
 * **Hook exits 0**: the worktree counts as removed. Claude Code reads nothing else from the hook, so make sure your hook deleted the directory.
 * **Hook exits non-zero**: the removal fails if the directory at `worktree_path` still exists afterward, and the worktree stays on disk with no git fallback. A hook that deleted the directory before exiting non-zero counts as removed. For how the failure is reported, see [WorktreeRemove input](#worktreeremove-input).
 

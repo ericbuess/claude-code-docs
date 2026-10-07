@@ -197,16 +197,32 @@ For programmatic streaming with callbacks and message objects, see [Stream respo
 
 #### Follow subagent messages
 
-Messages from [subagents](/docs/en/sub-agents) appear in the stream as `assistant` and `user` messages whose `parent_tool_use_id` field is the ID of the tool call that spawned the subagent. Messages from the main conversation carry `null` in that field.
+Messages from [subagents](/docs/en/sub-agents) and from skills that [run in a subagent](/docs/en/skills#run-skills-in-a-subagent) appear in the stream as `assistant` and `user` messages. Their `parent_tool_use_id` field says which run each one belongs to. Messages from the main conversation carry `null` in that field.
 
-The first message from a subagent running in the [foreground](/docs/en/sub-agents#run-subagents-in-foreground-or-background) is a `user` message carrying the prompt that drives it. After that first message, Claude Code emits:
+The first message from a forked skill, or from a subagent running in the [foreground](/docs/en/sub-agents#run-subagents-in-foreground-or-background), is a `user` message carrying the prompt or skill content that drives it. After that first message, Claude Code emits:
 
-* **By default**: the subagent's `tool_use` and `tool_result` blocks.
-* **With [`--forward-subagent-text`](/docs/en/cli-reference#cli-flags) or [`CLAUDE_CODE_FORWARD_SUBAGENT_TEXT`](/docs/en/env-vars)**: the subagent's text and thinking blocks too, so you can reconstruct each subagent's transcript. This requires Claude Code v2.1.211 or later.
+* **By default**: the run's `tool_use` and `tool_result` blocks.
+* **With [`--forward-subagent-text`](/docs/en/cli-reference#cli-flags) or [`CLAUDE_CODE_FORWARD_SUBAGENT_TEXT`](/docs/en/env-vars)**: the run's text and thinking blocks too, so you can reconstruct each run's transcript.
 
-When you enable either option, Claude Code forwards messages from [subagents at every nesting depth](/docs/en/sub-agents#let-subagents-spawn-their-own-subagents), whether each one was spawned with the Agent tool or started as a [forked skill](/docs/en/skills#run-skills-in-a-subagent). Messages of subagents that a forked skill spawns, and of forked skills started inside a subagent or another forked skill, require Claude Code v2.1.275 or later. In `parent_tool_use_id`, the nested subagent's messages carry the ID of the Agent or Skill tool call that started it, so you can rebuild the full nesting tree by following those IDs. Before v2.1.219, messages from nested subagents didn't appear in the stream.
+When you enable either option, Claude Code forwards messages from [subagents at every nesting depth](/docs/en/sub-agents#let-subagents-spawn-their-own-subagents), whether each one was spawned with the Agent tool or started as a forked skill. In `parent_tool_use_id`, the nested subagent's messages carry the ID of the Agent or Skill tool call that started it, so you can rebuild the full nesting tree by following those IDs.
 
-Skills that [run in a subagent](/docs/en/skills#run-skills-in-a-subagent) appear in the stream the same way: the forked skill's first message is a `user` message carrying the skill content that drives the run. If you enable either option, the stream also carries the forked skill's text and thinking blocks. Before v2.1.265, only a forked skill's `tool_use` and `tool_result` blocks appeared in the stream.
+A run that Claude starts with a tool call carries that tool call's ID. A forked skill that you start by passing `/<skill-name>` as the prompt has no tool call, so its messages carry a `forked-command-` value instead and arrive after it finishes. Find how the run started in the first column:
+
+| How the run starts | `parent_tool_use_id` | When its messages arrive |
+| :- | :- | :- |
+| Claude calls the Agent tool from the main conversation | The ID of that Agent `tool_use` block | While the subagent works |
+| Claude calls the Skill tool for a forked skill from the main conversation | The ID of that Skill `tool_use` block | While the forked skill works |
+| You pass `/<skill-name>` as the prompt | A value that starts with `forked-command-` | Together and in order after the forked skill finishes |
+
+For a forked skill started from the prompt, match `parent_tool_use_id` on the `forked-command-` prefix, because the name after it can differ from the one you typed.
+
+If some of these messages are missing from your stream, check your Claude Code version against these minimums:
+
+* **`--forward-subagent-text` and `CLAUDE_CODE_FORWARD_SUBAGENT_TEXT`**: v2.1.211 or later
+* **Forwarding at every nesting depth**: v2.1.219 or later
+* **A forked skill that Claude starts with the Skill tool from the main conversation**: v2.1.86 or later for its `tool_use` and `tool_result` blocks, and v2.1.265 or later for its first `user` message and its text and thinking blocks
+* **Messages of subagents that a forked skill spawns, and of forked skills started inside a subagent or another forked skill**: v2.1.275 or later
+* **Messages of a forked skill you start by passing `/<skill-name>` as the prompt**: v2.1.287 or later
 
 #### Handle API retries
 
