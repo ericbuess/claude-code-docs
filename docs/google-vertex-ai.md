@@ -192,7 +192,7 @@ export VERTEX_REGION_CLAUDE_HAIKU_4_5=us-east5
 export VERTEX_REGION_CLAUDE_4_6_SONNET=europe-west1
 ```
 
-Most model versions have a corresponding `VERTEX_REGION_CLAUDE_*` variable. See the [Environment variables reference](/docs/en/env-vars) for the full list. Check [Google Cloud's Agent Platform Model Garden](https://console.cloud.google.com/vertex-ai/model-garden) to determine which models support global endpoints versus regional only.
+Most model versions have a corresponding `VERTEX_REGION_CLAUDE_*` variable. See the [Environment variables reference](/docs/en/env-vars#variables) for the full list. Check [Google Cloud's Agent Platform Model Garden](https://console.cloud.google.com/vertex-ai/model-garden) to determine which models support global endpoints versus regional only.
 
 If a region value isn't shaped like a region or location name, Claude Code treats it as unset. For example, Claude Code treats a value containing a slash, dot, or space as unset. Claude Code falls back to a different source for each variable:
 
@@ -332,7 +332,7 @@ If you encounter "model not found" 404 errors:
 * Verify the model is available in the location you specified. Some models are offered only on `global` or multi-region locations such as `eu` and `us`, not in specific regions
 * If using `CLOUD_ML_REGION=global`, check that your models support global endpoints in [Model Garden](https://console.cloud.google.com/vertex-ai/model-garden) under "Supported features". For models that don't support global endpoints, either:
   * Specify a supported model via `ANTHROPIC_MODEL` or `ANTHROPIC_DEFAULT_HAIKU_MODEL`, or
-  * Set a region or multi-region location using `VERTEX_REGION_<MODEL_NAME>` environment variables
+  * Set a region or multi-region location using the model's `VERTEX_REGION_CLAUDE_*` variable, listed in the [environment variables reference](/docs/en/env-vars#variables)
 
 If you encounter 429 errors:
 

@@ -335,7 +335,7 @@ Both `defaults` and `config` print the four rule lists as a single JSON object, 
 }
 ```
 
-Get AI feedback on your custom `allow`, `soft_deny`, and `hard_deny` rules:
+Get AI feedback on your custom `allow`, `soft_deny`, `hard_deny`, and `environment` entries:
 
 ```bash theme={null}
 claude auto-mode critique

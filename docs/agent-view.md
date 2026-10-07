@@ -755,6 +755,7 @@ Every background session has a short ID you can use from the shell. The ID is pr
 | `claude rm <id> --discard-unpushed <commit>@<worktree-id>` | Delete a session whose delete was refused over unpushed commits, discarding the worktree along with its branch and commits. Pass the exact value that refusal printed; see [What deleting a session removes](#what-deleting-a-session-removes). Requires v2.1.260 or later |
 | `claude rm <id> --force-remove-worktree <worktree-id>` | Delete a session whose delete was refused because git or the `WorktreeRemove` hook couldn't remove its worktree, deleting the worktree directory anyway and leaving its branch in the repository. Pass the exact value that refusal printed; see [What deleting a session removes](#what-deleting-a-session-removes). Requires v2.1.268 or later |
 | `claude daemon status` | Print the [supervisor's](#the-supervisor-process) state, version, socket directory, and worker count |
+| `claude daemon logs` | Follow the supervisor's log file, [`~/.claude/daemon.log`](#where-state-is-stored), printing new lines as they arrive until you press `Ctrl+C` |
 | `claude daemon stop --any` | Stop the supervisor process and the background sessions it hosts. Pass `--keep-workers` to leave background sessions running so the next supervisor reconnects to them. The next `claude agents` or `claude --bg` starts a fresh supervisor |
 
 `claude attach` and `claude logs` can take part of a running session's name in place of the ID, as in `claude logs "auth refactor"`. Passing a name requires Claude Code v2.1.290 or later.

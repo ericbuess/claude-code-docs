@@ -960,7 +960,7 @@ The sections below cover issues specific to the desktop app. For runtime API err
 To see which version of the desktop app you're running:
 
 * **macOS**: click **Claude** in the menu bar, then **About Claude**
-* **Windows**: click **Help**, then **About**
+* **Windows**: click **Help**, then **About Claude**
 
 Click the version number to copy it to your clipboard.
 

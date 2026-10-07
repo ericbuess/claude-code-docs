@@ -386,10 +386,12 @@ If a new session fails to start with `Session creation failed` or stalls at prov
 `claude --cloud` and `claude --teleport` require sign-in with a claude.ai account. If you authenticate with an API key, or your stored account details are stale, you see one of these:
 
 * `Unable to get organization UUID`
-* A message that API key authentication is not sufficient
+* ``Cloud sessions need a claude.ai sign-in. Run `claude auth login` (or /login in a local session), then try again.``
 * `Error loading Claude Code sessions` in the session picker, when you run `claude --teleport` without a session ID
 
-Run `/login` to sign in with your claude.ai account, then retry the command. If the error names your provider instead, see the [error table](#errors-when-sending-to-a-cloud-session): cloud sessions aren't available through third-party providers.
+Run [`claude auth login`](/docs/en/cli-reference#cli-commands) in your shell to sign in with your claude.ai account, then retry the command. Inside a running session, `/login` does the same. If the error names your provider instead, see the [error table](#errors-when-sending-to-a-cloud-session): cloud sessions aren't available through third-party providers.
+
+From v2.1.274 through v2.1.289, the sign-in message read `Claude Code cloud sessions require authentication with a Claude.ai account. API key authentication is not sufficient. Please run /login to authenticate, or check your authentication status with /status.`
 
 ### Remote Control session expired or access denied
 

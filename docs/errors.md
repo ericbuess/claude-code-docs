@@ -195,6 +195,7 @@ Match the message you see to a section below.
 | `Cloud sessions cannot be created from a --restricted session` | [Command-line errors](#cloud-sessions-cannot-be-created-from-a-restricted-session) |
 | `Cloud sessions are disabled by your organization's policy` | [Command-line errors](#cloud-sessions-are-disabled-by-your-organizations-policy) |
 | `Couldn't verify your organization's policy for cloud sessions` | [Command-line errors](#cloud-sessions-are-disabled-by-your-organizations-policy) |
+| `Cloud sessions need a claude.ai sign-in` | [Unable to get organization UUID](/docs/en/claude-code-on-the-web#unable-to-get-organization-uuid) |
 | `Error: --json-schema is not a valid JSON Schema` | [Command-line errors](#the-json-schema-value-is-not-a-valid-json-schema) |
 | `Error: Invalid --agents configuration:` | [Command-line errors](#invalid-agents-configuration) |
 | `Error: --agents takes a JSON object, or a file path only with --print (-p)` | [Command-line errors](#invalid-agents-configuration) |
@@ -383,6 +384,7 @@ Claude Code retries these failures:
 * A connection that Claude Code detects was broken by your computer going to sleep partway through a request. Claude Code counts it as a dropped connection under the rules above; once the retry label names the specific reason, it reads `Connection lost while your computer was asleep`, and if the turn ends after Claude has finished thinking but before any text or tool call, the message reads `Your computer went to sleep before a response was produced`.
 * A stalled response stream, when the response headers have arrived but none of Claude's response has arrived, or when Claude has finished thinking but hasn't started any text or tool call: Claude Code aborts the stalled connection and re-issues the request at most once, outside the 10-attempt budget above. If the response stalls a second time after Claude has finished thinking but before any text or tool call, Claude Code ends the turn with `The response stalled before a response was produced`.
 * A streaming request the API never answers with response headers, on a connection where the [first-byte deadline runs](/docs/en/network-config#streaming-idle-watchdogs): Claude Code aborts it at the deadline and re-sends it at most once per model request, within the retry budget, then ends the turn with [No response from API](#no-response-from-api) if that attempt goes unanswered too. On other connections, the request waits out `API_TIMEOUT_MS`. When you set `CLAUDE_CODE_RETRY_WATCHDOG`, the one-retry cap doesn't apply.
+* A streaming response that the API's output content filter stops before Claude has either finished thinking or started any text or tool call. Claude Code re-sends the request once, within the retry budget, and shows [Output blocked by content filtering policy](#output-blocked-by-content-filtering-policy) if the filter stops the second response too.
 * Temporary 429 throttles, but not a gateway's spend-limit `429`, which isn't a throttle; see [Spend limit reached](#spend-limit-reached).
   * When you're signed in with a claude.ai subscription, this includes 429 throttles that don't carry your plan's quota headers. Before v2.1.199, Claude Code retried those throttles only for API key and Enterprise sign-ins.
 * A request rejected because the input plus `max_tokens` exceeds the context limit. Re-sending it unchanged would fail the same way, so Claude Code retries with a reduced `max_tokens`, and stops retrying and compacts instead in two cases:
@@ -401,7 +403,6 @@ Claude Code doesn't retry these failures:
 * An [Amazon Bedrock streaming response with an unexpected content-type](#bedrock-streaming-response-has-an-unexpected-content-type), because the gateway or proxy rewriting the response would rewrite the retry the same way. Requires Claude Code v2.1.208 or later.
 * A non-streaming retry of a failed streaming request that gets a success status but [no Claude API message in the body](#api-returned-an-empty-or-malformed-response). Claude Code ends the turn with that error.
 * A request that your organization's policy check denied, which surfaces as an `API Error:` line carrying the denial message. Your organization's administrators set up the check with [Inference hooks](https://platform.claude.com/docs/en/manage-claude/inference-hooks), a Claude Enterprise feature, and the message ends with the instructions they configured, or by default tells you to contact them. Claude Code doesn't re-send the denied request to the same model or to a [fallback model](/docs/en/model-config#fallback-model-chains), because the denial is about the request's content rather than the model. Before v2.1.239, Claude Code could re-send a denied request, without streaming or on a configured fallback model, before showing you the denial.
-* A response the API's output content filter blocked. Claude Code shows [Output blocked by content filtering policy](#output-blocked-by-content-filtering-policy) at once and doesn't retry or re-send that request.
 
 ### What you see while Claude Code retries or waits
 
@@ -2734,8 +2735,6 @@ The API's output content filter stopped the response Claude was generating. The 
 ```text theme={null}
 API Error: Output blocked by content filtering policy
 ```
-
-Claude Code shows the error as soon as the block arrives and ends the request there. It doesn't retry the request, re-send it without streaming, or switch to a [fallback model](/docs/en/model-config#fallback-model-chains). Before v2.1.285, Claude Code could re-send and retry a blocked request, sometimes for minutes, before showing you the error.
 
 **What to do:**
 

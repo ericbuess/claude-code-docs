@@ -37,7 +37,7 @@ If your devices are enrolled in an MDM or endpoint management solution, endpoint
   <Step title="Open the admin console">
     In the claude.ai console, go to [**Organization settings > Claude Code > Managed settings**](https://claude.ai/admin-settings/claude-code).
 
-    If the link redirects you to a different Organization settings page instead of the Claude Code page, your account doesn't have the required role. Admin and other non-Owner roles can't view or edit managed settings, so ask an Owner or Primary Owner in your organization to make the change. See [Access control](#access-control).
+    In a Team or Enterprise organization, if the page says you don't have access, ask an [Owner or Primary Owner](#access-control) to make the change.
   </Step>
 
   <Step title="Define your settings">

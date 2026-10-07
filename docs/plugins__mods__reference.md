@@ -212,7 +212,7 @@ A render site is an extension point in Claude Code's interface. Each row is a va
 To fit a tree to its site, read these props in the hook:
 
 * **Width of a `Pane` or the band**: draw to `e.props.bodyColumns`
-* **Height of a `Pane` beside the transcript**: where `e.props.placement` is `'dock'`, `e.props.scroll.bodyRows` is the number of rows the pane has
+* **Height of a `Pane` beside the transcript**: where `e.props.placement` is `'dock'`, `e.props.scroll.bodyRows` is the number of rows the pane has for your tree
 * **Height of a `Pane` above the prompt**: where `e.props.placement` is `'inline'`, the pane grows with your tree up to a limit, and `bodyRows` is that limit. The [`rows` field of `$.ui.open`](/docs/en/plugins/mods/interface#open-a-pane-at-the-right-time) asks for a different one.
 
 A tree taller than the pane scrolls as a whole.
@@ -223,7 +223,7 @@ Elements are the building blocks of a tree a `ui.render` hook returns, and you g
 
 | Element | Main props | Terminal | Desktop |
 | :- | :- | :-: | :-: |
-| [`Box`](/docs/en/plugins/mods/interface#build-a-tree-from-elements) | `key`, flex layout, `gap`, `padding`, `margin`, `width`, `height`, `borderStyle`, `backgroundColor`, `position`, `hover` | ✓ | ✓ |
+| [`Box`](/docs/en/plugins/mods/interface#build-a-tree-from-elements) | `key`, flex layout, `gap`, `padding`, `margin`, `width`, `height`, [`borderStyle`](#box-border-styles), `backgroundColor`, `position`, `hover` | ✓ | ✓ |
 | [`Text`](/docs/en/plugins/mods/interface#build-a-tree-from-elements) | `color`, `backgroundColor`, `bold`, `italic`, `underline`, `dimColor`, `inverse`, `wrap` | ✓ | ✓ |
 | [`Button`](/docs/en/plugins/mods/interface#respond-to-presses-and-typing) | `key`, `label`, `onPress`, `hotkey`, `plain`, `dimColor`, `autoFocus`, `action` | ✓ | ✓ |
 | `Link` | `href`, `label` | ✓ | ✓ |
@@ -237,6 +237,27 @@ Elements are the building blocks of a tree a `ui.render` hook returns, and you g
 | `Image` | PNG or RGBA bytes up to 2 MiB, or a file path | ✓ | |
 
 More `Button` rules: `action` names one of Claude Code's own [keybinding actions](/docs/en/keybindings), and the user's binding for it presses the button when that binding is a chord or a modified key. A digit `hotkey` on a button in the band also fires when the user types that digit alone into an empty prompt and pauses. When two buttons in one drawing name the same `hotkey`, the later one gets it. `autoFocus` accepts only `true` on any control, so omit the prop to leave it off.
+
+<h3 id="box-border-styles">
+  `Box` border styles
+</h3>
+
+To draw a border around a `Box`, set its `borderStyle` to one of these names, as in `borderStyle: 'round'`. Each row says what the terminal draws for that name and shows the top edge of the border.
+
+| `borderStyle` | What the terminal draws | Top edge |
+| :- | :- | :- |
+| `'single'` | Thin lines with square corners | `┌──┐` |
+| `'double'` | Double lines | `╔══╗` |
+| `'round'` | Thin lines with rounded corners | `╭──╮` |
+| `'bold'` | Thick lines | `┏━━┓` |
+| `'singleDouble'` | Thin lines on the top and bottom, double lines on the sides | `╓──╖` |
+| `'doubleSingle'` | Double lines on the top and bottom, thin lines on the sides | `╒══╕` |
+| `'classic'` | The ASCII characters `+`, `-`, and `\|` | `+--+` |
+| `'arrow'` | Arrows that point into the `Box` | `↘↓↓↙` |
+| `'dashed'` | Dashed lines with blank corners | `╌╌` |
+| `'quote'` | A bar, `▎`, down the left side and blank cells on the other three sides | Blank |
+
+A `Box` whose `borderStyle` names anything else, such as `'rounded'`, draws with no border.
 
 ## Limits
 

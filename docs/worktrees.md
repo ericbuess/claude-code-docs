@@ -6,7 +6,7 @@
 
 > Isolate parallel Claude Code sessions in separate git worktrees so changes don't collide. Covers the `--worktree` flag, subagent isolation, `.worktreeinclude`, cleanup, and non-git VCS hooks.
 
-A [git worktree](https://git-scm.com/docs/git-worktree) is a separate working directory with its own files and branch, sharing the same repository history and remote as your main checkout. Running each Claude Code session in its own worktree means edits in one session never touch files in another, so one session can build a feature while a second fixes a bug.
+A [git worktree](https://git-scm.com/docs/git-worktree) is a separate working directory with its own files and branch, sharing the same repository history and remote as your main checkout. Running each Claude Code session in its own worktree gives it a separate copy of the files to edit, so one session can build a feature while a second fixes a bug.
 
 <Note>
   Worktrees require a git repository; for other version control systems, [configure hooks to replace the git logic](#non-git-version-control). In the [desktop app](/docs/en/desktop#work-in-parallel-with-sessions), select the **worktree** option when you start a session to give it its own worktree.
@@ -91,6 +91,8 @@ Claude Code applies four checks:
 * **Command working directory**: Claude Code blocks a Bash, PowerShell, or Monitor command whose working directory resolves to the main checkout, or whose working directory it can't verify stays outside it.
 * **Git redirects**: Claude Code blocks a Bash or Monitor command that redirects git into the main checkout. The redirect can come through `git -C`, `--git-dir`, a `GIT_DIR` or `GIT_WORK_TREE` variable, or a `cd` into the main checkout before running git.
 * **Command shape**: Claude Code blocks a Bash or Monitor command when it can't verify from the command text that any git the command runs stays inside the worktree. That happens, for example, when the command name is computed at runtime, when the syntax can't be parsed, or when an expansion such as `${!name}` or `${ command; }` could run a command the text doesn't spell out. Claude Code tells Claude how to rewrite the refused command, such as splitting it into plain, separate commands. You can't turn this check off.
+
+These checks read the path an edit targets, the directory a command runs in, and the text of the command. None of them tracks which files a shell command writes, so a command that writes into the main checkout without running git there, such as `cp` or a shell redirect, isn't refused by them. Claude Code treats that command like any other shell command, so whether it runs or prompts you depends on your [permission mode](/docs/en/permission-modes) and rules.
 
 The checks apply to the repository you launched Claude Code from. They also cover the main checkout a linked worktree is linked from. For PowerShell commands, Claude Code applies only the working-directory check.
 

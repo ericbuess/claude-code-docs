@@ -416,7 +416,7 @@ The [interface gallery](/docs/en/plugins/mods/gallery) has samples and screensho
 
 | Element | What it draws | Where |
 | :- | :- | :- |
-| `Box` | A flex container. Takes layout props such as `flexDirection`, `columnGap`, `padding`, `borderStyle`, and `width`. | Everywhere |
+| `Box` | A flex container. Takes layout props such as `flexDirection`, `columnGap`, `padding`, [`borderStyle`](/docs/en/plugins/mods/reference#box-border-styles), and `width`. | Everywhere |
 | `Text` | Styled text. Takes `color`, `bold`, `dimColor`, `italic`, and `wrap`. A `color` is a theme key or a color such as `'red'`. A `wrap` is `'wrap'`, `'truncate'`, `'truncate-start'`, `'truncate-middle'`, or `'truncate-end'`. | Everywhere |
 | `Button` | A control that calls `onPress` | Everywhere |
 | `Link`, `Code`, `Markdown` | A link with `href` and an optional `label`, a code block, and text formatted the way Claude's replies are. `Markdown` takes its content in a `text` prop, not in `children`, and needs a `key` when you pass `onLinkPress`. | Everywhere |
@@ -539,12 +539,14 @@ In the terminal, name the key in a bracketed button's label, or use `plain: true
 Many panes are a text field with a list under it. The example in this section is a notes pane: you type a note and press Enter to add it, and each note has an `x` button that deletes it. With two notes added, the terminal draws the pane this way:
 
 ```text theme={null}
-╭──────────────────────────────────────────────────────────╮
-│ Note: Type a note and press Enter ⏎ add                ✕ │
+╭────────────────────────────────────────────────────────✕─╮
+│ Note: Type a note and press Enter ⏎ add                  │
 │ x buy milk                                               │
 │ x call bob                                               │
 ╰──────────────────────────────────────────────────────────╯
 ```
+
+The `✕` on the top border is Claude Code's own mark for closing the pane.
 
 The example uses these techniques:
 

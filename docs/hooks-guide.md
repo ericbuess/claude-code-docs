@@ -506,7 +506,7 @@ Claude Code fires hook events at specific points in its lifecycle. When an event
 | `DirectoryAdded` | When a working directory is added mid-session via `/add-dir` or the SDK `register_repo_root` control request |
 | `FileChanged` | When a watched file changes on disk. The `matcher` field specifies which filenames to watch |
 | `WorktreeCreate` | When a worktree is being created via `--worktree`, `isolation: "worktree"`, or for a background session. Replaces default git behavior |
-| `WorktreeRemove` | When a worktree is being removed at session exit, when a subagent finishes, or when you delete a background session |
+| `WorktreeRemove` | When a worktree that a `WorktreeCreate` hook created is being removed |
 | `PreCompact` | Before context compaction |
 | `PostCompact` | After context compaction completes |
 | `PreModelSwitch` | Before Claude Code applies a model switch that you or a client requested. Can block the switch |

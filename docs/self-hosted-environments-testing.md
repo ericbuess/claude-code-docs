@@ -92,7 +92,7 @@ The flag takes precedence over the [`remote.defaultEnvironmentId`](/docs/en/sett
 
 ## Example script
 
-The script below runs the full loop against `$CLAUDE_TEST_ENVIRONMENT_ID`, your test environment's `ccpool_...` ID, shown in the environment's detail dialog on the admin page or returned by the [create-environment call](#create-a-dedicated-test-environment), and asserts on a sentinel phrase in each reply. Run it from a git checkout of the repository you want the session to work in, after starting a runner on this host with the capture hook installed and `E2E_REPLY_DIR` exported.
+The script below runs the full loop against `$CLAUDE_TEST_ENVIRONMENT_ID`, your test environment's `ccpool_...` ID, shown in the environment's detail dialog on the admin page or returned by the [create-environment call](#create-a-dedicated-test-environment), and asserts on a sentinel phrase in each reply. Run it from a git checkout of the repository you want the session to work in, after starting a runner on this host with the capture hook installed and `E2E_REPLY_DIR` exported. First sign in with a claude.ai account on the machine that runs the script, as [Authenticate from CI](#authenticate-from-ci) describes. Without that sign-in, the first dispatch fails with an error such as `Unable to get organization UUID for cloud session creation`.
 
 ```bash theme={null}
 #!/usr/bin/env bash

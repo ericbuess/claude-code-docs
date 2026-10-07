@@ -554,7 +554,7 @@ VS Code reads `initialPermissionMode` from your user settings and ignores worksp
 | `environmentVariables` | `[]` | Set environment variables for the Claude process. Use Claude Code settings instead for shared config. A [`CLAUDE_CONFIG_DIR`](/docs/en/env-vars) entry applies only when its value is an absolute path; the extension doesn't expand `~` and ignores a relative value. |
 | `disableLoginPrompt` | `false` | Skip authentication prompts (for third-party provider setups) |
 | `allowDangerouslySkipPermissions` | `false` | Adds Bypass permissions to the mode selector. Use it only in sandboxes with no internet access. |
-| `claudeProcessWrapper` | - | Executable used to launch the Claude process. The bundled binary path is passed as an argument when present. Set this to a separately installed `claude` binary if the extension build doesn't include one for your platform. In a wrapped setup, conversations start in Manual mode unless you set `initialPermissionMode` or picked Manual, Edit automatically, or Auto in an earlier conversation, because the extension skips the settings and built-in-default steps there; see [Switch permission modes](/docs/en/permission-modes#switch-permission-modes). An "Unsupported platform" error at activation means no binary is bundled for your platform; see [which platforms have prebuilt binaries](/docs/en/troubleshoot-install#native-binary-not-found-after-npm-install). |
+| `claudeProcessWrapper` | - | Executable used to launch the Claude process. The bundled binary path is passed as an argument when present. Set this to a separately installed `claude` binary if the extension build doesn't include one for your platform. |
 
 ## Use a screen reader
 
