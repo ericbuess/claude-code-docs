@@ -532,15 +532,14 @@ The fallback model is checked against [`availableModels`](#restrict-model-select
 
 #### Effort level after a fallback
 
-When Claude Code switches your session to the fallback model, it keeps the effort level the flagged request ran at in place of that model's default effort. For example, a session on Opus 5.5 at its default `medium` that falls back to Opus 4.8 stays at `medium`, although Opus 4.8 defaults to `high`.
+When Claude Code switches your session to the fallback model, it keeps the effort level the flagged request ran at. For example, a session on Opus 5.5 at its default `medium` that falls back to Opus 4.8 stays at `medium`, although Opus 4.8 defaults to `high`.
 
 A different level applies in cases such as these:
 
-* **Settings or organization default**: a level in your settings that applies to the fallback model, or a default effort your organization set for it, applies instead.
 * **Your own change**: once you choose an effort level, pick a model in `/model`, or resume the session later, the flagged request's level no longer carries over.
 * **Skill effort**: a level that a skill's `effort` frontmatter set for the flagged request applies to that turn, and later turns run at the level the [effort resolution order](#adjust-effort-level) gives the fallback model.
 
-The session header shows the level in effect next to the model name. To change it, run `/effort` in the session.
+In the session, run `/effort status` to see the level in effect, or `/effort` to change it.
 
 #### Check what triggered fallback
 
@@ -598,7 +597,9 @@ Claude Code resolves the session's effort level in this order, taking the first 
 
 1. An explicit choice: the [`CLAUDE_CODE_EFFORT_LEVEL`](/docs/en/env-vars#variables) environment variable, launching with `--effort`, or `/effort` in the session ([a non-interactive `/effort` has narrower effect](#non-interactive-effort))
 2. Your settings: the level you saved for the model or an [`effortLevel`](/docs/en/settings-reference#effortlevel) key, with the precedence between them and across settings files stated at [`modelSettings`](/docs/en/settings-reference#modelsettings)
-3. The model's default effort: `high` on every model that supports effort, except that Opus 5.5, Sonnet 5.5, and Haiku 5.5 default to `medium`, Opus 4.7 defaults to `xhigh`, and, when your organization sets a default effort level for its [organization default model](#organization-default-model), that level is the default when you run that model. After an automatic model fallback, see [Effort level after a fallback](#effort-level-after-a-fallback) for the level that applies.
+3. The model's default effort: `high` on every model that supports effort, except that Opus 5.5, Sonnet 5.5, and Haiku 5.5 default to `medium`, Opus 4.7 defaults to `xhigh`, and, when your organization sets a default effort level for its [organization default model](#organization-default-model), that level is the default when you run that model
+
+After an automatic model fallback, see [Effort level after a fallback](#effort-level-after-a-fallback) for the level that applies.
 
 Opus 5.5 starts at `medium` unless one of the sources above sets a level for it, and a top-level `effortLevel` in your user settings file doesn't count for Opus 5.5. That key is the older form `/effort` wrote before Claude Code saved levels per model: it keeps applying where it applied before, on Opus 5, Fable 5.1, and earlier models, while Opus 5.5 and models released after it start at their own default until you choose a level for them with `/effort` or the `/model` picker. A top-level `effortLevel` in project, local, or managed settings, or one passed with `--settings`, applies to every model.
 

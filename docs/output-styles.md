@@ -167,7 +167,7 @@ Configure an output style with YAML [frontmatter](/docs/en/glossary#frontmatter)
 | :- | :- | :- |
 | `name` | No | Name of the output style, shown in the `/config` picker. Default: the file name |
 | `description` | No | Description of the output style, shown in the `/config` picker |
-| `keep-coding-instructions` | No | Set to `true` to keep Claude Code's built-in software engineering instructions alongside your style. Default: `false` |
+| `keep-coding-instructions` | No | Set to `true` to keep Claude Code's section of built-in software engineering instructions, which only the full system prompt includes, alongside your style. See [How output styles work](#how-output-styles-work). Default: `false` |
 | `force-for-plugin` | No | Plugin output styles only. Set to `true` to apply this style automatically whenever the plugin is enabled, without requiring users to select it. Overrides the user's `outputStyle` setting. If multiple enabled plugins set this, Claude Code uses the first one loaded. Default: `false` |
 
 <span id="comparisons-to-related-features" />
@@ -194,9 +194,9 @@ These features combine. For example, you can use CLAUDE.md for what Claude shoul
 An output style changes the instructions Claude Code gives Claude.
 
 * Claude Code sends the active style's instructions with every request.
-* Custom output styles leave out Claude Code's built-in software engineering instructions, such as how to scope changes, write comments, and verify work, unless `keep-coding-instructions` is set to `true`.
+* On the full system prompt, custom output styles leave out Claude Code's section of built-in software engineering instructions, such as how to scope changes, write comments, and verify work, unless `keep-coding-instructions` is set to `true`. The shorter system prompt doesn't include that section, so the field has no effect there. To rely on the field, set [`CLAUDE_CODE_SIMPLE_SYSTEM_PROMPT`](/docs/en/env-vars#variables) to `0`, which selects the full prompt on any model.
 
-Output styles apply to the main conversation and to a [fork](/docs/en/sub-agents#fork-the-current-conversation), which inherits the parent's full conversation and system prompt. Other [subagents run their own system prompt](/docs/en/sub-agents#what-loads-at-startup), so styles don't change how they respond.
+Output styles apply to the main conversation and to a [fork](/docs/en/sub-agents#fork-the-current-conversation), which inherits the parent's whole conversation and system prompt. Other [subagents run their own system prompt](/docs/en/sub-agents#what-loads-at-startup), so styles don't change how they respond.
 
 Token usage depends on the style. A style's instructions add input tokens, though prompt caching reduces this cost after the first request in a session.
 

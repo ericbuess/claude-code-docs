@@ -70,7 +70,7 @@ Claude Code exits `1` without writing when it can't scaffold safely, and the mes
 
 ### plugin install
 
-Install a plugin from a marketplace you've added. `i` is an alias for `install`.
+Install a plugin from one of your marketplaces. `i` is an alias for `install`.
 
 ```bash theme={null}
 claude plugin install <plugin> [options]
@@ -122,6 +122,21 @@ Other fields, such as `pluginId`, `scope`, and `failureCode`, appear only when t
 The `--json` option on `plugin uninstall`, `plugin update`, `plugin enable`, and `plugin disable` prints the same object with that subcommand's own fields.
 
 A usage error, such as an invalid `--scope`, prints no result line and exits `1` with the reason on stderr.
+
+#### JSON result for marketplace commands
+
+On `plugin marketplace add`, `plugin marketplace remove`, and `plugin marketplace update`, `--json` prints one JSON object on the last line of stdout with `command`, `outcome`, and `message` fields. The following is the result of `claude plugin marketplace remove your-marketplace --json`:
+
+```json theme={null}
+{"command":"marketplace-remove","outcome":"ok","marketplace":"your-marketplace","message":"Successfully removed marketplace: your-marketplace"}
+```
+
+The `command` value is `marketplace-add`, `marketplace-remove`, or `marketplace-update`. The fields below appear only when they apply:
+
+* `marketplace`: the name of the marketplace the command acted on
+* `failureCode`: a code for why the command failed, such as `invalid_source`
+
+`plugin marketplace add` and `plugin marketplace remove` can print no result line when the argument is the [reserved name](/docs/en/plugins/marketplace-reference#reserved-names) `anthropic-plugin-directory`, so check the exit code for that name.
 
 #### Accept a displayed install command
 
@@ -652,6 +667,7 @@ claude plugin marketplace add <source> [options]
 | `--scope <scope>` | Settings file to declare the marketplace in: `user`, `project`, or `local`. Defaults to `user` |
 | `--sparse <paths...>` | Limit the git checkout to these directories, for monorepos. `github` and `git` sources only |
 | `--claudeai` | Read the argument as the name of a [marketplace hosted on claude.ai](/docs/en/plugins/install#add-from-claude-ai) instead of a source. Requires Claude Code v2.1.273 or later |
+| `--json` | Print whether the command succeeded, and its message, as one JSON object on the last line of stdout, in the [JSON result format](#plugin-json-result). Has no effect with `--claudeai`. Requires Claude Code v2.1.287 or later |
 
 `<source>` takes any of the forms in the table below, and its form decides the source type and how Claude Code fetches the marketplace. For the resulting source object, see the [marketplace reference](/docs/en/plugins/marketplace-reference).
 
@@ -742,6 +758,7 @@ The `<name>` is the marketplace name that `plugin marketplace list` shows, not t
 | Flag | Description |
 | :- | :- |
 | `--scope <scope>` | Remove the declaration from one settings scope: `user`, `project`, or `local`. Without it, Claude Code removes the declaration from every scope |
+| `--json` | Print whether the command succeeded, and its message, as one JSON object on the last line of stdout, in the [JSON result format](#plugin-json-result). Requires Claude Code v2.1.287 or later |
 
 Remove a marketplace from every scope:
 
@@ -758,10 +775,12 @@ If you scope to a settings file that doesn't declare the marketplace, the comman
 Refresh one marketplace, or every marketplace, from its source to fetch new plugins and versions. A marketplace added with a branch or tag `ref` updates to the latest commit of that ref, not the repository's default branch.
 
 ```bash theme={null}
-claude plugin marketplace update [name]
+claude plugin marketplace update [name] [options]
 ```
 
-The command takes no flags beyond `--help`.
+| Flag | Description |
+| :- | :- |
+| `--json` | Print whether the command succeeded, and its message, as one JSON object on the last line of stdout, in the [JSON result format](#plugin-json-result). Without a name, the command refuses `--json` and exits `1`. Requires Claude Code v2.1.287 or later |
 
 Refresh one marketplace:
 
@@ -769,7 +788,7 @@ Refresh one marketplace:
 claude plugin marketplace update your-marketplace
 ```
 
-Claude Code prints `Successfully updated marketplace: your-marketplace`. When you omit the name, it prints a count such as `Successfully updated 2 marketplaces`. With no marketplaces added, it prints `No marketplaces configured` and exits `0`.
+Claude Code prints `Successfully updated marketplace: your-marketplace`. When you omit the name, it prints a count such as `Successfully updated 2 marketplaces`.
 
 <h2 id="plugin-in-a-session">
   /plugin in a session

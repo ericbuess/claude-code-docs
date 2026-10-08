@@ -61,6 +61,15 @@ Type what you want Claude to do and press **Enter** to send. Claude reads your p
 
 The **+** button next to the prompt box gives you access to file attachments, [skills](#use-skills), [connectors](#connect-external-tools), and [plugins](#install-plugins).
 
+### Accept a suggested prompt
+
+After Claude replies, the Code tab can show a suggested next prompt as gray text in the empty prompt box. Claude Code [generates each suggestion](/docs/en/interactive-mode#prompt-suggestions) from your conversation with a short background request that counts toward your plan's usage limits or your API costs.
+
+* **Use the suggestion**: press **Tab** or **Right arrow** to place it in the prompt box, edit it if you want, then press **Enter** to send it. Pressing **Enter** before you accept the suggestion doesn't send it.
+* **Write your own prompt**: start typing. The suggestion shows only while the prompt box is empty and has no attached files.
+
+Go to **Settings > Claude Code** and turn off **Prompt suggestions** under **Sessions** to stop suggestions in each session from the next time it starts or resumes.
+
 ### Add files and context to prompts
 
 The prompt box supports two ways to bring in external context:
@@ -236,6 +245,7 @@ Press **Cmd+/** on macOS or **Ctrl+/** on Windows to see all shortcuts available
 | `Ctrl` `Tab` / `Ctrl` `Shift` `Tab` | Next or previous session |
 | `Cmd` `Shift` `]` / `Cmd` `Shift` `[` | Next or previous session |
 | `Esc` | Stop Claude's response |
+| `Tab` / `Right arrow` | [Accept the suggested prompt](#accept-a-suggested-prompt) in an empty prompt box |
 | `Cmd` `Shift` `D` | Toggle diff pane |
 | `Cmd` `Shift` `B` | Toggle Browser pane |
 | `Cmd` `Shift` `S` | Select an element in the Browser |
@@ -248,7 +258,7 @@ Press **Cmd+/** on macOS or **Ctrl+/** on Windows to see all shortcuts available
 | `Cmd` `Shift` `E` | Open effort menu |
 | `1`–`9` | Select item in an open menu |
 
-These shortcuts apply only to the Code tab. The terminal-based [interactive mode shortcuts](/docs/en/interactive-mode#keyboard-shortcuts), such as `Shift+Tab` to cycle permission modes, do not apply in Desktop.
+These shortcuts apply to the Code tab. In Desktop, `Shift+Tab` doesn't cycle permission modes as it does in the terminal's [interactive mode](/docs/en/interactive-mode#keyboard-shortcuts).
 
 ### Check usage
 
@@ -395,6 +405,25 @@ To continue a session somewhere else, open the session menu from the caret besid
 
 * Select **Cloud** to continue the session as a [cloud session](/docs/en/claude-code-on-the-web), with your conversation carried over as a summary. Before you confirm, the dialog states whether your files move too and whether this session is archived once the cloud one is ready. You can't move a session that runs over [SSH](#ssh-sessions) or in [WSL](/docs/en/desktop-wsl) this way.
 * Select an installed editor or your file manager to open the session's folder on disk there.
+
+### Control which sessions appear on your other devices
+
+A local session shows up on your other devices once [Remote Control](/docs/en/remote-control) connects it. A connected session appears in the session list at [claude.ai/code](https://claude.ai/code) and in the Claude apps on devices signed in to your claude.ai account.
+
+A local session connects when you turn Remote Control on for it, or when it connects automatically as it starts:
+
+* **You turn it on for that session**: with the session's **Remote Control** switch, or by typing `/remote-control` in its prompt box.
+* **It connects when it starts**: new sessions connect automatically while **Connect new sessions to Remote Control** is on in **Settings > Claude Code**. If you've never changed that setting, Desktop follows [`remoteControlAtStartup`](/docs/en/settings-reference#remotecontrolatstartup) in your user or managed settings, then your organization's default.
+
+To see whether a session is connected, look at the laptop icon before the session title in the toolbar. The icon is highlighted while the session is connected or connecting. Click it to open the session's **Remote Control** switch.
+
+To keep sessions off your other devices, turn Remote Control off at the level you need:
+
+* **One session**: turn off its **Remote Control** switch. In a session that connected when it started, typing `/remote-control` leaves Remote Control on and shows `Remote Control is already on. This session connected automatically when it started.` Click **Turn off** on that line to disconnect.
+* **New Desktop sessions on this computer**: turn off **Connect new sessions to Remote Control** in **Settings > Claude Code**. If it already shows off, turn it on and then off so Desktop saves your choice. Once saved, it takes precedence over `remoteControlAtStartup` and the defaults.
+* **Any session on this computer, including the CLI**: set [`disableRemoteControl`](/docs/en/settings-reference#disableremotecontrol) to `true` in `~/.claude/settings.json` to stop sessions from connecting. A session that was already connected when you saved the file stays connected until you turn Remote Control off for it.
+
+To hide a session that already appears on your other devices, archive it in Desktop. Desktop archives the session's Remote Control copy too, so it leaves the default session list on those devices. To view or delete it there, see [Archive sessions](/docs/en/claude-code-on-the-web#archive-sessions).
 
 ### Sessions from Dispatch
 
@@ -869,7 +898,6 @@ s-cdn.anthropic.com
 assets-proxy.anthropic.com
 claude.ai
 a.claude.ai
-a-cdn.claude.ai
 assets.claude.ai
 downloads.claude.ai
 *.livepreview.claude.ai
@@ -1000,7 +1028,7 @@ The following features aren't available in Desktop, except where noted:
 
 * **Third-party providers**: Desktop connects to Anthropic's API by default. To route Desktop through a gateway, or to run the Code tab on Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry, or a self-hosted LLM gateway, follow the links in the [Third-party providers row](#feature-comparison).
 * **Linux (beta)**: Computer Use isn't yet available in the Linux desktop app. See [Claude Desktop on Linux](/docs/en/desktop-linux).
-* **Inline code suggestions**: Desktop does not provide autocomplete-style suggestions. It works through conversational prompts and explicit code changes.
+* **Inline code suggestions**: Desktop doesn't offer autocomplete-style code completions. It works through conversational prompts and explicit code changes, and can [suggest your next prompt](#accept-a-suggested-prompt) after Claude replies.
 * **Agent teams**: coordinated teams, where Claude as the team lead assigns tasks to teammates from a shared task list, are available in the [CLI](/docs/en/agent-teams), not in Desktop. For multi-agent work inside one session, use [dynamic workflows](/docs/en/workflows), which run in Desktop; Claude can also [message and manage your other sessions](#work-across-sessions) directly.
 * **Terminal-dialog commands**: built-in commands that open an interactive panel in the terminal behave differently in the Code tab. Edit [settings files](/docs/en/settings) directly to manage permission rules and configuration, or run the commands from the standalone CLI.
   * Commands with no argument form, such as `/permissions`, reply with `isn't available in this environment`.

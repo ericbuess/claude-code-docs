@@ -128,11 +128,13 @@ When you install the app, you grant the following permissions:
 | Permission | Access |
 | - | - |
 | Actions | Read and write |
+| Administration | Read |
 | Checks | Read and write |
 | Contents | Read and write |
 | Discussions | Read and write |
 | Issues | Read and write |
 | Members | Read |
+| Merge queues | Read |
 | Metadata | Read |
 | Pull requests | Read and write |
 | Repository hooks | Read and write |

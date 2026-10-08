@@ -112,7 +112,7 @@ Output styles are saved sets of instructions that change Claude's role, tone, an
 
 An output style is a markdown file with [frontmatter](/docs/en/output-styles#frontmatter) for metadata, followed by the prompt content. Save it to `~/.claude/output-styles/` for a user-level style available in every project, or `.claude/output-styles/` in your repository for a project-level style you can commit and share with your team.
 
-A custom output style leaves the `claude_code` preset's software engineering instructions out and uses your own. To keep them and layer your instructions on top, set `keep-coding-instructions: true` in the frontmatter. Those instructions are only in Claude Code's full system prompt, so the setting has no effect in a session on the shorter system prompt, which you pin on or off with [`CLAUDE_CODE_SIMPLE_SYSTEM_PROMPT`](/docs/en/env-vars#variables). Keep them when your agent is still doing software engineering work. Leave them out when you're replacing the role entirely.
+A custom output style leaves the `claude_code` preset's software engineering instructions out and uses your own. To keep them and layer your instructions on top, set `keep-coding-instructions: true` in the frontmatter. Those instructions are only in Claude Code's full system prompt, so the setting has no effect in a session on the shorter system prompt; set [`CLAUDE_CODE_SIMPLE_SYSTEM_PROMPT`](/docs/en/env-vars#variables) to `0` to select the full prompt on any model. Keep them when your agent is still doing software engineering work. Leave them out when you're replacing the role entirely.
 
 The example below defines a code-review persona that keeps the coding instructions, since reviewing code still benefits from Claude Code's security and code-quality guidance. Save it as `~/.claude/output-styles/code-reviewer.md` to make it available across projects:
 
@@ -507,7 +507,7 @@ The four customization methods differ in where they live, how they're shared, an
 | **Management** | On filesystem | CLI + files | In code | In code |
 | **Default tools** | Preserved | Preserved | Preserved | Lost (unless included) |
 | **Built-in safety** | Maintained | Maintained | Maintained | Must be added |
-| **Customization level** | Additions only | Replace or extend default | Additions only | Complete control |
+| **Customization level** | Additions only | Additions; can omit coding instructions | Additions only | Complete control |
 | **Version control** | With project | Yes | With code | With code |
 | **Scope** | Project-specific | User or project | Code session | Code session |
 

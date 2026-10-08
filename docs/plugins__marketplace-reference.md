@@ -450,6 +450,7 @@ The table maps marketplace-level messages to the field each is about.
 | `Claude Code cannot install plugin "x". Each part of a plugin id (plugin@marketplace) may use only the letters a-z and A-Z, digits, ".", "_" and "-", and must start with a letter or digit. Change this entry's "name".` | Error | `plugins[i].name` |
 | `Duplicate plugin name "x" found in marketplace` | Error | Two entries share a `name` |
 | `plugins.i.source: Invalid input` | Error | The entry's `source` matches no type. See [Invalid input on a source](#invalid-input-on-a-source) |
+| `plugins.i.source: Invalid string: must start with "./"` | Error | A relative-path `source` without the leading `./`. Before v2.1.285, this mistake printed `Invalid input` instead |
 | `plugins[i].source: Path contains "..": <path>` | Error | A relative `source` that escapes the marketplace root |
 | `source.source: 'unsupported' is a parse-time placeholder and cannot be authored` | Error | `plugins[i].source` |
 | `Plugin "x" sets headersHelper but is not "strict": false` | Error | `plugins[i].headersHelper`, on an `archive` entry |
@@ -474,10 +475,11 @@ The table maps marketplace-level messages to the field each is about.
 
 `Invalid input` on a `source` means the object matched no source type. Check for these causes:
 
-* A relative path that doesn't start with `./`, other than `"."` or a [bare name under `metadata.pluginRoot`](#relative-path-plugin-source)
 * An `npm` `package` containing `..`
 * A `source` type that isn't one of the [plugin sources](#plugin-sources)
 * A known type with a required field missing or of the wrong type, such as `github` without `repo`
+
+A relative path that doesn't start with `./`, other than `"."` or a [bare name under `metadata.pluginRoot`](#relative-path-plugin-source), fails with `Invalid string: must start with "./"`. Before v2.1.285, it printed `Invalid input` like the causes above.
 
 ### Failures that validation doesn't catch
 

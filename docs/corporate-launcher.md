@@ -118,6 +118,7 @@ When the launcher can't run, Claude Code refuses to start the process instead of
 * **Reach `exec` within about three seconds each time the launcher runs.** A cold background dispatch runs the launcher twice in series before the first byte of output, so do slow work such as a single sign-on exchange lazily or from a cache.
 * **Tolerate being invoked from inside itself.** Claude Code applies the launcher to every nested self-spawn, so a launcher that acquires an exclusive resource must detect that it already holds it.
 * **Don't write to the terminal before Claude Code starts.** Anything printed before the `exec` is reported as the crash cause if the session dies before initializing.
+* **Don't depend on how arguments are spelled.** A flag's value can arrive as its own argument, `--flag value`, or joined to the flag, `--flag=value`. Which form a flag uses can change between versions.
 
 ### Format of the launcher value
 

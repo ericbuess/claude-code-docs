@@ -212,7 +212,7 @@ Most of the time the peek panel is enough and you don't need to open the full tr
 
 Type a reply in the peek panel and press `Enter` to send it to that session. Prefix a reply with `!` to send a Bash command instead. What happens to the reply depends on the session and on what you send:
 
-* A session that's working: the reply joins the session's [message queue](/docs/en/interactive-mode#queue-messages-while-claude-works) instead of interrupting the response, and takes effect [when queued input does](/docs/en/interactive-mode#when-claude-code-sends-what-you-queued). A [command](/docs/en/commands) waits for the turn to end, even one that runs as soon as you type it at a session's own prompt
+* A session that's working: `/model`, `/effort`, `/rename`, and `/usage` run right away. Other replies join the session's [message queue](/docs/en/interactive-mode#queue-messages-while-claude-works) instead of interrupting the response, and take effect [when queued input does](/docs/en/interactive-mode#when-claude-code-sends-what-you-queued). Other [commands](/docs/en/commands) wait for the turn to end, even ones that run as soon as you type them at a session's own prompt
 * A reply that is exactly `/stop`: stops the session at once instead of being delivered to it, whether the session is working or waiting on you
 * A [shell job](#run-a-shell-command): the reply, `/stop` included, goes to the command's terminal as typed input
 
@@ -220,7 +220,7 @@ When the session is waiting on you, how you answer from the peek panel depends o
 
 * A question with predefined choices: the panel lists the choices by number. With the reply input empty, press a choice's number to fill it in, then `Enter` to send it, or type your own answer instead
 * A question without predefined choices: type your answer. When the empty input shows a suggested reply, press `Tab` to fill it in and edit it before sending
-* A permission prompt or another dialog, such as a [sandbox](/docs/en/sandboxing) prompt or an MCP server's [request for input](/docs/en/mcp#respond-to-mcp-elicitation-requests): replying doesn't answer it. Your reply waits in the queue. To answer the dialog, attach with `→`
+* A permission prompt or another dialog, such as a [sandbox](/docs/en/sandboxing) prompt or an MCP server's [request for input](/docs/en/mcp#respond-to-mcp-elicitation-requests): replying doesn't answer it. Your message waits in the queue. To answer the dialog, attach with `→`
 
 When a [`PermissionRequest`](/docs/en/hooks#permissionrequest) or [`PreToolUse`](/docs/en/hooks#pretooluse) hook returns output Claude Code can't validate for the call the session is asking about, the row shows the hook event and `hook output invalid:` with the validation error before the pending request's text. For a hook that fails another way, the row says the hook failed. The session still waits on the same request.
 
@@ -806,7 +806,7 @@ The supervisor is a background service that runs your background sessions so the
 
 Each session is its own Claude Code process under the supervisor, and what happens to that process depends on the session's state:
 
-* **Working, paused on a permission prompt or other dialog, or attached**: the process keeps running. A running subagent, workflow, or monitor counts as working.
+* **Working, paused on a permission prompt or other dialog, or attached**: the process keeps running. A running subagent, workflow, or monitor counts as working, and so does a pending [session-scoped scheduled task](/docs/en/scheduled-tasks), such as a `/loop` wakeup.
 * **Finished or waiting for your next message, and unattached for about an hour**: the supervisor stops the process to free resources. A session that ended its turn by asking you a question counts as waiting for your next message. The conversation stays on disk, and the next time you attach or reply, the session resumes where it left off. Pin a session with `Ctrl+T` to keep its process running.
 * **Exited unexpectedly while the supervisor is running**: the supervisor restarts the process. Ending a session you backgrounded yourself with `←` or `/background`, for example with `kill`, marks it stopped instead of restarting it. For sessions that ended with a shutdown, see [Sessions show as failed or stopped after shutdown](#sessions-show-as-failed-after-shutdown).
 * **After an auto-update**: the supervisor restarts itself onto the new version and moves idle sessions over in the background. Sessions that are working, waiting on you, or attached aren't interrupted.
@@ -983,6 +983,7 @@ Agent view has evolved quickly during research preview. If you are on an older C
 | Version | Change |
 | - | - |
 | v2.1.290 | [`claude attach` and `claude logs`](#manage-sessions-from-the-shell) can take part of a running session's name in place of the ID. |
+| v2.1.290 | `/model`, `/effort`, `/rename`, and `/usage` sent as a [peek reply](#peek-and-reply) to a working session run right away. |
 | v2.1.288 | `Ctrl+F` finds sessions by name, and `Alt+↑` / `Alt+↓` jump between group headers. Both, and `Ctrl+R`, can be [rebound](/docs/en/keybindings#agents-actions). |
 | v2.1.287 | The [`n:<text>` filter](#filter-sessions) finds sessions by name or first prompt. While any filter is active, groups you collapsed expand to show their matches and the first match is selected, so `Enter` opens it. |
 | v2.1.287 | A command sent as a [peek reply](#peek-and-reply) runs when the session's current turn ends, including the commands that run as soon as you type them at a session's own prompt. A reply that is exactly `/stop` stops the session at once. |

@@ -130,8 +130,6 @@ claude mcp add --env AIRTABLE_API_KEY=YOUR_KEY --transport stdio airtable \
 ```
 
 <Note>
-  **Important: Separate server arguments with `--`**
-
   For stdio servers, the `--` (double dash) separates Claude's own options, such as `--transport`, `--env`, and `--scope`, from the command and arguments that run the server. Everything after `--` is passed to the server untouched.
 
   For example:
@@ -1309,10 +1307,6 @@ This is useful for tools that return inherently large but necessary outputs, suc
 ```
 
 The annotation applies independently of `MAX_MCP_OUTPUT_TOKENS` for text content, so users don't need to raise the environment variable for tools that declare it. Tools that return image data are still subject to the token limit.
-
-<Warning>
-  If you frequently encounter output warnings with specific MCP servers you don't control, consider increasing the `MAX_MCP_OUTPUT_TOKENS` limit. You can also ask the server author to add the `anthropic/maxResultSizeChars` annotation or to paginate their responses. The annotation has no effect on tools that return image content; for those, raising `MAX_MCP_OUTPUT_TOKENS` is the only option.
-</Warning>
 
 ### Images in tool results
 

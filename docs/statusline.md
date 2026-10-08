@@ -136,7 +136,9 @@ These examples use Bash scripts, which work on macOS and Linux. On Windows, see 
 
 Claude Code runs your script with [JSON session data](#available-data) on stdin and displays whatever the script prints to stdout.
 
-**When it updates**
+<Note>The status line runs locally and does not consume API tokens. It temporarily hides during certain UI interactions, including the help menu and permission prompts.</Note>
+
+### When the status line updates
 
 Your script runs once when a session starts, including when you resume one. After that, it runs again when:
 
@@ -153,17 +155,17 @@ Claude Code debounces updates at 300ms, so rapid changes batch together and your
 
 The event-driven triggers can go quiet when the main session is idle, for example while a coordinator waits on background subagents. To keep time-based or externally-sourced segments current during idle periods, set [`refreshInterval`](#manually-configure-a-status-line) to also re-run the command on a fixed timer.
 
-**What your script can output**
+### What your script can output
+
+Your script can print more than a single line of plain text:
 
 * **Multiple lines**: each `echo` or `print` statement displays as a separate row. See the [multi-line example](#display-multiple-lines).
 * **Colors**: use [ANSI escape codes](https://en.wikipedia.org/wiki/ANSI_escape_code#Colors) like `\033[32m` for green (terminal must support them). See the [git status example](#git-status-with-colors).
 * **Links**: use [OSC 8 escape sequences](https://en.wikipedia.org/wiki/ANSI_escape_code#OSC) to make text clickable (Cmd+click on macOS, Ctrl+click on Windows/Linux). Requires a terminal that supports hyperlinks like iTerm2, Kitty, or WezTerm. See the [clickable links example](#clickable-links).
 
-**Sizing output to the terminal**
+### Size output to the terminal
 
 Claude Code captures your script's output instead of connecting it directly to the terminal, so `tput cols` and language-level width detection cannot read the terminal size from inside the script. Read the `COLUMNS` and `LINES` environment variables instead. Claude Code sets these to the current terminal dimensions before running your script.
-
-<Note>The status line runs locally and does not consume API tokens. It temporarily hides during certain UI interactions, including the help menu and permission prompts.</Note>
 
 ## Available data
 
@@ -1165,7 +1167,11 @@ Community projects like [ccstatusline](https://github.com/sirmalloc/ccstatusline
 
 ## Troubleshooting
 
-**Status line not appearing**
+If the status line is blank, start with [Status line not appearing](#status-line-not-appearing). A folder you haven't trusted and a script that fails also leave it blank, as [Workspace trust required](#workspace-trust-required) and [Script errors or hangs](#script-errors-or-hangs) describe.
+
+### Status line not appearing
+
+If you configured a status line and nothing shows at the bottom of the interface, work through these checks:
 
 * Verify your script is executable: `chmod +x ~/.claude/statusline.sh`
 * Check that your script outputs to stdout, not stderr
@@ -1176,18 +1182,17 @@ Community projects like [ccstatusline](https://github.com/sirmalloc/ccstatusline
 * Run `claude --debug` to log your script's stderr on every status line invocation, and its exit code on the first invocation in a session
 * Ask Claude to read your settings file and execute the `statusLine` command directly to surface errors
 
-**Status line shows `--` or empty values**
+### Status line shows `--` or empty values
 
-* Fields may be `null` before the first API response completes
-* Handle null values in your script with fallbacks such as `// 0` in jq
-* Restart Claude Code if values remain empty after multiple messages
+Fields may be `null` before the first API response completes, so handle null values in your script with fallbacks such as `// 0` in jq. Restart Claude Code if values remain empty after multiple messages.
 
-**Context percentage shows unexpected values**
+### Context percentage shows unexpected values
 
-* Use `used_percentage` for the simplest accurate context state
-* The status line reports the counts from the last API response, while `/context` adds an estimate for messages added since that response, so `/context` can read higher until the next response
+The status line reports the counts from the last API response, while `/context` adds an estimate for messages added since that response, so `/context` can read higher until the next response. Use `used_percentage` for the simplest accurate context state. For the formula behind `used_percentage`, see [Context window fields](#context-window-fields).
 
-**OSC 8 links not clickable**
+### OSC 8 links not clickable
+
+Whether a link is clickable depends on your terminal, on whether Claude Code detects hyperlink support in it, on whether SSH or tmux strips the escape sequence, and on how your script prints it:
 
 * Verify your terminal supports OSC 8 hyperlinks (iTerm2, Kitty, WezTerm)
 
@@ -1209,25 +1214,28 @@ Community projects like [ccstatusline](https://github.com/sirmalloc/ccstatusline
 
 * If escape sequences appear as literal text like `\e]8;;`, use `printf '%b'` instead of `echo -e` for more reliable escape handling
 
-**Display glitches with escape sequences**
+### Display glitches with escape sequences
 
-* Complex escape sequences (ANSI colors, OSC 8 links) can occasionally cause garbled output if they overlap with other UI updates
-* If you see corrupted text, try simplifying your script to plain text output
-* Multi-line status lines with escape codes are more prone to rendering issues than single-line plain text
+Complex escape sequences (ANSI colors, OSC 8 links) can occasionally cause garbled output if they overlap with other UI updates. Multi-line status lines with escape codes are more prone to rendering issues than single-line plain text.
 
-**Workspace trust required**
+If you see corrupted text, try simplifying your script to plain text output.
 
-* Because `statusLine` executes a shell command, Claude Code runs it under the same [workspace trust rule as hooks in settings files](/docs/en/permissions#what-runs-before-you-trust-a-folder). Accepting the dialog for the folder, or for a parent directory whose trust extends to it, is enough.
-* Until then, the status line stays blank, and `claude --debug` logs `Status line command skipped: workspace trust not accepted`. Restart Claude Code and accept the trust dialog to enable it.
+### Workspace trust required
 
-**Script errors or hangs**
+Until you accept the workspace trust dialog, the status line stays blank. Because `statusLine` executes a shell command, Claude Code runs it under the same [workspace trust rule as hooks in settings files](/docs/en/permissions#what-runs-before-you-trust-a-folder). Accepting the dialog for the folder, or for a parent directory whose trust extends to it, is enough.
+
+Until then, `claude --debug` logs `Status line command skipped: workspace trust not accepted`. Restart Claude Code and accept the trust dialog to enable it.
+
+### Script errors or hangs
+
+Claude Code displays your script's output only after the script exits with code 0:
 
 * Scripts that exit with non-zero codes or produce no output cause the status line to go blank
 * Slow scripts block the status line from updating until they complete. Keep scripts fast to avoid stale output.
 * If a new update triggers while a slow script is running, the in-flight script is cancelled
 * Test your script independently with mock input before configuring it
 
-**Notifications share the status line row**
+### Notifications share the status line row
 
 Outside [fullscreen rendering](/docs/en/fullscreen), Claude Code shows notifications on the same row as your status line. In fullscreen rendering, Claude Code gives notifications a row of their own.
 

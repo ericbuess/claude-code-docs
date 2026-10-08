@@ -569,6 +569,7 @@ During a conversation, the extension announces:
 * **Claude's replies**: the extension announces each reply once, when it's complete, and stays silent while text streams in. Your screen reader reads code blocks as a line-count summary, reads links by their label, and reads tables cell by cell; the full reply stays readable in the transcript.
 * **Permission requests and questions**: the extension announces a request when its permission prompt appears, naming the tool Claude wants to use. It announces in the same way when Claude asks you a question and when Claude finishes a plan and waits for your review.
 * **Status changes**: the extension announces when Claude starts working, when Claude is ready for your input, and when Claude Code starts compacting the conversation.
+* **Queued messages**: when you send a message while Claude is working, the extension announces "Message queued." for that message.
 * **Errors and model prompts**: the extension announces errors in the conversation, and announces when the [usage-credits consent prompt](/docs/en/model-config#fable-and-usage-credits) or the [flagged-request prompt](/docs/en/model-config#ask-before-switching) appears.
 
 While Claude works, your screen reader reads a text label in place of the progress spinner's animation.

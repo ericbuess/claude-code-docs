@@ -317,7 +317,7 @@ A mock file's body and frontmatter accept these options:
 * **Substitutions**: insert fields from the call's input with `{{input.<field>}}`, and the contents of a fixture file beside the mock with `{{file:fixtures/{input.<field>}.json}}`.
 * **`expect:`**: the `expect:` block guards the input. If a call violates it, the run aborts with score 0 and records why, so a case can assert what your plugin asked the server to do.
 * **`error: true`**: set `error: true` to return the body as a tool error instead.
-* **`type: agent`**: set `type: agent` to have the judge model answer as the server from instructions in the body.
+* **`type: agent`**: set `type: agent` to have the judge model answer as the server from instructions in the body. Calls to agent mocks share one [budget per run](#mock-call-budget-exceeded) of four times the case's `max_turns`, and a call past it aborts the run with score 0.
 
 The [mock file reference](#mock-files) lists every key and the `_server.md` and `_tools.json` files.
 
@@ -468,7 +468,7 @@ These are the fields a gating script usually reads. The document also carries th
 | `cases[].aggregates.score` | Mean with-arm run score for the case |
 | `cases[].aggregates.delta` | With-arm score minus without-arm score. Omitted when the case ran one arm or the arms aren't comparable |
 | `cases[].arms.with[].error` | `null`, or why a run ended abnormally, such as `timed out after 300s`. A run that started but ended badly is still graded on what it produced, so a non-null error doesn't imply score 0 |
-| `cases[].arms.with[].aborted` | Present when a [mock](#mock-mcp-servers)'s `expect:` or `abort_when` stopped the run, with `server`, `tool`, and `reason`. The run scores 0 and `error` stays `null` |
+| `cases[].arms.with[].aborted` | Present when a [mock](#mock-mcp-servers) stopped the run through `expect:`, `abort_when`, or the [agent-mock call budget](#mock-call-budget-exceeded), with `server`, `tool`, and `reason`. The run scores 0 and `error` stays `null` |
 | `cases[].arms.with[].skippedPaidGraders` | `true` when the cost ceiling skipped this run's judge graders, so its score isn't comparable |
 | `costUsd`, `durationSeconds`, `claudeVersion` | Estimated cost at list price including judge calls, wall-clock seconds, and the Claude Code version that ran the suite |
 
@@ -614,16 +614,31 @@ A `<tool>.md` file under `mocks/<server>/` answers one tool. Its body is the too
 | Key | Default | Purpose |
 | :- | :- | :- |
 | `type` | `fixed` | `fixed` returns the body as written. `agent` treats the body as instructions for the [judge model](#command-options), which acts as the server for the run and sees earlier calls as history |
-| `expect` | unset | A map from dotted input paths to a type name such as `string`, `number`, `boolean`, `array`, or `object`, a `/regex/`, a literal, or a list of allowed literals. A call that violates it aborts the run with score 0 and is reported as `aborted` with the server, tool, and reason |
+| `expect` | unset | A map from dotted input paths to a type name such as `string`, `number`, `boolean`, `array`, or `object`, a [`/regex/`](#expect-patterns), a literal, or a list of allowed literals. A call that violates it aborts the run with score 0 and is reported as `aborted` with the server, tool, and reason |
 | `error` | `false` | `fixed` only. Return the body as a tool error |
 | `abort_when` | unset | `agent` only. Prose listing the only conditions under which the agent may abort the run |
 
 Two optional files sit beside the tool files in a server's directory:
 
-* **`_server.md`**: a single `type: agent` mock that answers several tools, listed in its `tools:` frontmatter key. A `<tool>.md` for the same tool takes precedence. Put an `expect:` guard on the individual `<tool>.md`, not here
+* **`_server.md`**: a single `type: agent` mock that answers several tools, listed in its `tools:` frontmatter key. A `<tool>.md` for the same tool takes precedence. An `expect:` guard here is a load error unless `tools:` lists a single tool, so put the guard on the individual `<tool>.md` instead
 * **`_tools.json`**: a saved `tools/list` response from the real server, so mocked tools carry their real descriptions and input schemas instead of a permissive placeholder
 
 A case's own `mocks/` directory uses the same layout and overrides the suite's mocks file by file.
+
+<h4 id="expect-patterns">
+  Regex patterns in expect
+</h4>
+
+A `/regex/` value in `expect:` uses a small dialect that Claude Code checks when it loads the suite:
+
+* Literal characters, `.`, escapes such as `\d`, and character classes such as `[a-z]`
+* The quantifiers `*`, `+`, `?`, and the `{m,n}` forms, each on a single character, escape, or class
+* An optional `^` at the start and `$` at the end
+* The flags `i` and `s` only
+
+A pattern outside the dialect, such as one with a group, alternation, a backreference, lookaround, or another flag, stops the case from loading: the case scores 0 and its error names the pattern. To allow several exact values, write a list of literals instead of an alternation.
+
+Each pattern checks values only up to a maximum length, and a longer value counts as a violation. Quantifiers can lower that length, and a leading `^` raises it, so anchor patterns with `^` and keep quantifiers few.
 
 ## Troubleshooting
 
@@ -706,6 +721,12 @@ That grader is excluded from the score by design in a two-arm run, and its `scor
 ### Runs fail with a usage-limit or rate-limit error partway through
 
 If your account reaches its plan's usage limit or an API rate limit while a suite is running, each later run ends with that error, is graded on what it produced, and usually scores 0. The suite still finishes and isn't marked `partial`, so the result can look like a regression. Check the `NOTES` column or `cases[].arms.with[].error` in the JSON for the limit message before trusting the scores, then re-run after the limit resets, with `--runs 1` or a `--case` filter if you need to stay under it.
+
+<h3 id="mock-call-budget-exceeded">
+  "mock call budget exceeded"
+</h3>
+
+Every `type: agent` [mock](#mock-mcp-servers) in a run draws on one call budget of four times the case's `max_turns`, which is 40 calls at the default of 10. Calls answered from `.replay/` recordings count too, and the case's `mock budget` progress line prints the budget. A call past it aborts the run with score 0 and this reason, so raise `max_turns` in the case for a skill that makes many calls to agent mocks.
 
 ### Runs time out or hit the turn cap
 

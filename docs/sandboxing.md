@@ -634,7 +634,7 @@ Sandboxing, [permission rules](/docs/en/permissions), and [permission modes](/do
 Permission rules and sandboxing control different things:
 
 * **Permission rules** control which tools Claude Code can use and are evaluated before any tool runs. They apply to every tool: Bash, Read, Edit, WebFetch, MCP, and others, except that a deny or ask rule can't block [`EndConversation`](/docs/en/tools-reference#endconversation-tool-behavior) while any other tool remains.
-* **Sandboxing** provides OS-level enforcement that restricts what shell commands can access at the filesystem and network level. It applies only to Bash, PowerShell, and [Monitor](/docs/en/tools-reference#monitor-tool) commands and their child processes.
+* **Sandboxing** provides OS-level enforcement that restricts what shell commands can access at the filesystem and network level. It applies to Bash, PowerShell, and [Monitor](/docs/en/tools-reference#monitor-tool) tool commands and their child processes.
 
 The two layers also differ in how they are enforced. Claude Code evaluates permission decisions before a command runs, based on the command string and, in auto mode, a separate classifier's judgment about whether the command is safe. The operating system enforces the sandbox boundary on the running process, so it holds regardless of what the model chose to run and even if an allowed command does more than its name suggests.
 

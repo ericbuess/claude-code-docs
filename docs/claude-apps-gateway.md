@@ -289,7 +289,7 @@ A developer can't set this up manually. The login picker has no gateway option, 
 
 ### Allow a gateway on public address space you own
 
-Some organizations number their internal network from a public IPv4 block they own, such as a carrier's own address space or a legacy `/8`, so their gateway can't have a private address. List those blocks in the `gatewayInternalNetworks` managed setting. `/login` then accepts a gateway inside a listed block when the developer's machine connects to it from an address inside the same block. This requires Claude Code v2.1.268 or later on the developer machine; earlier versions ignore the key and apply the private-address rule.
+Some organizations number their internal network from a public IPv4 block they own, such as a carrier's own address space or a legacy `/8`, so their gateway has no private address. List those blocks in the `gatewayInternalNetworks` managed setting. `/login` then accepts a gateway inside a listed block when the developer's machine connects to it from an address inside the same block. This requires Claude Code v2.1.268 or later on the developer machine; earlier versions ignore the key and apply the private-address rule.
 
 <Warning>
   `gatewayInternalNetworks` is for internal networks that happen to be numbered from public address space. It doesn't make it safe to expose a gateway to the internet: a trusted gateway can push settings that run commands on developer machines.

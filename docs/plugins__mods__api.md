@@ -192,6 +192,11 @@ Files and processes have a few rules of their own:
 
 Every one of these calls is itself an event, named for its namespace and method without the `$.`, such as `fs.read` for `$.fs.read`. A mod [earlier in the chain](/docs/en/plugins/mods/events#the-order-mods-run-in) can observe, rewrite, or refuse your call, which is how an organization restricts what mods reach.
 
+A mod can refuse your `$.process.spawn` call after the command has produced output or exited, and nothing the command did is undone. The call then rejects with a message that ends with one of these strings and the refusing mod's reason:
+
+* **`$.process.spawn started, and a plugin withheld its result:`**: the refusing mod hadn't read the command's output to the end. Claude Code stops the command if it's still running.
+* **`$.process.spawn ran, and a plugin withheld its result:`**: the refusing mod had read the command's output to the end, so the command had exited
+
 ## Next steps
 
 * [React to events](/docs/en/plugins/mods/events): hook tool calls, prompts, and turns

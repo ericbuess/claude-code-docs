@@ -638,7 +638,7 @@ To share that configuration across projects, use one of these approaches:
 Permissions and [sandboxing](/docs/en/sandboxing) are complementary security layers:
 
 * **Permissions** control which tools Claude Code can use and which files or domains it can access. They apply to Bash, Read, Edit, WebFetch, MCP, and every other tool, except that a deny or ask rule can't block [`EndConversation`](/docs/en/tools-reference#endconversation-tool-behavior) while any other tool remains.
-* **Sandboxing** provides OS-level enforcement that restricts shell commands' filesystem and network access. It applies only to Bash, PowerShell, and [Monitor](/docs/en/tools-reference#monitor-tool) commands and their child processes.
+* **Sandboxing** provides OS-level enforcement that restricts shell commands' filesystem and network access. It applies to Bash, PowerShell, and [Monitor](/docs/en/tools-reference#monitor-tool) tool commands and their child processes.
 
 Use both for defense-in-depth, since sandbox restrictions still apply even if a prompt injection bypasses Claude's decision-making. Paths and domains from both sandbox settings and permission rules are [merged into the final sandbox configuration](/docs/en/sandboxing#permission-rules).
 

@@ -214,7 +214,7 @@ Learn more: [Run Claude Code programmatically](/docs/en/headless)
 
 ### Output style
 
-A configuration that changes the instructions Claude Code gives Claude, to set response behavior, tone, or format. Unlike [CLAUDE.md](#claude-md), which adds project context alongside Claude Code's default instructions, a custom output style can replace the default software engineering instructions.
+A configuration that changes the instructions Claude Code gives Claude, to set response behavior, tone, or format. Unlike [CLAUDE.md](#claude-md), which adds project context alongside Claude Code's default instructions, a custom output style adds its own instructions and can leave out the default software engineering instructions.
 
 Learn more: [Output styles](/docs/en/output-styles)
 

@@ -57,7 +57,7 @@ To install Claude Code, open a terminal and run the command for your system. If 
     curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd && del install.cmd
     ```
 
-    When the installer finishes, open a new terminal window and run `claude --version`. A working installation prints a version number. If your shell says `claude` isn't found or isn't recognized, the install directory isn't on your PATH yet: see [Fix your PATH](/docs/en/troubleshoot-install#command-not-found-claude-after-installation).
+    The install command shows no progress while it downloads Claude Code. When the installer finishes, open a new terminal window and run `claude --version`. A working installation prints a version number. If your shell says `claude` isn't found or isn't recognized, the install directory isn't on your PATH yet: see [Fix your PATH](/docs/en/troubleshoot-install#command-not-found-claude-after-installation).
 
     If you see `The token '&&' is not a valid statement separator`, you're in PowerShell, not CMD. If you see `'irm' is not recognized as an internal or external command`, you're in CMD, not PowerShell.
 
@@ -111,13 +111,13 @@ You can run Claude Code natively on Windows or inside WSL. Pick based on where y
 
 | Option | Requires | [Sandboxing](/docs/en/sandboxing) | When to use |
 | - | - | - | - |
-| Native Windows | None; [Git for Windows](https://git-scm.com/downloads/win) is optional | Not supported | Windows-native projects and tools |
-| WSL 2 | WSL 2 enabled | Supported | Linux toolchains or sandboxed command execution |
-| WSL 1 | WSL 1 enabled | Not supported | If WSL 2 is unavailable |
+| [Native Windows](#install-on-native-windows) | None; [Git for Windows](https://git-scm.com/downloads/win) is optional | Not supported | Windows-native projects and tools |
+| [WSL 2](#install-in-wsl) | WSL 2 enabled | Supported | Linux toolchains or sandboxed command execution |
+| [WSL 1](#install-in-wsl) | WSL 1 enabled | Not supported | If WSL 2 is unavailable |
 
-**Option 1: Native Windows**
+#### Install on native Windows
 
-Run the install command from PowerShell or CMD. You do not need to run as Administrator. Installing [Git for Windows](https://git-scm.com/downloads/win) is optional. It provides Git Bash, which the [Bash tool](/docs/en/tools-reference#bash-tool-behavior) and the [Monitor tool](/docs/en/tools-reference#monitor-tool) need.
+Run the [install command](#install-claude-code) from PowerShell or CMD. You do not need to run as Administrator. Installing [Git for Windows](https://git-scm.com/downloads/win) is optional. It provides Git Bash, which the [Bash tool](/docs/en/tools-reference#bash-tool-behavior) and the [Monitor tool](/docs/en/tools-reference#monitor-tool) need.
 
 Whether you install from PowerShell or CMD only affects which install command you run. Your prompt shows `PS C:\Users\YourName>` in PowerShell and `C:\Users\YourName>` without the `PS` in CMD. If you're new to the terminal, the [terminal guide](/docs/en/terminal-guide#windows) walks through each step.
 
@@ -136,9 +136,9 @@ After installation, launch `claude` from any terminal.
 
 When Git for Windows is installed, the PowerShell tool is available alongside Bash: on by default for claude.ai and Console accounts, and enabled with `CLAUDE_CODE_USE_POWERSHELL_TOOL=1` in Amazon Bedrock, Google Cloud's Agent Platform, and Microsoft Foundry sessions. Set it to `0` to turn the tool off. See [PowerShell tool](/docs/en/tools-reference#powershell-tool) for setup and limitations.
 
-**Option 2: WSL**
+#### Install in WSL
 
-Open your WSL distribution and run the Linux installer from the [install instructions](#install-claude-code) above. You install and launch `claude` inside the WSL terminal, not from PowerShell or CMD.
+Open your WSL distribution and run the Linux installer from the [install instructions](#install-claude-code). You install and launch `claude` inside the WSL terminal, not from PowerShell or CMD.
 
 ### Alpine Linux and musl-based distributions
 

@@ -64,6 +64,9 @@ Each binding block specifies a **context** where the bindings apply:
 | `EffortSlider` | Effort slider opened by `/effort` |
 | `Select` | Generic select/list components |
 | `Plugin` | Plugin dialog (browse, discover, manage) |
+| `AbovePrompt` | The [band above the prompt](#above-prompt-actions), or a button in it, has keyboard focus |
+| `AbovePromptInput` | An input field in the band above the prompt or in a mod's pane has keyboard focus |
+| `AbovePromptSelect` | A select in the band above the prompt or in a mod's pane has keyboard focus |
 | `Pane` | A pane drawn by a [mod](/docs/en/plugins/mods/interface#know-which-keys-your-mod-can-receive) has keyboard focus |
 | `PaneField` | An input field or select in a mod's pane has keyboard focus |
 | `Agents` | [Agent view](/docs/en/agent-view) (`claude agents`) |
@@ -393,6 +396,48 @@ Actions available in the `Plugin` context:
 | `plugin:toggle` | Space | Toggle plugin selection |
 | `plugin:install` | I | Install selected plugins |
 | `plugin:favorite` | F | Favorite the selected plugin so it sorts near the top of the Installed tab |
+
+### Above-prompt actions
+
+Actions for the band above the prompt, the shared strip where [mods](/docs/en/plugins/mods/interface#pick-where-to-draw) draw buttons, input fields, and selects. `abovePrompt:toggle` and `abovePrompt:focus` apply in the `Chat` context. The other actions apply in the [context](#contexts) of whatever has keyboard focus in the band or a pane.
+
+| Action | Default | Description |
+| :- | :- | :- |
+| `abovePrompt:toggle` | Ctrl+X Ctrl+A | Collapse the band to a one-row hint, or expand it again |
+| `abovePrompt:focus` | Ctrl+X Tab | Move keyboard focus into the band, then to each open [pane](#pane-actions), and from the last pane back to the prompt |
+| `abovePrompt:next` | Tab | Focus the next control |
+| `abovePrompt:previous` | Shift+Tab | Focus the previous control |
+| `abovePrompt:press` | Enter | Press the focused button, submit the focused input field, or pick the highlighted option in a select |
+| `abovePrompt:leave` | Escape | Return keyboard focus to the prompt |
+| `abovePrompt:highlightNext` | Down | Highlight the next option in a focused select |
+| `abovePrompt:highlightPrevious` | Up | Highlight the previous option in a focused select |
+
+Two contexts bind more keys to these actions by default:
+
+* **`AbovePrompt`**: Right and Left also run `abovePrompt:next` and `abovePrompt:previous`, and Space also runs `abovePrompt:press`
+* **`AbovePromptInput`**: Down and Up also run `abovePrompt:next` and `abovePrompt:previous`
+
+The `AbovePrompt` context also binds Up, Down, PageUp, PageDown, Home, and End to the [pane scroll actions](#pane-actions) `pane:scrollUp` through `pane:bottom`, so to change one of those keys for the band, bind the scroll action in an `AbovePrompt` block.
+
+### Pane actions
+
+Actions for a pane drawn by a [mod](/docs/en/plugins/mods/interface#know-which-keys-your-mod-can-receive). The scroll, resize, and close actions apply in the `Pane` [context](#contexts). `pane:close` also applies in the `PaneField` context, so it works while one of the pane's fields has focus. `pane:next` and `pane:previous` apply in the `Global` context while more than one pane is open.
+
+| Action | Default | Description |
+| :- | :- | :- |
+| `pane:scrollUp` | Up | Scroll the pane up when it has more rows than it can show |
+| `pane:scrollDown` | Down | Scroll the pane down when it has more rows than it can show |
+| `pane:pageUp` | PageUp | Scroll the pane up a page |
+| `pane:pageDown` | PageDown | Scroll the pane down a page |
+| `pane:top` | Home | Jump to the top of the pane |
+| `pane:bottom` | End | Jump to the bottom of the pane |
+| `pane:grow` | Ctrl+X Left, Ctrl+X Up | Give the pane more room: width when it sits beside the transcript, height when it sits above the prompt |
+| `pane:shrink` | Ctrl+X Right, Ctrl+X Down | Give the pane less room: width when it sits beside the transcript, height when it sits above the prompt |
+| `pane:close` | Ctrl+X X | Close the pane |
+| `pane:next` | (unbound) | Show the next open pane |
+| `pane:previous` | (unbound) | Show the previous open pane |
+
+The `Pane` context also binds Tab, Shift+Tab, Enter, and Escape to the same [above-prompt actions](#above-prompt-actions) as the band, and a pane's input fields and selects use the `AbovePromptInput` and `AbovePromptSelect` contexts. [Keyboard focus and hotkeys](/docs/en/plugins/mods/interface#know-which-keys-your-mod-can-receive) lists what each key does in a pane.
 
 ### Settings actions
 

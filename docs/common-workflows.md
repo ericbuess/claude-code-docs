@@ -367,7 +367,7 @@ Use @ to quickly include files or directories without waiting for Claude to read
     Explain the logic in @src/utils/auth.js
     ```
 
-    This includes the full content of the file in the conversation.
+    This includes the content of the file in the conversation when it fits the [Read tool](/docs/en/tools-reference#read-tool-behavior)'s token limit, 25,000 tokens by default. A text file larger than 256KB isn't included.
   </Step>
 
   <Step title="Reference a directory">
