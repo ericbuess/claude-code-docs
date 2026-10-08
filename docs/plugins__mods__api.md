@@ -65,6 +65,10 @@ on('tool.call', { tool: 'mcp__my-mod__ticket' }, async ($, e) => {
 
 When you ask about a ticket, Claude can call `mcp__my-mod__ticket` with its id. The second hook fetches the ticket and returns the response body, which Claude reads as the tool's result. When the server answers with an error status, Claude reads `Lookup failed with status` and the number.
 
+<Tip>
+  When [MCP tool search](/docs/en/mcp#scale-with-mcp-tool-search) defers a registered tool, Claude sees its name but not its description until it searches for it. If Claude should consider the tool on every turn, add [`isDeferred: false`](/docs/en/plugins/mods/reference#tools) to the registration to [load the full tool upfront](/docs/en/mcp#exempt-a-server-from-deferral). The field requires Claude Code v2.1.293 or later, and earlier versions ignore it.
+</Tip>
+
 ## Call a model
 
 A mod can ask a model a question of its own, outside the conversation, for a small job such as sorting or summarizing a piece of text. `$.model.complete` sends one prompt to a model with your session's credentials and resolves to the reply. It has no conversation history.

@@ -2958,7 +2958,7 @@ In a `-p` run or an Agent SDK session, Claude Code ignores this key. The SDK tur
 
 ### `plansDirectory`
 
-Choose where Claude Code stores the plan files it writes in [plan mode](/docs/en/permission-modes#analyze-before-you-edit-with-plan-mode). Claude Code resolves the path relative to the project root and keeps the default when the path resolves outside it.
+Choose where Claude Code stores the plan files it writes in [plan mode](/docs/en/permission-modes#analyze-before-you-edit-with-plan-mode). Claude Code resolves the path relative to the project root.
 
 * **Scope**: [`Any file`](#scopes)
 * **Type**: string, a path relative to the project root
@@ -2969,6 +2969,11 @@ Choose where Claude Code stores the plan files it writes in [plan mode](/docs/en
   "plansDirectory": "./plans"
 }
 ```
+
+Claude Code stores plans in `~/.claude/plans` instead of the directory you set in cases such as these:
+
+* **Outside the project root**: the path resolves outside the project root, as `"../plans"` does.
+* **Backslash on macOS, Linux, and WSL**: the resolved path contains a backslash, as the Windows-style `"docs\\plans"` does. Write `"docs/plans"`, which works on Windows too.
 
 ### `skillListingBudgetFraction`
 
@@ -5314,7 +5319,7 @@ Stop Claude Code from registering the `claude-cli://` protocol handler with the 
 
 Turn off Code sessions that run on the device in the [desktop app](/docs/en/desktop#local-sessions-on-managed-devices), for deployments where developers should work on remote machines over SSH. In the Code tab, the **Local** environment stays in the environment dropdown but is grayed out and can't be selected, with a tooltip saying your organization turned it off; on Windows the WSL entry is grayed out the same way, though whether WSL sessions run on a managed device at all is [governed separately](/docs/en/admin-setup#wsl-sessions-in-claude-code-desktop). New sessions default to the first [SSH connection](/docs/en/desktop#ssh-sessions) if one is configured, and the app refuses to start or resume a session on the device, including an SSH connection back to the same machine. SSH sessions to other hosts and cloud sessions are unaffected. The desktop app reads this key; the terminal CLI ignores it. Requires Claude Desktop v1.37937.0 or later.
 
-* **Scope**: [`Managed`](#scopes)
+* **Scope**: [`Managed`](#scopes). By default, the desktop app reads the key from [one managed source](/docs/en/managed-settings#how-claude-code-combines-managed-sources).
 * **Type**: Boolean; only the JSON Boolean `true` takes effect
   * `true`: the desktop app offers no on-device Code sessions; existing local sessions stay listed but can't continue
   * `false`: local sessions stay available
@@ -5447,7 +5452,7 @@ Claude Code ignores a `true` from project or local settings, so a repository can
 
 Add SSH connections to the [Desktop](/docs/en/desktop#pre-configure-ssh-connections-for-your-team) environment dropdown. Administrators use it to distribute shared connections to a team. Connections you define in managed settings show as managed, so users can select them but can't edit or delete them in the app.
 
-* **Scope**: [`User or managed`](#scopes). The desktop app reads this key.
+* **Scope**: [`User or managed`](#scopes). The desktop app reads this key. By default, it reads managed connections from [one managed source](/docs/en/managed-settings#how-claude-code-combines-managed-sources).
 * **Type**: array of objects, each with required `id`, `name`, and `sshHost` and optional `sshPort` and `sshIdentityFile`
 * **Default**: unset
 
@@ -5469,7 +5474,7 @@ This example adds one connection named `Dev VM` that connects to `user@dev.examp
 
 Limit the hosts a [Desktop SSH session](/docs/en/desktop#restrict-which-ssh-hosts-users-can-connect-to) can connect to. Only the Desktop app reads this key; the CLI doesn't. Patterns are case-insensitive: `*` matches any host, `*.example.com` matches `example.com` and every subdomain, and anything else is an exact match against the hostname after `~/.ssh/config` resolution. An empty array turns SSH sessions off.
 
-* **Scope**: [`Managed`](#scopes)
+* **Scope**: [`Managed`](#scopes). By default, Desktop reads the key from [one managed source](/docs/en/managed-settings#how-claude-code-combines-managed-sources).
 * **Type**: array of hostname patterns
 * **Default**: unset, so any host is allowed
 
@@ -5480,6 +5485,10 @@ This example allows `devboxes.example.com` and its subdomains, plus the exact ho
   "sshHostAllowlist": ["*.devboxes.example.com", "bastion.example.com"]
 }
 ```
+
+A value that Desktop can't read as a list of hosts, such as `true` or an object, counts as an empty array until you correct it, except `null`, which counts as unset. Requires Claude Desktop v2.26454.0 or later.
+
+If you set [`managedSourcesBehavior`](#managedsourcesbehavior) to `"merge"` in your highest-ranked source, Desktop combines the lists from every [admin source](/docs/en/managed-settings#how-claude-code-combines-managed-sources) and allows a host that matches any of them. If you set an empty array in one source, SSH sessions stay on for the hosts another source lists.
 
 <span id="authentication-and-login" />
 

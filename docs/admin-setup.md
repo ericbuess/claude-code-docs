@@ -72,7 +72,7 @@ Claude Desktop turns off WSL sessions by default on devices it detects as organi
 
 Desktop reads the policy each time a WSL session starts, so you don't need to restart the app after deploying it.
 
-If a device still refuses WSL sessions, open **Help > Troubleshooting > Show Logs in Explorer** in Claude Desktop on that device, which saves a copy of its log folder to Downloads. Search `main.log` in that copy for `[wslPolicyGate] denying WSL session`. The reason for the denial follows in parentheses, such as `(cli-file-present)`. If Claude Desktop was installed with the `.exe` installer, you can also read the live file at `%APPDATA%\Claude\logs\main.log`.
+If a device still refuses WSL sessions, open **Help > Troubleshooting > Show Logs in File Explorer** in Claude Desktop on that device, which saves a copy of its log folder to Downloads. Search `main.log` in that copy for `[wslPolicyGate] denying WSL session`. The reason for the denial follows in parentheses, such as `(cli-file-present)`.
 
 After WSL sessions are enabled, extend your managed settings to them:
 

@@ -107,7 +107,7 @@ You can see what a mod is able to do without running it. In your shell, run `cla
 claude plugin validate ./some-mod
 ```
 
-Two lines in the output describe the mod's code:
+The `hooks:` and `calls:` lines in the output describe the mod's code:
 
 ```text theme={null}
   ❯ ./register.js hooks: session.start, tool.call, ui.render{component=Pane}

@@ -302,7 +302,7 @@ For `first-mod`, the output includes these lines.
 ✔ Validation passed
 ```
 
-The `hooks:` line lists the events your module hooks, each with its filter in braces. The `calls:` line lists every mods API method it calls. A module that reads or sets environment variables also gets `env reads:` and `env writes:` lines, and one that uses [`$.state`](/docs/en/plugins/mods/interface#keep-state) gets `state reads:` and `state writes:`.
+Check the `hooks:` line for the events your module hooks, each with its filter in braces, and `calls:` for every mods API method it calls. If your module reads or sets environment variables, look for `env reads:` and `env writes:` lines too, and `state reads:` and `state writes:` if it uses [`$.state`](/docs/en/plugins/mods/interface#keep-state). You also see one line for each hook that can refuse an action, such as `gating hook without .catch: tool.call`, which says whether that hook has a [`.catch` handler](/docs/en/plugins/mods/events#handle-a-hook-that-fails).
 
 If an event you meant to handle is missing from the first line, Claude Code won't call that hook either. The usual cause is a misspelled event name, which the command reports as an error such as `"tool.calls" is not an event`.
 

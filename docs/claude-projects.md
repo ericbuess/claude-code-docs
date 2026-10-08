@@ -350,7 +350,7 @@ In a project with several repositories, each clone is attached to the thread as 
 
 Every new cloud thread starts in the project's [cloud environment](/docs/en/cloud-environments). The environment sets which domains threads can reach, which environment variables they have, which network secrets are added to their requests, and what the setup script installs before Claude starts. Cloud threads use a default Anthropic-hosted environment until you pick one in **Project settings > Environment**.
 
-If cloud threads need to reach an internal API or a private package registry, or need a token your machine normally holds, change the environment rather than the project: see [Network access](/docs/en/cloud-environments#network-access), [Add network secrets](/docs/en/cloud-environments#add-api-credentials), and [Setup scripts](/docs/en/cloud-environments#setup-scripts).
+If cloud threads need to reach an internal API or a private package registry, or need a token your machine normally holds, change the environment rather than the project: see [Network access](/docs/en/cloud-environments#network-access), [Add network secrets](/docs/en/cloud-environments#add-network-secrets), and [Setup scripts](/docs/en/cloud-environments#setup-scripts).
 
 ### Get skills, plugins, connectors, and tools into threads
 

@@ -270,11 +270,13 @@ When Claude Code can't reopen the conversation, it exits and prints a `claude --
 
 The row you pressed `←` from also keeps a bold, undimmed name after you move the selection with the arrow keys or the mouse, so you can tell which session you came from.
 
-If a tool is running when you press `←`, Claude Code waits up to about ten seconds for it to finish before backgrounding, and Claude continues the response in the background session. Press `←` again to background immediately instead of waiting. When in-flight work can't carry over to the background session, Claude Code shows the `Background this session?` dialog first, the same as with [`/background`](#from-inside-a-session).
+If a tool is running when you press `←`, Claude Code waits for it to finish before backgrounding, and Claude continues the response in the background session. Press `←` again to background immediately instead of waiting. When in-flight work can't carry over to the background session, Claude Code shows the `Background this session?` dialog first, the same as with [`/background`](#from-inside-a-session).
 
-The ten-second limit doesn't apply while the [foreground subagents](/docs/en/sub-agents#run-subagents-in-foreground-or-background) Claude started in the conversation are still running. Claude Code keeps waiting so their work carries over, and shows a `Still backgrounding after the current tool` notice while it waits. Press `←` again to background without waiting, which restarts those subagents from the beginning. Claude Code doesn't wait for the subagents a [dynamic workflow](/docs/en/workflows) is running. When a workflow has subagents running, Claude Code shows the `Background this session?` dialog instead.
+After about ten seconds, Claude Code backgrounds the session without waiting any longer, except in cases such as these:
 
-Claude Code doesn't background the session while you have unsent text in the prompt input, because the text stays in your terminal's input box and wouldn't move to the background session. If you type into the input while Claude Code waits to background the session, it cancels the switch with `Backgrounding cancelled — you have unsent text in the input. Send it or clear it, then press ← again.`
+* **Foreground subagents are still running**: Claude Code keeps waiting so the work of the [foreground subagents](/docs/en/sub-agents#run-subagents-in-foreground-or-background) Claude started carries over, and shows `Still backgrounding after the current tool`. Press `←` again to background without waiting, which restarts those subagents from the beginning.
+* **A permission prompt or question is waiting for your answer**: while a permission prompt or a question Claude asked waits, Claude Code keeps waiting and shows `Still backgrounding after the current tool — a question is waiting for your answer.`
+* **You type into the prompt input**: Claude Code cancels the switch, because unsent text stays in your terminal's input box and wouldn't move to the background session. It shows `Backgrounding cancelled — you have unsent text in the input. Send it or clear it, then press ← again.`
 
 Pressing `←` creates the session's row even when the conversation has no messages yet, so `→` still returns to it.
 

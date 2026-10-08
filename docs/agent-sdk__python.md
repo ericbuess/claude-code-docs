@@ -2524,6 +2524,7 @@ Each output shown is the value you read from [`UserMessage.tool_use_result`](#us
     "prompt": str,  # The task for the agent to perform
     "subagent_type": str | None,  # The type of specialized agent to use
     "model": "sonnet" | "opus" | "haiku" | "fable" | None,  # Model override for this agent
+    "effort": "low" | "medium" | "high" | "xhigh" | "max" | None,  # Reasoning effort for this agent
     "run_in_background": bool | None,  # Agents run in the background by default; set to False to run synchronously
     "name": str | None,  # Name for the spawned agent
     "team_name": str | None,  # Deprecated; ignored

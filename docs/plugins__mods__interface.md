@@ -764,6 +764,7 @@ Because the `ui.render` hook read `count`, Claude Code runs the hook again each 
 These rules apply to the code:
 
 * **Write `plugin` and `key` as string literals**: `claude plugin validate` reads them from your source
+* **Hold the result of each `atom` call in a `const`**: if you declare `count` with `let`, validation fails with `takes a source the scan can read`
 * **Declare every value in the type declaration file**: otherwise validation fails with `hello-tabs.count is not declared`
 * **Write from a callback or another event's hook**: a `ui.render` hook can read state and can't write it, so write from `onPress`, `onSubmit`, or a hook for another event
 

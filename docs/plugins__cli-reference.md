@@ -624,6 +624,7 @@ With `--json`, Claude Code writes the report to stdout as one JSON object with t
 * `target`: the resolved path Claude Code validated
 * `manifest`: the manifest's own result, or `null` for a run without a manifest
 * `contents`: per-file results, each naming its `file` and carrying `errors`, `warnings`, and `notes` arrays
+  * `gatingHooks`: whether each [mod](/docs/en/plugins/mods/overview) hook that can refuse an action, such as a `tool.call` hook, has a [`.catch` handler](/docs/en/plugins/mods/events#handle-a-hook-that-fails). Each item gives `module`, `pattern`, `hook`, and `hasCatch`. Requires Claude Code v2.1.290 or later
 
 On exit `2`, the command writes nothing to stdout. The error message goes to stderr.
 
