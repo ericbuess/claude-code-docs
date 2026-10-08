@@ -634,9 +634,15 @@ The search backend is not configurable. To search with a different provider, add
 
 ### Session search limit
 
-An interactive terminal session can make 200 WebSearch calls, counted across the main conversation and every [subagent](/docs/en/sub-agents) it spawns, so searches made by parallel research fan-outs count against the same limit. The limit requires Claude Code v2.1.212 or later. When Claude reaches the limit, further calls return a notice telling Claude to continue with the information it already gathered, rather than an error that would invite a retry. You don't see the notice: a capped call appears in the conversation as a search that did nothing, and if Claude needs more searches, the notice tells it to ask you to raise the limit.
+An interactive terminal session has a limit of 200 WebSearch calls. Searches from the main conversation and from [subagents](/docs/en/sub-agents), such as a parallel research fan-out, count against the same limit. The limit requires Claude Code v2.1.212 or later.
 
-Set the [`CLAUDE_CODE_MAX_WEB_SEARCHES_PER_SESSION`](/docs/en/env-vars) environment variable to change the cap; it accepts a positive whole number, so the cap can be raised but not turned off. An interactive terminal session's limit refills at about 100 calls per hour, and [`CLAUDE_CODE_WEB_SEARCH_REFILLS_PER_HOUR`](/docs/en/env-vars#variables) sets the rate. Running [`/clear`](/docs/en/commands#all-commands) resets the count. If work that can still spawn [subagents](/docs/en/sub-agents) survives the clear, such as a running workflow, the count carries over instead.
+While a session is at the limit, searches appear in the conversation as calls that did nothing. Claude gets a notice telling it to continue with the information it already gathered and, if it needs more searches, to ask you to raise the limit.
+
+To get more searches, raise the cap, wait for the limit to refill, or start a new conversation:
+
+* **Raise the cap**: set the [`CLAUDE_CODE_MAX_WEB_SEARCHES_PER_SESSION`](/docs/en/env-vars#variables) environment variable to a positive whole number, such as `500`. The cap can be raised but not turned off.
+* **Wait for the refill**: on Claude Code v2.1.290 or later, an interactive terminal session's limit refills at about 100 calls per hour. To change the rate, set [`CLAUDE_CODE_WEB_SEARCH_REFILLS_PER_HOUR`](/docs/en/env-vars#variables) to a number of calls per hour, such as `50`.
+* **Start a new conversation**: running [`/clear`](/docs/en/commands#all-commands) at the Claude Code prompt also resets the count. If work that can still spawn subagents survives the clear, such as a running workflow, the count carries over instead.
 
 ## Write tool behavior
 

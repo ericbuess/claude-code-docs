@@ -832,8 +832,8 @@
     "plugins__marketplace-reference.md": {
       "original_url": "https://code.claude.com/docs/en/plugins/marketplace-reference",
       "original_md_url": "https://code.claude.com/docs/en/plugins/marketplace-reference.md",
-      "hash": "9fd24e93240c2b21f48b4bc9a3f76e79cee58004eb49bf9c9f7a28b6404ec041",
-      "last_updated": "2026-10-08T09:40:34.119648"
+      "hash": "32fa7bebd1cbdbea5e2622f9adacf396c20b50c3912e8ac9f7b753967378f183",
+      "last_updated": "2026-10-08T18:07:15.420832"
     },
     "plugins__measure.md": {
       "original_url": "https://code.claude.com/docs/en/plugins/measure",
@@ -1114,8 +1114,8 @@
     "tools-reference.md": {
       "original_url": "https://code.claude.com/docs/en/tools-reference",
       "original_md_url": "https://code.claude.com/docs/en/tools-reference.md",
-      "hash": "ead1879f1f0631d4aa762fde5b2426e6f35ac3ae7d0fd809ce7d874bfc69fe03",
-      "last_updated": "2026-10-08T09:41:05.385042"
+      "hash": "56c03280c66af5649abc7fcee61c2afc60761c6df29ad297a724ad2a4c6332c8",
+      "last_updated": "2026-10-08T18:07:49.010354"
     },
     "troubleshoot-install.md": {
       "original_url": "https://code.claude.com/docs/en/troubleshoot-install",
@@ -1323,8 +1323,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-10-08T09:41:27.790105",
-    "fetch_duration_seconds": 146.357149,
+    "last_fetch_completed": "2026-10-08T18:08:12.736348",
+    "fetch_duration_seconds": 157.999508,
     "total_pages_discovered": 220,
     "pages_fetched_successfully": 221,
     "pages_failed": 0,
@@ -1334,7 +1334,7 @@
     "total_files": 220,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-10-08T09:41:27.790125",
+  "last_updated": "2026-10-08T18:08:12.736378",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",
