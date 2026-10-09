@@ -176,11 +176,12 @@ Open the bug tracker at bugs.example.com, create a new issue,
 and attach logs/session.log to it
 ```
 
-Three restrictions apply to uploads:
+If Claude refuses to attach a file or an upload fails, check for these causes:
 
 * **Permissions**: Claude can upload a file only when the session is allowed to read it, so [permission rules](/docs/en/settings-reference#permission-settings) that deny `Read` access to a file also block uploading it.
 * **Size**: a single upload can include up to 10 MB of files in total.
 * **Hard links**: Claude refuses files that have multiple hard links, which is common inside package-manager stores like `node_modules`. Copy the file and upload the copy.
+* **Credential names**: Claude refuses a file whose name or folder is one that credentials are kept under, such as `.env`, a `.pem` or `.key` file, or anything under `.ssh`. Requires Claude Code v2.1.293 or later.
 
 ### Draft content in Google Docs
 
@@ -269,6 +270,24 @@ For Edge:
 
 Other Chromium-based browsers read the same file from their own configuration directory, named after the browser. For example, Brave on macOS uses `~/Library/Application Support/BraveSoftware/Brave-Browser/NativeMessagingHosts/`, and on Windows each browser has its own registry key, such as `HKCU\Software\BraveSoftware\Brave-Browser\NativeMessagingHosts\`.
 
+### Project settings can't turn on Chrome
+
+This warning in your terminal means the project you're working in tried to turn on Chrome integration, and Claude Code didn't allow it:
+
+```text wrap theme={null}
+Claude Code ignored CLAUDE_CODE_ENABLE_CFC in this project's settings: a project can't turn on Claude in Chrome. To turn it on yourself, run /chrome or start with --chrome.
+```
+
+The project's `.claude/settings.json` or `.claude/settings.local.json` sets [`CLAUDE_CODE_ENABLE_CFC`](/docs/en/env-vars#variables) to `1` in its `env` block to turn Chrome integration on. Claude Code didn't apply that setting, so Chrome integration is off in this session and Claude has no browser tools.
+
+Claude Code skips the setting because those files are stored in the project directory, and a repository you check out must not be able to connect Claude to your browser.
+
+You can keep working as you are. If you want browser tools, or want the warning gone, do one of these:
+
+* **To get browser tools now**: exit and start again with `claude --chrome` in your shell.
+* **To get browser tools in later sessions**: run `/chrome` at the Claude Code prompt and select [**Enabled by default**](#enable-chrome-by-default). This applies to sessions you start afterward, not the one that's running.
+* **To stop the warning without browser tools**: remove the `CLAUDE_CODE_ENABLE_CFC` line from the project's settings file.
+
 ### Browser not responding
 
 If Claude's browser commands stop working:
@@ -280,6 +299,20 @@ If Claude's browser commands stop working:
 ### Connection drops during long sessions
 
 The Chrome extension's service worker can go idle during extended sessions, which breaks the connection. If browser tools stop working after a period of inactivity, run `/chrome` and select "Reconnect extension".
+
+When you run `/chrome`, check its `Status` line. If it reads "Not connected", the running session's own connection to Chrome has failed. Select "Reconnect extension" to restart that connection. After the connection succeeds, the extension's reconnect page opens in Chrome. Before v2.1.290, "Reconnect extension" only opened that page and didn't restart a failed connection, so if browser tools don't return on an earlier version, update Claude Code.
+
+### Extension signed in to a different organization
+
+If you belong to more than one claude.ai organization, the extension must be signed in to the same organization as Claude Code. If the two differ, Claude's browser tools return "Browser extension is not connected", even when both use the same claude.ai account.
+
+To see which organization Claude Code is signed in to, run [`/status`](/docs/en/commands) at the Claude Code prompt and read the `Organization` row.
+
+<Warning>
+  If you log out of the extension, you lose the shortcuts and scheduled tasks saved in it. Try the other fixes under [Common error messages](#common-error-messages) first.
+</Warning>
+
+To change the extension's organization, log out in the extension's settings, then log in and select the organization that `/status` shows.
 
 ### Windows-specific issues
 
@@ -295,7 +328,7 @@ These are the most frequently encountered errors and how to resolve them:
 
 | Error | Cause | Fix |
 | - | - | - |
-| "Browser extension is not connected" | Native messaging host cannot reach the extension, or your organization's IP allowlist rejects the connection to `bridge.claudeusercontent.com` | Check that the extension is signed in to the same claude.ai account as Claude Code, restart Chrome and Claude Code, then run `/chrome` to reconnect. If your organization uses IP allowlisting and the error persists, see [Organization IP allowlists and proxy egress](/docs/en/network-config#organization-ip-allowlists-and-proxy-egress) |
+| "Browser extension is not connected" | The extension isn't installed and running in Chrome, the extension is signed in to a different claude.ai account or organization than Claude Code, or your organization's IP allowlist rejects the connection to `bridge.claudeusercontent.com` | Check that the extension is signed in to the same claude.ai account and [organization](#extension-signed-in-to-a-different-organization) as Claude Code, restart Chrome and Claude Code, then run `/chrome` to reconnect. If your organization uses IP allowlisting and the error persists, see [Organization IP allowlists and proxy egress](/docs/en/network-config#organization-ip-allowlists-and-proxy-egress) |
 | Extension shows "Not detected" in `/chrome` | Chrome extension is not installed or is disabled | Install or enable the extension in `chrome://extensions` |
 | "No tab available" | Claude tried to act before a tab was ready | Ask Claude to create a new tab and retry |
 | "Receiving end does not exist" | Extension service worker went idle | Run `/chrome` and select "Reconnect extension" |

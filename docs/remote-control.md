@@ -350,13 +350,44 @@ Claude Code skips mobile push notifications while you are typing in or focused o
 * **Some commands are local-only**: commands that only run in the terminal interface, such as `/plugin` or `/resume`, work only from the local CLI, whether or not you pass an argument. `/claude-api` is also unavailable when you type it from mobile or web. Claude can still [load that skill on its own](/docs/en/skills#work-on-claude-api-projects) there. The following work from mobile and web:
   * Text-output commands: `/compact`, `/clear`, `/context`, `/usage`, `/exit`, `/usage-credits`, `/recap`, and `/reload-plugins`. `/usage-credits` prints the billing URL instead of opening a browser. `/reload-plugins` works only when the session runs in an interactive terminal; a session without one declines it.
   * `/model`, `/effort`, `/fast`, `/color`, and `/rename`: pass the value as an argument, for example `/model sonnet` or `/effort high`. From mobile and web, `/model` and `/effort` take the argument in place of the terminal picker or slider.
-  * `/mcp`: from the mobile app, returns a text summary of server status instead of opening the picker. On the web, `/mcp` on its own opens a directory of [claude.ai connectors](/docs/en/mcp#use-mcp-servers-from-claude-ai) instead of returning the summary. The `reconnect`, `enable`, and `disable` [subcommands](/docs/en/commands#all-commands) work from both. `/mcp reconnect` with no server name retries every server that has failed or needs authentication.
+  * `/mcp`: from the mobile app, returns a text summary of server status instead of opening the picker. On the web, `/mcp` on its own opens a directory of [claude.ai connectors](/docs/en/mcp#use-mcp-servers-from-claude-ai) instead of returning the summary. The `reconnect`, `enable`, and `disable` [subcommands](/docs/en/commands#all-commands) work from both when the session runs in an interactive terminal. `/mcp reconnect` with no server name retries every server that has failed or needs authentication. To authorize a claude.ai connector without the picker, see [Authorize a connector again from your shell](#authorize-a-connector-again-from-your-shell).
   * `/config`: from the mobile app, pass `key=value` to set a setting, or run it with no argument to list the keys you can set. On the web, `/config` opens the Claude Code section of your settings instead, and ignores text after the command.
   * On Team and Enterprise, `/usage-credits` from mobile or web doesn't send a [usage-credits request to your admin](/docs/en/costs#add-usage-credits-to-your-subscription). Sending requires a confirmation that appears only in the interactive CLI, so the command tells you to run it there instead.
   * `/autocompact`, from v2.1.221: pass the window size as an argument, for example `/autocompact 500k`. With no argument, it prints the current window size as text instead of opening the dialog the command shows in a terminal session.
   * `/advisor`, from v2.1.260: pass the model as an argument, for example `/advisor opus`, or pass `off` to turn the advisor off. Both forms apply to the current session only and leave your saved default unchanged. With no argument, it prints the current advisor as text instead of opening the picker.
   * `/output-style`, from v2.1.269: pass the style name as an argument, for example `/output-style concise`, or run it with no argument to list the styles. From mobile and web, you can list and select only [built-in styles](/docs/en/output-styles#built-in-output-styles). To use a [custom style](/docs/en/output-styles#create-a-custom-output-style), select it in the session itself.
   * `/focus`, from v2.1.281: pass `on` or `off` as an argument, for example `/focus on`, or run it with no argument to toggle the [focus view](/docs/en/commands#all-commands). Both forms apply to the current session only and leave your saved selection unchanged.
+
+## Authorize a connector again from your shell
+
+When a claude.ai connector needs authentication in a session you drive over Remote Control, the `/mcp` panel isn't available from the mobile app or the web. Get the authorization link from a terminal on the machine where the session runs, then open the link on the device you're using. You can't run the command from the mobile app or the web. A line you send from there that starts with `!` goes to Claude as a message and doesn't run in [shell mode](/docs/en/interactive-mode#shell-mode-with-prefix).
+
+<Steps>
+  <Step title="Get the authorization link">
+    In a terminal on the machine where the session runs, such as over SSH, run `claude mcp login` with the connector's name in quotes. A connector's name starts with `claude.ai`, such as `claude.ai Slack` for the Slack connector. The following command gets the link for the Slack connector:
+
+    ```bash theme={null}
+    claude mcp login "claude.ai Slack" --no-browser
+    ```
+
+    The command prints a claude.ai link and exits. Open the link in your browser and finish authorizing on claude.ai. `--no-browser` keeps the command from opening a browser on that machine, which might not be the device you're using.
+  </Step>
+
+  <Step title="Use the connector in a session">
+    Start a new session, or reconnect the connector in the session that's already running:
+
+    * **New session**: a session you start after authorizing connects to the connector without any further step.
+    * **Running session**: run `/mcp reconnect` with the same name and no quotes, at the Claude Code prompt or from the mobile app or the web. To check that your session accepts the command from there, see the `/mcp` entry under [which commands work from mobile and web](#limitations).
+
+    The following command reconnects the Slack connector:
+
+    ```text theme={null}
+    /mcp reconnect claude.ai Slack
+    ```
+
+    In the terminal, Claude Code prints `Successfully reconnected to claude.ai Slack`. From the mobile app or the web, the reply is `Reconnected "claude.ai Slack".`
+  </Step>
+</Steps>
 
 ## Troubleshooting
 

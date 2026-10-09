@@ -22,7 +22,9 @@ Migrating from the OpenAI Agents SDK instead? The [OpenAI Agents SDK migration r
 
 ## Migration Steps
 
-### For TypeScript/JavaScript Projects
+<span id="for-typescript/javascript-projects" />
+
+### Migrate a TypeScript or JavaScript project
 
 **1. Uninstall the old package:**
 
@@ -56,7 +58,9 @@ If `@anthropic-ai/claude-code` is still listed in your `package.json`, replace i
 
 Make any code changes needed to complete the migration.
 
-### For Python Projects
+<span id="for-python-projects" />
+
+### Migrate a Python project
 
 **1. Uninstall the old package:**
 

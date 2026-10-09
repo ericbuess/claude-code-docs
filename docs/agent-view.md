@@ -365,7 +365,9 @@ The shortcuts that have an action in the [`Agents` context](/docs/en/keybindings
 
 You can dispatch new background sessions from agent view, send or copy an existing interactive session to the background, or start one directly from the shell.
 
-### From agent view
+<span id="from-agent-view" />
+
+### Dispatch an agent from agent view
 
 Type a prompt in the input at the bottom of agent view and press `Enter` to start a new background session. The session is named automatically from the prompt; rename it later with `Ctrl+R`.
 
@@ -416,7 +418,9 @@ A new session runs in the directory you opened agent view from. To target a diff
 
 When agent view is grouped by directory, dispatching sends the prompt to the selected row's directory, so you can select a group and dispatch into it without retyping the path.
 
-### From inside a session
+<span id="from-inside-a-session" />
+
+### Send or copy a session to the background
 
 Two commands move work from the session you're in to the background: `/background` sends the current conversation there and frees your terminal, and `/fork` sends a copy while you keep working where you are.
 
@@ -473,7 +477,9 @@ Configuration flags from the original launch carry through to the backgrounded s
 
 Directories you added during the session with [`/add-dir`](/docs/en/permissions#additional-directories-grant-file-access-not-configuration) also carry through. Carrying `--allow-dangerously-skip-permissions` keeps `bypassPermissions` reachable in the backgrounded session, but it doesn't grant anything new: the mode still requires the one-time interactive acceptance described in [Permission mode, model, and effort](#permission-mode-model-and-effort).
 
-### From your shell
+<span id="from-your-shell" />
+
+### Dispatch an agent from your shell
 
 Pass `--bg` or its long form `--background` to start a session that goes straight to the background:
 

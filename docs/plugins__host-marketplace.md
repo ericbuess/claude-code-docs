@@ -361,11 +361,17 @@ A `headersHelper` command doesn't run, or headers from `headers` or from the com
 
 ### How users accept a headersHelper command
 
-A user accepts a plugin entry's command each time they install or update that one plugin by itself. They do that from the plugin's own view in `/plugin`, or with `claude plugin install` or `claude plugin update`. Claude Code shows the command and the archive URL, and runs the command only after the user accepts.
+A user accepts a plugin entry's command each time they install or update that one plugin by itself. Claude Code shows the command and the archive URL, and runs the command only after the user accepts.
+
+Users can install or update the plugin inside a Claude Code session in a terminal, in their shell with no session running, or in the VS Code extension:
+
+* **Terminal session**: from the plugin's own view in `/plugin`.
+* **Shell**: with `claude plugin install` or `claude plugin update`.
+* **VS Code extension**: from the [**Manage plugins** dialog](/docs/en/vs-code#manage-plugins), with version 2.1.290 or later of the extension.
 
 In a non-interactive shell, pass [`--yes`](/docs/en/plugins/cli-reference#plugin-install) to accept the command. To accept only the command that a previous `--json` run displayed, pass [`--accept-command`](/docs/en/plugins/cli-reference#plugin-install) with the `sha256` the run reported.
 
-Claude Code runs only the command it showed, for the archive URL it showed. If the entry's command or archive URL changed in between, Claude Code refuses the install or update. A change in the query string alone doesn't count.
+Claude Code runs only the command it showed, for the archive URL it showed. If the entry's command or archive URL changed in between, Claude Code refuses the install or update. A change in the query string alone doesn't count, except in the VS Code extension or with `--accept-command`.
 
 <h3 id="installs-and-updates-that-refuse-the-command-instead-of-asking">
   Installs and updates that refuse a command instead of asking

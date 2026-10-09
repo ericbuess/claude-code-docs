@@ -98,7 +98,7 @@ To publish from the plugin's own repository, save the marketplace file beside `p
 }
 ```
 
-In your shell, run `claude plugin validate .` in the repository to check the file before you push.
+In your shell, run `claude plugin validate .` in the repository before you push. For what the run checks, see [Validate a directory](/docs/en/plugins/cli-reference#validate-a-directory).
 
 [Create a marketplace](/docs/en/plugins/create-marketplace) covers the layout with several plugins in one repository.
 

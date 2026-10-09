@@ -19,7 +19,9 @@ This page covers how to:
 
 A variable you set in your shell lasts for that terminal session, while a variable in a settings file applies every time `claude` runs.
 
-### In your shell
+<span id="in-your-shell" />
+
+### Set variables in your shell
 
 Set the variable before launching `claude`:
 
@@ -74,7 +76,9 @@ The assignment line prints nothing on success. To confirm the variable is set, p
   </Tab>
 </Tabs>
 
-### In settings files
+<span id="in-settings-files" />
+
+### Set variables in settings files
 
 Add variables under the `env` key in a `settings.json` file, creating the file if it doesn't exist. Claude Code reads them directly from the file, so they take effect no matter how `claude` was launched. A running session applies new and changed values to its environment when you save the file, but a feature that reads its variables once at startup, such as [OpenTelemetry monitoring](/docs/en/monitoring-usage), keeps its startup values until you relaunch. Removing a variable from the file doesn't unset it in a running session; the removal takes effect the next time you launch `claude`.
 
@@ -112,7 +116,7 @@ Between settings files, `env` values follow [settings precedence](/docs/en/setti
 
 How an environment variable interacts with CLI flags and in-session commands varies per feature: `--model` and `/model` override `ANTHROPIC_MODEL`, while `CLAUDE_CODE_EFFORT_LEVEL` overrides `--effort` and `/effort`. When a variable interacts with another configuration source, its row in the [Variables](#variables) list states the precedence or links to the page that documents it.
 
-Claude Code reads shell environment variables at startup, so changes to them take effect the next time you launch `claude`. Variables set under the `env` key in settings files are reapplied to a running session when the file changes, with the startup-only exception described in [In settings files](#in-settings-files).
+Claude Code reads shell environment variables at startup, so changes to them take effect the next time you launch `claude`. Variables set under the `env` key in settings files are reapplied to a running session when the file changes, with the startup-only exception described in [Set variables in settings files](#in-settings-files).
 
 ## Variables
 
@@ -283,6 +287,7 @@ Numeric variables such as timeouts, token budgets, and retry counts accept scien
 | `CLAUDE_CODE_ENABLE_AUTO_MODE` | Accepted for compatibility with older releases and has no effect. Auto mode is available by default on every provider, including Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry, and signed-in [Claude apps gateway](/docs/en/claude-apps-gateway) sessions. In v2.1.158 through v2.1.206, setting this to `1` was required to make [auto mode](/docs/en/permission-modes#eliminate-prompts-with-auto-mode) available on those providers |
 | `CLAUDE_CODE_ENABLE_AWAY_SUMMARY` | Override [session recap](/docs/en/interactive-mode#session-recap) availability. Set to `0` to force recaps off regardless of the `/config` toggle. Set to `1` to force recaps on when [`awaySummaryEnabled`](/docs/en/settings-reference#awaysummaryenabled) is `false`. Takes precedence over the setting and `/config` toggle |
 | `CLAUDE_CODE_ENABLE_BACKGROUND_PLUGIN_REFRESH` | Set to `1` to refresh plugin state at turn boundaries in [non-interactive mode](/docs/en/headless) after a background install completes. Off by default because the refresh changes the system prompt mid-session, which invalidates [prompt caching](/docs/en/prompt-caching) for that turn |
+| `CLAUDE_CODE_ENABLE_CFC` | Set to `1` to start a CLI session with [Chrome integration](/docs/en/chrome) on, or `0` to start with it off. Takes precedence over the [`claudeInChromeDefaultEnabled`](/docs/en/settings-reference#claudeinchromedefaultenabled) setting. The `--chrome` and `--no-chrome` flags take precedence over both. Claude Code [ignores `1` in project and local settings](/docs/en/chrome#project-settings-can’t-turn-on-chrome) |
 | `CLAUDE_CODE_ENABLE_FEEDBACK_SURVEY_FOR_OTEL` | Set to `1` to route the "How is Claude doing?" session quality survey to your own [OpenTelemetry collector](/docs/en/monitoring-usage) when Anthropic-bound nonessential traffic is blocked. Survey ratings are emitted only as OTEL events to your configured collector. No survey data is sent to Anthropic in this mode. Applies when `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC`, `DISABLE_TELEMETRY`, or `DO_NOT_TRACK` is set, and has no effect otherwise. `CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY` and the organization product feedback policy take precedence |
 | `CLAUDE_CODE_ENABLE_FINE_GRAINED_TOOL_STREAMING` | Controls whether tool call inputs stream from the API as Claude generates them. With this off, a large tool input such as a long file write arrives only after Claude finishes generating it, which can look like it's hanging. Enabled by default on the Anthropic API. On Amazon Bedrock and Google Cloud's Agent Platform, enabled per model where the deployed container supports it. Set to `0` to opt out. Set to `1` to force on when routing through a proxy via `ANTHROPIC_BASE_URL`, `ANTHROPIC_VERTEX_BASE_URL`, or `ANTHROPIC_BEDROCK_BASE_URL`. Off by default on Microsoft Foundry and [gateway](/docs/en/llm-gateway) connections |
 | `CLAUDE_CODE_ENABLE_GATEWAY_MODEL_DISCOVERY` | Set to `1` to populate the `/model` picker from your gateway's `/v1/models` endpoint when `ANTHROPIC_BASE_URL` points at an Anthropic-compatible gateway such as LiteLLM, Kong, or an internal proxy. Off by default because gateways backed by a shared API key would otherwise show every user every model the key can access. Discovered models are still filtered by an [`availableModels`](/docs/en/settings-reference#availablemodels) allowlist the session receives; deliver the list through [MDM or a managed settings file](/docs/en/managed-settings#delivery-mechanisms), since [server-managed delivery is not available on gateway configurations](/docs/en/server-managed-settings#platform-availability) |

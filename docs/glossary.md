@@ -343,7 +343,7 @@ Learn more: [Context Claude Code adds outside the system prompt](/docs/en/agent-
 
 A command, `/teleport`, that pulls a cloud Claude Code session into your local terminal. Claude fetches the branch, loads the conversation history, and resumes from the cloud session's last state. The reverse direction is `--cloud`, which sends a local task to run in the cloud.
 
-Learn more: [From cloud to terminal](/docs/en/claude-code-on-the-web#from-cloud-to-terminal)
+Learn more: [Continue a cloud session in your terminal](/docs/en/claude-code-on-the-web#from-cloud-to-terminal)
 
 ### Tool
 

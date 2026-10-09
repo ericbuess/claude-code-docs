@@ -74,7 +74,9 @@ The agent connects to the documentation server, searches for information about h
 
 You can configure MCP servers in code when calling `query()`, or in a `.mcp.json` file loaded via [`settingSources`](#from-a-config-file).
 
-### In code
+<span id="in-code" />
+
+### Add a server in code
 
 Pass MCP servers directly in the `mcpServers` option. This example starts a local filesystem MCP server for `/Users/me/projects`. Replace that path with a directory on your machine:
 
@@ -129,7 +131,9 @@ Pass MCP servers directly in the `mcpServers` option. This example starts a loca
   ```
 </CodeGroup>
 
-### From a config file
+<span id="from-a-config-file" />
+
+### Add a server from a config file
 
 Create a `.mcp.json` file at your project root. The file is picked up when the `project` setting source is enabled, which it is for default `query()` options. If you set `settingSources` explicitly, include `"project"` for this file to load. Replace `/Users/me/projects` with a directory on your machine:
 
@@ -279,7 +283,7 @@ MCP servers communicate with your agent using different transport protocols. Che
 
 ### stdio servers
 
-Local processes that communicate via stdin/stdout. Use this for MCP servers you run on the same machine. For the `.mcp.json` form, use the same fields shown at [From a config file](#from-a-config-file). In code, pass the command and its arguments. Replace `/Users/me/projects` with a directory on your machine:
+Local processes that communicate via stdin/stdout. Use this for MCP servers you run on the same machine. For the `.mcp.json` form, use the same fields shown at [Add a server from a config file](#from-a-config-file). In code, pass the command and its arguments. Replace `/Users/me/projects` with a directory on your machine:
 
 <CodeGroup>
   ```typescript TypeScript hidelines={1,-1} theme={null}

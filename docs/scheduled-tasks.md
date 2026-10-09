@@ -169,12 +169,25 @@ All times are interpreted in your local timezone. A cron expression like `0 9 * 
 
 ### Jitter
 
-To avoid every session hitting the API at the same wall-clock moment, the scheduler adds a deterministic offset to fire times:
+A scheduled task can run at a different time than its schedule says. If every session's tasks ran exactly on schedule, many of them would call the API at the same moment, so Claude Code shifts each task's run time. Recurring tasks run late, and one-shot tasks scheduled on the hour or half hour run a little early.
 
-* Recurring tasks fire up to 30 minutes after the scheduled time (or up to half the interval, for tasks that run more often than hourly). An hourly job scheduled for `:00` may fire anywhere up to `:30`.
-* One-shot tasks scheduled for the top or bottom of the hour fire up to 90 seconds early.
+#### How late a recurring task runs
 
-The offset is derived from the task ID, so the same task always gets the same offset. If exact timing matters, pick a minute that is not `:00` or `:30`, for example `3 9 * * *` instead of `0 9 * * *`, and the one-shot jitter will not apply.
+When you create a recurring task, Claude Code gives it a fixed delay and adds that delay to every run. The delay is worked out from the task's ID, so the same task runs the same number of minutes late each time, including when the session is idle and nothing else is running.
+
+Tasks that run more often get shorter delays, and 30 minutes is the longest delay a task can get. These are the delay ranges for some common schedules:
+
+| Task runs | Delay is between |
+| :- | :- |
+| Every 10 minutes | 0 and 5 minutes |
+| Every 30 minutes | 0 and 15 minutes |
+| Every hour, or less often such as daily | 0 and 30 minutes |
+
+For example, `7,37 * * * *` schedules a task for `:07` and `:37`, which are 30 minutes apart, so its delay is somewhere between 0 and 15 minutes. If this task's delay is 14 minutes, it runs at `:21` and `:51` every hour. Changing the schedule to a different minute moves the run time, and a delay is still added on top.
+
+#### When a one-shot task runs early
+
+A one-shot task scheduled for `:00` or `:30` runs up to 90 seconds early. Claude Code doesn't shift a one-shot task scheduled for any other minute, so when the timing matters, schedule it off the hour and half hour: `3 9 * * *` instead of `0 9 * * *`.
 
 ### Seven-day expiry
 

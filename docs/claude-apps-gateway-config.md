@@ -1139,7 +1139,7 @@ Gateway policies apply to every Claude Code invocation on the machine, including
 
 The CLI sends metrics, logs, and, when enabled, traces to the gateway, which relays them verbatim to each configured destination. The exports use OpenTelemetry Protocol (OTLP) over HTTP. To skip the relay and have sessions export straight to your collector, [name the collector in a policy](#export-directly-to-your-collector). See [Monitoring usage](/docs/en/monitoring-usage) for the metrics and events the CLI emits.
 
-In sessions signed in through `/login`, the CLI stamps each export with the authenticated user's identity, read from the gateway-issued JWT: the `user.id`, `user.email`, and `user.groups` attributes. Per-developer cost and usage attribution therefore works with no developer-side configuration. Events that Claude Code logs before the developer signs in [don't carry this identity](/docs/en/monitoring-usage#standard-attributes).
+In sessions signed in through `/login`, the CLI stamps each export with the authenticated user's identity, read from the gateway-issued JWT: the `user.id`, `user.email`, and `user.groups` attributes. Per-developer cost and usage attribution therefore works with no developer-side configuration. Events that Claude Code logs before the developer signs in [don't carry this identity](/docs/en/monitoring-usage#standard-attributes). To see which attribute follows a change in a developer's groups, see [Group changes during an open session](#group-changes-during-an-open-session).
 
 [Claude Desktop](#claude-desktop-overlay) and Cowork sessions signed in through the gateway stamp their telemetry with `user.email` and `user.groups` alongside `enduser.id`, so you can cover terminal, Desktop, and Cowork usage with one query on `user.email` or `user.groups`. `user.groups` is the comma-separated IdP group list.
 
@@ -1246,6 +1246,24 @@ You need Claude Code v2.1.281 or later on the gateway server to set `telemetry.r
 Terminal sessions signed in through `/login` receive the labels as `OTEL_RESOURCE_ATTRIBUTES`, pushed with the other [telemetry variables](#telemetry). If you set `OTEL_RESOURCE_ATTRIBUTES` in a policy's `env` block, terminal sessions that policy matches get that value instead of the labels. Claude Desktop receives the labels from the gateway alongside `user.email` and the other identity attributes.
 
 Claude Code also copies each label onto every metric data point, so you can filter metrics by it in a backend that doesn't index resource attributes. To turn that copy off, see [Metrics cardinality control](/docs/en/monitoring-usage#metrics-cardinality-control).
+
+#### Group changes during an open session
+
+Terminal sessions put `user.groups` on the OTLP resource and again on each metric data point and event. If a developer's groups change while a session is open, data points and events for usage after the next [silent refresh](#session) carry the new groups. The resource keeps the old groups until the developer restarts Claude Code, so group by the attribute on the data point or event.
+
+If you turn on `resource_to_telemetry_conversion` in the OpenTelemetry Collector's Prometheus remote write exporter, the exporter replaces each data point's `user.groups` with the resource's, so every data point shows the old groups. To keep the data point's value, delete `user.groups` from the resource ahead of that exporter.
+
+This OpenTelemetry Collector `resource` processor deletes the attribute in the pipelines that list it:
+
+```yaml theme={null}
+processors:
+  resource/drop-user-groups:
+    attributes:
+      - key: user.groups
+        action: delete
+```
+
+After you add `resource/drop-user-groups` to the metrics pipeline's `processors`, each series carries the `user_groups` label from its own data point.
 
 #### Export directly to your collector
 

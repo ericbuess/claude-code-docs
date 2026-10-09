@@ -75,6 +75,8 @@ Pick a mechanism by how you already manage devices, using the table below.
 
 Starter templates for Jamf, Iru, Intune, and Group Policy are in the [MDM examples repository](https://github.com/anthropics/claude-code/tree/main/examples/mdm).
 
+If your organization has the [HIPAA configuration](/docs/en/hipaa-setup#deploy-managed-settings) applied, see `settings-hipaa.json` and `README-hipaa.md` in the [settings examples repository](https://github.com/anthropics/claude-code/tree/main/examples/settings) for a fuller `managed-settings.json` with sandboxing, a network allowlist, credential protections, and local data retention.
+
 For managed MCP servers, which you deploy alongside any of these through `managed-mcp.json` or provide through the [`managedMcpServers`](/docs/en/settings-reference#managedmcpservers) key, see [Managed MCP configuration](/docs/en/managed-mcp).
 
 ### Where and when a policy applies

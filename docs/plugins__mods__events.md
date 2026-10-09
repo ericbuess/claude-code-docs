@@ -131,7 +131,12 @@ on('tool.call', { tool: ['Edit', 'Write'] }, async ($, e, next) => {
 
 After Claude edits or writes an `.mdx` file, a dim line in the transcript names the file. Nothing is logged for another kind of file, or for a call that was refused or failed. Claude's view of the call doesn't change, because the hook returns the result it received.
 
-To change a call, pass changed arguments to `next`. To retry a call, call `next(e)` again: a hook that sees `isError` on the first result can run the tool a second time and return that result. To answer a call yourself, return an object with a `result` field, such as `{ result: 'Skipped by my-mod' }`, without calling `next`. When you do that, no permission prompt appears and the tool doesn't run, so the result you return is all Claude learns about what happened.
+Your hook can also change a call, retry it, answer it itself, or withhold its result:
+
+* **Change the call**: pass changed arguments to `next`.
+* **Retry the call**: call `next(e)` again. A hook that sees `isError` on the first result can run the tool a second time and return that result.
+* **Answer the call yourself**: return an object with a `result` field, without calling `next`, and for a built-in tool, give `result` the shape that tool's own result has in [the types for your build](/docs/en/plugins/mods/create#get-the-types-for-your-build). No permission prompt appears and the tool doesn't run, so the result you return is all Claude learns about what happened.
+* **Withhold the result from Claude**: return `{ deny: reason }` after `await next(e)`. Claude reads your reason in place of what `next` returned. When the tool ran, the deny keeps its result from Claude and undoes nothing the tool did. When the tool ran and succeeded, the reason follows a note such as `Bash ran, and a plugin withheld its result:`.
 
 Hooks in your organization's [managed settings](/docs/en/server-managed-settings) run before any mod's `tool.call` hook, and a block from one of them is final.
 
@@ -205,7 +210,7 @@ A `prompt.submit` hook sees each prompt before the turn starts, so it can rewrit
 
 | To do this | Return this |
 | :- | :- |
-| Rewrite the prompt. The message in the transcript shows the new text. | `next({ ...e, text: newText })` |
+| Rewrite the prompt. The transcript and your [prompt history](/docs/en/interactive-mode#command-history) show the new text. | `next({ ...e, text: newText })` |
 | Add text only Claude reads, after the prompt | `next({ ...e, context: [...(e.context ?? []), extraText] })` |
 | Stop the prompt from being sent | `{ drop: 'the reason' }` |
 
@@ -225,7 +230,7 @@ on('prompt.submit', async ($, e, next) => {
 
 When you send a prompt such as `open a PR for this change`, your message looks the same in the transcript, and Claude also reads a line such as `Current branch: feature/auth` after it. A prompt that doesn't mention a pull request goes through unchanged, and `git` doesn't run.
 
-To stop a prompt, return `{ drop: 'the reason' }` without calling `next`. If your hook returns a `drop` after its `next(e)` call let the prompt through, the turn still runs, and the hook [fails](#handle-a-hook-that-fails) with a message that includes `a drop after its next() was answered`.
+To stop a prompt, return `{ drop: 'the reason' }` without calling `next`. The text goes back into the user's prompt input, and they see `Prompt dropped by a hook:` followed by your reason, so address the reason to them. If your hook returns a `drop` after its `next(e)` call let the prompt through, the turn still runs, and the hook [fails](#handle-a-hook-that-fails) with a message that includes `a drop after its next() was answered`.
 
 [Other events](/docs/en/plugins/mods/reference#prompts-and-what-claude-reads) cover the rest of what Claude reads: `prompt.section` for each section of the system prompt, `prompt.context` for the context sent with the first message, and `skill.prompt` for a skill's text. Text from these hooks that changes between requests [invalidates the prompt cache](/docs/en/prompt-caching).
 
@@ -340,6 +345,8 @@ At `tool.check` and `plugin.register`, a refusal returned after `next` resolved 
 
 * **`tool.check`**: return `{ decision: 'deny', reason: 'the reason' }`
 * **`plugin.register`**: return `{ refuse: 'the reason' }`, as [Refuse mods when your check fails](/docs/en/plugins/mods/admin#refuse-mods-when-your-check-fails) shows
+
+At `tool.call`, a `deny` returned after `next` resolved [withholds the result from Claude](#guard-or-change-a-tool-call).
 
 ## Next steps
 

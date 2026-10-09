@@ -47,11 +47,15 @@ Claude Code works with any paid Claude subscription (Pro, Max, Team, or Enterpri
 
 ## Usage
 
-### From your IDE
+<span id="from-your-ide" />
+
+### Run Claude Code from your IDE
 
 Run `claude` from your IDE's integrated terminal, and all integration features will be active.
 
-### From external terminals
+<span id="from-external-terminals" />
+
+### Connect from an external terminal
 
 Use the `/ide` command in any external terminal to connect Claude Code to your JetBrains IDE and activate all features:
 

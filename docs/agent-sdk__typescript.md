@@ -1414,6 +1414,7 @@ type SDKAssistantMessage = {
   agent_id?: string;
   timestamp?: string;
   context_usage?: SDKContextUsage;
+  usage_report?: SDKUsageReport;
   user_message_uuid?: string;
   user_message_uuids?: string[];
   resume_reason?: string;
@@ -1440,6 +1441,14 @@ Claude Code sets `user_message_uuid` and `user_message_uuids` on the turn's firs
 `timestamp` is the ISO 8601 time when the message's content finished generating on the process that produced it. The value comes from that machine's clock, so use it for display only and don't order messages by it. One API turn can produce several assistant messages that share a `message.id`, each with its own `timestamp`. When the field is absent, fall back to the time you received the message.
 
 `context_usage` is a structured copy of the `/context` report, typed as [`SDKContextUsage`](#sdkcontextusage), and requires Agent SDK v0.3.232 or later. When you send `/context` as a prompt, Claude Code delivers the report as an assistant message whose `message.content` holds the markdown table, and attaches `context_usage` to that same message. Claude Code doesn't set the field on any other assistant message, and earlier versions deliver the `/context` table without it, so read the breakdown from the field when it's present and fall back to the markdown text when it isn't.
+
+`usage_report` is a structured copy of the `/usage` report, typed as [`SDKUsageReport`](#sdkusagereport), and requires Agent SDK v0.3.273 or later. When you send `/usage` as a prompt, Claude Code delivers the report as an assistant message whose `message.content` holds the text. It attaches `usage_report` to that same message only when the session meets all of these conditions:
+
+* The session authenticates with a claude.ai credential
+* The credential shows a known plan type or carries the `user:profile` scope
+* The account isn't on usage-based billing
+
+A `claude setup-token` token passed as `CLAUDE_CODE_OAUTH_TOKEN` doesn't qualify by default, because it carries only the `user:inference` scope. Other sessions, such as API-key sessions, deliver the text without the field, and so do earlier versions. Read the report from the field when it's present and fall back to the text when it isn't.
 
 ### `SDKUserMessage`
 
@@ -2052,6 +2061,77 @@ Each `kind` value says what the row's tokens are:
 * `free`: the remaining window
 * `buffer`: the compaction reserve
 * `deferred`: tool schemas Claude Code holds out of the window and excludes from the usage calculation, listed for awareness
+
+### `SDKUsageReport`
+
+Structured form of the `/usage` report, carried as `usage_report` on the [`SDKAssistantMessage`](#sdkassistantmessage) that delivers a `/usage` result. Agent SDK v0.3.273 and later export the type. The type is experimental: its shape may change.
+
+```typescript theme={null}
+type SDKUsageReport = {
+  session: {
+    total_cost_usd: number;
+    total_api_duration_ms: number;
+    total_duration_ms: number;
+    total_lines_added: number;
+    total_lines_removed: number;
+    model_usage: { [modelName: string]: ModelUsage };
+  };
+  rate_limits: {
+    limits:
+      | {
+          kind: string;
+          group: string;
+          percent: number;
+          resets_at: string | null;
+          scope?: {
+            model?: { display_name: string } | null;
+            surface?: { display_name: string } | null;
+          } | null;
+          severity: string;
+          is_active: boolean;
+        }[]
+      | null;
+    extra_usage?: {
+      is_enabled: boolean;
+      monthly_limit: number | null;
+      used_credits: number | null;
+      utilization: number | null;
+      currency?: string | null;
+    } | null;
+  } | null;
+};
+```
+
+The top-level fields are `session` and `rate_limits`:
+
+* `session`: Claude Code's running cost and usage totals, read from the same ledger as `total_cost_usd` and `modelUsage` on [`SDKResultMessage`](#sdkresultmessage). Each `model_usage` entry is a [`ModelUsage`](#modelusage).
+* `rate_limits`: the plan's usage rows in `limits` and usage-credits spend in `extra_usage`. It is `null` when Claude Code couldn't get the plan's usage, for example when the session's OAuth token lacks the `user:profile` scope.
+
+Claude Code computes `session.total_cost_usd` locally from token counts, so it is an estimate and not what your plan bills. The usage-credits spend the server reports is the separate `extra_usage` block. See [Track cost and usage](/docs/en/agent-sdk/cost-tracking) for the accuracy caveats.
+
+`limits` holds the server's usage rows as the server sent them: which meters apply, their scope, labels, severity, and order are the server's, so render the rows verbatim.
+
+* An empty array means the server reported no meters.
+* `null` means Claude Code has no rows to report.
+
+Each row of `limits` describes one usage meter:
+
+| Field | Type | Description |
+| - | - | - |
+| `kind` | `string` | The server's meter kind, such as `session`, `weekly_all`, or `weekly_scoped`. Classify a row on this, never on a label |
+| `group` | `string` | The server's row group, such as `session` or `weekly`. Rows render grouped under it, in the server's order |
+| `percent` | `number` | Share of the window used, 0-100 |
+| `resets_at` | `string \| null` | ISO 8601 timestamp when the window resets |
+| `scope` | `object \| null` | Optional. What a scoped row is for, a model or a surface, with the server's display label |
+| `severity` | `string` | The server's reading of the row for a meter's color, such as `normal`, `warning`, or `critical` |
+| `is_active` | `boolean` | `true` on the row the server picks for a single-value indicator to show |
+
+Before Agent SDK v0.3.277, the type declared `severity` and `is_active` as optional and nullable, and a row could arrive without them.
+
+`extra_usage` is the [usage credits](https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans) spend and cap for the billing period as the server reports them, present when the plan has usage credits. Amounts are in minor units of `currency`, cents for USD.
+
+* `monthly_limit` is `null` when this account has no spending cap of its own. On Team and Enterprise plans, don't render `null` as unlimited.
+* `is_enabled` is `false` while usage credits can't pay for requests.
 
 ### `SDKMessageOrigin`
 
@@ -5120,6 +5200,7 @@ type SDKTaskNotificationMessage = {
   task_id: string;
   tool_use_id?: string;
   status: "completed" | "failed" | "stopped";
+  reason?: "worker_restart";
   output_file: string;
   summary: string;
   ambient?: boolean;
@@ -5133,6 +5214,8 @@ type SDKTaskNotificationMessage = {
   session_id: string;
 };
 ```
+
+`reason` is set when a task ends for a cause other than its own completion, failure, or stop, and requires Agent SDK v0.3.273 or later. Claude Code sets it only in sessions that connect through claude.ai: cloud sessions, including those on self-hosted runners, and Remote Control sessions. A local `query()` call never sets it. Its one value, `worker_restart`, means the Claude Code process that was running the task restarted. The notification carries status `"stopped"`, so treat the task as neither completed nor failed.
 
 When Claude Code [moves a long MCP tool call to the background](/docs/en/mcp#automatic-backgrounding-of-long-tool-calls), the `tool_result` block for that call holds only a placeholder and the call's real result arrives in this notification. Match the notification to the call with `tool_use_id`. On a `completed` notification, `resource_links` lists the files the tool returned by reference as [`SDKMcpResourceLink`](#sdkmcpresourcelink) entries, with the same 50-link and 64 KiB limits as [`tool_use_result.resourceLinks`](#sdkusermessage). Claude Code omits `resource_links` when the result had no links and on notifications for tasks that aren't MCP tool calls. `resource_links` requires Agent SDK v0.3.257 or later.
 

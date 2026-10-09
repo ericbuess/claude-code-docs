@@ -177,7 +177,9 @@ If two plugins loaded in different ways share a name, see [Name conflicts](/docs
 
 You can load a plugin for a single session in three ways: from a directory or `.zip` archive on disk with `--plugin-dir`, from a URL with `--plugin-url`, or from an environment variable when you can't add a flag. Each plugin loads for that session only, and nothing is written to your settings for it. When you edit the plugin's files during the session, run `/reload-plugins` to load the changes.
 
-#### From a directory or `.zip`
+<span id="from-a-directory-or-zip" />
+
+#### Load a plugin from a directory or `.zip`
 
 When you start `claude` from your shell, pass `--plugin-dir` with the plugin's root directory or a `.zip` archive of it. Repeat the flag to load several plugins:
 
@@ -185,9 +187,7 @@ When you start `claude` from your shell, pass `--plugin-dir` with the plugin's r
 claude --plugin-dir ./my-first-plugin --plugin-dir ./other-plugin.zip
 ```
 
-<h4 id="load-a-folder-of-plugins">
-  From a folder of plugins
-</h4>
+#### Load a folder of plugins
 
 To load several plugins from one place, pass a folder that holds them, such as `--plugin-dir ./plugins`. Loading a folder of plugins requires Claude Code v2.1.265 or later.
 
@@ -202,9 +202,9 @@ In an interactive session, you can also add and remove plugins in the folder aft
 
 A message appears in the session for each of these changes. If loading or unloading a plugin mid-conversation would [invalidate the prompt cache](/docs/en/prompt-caching#enabling-or-disabling-a-plugin), the change is held instead, and the message tells you to run `/reload-plugins` to apply it.
 
-<h4 id="fetch-an-archive-from-a-url-for-one-session">
-  From a URL
-</h4>
+<span id="fetch-an-archive-from-a-url-for-one-session" />
+
+#### Load a plugin from a URL
 
 When you start `claude` from your shell, pass `--plugin-url` with the address of a `.zip` archive, such as a build artifact your CI publishes:
 
@@ -218,7 +218,9 @@ Point the flag only at archives you control or trust.
 
 If Claude Code can't fetch the archive, or the archive is invalid, it starts without the plugin and records a plugin load error that you can review in the `/plugin` manager's **Errors** tab.
 
-#### From an environment variable
+<span id="from-an-environment-variable" />
+
+#### Load plugins from an environment variable
 
 To load plugins in a session where you can't add the `--plugin-dir` flag, list their absolute paths in the [`CLAUDE_CODE_PLUGIN_DIRS`](/docs/en/env-vars#variables) environment variable instead. Claude Code loads each path as it loads a `--plugin-dir` path. These plugins load in addition to any you pass with `--plugin-dir`. [Project and local settings can't set this variable](/docs/en/settings-reference#variables-claude-code-ignores-in-env). `CLAUDE_CODE_PLUGIN_DIRS` requires Claude Code v2.1.280 or later.
 

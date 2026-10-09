@@ -165,7 +165,9 @@ MCP servers aren't specific to Claude Code, so a server's setup instructions may
 
 Each is one of the inputs the four options in [Installing MCP servers](#installing-mcp-servers) take. Find the shape you have below to turn it into the command Claude Code accepts. Each command writes to [local scope](#local-scope) unless you add `--scope project` or `--scope user`.
 
-#### From a URL
+<span id="from-a-url" />
+
+#### Add a server from a URL
 
 A URL means the server is remote. For an `https://` endpoint, add it with `--transport http`, or follow [Option 2](#option-2-add-a-remote-sse-server) when the instructions say the endpoint uses SSE. For a `wss://` endpoint, use [Option 4](#option-4-add-a-remote-websocket-server) instead, since `--transport` doesn't accept `ws`:
 
@@ -175,7 +177,9 @@ claude mcp add --transport http example https://mcp.example.com/mcp
 
 If the instructions also give an API key or token header, pass it with `--header` as shown in [Option 1](#option-1-add-a-remote-http-server).
 
-#### From an `npx`, `uvx`, or binary command
+<span id="from-an-npx-uvx-or-binary-command" />
+
+#### Add a server from an `npx`, `uvx`, or binary command
 
 A launch command means the server runs as a local stdio process. Put the whole command after `--`, so Claude Code passes flags such as `-y` to the command that starts the server instead of reading them as its own options. Pass any environment variables the instructions ask for with `--env`, after the server name and before `--`:
 
@@ -185,7 +189,9 @@ claude mcp add example --env API_KEY=your-key -- npx -y @example/mcp-server
 
 [Option 3](#option-3-add-a-local-stdio-server) covers the `--` separator in full.
 
-#### From an `mcpServers` JSON block
+<span id="from-an-mcpservers-json-block" />
+
+#### Add a server from an `mcpServers` JSON block
 
 An `mcpServers` block written for another MCP client, such as Claude Desktop, uses the wrapper key and entry shape Claude Code reads. Pass `claude mcp add-json` the object inside `mcpServers`, not the wrapper. Two entries need a repair first:
 
@@ -797,7 +803,7 @@ If you configured `headers.Authorization` for the server and the server rejects 
 
 ### Authenticate from the command line
 
-The `claude mcp login <name>` command runs a configured server's OAuth flow directly from your shell, so you don't need to open the `/mcp` panel inside a session.
+The `claude mcp login <name>` command runs a configured server's OAuth flow directly from your shell, so you don't need to open the `/mcp` panel inside a session. For a claude.ai connector, follow [Authorize a connector again from your shell](/docs/en/remote-control#authorize-a-connector-again-from-your-shell).
 
 ```bash theme={null}
 claude mcp login sentry
@@ -1437,7 +1443,9 @@ Tool search keeps MCP context usage low by deferring tool definitions until Clau
   Tool search isn't supported on Microsoft Foundry [deployments hosted on Azure](https://platform.claude.com/docs/en/build-with-claude/claude-in-microsoft-foundry#hosting-options), which reject it server-side: Claude Code detects the rejection and loads MCP tools upfront for that deployment instead. [`ENABLE_TOOL_SEARCH`](#configure-tool-search) can't override this, since the rejection comes from the deployment itself.
 </Note>
 
-### For MCP server authors
+<span id="for-mcp-server-authors" />
+
+### Tool search for MCP server authors
 
 If you're building an MCP server, the server instructions field becomes more useful with tool search enabled. Server instructions help Claude understand when to search for your tools, similar to how [skills](/docs/en/skills) work.
 

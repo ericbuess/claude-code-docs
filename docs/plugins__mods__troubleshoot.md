@@ -94,6 +94,12 @@ The line starts with the mod's name, then `hooks module did not load: options do
 
 Set or change the value. The end of the line names its `pluginConfigs` entry in `settings.json`.
 
+### `code nested too deep to scan: more than 2000 scopes`
+
+The line starts with the mod's name, then `hooks module did not load:`, the file, and `code nested too deep to scan: more than 2000 scopes`. A file in a hooks module can't nest scopes, such as functions, blocks, and loops, more than [2,000 deep](/docs/en/plugins/mods/reference#limits). [`claude plugin validate`](/docs/en/plugins/mods/create#check-what-claude-code-reads-from-your-mod) reports the same reason.
+
+Rewrite the code so its scopes nest less deeply.
+
 ### No mod loads in a directory you opened for the first time
 
 You haven't answered the trust prompt for the directory.
@@ -105,6 +111,12 @@ Start an interactive session in that directory with `claude`, and accept the tru
 You started Claude Code with `--safe-mode`.
 
 Start without the flag.
+
+### Claude Code stops asking to enable hot reloading
+
+Claude writes a mod in an interactive session, nothing loads, and Claude Code doesn't ask again [whether to enable hot reloading](/docs/en/plugins/mods/create#ask-claude-for-a-mod). If the question ends three times without an answer picked, hot reloading stays off. For example, the question ends that way when you set [`askUserQuestionTimeout`](/docs/en/settings-reference#askuserquestiontimeout) and the time passes before you answer. That setting applies here because Claude Code asks in the same [question dialog that `AskUserQuestion` uses](/docs/en/tools-reference#question-auto-continue-timeout). A question you dismiss yourself doesn't count toward the three.
+
+To run the mod, [copy its directory out of the mods folder](/docs/en/plugins/mods/create#use-the-mod-in-other-sessions), then in your shell start a new session with `--plugin-dir`, as in `claude --plugin-dir ~/mods/git-branch`.
 
 ## A hook is skipped or a mod is unloaded
 
