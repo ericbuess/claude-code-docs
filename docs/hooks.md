@@ -1740,6 +1740,7 @@ Fetches and processes web content.
 | :- | :- | :- | :- |
 | `url` | string | `"https://example.com/api"` | URL to fetch content from |
 | `prompt` | string | `"Extract the API endpoints"` | Prompt to run on the fetched content |
+| `offset` | number | `100000` | Optional number of characters to skip from the start of the page. Claude sets it to keep reading a long page. Requires Claude Code v2.1.290 or later |
 
 ##### WebSearch
 

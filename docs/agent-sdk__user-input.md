@@ -34,10 +34,13 @@ Pass a `canUseTool` callback in your query options. The callback fires whenever 
   ```
 
   ```typescript TypeScript theme={null}
-  async function handleToolRequest(toolName, input, options) {
+  import type { CanUseTool } from "@anthropic-ai/claude-agent-sdk";
+
+  const handleToolRequest: CanUseTool = async (toolName, input, options) => {
     // options includes { signal: AbortSignal, suggestions?: PermissionUpdate[] }
-    // Prompt user and return allow or deny
-  }
+    // Prompt the user here, then return allow or deny
+    return { behavior: "deny", message: "User declined" };
+  };
 
   const options = { canUseTool: handleToolRequest };
   ```
@@ -432,7 +435,8 @@ The following steps show how to handle clarifying questions:
           // Include AskUserQuestion in your tools list
           tools: ["Read", "Glob", "Grep", "AskUserQuestion"],
           canUseTool: async (toolName, input) => {
-            // Handle clarifying questions here
+            // Placeholder that approves every call. The Detect AskUserQuestion step replaces it.
+            return { behavior: "allow", updatedInput: input };
           }
         }
       })) {
@@ -745,6 +749,7 @@ Save the TypeScript version as `ask.ts` and run it with `npx tsx ask.ts`, or sav
 
   ```typescript TypeScript theme={null}
   import { query } from "@anthropic-ai/claude-agent-sdk";
+  import type { PermissionResult } from "@anthropic-ai/claude-agent-sdk";
   import * as readline from "readline/promises";
 
   // Helper to prompt user for input in the terminal
@@ -765,7 +770,7 @@ Save the TypeScript version as `ask.ts` and run it with `npx tsx ask.ts`, or sav
   }
 
   // Display Claude's questions and collect user answers
-  async function handleAskUserQuestion(input: any) {
+  async function handleAskUserQuestion(input: any): Promise<PermissionResult> {
     const answers: Record<string, string> = {};
 
     for (const q of input.questions) {

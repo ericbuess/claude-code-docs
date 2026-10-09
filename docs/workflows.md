@@ -312,7 +312,7 @@ return audits.filter(Boolean)
 
 The body is plain JavaScript with top-level `await`. `agent()` spawns one subagent, `pipeline()` runs one per item in a list, and `parallel()` runs a set of agent tasks at the same time and waits for all of them.
 
-An `agent()` call resolves to `null` if you stop it mid-run or it hits an unrecoverable API error. `pipeline()` keeps each `null` in the results array, which is why the example ends with `.filter(Boolean)` to drop those entries.
+An `agent()` call resolves to `null` if you stop it mid-run or it hits an unrecoverable API error. `pipeline()` keeps each `null` in the results array, which is why the example ends with `.filter(Boolean)` to drop those entries, including the slot of [an agent that stalled on every attempt](#when-an-agent-stalls-and-restarts).
 
 In [auto mode](/docs/en/permission-modes#eliminate-prompts-with-auto-mode), the prompt your script passes to `agent()` doesn't count as a request from you when the classifier reviews that subagent's actions, because Claude Code marks it as text the script computed.
 
@@ -406,6 +406,30 @@ The run pauses only when all of these hold; when one doesn't, the affected agent
 * [`autoContinueAtUsageLimit`](/docs/en/settings-reference#autocontinueatusagelimit) is on, the same setting that lets the session itself [wait for a usage limit to reset](/docs/en/interactive-mode#wait-for-a-usage-limit-to-reset). If you turn it off during a wait, the wait ends and the waiting agents fail.
 * The limit resets within 24 hours. A weekly limit can reset further out.
 * The run hasn't already waited twice. When it hits the limit a third time, the agent fails.
+
+### When an agent stalls and restarts
+
+An agent whose output stops arriving for long enough starts over from the same prompt. In [`/workflows`](#watch-the-run), its name gains a `(retry 1)` suffix and its detail shows `attempt 2 (stalled)`. The restart is automatic, so you don't need to do anything.
+
+The new attempt starts without the stalled attempt's transcript. Files the stalled attempt already changed stay changed, and the tokens it spent stay in the run's total. The stall window is how long Claude Code waits for output from an agent before it ends the attempt. Time the agent spends waiting on its own tool calls or on a [usage-limit reset](#when-a-run-hits-your-usage-limit) doesn't count toward the stall window.
+
+An agent restarts at most five times, counting any restart you ask for with `r`. If the sixth attempt stalls as well, the `agent()` call fails, and the start of the error says why:
+
+* `agent stalled on all 6 attempts`: every attempt went the whole window without output. If the agent's work keeps it silent that long, lengthen the window
+* `agent lost its reply on all 6 attempts`: every attempt's response stream went silent and Claude Code gave up waiting on it. Lengthening the stall window doesn't help, since a [streaming idle watchdog](/docs/en/network-config#streaming-idle-watchdogs) ended the response first and `CLAUDE_STREAM_IDLE_TIMEOUT_MS` sets that watchdog's timeout
+* `agent abandoned after 6 attempts`: the attempts ended in different ways, which the error lists in order
+
+To give an agent more time to produce output before the window ends:
+
+* **One agent**: pass `stallMs` in milliseconds on its `agent()` call, such as `agent(prompt, { stallMs: 1800000 })` for 30 minutes
+* **Every agent**: set [`CLAUDE_ASYNC_AGENT_STALL_TIMEOUT_MS`](/docs/en/env-vars#variables), which also applies to subagents outside workflows
+
+Whether the run continues after the failure depends on how your script called the agent:
+
+* **Inside [`parallel()` or `pipeline()`](#what-the-saved-script-looks-like)**: the run carries on with `null` in place of the agent's result
+* **Awaited directly**: the run ends with the error
+
+To try again, ask Claude to relaunch the workflow. [Resume after a pause](#resume-after-a-pause) covers what runs again.
 
 ### Cost
 

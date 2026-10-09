@@ -507,7 +507,7 @@ Managed settings reach you through the [delivery mechanisms](/docs/en/managed-se
 
 In a [Cowork](https://claude.com/docs/cowork/overview) session that runs on your machine in the Claude Desktop app, Claude Code doesn't fetch server-managed settings from the claude.ai admin console, and it reads policy deployed to your device unless your organization's Claude Desktop configuration sets `requireCoworkFullVmSandbox`. [Where and when a policy applies](/docs/en/managed-settings#where-and-when-a-policy-applies) covers Cowork and cloud sessions.
 
-If you're the administrator, [Set up Claude Code for your organization](/docs/en/admin-setup) walks through choosing what to enforce, and [Deploy managed settings](/docs/en/managed-settings) covers delivery and how to confirm a policy is in force.
+If you're the administrator, [Set up Claude Code for your organization](/docs/en/admin-setup) walks through choosing what to enforce, and [Deploy managed settings](/docs/en/managed-settings) covers delivery and how to confirm a policy is in force. For the warning the managed settings editor in the claude.ai admin console can show, see [Configure server-managed settings](/docs/en/server-managed-settings#configure-server-managed-settings).
 
 ## Change a setting
 

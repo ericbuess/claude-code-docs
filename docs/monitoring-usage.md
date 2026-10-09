@@ -559,6 +559,10 @@ All metrics and events share these standard attributes:
 
 In sessions signed in to a [Claude apps gateway](/docs/en/claude-apps-gateway) through `/login`, the CLI stamps exports with the authenticated identity: `user.id` is the IdP subject, `user.email` is the signed-in email, and `user.groups` carries IdP group membership as a comma-separated string. Each export also carries `identity.source: gateway-oidc`. The gateway identity is applied last, so `user.*` and `identity.*` keys set through `OTEL_RESOURCE_ATTRIBUTES` are ignored on those sessions.
 
+<Note>
+  Events that Claude Code logs before a developer signs in don't carry the gateway identity. When Claude Code opens a session signed out of the gateway, for example after [the gateway ends the sign-in](/docs/en/errors#cloud-gateway-session-expired), the startup events logged before sign-in carry the anonymous `user.id` and no `identity.source`. These include [`managed_settings_resolved`](#managed-settings-resolved-event), [`plugin_loaded`](#plugin-loaded-event), and [`mcp_server_connection`](#mcp-server-connection-event).
+</Note>
+
 For the identity attributes on Claude Desktop and Cowork sessions that connect through a gateway, see the [gateway `telemetry` reference](/docs/en/claude-apps-gateway-config#telemetry).
 
 Events additionally include the following attributes. These are never attached to metrics because they would cause unbounded cardinality:

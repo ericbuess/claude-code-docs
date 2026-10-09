@@ -196,13 +196,17 @@ You can limit how many turns the loop takes, how much it costs, how deeply Claud
 | Option | What it controls | Default |
 | :- | :- | :- |
 | Max turns (`max_turns` / `maxTurns`) | Maximum tool-use round trips | No limit |
-| Max budget (`max_budget_usd` / `maxBudgetUsd`) | Maximum cost before stopping | No limit |
+| Max budget (`max_budget_usd` / `maxBudgetUsd`) | Estimated spend at which the loop stops | No limit |
 
 When either limit is hit, the SDK returns a `ResultMessage` with a corresponding error subtype (`error_max_turns` or `error_max_budget_usd`). See [Handle the result](#handle-the-result) for how to check these subtypes and [`ClaudeAgentOptions`](/docs/en/agent-sdk/python#claudeagentoptions) / [`Options`](/docs/en/agent-sdk/typescript#options) for syntax.
 
 The budget cap covers [subagents](/docs/en/agent-sdk/subagents): their spend counts toward the total. Once spend reaches the cap, spawning another subagent fails with `Budget limit reached`, and Claude Code stops any background subagents still running. The cap-enforcement behaviors require Claude Code v2.1.217 or later.
 
 With [streaming input](/docs/en/agent-sdk/streaming-vs-single-mode), a message that is still queued when a turn ends at the max-turns limit stays queued. Claude Code doesn't add it to that turn's last model call. It starts a new turn for the message, and the max-turns count starts over for that turn. The budget total keeps accumulating across messages, and once spend reaches `maxBudgetUsd`, later messages in the same conversation end with the `error_max_budget_usd` result. A [`/clear`](/docs/en/agent-sdk/cost-tracking) starts the budget over.
+
+#### Budget headroom
+
+Claude Code compares spend with the `max_budget_usd` / `maxBudgetUsd` cap after model responses arrive, because each response's cost comes from the token usage the API returns with it. The response that reaches the cap still completes and counts toward [`total_cost_usd`](/docs/en/agent-sdk/cost-tracking#get-the-total-cost-of-a-query). Spend can therefore pass the cap by up to the cost of that one response, plus anything that subagents still running at that moment spend before they stop. Leave headroom for this when you set the cap.
 
 ### Effort level
 

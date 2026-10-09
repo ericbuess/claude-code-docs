@@ -1139,7 +1139,7 @@ Gateway policies apply to every Claude Code invocation on the machine, including
 
 The CLI sends metrics, logs, and, when enabled, traces to the gateway, which relays them verbatim to each configured destination. The exports use OpenTelemetry Protocol (OTLP) over HTTP. To skip the relay and have sessions export straight to your collector, [name the collector in a policy](#export-directly-to-your-collector). See [Monitoring usage](/docs/en/monitoring-usage) for the metrics and events the CLI emits.
 
-In sessions signed in through `/login`, the CLI stamps each export with the authenticated user's identity, read from the gateway-issued JWT: the `user.id`, `user.email`, and `user.groups` attributes. Per-developer cost and usage attribution therefore works with no developer-side configuration.
+In sessions signed in through `/login`, the CLI stamps each export with the authenticated user's identity, read from the gateway-issued JWT: the `user.id`, `user.email`, and `user.groups` attributes. Per-developer cost and usage attribution therefore works with no developer-side configuration. Events that Claude Code logs before the developer signs in [don't carry this identity](/docs/en/monitoring-usage#standard-attributes).
 
 [Claude Desktop](#claude-desktop-overlay) and Cowork sessions signed in through the gateway stamp their telemetry with `user.email` and `user.groups` alongside `enduser.id`, so you can cover terminal, Desktop, and Cowork usage with one query on `user.email` or `user.groups`. `user.groups` is the comma-separated IdP group list.
 

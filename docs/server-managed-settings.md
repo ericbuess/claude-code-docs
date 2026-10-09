@@ -86,6 +86,10 @@ If your devices are enrolled in an MDM or endpoint management solution, endpoint
 
   <Step title="Save and deploy">
     Save your changes. Claude Code clients receive the updated settings on their next startup or hourly polling cycle.
+
+    The editor checks your JSON against the published JSON schema for Claude Code settings. If it finds a problem in JSON that parses, it shows a warning and relabels the save button. The label is **Update with errors** when settings are already saved, and **Add with errors** when no settings are saved yet. That button still saves, because a schema warning doesn't block the save.
+
+    The schema [can lag behind the newest releases](/docs/en/settings#edit-a-settings-file), so the editor can flag a key or value that the [settings reference](/docs/en/settings-reference#all-settings) documents. Claude Code receives the keys and values you saved and runs [its own validation](#invalid-entries-in-delivered-settings) when it loads them.
   </Step>
 </Steps>
 
