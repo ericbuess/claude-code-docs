@@ -497,6 +497,29 @@ fi
 # Clean up old installations now that v0.3 is set up
 cleanup_old_installations
 
+# Setup /query feature (skill + agent + command)
+echo ""
+echo "Installing /query feature..."
+
+mkdir -p ~/.claude/commands
+mkdir -p ~/.claude/agents
+mkdir -p ~/.claude/skills/query-orchestrator
+
+if [[ -d "$INSTALL_DIR/claude-files" ]]; then
+    cp "$INSTALL_DIR/claude-files/commands/query.md" \
+       ~/.claude/commands/query.md
+    cp "$INSTALL_DIR/claude-files/agents/query-researcher.md" \
+       ~/.claude/agents/query-researcher.md
+    cp "$INSTALL_DIR/claude-files/skills/query-orchestrator/SKILL.md" \
+       ~/.claude/skills/query-orchestrator/SKILL.md
+    echo "✓ Installed /query command, query-researcher agent, query-orchestrator skill"
+else
+    echo "⚠️  claude-files/ missing — /query feature will not be available"
+fi
+
+mkdir -p "$INSTALL_DIR/query"
+echo "✓ Query workspace ready at $INSTALL_DIR/query"
+
 # Success message
 echo ""
 echo "✅ Claude Code Docs v0.3.3 installed successfully!"

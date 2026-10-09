@@ -97,6 +97,19 @@ The changelog feature fetches the latest release notes directly from the officia
 /docs uninstall    # Get commnd to remove claude-code-docs completely
 ```
 
+### Multi-question research with /query
+
+`/query` parses your input into sub-questions, dispatches research subagents in batches of 3 in parallel, and assembles a structured answer file.
+
+```bash
+/query What is a hook?                          # single question
+/query Explain hooks and MCP, then compare them # multi-part
+/query 1. ... 2. ... 3. ...                     # explicit numbering
+```
+
+Each query produces a folder under `~/.claude-code-docs/query/QUERY-TASK-<keyword>-<id>/`
+containing the full structured answer with citations. Useful for non-trivial questions that span multiple docs.
+
 ### Customize command name
 
 If you prefer a different command name (e.g., `/claude-docs` instead of `/docs`), you can easily customize it:

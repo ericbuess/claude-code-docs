@@ -11,6 +11,14 @@ When responding to /docs commands:
 2. Read documentation files from the docs/ directory only
 3. Use the manifest to know available topics
 
+## For /query Command
+
+When responding to /query commands:
+1. Invoke the `query-orchestrator` skill via the Skill tool
+2. Follow the skill's 7-step procedure (parse → task ID → folder → template → batch dispatch → assemble → summary)
+3. Subagents read from docs/ folder via DOCS_MAP.md
+4. Outputs accumulate in ~/.claude-code-docs/query/
+
 ## Files to ultrathink about
 
 @install.sh
@@ -20,3 +28,5 @@ When responding to /docs commands:
 @claude-docs-helper.md
 @scripts/
 @.github/workflows/
+@docs/DOCS_MAP.md
+@claude-files/
