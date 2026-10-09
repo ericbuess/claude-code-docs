@@ -97,7 +97,7 @@ The `hooks:` and `calls:` lines in the output list the events the mod handles an
 Mods are on by default. In the terminal, use Claude Code v2.1.287 or later. The Desktop app includes its own copy of Claude Code, and mods work there from v2.1.286. Check the version in the place you use mods:
 
 * **Terminal**: in your shell, run `claude --version`. If yours is older, [update Claude Code](/docs/en/setup#update-claude-code).
-* **Desktop app**: in a local session in the Code tab, enter `/status` and read the **Claude Code** row, which shows a version such as `2.1.286`. If yours is older, update the Desktop app.
+* **Desktop app**: in a local session in the Code tab, enter `/status` and read the **Claude Code** row, which shows a version such as `2.1.286`. If yours is older, [update the Desktop app](/docs/en/desktop#claude-code-version-in-the-code-tab).
 
 To turn mods off, choose how many to stop, and for how long. To turn them back on, undo the same change:
 

@@ -128,7 +128,7 @@ Look at the `calls:` line for these:
 | `$.mcp.call` | Calls a tool on a connected MCP server, under the session's permission rules |
 | `$.model.complete` | Uses the user's plan or API key for model calls |
 | `$.prompt.submit` | Submits a prompt, and can send it as the user's own words |
-| `$.session.send` | Sends a message that another session's or subagent's Claude reads |
+| `$.session.send` | Sends a message that another session's, subagent's, or [teammate's](/docs/en/agent-teams) Claude reads |
 
 In the `hooks:` line, [`tool.call`](/docs/en/plugins/mods/reference#tools) and [`prompt.submit`](/docs/en/plugins/mods/reference#prompts-and-what-claude-reads) mean the mod sees every tool call and every prompt, and can change them. [`session.append`](/docs/en/plugins/mods/reference#session) means the mod can rewrite each row of the conversation before it's stored. [`ui.render{component=AskUserQuestion}`](/docs/en/plugins/mods/interface#change-what-claude-code-already-draws) means the mod can redraw the dialog Claude uses to ask the user a question. `tool.check` means the mod can approve or deny a tool call before a permission prompt appears. [Know what happens by default](#know-what-happens-by-default) lists which of your rules and hooks take precedence over its answer.
 

@@ -183,7 +183,7 @@ Run `claude plugin install` in your shell to install a plugin without starting a
 
 * **Scope**: user scope by default. Pass `--scope project` or `--scope local` to change it.
 * **When the plugins load**: plugins it installs load the next time you start Claude Code, or when you run `/reload-plugins` in a session that's already open.
-* **The marketplace must be added first**: on a machine where no one has opened an interactive Claude Code session yet, the official marketplace isn't registered, so a script that installs from it runs `claude plugin marketplace add anthropics/claude-plugins-official` before the install.
+* **The marketplace on a new machine**: on a machine where no one has opened an interactive Claude Code session yet, the official marketplace isn't registered, so a script that installs from it runs `claude plugin marketplace add anthropics/claude-plugins-official` before the install. See [Add and install from your shell](#add-and-install-from-your-shell).
 
 ```bash theme={null}
 claude plugin install formatter@your-org --scope project
@@ -222,15 +222,27 @@ When the command succeeds, it prints `Successfully added marketplace: <name>`, a
 
 ### Add a marketplace and install in one command
 
-To install a plugin from a marketplace you haven't added yet, run `/plugin install` in a Claude Code session and name the marketplace source with `--marketplace`. Requires Claude Code v2.1.275 or later.
+To install a plugin from a marketplace you haven't added yet, name the marketplace source with `--marketplace` on the install command, in a session or from your shell. The source takes [the same forms as `/plugin marketplace add`](#add-a-marketplace), such as GitHub `owner/repo`, a git URL, or a local path. Give the plugin name by itself, without an `@marketplace` suffix.
+
+#### Add and install in a session
+
+Run `/plugin install` in a Claude Code session with the plugin and the source. Requires Claude Code v2.1.275 or later. In a session, the source can't contain spaces.
 
 ```text theme={null}
 /plugin install deploy-helper --marketplace your-org/plugins
 ```
 
-The source takes [the same forms as `/plugin marketplace add`](#add-a-marketplace), such as GitHub `owner/repo`, a git URL, or a local path, except that it can't contain spaces. Give the plugin name by itself, without an `@marketplace` suffix.
-
 If you haven't added that marketplace yet, Claude Code shows the source it resolved and asks you to confirm before adding it. Once the marketplace is added, the plugin's details open and you choose an [installation scope](#install-a-plugin). If the source matches a marketplace you've already added, Claude Code skips the confirmation and opens the plugin's details in that marketplace.
+
+#### Add and install from your shell
+
+In your shell, without starting a session, run `claude plugin install` with the plugin and the source. Requires Claude Code v2.1.292 or later.
+
+```bash theme={null}
+claude plugin install deploy-helper --marketplace your-org/plugins
+```
+
+The shell command adds the marketplace without a confirmation step. A marketplace you've already added from that source is reused. A new one is added under the same [organization policy checks](/docs/en/plugins/org#restrict-what-users-can-install) as `claude plugin marketplace add`, and is declared in your user settings even when you pass `--scope project`.
 
 ### Add a private marketplace
 

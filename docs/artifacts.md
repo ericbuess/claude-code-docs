@@ -45,19 +45,33 @@ Make an artifact that walks through this PR with the diff annotated inline.
 Build a dashboard artifact of last week's deploy failures by service and keep it updated as you investigate.
 ```
 
-Unless you name a location, Claude writes the page to an HTML or Markdown file in a temporary directory outside your project, then publishes it. Outside [plan mode](/docs/en/permission-modes#analyze-before-you-edit-with-plan-mode), a new artifact that Claude publishes in response to a prompt you type goes through without a permission prompt or classifier review, unless that publish declares runtime capabilities for the page, such as [connector calls](#pull-live-data-with-mcp-connectors) or [file downloads](#offer-a-file-download). In plan mode, Claude Code asks you before the first publish of each artifact.
+Unless you name a location, Claude writes the page to an HTML or Markdown file in a temporary directory outside your project, then publishes it. The artifact stays private to you until you [share it](#share-an-artifact).
 
-The artifact stays private to you until you [share it](#share-an-artifact). After you share it publicly, Claude Code asks for your approval once per conversation before changing it, or in [auto mode](/docs/en/permission-modes#eliminate-prompts-with-auto-mode) has the classifier review the change.
+After the first publish, Claude prints the URL, and your browser opens to the new page.
 
-If you turned [feature-flag fetching](/docs/en/env-vars#features-that-need-feature-flag-fetching) off, Claude Code asks before the first publish of each artifact, or in auto mode has the classifier review it.
+* **Reopen the page**: press `Ctrl+]` at any time to reopen the session's most recent artifact
+* **See this session's artifacts**: a `⧉` pill below the prompt shows the artifact's name, or a count when the session has several. In [fullscreen rendering](/docs/en/fullscreen), click it to open the [`/artifacts`](#find-an-artifact-again) list
+* **Keep the browser from opening**: set `CLAUDE_CODE_ARTIFACT_AUTO_OPEN=0` in your environment
+* **Remote Control**: if you sent the prompt through [Remote Control](/docs/en/remote-control) from claude.ai, Claude Desktop, or the Claude mobile app, no tab opens on the machine running the session. The browser opens there the next time Claude publishes the artifact from a prompt you type at the terminal
 
-After the first publish, Claude prints the URL, and your browser opens to the new page. If you sent the prompt through [Remote Control](/docs/en/remote-control) from claude.ai, Claude Desktop, or the Claude mobile app, no tab opens on the machine running the session. The browser opens there the next time Claude publishes the artifact from a prompt you type at the terminal. Press `Ctrl+]` at any time to reopen the session's most recent artifact.
+Claude picks the artifact's title and a browser-tab icon that matches what the page is, such as a chart or a calendar. The title appears in your [gallery of artifacts](#share-an-artifact) on claude.ai and in shared links. Ask Claude for a specific title or tab icon if you want one.
 
-Claude picks the artifact's title and an emoji, and both appear in your [gallery of artifacts](#share-an-artifact) on claude.ai and in shared links. Claude can also pick a browser-tab icon that matches what the page is, such as a chart or a calendar. Ask Claude for a specific title, emoji, or tab icon if you want one.
+If Claude responds that it can't publish, or writes a local HTML file without a link, artifacts aren't enabled for your session. Check the [Availability](#availability) requirements. If the terminal shows `Artifacts need a claude.ai login`, see [that error's entry](/docs/en/errors#artifacts-need-a-claude-ai-login) for how to sign in.
 
-To stop the browser from opening automatically when a new artifact is published, set `CLAUDE_CODE_ARTIFACT_AUTO_OPEN=0` in your environment.
+### When Claude Code asks before publishing
 
-If Claude responds that it cannot publish, or writes a local HTML file without a link, the tool is not enabled for your session. Check the [Availability](#availability) requirements.
+A new artifact that Claude publishes in response to a prompt you type goes through without a permission prompt or classifier review. In these cases Claude Code asks you first, or in [auto mode](/docs/en/permission-modes#eliminate-prompts-with-auto-mode) has the classifier review the publish:
+
+| When | What Claude Code does |
+| :- | :- |
+| The session is in [plan mode](/docs/en/permission-modes#analyze-before-you-edit-with-plan-mode) | Asks before the first publish of each artifact |
+| The publish declares runtime capabilities for the page, such as [connector calls](#pull-live-data-with-mcp-connectors) or [file downloads](#offer-a-file-download) | Asks before that publish |
+| You shared the artifact publicly | Asks once per conversation before changing it |
+| You turned [feature-flag fetching](/docs/en/env-vars#features-that-need-feature-flag-fetching) off | Asks before the first publish of each artifact |
+| Claude publishes in a turn that a [scheduled task](/docs/en/scheduled-tasks) firing in your session started, rather than a prompt you typed | Asks before the first publish of each artifact |
+| Claude can't read the file without your approval | Asks before publishing it. An allow rule for the `Artifact` tool doesn't skip this prompt |
+
+Claude reads files in your session's [working directories](/docs/en/permissions#working-directories), and in the temporary directory it writes pages to, without asking. To let Claude publish from another folder without the prompt, add the folder as a working directory with [`--add-dir`](/docs/en/cli-reference#cli-flags) at launch or `/add-dir` during the session.
 
 ## Update an artifact
 
@@ -77,7 +91,15 @@ Update https://claude.ai/code/artifact/5fbea6f3-... with today's numbers.
 
 ## Find an artifact again
 
-Run `/artifacts` in Claude Code to list every artifact you own and every artifact shared with you. Select one and press `o` to open it in your browser or `c` to copy its link. Press `Enter` to attach it to the current session; before v2.1.216, `Enter` opened it in your browser. Claude Code reads the list from your claude.ai account, so it works in a new session and after `/clear`, when the link has scrolled out of the terminal. Requires Claude Code v2.1.208 or later.
+Run `/artifacts` in Claude Code to list the artifacts you own and the ones shared with you. The current session's artifacts come first, under **This session**. Requires Claude Code v2.1.208 or later.
+
+Select an artifact, then press one of these keys:
+
+* **`Enter`**: opens it in your browser when it's already attached to the current session, and attaches it when it isn't. Before v2.1.216, `Enter` opened it in your browser
+* **`o`**: opens it in your browser
+* **`c`**: copies its link
+
+Claude Code reads the list from your claude.ai account, so it works in a new session and after `/clear`, when the link has scrolled out of the terminal.
 
 ## Share an artifact
 
@@ -95,6 +117,8 @@ Who you can share with depends on your plan:
 People you share with are viewers by default: they see each version you publish but can't change the page. On Team and Enterprise plans, you can also make someone an editor. In the share dialog, add a person and switch their role from **viewer** to **editor**.
 
 An editor publishes new versions the same way you [update the artifact from another session](#update-an-artifact): they give Claude the artifact's URL, or attach it from [`/artifacts`](#find-an-artifact-again), and Claude pulls the current content and republishes with their changes. Everyone with the page open sees each update live.
+
+If an editor publishes while Claude holds an older copy of the page, Claude Code refuses a publish built on that copy. Claude then merges its changes onto the newer version and publishes again.
 
 ## Read an artifact shared with you
 
@@ -148,7 +172,9 @@ Your [permission mode](/docs/en/permission-modes) decides what Claude does when 
 
 Claude also stops replying on its own to an artifact after it handles 60 sent comments or thread activations on that artifact within an hour. You see `Comments are waiting on Artifact: <name>` once, and Claude picks up again as that hour's comments age out.
 
-Run `/tasks` to see each artifact your session is watching, listed as a live-updates task. You can stop Claude from replying on its own in any of these ways:
+Run `/tasks` to see the artifacts your session is watching. `/tasks` groups the watches Claude Code started on its own under the **System tasks** row. Press `Enter` on that row to list them. A watch you asked Claude to start appears under **Monitors**.
+
+You can stop Claude from replying on its own in any of these ways:
 
 * **Press Ctrl+C once at an idle prompt**: Claude pauses replying on every artifact your session is watching. Replies start again after you send your next message.
 * **Stop the task in `/tasks`**: Claude stops replying on that artifact until you ask it to resume replies there. Publishing the artifact again doesn't start replies again, and the stop still applies when you resume the session later.
@@ -337,7 +363,7 @@ Artifacts require every condition below. When one is not met, Claude writes a lo
 | Authentication | The session is backed by a claude.ai account: sign in with `/login` in the CLI or desktop app. Claude Tag sessions are signed in through the agent's identity, so no step is needed there. Sessions using an API key, [gateway token](/docs/en/llm-gateway), or cloud-provider credential cannot publish. |
 | Model provider | Anthropic API. Not available on [Amazon Bedrock](/docs/en/amazon-bedrock), [Google Cloud's Agent Platform](/docs/en/google-vertex-ai), or [Microsoft Foundry](/docs/en/microsoft-foundry). |
 | Organization policy | Customer-managed encryption keys (CMEK), HIPAA, and [Zero Data Retention](/docs/en/zero-data-retention) are not enabled for the organization. |
-| Surface | Claude Code CLI, or the Claude desktop app version 1.13576.0 or later. [Claude Tag](https://claude.com/docs/claude-tag/overview) sessions can also publish artifacts when both Claude Tag and artifacts are enabled for the organization. Off by default in [Agent SDK](/docs/en/agent-sdk/overview), GitHub Action, and MCP-server contexts, and when [`CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC`](/docs/en/env-vars) is set. |
+| Surface | Claude Code CLI, or the Claude desktop app version 1.13576.0 or later. [Claude Tag](https://claude.com/docs/claude-tag/overview) sessions can also publish artifacts when both Claude Tag and artifacts are enabled for the organization. Sessions served by [`claude remote-control`](/docs/en/remote-control) can publish artifacts when you started the session yourself. Requires Claude Code v2.1.281 or later. Off by default in the [Agent SDK](/docs/en/agent-sdk/overview), the GitHub Action, and MCP-server contexts, when you run Claude Code with [`-p`](/docs/en/headless) from your own terminal or scripts, and when [`CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC`](/docs/en/env-vars) is set. |
 
 Whether artifacts are allowed for your organization comes from your organization's policy, which Claude Code loads from `api.anthropic.com`. When Claude Code can't load the policy, artifacts are unavailable. When you ask for one, Claude says why.
 

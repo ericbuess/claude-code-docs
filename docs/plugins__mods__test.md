@@ -106,7 +106,12 @@ A stub for a mods API call returns an object with a `value` field, which holds w
 * `returned neither { value } nor { deny }`: a stub for a mods API call returned a bare value, which fails the test
 * `no implementation for` followed by a name: your mod made that call and no stub answers it
 
-The kit also exports in-memory mocks that answer a whole namespace for you. `mock.clock(on)` answers [`$.clock`](/docs/en/plugins/mods/api#run-work-in-the-background), `mock.store(on, { count: 7 })` answers `$.store` from a store that starts with those entries, and `mock.env(on, { CI: 'true' })` answers `$.env.get` from those variables. `mock.clock` returns a mock clock that your test advances, so a test of a timer doesn't wait. `mock.store` returns nothing, so to check what your mod saved, write the two `store` stubs yourself as the [drawing test](#test-a-drawing) does.
+The kit also exports ready-made mocks for the clock, the store, environment variables, and rows appended to the conversation:
+
+* **`mock.clock(on)`**: answers [`$.clock`](/docs/en/plugins/mods/api#run-work-in-the-background) and returns a mock clock that your test advances, so a test of a timer doesn't wait.
+* **`mock.store(on, { count: 7 })`**: answers `$.store` from a store that starts with those entries. It returns nothing, so to check what your mod saved, write the two `store` stubs yourself as the [drawing test](#test-a-drawing) does.
+* **`mock.env(on, { CI: 'true' })`**: answers `$.env.get` from those variables.
+* **`mock.session(on)`**: returns a mock session whose `appended()` method lists the rows your mod added with [`$.session.append`](/docs/en/plugins/mods/reference#session), oldest first; it requires Claude Code v2.1.293 or later.
 
 ### Follow the test kit's rules
 
@@ -160,7 +165,7 @@ The test kit has a few rules of its own, and breaking one produces the errors ne
 
 ### Look up what a stub returns
 
-Every mods API call your mod makes in a test needs a stub that answers in Claude Code's place, except the few the kit answers itself: [`$.ui.invalidate`](/docs/en/plugins/mods/interface#redraw-when-something-changes) and [`$.state`](/docs/en/plugins/mods/interface#keep-state) calls. For `$.clock` calls, use `mock.clock(on)`, or your mod's `$.clock.now()` fails with `no implementation for clock.now`.
+Every mods API call your mod makes in a test needs a stub that answers in Claude Code's place, except the few the kit answers itself: [`$.ui.invalidate`](/docs/en/plugins/mods/interface#redraw-when-something-changes), [`$.state`](/docs/en/plugins/mods/interface#keep-state), and `$.session.append` calls. For `$.clock` calls, use `mock.clock(on)`, or your mod's `$.clock.now()` fails with `no implementation for clock.now`.
 
 This table lists the ones mods use most. The first column is the call your mod makes or the event it passes on with `next(e)`. The second is the function to pass to `on` under that name, so the `$.store.get` row becomes `on('store.get', ($, e) => ({ value: saved.get(e.key) }))`. A `'...'` in a stub marks text for you to fill in:
 

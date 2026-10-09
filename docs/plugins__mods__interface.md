@@ -10,9 +10,9 @@ A mod can draw its own interface in Claude Code and change parts of the interfac
 
 This map shows where a mod can draw in a terminal session:
 
-<img src="https://mintcdn.com/claude-code/dgiVO_Od1X1faduV/images/mods-screen-map.svg?fit=max&auto=format&n=dgiVO_Od1X1faduV&q=85&s=5fda26b6609c62b68c6f9e528c1590ea" className="dark:hidden" alt="Map of a Claude Code terminal session. A mod can add a pane as a sidebar on the right, a toast at the top right of the transcript, a log line in the transcript, a band above the prompt, and a status line under the prompt. A mod can redraw messages, tool call rows, and the spinner. The prompt is Claude Code's own." width="600" height="336" data-path="images/mods-screen-map.svg" />
+<img src="https://mintcdn.com/claude-code/dgiVO_Od1X1faduV/images/mods-screen-map.svg?fit=max&auto=format&n=dgiVO_Od1X1faduV&q=85&s=5fda26b6609c62b68c6f9e528c1590ea" className="dark:hidden" alt="Map of a Claude Code terminal session in fullscreen rendering. A mod can add a pane as a sidebar on the right, a toast at the top right of the transcript, a log line in the transcript, a band above the prompt, and a status line under the prompt. A mod can redraw messages, tool call rows, and the spinner. The prompt is Claude Code's own." width="600" height="336" data-path="images/mods-screen-map.svg" />
 
-<img src="https://mintcdn.com/claude-code/dgiVO_Od1X1faduV/images/mods-screen-map-dark.svg?fit=max&auto=format&n=dgiVO_Od1X1faduV&q=85&s=5b4161581a1bd2c0450b0c8b57bc1225" className="hidden dark:block" alt="Map of a Claude Code terminal session. A mod can add a pane as a sidebar on the right, a toast at the top right of the transcript, a log line in the transcript, a band above the prompt, and a status line under the prompt. A mod can redraw messages, tool call rows, and the spinner. The prompt is Claude Code's own." width="600" height="336" data-path="images/mods-screen-map-dark.svg" />
+<img src="https://mintcdn.com/claude-code/dgiVO_Od1X1faduV/images/mods-screen-map-dark.svg?fit=max&auto=format&n=dgiVO_Od1X1faduV&q=85&s=5b4161581a1bd2c0450b0c8b57bc1225" className="hidden dark:block" alt="Map of a Claude Code terminal session in fullscreen rendering. A mod can add a pane as a sidebar on the right, a toast at the top right of the transcript, a log line in the transcript, a band above the prompt, and a status line under the prompt. A mod can redraw messages, tool call rows, and the spinner. The prompt is Claude Code's own." width="600" height="336" data-path="images/mods-screen-map-dark.svg" />
 
 In a narrower terminal, the pane sits above the prompt instead of beside the transcript.
 
@@ -316,7 +316,7 @@ Besides `id`, `$.ui.open` takes these optional fields:
 | `title` | The pane's tab label when more than one pane is open |
 | `focus` | Requests [keyboard focus](#know-which-keys-your-mod-can-receive) |
 | `closeOnEscape` | Makes Esc close the pane |
-| `holdToasts` | Holds toasts, the small notices from [`$.ui.toast`](/docs/en/plugins/mods/api#show-something-without-starting-a-turn), until the pane closes |
+| `holdToasts` | In the terminal, holds toasts while this pane is the one showing. See [Hold toasts behind a dialog](#hold-toasts-behind-a-dialog). |
 | `rows` | The height to ask for when the pane sits above the prompt. The default is a third of the space. |
 | `columns` | The width to ask for when the pane sits beside the transcript |
 
@@ -328,6 +328,12 @@ await $.ui.open(items.length > 0 ? { ...pane, focus: true } : pane)
 ```
 
 To let a command open the pane while Claude is working, add `immediate: true` when you [register the command](/docs/en/plugins/mods/api#add-a-command). Without it, a command typed during a turn waits for the turn to end.
+
+#### Hold toasts behind a dialog
+
+Pass `holdToasts: true` to `$.ui.open` when the pane is a dialog the user answers and leaves, so toasts don't appear while they decide. In the terminal, the hold lasts while that pane is the one showing, and a toast raised in that time waits until the hold ends.
+
+Claude Code holds other mods' toasts and its own short-lived notifications as well as the ones your mod raises with [`$.ui.toast`](/docs/en/plugins/mods/api#show-something-without-starting-a-turn). Leave the field off a pane that stays open, so the user keeps seeing them.
 
 #### When a pane waits for a wider terminal
 
@@ -430,6 +436,26 @@ If your module is a `.tsx` or `.jsx` file, you can write the tree as JSX. Destru
 If a tree uses an element the app doesn't have, a prop an element doesn't take, or a child where none goes, Claude Code draws its own version of the site.
 
 In a session started with `--plugin-dir`, a transcript line says so, such as `ui.render (Pane) refused: Text prop "bogusProp" is not allowed; the engine drew its own`. The [debug log](/docs/en/plugins/mods/troubleshoot#read-the-debug-log) records it as `ui.render (Pane): a hook returned a tree that does not validate` with the same reason. Nothing else appears in the session, so when a drawing doesn't show up, check that line or the log.
+
+<h3 id="link-in-the-desktop-app">
+  `Link` in the Desktop app
+</h3>
+
+In the Desktop app, a `Link` draws as plain text unless its `href` meets these requirements:
+
+* **Scheme and host**: an `https:` URL, or an `http://localhost` URL such as `http://localhost:3000`
+* **No `@`**: write an `@` in the path or query as `%40`
+* **Spelling**: what `new URL(href).href` returns, apart from a missing `/` after the host. That excludes an uppercase host, a space, and `:443` on an `https:` URL.
+
+In the terminal, these requirements don't apply.
+
+<h3 id="when-a-client-fails">
+  When a `Client` fails
+</h3>
+
+In the terminal, when the file a `Client` runs fails, a dimmed line such as `my-mod: Client client/spinner.js: boom` takes the `Client`'s place, and the rest of your drawing still shows.
+
+If your mod handles [`ui.fault`](/docs/en/plugins/mods/reference#interface), Claude Code then [draws the site again](#when-claude-code-redraws-without-being-asked).
 
 ### Draw a grid of colored cells
 

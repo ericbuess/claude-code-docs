@@ -75,7 +75,18 @@ If `/hooks` shows the hook but it still does not fire, the next step is to watch
 
 ## Test against a clean configuration
 
-Start with [`claude --safe-mode`](/docs/en/cli-reference#cli-flags), which launches a session with all customizations disabled, including `CLAUDE.md`, skills, plugins, hooks, MCP servers, and custom commands and agents. Authentication, model selection, built-in tools, and permissions work normally. If the problem disappears in safe mode, one of those surfaces is the cause; use the targeted checks above to find which. Safe mode still applies managed hooks and settings policy from your organization. Managed plugins, skills, CLAUDE.md, and MCP servers are turned off.
+Start with [`claude --safe-mode`](/docs/en/cli-reference#cli-flags), which launches a session with your customizations disabled, including:
+
+* `CLAUDE.md`
+* Skills, plugins, and hooks
+* MCP servers
+* Custom commands and agents
+* Custom output styles
+* Custom keybindings
+
+Authentication, model selection, built-in tools, and permissions work normally. If the problem disappears in safe mode, you've narrowed the cause to one of the items you turned off. To find it, use the check for that item, such as [See what loaded into context](#see-what-loaded-into-context), [Check MCP servers](#check-mcp-servers), or [Check hooks](#check-hooks).
+
+Safe mode still applies managed hooks and settings policy from your organization. Managed plugins, skills, `CLAUDE.md`, and MCP servers are turned off.
 
 If the problem persists in safe mode, or your settings themselves are suspect, compare against a session that loads nothing from your usual setup. Point [`CLAUDE_CONFIG_DIR`](/docs/en/env-vars) at an empty directory to bypass everything under `~/.claude`, and launch from a directory that has no `.claude` folder, `.mcp.json`, or `CLAUDE.md` so project configuration is also skipped.
 
