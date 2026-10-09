@@ -382,7 +382,7 @@ Claude Code retries these failures:
 * A server error or overloaded response that arrives after Claude has finished thinking but before it has started any text or tool call. Claude Code retries a server error at that point up to two times. Before v2.1.284, Claude Code ended the turn with the error at that point.
 * Dropped connections. When a connection drops partway through a request before Claude has completed any part of its response, including its thinking, Claude Code re-issues the request with the same backoff and the turn continues, even if some text had already started streaming. When it drops after Claude has finished thinking but before it has started any text or tool call, Claude Code instead re-issues the request up to two times in quick succession, and ends the turn with `Connection lost before a response was produced` if the connection keeps dropping at that point.
 * A connection that Claude Code detects was broken by your computer going to sleep partway through a request. Claude Code counts it as a dropped connection under the rules above; once the retry label names the specific reason, it reads `Connection lost while your computer was asleep`, and if the turn ends after Claude has finished thinking but before any text or tool call, the message reads `Your computer went to sleep before a response was produced`.
-* A stalled response stream, when the response headers have arrived but none of Claude's response has arrived, or when Claude has finished thinking but hasn't started any text or tool call: Claude Code aborts the stalled connection and re-issues the request at most once, outside the 10-attempt budget above. If the response stalls a second time after Claude has finished thinking but before any text or tool call, Claude Code ends the turn with `The response stalled before a response was produced`.
+* A stalled response stream, when the response headers have arrived but none of Claude's response has arrived, or when Claude has finished thinking but hasn't started any text or tool call: Claude Code aborts the stalled connection and streams the request again at most once. If the response stalls a second time after Claude has finished thinking but before any text or tool call, Claude Code ends the turn with `The response stalled before a response was produced`.
 * A streaming request the API never answers with response headers, on a connection where the [first-byte deadline runs](/docs/en/network-config#streaming-idle-watchdogs): Claude Code aborts it at the deadline and re-sends it at most once per model request, within the retry budget, then ends the turn with [No response from API](#no-response-from-api) if that attempt goes unanswered too. On other connections, the request waits out `API_TIMEOUT_MS`. When you set `CLAUDE_CODE_RETRY_WATCHDOG`, the one-retry cap doesn't apply.
 * A streaming response that the API's output content filter stops before Claude has either finished thinking or started any text or tool call. Claude Code re-sends the request once, within the retry budget, and shows [Output blocked by content filtering policy](#output-blocked-by-content-filtering-policy) if the filter stops the second response too.
 * Temporary 429 throttles, but not a gateway's spend-limit `429`, which isn't a throttle; see [Spend limit reached](#spend-limit-reached).
@@ -4557,7 +4557,7 @@ This session is isolated in the worktree /path/to/worktree, but this command eva
 
 ### This session has no saved transcript
 
-You attached to a stopped [background session](/docs/en/agent-view) that was backgrounded from another conversation with `←` or `/background` and stopped before its first response finished. Until that first response finishes, the conversation still lives only in the session it was backgrounded from, so `claude attach` refuses to start the stopped session rather than begin a blank conversation under the same session ID. The message ends with the `claude respawn` command for this session:
+You attached to a session that you [moved to the background](/docs/en/agent-view#from-inside-a-session) with `←` or `/background` and that stopped before it ran a turn of its own. Claude Code couldn't find the conversation you moved it from, so the session has nothing to resume. The message ends with the `claude respawn` command for this session:
 
 ```text theme={null}
 This session has no saved transcript — it was stopped before its first response finished. If it was backgrounded from another conversation, that one is still intact; `claude respawn <id>` starts this one fresh.
@@ -4567,8 +4567,7 @@ Opening the same session's row in [agent view](/docs/en/agent-view) shows `Press
 
 **What to do:**
 
-* The conversation you backgrounded from is intact: resume it with [`claude --resume`](/docs/en/sessions) or keep working in it
-* To start the stopped session fresh anyway, run `claude respawn <id>` with the ID from the message, or press `Enter` twice on its row in agent view
+* To start the stopped session fresh, run `claude respawn <id>` with the ID from the message, or press `Enter` twice on its row in agent view
 * If the session did finish a response and you still see this refusal on a version before v2.1.214, an unreadable folder in `~/.claude/projects` could make the transcript scan miss the saved conversation; update to v2.1.214 or later, which tolerates unreadable folders during the scan
 
 <h3 id="this-session-is-running-in-another-terminal">

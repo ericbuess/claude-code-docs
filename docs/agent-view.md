@@ -761,7 +761,7 @@ Every background session has a short ID you can use from the shell. The ID is pr
 | `claude daemon logs` | Follow the supervisor's log file, [`~/.claude/daemon.log`](#where-state-is-stored), printing new lines as they arrive until you press `Ctrl+C` |
 | `claude daemon stop --any` | Stop the supervisor process and the background sessions it hosts. Pass `--keep-workers` to leave background sessions running so the next supervisor reconnects to them. The next `claude agents` or `claude --bg` starts a fresh supervisor |
 
-`claude attach` and `claude logs` can take part of a running session's name in place of the ID, as in `claude logs "auth refactor"`. Passing a name requires Claude Code v2.1.290 or later.
+`claude attach` and `claude logs` can take part of a session's name in place of the ID, as in `claude logs "auth refactor"`. Passing a name requires Claude Code v2.1.290 or later.
 
 ### List sessions as JSON
 
@@ -889,11 +889,14 @@ Claude Code saves a reply you typed with the refused attempt, except one prefixe
 
 ### Opening a session says it has no saved transcript
 
-A stopped session that was [backgrounded from another conversation](#from-inside-a-session) and stopped before its first response finished has nothing to resume: until that first response finishes, the conversation still lives only in the session it was backgrounded from. `claude attach` refuses to open it with `This session has no saved transcript`.
+When you open a session that you [backgrounded from another conversation](#from-inside-a-session) and that stopped before it ran a turn of its own, Claude Code resumes that conversation. If Claude Code can't find the conversation, it refuses to open the session:
 
-In agent view, opening that row shows `Press enter again to restart this session fresh` below the list. Press `Enter` on the same row again to restart the session with an empty conversation, or run `claude respawn <id>` from the shell.
+* `claude attach` prints `This session has no saved transcript`.
+* Agent view shows `Press enter again to restart this session fresh` below the list.
 
-The original conversation is intact; resume it with `claude --resume` or keep working in it. See the [error reference](/docs/en/errors#this-session-has-no-saved-transcript) for details.
+Press `Enter` on the same row again to restart the session with an empty conversation, or run `claude respawn <id>` from the shell.
+
+See the [error reference](/docs/en/errors#this-session-has-no-saved-transcript) for details.
 
 ### The terminal host died or the session stopped responding
 
@@ -983,7 +986,7 @@ Agent view has evolved quickly during research preview. If you are on an older C
 
 | Version | Change |
 | - | - |
-| v2.1.290 | [`claude attach` and `claude logs`](#manage-sessions-from-the-shell) can take part of a running session's name in place of the ID. |
+| v2.1.290 | [`claude attach` and `claude logs`](#manage-sessions-from-the-shell) can take part of a session's name in place of the ID. |
 | v2.1.290 | `/model`, `/effort`, `/rename`, and `/usage` sent as a [peek reply](#peek-and-reply) to a working session run right away. |
 | v2.1.290 | A [peek reply](#peek-and-reply) that can't be delivered is no longer saved for the next restart when it starts with `/`, or when it answers a question with predefined choices while the session's process is running. |
 | v2.1.288 | `Ctrl+F` finds sessions by name, and `Alt+↑` / `Alt+↓` jump between group headers. Both, and `Ctrl+R`, can be [rebound](/docs/en/keybindings#agents-actions). |

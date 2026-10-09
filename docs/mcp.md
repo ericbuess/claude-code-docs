@@ -329,7 +329,7 @@ In the sessions where it doesn't fetch feature flags, Claude Code uses the v2 ru
 
 On v2, Claude Code also:
 
-* Asks HTTP and stdio servers whether they support the newer revision, and uses it with those that do. In sessions where it fetches feature flags, it also asks claude.ai connector servers. It connects to every other server as v1 does.
+* Asks HTTP, stdio, and claude.ai connector servers whether they support the newer revision, and uses it with those that do. It connects to every other server as v1 does.
 * Receives `list_changed` notifications from servers on the newer revision over a [stream it holds open](#notification-streams-on-the-v2-runtime).
 * Doesn't register a [channel](#push-messages-with-channels) server that connects on the newer revision, because that revision can't carry channel messages.
 * Fails an [MCP OAuth sign-in](#authenticate-with-remote-mcp-servers) whose authorization response names an unexpected issuer.

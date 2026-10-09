@@ -804,6 +804,24 @@ After you run `/reload-plugins` in your session, the **Errors** tab entry is gon
 
 If your organization pre-installs plugins for you, it does so through managed settings instead. See [Pre-install and require plugins](/docs/en/plugins/org#pre-install-and-require-plugins).
 
+<h3 id="a-plugin-stays-installed-after-plugin-uninstall-on-windows">
+  A plugin stays installed after `plugin uninstall` on Windows
+</h3>
+
+On Windows, you run `claude plugin uninstall` at project or local scope and it reports success, but `claude plugin list` or `/plugin` still lists the plugin.
+
+`installed_plugins.json` held two install records of the plugin for the project folder, each spelling the folder's path differently, and one uninstall removes one of them. To check, run `claude plugin list --json` in your shell. The plugin's remaining row has a `projectPath` that spells the folder differently from where you ran the uninstall, such as `c:\work\app` for `C:\work\app`.
+
+Run the same uninstall command again, with the same `--scope`, from the same folder. The second run finds no record under its own spelling of the path, so it removes the one under the other spelling. For a project-scope install:
+
+```shell theme={null}
+claude plugin uninstall <name>@<marketplace> --scope project
+```
+
+Then run `claude plugin list --json` again to confirm that the row is gone.
+
+Before v2.1.295, the second run fails with `Plugin "<name>" is not installed in project scope`. Run `claude update`, then run the uninstall again.
+
 <h3 id="failed-to-load-hooks-from-and-hooks-that-dont-fire">
   `Failed to load hooks from <path>` and hooks that don't fire
 </h3>

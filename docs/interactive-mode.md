@@ -188,10 +188,10 @@ Claude Code reads this setting from your user settings file, the `--settings` fl
 | `^` | First non-blank character |
 | `gg` | Beginning of input |
 | `G` | Beginning of last line |
-| `f{char}` | Jump to next occurrence of character |
-| `F{char}` | Jump to previous occurrence of character |
-| `t{char}` | Jump to just before next occurrence of character |
-| `T{char}` | Jump to just after previous occurrence of character |
+| `f{char}` | Jump to next occurrence of character on the current line |
+| `F{char}` | Jump to previous occurrence of character on the current line |
+| `t{char}` | Jump to just before next occurrence of character on the current line |
+| `T{char}` | Jump to just after previous occurrence of character on the current line |
 | `;` | Repeat last f/F/t/T motion |
 | `,` | Repeat last f/F/t/T motion in reverse |
 | `/` | Open reverse history search, same as `Ctrl+R`. The empty search prompt shows a hint: press `Esc` then `i` then `/` to open the command menu instead |
@@ -209,7 +209,7 @@ Claude Code reads this setting from your user settings file, the `--settings` fl
 | `dd` | Delete line |
 | `D` | Delete to end of line |
 | `dw`/`de`/`db` | Delete word/to end/back |
-| `df{char}`/`dt{char}` | Delete to and including, or up to, the next occurrence of a character |
+| `df{char}`/`dt{char}` | Delete to and including, or up to, the next occurrence of a character on the current line |
 | `dj`/`dk` | Delete the current line and the line below or above |
 | `dgg`/`dG` | Delete from the current line to the first or last line |
 | `d0`/`c0`/`y0` | Delete, change, or yank from the cursor back to the beginning of the line. Requires Claude Code v2.1.281 or later |
@@ -763,6 +763,7 @@ You get a link only for the two-part `owner/repo#123` form. These stay plain tex
 * A bare `#123`
 * A nested GitLab path such as `group/subgroup/project#123`
 * Any reference inside a code span or code block
+* Any reference in a reply longer than about 1,000 lines or 100,000 characters
 
 Claude Code builds the link for the host of the repository it identifies from your git remote, not for the repository the reference names:
 

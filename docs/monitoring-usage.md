@@ -845,7 +845,7 @@ Logged when an API request to Claude fails.
 * `error`: Error message
 * `status_code`: HTTP status code as a number. Absent for non-HTTP errors such as connection failures.
 * `duration_ms`: Request duration in milliseconds
-* `attempt`: Total number of attempts made, including the initial request (`1` means no retries occurred)
+* `attempt`: Number of attempts made, including the initial request. [Detect retry exhaustion](#detect-retry-exhaustion) says when the count starts again
 * `request_id`: API request ID, such as `"req_011..."`, described under [Event correlation attributes](#event-correlation-attributes).
 * `client_request_id`: Client-generated UUID sent as the `x-client-request-id` request header. Available even when a failure such as a timeout or connection error never produced a server `request_id`; see the [event correlation attributes](#event-correlation-attributes) table for when it's present. Requires Claude Code v2.1.214 or later
 * `speed`: `"fast"` or `"normal"`, indicating whether fast mode was active
@@ -1402,9 +1402,11 @@ Per-model breakdowns of commits can only be approximated by joining against the 
 
 Claude Code retries failed API requests internally and emits a single `claude_code.api_error` event only after it gives up, so the event itself is the terminal signal for that request. Intermediate retry attempts are not logged as separate events.
 
-The `attempt` attribute on the event records the total number of attempts. `CLAUDE_CODE_MAX_RETRIES` defaults to 10 and is capped at 15. On v2.1.199 or later, you can set `CLAUDE_CODE_RETRY_WATCHDOG` to raise the default and remove the cap.
+The `attempt` attribute on the event records the number of attempts. `CLAUDE_CODE_MAX_RETRIES` defaults to 10 and is capped at 15. On v2.1.199 or later, you can set `CLAUDE_CODE_RETRY_WATCHDOG` to raise the default and remove the cap.
 
-When the request exhausts all retries on a transient error, `attempt` equals one more than that effective limit: 11 by default, and never more than 16 unless the watchdog is set. A lower value indicates a non-retryable error such as a `400` response, or a cause with its own smaller retry budget. For example, Claude Code retries a failure to load AWS or Google Cloud credentials at most twice.
+When the request exhausts all retries on a transient error, `attempt` is at most one more than that effective limit: 11 by default.
+
+A lower value can still mean the retries ran out: `attempt` starts again from `1` each time Claude Code re-issues the request after a streaming failure.
 
 To distinguish a session that recovered from one that stalled, group events by `session.id` and check whether a later `api_request` event exists after the error.
 

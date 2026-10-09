@@ -78,12 +78,14 @@ Unless a background command that the main conversation started is still running,
 
 The run waits for background work such as background commands, subagents and workflows, Monitor watches, and pending `/loop` wakeups:
 
-* **[Background commands](/docs/en/tools-reference#background-commands)**: for a command that the main conversation started, for example a dev server or a watch build, the run waits until the command exits or reaches its [time limit](/docs/en/tools-reference#time-limit-for-background-commands). Claude then takes one more turn with the outcome, and that turn's result becomes the run's last, which is the one `text` and `json` output print. While the command runs, the 10-minute cap doesn't end the wait.
+* **[Background commands](/docs/en/tools-reference#background-commands)**: for a command that the main conversation started, for example a dev server or a watch build, the run waits until the command exits or reaches its [time limit](/docs/en/tools-reference#time-limit-for-background-commands). Claude then takes one more turn with the outcome. While the command runs, the 10-minute cap doesn't end the wait.
 * **Background [subagents](/docs/en/sub-agents) and workflows**: the run stays open until that work completes, because its result is part of the final output.
 * **[Monitor](/docs/en/tools-reference#monitor-tool) watches**: the run waits until the watch times out or the 10-minute cap ends the wait, whichever comes first. While it waits, Claude keeps responding to what the watch reports. By default, a watch times out five minutes after Claude starts it.
 * **Pending wakeups**: in a run whose prompt you passed as text rather than with `--input-format stream-json`, when Claude has scheduled a [self-paced `/loop` wakeup](/docs/en/scheduled-tasks#let-claude-choose-the-interval), the run waits for each wakeup to fire and runs its iteration until the [loop ends](/docs/en/scheduled-tasks#stop-a-loop), even past the 10-minute cap.
 
 If the run reaches its [`--max-budget-usd`](/docs/en/cli-reference#cli-flags) cap, Claude Code stops the remaining background work instead of waiting.
+
+When background work starts another turn, the run prints each turn's result with the default `text` output and the last turn's result with `json` output. Before v2.1.295, the run printed only the last turn's result with `text` output too.
 
 ### Stop a run with SIGTERM
 
@@ -238,10 +240,10 @@ When an API request fails with a retryable error, Claude Code emits a `system/ap
 | `type` | `"system"` | message type |
 | `subtype` | `"api_retry"` | identifies this as a retry event |
 | `attempt` | integer | current attempt number, starting at 1 |
-| `max_retries` | integer | total retries permitted for this failure's cause, which can be fewer than the session-wide budget |
+| `max_retries` | integer | total retries permitted for this failure's cause |
 | `retry_delay_ms` | integer | milliseconds until the next attempt |
 | `error_status` | integer or null | HTTP status code of the failed attempt, or `null` when the attempt got no HTTP response from the API |
-| `no_response` | object, optional | present only when the failed attempt got [no response headers in time](/docs/en/errors#no-response-from-api). `waited_ms` is how long that attempt waited and `retry_wait_ms` is how long the retry will wait. In these events, `max_retries` reflects the one retry this cause normally gets, not the session-wide budget. Requires Claude Code v2.1.261 or later |
+| `no_response` | object, optional | present only when the failed attempt got [no response headers in time](/docs/en/errors#no-response-from-api). `waited_ms` is how long that attempt waited and `retry_wait_ms` is how long the retry will wait. Requires Claude Code v2.1.261 or later |
 | `error` | string | error category: `authentication_failed`, `oauth_org_not_allowed`, `account_on_hold`, `billing_error`, `rate_limit`, `overloaded`, `invalid_request`, `model_not_found`, `server_error`, `max_output_tokens`, `cloud_credential_error`, or `unknown` |
 | `uuid` | string | unique event identifier |
 | `session_id` | string | session the event belongs to |
