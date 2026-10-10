@@ -332,7 +332,7 @@ The following TypeScript SDK functions accept a `sessionStore` option and operat
 * [`renameSession()`](/docs/en/agent-sdk/typescript#renamesession)
 * [`tagSession()`](/docs/en/agent-sdk/typescript#tagsession)
 * [`deleteSession()`](/docs/en/agent-sdk/typescript)
-* [`forkSession()`](/docs/en/agent-sdk/typescript)
+* [`forkSession()`](/docs/en/agent-sdk/typescript#forksession)
 * [`listSubagents()`](/docs/en/agent-sdk/typescript)
 * [`getSubagentMessages()`](/docs/en/agent-sdk/typescript)
 

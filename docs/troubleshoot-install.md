@@ -1136,7 +1136,7 @@ If you see `OAuth error: Invalid code. Please make sure the full code was copied
 If you see `API Error: 403 Request not allowed` after logging in:
 
 * **Claude Pro/Max users**: verify your subscription is active at [claude.ai/settings](https://claude.ai/settings)
-* **Anthropic Console users**: confirm your account has the "Claude Code" or "Developer" role. Admins assign this in the Anthropic Console under Settings → Members.
+* **Anthropic Console users**: confirm your account has the "Claude Code" or "Developer" role. Admins assign this on the Console's Members page at [platform.claude.com/settings/members](https://platform.claude.com/settings/members).
 * **Behind a proxy**: corporate proxies can interfere with API requests. See [network configuration](/docs/en/network-config) for proxy setup.
 
 ### Claude Code access has not been granted for this account

@@ -8,7 +8,7 @@
 
 Some organizations require every process on a workstation to start through a mandatory launcher. The launcher applies the sandbox, network controls, or credential injection that the company's security posture depends on, and a binary that starts without it is a policy violation.
 
-`CLAUDE_CODE_PROCESS_WRAPPER` starts every process Claude Code launches from its own binary through your launcher: the background service, every session it hosts in [agent view](/docs/en/agent-view), and Claude Code's relaunches after an update. Set it to your launcher's absolute path, and Claude Code runs the launcher with the Claude Code command as its arguments.
+`CLAUDE_CODE_PROCESS_WRAPPER` starts every process Claude Code launches from its own binary through your launcher: the [background service](/docs/en/agent-view#the-supervisor-process), every session it hosts in [agent view](/docs/en/agent-view), and Claude Code's relaunches after an update. Set it to your launcher's absolute path, and Claude Code runs the launcher with the Claude Code command as its arguments.
 
 A launcher that wraps the `claude` command on your `PATH` can't reach the background service or the sessions it hosts, because they start from the binary's direct path without looking up `claude`.
 
@@ -35,7 +35,6 @@ On Windows, the variable is ignored: the launcher contract depends on `exec`, wh
 
 The following processes don't start through the launcher:
 
-* An [installed background service](/docs/en/agent-view#the-supervisor-process) whose unit was written before the launcher was configured: `launchd` or `systemd` starts that process from its unit file. `/status` and `claude daemon status` warn while the running service and the configured launcher don't match, and the sessions the service spawns still start through the launcher once the service restarts with the variable in its settings.
 * A session you start yourself in a terminal, which runs however you invoked it. To cover these sessions, put a script named `claude` in a directory earlier on `PATH` that runs your launcher with the real binary; don't replace the managed symlink. The background service and its sessions start without a `PATH` lookup, so the two launchers don't stack there.
 * The first process of a `claude-cli://` deep link, which the operating system's protocol handler starts directly. Everything that session starts in the background afterward runs through the launcher. To close this path entirely, [prevent handler registration](/docs/en/deep-links#registration-and-supported-platforms) with the `disableDeepLinkRegistration` setting.
 * The relaunch that `--worktree` combined with `--tmux` performs: the terminal multiplexer starts that pane, not Claude Code's binary.
@@ -96,9 +95,9 @@ With a launcher configured, `ps` and Activity Monitor no longer show Claude Code
   </Step>
 
   <Step title="Restart the background service and your sessions">
-    A running background service and any open `claude` sessions read the variable once at startup, so they keep launching unwrapped processes until restarted. Run `claude daemon stop --any` to stop the on-demand service; the next command that needs it, such as `claude agents`, starts a wrapped one. An [installed service](/docs/en/agent-view#the-supervisor-process) takes `claude daemon stop` without `--any`. Then restart your open `claude` sessions.
+    A running background service and any open `claude` sessions read the variable once at startup, so they keep launching unwrapped processes until restarted. Run `claude daemon stop --any` to stop the on-demand service. The next command that needs it, such as `claude agents`, starts a wrapped one. Then restart your open `claude` sessions.
 
-    On machines you can't restart by hand, the first session started after the settings push retires a leftover unwrapped on-demand service automatically. A machine where no new session starts keeps its unwrapped service until one does, and an installed service always needs the restart in this step.
+    On machines you can't restart yourself, the first session started after the settings push retires a leftover unwrapped on-demand service automatically. A machine where no new session starts keeps its unwrapped background service until one does.
   </Step>
 
   <Step title="Verify">

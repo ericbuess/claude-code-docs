@@ -440,6 +440,36 @@ Each custom key becomes a label on every metric series, so high-cardinality valu
   Wrapping values in quotes doesn't escape spaces. For example, `org.name="My Company"` results in the literal value `"My Company"` with the quotes included, not `My Company`.
 </Warning>
 
+### Attribute telemetry to Desktop SSH sessions
+
+To see which remote machine a [Desktop SSH session](/docs/en/desktop#ssh-sessions) ran on, name each machine in a custom attribute. Metrics and events don't name the machine a session ran on.
+
+On each remote machine, add [`OTEL_RESOURCE_ATTRIBUTES`](#multi-team-organization-support) to the `env` block that turns telemetry on, in the [managed settings file the session reads](/docs/en/desktop#managed-settings). Write the name out in each machine's file. Claude Code doesn't expand the value, so `host.name=$(hostname)` arrives as those characters.
+
+The following example names the machine `build-7`:
+
+```json theme={null}
+{
+  "env": {
+    "CLAUDE_CODE_ENABLE_TELEMETRY": "1",
+    "OTEL_METRICS_EXPORTER": "otlp",
+    "OTEL_LOGS_EXPORTER": "otlp",
+    "OTEL_EXPORTER_OTLP_PROTOCOL": "grpc",
+    "OTEL_EXPORTER_OTLP_ENDPOINT": "http://collector.example.com:4317",
+    "OTEL_RESOURCE_ATTRIBUTES": "host.name=build-7"
+  }
+}
+```
+
+When nothing else sets the variable, `host.name` arrives in the resource block, in Desktop SSH sessions and in the CLI on that machine. For where else custom attributes appear, see [Multi-team organization support](#multi-team-organization-support).
+
+If the name doesn't arrive, check for one of these causes:
+
+* **You set it on the computer that runs Desktop**: Desktop doesn't pass a value you set there to the SSH session
+* **You exported it in a login file**: only login shells read a file such as `/etc/profile`. A value you `export` there reaches Claude Code that you start from a login shell. It doesn't reach a Desktop SSH session, because Desktop doesn't start Claude Code through a login shell.
+* **A value has a space inside it**: Claude Code then copies none of the keys onto events or datapoints and reports no error. [Take the space out of the value](#multi-team-organization-support).
+* **Something else already sets the variable**: in a session that the desktop app starts, a variable already set in the launch environment [takes precedence over settings files](/docs/en/settings-reference#how-env-values-interact-with-your-shell). The [debug log](/docs/en/debug-your-config) names each ignored variable. When a third-party Desktop deployment [names an OTLP endpoint](#how-managed-settings-lock-the-otlp-destination) in the environment it provides, that environment carries Desktop's own `OTEL_RESOURCE_ATTRIBUTES`.
+
 ### Example configurations
 
 Set these environment variables before running `claude`. Each scenario below shows a complete configuration, and each variable is described under [Common configuration variables](#common-configuration-variables). To confirm a configuration took effect, check your backend for the `claude_code.session.count` metric after starting a session; the [Quick start](#quick-start) covers logs-only verification and what to check when nothing arrives.
@@ -1588,15 +1618,15 @@ For organizations requiring Daily/Weekly/Monthly Active User (DAU/WAU/MAU) metri
 
 All metrics and events are exported with the following resource attributes:
 
-* `service.name`: `claude-code` for terminal sessions, `claude-code-desktop` for sessions started from the Code tab in the [Claude Desktop app](/docs/en/desktop)
-* `service.version`: Current Claude Code version, or the Desktop app version for Code tab sessions
+* `service.name`: `claude-code` for terminal sessions, `claude-code-desktop` for local sessions started from the Code tab in the [Claude Desktop app](/docs/en/desktop)
+* `service.version`: Current Claude Code version, or the Desktop app version for local Code tab sessions
 * `os.type`: Operating system type (for example, `linux`, `darwin`, `windows`)
 * `os.version`: Operating system version string
 * `host.arch`: Host architecture (for example, `amd64`, `arm64`)
 * `wsl.version`: WSL version number (only present when running on Windows Subsystem for Linux)
 * Meter Name: `com.anthropic.claude_code`
 
-If your collector pipelines or dashboards filter on `service.name = claude-code`, add `claude-code-desktop` to the filter to also capture telemetry from Code tab sessions.
+If your collector pipelines or dashboards filter on `service.name = claude-code`, add `claude-code-desktop` to the filter to also capture telemetry from local Code tab sessions.
 
 ## ROI measurement resources
 

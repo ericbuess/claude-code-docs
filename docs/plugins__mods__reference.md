@@ -130,6 +130,8 @@ Subagent events fire when a subagent type is offered to Claude and when a subage
 | `agent.offer` | A subagent type is offered to Claude | `{ isOffered: false }` to withhold it |
 | `agent.spawn` | A subagent or an [agent team](/docs/en/agent-teams) teammate is about to start. For a teammate, `e.isTeammate` is `true`. | `next({ ...e, model })` to choose its model, or `{ deny: reason }` |
 
+When Claude resumes a subagent with the [`SendMessage`](/docs/en/sub-agents#resume-subagents) tool, your `agent.spawn` hook doesn't run again. To refuse the `SendMessage` calls that resume a subagent, match that tool in a [`tool.call`](/docs/en/plugins/mods/events#guard-or-change-a-tool-call) hook.
+
 ### Interface
 
 Interface events fire when Claude Code draws a render site and when the user uses a control a mod drew. [Draw in the interface](/docs/en/plugins/mods/interface) shows what a `ui.render` hook returns:
@@ -152,6 +154,8 @@ These events let a mod act on other mods as they load, to refuse one or change t
 | :- | :- | :- |
 | [`plugin.register`](/docs/en/plugins/mods/admin#enforce-a-policy-with-a-mod-of-your-own) | A hooks module is about to load. `e.uses` lists its events, mods API calls, environment variables, and state, as `claude plugin validate` prints them. Each call is written without the `$.` prefix, such as `fs.read`. | `{ refuse: reason }` |
 | `engine.create` | The mods API is being built for this mod | A changed mods API, to add a namespace. A mod outside the `user` [tier](#the-hook-function) can also withhold one. |
+
+When another mod's hook calls a method on a namespace you added in `engine.create`, your method's `$` calls run in that hook's context until every hook on that event returns. For example, a relative path resolves against that hook's working directory, and `$.prompt.submit` rejects while the turn is waiting on that hook. Calls your method makes after that run in your mod's own context.
 
 ### Telemetry
 
@@ -281,6 +285,10 @@ Hooks and mods API calls run under time and size limits. Claude Code skips a hoo
 | `$.process.run` timeout | 30 seconds by default, 10 minutes at most |
 | `$.model.complete` `maxTokens` | 1024 by default, up to 64,000 or the model's output limit |
 | `$.fs.read` and `$.fs.write` | 4 MiB for one file |
+| A `$.http.fetch` request body | 4 MiB, counted in characters. A call with a larger body rejects. |
+| A `$.http.fetch` response body | 4 MiB. `text` holds the first 4 MiB and the rest isn't read. When the `Content-Length` header declares more, the call rejects instead, with a reason that ends `is over the 4194304-byte limit`, except when the last request after any redirects uses the `HEAD` method. The `HEAD` exemption requires Claude Code v2.1.296 or later. |
+| One `$.http.fetch` call, redirects and body included | 30 seconds |
+| Redirects one `$.http.fetch` call follows | 5 |
 | A hook's `drop` reason or `config.set` `deny` reason | 4,096 characters. The end of a longer reason is cut, and the drop or deny still applies. The cut requires Claude Code v2.1.292 or later, and on earlier versions the hook [fails](/docs/en/plugins/mods/events#handle-a-hook-that-fails) instead. |
 | Text in one tree | The first 100,000 characters are drawn |
 | A `Code`'s `language` or `path`, a `Select` option's `value`, or a `Client`'s `module` | 10,000 characters. If one is longer, Claude Code [draws its own version of the site](/docs/en/plugins/mods/interface#build-a-tree-from-elements). |

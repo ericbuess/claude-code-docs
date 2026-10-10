@@ -273,11 +273,12 @@ A mod reaches the file system, processes, and the network through the mods API, 
 | `$.session` | `messages()` returns the transcript as a list of `{ role, text, toolUses }`. Also the working directory, model, and more. [`usage()`](/docs/en/plugins/mods/reference#mods-api-methods) returns context window use and plan limits. |
 | `$.mcp` | `call` a tool on a connected MCP server |
 
-Files and processes have a few rules of their own:
+Files, processes, and requests have a few rules of their own:
 
-* **Paths**: a relative path resolves against the session's working directory
+* **Paths**: a relative path resolves against the working directory of the session, or of the subagent whose event the hook is handling
 * **`$.fs.list`**: returns one directory's entries as `{ name, kind, size, isLink }` and isn't recursive
 * **`$.process.run`**: takes an argument list and uses no shell. It resolves to `{ exitCode, stdout, stderr }` whatever the exit code. It rejects if the program can't start or is still running at the timeout, which is 30 seconds by default, so wrap it in `try` and `catch`.
+* **`$.http.fetch`**: follows up to five redirects. On a redirect to a different origin, it keeps only the `accept`, `accept-language`, `content-type`, and `user-agent` request headers you set and drops the rest, so a request that depends on another header, such as `Authorization`, can fail after that redirect. The [limits](/docs/en/plugins/mods/reference#limits) give its timeout and body sizes.
 
 Every one of these calls is itself an event, named for its namespace and method without the `$.`, such as `fs.read` for `$.fs.read`. A mod [earlier in the chain](/docs/en/plugins/mods/events#the-order-mods-run-in) can observe, rewrite, or refuse your call, which is how an organization restricts what mods reach.
 

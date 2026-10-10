@@ -42,6 +42,8 @@ When Claude requests a tool, the SDK checks permissions in this order:
     Check `allow` rules (from `allowed_tools` and settings.json). If a rule matches, the tool is approved. A call the tool approves on its own is resolved at this step too, with no rule needed: for example a file read inside your working directories or a [read-only Bash command](/docs/en/permissions#read-only-commands).
 
     `rm` and `rmdir` removals targeting a [critical path](/docs/en/permission-modes#critical-paths) are never approved by an allow rule. Whether they then reach your callback depends on the permission mode: in an Agent SDK session in `auto` mode, for example, Claude Code denies them by default without calling it. The [Critical paths](/docs/en/permission-modes#critical-paths) mode table lists what each mode does with them.
+
+    An allow rule doesn't approve a read from a [network path](/docs/en/permissions#network-paths).
   </Step>
 
   <Step title="canUseTool callback">
@@ -58,7 +60,7 @@ When Claude requests a tool, the SDK checks permissions in this order:
 If you pass a `canUseTool` callback in a configuration where the TypeScript SDK expects the evaluation order to auto-approve calls before the callback is consulted, the SDK emits a Node.js process warning once when the query is constructed. The warning's code is `CLAUDE_SDK_CAN_USE_TOOL_SHADOWED`. Two configurations trigger it:
 
 * `permissionMode: 'bypassPermissions'`, which auto-approves every call that reaches the permission mode step apart from the [actions no mode auto-approves](/docs/en/permission-modes#actions-no-mode-auto-approves)
-* Each bare `allowedTools` entry such as `"Read"`, which auto-approves that whole tool before the callback is consulted, apart from the [actions no mode auto-approves](/docs/en/permission-modes#actions-no-mode-auto-approves)
+* Each bare `allowedTools` entry such as `"Read"`, which auto-approves that whole tool before the callback is consulted, apart from the [actions no mode auto-approves](/docs/en/permission-modes#actions-no-mode-auto-approves) and [reads from network paths](/docs/en/permissions#network-paths)
 
 Entries with a specifier such as `Bash(ls *)` and the `acceptEdits` mode don't trigger it, and allow rules coming from settings files aren't visible to the check.
 
@@ -75,7 +77,7 @@ This page focuses on **allow and deny rules** and **permission modes**. For the 
 
 | Option | Effect |
 | :- | :- |
-| `allowed_tools=["Read", "Grep"]` | `Read` and `Grep` are auto-approved. Other tools not listed here still exist, and calls to them that need approval fall through to the permission mode and `canUseTool`. |
+| `allowed_tools=["Read", "Grep"]` | `Read` and `Grep` are auto-approved, apart from [reads from network paths](/docs/en/permissions#network-paths). Other tools not listed here still exist, and calls to them that need approval fall through to the permission mode and `canUseTool`. |
 | `disallowed_tools=["Bash"]` | The `Bash` tool definition is removed from the request. Claude does not see the tool and cannot attempt it. |
 | `disallowed_tools=["Bash(rm *)"]` | `Bash` stays available. Calls matching `rm *` [as written](/docs/en/permissions#bash-rule-limits) are denied in every permission mode, including `bypassPermissions`. Other `Bash` calls, including `/bin/rm`, fall through to the permission mode. |
 | `disallowed_tools=["*"]` | Every tool definition is removed from the request. Tool-name globs are supported in deny rules: `"*"` matches every tool and `"mcp__*"` matches every MCP tool across all servers. |
@@ -91,7 +93,7 @@ Use `//path` for an absolute filesystem path: a deny rule of `Edit(//secrets/**)
 
   An allow rule never auto-approves `AskUserQuestion`, MCP tools marked [`_meta["anthropic/requiresUserInteraction"]`](/docs/en/mcp#require-approval-for-a-specific-tool), connector tools [your organization set to `ask`](/docs/en/mcp#organization-controls-on-connector-tools), or `rm` and `rmdir` removals targeting a [critical path](/docs/en/permission-modes#critical-paths). In `dontAsk` mode Claude Code denies these calls without invoking the callback. In other modes the first three reach the callback. Depending on the [permission mode](/docs/en/permission-modes#critical-paths), a critical-path removal reaches the callback too or Claude Code denies it without calling it, as it does by default for an Agent SDK session in `auto` mode.
 
-  Coverage depends on the entry's form: a bare name like `Read` or `mcp__github__get_issue` auto-approves every call to that tool apart from the exceptions above, while a scoped rule like `Bash(npm test *)` auto-approves only matching calls, and other `Bash` calls that need approval still fall through to the callback. For checks that must run on every tool call, use a [`PreToolUse` hook](/docs/en/agent-sdk/hooks): hooks run before every other step, and a hook deny applies even in `bypassPermissions` mode.
+  Coverage depends on the entry's form: a bare name like `Read` or `mcp__github__get_issue` auto-approves every call to that tool apart from those exceptions and [reads from network paths](/docs/en/permissions#network-paths), while a scoped rule like `Bash(npm test *)` auto-approves only matching calls, and other `Bash` calls that need approval still fall through to the callback. For checks that must run on every tool call, use a [`PreToolUse` hook](/docs/en/agent-sdk/hooks): hooks run before every other step, and a hook deny applies even in `bypassPermissions` mode.
 </Warning>
 
 For a locked-down agent, pair `allowedTools` with `permissionMode: "dontAsk"`:
@@ -103,7 +105,7 @@ const options = {
 };
 ```
 
-Listed tools are approved, apart from the [actions no mode auto-approves](/docs/en/permission-modes#actions-no-mode-auto-approves), and every other call that would prompt is denied instead. Calls that need no approval in `default` mode run whether or not you list them, such as [read-only Bash commands](/docs/en/permissions#read-only-commands), tools like `Agent` that don't ask before running, and file reads inside your working directories. To put a tool out of Claude's reach entirely, add its bare name to `disallowedTools`.
+Listed tools are approved, apart from the [actions no mode auto-approves](/docs/en/permission-modes#actions-no-mode-auto-approves) and [reads from network paths](/docs/en/permissions#network-paths), and every other call that would prompt is denied instead. Calls that need no approval in `default` mode run whether or not you list them, such as [read-only Bash commands](/docs/en/permissions#read-only-commands), tools like `Agent` that don't ask before running, and file reads inside your working directories. To remove a tool from the request entirely, add its bare name to `disallowedTools`.
 
 <Warning>
   **`allowed_tools` does not constrain `bypassPermissions`.** `allowed_tools` pre-approves the tools you list. Other unlisted tools are not matched by any allow rule and fall through to the permission mode, where `bypassPermissions` approves them. Setting `allowed_tools=["Read"]` alongside `permission_mode="bypassPermissions"` still approves every tool, including `Bash`, `Write`, and `Edit`. If you need `bypassPermissions` but want specific tools blocked, use `disallowed_tools`.
@@ -131,7 +133,7 @@ The SDK supports these permission modes:
 | Mode | Description | Tool behavior |
 | :- | :- | :- |
 | `default` | Standard permission behavior | No mode-based auto-approvals; calls that need approval and match no allow rule trigger your `canUseTool` callback |
-| `dontAsk` | Deny instead of prompting | Any call that would otherwise prompt is denied. Calls approved by `allowed_tools` or rules run, and so do calls that need no approval in `default` mode; connector tools [your organization set to `ask`](/docs/en/mcp#organization-controls-on-connector-tools) and tools that require user interaction are denied even if you've pre-approved them, as are `rm` and `rmdir` removals targeting a [critical path](/docs/en/permission-modes#critical-paths). `canUseTool` is never called |
+| `dontAsk` | Deny instead of prompting | Any call that would otherwise prompt is denied. Calls approved by `allowed_tools` or rules run, and so do calls that need no approval in `default` mode; connector tools [your organization set to `ask`](/docs/en/mcp#organization-controls-on-connector-tools) and tools that require user interaction are denied even if you've pre-approved them, as are [reads from network paths](/docs/en/permissions#network-paths) and `rm` and `rmdir` removals targeting a [critical path](/docs/en/permission-modes#critical-paths). `canUseTool` is never called |
 | `acceptEdits` | Auto-accept file edits | File edits and [filesystem operations](#accept-edits-mode-acceptedits) (`mkdir`, `rm`, `mv`, etc.) are automatically approved |
 | `bypassPermissions` | Bypass permission checks | Tools run without permission prompts, except for the [actions no mode auto-approves](/docs/en/permission-modes#actions-no-mode-auto-approves). Use with caution |
 | `plan` | Planning mode | Claude explores and plans without editing your source files; file edits are never auto-approved and prompt through your `canUseTool` callback |
@@ -270,7 +272,7 @@ Both apply only to paths inside the working directory or `additionalDirectories`
 
 #### Don't ask mode (`dontAsk`)
 
-Converts any permission prompt into a denial, without calling `canUseTool`. Tools pre-approved by `allowed_tools`, `settings.json` allow rules, or a hook run as normal, and so do calls that need no approval in `default` mode, such as file reads inside your working directories and calls to `Agent`. Connector tools [your organization set to `ask`](/docs/en/mcp#organization-controls-on-connector-tools), tools that require user interaction, and `rm` and `rmdir` removals targeting a [critical path](/docs/en/permission-modes#critical-paths) are denied even when an allow rule matches. A `PreToolUse` hook allow doesn't clear a critical-path removal either.
+Converts any permission prompt into a denial, without calling `canUseTool`. Tools pre-approved by `allowed_tools`, `settings.json` allow rules, or a hook run as normal, and so do calls that need no approval in `default` mode, such as file reads inside your working directories and calls to `Agent`. Connector tools [your organization set to `ask`](/docs/en/mcp#organization-controls-on-connector-tools), tools that require user interaction, [reads from network paths](/docs/en/permissions#network-paths), and `rm` and `rmdir` removals targeting a [critical path](/docs/en/permission-modes#critical-paths) are denied even when an allow rule matches. A `PreToolUse` hook allow doesn't clear a critical-path removal or a read from a network path either.
 
 **Use when:** you want a fixed, explicit tool surface for a headless agent and prefer a hard deny over silent reliance on `canUseTool` being absent.
 

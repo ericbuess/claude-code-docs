@@ -70,7 +70,11 @@ To share a plugin through a repository, list it under `enabledPlugins` in `.clau
 
 A cloud session doesn't add the marketplaces a repository lists under [`extraKnownMarketplaces`](/docs/en/settings-reference#extraknownmarketplaces), because that requires the workspace trust dialog, which a cloud session never shows.
 
-A project-scope skills-directory plugin loads only from the `.claude/skills/` of the session's [primary working directory](/docs/en/permissions#working-directories), and only after you accept the [workspace trust dialog](/docs/en/permissions#what-runs-before-you-trust-a-folder) for that folder. It doesn't [search parent directories up to the repository root](/docs/en/skills#discovery-from-parent-and-nested-directories) the way plain skills and commands do. If you launch from a subdirectory, a plugin at the repository root doesn't load. Launch from the repository root instead, or [move the session there with `/cd`](/docs/en/permissions#move-the-session-to-another-directory) on v2.1.246 or later.
+If a plugin in your repository's `.claude/skills/` doesn't load, check where you started the session and whether you trusted the folder:
+
+* **In a subdirectory**: a plugin at the repository root doesn't load. Claude Code reads the `.claude/skills/` of the session's [primary working directory](/docs/en/permissions#working-directories) and, unlike plain skills and commands, doesn't [search parent directories](/docs/en/skills#discovery-from-parent-and-nested-directories) for plugins. Launch from the repository root instead, or [move the session there with `/cd`](/docs/en/permissions#move-the-session-to-another-directory) on v2.1.246 or later
+* **From the desktop app, in a worktree**: the plugin loads from the main checkout's `.claude/skills/` rather than the worktree's. See [What worktrees share with the main checkout](/docs/en/worktrees#what-worktrees-share-with-the-main-checkout)
+* **In a folder you haven't trusted**: the plugin loads only after you accept the [workspace trust dialog](/docs/en/permissions#what-runs-before-you-trust-a-folder) for that folder
 
 A project-scope plugin is checked into the repository and reaches every collaborator who clones it. Because that content comes from the repository rather than from you, it loads only after the same trust check that applies to project allow rules in `.claude/settings.json`. Trusting a parent folder or running with `-p` isn't enough. Components that run code are restricted further:
 
@@ -368,6 +372,16 @@ When enabled plugins from different origins share a manifest name, this order de
 5. A plugin [synced from claude.ai](#synced-plugins). When an enabled plugin from any other origin matches its name, Claude Code loads that plugin and reports the synced copy as not loaded. To use the claude.ai copy instead, disable your own copy
 
 Because the order compares manifest names, a `--plugin-dir` plugin named `hello-plugin` replaces `hello@example-marketplace` when that plugin's manifest also says `"name": "hello-plugin"`.
+
+<h3 id="hooks-when-two-enabled-plugins-share-a-name">
+  Hooks when two enabled plugins share a name
+</h3>
+
+When you install and enable two plugins with the same manifest name from different marketplaces, both appear as enabled in `/plugin`, but the hooks of one of them are left out. One plugin per name registers the hooks in its `hooks/hooks.json`, and one plugin per name loads a [hooks module](/docs/en/plugins/mods/overview). When your organization's managed settings turn on one of the copies, that copy holds the name. Otherwise the copy Claude Code loads first holds it.
+
+To see which copy holds the name, run `/plugin` in your session and open the **Errors** tab. A note there for the copy whose hooks were left out names the copy that holds the name, and the left-out copy's details show the same note. For `hooks/hooks.json` hooks the note begins `Its hooks.json hooks do not run`, and for a hooks module it begins `Its hooks module does not load`. The note requires Claude Code v2.1.296 or later.
+
+To run the left-out copy's hooks instead, disable or uninstall the copy that holds the name, then run `/reload-plugins` in your session. The reload registers the remaining copy's hooks and clears the note. When the copy that holds the name is one your managed settings turn on, you can't disable it, and the other copy's hooks stay off while both are installed.
 
 ### Keep a session-only plugin from loading
 

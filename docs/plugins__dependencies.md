@@ -191,7 +191,7 @@ When a user installs a plugin that declares `{ "name": "secrets-vault", "version
 * **Plugin with its own repository**: the install fails with a message containing `Dependency "secrets-vault@your-marketplace" has no git tag satisfying`.
 * **Plugin referenced by a relative path**: the install uses the marketplace's current copy instead, and the constraint is checked when the plugin loads. If that copy is outside the range, the dependent plugin stays disabled and `claude plugin list` shows `Requires "secrets-vault@your-marketplace" ~2.1.0, installed 3.0.0`.
 
-For a plugin the marketplace references by a relative path, a marketplace you added as a local folder path also resolves constraints against that folder's git tags, when the folder is a git repository. This requires Claude Code v2.1.196 or later. A local folder that isn't a git repository has no tags, so Claude Code installs the dependency from the folder's current contents instead.
+For a plugin the marketplace references by a relative path, a marketplace you added as a local folder path also resolves constraints against that folder's git tags, when the folder is a git repository. A local folder that isn't a git repository has no tags, so Claude Code installs the dependency from the folder's current contents instead.
 
 ### Confirm the resolved version
 

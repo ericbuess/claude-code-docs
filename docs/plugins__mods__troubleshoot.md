@@ -64,7 +64,7 @@ Each of these follows `hooks module`, the mod's name, and `not loaded:` in the d
 | `disableAllHooks in managed settings` | Your organization turned off hooks from installed plugins |
 | `only managed plugins and built-in plugins run` | `allowManagedHooksOnly` is set, or `disableAllHooks` is set in a settings file other than managed settings |
 | `installed plugins that are not managed load no hooks module in this mode (--bare)` | You started Claude Code with `--bare` |
-| `another plugin of that name loads first` | Two plugins share a name. The managed one, or the one loaded first, is used. |
+| `another plugin of that name loads first` | Another enabled plugin has the same name as your mod and [holds the name](/docs/en/plugins/loading#hooks-when-two-enabled-plugins-share-a-name), so your hooks module doesn't load |
 
 ### Messages from the built-in guard
 
@@ -150,6 +150,12 @@ The line starts with the mod's name and names a `$.prompt.submit`, `$.command.ru
 There's nothing to fix.
 
 Before v2.1.292, the call ran a second time, so the prompt was submitted, the command run, or the subagent started twice.
+
+### `$.agent.register refused: the hooks module that made the call is no longer loaded`
+
+The line starts with your mod's name, as in `first-mod: $.agent.register refused: the hooks module that made the call is no longer loaded (it was reloaded or removed)`, and the agent isn't registered. Your mod was reloaded or unloaded before the call. A reload loads a fresh copy of the hooks module, and this call came from code still running in the old copy, such as a hook that hadn't returned yet.
+
+If that hook doesn't catch the rejection, it fails and Claude Code [skips it](#hook-skipped). To register the agent from the copy that stays loaded, make the call in your [`session.start`](/docs/en/plugins/mods/reference#session) hook, which runs again in each fresh copy after a reload.
 
 ### `mods that run in the hooks worker are off for this session`
 

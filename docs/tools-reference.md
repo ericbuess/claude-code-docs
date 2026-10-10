@@ -257,15 +257,17 @@ These checks must pass for an edit to apply. Before any of them, a path matched 
 
 A file that changed on disk after Claude last read it can still be edited when `old_string` matches the current content exactly and unambiguously and Claude Code can read the file without prompting. Matching against the file's current content keeps this safe, and the result notes that the file carries other changes so Claude re-reads it before edits that depend on surrounding content. In any other case, such as a stale `old_string` or one that matches more than once without `replace_all`, Claude reads the file again before editing. The relaxed handling of unread and changed files requires Claude Code v2.1.208 or later; before that, Claude Code refused any edit to a file it hadn't read in the conversation or that changed on disk after the read.
 
-Viewing a file with Bash also satisfies the read-before-edit requirement when the command is `cat`, `nl`, `bat`, `batcat`, `head`, `tail`, `sed -n 'X,Yp'`, `grep`, `egrep`, `fgrep`, or `rg` on a single file with no pipes or redirects. A search that matches nothing leaves the file unread. Piped output and other Bash commands don't count toward the read-before-edit check.
+Claude can also edit a file without a separate Read after it views the file with a Bash command such as `cat` or `grep`. Those commands are `cat`, `nl`, `bat`, `batcat`, `head`, `tail`, `sed -n 'X,Yp'`, `grep`, `egrep`, `fgrep`, and `rg`, each run on one file with no pipes or redirects. A search that prints no matches doesn't count as a read, nor does any command outside this list.
 
 When Claude views a file this way, Claude Code also loads any [subdirectory `CLAUDE.md`](/docs/en/memory#how-claude-md-files-load) and [path-scoped rules](/docs/en/memory#path-specific-rules) that apply to that file. See [Read and Edit permission rules](/docs/en/permissions#read-and-edit) for which Bash commands your `Read` and `Edit` deny rules cover.
 
 ### Non-UTF-8 files
 
-Edit and [NotebookEdit](#notebookedit-tool-behavior) refuse to change a file whose bytes don't decode as UTF-8, and write nothing, because saving it back as UTF-8 would turn every byte they couldn't decode into the replacement character `U+FFFD`. That covers, for example, a file with non-ASCII text in a legacy encoding such as Windows-1252 or Shift-JIS, a binary file, and a UTF-8 file with an invalid byte sequence. The [error Claude receives](/docs/en/errors#file-is-not-valid-utf-8) tells it to make the change with a shell command that reads and writes the file in its own encoding, or to ask you whether to convert the file to UTF-8 first. Edit reads a file that starts with a little-endian UTF-16 byte-order mark as UTF-16 instead, so that file stays editable.
+Claude can't use [NotebookEdit](#notebookedit-tool-behavior) on a file that isn't valid UTF-8. The same goes for Edit, unless the file starts with a little-endian UTF-16 byte-order mark. When Claude tries, the tool refuses the change and leaves the file untouched. Refused files include non-ASCII text saved in a legacy encoding such as Windows-1252 or Shift-JIS, binary files, and UTF-8 with an invalid byte sequence.
 
-Write doesn't share this refusal. On a file Edit would refuse, Write replaces the whole file with the new content and saves it as UTF-8, so the file's original encoding is lost. Write refuses, and writes nothing, when the file on disk doesn't decode and the new content contains `U+FFFD`, the character Read shows for bytes it can't decode.
+The tools refuse because they save the whole file back as UTF-8, which would replace every byte they can't decode with the replacement character `U+FFFD`. Instead, the [error Claude receives](/docs/en/errors#file-is-not-valid-utf-8) tells it to make the change with a shell command that keeps the file's encoding, or to ask you about converting it to UTF-8 first.
+
+Claude can still replace such a file with Write, unless the new content contains `U+FFFD`, the character Read shows Claude in place of bytes it can't decode. That guard stops Claude from writing back the garbled text it read. When Write does replace the file, it saves the new content as UTF-8, so the file's original encoding is lost.
 
 ## EndConversation tool behavior
 
@@ -470,7 +472,9 @@ Three additional settings control where PowerShell is used:
 * `"shell": "powershell"` on individual [command hooks](/docs/en/hooks#command-hook-fields): runs that hook in PowerShell. Hooks spawn PowerShell directly, so this works regardless of `CLAUDE_CODE_USE_POWERSHELL_TOOL`.
 * `shell: powershell` in [skill frontmatter](/docs/en/skills#frontmatter-reference): runs `` !`command` `` blocks in PowerShell. Requires the PowerShell tool to be enabled.
 
-The same main-session working-directory reset behavior described under the Bash tool section applies to PowerShell commands, including the `CLAUDE_BASH_MAINTAIN_PROJECT_WORKING_DIR` environment variable.
+PowerShell commands follow the [same main-session working-directory reset behavior](#what-persists-between-commands) as Bash commands, including the `CLAUDE_BASH_MAINTAIN_PROJECT_WORKING_DIR` environment variable.
+
+PowerShell commands also receive the variables hooks persist through `CLAUDE_ENV_FILE`, under the conditions in [Persisted variables in PowerShell commands](/docs/en/hooks#persisted-variables-in-powershell-commands). Requires Claude Code v2.1.296 or later.
 
 Exit code 1 from `grep`, `rg`, `egrep`, `fgrep`, `findstr`, and `git grep` means no matches. Exit code 1 from `git diff` means differences exist. Neither result is reported to Claude as a command failure. For `robocopy`, exit codes 0 through 7 are informational results, such as files copied or extra files detected. Exit codes of 8 or higher count as failures.
 

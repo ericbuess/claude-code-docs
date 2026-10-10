@@ -144,7 +144,7 @@ Separately, the icon's shape has its own meaning:
 | Shape | What it means |
 | :- | :- |
 | `✻` or animated `✽` | The session process is running, or the session needs your input |
-| `∙` | The process has exited. You can still peek at the row, and when you reply or attach, Claude restarts from where it left off |
+| `∙` | The process has exited. You can still peek at the row, and when you reply or attach, Claude restarts it from its saved conversation |
 | `✢` | A [`/loop`](/docs/en/scheduled-tasks) session sleeping between iterations. The row shows its run count and a countdown |
 
 The `#N` or `!N` label that can appear at the right edge of a row is a link to the session's [pull request or merge request](#pull-request-status), not part of the state icon.
@@ -250,9 +250,9 @@ On Windows, if you press `←` within about half a second of attaching, Claude C
 
 `Ctrl+Z` also detaches but goes back to where you started instead: agent view if you attached from there, or your shell if you ran `claude attach`. Use `Ctrl+Z` when a dialog has focus and isn't responding to `←`.
 
-`Ctrl+C` keeps its standard interrupt behavior while attached: it cancels a running response or `!` shell command rather than detaching. Pressing `Ctrl+C` twice on an empty prompt detaches, the same as in any session.
+`Ctrl+C` keeps its standard interrupt behavior while attached: it cancels a running response or `!` shell command rather than detaching. Pressing `Ctrl+C` twice on an empty prompt detaches.
 
-Detaching never stops a background session: `←`, `Ctrl+Z`, `/exit`, and double `Ctrl+C` or double `Ctrl+D` all leave it running. To end a session from inside it, run `/stop`.
+Detaching never stops a background session: `←`, `Ctrl+Z`, `/exit`, and double `Ctrl+C` or double `Ctrl+D` all leave it running. If you detach while a `/loop` is waiting for its next iteration, the loop keeps running and that iteration starts on schedule without you. To stop the loop before you detach, see [Stop a loop](/docs/en/scheduled-tasks#stop-a-loop). To end a session from inside it, run `/stop`.
 
 #### Switch sessions without leaving the terminal
 
@@ -277,8 +277,9 @@ If a tool is running when you press `←`, Claude Code waits for it to finish be
 After about ten seconds, Claude Code backgrounds the session without waiting any longer, except in cases such as these:
 
 * **Foreground subagents are still running**: Claude Code keeps waiting so the work of the [foreground subagents](/docs/en/sub-agents#run-subagents-in-foreground-or-background) Claude started carries over, and shows `Still backgrounding after the current tool`. Press `←` again to background without waiting, which restarts those subagents from the beginning.
-* **A permission prompt or question is waiting for your answer**: while a permission prompt or a question Claude asked waits, Claude Code keeps waiting and shows `Still backgrounding after the current tool — a question is waiting for your answer.`
+* **A permission prompt or question is waiting for your answer**: while a permission prompt or a question Claude asked waits, Claude Code keeps waiting and shows `Still backgrounding after the current tool — a question is waiting for your answer.` If your answer lets the turn continue, such as **Yes** on a permission prompt, Claude Code backgrounds the session when the current tool finishes.
 * **You type into the prompt input**: Claude Code cancels the switch, because unsent text stays in your terminal's input box and wouldn't move to the background session. It shows `Backgrounding cancelled — you have unsent text in the input. Send it or clear it, then press ← again.`
+* **You stop the turn**: Claude Code cancels the switch and shows `Backgrounding cancelled — the turn was stopped.` For example, the turn stops when you [interrupt Claude with `Esc`](/docs/en/interactive-mode#general-controls) or select **No** [without a comment](/docs/en/permissions#add-a-comment-when-you-answer-a-permission-prompt) on a permission prompt from the main conversation, or press `Esc` on a question Claude asks there. Press `←` again to background the session.
 * **A queued message can't move**: messages you [queued while Claude was working](/docs/en/interactive-mode#queue-messages-while-claude-works) move to the background session with the conversation. When one of them can't, the session stays in the foreground and Claude Code shows a notice such as `Cannot open agents — 1 queued message can't move to the background. Press ← again once Claude has read it.`
 
 Pressing `←` creates the session's row even when the conversation has no messages yet, so `→` still returns to it.
@@ -477,7 +478,7 @@ Configuration flags from the original launch carry through to the backgrounded s
 * `--fallback-model`
 * `--allow-dangerously-skip-permissions`
 
-Directories you added during the session with [`/add-dir`](/docs/en/permissions#additional-directories-grant-file-access-not-configuration) also carry through. Carrying `--allow-dangerously-skip-permissions` keeps `bypassPermissions` reachable in the backgrounded session, but it doesn't grant anything new: the mode still requires the one-time interactive acceptance described in [Permission mode, model, and effort](#permission-mode-model-and-effort).
+Directories you added during the session with [`/add-dir`](/docs/en/permissions#additional-directories-grant-file-access-not-configuration) also carry through. Carrying `--allow-dangerously-skip-permissions` keeps `bypassPermissions` reachable in the backgrounded session, but it doesn't grant anything new: the mode still needs your [acceptance of the bypass disclaimer](/docs/en/permission-modes#skip-all-checks-with-bypasspermissions-mode) on record.
 
 <span id="from-your-shell" />
 
@@ -711,11 +712,11 @@ Pass `--restricted` to start every session you dispatch from the view in [restri
 
 The active defaults appear in the footer below the dispatch input.
 
-Claude Code refuses `claude --bg --permission-mode bypassPermissions` until you've accepted the bypass disclaimer by running `claude --dangerously-skip-permissions` once interactively, since that mode lets a session you aren't watching act without approval. Passing `--dangerously-skip-permissions` or `--permission-mode bypassPermissions` to `claude agents` shows the same disclaimer when you haven't accepted it before, and accepting applies `bypassPermissions` to the sessions you launch from the view. Passing `--allow-dangerously-skip-permissions` shows the same disclaimer too, and accepting makes `bypassPermissions` available in the `Shift+Tab` cycle of those sessions without starting them in it.
+A background session started in `bypassPermissions` mode needs your [acceptance of the bypass disclaimer](/docs/en/permission-modes#skip-all-checks-with-bypasspermissions-mode) on record, since that mode lets a session you aren't watching act without approval. Passing `--dangerously-skip-permissions` or `--permission-mode bypassPermissions` to `claude agents` shows the same disclaimer when you haven't accepted it before, and accepting applies `bypassPermissions` to the sessions you launch from the view. Passing `--allow-dangerously-skip-permissions` shows the same disclaimer too, and accepting makes `bypassPermissions` available in the `Shift+Tab` cycle of those sessions without starting them in it.
 
 #### What persists across restarts
 
-The permission mode, model, and effort you chose for a background session, along with the [configuration flags it carries](#what-carries-over-when-you-background), all persist when the supervisor later [stops and restarts](#the-supervisor-process) its process. A session you launched with `claude --bg --dangerously-skip-permissions` or `claude --bg --permission-mode bypassPermissions` stays in `bypassPermissions` after that restart. A model or effort you changed mid-session with `/model` or `/effort` is kept too.
+The permission mode, model, and effort you chose for a background session, along with the [configuration flags it carries](#what-carries-over-when-you-background), all persist when the supervisor later [stops and restarts](#the-supervisor-process) its process. A model or effort you changed mid-session with `/model` or `/effort` is kept too.
 
 If the session took its effort from your settings rather than from `--effort` or `/effort`, Claude Code reads your settings again each time it starts a process for the session. After you edit the saved effort in `settings.json`, the change reaches sessions you background with `←` or `/bg`, and their later restarts. The saved effort is the [`effortLevel`](/docs/en/settings-reference#effortlevel) key or a [`modelSettings`](/docs/en/settings-reference#modelsettings) entry.
 
@@ -760,16 +761,16 @@ Every background session has a short ID you can use from the shell. The ID is pr
 | `claude attach <id\|name>` | Attach to a session in this terminal |
 | `claude logs <id\|name>` | Print the session's recent output |
 | `claude stop <id>` | Stop a session. Also accepts `claude kill` |
-| `claude respawn <id>` | Restart a session, running or stopped, e.g. to pick up an updated Claude Code binary. The restarted session resumes its saved conversation; when none is on disk, it runs its original prompt again as a new conversation |
+| `claude respawn <id>` | Restart a session, running or stopped, for example to pick up an updated Claude Code binary. A session that has a saved conversation resumes it |
 | `claude respawn --all` | Restart every running session, e.g. to move all sessions onto an updated Claude Code binary at once |
 | `claude rm <id>` | Remove a session from the list, along with a worktree Claude created for it when that's safe to delete; see [What deleting a session removes](#what-deleting-a-session-removes). The conversation transcript stays on your local machine and remains available through `claude --resume` |
 | `claude rm <id> --discard-unpushed <commit>@<worktree-id>` | Delete a session whose delete was refused over unpushed commits, discarding the worktree along with its branch and commits. Pass the exact value that refusal printed; see [What deleting a session removes](#what-deleting-a-session-removes). Requires v2.1.260 or later |
 | `claude rm <id> --force-remove-worktree <worktree-id>` | Delete a session whose delete was refused because git or the `WorktreeRemove` hook couldn't remove its worktree, deleting the worktree directory anyway and leaving its branch in the repository. Pass the exact value that refusal printed; see [What deleting a session removes](#what-deleting-a-session-removes). Requires v2.1.268 or later |
 | `claude daemon status` | Print the [supervisor's](#the-supervisor-process) state, version, socket directory, and worker count |
 | `claude daemon logs` | Follow the supervisor's log file, [`~/.claude/daemon.log`](#where-state-is-stored), printing new lines as they arrive until you press `Ctrl+C` |
-| `claude daemon stop --any` | Stop the supervisor process and the background sessions it hosts. Pass `--keep-workers` to leave background sessions running so the next supervisor reconnects to them. The next `claude agents` or `claude --bg` starts a fresh supervisor |
+| `claude daemon stop --any` | Stop the supervisor process and the background sessions it hosts. Pass `--keep-workers` to leave background sessions running for [the next supervisor](#the-supervisor-process) to reconnect to. The next `claude agents` or `claude --bg` starts a fresh supervisor |
 
-`claude attach` and `claude logs` can take part of a session's name in place of the ID, as in `claude logs "auth refactor"`. Passing a name requires Claude Code v2.1.290 or later.
+`claude attach` and `claude logs` can take part of a session's name in place of the ID, as in `claude logs "auth refactor"`. `claude attach` opens a session by name only while its process is running, so pass the ID instead to restart a stopped session. Passing a name requires Claude Code v2.1.290 or later.
 
 ### List sessions as JSON
 
@@ -819,6 +820,7 @@ Each session is its own Claude Code process under the supervisor, and what happe
 * **Finished or waiting for your next message, and unattached for about an hour**: the supervisor stops the process to free resources. A session that ended its turn by asking you a question counts as waiting for your next message. The conversation stays on disk, and the next time you attach or reply, the session resumes where it left off. Pin a session with `Ctrl+T` to keep its process running.
 * **Exited unexpectedly while the supervisor is running**: the supervisor restarts the process. Ending a session you backgrounded yourself with `←` or `/background`, for example with `kill`, marks it stopped instead of restarting it. For sessions that ended with a shutdown, see [Sessions show as failed or stopped after shutdown](#sessions-show-as-failed-after-shutdown).
 * **After an auto-update**: the supervisor restarts itself onto the new version and moves idle sessions over in the background. Sessions that are working, waiting on you, or attached aren't interrupted.
+* **The supervisor itself stops**, for example because its process was ended from outside Claude Code: on macOS and Linux, each session's process waits about a minute for a new supervisor to reconnect to it, and stops if none does. Run `claude agents` in your shell within that minute to start a new supervisor and keep your sessions running. If the minute passes first, the sessions stop, but their saved conversations stay on disk: attach or reply to a session and it restarts from its saved conversation, as described under [Sessions show as failed or stopped after shutdown](#sessions-show-as-failed-after-shutdown).
 
 When a session's process stops or restarts, the background shell commands, dynamic workflows, and background subagents Claude started in it carry over to its next process; running monitors and shell commands a subagent started stop with the process. Deleting the session stops everything it carried over. To stop all of it with the process instead, set [`CLAUDE_CODE_DISABLE_BG_EXIT_HANDOFF`](/docs/en/env-vars#variables) to `1`.
 
@@ -839,7 +841,7 @@ Each background session has the `CLAUDE_JOB_DIR` environment variable set to its
 
 To inspect this state without reading the files directly, run `claude daemon status`. It reports whether the supervisor is reachable, its process ID and version, the socket directory, and how many background sessions are live.
 
-The command also warns when the running supervisor is on a different version than the `claude` you invoked, which happens after an update the supervisor hasn't restarted into yet. The warning shows both versions and tells you to run `claude daemon stop --any` to pick up the new version. When Claude Code is installed as an OS service, the suggested command is `claude daemon stop` without the flag.
+The command also warns when the running supervisor is on a different version than the `claude` you invoked, which happens after an update the supervisor hasn't restarted into yet. The warning shows both versions and tells you to run `claude daemon stop --any` to pick up the new version.
 
 Sessions survive that version mismatch intact: an older Claude Code version that updates a session's `state.json` preserves fields it doesn't recognize and keeps the session listed. The session list in `roster.json` follows the same rule, so sessions started by the newer version stay reachable and keep accepting input after the supervisor restarts.
 
@@ -879,7 +881,7 @@ The dispatch input expects a task description, not a conversational opener. A pr
 
 Shutting down or restarting your machine stops running background sessions. A session that was waiting on your input stays under `Needs input` when you come back. For any other running session, what agent view shows depends on how long ago it last made progress:
 
-* Within 48 hours, the session shows as failed. Attach or reply to it and it restarts from where it left off.
+* Within 48 hours, the session shows as failed. Attach or reply to it and it restarts from its saved conversation. To pick the interrupted work back up, send it a reply asking it to continue.
 * Past 48 hours, such as after the machine was off for days, the session shows as stopped with `ended while the background service was off`. Press `Enter` on the row and the footer shows `Press enter again to resume this session (it ended while the background service was off), or ctrl+x to delete it.` Press `Enter` on the same row again to resume its saved conversation. A reply, or `claude attach <id>`, resumes it without that footer prompt.
 
 When [transcript cleanup](/docs/en/settings-reference#cleanupperioddays) has removed a stopped session's saved conversation, Claude Code refuses to open the row: the message says there is nothing to resume. `claude rm <id>` deletes the row, except in the [kept cases](#what-deleting-a-session-removes) described above, and `claude respawn <id>` runs its original prompt again. See [This session's saved conversation is no longer on disk](/docs/en/errors#this-sessions-saved-conversation-is-no-longer-on-disk).
@@ -928,7 +930,7 @@ If attaching, peeking, or `claude logs` reports that the background service did 
 claude daemon stop --any --keep-workers
 ```
 
-The new supervisor reconnects to the running sessions. Without `--keep-workers`, the command ends the background sessions too. The `--any` flag confirms you want to stop a supervisor that started on demand rather than as an installed service, which is the default.
+Then run `claude agents` in your shell to start the new supervisor. If you do that within [about a minute](#the-supervisor-process) of the stop, it reconnects to the still-running sessions, and their work continues uninterrupted. If you take longer, on macOS and Linux the sessions have stopped on their own by then, and attaching or replying to one restarts it from its saved conversation. Without `--keep-workers`, the command ends the background sessions too. The `--any` flag makes the command stop a supervisor that Claude Code started on demand.
 
 A supervisor that starts but can't accept connections exits and releases its lock on its own, so the next `claude agents` starts a fresh one without this manual stop. The steps above apply when a running supervisor stalls.
 
@@ -944,7 +946,7 @@ If a background dispatch fails with `Could not resolve authentication method` wh
 claude daemon stop --any --keep-workers
 ```
 
-The next `claude agents` or `claude --bg` starts a fresh supervisor that reads your stored credentials. If you authenticate with an environment variable such as `ANTHROPIC_API_KEY` rather than `/login`, run that next command from a shell where the variable is set.
+Within [about a minute](#the-supervisor-process), run `claude agents` or `claude --bg` in your shell to start a fresh supervisor that reads your stored credentials. If you authenticate with an environment variable such as `ANTHROPIC_API_KEY` rather than `/login`, run that next command from a shell where the variable is set.
 
 See the [error reference](/docs/en/errors#could-not-resolve-authentication-method) for the full list of causes and fixes.
 
