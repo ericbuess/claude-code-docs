@@ -50,15 +50,32 @@ Most flags have a corresponding environment variable. When both are set, the fla
 | `--release-idle-session-min <n>` | `SELF_HOSTED_RUNNER_SESSION_IDLE_MS` | `0` | Release a session slot after N minutes of inactivity once a turn finishes or the session waits for the user's action. A session that's still mid-turn, including one holding a never-finishing background task or an approval requested from inside a running tool call, doesn't count as idle; pair with `--kill-session-after-min` as the hard backstop. After a session's background task finishes, the runner considers the session busy until the follow-up turn that reads the result starts, for at most the [`SELF_HOSTED_RUNNER_BG_RESULT_GRACE_MS`](#environment-variable-only-settings) window. Until the runner receives a shutdown signal or reaches its retire time, a release that leaves the runner with no active sessions starts the same exit path as a normal drain, governed by `--drain-grace-sec`. After a first signal you deferred with [`--defer-shutdown-max-min`](/docs/en/self-hosted-environments-deploy#defer-the-drain-past-the-first-signal), the runner exits as soon as a release leaves it holding no sessions. `0` disables. |
 | `--remove-session-state [bool]` | `SELF_HOSTED_RUNNER_REMOVE_SESSION_STATE` | off | Remove a session's per-session directories under `<base-dir>/_sessions/` when the session ends on this runner, whatever the outcome. [Reuse a pre-warmed checkout](/docs/en/self-hosted-environments-deploy#reuse-a-pre-warmed-checkout) describes what they hold and who can read them when they stay. The removal is best-effort: the per-session directories stay in place when the runner is killed or reaches its drain deadline before cleanup runs. With the flag on, a failed or interrupted session's debug log isn't kept on disk. Requires Claude Code v2.1.268 or later. |
 | `--retire-at <epoch-seconds>` | `SELF_HOSTED_RUNNER_RETIRE_AT` | unset | Retire the runner at an absolute Unix timestamp in seconds, for infrastructure that kills the runner at a known time; [Runner lifecycle](/docs/en/self-hosted-environments#runner-lifecycle) describes the release sequence and how to size the margin. Values before 2001 or after the year 5138 are rejected by the flag and ignored by the environment variable. |
+| `--server-auto-mode-lists <mode>` | `SELF_HOSTED_RUNNER_SERVER_AUTO_MODE_LISTS` | `no-allow` | Which of the [auto mode](/docs/en/permission-modes#eliminate-prompts-with-auto-mode) classifier rule lists that the control plane sends with a session may reach that session: `all`, `no-allow`, or `none`. See [Auto mode rule lists](#auto-mode-rule-lists) for what each value applies. An invalid value stops the runner at startup. Requires Claude Code v2.1.295 or later. |
 | `--session-stop-grace-sec <n>` | `SELF_HOSTED_RUNNER_SESSION_STOP_GRACE_MS` | `5` | How long to wait for the Claude process to exit cleanly after a session ends, before force-killing it. Raise the value if the child's own `SessionEnd` hooks need more time. |
-| `--startup-timeout-min <n>` | `SELF_HOSTED_RUNNER_STARTUP_TIMEOUT_MS` | `15` | Release a session slot if the child hasn't signaled that it initialized within N minutes of spawn. Cleared by the child's init signal on the [activity channel](/docs/en/self-hosted-environments-configuration#keep-stdin-and-file-descriptor-3-attached), not by ordinary output, after which `--release-idle-session-min` takes over. `0` disables. |
+| `--startup-timeout-min <n>` | `SELF_HOSTED_RUNNER_STARTUP_TIMEOUT_MS` | `15` | Release a session slot if the child hasn't signaled that it initialized within N minutes of spawn. Cloning happens before spawn, so clone time doesn't count. Cleared by the child's init signal on the [activity channel](/docs/en/self-hosted-environments-configuration#keep-stdin-and-file-descriptor-3-attached), not by ordinary output, after which `--release-idle-session-min` takes over. `0` disables. |
 | `--trust-workspace [bool]` | `SELF_HOSTED_RUNNER_TRUST_WORKSPACE` | on | Seed persisted trust for each session's repository paths so repo-committed `permissions.allow` and `additionalDirectories` are honored. Set `false` to drop repo-committed permission grants and configure allow rules in the host config's `settings.json` instead; repository-committed `sandbox.*` settings still apply either way, which is why the [repo-settings guard](/docs/en/self-hosted-environments-deploy#harden-your-deployment) scans them regardless of this flag. |
-| `--use-anthropic-git-proxy` | `CLAUDE_RUNNER_USE_GIT_PROXY=1` | off | Clone via the [Anthropic git proxy](/docs/en/self-hosted-environments-deploy#use-the-anthropic-git-proxy) instead of customer-managed git auth. Requires `--capacity 1` and git 2.32 or later; the runner refuses to start otherwise. Supersedes the rewrite flags. |
+| `--use-anthropic-git-proxy` | `CLAUDE_RUNNER_USE_GIT_PROXY=1` | off | Clone repositories on github.com via the [Anthropic git proxy](/docs/en/self-hosted-environments-deploy#use-the-anthropic-git-proxy) instead of customer-managed git auth. Requires `--capacity 1` and git 2.32 or later; the runner refuses to start otherwise. Supersedes the rewrite flags. |
 
 Most duration flags have a maximum, chosen to keep each timeout inside the runtime's 32-bit timer ceiling of roughly 24.85 days. The `--*-min` flags cap at 10080 minutes, 7 days; `--drain-grace-sec` at 604800 seconds, also 7 days; and `--drain-wait-sec` at 86400 seconds, 24 hours. `--session-stop-grace-sec` and `--post-session-hook-timeout-sec` are uncapped. Overrunning a cap behaves differently per surface:
 
 * **Flag**: startup fails with an error.
 * **Environment variable**: the runner clamps the value to the timer ceiling rather than rejecting it.
+
+### Auto mode rule lists
+
+`--server-auto-mode-lists` lets you decide which [auto mode](/docs/en/permission-modes#eliminate-prompts-with-auto-mode) classifier rules from outside the runner reach the sessions on your runners. Anthropic's control plane can send rule lists with a session and ask the runner to apply them. Some entries may be rules an admin of your organization wrote. The lists are `environment`, `soft_deny`, and `allow`:
+
+* **`environment`**: an entry can make the classifier allow more as well as less.
+* **`soft_deny`**: an entry blocks an action unless the user explicitly asked for it or an `allow` exception applies.
+* **`allow`**: the exceptions to `soft_deny` entries.
+
+The flag's value picks which lists the runner applies:
+
+* **`no-allow`**: the default. Applies `environment` and `soft_deny` and withholds `allow`. An `environment` entry can still make the classifier allow more, so the default doesn't rule out every loosening.
+* **`all`**: applies all three lists.
+* **`none`**: applies none of them. Pick `none` to rule out every loosening from these lists. It also drops the `soft_deny` restrictions.
+
+No runner setting makes the control plane ask the runner to apply the lists. When it doesn't ask, sessions receive no list whatever you set. To see which happened, start the runner with `--log-level debug`. For each session the runner then logs a line containing `the server asked this runner to apply`, or one containing `the server did not ask this runner to apply the auto mode lists it sends`.
 
 ## Orchestrator CLI flags
 
@@ -68,7 +85,7 @@ The `self-hosted-runner orchestrator` subcommand, which spawns [on-demand runner
 | :- | :- | :- |
 | `--hook-concurrency <n>` | `4` | Maximum `spawn-runner` hooks running in parallel. Also caps how many spawn requests are claimed per poll. |
 | `--hook-timeout <sec>` | `60` | Terminate the hook's process tree after this many seconds. The timeout plus its 5-second kill grace must stay below `--expected-spawn-seconds`; the orchestrator enforces this at startup. |
-| `--expected-spawn-seconds <sec>` | `120` | Expected p99 boot time for spawned runners, in the server-enforced range 10 to 3600. Sent on every poll as the server-side lease; if no runner registers before it elapses, the session is re-offered with a fresh order ID. All replicas must share this value. |
+| `--expected-spawn-seconds <sec>` | `120` | Expected p99 time from when the orchestrator receives a spawn request to when the runner registers, including any wait for capacity on your platform. The server enforces a range of 10 to 3600. Sent on every poll as the server-side lease: if no runner registers before it elapses, the session is re-offered with a fresh order ID. All replicas must share this value. |
 | `--min-idle <n>` | `0` | Keep at least N idle session slots free by spawning standby runners proactively. `0` disables pre-warming. Pair with the runner's `--exit-if-unused-min` so surplus standby runners reclaim themselves. |
 | `--debug-dir <path>` | unset | Write each spawn request's work order and hook stderr to disk. Debug only; never set in production. |
 
@@ -100,6 +117,7 @@ These runner settings are read from the environment only and cover behavior most
 | `SELF_HOSTED_RUNNER_POST_TURN_SETTLE_MS` | `7000` | Cap on how long the runner counts a session as busy for the `--drain-wait-sec` drain after a turn finishes, while the session's process reports the turn's end to Anthropic. `0` or an unusable value falls back to the default, so the hold can't be turned off. Requires Claude Code v2.1.275 or later. |
 | `SELF_HOSTED_RUNNER_SIGKILL_GRACE_MS` | `30000` | How long the runner waits for the OS to deliver `SIGKILL` to a child stuck in uninterruptible I/O before exiting itself. Floored at `--post-session-hook-timeout-sec` plus 15 seconds, and 30 more when `--push-outcome-on-release` is set, so the effective minimum is 75 seconds at defaults. |
 | `CLAUDE_RUNNER_FETCH_DEPTH` | `50` | Git fetch depth for fresh clones. Set a positive integer, or `full` or `0` for a complete fetch. Repositories already present in the workspace keep their existing depth. |
+| `CLAUDE_RUNNER_FETCH_SERVER_PROGRESS_CAP_MS` | `600000` | How long in milliseconds, per attempt, a git fetch may wait for its first data while the git server's own progress numbers keep rising, as when the server prepares the pack for a large repository. `0` or `off` turns the wait off: such a fetch is then cut off after two minutes without data. Any other whole number is clamped to between `120000` and `1800000`, 2 to 30 minutes. Requires Claude Code v2.1.295 or later. |
 | `CLAUDE_RUNNER_SKIP_GIT_VERIFY` | unset | When `1`, skip the `.git` presence check after a `checkout` hook runs. Set this when your hook materializes a non-git source. |
 | `FORCE_AUTOUPDATE_PLUGINS` | unset | When `1`, let plugin marketplaces auto-update even though the binary is pinned |
 | `CLAUDE_CODE_DISABLE_ARTIFACT` | unset | When `1`, disable the Artifact tool in sessions regardless of the organization's admin setting, and drop the `*.frame.claudeusercontent.com` egress requirement |
@@ -164,7 +182,7 @@ The orchestrator serves its own series at `GET /metrics` on the same port as its
 | `claude_code_self_hosted_orchestrator_poll_errors_total{error_kind}` | Cumulative PollSpawnHints failures by kind: `transport`, `timeout`, `5xx`, `429`, or `4xx`. All five series are present from process start; alert on `rate(...[5m]) > 0`. |
 | `claude_code_self_hosted_orchestrator_queue_pending_sessions` | Spawn requests claimable right now |
 | `claude_code_self_hosted_orchestrator_queue_backing_off_sessions` | Spawn requests in retry backoff after a retryable hook failure |
-| `claude_code_self_hosted_orchestrator_queue_circuit_broken_sessions` | Spawn requests blocked until an Owner retries them from the environment's **Activity** tab; alert if above zero |
+| `claude_code_self_hosted_orchestrator_queue_circuit_broken_sessions` | Sessions blocked from spawning. Each stays blocked until a user sends it a new message or an Owner retries it from the environment's **Activity** tab. The count can stay above zero after you fix the cause. Alert if above zero. |
 | `claude_code_self_hosted_orchestrator_pool_pending_sessions` | Total sessions waiting on a runner for this environment. Environment-wide aggregate, identical on every orchestrator instance: use `MAX` rather than `SUM` across instances. |
 | `claude_code_self_hosted_orchestrator_pool_active_sessions` | Sessions currently assigned to an alive runner in this environment. Environment-wide aggregate, identical on every orchestrator instance: use `MAX` rather than `SUM` across instances. |
 | `claude_code_self_hosted_orchestrator_spawn_hooks_total{result}` | Cumulative `spawn-runner` hook outcomes: `ok`, `retryable`, `non_retryable`. Counts orchestrator hook invocations, not session children the runners spawn: not comparable to `sessions_started_total`, since capacity above one, warm pools, and runners spawned again for the same session all diverge the two. |
@@ -271,7 +289,7 @@ groups:
         for: 1m
         labels: {severity: critical}
         annotations:
-          summary: "{{ $value }} sessions circuit-broken — spawn-runner hook is repeatedly non-retryable; fix infra then retry from the Activity tab"
+          summary: "Sessions blocked from spawning: {{ $value }}. Read each one's error in the Activity tab, fix the cause, then select Retry"
       - alert: ClaudeOrchestratorPollErrors
         expr: sum by (pod) (rate(claude_code_self_hosted_orchestrator_poll_errors_total[5m])) > 0
         for: 2m
@@ -302,7 +320,7 @@ The `sessions_started_total`, `sessions_completed_total`, `sessions_failed_total
 
 Before v2.1.260, the runner terminated every session that reached its `--kill-session-after-min` limit and counted it in `sessions_interrupted_total`.
 
-The [`post-session` hook](/docs/en/self-hosted-environments-configuration#post-session)'s `CLAUDE_RUNNER_EXIT_REASON` classifies clean handoffs differently. The hook reports a release, a startup timeout, and a server deassign as `interrupted`, because the runner stopped the child. These counters record the same events as `completed`, because the slot was handed back cleanly.
+The [`post-session` hook](/docs/en/self-hosted-environments-configuration#post-session)'s `CLAUDE_RUNNER_EXIT_REASON` classifies clean handoffs differently. The hook reports these as `interrupted`, because the runner stopped the child: a release, a startup timeout, a server deassign, and an archive or delete that the poll noticed first. These counters record the same events as `completed`, because the slot was handed back cleanly.
 
 If you reconcile hook receipts against `sessions_completed_total` directly, you undercount completions. Use the hook for per-session guarantees and the counters for aggregate rates.
 

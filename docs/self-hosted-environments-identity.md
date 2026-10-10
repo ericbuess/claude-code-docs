@@ -183,7 +183,9 @@ This command extracts the creator identity, preferring the email address, then t
 
 Wrappers receive the absolute path to the runner's own binary in `CLAUDE_RUNNER_CLAUDE_BIN`; use that path rather than a PATH-resolved `claude` so the decode runs on the same binary the runner itself uses.
 
-Use `jq -re` rather than `jq -r` so a missing claim causes a non-zero exit. With `-r` alone, a missing claim prints the literal string `null` and exits zero, which silently passes a bad value downstream. Pass `--no-verify` to `decode-token` only for offline inspection where the JWKS endpoint is unreachable.
+Use `jq -re` rather than `jq -r` so a missing claim causes a non-zero exit. With `-r` alone, a missing claim prints the literal string `null` and exits zero, which silently passes a bad value downstream.
+
+If `decode-token` can't fetch the keys from the JWKS endpoint or can't verify the token, it prints the reason to stderr, prints no claims, and exits with code 1. Pass `--no-verify` to `decode-token` only for offline inspection where the JWKS endpoint is unreachable.
 
 ## Claims reference
 

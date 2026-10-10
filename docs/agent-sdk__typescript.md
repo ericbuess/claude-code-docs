@@ -1436,7 +1436,7 @@ The `message` field is a [`BetaMessage`](https://platform.claude.com/docs/en/api
 
 Match a subagent's messages to its task events on `agent_id` rather than pairing a message's `parent_tool_use_id` with a task event's `tool_use_id`. When a tool call resumes the subagent, the task events carry that call's `tool_use_id`, while the messages keep the `parent_tool_use_id` of the tool call that first started the subagent, so the two no longer match.
 
-Claude Code sets `user_message_uuid` and `user_message_uuids` on the turn's first assistant message, under the conditions in [`user_message_uuid`](#user_message_uuid). When Claude Code re-runs a turn that a restart interrupted, the re-run's assistant messages that carry those fields also carry [`resume_reason`](#resume_reason).
+Claude Code sets `user_message_uuid` and `user_message_uuids` on the turn's first assistant message, under the conditions in [`user_message_uuid`](#user_message_uuid). When the turn continues one that a restart interrupted, the assistant messages that carry those fields also carry [`resume_reason`](#resume_reason).
 
 `timestamp` is the ISO 8601 time when the message's content finished generating on the process that produced it. The value comes from that machine's clock, so use it for display only and don't order messages by it. One API turn can produce several assistant messages that share a `message.id`, each with its own `timestamp`. When the field is absent, fall back to the time you received the message.
 
@@ -1476,6 +1476,11 @@ type SDKUserMessage = {
 Set `pasted_content` to send content the user pasted into your prompt UI rather than typed, one entry per paste, each a string or an array of content blocks. Claude Code appends each entry's text after the typed text, in order, and may wrap each paste in `<pasted_content>` tags. Blocks other than text are ignored, so send images and documents in `message.content`. Requires Agent SDK v0.3.277 or later.
 
 Set `inline_pastes` to tell Claude Code which parts of `message.content` the user pasted rather than typed, one string per paste. The prompt text stays where the user put it. Claude Code may wrap each listed paste in `<pasted_content>` tags where it stands, so Claude can tell pasted material from the user's own words. Only pastes in the prompt's last text block are wrapped. Requires TypeScript Agent SDK v0.3.280 or later.
+
+Each paste field has a size limit:
+
+* `pasted_content`: if the entries plus the content blocks inside them number more than 1,000, Claude Code ignores the whole field.
+* `inline_pastes`: Claude Code uses the first 100 entries that aren't blank and ignores the rest.
 
 Set `shouldQuery`, `client_composed`, or `priority` to change how Claude Code handles a message you send:
 
@@ -1617,7 +1622,7 @@ Several fields on the result carry diagnostic detail beyond `subtype`:
 * `ttft_stream_ms`: time in milliseconds until the first `message_start` stream event, when the response stream opens. Lower than `ttft_ms`; the gap between the two is time spent streaming the first message. Present on the success arm only.
 * `user_message_uuid`: the `uuid` of the message you sent that this turn answered. See [`user_message_uuid`](#user_message_uuid) for which results carry it.
 * `user_message_uuids`: the `uuid`s of every message you sent that Claude Code answered in this turn. See [`user_message_uuids`](#user_message_uuids).
-* `resume_reason`: why Claude Code re-ran this turn after a restart interrupted it. Present on both arms. See [`resume_reason`](#resume_reason).
+* `resume_reason`: why this turn continues one that a restart interrupted. Present on both arms. See [`resume_reason`](#resume_reason).
 * `local_command`: the name of the command the turn dispatched, on the success result of a turn that a command completed without entering the agent loop, such as `/compact`. The name is folded to lowercase letters and underscores, so `/reload-plugins` reports `reload_plugins`. A command that an MCP server provides, and the built-in `/mcp`, report `mcp`. A command you defined yourself reports `custom`. The arguments are never included. Absent on every turn that entered the agent loop and on sends that ran no command. Requires Agent SDK v0.3.268 or later.
 * `request_sent_wall_ms`: epoch milliseconds at which Claude Code dispatched the API request, for joins against server-side timestamps. Present only together with [`user_message_uuid`](#user_message_uuid), on a success result with `is_error` false whose turn sent an API request.
 * `first_content_frame_ms`: time in milliseconds until the first `content_block_start` or `content_block_delta` stream event, counting thinking blocks as content. Present on the success arm only, when `is_error` is false. Requires Agent SDK v0.3.260 or later.
@@ -1665,7 +1670,7 @@ Which of your messages a turn answers depends on how the turn started:
 
 * **A regular message you sent**, meaning one without `isSynthetic: true`: the turn answers that message for its whole run. When you send several messages close together, Claude Code can merge them into one turn, and the field then carries only the last message's `uuid`. To match the reply to any of the merged messages, use [`user_message_uuids`](#user_message_uuids).
 * **A message you sent with `isSynthetic: true`**: the turn answers that message at first. If Claude Code picks up a regular message of yours between tool calls, the turn answers the picked-up message from then on. Echoing a synthetic message's `uuid` requires Agent SDK v0.3.265 or later; earlier versions echo nothing on synthetic turns.
-* **The prompt Claude Code generates to re-run an interrupted turn under [`CLAUDE_CODE_RESUME_INTERRUPTED_TURN`](/docs/en/env-vars)**: when the interrupted turn's last prompt is a regular message you sent, whether it opened the turn or Claude Code picked it up during the turn, the re-run answers that message at first. [`resume_reason`](#resume_reason) tells the re-run's frames from the interrupted attempt's. When the last prompt isn't a regular message of yours, the re-run answers no message of yours at first. If Claude Code picks up a regular message of yours between tool calls, the turn answers the picked-up message from then on. Echoing the interrupted turn's prompt requires Agent SDK v0.3.268 or later.
+* **The prompt Claude Code generates to continue an interrupted turn under [`CLAUDE_CODE_RESUME_INTERRUPTED_TURN`](/docs/en/env-vars)**: when the interrupted turn's last prompt is a regular message you sent, whether it opened the turn or Claude Code picked it up during the turn, the continued turn answers that message at first. [`resume_reason`](#resume_reason) tells the continued turn's frames from the interrupted attempt's. When the last prompt isn't a regular message of yours, the continued turn answers no message of yours at first. If Claude Code picks up a regular message of yours between tool calls, the turn answers the picked-up message from then on. Echoing the interrupted turn's prompt requires Agent SDK v0.3.268 or later.
 * **Any other prompt Claude Code generated itself**: the turn answers no message of yours at first and its frames carry no echo. If Claude Code picks up a regular message of yours between tool calls, the turn answers that message from then on. The pickup echo requires Agent SDK v0.3.265 or later; earlier versions echo nothing on these turns.
 
 Claude Code echoes the answered message's `uuid` on three kinds of frame:
@@ -1693,14 +1698,14 @@ When a first reply or result carries `user_message_uuid` without the list, it ca
 
 #### `resume_reason`
 
-Why Claude Code re-ran this turn after a restart. Claude Code sets this field on a turn it re-ran under [`CLAUDE_CODE_RESUME_INTERRUPTED_TURN`](/docs/en/env-vars), so you can tell the re-run's reply and result from the interrupted attempt's. Requires Agent SDK v0.3.268 or later.
+Why this turn continues one that a restart interrupted. Claude Code sets this field on a turn that continues an interrupted one under [`CLAUDE_CODE_RESUME_INTERRUPTED_TURN`](/docs/en/env-vars), so you can tell the continued turn's reply and result from the interrupted attempt's. Requires Agent SDK v0.3.268 or later.
 
 Claude Code sets the field on two kinds of frame:
 
-* **The re-run's result**: on the success and error arms alike, whether or not the result carries `user_message_uuid`.
-* **The re-run's reply frames**: those that carry [`user_message_uuid`](#user_message_uuid).
+* **The continued turn's result**: on the success and error arms alike, whether or not the result carries `user_message_uuid`.
+* **The continued turn's reply frames**: those that carry [`user_message_uuid`](#user_message_uuid).
 
-The value is a short lowercase token naming why the turn was re-run, such as `interrupted_turn`.
+The value is a short lowercase token, such as `interrupted_turn`.
 
 #### `queued_turn_count`
 
@@ -1857,7 +1862,7 @@ type SDKPartialAssistantMessage = {
 };
 ```
 
-Claude Code sets `user_message_uuid` and `user_message_uuids` on the turn's first non-ping stream event, and again when the message that the turn is answering changes, under the conditions in [`user_message_uuid`](#user_message_uuid). When Claude Code re-runs a turn that a restart interrupted, the re-run's stream events that carry those fields also carry [`resume_reason`](#resume_reason).
+Claude Code sets `user_message_uuid` and `user_message_uuids` on the turn's first non-ping stream event, and again when the message that the turn is answering changes, under the conditions in [`user_message_uuid`](#user_message_uuid). When the turn continues one that a restart interrupted, the stream events that carry those fields also carry [`resume_reason`](#resume_reason).
 
 ### `SDKCompactBoundaryMessage`
 
@@ -3244,7 +3249,7 @@ Runs a [dynamic workflow](/docs/en/workflows): a script that orchestrates many s
 | - | - | - |
 | `script` | `string` | Inline workflow script. Must begin with `export const meta = { name, description }` as a literal, followed by the script body using `agent()`, `parallel()`, `pipeline()`, and `phase()`. An optional `phases` array in `meta` groups agents under named stages in the progress view |
 | `name` | `string` | Name of a built-in workflow or one saved in `.claude/workflows/`. Resolved to a script |
-| `scriptPath` | `string` | Path to a workflow script file on disk. Takes precedence over `script` and `name`. Claude Code persists every invocation's script and returns the path in the result, so you can edit that file and re-invoke with the same `scriptPath` to iterate |
+| `scriptPath` | `string` | Path to a workflow script file on disk, such as the `scriptPath` a previous run returned. Takes precedence over `script` and `name`. Claude Code rejects `scriptPath` with an error when the session's tools don't include `Read` |
 | `args` | `unknown` | Input value exposed to the script as the global `args`, for parameterized named workflows such as a research question or a list of file paths. Pass arrays and objects as actual JSON values, not as a JSON-encoded string |
 | `resumeFromRunId` | `string` | Run ID of a prior `Workflow` invocation to resume. Completed `agent()` calls with unchanged inputs usually return cached results; the rest run live. [Resume after a pause](/docs/en/workflows#resume-after-a-pause) covers which completed calls re-run. Same session only |
 | `title` | `string` | Ignored; the script's `meta` block sets the title |

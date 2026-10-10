@@ -115,14 +115,13 @@ Site-level permissions are inherited from the Chrome extension. Manage permissio
 
 ### Permission prompts in VS Code sessions
 
-In a VS Code session, whether Claude Code asks you before a browser action depends on how the session connected to your browser:
+In a VS Code session, when Claude Code asks before a browser action, the prompt appears as a card in the chat panel. When the action targets a site you haven't allowed, the card also offers to allow that site.
 
-* **You typed `@browser`**: the extension approves each browser action that Claude Code would otherwise ask you about.
-* **The [Enabled by default](#enable-chrome-by-default) setting connected it at start**: Claude Code asks you before browser actions on a site you haven't allowed, in Manual, Edit automatically, Auto, and Bypass permissions modes, until you type `@browser` in that session.
+In a session that connected to your browser at start because [Enabled by default](#enable-chrome-by-default) is on, Claude Code asks you before browser actions on a site you haven't allowed, in Manual, Edit automatically, Auto, and Bypass permissions modes. In Auto and Bypass permissions modes, this applies until you type `@browser` in that session.
 
 ### Browser tools in plan mode
 
-In [plan mode](/docs/en/permission-modes#analyze-before-you-edit-with-plan-mode), a permission prompt appears before Claude records a GIF, opens a new tab, or runs a shortcut, except in a VS Code session where you typed [`@browser`](#permission-prompts-in-vs-code-sessions). In an interactive CLI session, if [bypass permissions mode is available](/docs/en/permission-modes#skip-all-checks-with-bypasspermissions-mode) and [feature-flag fetching](/docs/en/env-vars#features-that-need-feature-flag-fetching) is off, these calls run without a prompt.
+In [plan mode](/docs/en/permission-modes#analyze-before-you-edit-with-plan-mode), a permission prompt appears before Claude records a GIF, opens a new tab, or runs a shortcut. In an interactive CLI session, if [bypass permissions mode is available](/docs/en/permission-modes#skip-all-checks-with-bypasspermissions-mode) and [feature-flag fetching](/docs/en/env-vars#features-that-need-feature-flag-fetching) is off, these calls run without a prompt.
 
 A `tabs_context_mcp` call also prompts when it sets `createIfEmpty`, and so does a `browser_batch` call that includes any of these actions.
 

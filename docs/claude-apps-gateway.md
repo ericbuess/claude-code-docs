@@ -245,7 +245,7 @@ Have these in place before you start:
   </Step>
 
   <Step title="Log a developer in">
-    This last step happens on a developer machine, not the server. Set `forceLoginMethod` to `"gateway"` and `forceLoginGatewayUrl` to your gateway's `public_url` in that machine's [managed settings file](/docs/en/managed-settings#delivery-mechanisms), then run `/login`, press Enter on the **Cloud gateway** screen, and complete the browser sign-in. [Set the gateway URL](#set-the-gateway-url) below covers distributing both keys to every developer machine.
+    This last step happens on a developer machine, not the server. Set `forceLoginMethod` to `"gateway"`, `forceLoginGatewayUrl` to your gateway's `public_url`, and `parentSettingsBehavior` to `"merge"` in that machine's [managed settings file](/docs/en/managed-settings#delivery-mechanisms), then run `/login`, press Enter on the **Cloud gateway** screen, and complete the browser sign-in. [Set the gateway URL](#set-the-gateway-url) below covers the three keys and distributing them to every developer machine.
   </Step>
 </Steps>
 
@@ -332,9 +332,9 @@ A declared block narrows who can sign in but doesn't prove where a machine is, s
 
 ### Deliver policy to Claude Desktop sessions
 
-Claude Desktop runs its Cowork and Code tabs, plus the Chat tab when you enable it, on embedded Claude Code sessions and sends their model requests through the gateway. It passes policy to each of those sessions, built from the configuration the gateway serves it at `/user/bootstrap`: the model allowlist, disabled tools, and egress allowlist derived from the matched policy's `cli` block, plus the [`desktop` overlay](/docs/en/claude-apps-gateway-config#claude-desktop-overlay).
+Claude Desktop runs its Cowork and Code tabs, plus the Chat tab when you enable it, on embedded Claude Code sessions and sends their model requests through the gateway. It passes policy to each of those sessions, built from the configuration the gateway serves it at `/user/bootstrap`: the model allowlist, disabled tools, and egress allowlist derived from the matched policy's `cli` or `code` block, plus the [`desktop` overlay](/docs/en/claude-apps-gateway-config#claude-desktop-overlay).
 
-Other `cli` keys, such as hooks, `env`, and scoped permission rules like `Bash(npm *)`, reach only clients that sign in through `/login`. Claude Desktop reads the gateway URL from its own managed configuration and signs in with its own flow, separate from the `forceLoginMethod` and `forceLoginGatewayUrl` keys in [Set the gateway URL](#set-the-gateway-url).
+The block's other keys, such as hooks, `env`, and scoped permission rules like `Bash(npm *)`, reach clients that sign in through `/login`. Under `code`, they also reach the Code tab's session when the [conditions for the Code tab](/docs/en/claude-apps-gateway-config#apply-code-settings-in-the-code-tab) hold. They don't reach Cowork or Chat sessions. Claude Desktop reads the gateway URL from its own managed configuration and signs in with its own flow, separate from the `forceLoginMethod` and `forceLoginGatewayUrl` keys in [Set the gateway URL](#set-the-gateway-url).
 
 Settings passed by a launching process are parent settings. Claude Code ignores parent settings on any machine that has an admin-deployed managed source, unless the [source that delivers the policy](/docs/en/managed-settings#which-managed-source-claude-code-uses) sets `parentSettingsBehavior: "merge"`.
 
@@ -358,11 +358,15 @@ Deploy the managed settings snippet from [Set the gateway URL](#set-the-gateway-
   </Step>
 
   <Step title="Mirror the snippet to any source that outranks the file">
-    Claude Code reads `parentSettingsBehavior` only from the [selected source](/docs/en/managed-settings#which-managed-source-claude-code-uses). Adding any policy key to a source can make that source the selected one, so in a client-side source, mirror the whole snippet rather than `parentSettingsBehavior` alone. [Client-side managed settings](/docs/en/claude-apps-gateway-config#client-side-managed-settings) covers fleets that deliver policy through Group Policy or configuration profiles. A managed-preferences plist on macOS or an HKLM policy on Windows outranks the `managed-settings.json` file, and the gateway's own remote managed settings outrank both, so on machines that sign in to the gateway, also set `parentSettingsBehavior` in the gateway policy's [`cli` block](/docs/en/claude-apps-gateway-config#managed).
+    Claude Code reads `parentSettingsBehavior` only from the [selected source](/docs/en/managed-settings#which-managed-source-claude-code-uses). Adding any policy key to a source can make that source the selected one, so in a client-side source, mirror the whole snippet rather than `parentSettingsBehavior` alone. [Client-side managed settings](/docs/en/claude-apps-gateway-config#client-side-managed-settings) covers fleets that deliver policy through Group Policy or configuration profiles. A managed-preferences plist on macOS or an HKLM policy on Windows outranks the `managed-settings.json` file, and the gateway's own remote managed settings outrank both, so on machines that sign in to the gateway, also set `parentSettingsBehavior` in the gateway policy's [`cli` or `code` block](/docs/en/claude-apps-gateway-config#managed).
   </Step>
 
   <Step title="Check which source is selected">
-    On a machine that only runs Claude Desktop, call the Agent SDK's [`resolveSettings()`](/docs/en/agent-sdk/typescript#resolvesettings) and read `policyOrigin` on the `managed` entry in its `sources` list. The value names the selected client-side source, `plist`, `hklm`, or `file`, which is the source that must carry the snippet. Claude Desktop's embedded sessions don't fetch the gateway policy, so the gateway's `cli` block never counts as the selected source for them.
+    On a machine that only runs Claude Desktop, call the Agent SDK's [`resolveSettings()`](/docs/en/agent-sdk/typescript#resolvesettings) and read `policyOrigin` on the `managed` entry in its `sources` list. The value names the selected client-side source, `plist`, `hklm`, or `file`, which is the source that must carry the snippet.
+
+    Cowork and Chat sessions don't fetch the gateway policy, so the gateway's block isn't the selected source for them.
+
+    A Code tab session fetches it when the policy's settings are under `code` and the [conditions for the Code tab](/docs/en/claude-apps-gateway-config#apply-code-settings-in-the-code-tab) hold. The gateway's `code` settings are then the selected source for that session.
   </Step>
 </Steps>
 
@@ -406,7 +410,7 @@ To keep parent settings as close to restriction-only as the filter supports, add
 }
 ```
 
-An OS policy, such as an HKLM registry policy or a managed-preferences plist, outranks this file, so deliver the whole snippet through it instead of the file. The gateway's remote managed settings outrank the OS policy and file sources but reach only connected clients. Mirror the locks, the allowlists, and the merge opt-in into the policy's [`cli` block](/docs/en/claude-apps-gateway-config#managed) and keep this file deployed, because machines that never connect, including ones that only run Claude Desktop, get their policy from the file alone.
+An OS policy, such as an HKLM registry policy or a managed-preferences plist, outranks this file, so deliver the whole snippet through it instead of the file. The gateway's remote managed settings outrank the OS policy and file sources but reach only connected clients. Mirror the locks, the allowlists, and the merge opt-in into the policy's [`cli` or `code` block](/docs/en/claude-apps-gateway-config#managed) and keep this file deployed, because machines that never connect get their policy from the file alone.
 
 #### Lock behavior across sources
 

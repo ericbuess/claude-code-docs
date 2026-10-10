@@ -900,9 +900,40 @@ Before v2.1.232, the gateway started with these values. Each value had this effe
 * An `email_domain` containing `@`, whitespace, or a comma: the policy matched no one
 * An empty entry in `groups` or in `admin_groups`: the entry matched a user only when that user's IdP `groups` claim also contained an empty entry. In `admin_groups`, that match granted admin access. If your `admin_groups` list never contained an empty entry, no one gained admin access this way.
 
+#### Choose `cli` or `code`
+
+<Warning>
+  When a policy uses the `code` key, each of these stops the gateway from starting:
+
+  * **Gateway version**: `code` requires Claude Code v2.1.296 or later on the gateway server. An earlier gateway refuses to start when it finds the key. Upgrade every replica before you add the key, and change `code` back to `cli` before you roll back to an earlier version.
+  * **Mixed keys**: a file that has both `code` and `cli`, or its earlier spelling `settings`, stops the gateway at boot. Put every block under one key, in one edit.
+</Warning>
+
+A policy's Claude Code settings, such as a rule that denies reading `.env` files, go in a block under the `cli` or `code` key. `code` is the recommended key, and `cli` is the legacy key. Both keys take the same contents. The key decides where the settings are enforced:
+
+* **`cli`**: the terminal, the VS Code and JetBrains extensions, and the Agent SDK. Under `cli`, Claude Desktop's Code tab gets the [derived settings](#claude-desktop-overlay), so a scoped rule such as `Read(./.env)` doesn't stop a user there.
+* **`code`**: the same places, and Claude Desktop's Code tab can be covered too.
+
+A file that uses `cli` works as it did, and a gateway that finds `cli` in a policy with a [`desktop`](#claude-desktop-overlay) key warns at boot and starts anyway. Switch to `code` so that the settings can also cover the Code tab.
+
+Before you switch, read [Apply `code` settings in the Code tab](#apply-code-settings-in-the-code-tab). The policy needs a `desktop` key and users' machines need setup before the settings apply there, and web search turns off in Claude Desktop.
+
+This policy puts the deny rule under `code`, with an empty `desktop` key:
+
+```yaml theme={null}
+managed:
+  policies:
+    - match: {}
+      code:
+        permissions: { deny: ["Read(./.env)"] }
+      desktop: {}
+```
+
+When you switch, delete any `serve_to_desktop` line in the same edit that renames the blocks. Where an instruction names the `cli` block, use your `code` block.
+
 #### What goes in `cli`
 
-Each `cli` value is a complete Claude Code `managed-settings.json` document, the same schema you would deploy via MDM or `/etc/claude-code/managed-settings.json`, expressed here as YAML. The CLI applies the delivered document at the managed tier, above user and project settings, in place of server-managed settings. It therefore ignores the settings [restricted to OS-level policy sources](/docs/en/server-managed-settings#current-limitations), such as `policyHelper` and `wslInheritsWindowsSettings`.
+Each `code` or `cli` value is a complete Claude Code `managed-settings.json` document, the same schema you would deploy via MDM or `/etc/claude-code/managed-settings.json`, expressed here as YAML. The CLI applies the delivered document at the managed tier, above user and project settings, in place of server-managed settings. It therefore ignores the settings [restricted to OS-level policy sources](/docs/en/server-managed-settings#current-limitations), such as `policyHelper` and `wslInheritsWindowsSettings`.
 
 The gateway validates each document against the CLI's settings schema at boot, so an unrecognized top-level key fails boot with an error naming every offending key. Deliberately open parts of the schema still accept arbitrary values, because newer clients may recognize entries the gateway's schema doesn't. These open keys include `env`, `pluginConfigs`, and keys nested under `permissions`.
 
@@ -969,11 +1000,11 @@ Claude Code applies some delivered `env` variables without showing the developer
 
 The gateway's [telemetry](#telemetry) configuration pushes `OTEL_EXPORTER_OTLP_ENDPOINT`, so setting `telemetry.forward_to` triggers the dialog on each interactive client. The dialog protects the developer's machine from a compromised or hostile gateway, not the organization from the developer.
 
-A [non-interactive run](/docs/en/server-managed-settings#security-approval-dialogs), such as `claude -p` or an Agent SDK session, can't show the dialog. It applies the pushed settings for that run only and doesn't record them as approved, so the developer's next interactive session still shows the dialog. Before v2.1.207, a non-interactive run saved the settings as approved and no later interactive session showed the dialog for them.
+A [non-interactive run](/docs/en/server-managed-settings#security-approval-dialogs), such as `claude -p`, an Agent SDK session, or a session in Claude Desktop's Code tab, can't show the dialog. It applies the pushed settings for that run only and doesn't record them as approved, so the developer's next interactive session still shows the dialog. Before v2.1.207, a non-interactive run saved the settings as approved and no later interactive session showed the dialog for them.
 
 If a developer declines, Claude Code exits that session rather than applying the policy. When you push a new hook, or any env var that triggers the dialog, to a broad policy, every matching developer therefore sees the dialog in their interactive sessions. A running interactive session shows it on the next hourly poll, and otherwise it appears at the developer's next interactive startup.
 
-The `cli` key was named `settings` in earlier releases. That spelling is still accepted as an alias, but new deployments should use `cli`.
+The `cli` key was named `settings` in earlier releases, and the gateway still accepts that spelling as an alias. For new deployments, use [`code`](#choose-cli-or-code).
 
 #### Context window in terminal sessions
 
@@ -1016,7 +1047,7 @@ If you don't deploy Claude Desktop, leave `desktop` out of your policies entirel
 
 ##### Settings the gateway derives for Claude Desktop
 
-The gateway derives much of the bootstrap response from the matched policy's `cli` block and from top-level gateway config:
+The gateway derives much of the bootstrap response from the matched policy's `cli` or `code` block and from top-level gateway config:
 
 * The model list, from `availableModels`. [Extended context in Claude Desktop](#extended-context-in-claude-desktop) covers each model's 1M context option
 * Disabled tools, from bare tool-name `permissions.deny` entries. If you set `disabledBuiltinTools` in the policy's `desktop` block, the gateway serves the union of your value and the derived list, so you can disable more tools this way but can't re-enable one you disabled through `permissions.deny`
@@ -1028,6 +1059,29 @@ The gateway derives much of the bootstrap response from the matched policy's `cl
 To set `disabledBuiltinTools`, `coworkEgressAllowedHosts`, or Claude Desktop's own `managedMcpServers` setting in a policy's `desktop` block, you need Claude Code v2.1.232 or later on the gateway server. Claude Desktop's `managedMcpServers` takes an array value rather than an object.
 
 The gateway omits keys with no Claude Desktop equivalent, such as `hooks` and scoped permission rules like `Bash(npm *)`, from the bootstrap response.
+
+<a id="apply-code-settings-in-the-code-tab" />
+
+##### Apply `code` settings in the Code tab
+
+The Claude Code settings a policy holds under its [`code`](#choose-cli-or-code) key apply in Claude Desktop's Code tab when all of these hold:
+
+* The policy also has a `desktop` key, and an empty `desktop: {}` counts
+* Claude Desktop is version 2.9939.2 or later
+* The Claude Code managed settings on the machine [name this gateway](#client-side-managed-settings)
+* That machine reaches the gateway over HTTPS on a private network
+
+The last two conditions apply to whichever machine runs Claude Code for the session. For a local session, that is the user's own computer. For a Code tab session over SSH, it is the remote host.
+
+Deploy the [client-side managed settings](#client-side-managed-settings) to those machines before you rename `cli` to `code`. When the first two conditions hold and either of the last two fails, a user the policy matches gets one of these results:
+
+* **Over HTTPS, where Claude Desktop bundles Claude Code v2.1.296 or later**: the Code tab doesn't start, and the reply to the user's prompt says why
+* **Over HTTPS, where Claude Desktop bundles an earlier version**: the Code tab starts without your `code` settings, and nothing in the session says so
+* **Over plain HTTP**: the Code tab starts without your `code` settings, whichever version Claude Desktop bundles
+
+When a proxy in front of the gateway answers `/managed/settings` with its own 404, the Code tab also starts without your `code` settings, including on a machine that meets all four conditions.
+
+In a policy that has a `desktop` key, a `code` block that holds settings turns off the WebSearch tool in Cowork, Chat, and the Code tab. For MCP servers, see [Where `managedMcpServers` applies](/docs/en/managed-mcp#where-managedmcpservers-applies).
 
 ##### Set Claude Desktop settings directly
 

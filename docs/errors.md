@@ -245,6 +245,7 @@ Match the message you see to a section below.
 | `Windows reported an error (EBADF) when Claude Code read this session's transcript file` | [Command-line errors](#windows-reported-an-error-ebadf) |
 | `Cannot switch renderers in this session` | [Command-line errors](#cannot-switch-renderers-in-this-session) |
 | `Cannot switch renderers while work is running in the background` | [Command-line errors](#cannot-switch-renderers-in-this-session) |
+| `Claude Code couldn't restart` | [Command-line errors](#claude-code-couldnt-restart) |
 | `Couldn't open Claude Desktop` | [Command-line errors](#couldnt-open-claude-desktop) |
 | `Failed to open Claude Desktop. Please try opening it manually.` | [Command-line errors](#couldnt-open-claude-desktop) |
 | `Couldn't read your Zed keymap` / `Couldn't back up your Zed keymap` / `Couldn't update your Zed keymap` | [Command-line errors](#terminal-setup-left-your-zed-keymap-unchanged) |
@@ -332,6 +333,7 @@ Match the message you see to a section below.
 | `Session isn't responding` / `Press enter again to restart this session — it isn't responding` | [Background session errors](#session-isnt-responding) |
 | `Session <id> was stopped while the respawn was in flight` | [Background session errors](#session-was-stopped-while-the-respawn-was-in-flight) |
 | `This session was running agent '<name>', which is no longer available` | [Background session errors](#session-agent-no-longer-available) |
+| `This session restarted <time> after its next /loop wakeup was due, so that wakeup will not fire` | [Background session errors](#restarted-after-its-next-loop-wakeup-was-due) |
 | `CLAUDE_CODE_PROCESS_WRAPPER: launcher ...` | [Background session errors](#claude_code_process_wrapper-launcher-errors) |
 | `EUNKNOWN: unknown error, uv_spawn` | [Background session errors](#eunknown-when-starting-a-background-session) |
 | `EACCES: permission denied, posix_spawn` | [Background session errors](#eacces-when-starting-a-background-session) |
@@ -431,6 +433,7 @@ You can tune retry behavior with these environment variables:
 | :- | :- | :- |
 | [`CLAUDE_CODE_MAX_RETRIES`](/docs/en/env-vars) | 10 | Number of retry attempts. Capped at 15 as of v2.1.186; as of v2.1.199 `CLAUDE_CODE_RETRY_WATCHDOG` raises the default and removes the cap. Lower it to surface failures faster in scripts. |
 | [`CLAUDE_CODE_RETRY_WATCHDOG`](/docs/en/env-vars) | unset | Set to `1` in unattended sessions such as CI jobs to retry `429` and `529` capacity errors indefinitely instead of failing after `CLAUDE_CODE_MAX_RETRIES` attempts. Claude Code fails at once when a standard-speed request gets a `429` that reports a spend limit or exhausted usage credits, even one from a [gateway spend cap](#spend-limit-reached) that resets on a schedule. Before v2.1.239, the watchdog retried these indefinitely. For fast mode requests, see [Handle rate limits](/docs/en/fast-mode#handle-rate-limits). On v2.1.199 or later it also raises the default retry count for other transient errors, such as server errors, timeouts, and dropped connections, to 300, roughly three hours of backoff, and removes the cap of 15 on `CLAUDE_CODE_MAX_RETRIES` if you set that variable explicitly. |
+| [`CLAUDE_CODE_RETRY_WATCHDOG_MAX_WAIT_MS`](/docs/en/env-vars) | unset | Maximum time in milliseconds that each API request spends waiting out `429` and `529` errors when `CLAUDE_CODE_RETRY_WATCHDOG` is set. When unset, the wait has no limit. Requires Claude Code v2.1.295 or later. |
 | [`CLAUDE_CODE_OVERLOADED_RETRY_BASE_DELAY_MS`](/docs/en/env-vars) | 500 | Starting delay in milliseconds of the backoff between retries of a request that the API rejects with a `529` overloaded error. Raise it, up to 32000, to spread the retries over a longer window when the API is at capacity. Has no effect when `CLAUDE_CODE_RETRY_WATCHDOG` is set to `1`, or when the rejected request was sent in [fast mode](/docs/en/fast-mode#handle-rate-limits). Requires Claude Code v2.1.292 or later. |
 | [`API_TIMEOUT_MS`](/docs/en/env-vars) | 600000 | Per-request timeout in milliseconds. Raise it for slow networks or proxies. It also caps how long Claude Code waits for response headers, described in [No response from API](#no-response-from-api). |
 | [`CLAUDE_CODE_NONSTREAMING_TIMEOUT_RETRIES`](/docs/en/env-vars) | unset | Limit on re-sends of a [non-streaming request](#streaming-response-ended-before-any-complete-data-was-received) that times out. At the limit, the request fails. A response from Claude that takes longer than the timeout to generate times out again on every re-send, so set a low number such as `0` to fail sooner. Each non-streaming attempt times out after 300 seconds in a local session, or after `API_TIMEOUT_MS` when you set a positive value. Requires Claude Code v2.1.285 or later. |
@@ -3608,6 +3611,23 @@ Each reason the message can show in parentheses:
 
 * In a session started without those restrictions, run `/tui fullscreen`, or `/tui default` to switch back. Claude Code saves the [`tui` setting](/docs/en/settings-reference#tui) there
 
+<h3 id="claude-code-couldnt-restart">
+  Claude Code couldn't restart
+</h3>
+
+Claude Code was restarting, for example to switch to or from fullscreen rendering after you ran [`/tui`](/docs/en/fullscreen#enable-fullscreen-rendering). It closed the session but couldn't start the new process, so it printed this message and exited with status 1:
+
+```text theme={null}
+Claude Code couldn't restart. Your conversation is saved. Start Claude Code again and run /resume to pick it up.
+```
+
+When the restart had no conversation to reopen, for example because `/tui` was your first input in a new session, the message reads `Claude Code couldn't restart. Start Claude Code again.`
+
+**What to do:**
+
+* Run `claude` again in your shell from the same directory. If the message said your conversation is saved, run [`/resume`](/docs/en/sessions#resume-a-session) in the new session and select it
+* If restarts keep failing, start Claude Code from your shell with [`claude --debug-file claude-debug.log`](/docs/en/cli-reference#cli-flags). If a restart from that session fails, `claude-debug.log` in the directory you started from records a `Failed to relaunch:` line with the operating system's error. Include that line when you [report the problem](#report-an-error)
+
 <h3 id="couldnt-open-claude-desktop">
   Couldn't open Claude Desktop
 </h3>
@@ -4500,12 +4520,13 @@ A blocked command reports the same cause for its working directory and ends with
 
 ### Command blocked by the worktree isolation checks
 
-Claude ran a Bash or Monitor command in a [session isolated in a worktree](/docs/en/worktrees#how-claude-code-enforces-isolation), and Claude Code refused it for one of two reasons:
+Claude ran a Bash, [PowerShell](/docs/en/tools-reference#powershell-tool), or [Monitor](/docs/en/tools-reference#monitor-tool) command in a [session isolated in a worktree](/docs/en/worktrees#how-claude-code-enforces-isolation), and Claude Code refused it for one of these reasons:
 
-* The command points git at the main checkout.
-* Claude Code can't verify from the command text that any git the command runs stays inside the worktree. A command that never names git can still be refused for this reason, because expanding a variable indirection such as `${!name}` or running a Bash function substitution such as `${ command; }` produces a value at runtime that can itself be a command.
+* The command would run in the main checkout or in another worktree. The message says its working directory `resolved to the shared checkout` or `is in a different worktree`.
+* A Bash or Monitor command points git at the main checkout.
+* Claude Code can't verify from a Bash or Monitor command's text that any git the command runs stays inside the worktree. A command that never names git can still be refused for this reason, because expanding a variable indirection such as `${!name}` or running a Bash function substitution such as `${ command; }` produces a value at runtime that can itself be a command.
 
-The middle of the message names what couldn't be verified:
+The message says `is isolated in the worktree <path>, but this command`, followed by the reason, such as a command whose text Claude Code couldn't verify:
 
 ```text wrap theme={null}
 This session is isolated in the worktree /path/to/worktree, but this command evaluates ${!x@P} arithmetically inside a construct too complex to verify, which can run a command hidden in a variable's value. Refusing to run it — a worktree-isolated session's git operations must target its own worktree. Split it into plain, separate commands and run them from /path/to/worktree.
@@ -4513,8 +4534,7 @@ This session is isolated in the worktree /path/to/worktree, but this command eva
 
 **What to do:**
 
-* Usually nothing: Claude reads the message and rewrites the command the way its final sentence asks
-* If a command you asked for keeps being refused, spell the flagged value literally: replace the indirection or substitution with its value, and run git as its own plain command from inside the worktree
+* **Git pointed at the main checkout, or command text that can't be verified**: nothing. Claude reads the message and rewrites the command the way its final sentence asks. If a command you asked for keeps being refused over an expansion in its text, spell the flagged value literally and run git as its own plain command from inside the worktree
 * To act on the main checkout on purpose, run the command yourself in a terminal outside the session
 
 ### This session has no saved transcript
@@ -4687,6 +4707,23 @@ Claude Code doesn't save the fallback to the session, so the warning repeats on 
 * Re-create the agent file at `.claude/agents/<name>.md` in the session's project, or at `~/.claude/agents/<name>.md` for a personal agent, then resume again
 * Or resume with `--agent <name>` naming an agent that does exist, to run the session as that agent instead
 * If the agent is project-scoped and you haven't trusted the session's original directory, run Claude Code there once, accept the trust dialog, then resume again
+
+<h3 id="restarted-after-its-next-loop-wakeup-was-due">
+  This session restarted after its next /loop wakeup was due
+</h3>
+
+A [self-paced `/loop`](/docs/en/scheduled-tasks#let-claude-choose-the-interval) in a [background session](/docs/en/agent-view) has stopped. The session's process ended while the loop was waiting for its next wakeup, and that wakeup came due before the session's [next process](/docs/en/agent-view#the-supervisor-process) started. The missed wakeup doesn't fire late. The notice says how overdue the wakeup was when the session restarted:
+
+```text theme={null}
+This session restarted 12m after its next /loop wakeup was due, so that wakeup will not fire. The loop stays stopped until Claude schedules it again: reply to continue it.
+```
+
+Before v2.1.295, the loop stopped in this situation without a notice.
+
+**What to do:**
+
+* To continue the loop, [reply to the session](/docs/en/agent-view#peek-and-reply) and say so, such as `keep the loop running`. Claude reads the notice with your reply and can schedule the next wakeup
+* If you're done with the loop, do nothing. It has already stopped
 
 ### CLAUDE\_CODE\_PROCESS\_WRAPPER launcher errors
 

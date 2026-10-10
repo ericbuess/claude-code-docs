@@ -338,7 +338,7 @@ The first time a developer starts an interactive terminal session, Claude Code r
 * **A marketplace list**: a [`strictKnownMarketplaces`](/docs/en/plugins/org#allowlist-with-strictknownmarketplaces) allowlist that leaves the marketplace out, or a [`blockedMarketplaces`](/docs/en/plugins/org#blocklist-with-blockedmarketplaces) entry that names it
 * **An environment variable**: `CLAUDE_CODE_DISABLE_OFFICIAL_MARKETPLACE_AUTOINSTALL` set to `"1"` in the managed [`env` block](/docs/en/plugins/org#turn-updates-off-for-the-whole-fleet)
 
-The first registration can run before the developer signs in to the gateway, when no gateway policy has arrived. To cover that first start, deliver your choice in [client-side managed settings](/docs/en/claude-apps-gateway-config#client-side-managed-settings) as well as in the gateway policy's [`cli` block](/docs/en/claude-apps-gateway-config#what-goes-in-cli).
+The first registration can run before the developer signs in to the gateway, when no gateway policy has arrived. To cover that first start, deliver your choice in [client-side managed settings](/docs/en/claude-apps-gateway-config#client-side-managed-settings) as well as in the gateway policy's [`cli` or `code` block](/docs/en/claude-apps-gateway-config#what-goes-in-cli).
 
 ## Troubleshooting
 

@@ -83,6 +83,8 @@ The run waits for background work such as background commands, subagents and wor
 * **[Monitor](/docs/en/tools-reference#monitor-tool) watches**: the run waits until the watch times out or the 10-minute cap ends the wait, whichever comes first. While it waits, Claude keeps responding to what the watch reports. By default, a watch times out five minutes after Claude starts it.
 * **Pending wakeups**: in a run whose prompt you passed as text rather than with `--input-format stream-json`, when Claude has scheduled a [self-paced `/loop` wakeup](/docs/en/scheduled-tasks#let-claude-choose-the-interval), the run waits for each wakeup to fire and runs its iteration until the [loop ends](/docs/en/scheduled-tasks#stop-a-loop), even past the 10-minute cap.
 
+When stderr is a terminal and the run has waited five seconds, Claude Code prints a line to stderr that starts with `Waiting for background work to finish` and names the work. With [`json` or `stream-json` output](#get-structured-output), the line prints only when stdout isn't a terminal, so the JSON your script reads never carries it.
+
 If the run reaches its [`--max-budget-usd`](/docs/en/cli-reference#cli-flags) cap, Claude Code stops the remaining background work instead of waiting.
 
 When background work starts another turn, the run prints each turn's result with the default `text` output and the last turn's result with `json` output. Before v2.1.295, the run printed only the last turn's result with `text` output too.
@@ -268,7 +270,7 @@ Use the plugin fields in the `system/init` event to catch a plugin that didn't l
 
 When a `--plugin-dir` directory or archive itself fails to load, its `plugin_errors` entry includes the resolved absolute path as `path`. Use it to tell which of several `--plugin-dir` values failed. The `path` field requires Claude Code v2.1.283 or later.
 
-Use the MCP server fields the same way. When you pass [`--mcp-config`](/docs/en/cli-reference#cli-flags) with `-p`, Claude Code waits for still-pending servers before running the first turn, up to the [`MCP_TIMEOUT`](/docs/en/env-vars) startup timeout, 30 seconds by default. A remote server with a [cached tool list](/docs/en/agent-sdk/mcp#connection-timing) skips the wait, shows `pending` in `system/init`, and connects on its first tool call. The wait requires Claude Code v2.1.221 or later.
+Use the MCP server fields the same way. When you pass [`--mcp-config`](/docs/en/cli-reference#cli-flags) with `-p`, Claude Code waits for still-pending servers before running the first turn, up to the [`MCP_TIMEOUT`](/docs/en/env-vars) startup timeout, 30 seconds by default. A remote server with a [cached tool list](/docs/en/agent-sdk/mcp#connection-timing) skips the wait, shows `pending` in `system/init`, and connects on its first tool call. In a [self-hosted environment](/docs/en/self-hosted-environments-configuration#connection-timing), a shorter wait applies instead. The wait requires Claude Code v2.1.221 or later.
 
 Claude Code validates each `--mcp-config` entry at startup and skips entries that fail validation, for example a `url` entry with no `type`. The run continues and exits cleanly, so check these fields to catch a server that never loaded:
 
