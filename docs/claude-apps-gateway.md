@@ -251,7 +251,7 @@ Have these in place before you start:
 
 ## Connect developers
 
-Developers connect from their own laptops with one browser sign-in, using their corporate work account. They don't need a claude.ai account, an API key, or a subscription, because requests to the model go through the gateway using the organization's upstream credential. Connection is driven by the [client-side managed settings](/docs/en/claude-apps-gateway-config#client-side-managed-settings) you push via MDM, so there is no manual setup on the developer side; this section covers what the admin configures.
+Developers connect from their own laptops with one browser sign-in, using their corporate work account. They don't need a claude.ai account, an API key, or a subscription, because requests to the model go through the gateway using the organization's upstream credential. Connection is driven by the [client-side managed settings](/docs/en/claude-apps-gateway-config#client-side-managed-settings) you push via MDM, and this section covers what the admin configures.
 
 The CLI fingerprints the gateway's TLS leaf certificate on first connect and pins it per hostname. It checks that pin again during sign-in, on silent session refreshes, and on managed-settings fetches, while inference requests use standard TLS validation without the pin. Requests routed through an HTTPS proxy skip the pin check, so add the gateway host to `NO_PROXY` to keep them direct.
 
@@ -273,7 +273,7 @@ Sessions refresh silently before `ttl_hours` expiry. When a refresh fails after 
 
 ### Set the gateway URL
 
-Three keys go in the per-OS [managed settings file](/docs/en/managed-settings#delivery-mechanisms) you deploy via MDM or directly on disk. `forceLoginMethod` and `forceLoginGatewayUrl` open `/login` directly on the **Cloud gateway** screen with the URL filled in, and `parentSettingsBehavior: "merge"` lets Claude Desktop deliver the gateway's egress allowlist to the Claude Code sessions it launches, explained in [Deliver policy to Claude Desktop sessions](#deliver-policy-to-claude-desktop-sessions):
+Three keys go in the per-OS [managed settings file](/docs/en/managed-settings#delivery-mechanisms) you deploy via MDM or directly on disk. For a machine with no managed settings, see [Set the gateway URL in user settings](#set-the-gateway-url-in-user-settings) instead. `forceLoginMethod` and `forceLoginGatewayUrl` open `/login` directly on the **Cloud gateway** screen with the URL filled in, and `parentSettingsBehavior: "merge"` lets Claude Desktop deliver the gateway's egress allowlist to the Claude Code sessions it launches, explained in [Deliver policy to Claude Desktop sessions](#deliver-policy-to-claude-desktop-sessions):
 
 ```json theme={null}
 {
@@ -285,7 +285,23 @@ Three keys go in the per-OS [managed settings file](/docs/en/managed-settings#de
 
 The developer presses Enter to connect. The [first-connect TLS fingerprint prompt](#connect-developers) still appears. Once the file is on a machine, a developer who hasn't completed the gateway sign-in sees one of the messages described under [Administrator policy requires a Cloud gateway sign-in](/docs/en/errors#administrator-policy-requires-a-cloud-gateway-sign-in). Developers who select a cloud provider through an environment variable such as `CLAUDE_CODE_USE_BEDROCK` don't need the gateway sign-in.
 
-A developer can't set this up manually. The login picker has no gateway option, and `forceLoginGatewayUrl` is ignored in a developer's own settings files. `forceLoginMethod` alone, without a URL, leaves the developer at a "Contact your IT administrator" message. The login keys belong in the file you push to machines, not in the gateway's `managed.policies[].cli` block, which only reaches clients that are already connected.
+The login picker has no gateway option, and in managed settings `forceLoginMethod` alone, without a URL, leaves the developer at a "Contact your IT administrator" message. The login keys belong in the file you push to machines, not in the gateway's `managed.policies[].cli` block, which only reaches clients that are already connected.
+
+#### Set the gateway URL in user settings
+
+On machines with no managed settings, have each developer add `forceLoginMethod` and `forceLoginGatewayUrl` to their own user settings file, `~/.claude/settings.json`. This requires Claude Code v2.1.295 or later on the developer machine. This example names a gateway at `claude-gateway.internal.example.com`:
+
+```json theme={null}
+{
+  "forceLoginMethod": "gateway",
+  "forceLoginGatewayUrl": "https://claude-gateway.internal.example.com"
+}
+```
+
+When the developer runs `/login` at the Claude Code prompt, the **Cloud gateway** screen opens on that address and they press Enter to connect. The [first-connect TLS fingerprint prompt](#connect-developers) still appears. These limits apply to keys set this way:
+
+* **User settings only**: Claude Code reads the two keys from `~/.claude/settings.json`, not from a project's `.claude/settings.json` or `.claude/settings.local.json`.
+* **Managed settings turn them off**: once an administrator's settings reach the machine through a managed settings file, a macOS plist or Windows HKLM policy, or a [policy helper](/docs/en/settings-reference#policyhelper), Claude Code ignores a gateway named in user settings.
 
 ### Allow a gateway on public address space you own
 

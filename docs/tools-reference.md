@@ -249,17 +249,23 @@ Whatever you list, these rules apply:
 
 The Edit tool performs exact string replacement. It takes an `old_string` and a `new_string` and replaces the first with the second. It doesn't use regex or fuzzy matching.
 
-Three checks must pass for an edit to apply. Before any of them, a path matched by a [`Read` deny rule](/docs/en/permissions#tool-specific-permission-rules) is refused, including creating a new file there. The refusal requires Claude Code v2.1.208 or later.
+These checks must pass for an edit to apply. Before any of them, a path matched by a [`Read` deny rule](/docs/en/permissions#tool-specific-permission-rules) is refused, including creating a new file there. The refusal requires Claude Code v2.1.208 or later.
 
-* **Read-before-edit**: Claude reads the file in the current conversation before editing it, and a read cut short with a [`PARTIAL view` notice](#read-tool-behavior) doesn't count. Claude Opus 4.6, Claude Haiku 4.5, and older models always require the read. Newer models can edit an unread file when reading it wouldn't need a permission prompt and the Read tool is available.
+* **Read-before-edit**: Claude reads the file in the current conversation before editing it, and a read cut short with a [`PARTIAL view` notice](#large-files) doesn't count. Claude Opus 4.6, Claude Haiku 4.5, and older models always require the read. Newer models can edit an unread file when reading it wouldn't need a permission prompt and the Read tool is available.
 * **Match**: `old_string` must appear in the file exactly as written. A single character of whitespace or indentation difference is enough to miss.
 * **Uniqueness**: `old_string` must appear exactly once. When it appears more than once, Claude either supplies a longer string with enough surrounding context to pin down one occurrence, or sets `replace_all: true` to replace them all.
 
 A file that changed on disk after Claude last read it can still be edited when `old_string` matches the current content exactly and unambiguously and Claude Code can read the file without prompting. Matching against the file's current content keeps this safe, and the result notes that the file carries other changes so Claude re-reads it before edits that depend on surrounding content. In any other case, such as a stale `old_string` or one that matches more than once without `replace_all`, Claude reads the file again before editing. The relaxed handling of unread and changed files requires Claude Code v2.1.208 or later; before that, Claude Code refused any edit to a file it hadn't read in the conversation or that changed on disk after the read.
 
-Viewing a file with Bash also satisfies the read-before-edit requirement when the command is `cat`, `nl`, `bat`, `batcat`, `head`, `tail`, `sed -n 'X,Yp'`, `grep`, `egrep`, `fgrep`, or `rg` on a single file with no pipes or redirects. Piped output and other Bash commands don't count toward the read-before-edit check.
+Viewing a file with Bash also satisfies the read-before-edit requirement when the command is `cat`, `nl`, `bat`, `batcat`, `head`, `tail`, `sed -n 'X,Yp'`, `grep`, `egrep`, `fgrep`, or `rg` on a single file with no pipes or redirects. A search that matches nothing leaves the file unread. Piped output and other Bash commands don't count toward the read-before-edit check.
 
 When Claude views a file this way, Claude Code also loads any [subdirectory `CLAUDE.md`](/docs/en/memory#how-claude-md-files-load) and [path-scoped rules](/docs/en/memory#path-specific-rules) that apply to that file. See [Read and Edit permission rules](/docs/en/permissions#read-and-edit) for which Bash commands your `Read` and `Edit` deny rules cover.
+
+### Non-UTF-8 files
+
+Edit and [NotebookEdit](#notebookedit-tool-behavior) refuse to change a file whose bytes don't decode as UTF-8, and write nothing, because saving it back as UTF-8 would turn every byte they couldn't decode into the replacement character `U+FFFD`. That covers, for example, a file with non-ASCII text in a legacy encoding such as Windows-1252 or Shift-JIS, a binary file, and a UTF-8 file with an invalid byte sequence. The [error Claude receives](/docs/en/errors#file-is-not-valid-utf-8) tells it to make the change with a shell command that reads and writes the file in its own encoding, or to ask you whether to convert the file to UTF-8 first. Edit reads a file that starts with a little-endian UTF-16 byte-order mark as UTF-16 instead, so that file stays editable.
+
+Write doesn't share this refusal. On a file Edit would refuse, Write replaces the whole file with the new content and saves it as UTF-8, so the file's original encoding is lost. Write refuses, and writes nothing, when the file on disk doesn't decode and the new content contains `U+FFFD`, the character Read shows for bytes it can't decode.
 
 ## EndConversation tool behavior
 
@@ -411,6 +417,8 @@ Three edit modes control what happens to the target cell:
 * `insert`: add a new cell after the target. With no `cell_id`, the new cell goes at the start of the notebook. Requires `cell_type` set to `code` or `markdown`.
 * `delete`: remove the target cell.
 
+NotebookEdit refuses a notebook file that doesn't decode as UTF-8, under the [same rule as Edit](#non-utf-8-files), and writes nothing.
+
 Permission rules use the `Edit(...)` path format. A rule like `Edit(notebooks/**)` covers NotebookEdit calls on files in that directory.
 
 ## PowerShell tool
@@ -489,19 +497,24 @@ The PowerShell tool has the following known limitations during the preview:
 
 The Read tool takes a file path and returns the contents with line numbers. Claude is instructed to always pass absolute paths.
 
-By default, Read returns the file from the start. When a whole-file read exceeds the token limit, Read returns the first page with a `PARTIAL view` notice that tells Claude how much of the file it received and how to read more with `offset` and `limit`. A read that passes an explicit `offset` or `limit` and still exceeds the token limit returns an error.
-
-A read with an explicit `limit` stops as soon as the selected lines exceed what the token limit could ever fit and returns an error without loading the rest of the range. The error tells Claude to use a smaller `limit`, or to search for specific content with [Grep](#grep-tool-behavior) instead when a single line is that large. Before v2.1.208, Claude Code loaded the whole range into memory before rejecting it, so reading a file with an extremely long single line could run it out of memory.
-
 Reading an empty file returns a notice that the file exists but its contents are empty, and an `offset` past the last line returns a notice giving the file's line count. Before v2.1.208, reading an empty file returned the past-the-end notice instead.
 
 Read handles several file types beyond plain text:
 
 * **Images**: PNG, JPG, and other image formats are returned as visual content that Claude can see, not as raw bytes. Claude Code resizes and recompresses large images to fit the model's image size limits before sending them, so Claude may see a downscaled version of a large screenshot. An image that is still larger than 500KB after that resize is re-encoded as a JPEG at reduced quality with its pixel dimensions unchanged. If Claude misses fine pixel-level detail in a large image, ask it to crop the region of interest first, for example with ImageMagick via Bash.
 * **PDFs**: Claude reads short `.pdf` files whole. For PDFs longer than 10 pages, it reads in ranges with a `pages` parameter, such as `"1-5"`, up to 20 pages at a time. Page-range reads render pages with `pdftoppm` from poppler-utils, so install it with `brew install poppler` on macOS or `apt-get install poppler-utils` on Debian and Ubuntu. On Windows and other platforms, install a poppler build that puts `pdftoppm` on your `PATH`. Without it, a page-range read fails with `pdftoppm is not installed`.
-* **Jupyter notebooks**: `.ipynb` files return all cells with their outputs, including code, markdown, and visualizations. Claude Code refuses to read a notebook file over 100 MB; the error tells Claude how to read a portion of the notebook instead, such as a slice of cells, with a shell command.
+* **Jupyter notebooks**: `.ipynb` files return all cells with their outputs, including code, markdown, and visualizations. A notebook whose cells come to more than 256 KB, or more than the [token limit](#large-files), returns an error instead. Claude Code refuses to read a notebook file over 100 MB; the error tells Claude how to read a portion of the notebook instead, such as a slice of cells, with a shell command.
 
 Read only reads files, not directories. Claude lists directory contents with a shell command such as `ls`.
+
+### Large files
+
+Claude can read a text file larger than a single Read call returns. By default one call returns at most 25,000 tokens, or the value you set in [`CLAUDE_CODE_FILE_READ_MAX_OUTPUT_TOKENS`](/docs/en/env-vars), and refuses a whole file over 256 KB, so Claude reads a larger file in pages with `offset` and `limit`. On Claude Code v2.1.296 or later it can instead read the whole file, or a long line range, in one call by setting `allow_large: true` when it needs to, for example because you asked for the entire file. That read is sized against the room left in the session's [context window](/docs/en/context-window) instead of the default limits. Images, PDFs, and notebooks keep their limits.
+
+What Claude receives when a read goes over the default limits:
+
+* **Whole file over the token limit**: the first page of the file, with a `PARTIAL view` notice saying how much of the file it received and how to read more with `offset` and `limit`
+* **Whole file over 256 KB, or an `offset` or `limit` read over the token limit**: an error telling it to read a portion with `offset` and `limit`, or to search for specific content with [Grep](#grep-tool-behavior) instead
 
 ## SendFeedback tool behavior
 
@@ -650,13 +663,13 @@ To get more searches, raise the cap, wait for the limit to refill, or start a ne
 
 ## Write tool behavior
 
-The Write tool creates a new file or overwrites an existing one with the full content provided. It doesn't append or merge.
+The Write tool creates a new file or overwrites an existing one with the full content provided. It doesn't append or merge. Write also overwrites an existing file whose bytes don't decode and saves the new content as UTF-8, as described under [non-UTF-8 files](#non-utf-8-files).
 
 Whether Claude must read an existing file in the current conversation before overwriting it depends on the model and the file:
 
 * Claude Opus 4.6, Claude Haiku 4.5, and older models always require the read, so a Write to an unread existing file fails with an error.
 * Newer models can overwrite a file they never read this session under the same conditions as [read-before-edit](#edit-tool-behavior): reading it wouldn't need a permission prompt and the Read tool is available.
-* Jupyter notebooks, and files Claude has read only partially with a [`PARTIAL view` notice](#read-tool-behavior), require the read on every model.
+* Jupyter notebooks, and files Claude has read only partially with a [`PARTIAL view` notice](#large-files), require the read on every model.
 
 This constraint doesn't apply to new files. Before v2.1.228, every model required the read before overwriting an existing file.
 

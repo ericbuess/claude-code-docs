@@ -92,9 +92,9 @@ Checkpointing only tracks files that have been edited within the current session
 
 ### Messages sent mid-turn not checkpointed
 
-When a message you [queue while Claude works](/docs/en/interactive-mode#queue-messages-while-claude-works) reaches Claude within the running turn, it joins that turn instead of starting a new one. The message appears in the conversation, but Claude Code doesn't create a checkpoint for it. A queued message that Claude Code sends as part of a new turn gets a checkpoint as usual, including when several queued messages [share that turn](/docs/en/interactive-mode#when-claude-code-sends-what-you-queued).
+In the rewind menu, a message you [typed while Claude was still working](/docs/en/interactive-mode#queue-messages-while-claude-works) can be marked **No code restore**. Claude read that message before its turn ended. [Checkpoints are taken for prompts that start a turn](#how-checkpoints-work), so this message has none of its own. The edits Claude made after reading it count toward the prompt that started the turn.
 
-To undo the edits Claude made after such a message, rewind to the prompt that started the turn. That rewinds the whole turn, including the work Claude did before your message arrived.
+You don't need to do anything about the message itself. To undo the file changes from that part of the session, select the prompt that started the turn and choose **Restore code** or **Restore code and conversation**. That reverts Claude's file edits from the whole turn, including the ones from before your message arrived. Selecting the marked message still offers **Restore conversation**, which rewinds the conversation to it and leaves your files as they are.
 
 ### Symlinked and hard-linked paths not restored
 

@@ -240,6 +240,8 @@ While you're attached, `/install-github-app` and the [`/mcp`](/docs/en/mcp) sett
 
 Attached sessions always render in [fullscreen mode](/docs/en/fullscreen), regardless of your `tui` setting, because a background session has no terminal scrollback to append to. Scroll with `PgUp`, `PgDn`, or the mouse wheel, and press `Ctrl+O` for transcript mode. Your terminal's native scroll and tmux copy mode show only the current viewport, the same as when you run any fullscreen application.
 
+An attached session doesn't [report its status to your terminal](/docs/en/terminal-config#see-session-status-in-your-terminal).
+
 Press `←` on an empty prompt, or run `/exit`, to detach and return to agent view, whether you opened the session from agent view or with `claude attach <id>` from your shell.
 
 `←` also detaches while the [`/btw` overlay](/docs/en/interactive-mode#side-questions-with-%2Fbtw) is open. Requires Claude Code v2.1.257 or later. A side question that's still answering keeps running while you're away. The next time you attach, the overlay reopens with it, or with its answer.
