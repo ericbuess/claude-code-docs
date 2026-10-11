@@ -2975,7 +2975,7 @@ type SyncHookJSONOutput = {
 
 ## Tool Input Types
 
-Documentation of input schemas for all built-in Claude Code tools. These types are exported from `@anthropic-ai/claude-agent-sdk/sdk-tools` and can be used for type-safe tool interactions.
+Documentation of input schemas for built-in Claude Code tools. These types are exported from `@anthropic-ai/claude-agent-sdk/sdk-tools` and can be used for type-safe tool interactions.
 
 ### `ToolInputSchemas`
 
@@ -3707,7 +3707,7 @@ MCP tool arguments are an open object: each server defines its own parameters, s
 
 ## Tool Output Types
 
-Documentation of output schemas for all built-in Claude Code tools. These types are exported from `@anthropic-ai/claude-agent-sdk/sdk-tools` and represent the actual response data returned by each tool.
+Documentation of output schemas for built-in Claude Code tools. These types are exported from `@anthropic-ai/claude-agent-sdk/sdk-tools` and represent the actual response data returned by each tool.
 
 ### `ToolOutputSchemas`
 

@@ -88,18 +88,60 @@ Authentication, model selection, built-in tools, and permissions work normally. 
 
 Safe mode still applies managed hooks and settings policy from your organization. Managed plugins, skills, `CLAUDE.md`, and MCP servers are turned off.
 
-If the problem persists in safe mode, or your settings themselves are suspect, compare against a session that loads nothing from your usual setup. Point [`CLAUDE_CONFIG_DIR`](/docs/en/env-vars) at an empty directory to bypass everything under `~/.claude`, and launch from a directory that has no `.claude` folder, `.mcp.json`, or `CLAUDE.md` so project configuration is also skipped.
+If the problem persists in safe mode, or your settings themselves are suspect, start a session with none of your own configuration and check whether the problem follows.
 
-```bash theme={null}
-cd /tmp && CLAUDE_CONFIG_DIR=/tmp/claude-clean claude
-```
+<Steps>
+  <Step title="Create an empty directory and change into it">
+    In your shell, with no Claude Code session running, create the directory and move into it:
 
-The clean session has no user or project settings, hooks, MCP servers, plugins, or memory. On the first launch, expect the first-run setup screens, starting with theme selection. If you see them, the clean configuration directory is in effect. Later launches with the same directory skip these screens because Claude Code saves onboarding state there.
+    <Tabs>
+      <Tab title="Bash or Zsh">
+        ```bash theme={null}
+        mkdir -p ~/claude-clean/empty && cd ~/claude-clean/empty
+        ```
+      </Tab>
 
-* Managed settings still apply if your organization deploys them. Claude Code reads MDM profiles, registry policy, and `managed-settings.json` from locations outside the configuration directory, and [fetches server-managed settings](/docs/en/server-managed-settings#fetch-and-caching-behavior) again for the clean session once it has credentials
-* You'll be prompted to log in again
+      <Tab title="PowerShell">
+        ```powershell theme={null}
+        New-Item -ItemType Directory -Force "$HOME/claude-clean/empty" | Out-Null
+        Set-Location "$HOME/claude-clean/empty"
+        ```
+      </Tab>
+    </Tabs>
+  </Step>
 
-If the problem disappears here, the cause is somewhere in your real `~/.claude` or project `.claude` files. Reintroduce them one at a time, by copying files into the temporary directory or by launching from your project, to find which one. If it persists in the clean session, the cause is outside your user and project configuration. Run `/status` to check whether managed settings are in effect, look for [environment variables](/docs/en/env-vars) that affect Claude Code, then see [Troubleshooting](/docs/en/troubleshooting).
+  <Step title="Start Claude Code with a clean configuration directory">
+    From the same shell, set [`CLAUDE_CONFIG_DIR`](/docs/en/env-vars) to a fresh directory in place of `~/.claude`, and pass [`--setting-sources user`](/docs/en/cli-reference#cli-flags) to turn off project configuration such as `.claude/settings.json`, `CLAUDE.md`, and `.mcp.json`:
+
+    <Tabs>
+      <Tab title="Bash or Zsh">
+        The variable applies to this one launch.
+
+        ```bash theme={null}
+        CLAUDE_CONFIG_DIR=~/claude-clean/config claude --setting-sources user
+        ```
+      </Tab>
+
+      <Tab title="PowerShell">
+        The variable stays set for the rest of this PowerShell session, so later `claude` launches in the same window keep using the clean directory. To return to your usual directory, run `Remove-Item Env:CLAUDE_CONFIG_DIR` before the next launch.
+
+        ```powershell theme={null}
+        $env:CLAUDE_CONFIG_DIR = "$HOME/claude-clean/config"
+        claude --setting-sources user
+        ```
+      </Tab>
+    </Tabs>
+
+    On the first launch, you go through the first-run setup screens again, a sign that the clean configuration directory is in effect. Managed settings still apply, and [connectors](/docs/en/mcp#use-mcp-servers-from-claude-ai) still load if you log in with a claude.ai account.
+  </Step>
+
+  <Step title="Reproduce the problem">
+    Repeat what triggered the problem in the clean session:
+
+    * **Problem gone**: the cause is in your user or project configuration. Copy `~/.claude.json` and the files in `~/.claude` into `~/claude-clean/config` one at a time. If none brings the problem back, go to your project directory in the same shell and start Claude Code without `--setting-sources user`. In Bash or Zsh, run `CLAUDE_CONFIG_DIR=~/claude-clean/config claude`. In PowerShell, the variable is still set, so run `claude`.
+    * **Problem persists**: the cause is outside your user and project configuration. Run `/status` in the session to check for managed settings, check your shell for [environment variables](/docs/en/env-vars), then see [Troubleshooting](/docs/en/troubleshooting).
+  </Step>
+</Steps>
 
 ## Check common causes
 

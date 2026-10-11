@@ -51,7 +51,9 @@ You can't give your marketplace any of the following names:
 * **Names starting with `claudeai-`**: reserved for marketplaces hosted on claude.ai. `claude plugin marketplace add` refuses any other marketplace that uses one with `Cannot add marketplace "<name>": names starting with "claudeai-" are reserved for marketplaces hosted on claude.ai`.
 * **The download folder of a registered GitHub marketplace, `<owner>-<repo>`**: Claude Code downloads a marketplace added from a `github` source such as `acme/x-tools` through a folder named `acme-x-tools`, whatever that marketplace's own `name` is. While that marketplace is registered under a name other than `acme-x-tools`, `claude plugin marketplace add` refuses a different marketplace named `acme-x-tools` after downloading it, and reports `Can't use the marketplace name "acme-x-tools"`. This check requires Claude Code v2.1.290 or later.
 
-When a registered marketplace stops loading because its name imitates an official one, `claude plugin list` and `/plugin` report `Claude Code refuses the marketplace name "<name>"`. The message tells you to remove the marketplace. Removing it also uninstalls its plugins and deletes their saved data. This named refusal message requires Claude Code v2.1.282 or later.
+When a registered marketplace stops loading because its name imitates an official one, `claude plugin list` and `/plugin` report `Claude Code refuses the marketplace name "<name>"`. The message tells you to remove the marketplace. Removing it also uninstalls its plugins and deletes their data, options, and secrets. This named refusal message requires Claude Code v2.1.282 or later.
+
+If a settings file declares the marketplace inline, the message tells you to rename its entry before you remove the old name. For the steps, see [Claude Code refuses the marketplace name](/docs/en/errors#claude-code-refuses-the-marketplace-name). The message lists them in Claude Code v2.1.292 or later.
 
 ## Top-level fields
 

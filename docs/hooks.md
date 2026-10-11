@@ -3077,7 +3077,18 @@ Claude Code reads `watchPaths` and `systemMessage` from their JSON output and di
 
 ### WorktreeCreate
 
-Runs when a worktree is being created, whether from `claude --worktree`, from a [subagent using `isolation: "worktree"`](/docs/en/sub-agents#choose-the-subagent-scope), or for a [background session](/docs/en/agent-view#how-file-edits-are-isolated) that Claude Code isolates in its own worktree. By default Claude Code creates the isolated working copy with `git worktree`. Configuring a WorktreeCreate hook replaces that default git behavior, letting you use a different version control system like SVN, Perforce, or Mercurial.
+Runs when Claude Code creates a worktree in cases such as these:
+
+* You start a session with `claude --worktree`
+* Claude creates a worktree during a session and switches into it with the [`EnterWorktree`](/docs/en/tools-reference) tool
+* A [subagent uses `isolation: "worktree"`](/docs/en/sub-agents#choose-the-subagent-scope)
+* A [workflow](/docs/en/workflows#migrate-many-files-in-parallel) runs an agent in its own worktree
+* Claude Code isolates a [background session](/docs/en/agent-view#how-file-edits-are-isolated) in its own worktree
+* [`claude remote-control`](/docs/en/remote-control#start-a-remote-control-session) in `worktree` mode starts a session in its own worktree
+
+When Claude runs `git worktree add` through the Bash tool rather than calling `EnterWorktree`, your WorktreeCreate hook doesn't run. To inspect or block that command, add a [`PreToolUse`](#pretooluse) hook with the `Bash` matcher.
+
+By default Claude Code creates the isolated working copy with `git worktree`. Configuring a WorktreeCreate hook replaces that default git behavior, letting you use a different version control system like SVN, Perforce, or Mercurial.
 
 Because the hook replaces the default behavior entirely, [`.worktreeinclude`](/docs/en/worktrees#copy-gitignored-files-into-worktrees) is not processed. If you need to copy local configuration files like `.env` into the new worktree, do it inside your hook script.
 
@@ -3140,12 +3151,22 @@ Runs when Claude Code cleans up a worktree that your [`WorktreeCreate`](#worktre
 * You exit an interactive [worktree session](/docs/en/worktrees#start-claude-in-a-worktree) and choose to remove the worktree when Claude Code prompts you
 * You exit an interactive worktree session you haven't [named](/docs/en/sessions#name-your-sessions), Claude Code finds no changed or untracked files, and it removes the worktree without prompting you
 * You delete a [background session](/docs/en/agent-view#what-deleting-a-session-removes) that runs in the worktree
+* You ask Claude to exit and remove the worktree during a session, and Claude removes it with the [`ExitWorktree`](/docs/en/tools-reference) tool
+* A session that [`claude remote-control`](/docs/en/remote-control#start-a-remote-control-session) started in `worktree` mode ends without crashing, and Claude Code finds no changed or untracked files and no new commits in its worktree
+* You stop `claude remote-control` while sessions it started in `worktree` mode are still running, and Claude Code finds no changed or untracked files and no new commits in their worktrees
+
+When a subagent or a workflow agent finishes, Claude Code keeps the worktree your WorktreeCreate hook made for it and doesn't run your WorktreeRemove hook. Remove those worktrees yourself when the work is done.
+
+Claude Code doesn't prompt you before your hook runs for an `ExitWorktree` call or a `claude remote-control` cleanup. `ExitWorktree` refuses to remove a hook-created worktree unless the call passes [`discard_changes: true`](/docs/en/agent-sdk/typescript#exitworktree), which makes your hook the last check on that route.
 
 Claude Code uses git to look for changed or untracked files, so it finds none in a worktree that isn't a git checkout or inside one, even when the directory holds uncommitted work. Check for that work in your WorktreeRemove hook before it deletes anything.
 
-For git-based worktrees, Claude Code handles cleanup automatically with `git worktree remove`. If you configured a WorktreeCreate hook, pair it with a WorktreeRemove hook to control cleanup of the worktrees it creates:
+For git-based worktrees, Claude Code handles cleanup automatically with `git worktree remove`. If you configured a WorktreeCreate hook, pair it with a WorktreeRemove hook to control cleanup:
 
-* **No WorktreeRemove hook**: when Claude Code removes the worktree as you exit a worktree session, it falls back to `git worktree remove --force` on the path your WorktreeCreate hook returned, so a worktree git recognizes is removed. A worktree git doesn't recognize, for example one your hook created with a non-git version control system, stays on disk. For what deleting a [background session](/docs/en/agent-view#what-deleting-a-session-removes) does with a hook-created worktree, see agent view's delete rules.
+* **No WorktreeRemove hook**: Claude Code falls back to git for a removal at exit or through `ExitWorktree`, and keeps the worktree when `claude remote-control` cleans up:
+  * **You exit a worktree session, or Claude calls `ExitWorktree`**: Claude Code removes the path your WorktreeCreate hook returned as `git worktree remove --force` would, so a worktree git recognizes is removed. A worktree git doesn't recognize, for example one your hook created with a non-git version control system, stays on disk.
+  * **`claude remote-control` cleans up a session's worktree**: the worktree stays on disk, and the terminal running `claude remote-control` shows `worktree removal failed, kept: <path>`.
+  * **You delete a background session**: see [What deleting a session removes](/docs/en/agent-view#what-deleting-a-session-removes).
 * **Hook exits 0**: the worktree counts as removed. Claude Code reads nothing else from the hook, so make sure your hook deleted the directory.
 * **Hook exits non-zero**: the removal fails if the directory at `worktree_path` still exists afterward, and the worktree stays on disk with no git fallback. A hook that deleted the directory before exiting non-zero counts as removed. For how the failure is reported, see [WorktreeRemove input](#worktreeremove-input).
 
@@ -3153,7 +3174,7 @@ Claude Code never deletes a branch belonging to a hook-created worktree, because
 
 Claude Code discards a WorktreeRemove hook's [JSON output fields](#json-output), such as `systemMessage` and `continue`.
 
-For a background-session delete, Claude Code verifies the stored worktree path before running the hook and refuses a path that is a symlink or passes through one below the repository root. The hook runs for a worktree that still contains files only when you confirm the delete in [agent view](/docs/en/agent-view#what-deleting-a-session-removes); for such a worktree, [`claude rm`](/docs/en/agent-view#manage-sessions-from-the-shell) keeps the session and worktree instead. Before v2.1.216, the hook ran on the stored path without these checks.
+For a background-session delete, Claude Code verifies the stored worktree path before running the hook and refuses a path that is a symlink or passes through one below the repository root. On that route, the hook runs for a worktree that still contains files only when you confirm the delete in [agent view](/docs/en/agent-view#what-deleting-a-session-removes); for such a worktree, [`claude rm`](/docs/en/agent-view#manage-sessions-from-the-shell) keeps the session and worktree instead. Before v2.1.216, the hook ran on the stored path without these checks.
 
 Claude Code passes the path returned by WorktreeCreate as `worktree_path` in the hook input. This example reads that path and removes the directory:
 
@@ -3192,6 +3213,7 @@ A WorktreeRemove hook's exit code decides the outcome. When a hook exits non-zer
 
 * The worktree stays on disk, and the hook's command and stderr go to the [debug log](#debug-hooks).
 * If you were deleting a background session, the session stays too. The refusal message in [agent view](/docs/en/agent-view#what-deleting-a-session-removes) reports how the hook ended, such as `exited 1`, quotes the start of its stderr, and says whether deleting the session again removes the directory anyway.
+* If `claude remote-control` was cleaning up a session's worktree, the terminal running it shows `worktree removal failed, kept: <path>`.
 
 ### PreCompact
 

@@ -188,8 +188,18 @@ Even in auto-allow mode, the following still apply:
 * Explicit [deny rules](/docs/en/permissions) are always respected
 * `rm` or `rmdir` commands that target a [critical path](/docs/en/permission-modes#critical-paths) still go through the regular permission flow
 * Content-scoped [ask rules](/docs/en/permissions) like `Bash(git push *)` still force a prompt even for sandboxed commands
-* A bare `Bash` ask rule, or the equivalent `Bash(*)` form, is skipped for commands that run sandboxed; it still applies to commands that fall back to the regular permission flow. In [plan mode](/docs/en/permission-modes#analyze-before-you-edit-with-plan-mode), the rule isn't skipped: it prompts for sandboxed commands too, including read-only ones
+* A bare `Bash` ask rule, or the equivalent `Bash(*)` form, is skipped for commands that run sandboxed; it still applies to commands that run outside the sandbox. In [plan mode](/docs/en/permission-modes#analyze-before-you-edit-with-plan-mode), the rule isn't skipped: it prompts for sandboxed commands too, including read-only ones
 * [Monitor tool](/docs/en/tools-reference#monitor-tool) commands aren't approved automatically, though they still run in the sandbox. To skip the prompt, add an [allow rule](/docs/en/permissions#bash) that matches the command, such as `Bash(npm run *)`
+
+Some sandboxed commands also go through the regular [permission flow](/docs/en/permissions) instead of being approved automatically. This happens with commands such as `FOO=bar npm test`, where a variable set in front of a command can change which program runs, and with `make CC=clang` or `eval "ls"`. Your allow rules and permission mode then decide whether you see a prompt, and the command still runs inside the sandbox.
+
+For these three commands, an [allow rule](/docs/en/permissions#bash) that matches the command stops a recurring prompt. These rules show the pattern:
+
+* `Bash(make *)` approves `make CC=clang`
+* `Bash(FOO=bar npm *)` approves `FOO=bar npm test`. When the command starts with a variable assignment, include the assignment in the rule
+* `Bash(eval "ls")` approves `eval "ls"`. A wildcard rule such as `Bash(eval *)` doesn't stop this prompt, so write a rule that matches the whole command
+
+An allow rule that matches a command also approves an [unsandboxed retry](#the-unsandboxed-retry-escape-hatch) of it, so the command can run outside the sandbox with no prompt.
 
 <Info>
   Auto-allow mode works independently of your permission mode setting, with three exceptions: [plan mode](/docs/en/permission-modes#analyze-before-you-edit-with-plan-mode), an auto mode command that carries [per-command allowed domains](#per-command-allowed-domains-in-auto-mode), and [server-side classifier review](/docs/en/permission-modes#how-the-classifier-evaluates-actions) of sandboxed commands in auto mode. Even if you're not in "accept edits" mode, sandboxed Bash commands run automatically when auto-allow is enabled. This means Bash commands that modify files within the sandbox boundaries execute without prompting, even in Manual mode, where the file edit tools would prompt.

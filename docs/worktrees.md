@@ -115,7 +115,7 @@ Apply the requested refactor across every affected file, then run the tests
 and report the results.
 ```
 
-Each subagent gets a temporary worktree that Claude Code removes automatically when the subagent finishes without changes; a worktree with changes stays on disk until the [periodic sweep below](#clean-up-subagent-and-background-session-worktrees) can remove it without losing work.
+Each subagent gets a temporary worktree that Claude Code removes automatically when the subagent finishes without changes; a worktree with changes stays on disk until the [periodic sweep below](#clean-up-subagent-and-background-session-worktrees) can remove it without losing work. For a worktree your [WorktreeCreate hook](/docs/en/hooks#worktreecreate) created, see [WorktreeRemove](/docs/en/hooks#worktreeremove) instead.
 
 Subagent worktrees use the same [base branch](#choose-the-base-branch) as `--worktree`, so they branch from your repository's default branch unless `worktree.baseRef` is set to `"head"`.
 

@@ -169,19 +169,24 @@ All times are interpreted in your local timezone. A cron expression like `0 9 * 
 
 ### Jitter
 
-A scheduled task can run at a different time than its schedule says. If every session's tasks ran exactly on schedule, many of them would call the API at the same moment, so Claude Code shifts each task's run time. Recurring tasks run late, and one-shot tasks scheduled on the hour or half hour run a little early.
+A scheduled task can run at a different time than its schedule says. If every session's tasks ran exactly on schedule, many of them would call the API at the same moment, so Claude Code shifts each task's run time. Recurring tasks run late, except a task that runs every five minutes, written `*/5 * * * *`. One-shot tasks scheduled on the hour or half hour run a little early.
 
 #### How late a recurring task runs
 
-When you create a recurring task, Claude Code gives it a fixed delay and adds that delay to every run. The delay is worked out from the task's ID, so the same task runs the same number of minutes late each time, including when the session is idle and nothing else is running.
+Unless it runs every five minutes, a recurring task starts each run late by up to half the gap to the next run, and by at most 30 minutes. Your task is one of these three cases:
 
-Tasks that run more often get shorter delays, and 30 minutes is the longest delay a task can get. These are the delay ranges for some common schedules:
+* **Evenly spaced runs**: a task with equal gaps, such as hourly, daily, or every 10 minutes, runs the same number of minutes late every time, including when the session is idle.
+* **Unevenly spaced runs**: a task with uneven gaps, such as one scheduled for `:00` and `:15` each hour, can run a different number of minutes late at each.
+* **Every five minutes**: a task written `*/5 * * * *` isn't delayed. A run exactly five minutes after the last one would start after a five-minute [prompt cache](/docs/en/prompt-caching#which-ttl-each-request-gets) had expired, so each run starts 15 seconds sooner.
 
-| Task runs | Delay is between |
+Find your schedule in the first column of this table to see when each of its runs starts.
+
+| Schedule | When each run starts |
 | :- | :- |
-| Every 10 minutes | 0 and 5 minutes |
-| Every 30 minutes | 0 and 15 minutes |
-| Every hour, or less often such as daily | 0 and 30 minutes |
+| Every 5 minutes, written `*/5 * * * *`, which is what `/loop 5m` creates | 4 minutes 45 seconds after the previous run |
+| Every 10 minutes | 0 to 5 minutes late |
+| Every 30 minutes | 0 to 15 minutes late |
+| Every hour, or less often such as daily | 0 to 30 minutes late |
 
 For example, `7,37 * * * *` schedules a task for `:07` and `:37`, which are 30 minutes apart, so its delay is somewhere between 0 and 15 minutes. If this task's delay is 14 minutes, it runs at `:21` and `:51` every hour. Changing the schedule to a different minute moves the run time, and a delay is still added on top.
 

@@ -807,6 +807,8 @@ The following example pre-configures a single connection:
 
 Each entry requires `id`, `name`, and `sshHost`. The `sshPort` and `sshIdentityFile` fields are optional. Users can also add `sshConfigs` to their own `~/.claude/settings.json`.
 
+If you leave `user@` out of `sshHost`, Desktop connects as the `User` that each developer's `~/.ssh/config` sets for the host, or else as their username on their own computer.
+
 #### Restrict which SSH hosts users can connect to
 
 Administrators can limit Desktop's SSH sessions to an approved set of hosts by setting `sshHostAllowlist` in [managed settings](/docs/en/managed-settings). When set, users can only connect to hosts whose resolved hostname matches one of the patterns. Set it to an empty array to disable SSH sessions. The [`sshHostAllowlist` reference entry](/docs/en/settings-reference#sshhostallowlist) says how an empty array combines with lists in other managed sources.
@@ -828,6 +830,55 @@ The following example allows connections to any host under `devboxes.example.com
 Patterns are case-insensitive. `*` matches any host, and `*.example.com` matches `example.com` and any subdomain. Anything else is an exact match. The check runs against the hostname after `~/.ssh/config` resolution via `ssh -G`, so `Host` aliases and `ProxyCommand`/`ProxyJump` entries are permitted as long as the resolved `HostName` matches.
 
 `sshHostAllowlist` is read from managed settings only; values in user or project settings are ignored. Only the Claude Desktop app honors this setting; the Claude Code CLI and IDE extensions do not read it, and it does not restrict `ssh` commands run through the Bash tool. It governs which hosts the Desktop app connects to, not network egress, so pair it with your organization's network or zero-trust controls if you need a hard boundary.
+
+#### Turn off local sessions and distribute SSH connections
+
+To turn off local sessions and limit SSH sessions to hosts that you choose, deploy [`disableDesktopLocalSessions`](/docs/en/settings-reference#disabledesktoplocalsessions), [`sshConfigs`](#pre-configure-ssh-connections-for-your-team), and [`sshHostAllowlist`](#restrict-which-ssh-hosts-users-can-connect-to) together.
+
+<Note>
+  This setup is for users who sign in with a Claude account. With a [third-party provider](/docs/en/third-party-integrations), SSH sessions are off by default, and setting `sshHostAllowlist` can turn them on. Read [SSH remote sessions in Claude Desktop on 3P](https://claude.com/docs/third-party/claude-desktop/ssh-remote-sessions) before you deploy these keys.
+</Note>
+
+The following example turns off local sessions, adds one connection, and limits SSH sessions to that connection's host:
+
+```json managed-settings.json theme={null}
+{
+  "disableDesktopLocalSessions": true,
+  "sshConfigs": [
+    {
+      "id": "shared-dev-vm",
+      "name": "Shared Dev VM",
+      "sshHost": "dev.example.com"
+    }
+  ],
+  "sshHostAllowlist": ["dev.example.com"]
+}
+```
+
+The keys apply to the desktop app. They leave other ways to run Claude Code as they are, such as the CLI, Cowork, and cloud sessions:
+
+* **The CLI**: none of the keys stops a developer from running the Claude Code CLI on their own computer
+* **Cowork**: none of the keys applies to [Cowork](https://claude.com/docs/cowork/overview) sessions or Cowork scheduled tasks
+* **Cloud sessions**: none of the keys changes whether [cloud sessions](#cloud-sessions) are available. To turn them off, use the **Cloud sessions** setting under [Admin console controls](#admin-console-controls).
+
+When you adapt the example, check the hostnames and the Desktop version:
+
+* **Hostnames**: make sure that a pattern in `sshHostAllowlist` matches the hostname of each `sshConfigs` entry, without `user@`, or developers can't connect to it. For how Desktop matches a hostname, see [Restrict which SSH hosts users can connect to](#restrict-which-ssh-hosts-users-can-connect-to).
+* **Version**: `disableDesktopLocalSessions` requires Claude Desktop v1.37937.0 or later
+
+Put the three keys in one [managed source](/docs/en/managed-settings#how-claude-code-combines-managed-sources), the highest-ranked one that you deliver. If you deliver [server-managed settings](/docs/en/server-managed-settings), also keep a copy of the three keys in the highest-ranked MDM policy or managed settings file on each computer. Desktop fetches server-managed settings at launch, and the copy on the computer applies until a fetch succeeds.
+
+To confirm that the settings apply, check a developer's computer:
+
+<Steps>
+  <Step title="Check the environment dropdown">
+    Quit and reopen Desktop, then open the environment dropdown in the prompt box. **Local** is grayed out, and **Shared Dev VM** appears under **SSH**. If **Local** is still available, check the Desktop version, that the file is valid JSON, and which managed source the computer reads.
+  </Step>
+
+  <Step title="Add a host that isn't on the allowlist">
+    [Add an SSH connection](#ssh-sessions) with a hostname that isn't on the allowlist, such as `other.example.com`. Desktop saves the connection but refuses to connect, and says that your organization's settings don't allow the connection.
+  </Step>
+</Steps>
 
 ## Enterprise configuration
 

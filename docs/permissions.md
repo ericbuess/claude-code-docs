@@ -680,6 +680,7 @@ These checks still apply:
 * Content-scoped ask rules like `Bash(git push *)` still force a prompt
 * Explicit deny rules still apply
 * `rm` or `rmdir` commands that target a [critical path](/docs/en/permission-modes#critical-paths) still go through the regular permission flow
+* Other sandboxed commands can go through the regular permission flow too, as [Auto-allow mode](/docs/en/sandboxing#auto-allow-mode) describes
 
 Commands that won't run sandboxed, such as excluded commands, respect the bare `Bash` ask rule as usual. See [sandbox modes](/docs/en/sandboxing#sandbox-modes) to change this behavior.
 

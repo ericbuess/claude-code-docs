@@ -3825,8 +3825,12 @@ Before v2.1.282, `claude plugin list` and `/plugin` reported the plugins of an i
 
 **What to do:**
 
-* Run `claude plugin marketplace remove <name>`. This also uninstalls the plugins installed from the marketplace and deletes their saved data
-* To keep the marketplace instead, wait until its maintainer renames it, then run `claude plugin marketplace update <name>`
+* To keep a marketplace that a settings file declares inline with `"source": "settings"`, rename it before you remove the old name, because removing the marketplace also deletes its entry from your settings files. Claude Code v2.1.292 or later lists these steps in the message:
+  1. In each settings file that lists the marketplace under `extraKnownMarketplaces`, give the entry's key and its `source.name` one new plain-ASCII name that doesn't look like an official one. If an administrator adds the marketplace through your organization's managed settings, the administrator does this step
+  2. Run `claude plugin marketplace remove <old-name>`, or remove the old name in the **Marketplaces** tab in `/plugin`. This also uninstalls its plugins and deletes their data, options, and secrets
+  3. Start Claude Code again, in the project's folder if the file is a project's settings file. Then install the plugins from the renamed marketplace
+* To keep any other marketplace, wait until its maintainer renames it, then run `claude plugin marketplace update <name>`
+* To remove the marketplace, run `claude plugin marketplace remove <name>`. This also uninstalls the plugins installed from the marketplace and deletes their data, options, and secrets
 * If you publish the marketplace, rename it in your `marketplace.json`; users then update the marketplace instead of removing it
 
 ### Marketplace is already added from a different source
