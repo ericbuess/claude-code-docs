@@ -1240,5 +1240,5 @@ Claude Code displays your script's output only after the script exits with code 
 Outside [fullscreen rendering](/docs/en/fullscreen), Claude Code shows notifications on the same row as your status line. In fullscreen rendering, Claude Code gives notifications a row of their own.
 
 * System notifications like MCP server errors and auto-updates display on the right side of the row. Transient notifications such as the context-low warning also cycle through this area.
-* Enabling verbose mode adds a token counter to this area
+* Enabling verbose mode adds a token counter to this area, showing the size of your context as the last API response reported it, not the [per-turn count beside the spinner](/docs/en/costs#read-the-token-count-beside-the-spinner)
 * On narrow terminals, these notifications may truncate your status line output
