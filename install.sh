@@ -453,43 +453,14 @@ EOF
 
 echo "✓ Created /docs command"
 
-# Always update hook (remove old ones pointing to wrong location)
-echo "Setting up automatic updates..."
-
-# Simple hook that just calls the helper script
-HOOK_COMMAND="~/.claude-code-docs/claude-docs-helper.sh hook-check"
-
+# Remove old claude-code-docs hooks (no longer needed - auto_update is throttled)
 if [ -f ~/.claude/settings.json ]; then
-    # Update existing settings.json
-    echo "  Updating Claude settings..."
-    
-    # First remove ALL hooks that contain "claude-code-docs" anywhere in the command
-    # This catches old installations at any path
-    jq '.hooks.PreToolUse = [(.hooks.PreToolUse // [])[] | select(.hooks[0].command | contains("claude-code-docs") | not)]' ~/.claude/settings.json > ~/.claude/settings.json.tmp
-    
-    # Then add our new hook
-    jq --arg cmd "$HOOK_COMMAND" '.hooks.PreToolUse = [(.hooks.PreToolUse // [])[]] + [{"matcher": "Read", "hooks": [{"type": "command", "command": $cmd}]}]' ~/.claude/settings.json.tmp > ~/.claude/settings.json
-    rm -f ~/.claude/settings.json.tmp
-    echo "✓ Updated Claude settings"
-else
-    # Create new settings.json
-    echo "  Creating Claude settings..."
-    jq -n --arg cmd "$HOOK_COMMAND" '{
-        "hooks": {
-            "PreToolUse": [
-                {
-                    "matcher": "Read",
-                    "hooks": [
-                        {
-                            "type": "command",
-                            "command": $cmd
-                        }
-                    ]
-                }
-            ]
-        }
-    }' > ~/.claude/settings.json
-    echo "✓ Created Claude settings"
+    if jq -e '.hooks.PreToolUse[]? | select(.hooks[]?.command | contains("claude-code-docs"))' ~/.claude/settings.json >/dev/null 2>&1; then
+        echo "Removing old auto-update hook..."
+        jq '.hooks.PreToolUse = [(.hooks.PreToolUse // [])[] | select(.hooks[0].command | contains("claude-code-docs") | not)]' ~/.claude/settings.json > ~/.claude/settings.json.tmp
+        mv ~/.claude/settings.json.tmp ~/.claude/settings.json
+        echo "✓ Removed old hook from Claude settings"
+    fi
 fi
 
 # Note: Do NOT modify docs_manifest.json - it's tracked by git and would break updates
