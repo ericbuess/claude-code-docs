@@ -114,7 +114,7 @@ You can sign in to your Console account without creating an API key, even when y
 * **Sign in with your Console account**, labeled `(recommended)`: Claude Code keeps the OAuth token from that sign-in and stores it as an [Anthropic profile](#anthropic-profiles-and-federation-credentials). It creates no API key
 * **Create an API key**, labeled `(legacy)`: Claude Code creates a Console API key for you and stores it with your other credentials
 
-In practice, the profile stores an OAuth login while an API key is a static credential: Claude Code refreshes the profile's login automatically, and when refresh fails, requests fail with [Anthropic profile login expired](/docs/en/errors#anthropic-profile-login-expired) until you sign in again.
+In practice, the profile stores an OAuth login while an API key is a static credential. Claude Code refreshes the profile's login automatically, and when refresh fails, requests fail with an [expired profile login error](/docs/en/errors#anthropic-profile-login-expired) until you sign in again.
 
 You don't get the choice on every machine. Claude Code creates an API key without asking in these cases:
 
@@ -266,7 +266,7 @@ For the federation variables, Claude Code also reads the other variables in the 
 
 To confirm which source Claude Code chose, run `/status`. A `Profile` row names the source in place of the `Login method` row. When the profile is the credential in use, `Organization` and `Email` rows show its account.
 
-When a `user_oauth` profile's login has expired and Claude Code can't renew it, requests fail with [Anthropic profile login expired](/docs/en/errors#anthropic-profile-login-expired).
+When a `user_oauth` profile's login has expired and Claude Code can't renew it, requests fail with an [expired profile login error](/docs/en/errors#anthropic-profile-login-expired).
 
 Features that need your claude.ai login, such as [claude.ai connectors](/docs/en/mcp#use-mcp-servers-from-claude-ai) and [`/schedule`](/docs/en/routines), aren't available while one of these sources is selected. To stop Claude Code from selecting a source:
 

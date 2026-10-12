@@ -2190,6 +2190,7 @@ type SDKMessageOrigin =
       kind: "task-notification";
       subkind?: "scheduled-trigger" | "peer-send-message";
       fireReason?: string;
+      runId?: string;
     }
   | { kind: "coordinator" }
   | { kind: "auto-continuation" }
@@ -2216,6 +2217,8 @@ When Claude Code delivers a task notification into a session, it sets `subkind` 
 Every other task notification has no `subkind`. That includes [PR activity](/docs/en/claude-code-on-the-web#how-claude-responds-to-pr-activity) delivered into a session and background events such as a finished task. Messages from the [cross-session `SendMessage` tool](/docs/en/cross-session-messaging) aren't task notifications at all: whether they come from a session on the same machine or through Anthropic servers from another machine, Claude Code gives them `kind: "peer"` and the [peer origin fields](#peer-origin-fields).
 
 `fireReason` says why a `scheduled-trigger` notification fired, as a short lowercase token such as `scheduled`, `manual`, `retry`, `catch_up`, or `api`. Anthropic servers set it on a [routine](/docs/en/routines)'s deliveries, and your application sets it when it declares a scheduled run. It's absent when neither sent one. Requires TypeScript Agent SDK v0.3.280 or later.
+
+A background task can run more than once under the same `task_id`, such as when Claude [resumes a subagent](/docs/en/agent-sdk/subagents#resume-subagents). Each run has its own [`run_id`](#sdktaskstartedmessage). When a run's notification reaches your session as a user message, `runId` on that message's `task-notification` origin holds the same value. A notification can arrive after the task's next run has started, and it still carries the earlier run's ID. To tell which run a turn belongs to, compare `runId`, not `task_id`. Requires TypeScript Agent SDK v0.3.292 or later.
 
 #### Declare a scheduled run
 
@@ -5226,13 +5229,14 @@ type SDKStatusMessage = {
 
 ### `SDKTaskNotificationMessage`
 
-Notification when a background task completes, fails, or is stopped. Background tasks include `run_in_background` Bash commands, [Monitor](#monitor) watches, and background subagents. For the `ambient` field, see [`SDKTaskStartedMessage`](#sdktaskstartedmessage), which defines it and its version requirement.
+Notification when a background task completes, fails, or is stopped. Background tasks include `run_in_background` Bash commands, [Monitor](#monitor) watches, and background subagents. For the `run_id` and `ambient` fields, see [`SDKTaskStartedMessage`](#sdktaskstartedmessage), which defines them and their version requirements.
 
 ```typescript theme={null}
 type SDKTaskNotificationMessage = {
   type: "system";
   subtype: "task_notification";
   task_id: string;
+  run_id?: string;
   tool_use_id?: string;
   status: "completed" | "failed" | "stopped";
   reason?: "worker_restart";
@@ -5391,6 +5395,7 @@ type SDKTaskStartedMessage = {
   type: "system";
   subtype: "task_started";
   task_id: string;
+  run_id?: string;
   tool_use_id?: string;
   description: string;
   task_type?: string;
@@ -5401,6 +5406,20 @@ type SDKTaskStartedMessage = {
   uuid: UUID;
   session_id: string;
 };
+```
+
+`run_id` identifies one run of the task. When a task runs again under the same `task_id`, such as a [subagent that Claude resumes](/docs/en/agent-sdk/subagents#resume-subagents), the new run gets a new `run_id`. The field requires Agent SDK v0.3.292 or later. Use it to keep the runs of one task apart:
+
+* **Match messages to a run**: the `task_started`, [`task_progress`](#sdktaskprogressmessage), [`task_updated`](#sdktaskupdatedmessage), and [`task_notification`](#sdktasknotificationmessage) messages of one run carry the same `run_id`. The run's entry in each [`SDKBackgroundTasksChangedMessage`](#sdkbackgroundtaskschangedmessage) carries it too, and so does the [`runId`](#task-notification-subkinds) on the origin of the user message that delivers the run's notification.
+* **Detect a late message**: compared as plain strings, the run IDs of one task sort in the order the runs started, so a message whose `run_id` sorts before the run you're showing comes from an earlier run. Treat the value as opaque apart from that comparison.
+* **Fall back to `task_id`**: when a message carries no `run_id`, such as the `task_notification` that a resumed session emits to close a task the earlier process started, attribute it by `task_id`.
+
+For example, these three messages, trimmed to their identifying fields, come from a background subagent that Claude resumed once. The two `task_started` messages share a `task_id`, and the notification that ended the first run carries the first run's ID:
+
+```json theme={null}
+{"subtype": "task_started", "task_id": "a5c2e8f41b09d7a36", "run_id": "0mubbs7i8-6f0c2d41"}
+{"subtype": "task_notification", "task_id": "a5c2e8f41b09d7a36", "run_id": "0mubbs7i8-6f0c2d41", "status": "completed"}
+{"subtype": "task_started", "task_id": "a5c2e8f41b09d7a36", "run_id": "0mubc18m1-b7719e05"}
 ```
 
 `ambient` is `true` for tasks that aren't part of the session's work, such as tasks Claude Code runs for its own operation. Live-update watchers are also ambient, including watchers the user asked for. Exclude ambient tasks from activity indicators. The field requires Agent SDK v0.3.247 or later.
@@ -5424,7 +5443,7 @@ The parent can be a foreground task or one that already ended, so treat an ID yo
 
 ### `SDKTaskProgressMessage`
 
-Emitted periodically while a subagent or background task is running.
+Emitted periodically while a subagent or background task is running. For the `run_id` field, see [`SDKTaskStartedMessage`](#sdktaskstartedmessage), which defines it and its version requirement.
 
 For a subagent task, the `summary` field carries a model-generated progress summary and is populated only when [`agentProgressSummaries`](#options) is enabled. For a [backgrounded MCP tool call](/docs/en/mcp#automatic-backgrounding-of-long-tool-calls), `summary` carries the MCP server's latest reported progress and doesn't depend on that option.
 
@@ -5433,6 +5452,7 @@ type SDKTaskProgressMessage = {
   type: "system";
   subtype: "task_progress";
   task_id: string;
+  run_id?: string;
   tool_use_id?: string;
   description: string;
   subagent_type?: string;
@@ -5450,13 +5470,14 @@ type SDKTaskProgressMessage = {
 
 ### `SDKTaskUpdatedMessage`
 
-Emitted when a background task's state changes, such as when it transitions from `running` to `completed`. Merge `patch` into your local task map keyed by `task_id`. The `end_time` field is a Unix epoch timestamp in milliseconds, comparable with `Date.now()`.
+Emitted when a background task's state changes, such as when it transitions from `running` to `completed`. Merge `patch` into your local task map keyed by `task_id`. The `end_time` field is a Unix epoch timestamp in milliseconds, comparable with `Date.now()`. For the `run_id` field, see [`SDKTaskStartedMessage`](#sdktaskstartedmessage), which defines it and its version requirement.
 
 ```typescript theme={null}
 type SDKTaskUpdatedMessage = {
   type: "system";
   subtype: "task_updated";
   task_id: string;
+  run_id?: string;
   patch: {
     status?: "pending" | "running" | "completed" | "failed" | "killed";
     description?: string;
@@ -5472,7 +5493,7 @@ type SDKTaskUpdatedMessage = {
 
 ### `SDKBackgroundTasksChangedMessage`
 
-Emitted whenever the set of live background tasks changes: a task starts, completes, or is killed; a foreground agent is backgrounded; or a task's `description`, `ambient`, or `parent_task_id` field changes. For the `parent_task_id` field on each entry, see [`SDKTaskStartedMessage`](#sdktaskstartedmessage), which defines it and its version requirement.
+Emitted whenever the set of live background tasks changes: a task starts, completes, or is killed; a foreground agent is backgrounded; or a task's `description`, `ambient`, or `parent_task_id` field changes. For the `run_id` and `parent_task_id` fields on each entry, see [`SDKTaskStartedMessage`](#sdktaskstartedmessage), which defines them and their version requirements.
 
 The `tasks` array is the full live set. Replace any cached set with each payload instead of pairing `task_started` and `task_notification` events, so the next membership change corrects any event you missed.
 
@@ -5490,6 +5511,7 @@ type SDKBackgroundTasksChangedMessage = {
   subtype: "background_tasks_changed";
   tasks: {
     task_id: string;
+    run_id?: string;
     task_type: string;
     subagent_type?: string;
     description: string;

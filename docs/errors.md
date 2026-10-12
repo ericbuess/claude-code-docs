@@ -92,6 +92,7 @@ Match the message you see to a section below.
 | `Your account is on hold and can't use Claude Code. View details or appeal: https://claude.ai/restricted` | [Authentication](#your-account-is-on-hold) |
 | `Your account is on hold and can't sign in to Claude Code. View details or appeal: https://claude.ai/restricted` | [Authentication](#your-account-is-on-hold) |
 | `Anthropic profile login expired · Re-authenticate your Anthropic profile` | [Authentication](#anthropic-profile-login-expired) |
+| `Login expired · Run /login to sign in again, or re-authenticate your Anthropic profile` | [Authentication](#anthropic-profile-login-expired) |
 | `Anthropic profile login expired · Run /login to use your claude.ai account instead, or re-authenticate the profile` | [Authentication](#anthropic-profile-login-expired) |
 | `does not meet scope requirement user:profile` | [Authentication](#oauth-scope-requirement) |
 | `claude.ai rejected the session token` / `session token rejected` | [Authentication](#claude-ai-rejected-the-session-token) |
@@ -1237,6 +1238,8 @@ In [non-interactive mode](/docs/en/headless) (`-p`) and the [Agent SDK](/docs/en
 Failed to authenticate: OAuth session expired and could not be refreshed
 ```
 
+For a `Login expired` message that ends with `or re-authenticate your Anthropic profile`, see [Anthropic profile login expired](#anthropic-profile-login-expired).
+
 This is not the same state as [OAuth token revoked or expired](#oauth-token-revoked-or-expired). Those messages report a rejection the API returned. Claude Code itself produces `Login expired` for a login it already failed to renew, so it sends no request. When the renewal fails because the account itself is suspended rather than the login being stale, Claude Code shows [Your account is on hold](#your-account-is-on-hold) instead.
 
 Sessions authenticated with an API key, [`CLAUDE_CODE_OAUTH_TOKEN`](/docs/en/env-vars), or a third-party provider don't use the saved login and never see this message.
@@ -1394,26 +1397,28 @@ Signing in again with the same account doesn't clear the message, because the ho
 
 ### Anthropic profile login expired
 
-Claude Code is authenticating through an Anthropic credential profile whose saved login credential has expired, and the profile holds no refresh credential Claude Code can use to renew it. Claude Code stops each request locally without retrying, because a retry would read the same expired credential.
+Claude Code is authenticating through an Anthropic credential profile whose saved login credential has expired, and the profile holds no refresh credential Claude Code can use to renew it. Claude Code stops each request locally without retrying.
 
 ```text theme={null}
 Anthropic profile login expired · Re-authenticate your Anthropic profile
-Anthropic profile login expired · Run /login to use your claude.ai account instead, or re-authenticate the profile
+Login expired · Run /login to sign in again, or re-authenticate your Anthropic profile
 ```
-
-This appears only when the active credential comes from an Anthropic credential profile, one you select with the `ANTHROPIC_PROFILE` environment variable, that Claude Code discovers as the active profile in your Anthropic configuration directory, or that Claude Code wrote when you [signed in without an API key](/docs/en/authentication#sign-in-without-an-api-key). Sessions that authenticate with an API key, a bearer token such as `ANTHROPIC_AUTH_TOKEN`, or a third-party provider never see this message.
-
-On a machine that [offers the keyless sign-in](/docs/en/authentication#sign-in-without-an-api-key), run `/login`, choose the Anthropic Console account, and sign in again to renew a profile that the keyless Console sign-in or the Claude Platform CLI's `ant auth login` wrote. Claude Code replaces the expired credential in that profile. For a federation profile or one another tool created, `/login` doesn't renew the credential. Which form you see depends on whether you selected the profile or Claude Code discovered it:
-
-* When you set `ANTHROPIC_PROFILE` explicitly, the message ends with `Re-authenticate your Anthropic profile`.
-* When Claude Code discovered the profile from your configuration directory, the message offers `/login`, because Claude Code gives a working `/login` precedence over the discovered profile and then authenticates with your claude.ai or Console account instead. Before v2.1.234, Claude Code showed the `Re-authenticate your Anthropic profile` form in this case too.
 
 **What to do:**
 
-* Sign in to the profile again, then retry: on a machine that [offers the keyless sign-in](/docs/en/authentication#sign-in-without-an-api-key), run `/login` and choose the Anthropic Console account for a profile the keyless Console sign-in or the Claude Platform CLI's `ant auth login` wrote; for other profiles, use the tool that created them
+* If the message leads with `Login expired`, run `/login` to sign in again
+* To renew a profile that the keyless Console sign-in or the Claude Platform CLI's `ant auth login` wrote, run `/login` on a machine that [offers the keyless sign-in](/docs/en/authentication#sign-in-without-an-api-key). Choose the Anthropic Console account, then **Sign in with your Console account**. Claude Code replaces the expired credential in that profile
+* To renew a profile that another tool created, sign in again with that tool. If you choose **Sign in with your Console account** at `/login` instead, Claude Code leaves the profile as it is and creates an API key
 * If an administrator provisioned the profile's credential, ask them to issue a new one
 * Run `/status` to confirm the active credential source and profile name
 * To stop using the profile, unset `ANTHROPIC_PROFILE` if you set it, then authenticate another way, such as `/login` or `ANTHROPIC_API_KEY`
+
+How the message starts tells you how Claude Code found the profile:
+
+* When Claude Code discovered the profile from your configuration directory and its auth mode is `user_oauth`, the message leads with `Login expired` and offers `/login` first. Claude Code gives a working `/login` precedence over the discovered profile and then authenticates with your claude.ai account instead. From v2.1.234 until v2.1.277, this form read `Anthropic profile login expired · Run /login to use your claude.ai account instead, or re-authenticate the profile`. Before v2.1.234, Claude Code showed the `Re-authenticate your Anthropic profile` form in this case too.
+* When you selected the profile with `ANTHROPIC_PROFILE`, the message leads with `Anthropic profile login expired`.
+
+This appears only when the active credential comes from an Anthropic credential profile, one you select with the `ANTHROPIC_PROFILE` environment variable, that Claude Code discovers as the active profile in your Anthropic configuration directory, or that Claude Code wrote when you [signed in without an API key](/docs/en/authentication#sign-in-without-an-api-key). Sessions that authenticate with an API key, a bearer token such as `ANTHROPIC_AUTH_TOKEN`, or a third-party provider never see this message.
 
 ### OAuth scope requirement
 
