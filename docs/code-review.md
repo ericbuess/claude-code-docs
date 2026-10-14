@@ -141,8 +141,6 @@ For any of these commands to trigger a review:
 * You must have write, maintain, or admin permission on the repository
 * The PR must be open
 
-If the repository belongs to an organization and your membership in that organization is private, which is GitHub's default, GitHub doesn't identify you to Claude as a member. Claude may still react to your comment with 👀, but it doesn't start a review unless you were added to the repository directly as a collaborator, even when a team or the organization's base permissions give you write access. To fix this, [make your organization membership public](https://docs.github.com/en/account-and-profile/setting-up-and-managing-your-personal-account-on-github/managing-your-membership-in-organizations/publicizing-or-hiding-organization-membership) or ask a repository admin to add you to the repository as a collaborator.
-
 Unlike automatic triggers, manual triggers run on draft PRs, since an explicit request signals you want the review now regardless of draft status.
 
 If a review is already running on that PR, the request is queued until the in-progress review completes. You can monitor progress via the check run on the PR.
