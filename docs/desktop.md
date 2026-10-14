@@ -89,7 +89,7 @@ To set a default mode for new local sessions, add `permissions.defaultMode` to y
 | **Accept edits** | `acceptEdits` | Claude auto-accepts file edits and common filesystem commands like `mkdir`, `touch`, and `mv`, but still asks before running other terminal commands. Use this when you trust file changes and want faster iteration. |
 | **Plan** | `plan` | Claude reads files and runs commands to explore, then proposes a plan without editing your source code. Good for complex tasks where you want to review the approach first. |
 | **Auto** | `auto` | Claude runs without routine prompts; before actions such as shell commands and network requests run, a background classifier checks that they align with your request. Appears when [auto mode is available](#auto-mode-availability); there is no separate Settings toggle for it. |
-| **Bypass permissions** | `bypassPermissions` | Claude runs without permission prompts, except for the [actions no mode auto-approves](/docs/en/permission-modes#actions-no-mode-auto-approves), safety classifiers when Claude [acts on external sites](#browse-external-sites), or desktop actions where Claude always asks first, such as [archiving a session](#work-across-sessions). Equivalent to `--dangerously-skip-permissions` in the CLI. On Pro and Max plans, enable it in your Settings → Claude Code under "Allow bypass permissions mode"; on Team and Enterprise plans there is no Settings toggle, and organization policy controls it instead. Only use this in sandboxed containers or VMs. |
+| **Bypass permissions** | `bypassPermissions` | Claude runs without permission prompts, except for the [actions no mode auto-approves](/docs/en/permission-modes#actions-no-mode-auto-approves), safety classifiers when Claude [acts on external sites](#browse-external-sites), or desktop actions such as deleting a session, though not [archiving one](#work-across-sessions). Equivalent to `--dangerously-skip-permissions` in the CLI. On Pro and Max plans, enable it in your Settings → Claude Code under "Allow bypass permissions mode"; on Team and Enterprise plans there is no Settings toggle, and organization policy controls it instead. Only use this in sandboxed containers or VMs. |
 
 Earlier versions of the Code tab labeled these modes Ask permissions, Auto accept edits, and Plan mode.
 
@@ -393,7 +393,7 @@ When Claude messages another session through this surface, Claude Code shows it 
 
 Claude Code applies four safety behaviors across sessions:
 
-* Before archiving any session, Claude asks you first. You see the approval card in every permission mode, including Auto and Bypass permissions.
+* You get an approval card before Claude archives a session, except in Auto mode and Bypass permissions mode, where Claude can archive a session without one. To be asked, switch to Manual.
 * Through this surface, Claude can't send cross-session messages from a session nobody is watching, such as a scheduled-task run, and can't deliver messages into one.
 * Claude Code checks each message from this surface against the receiving session's [inbound controls](/docs/en/cross-session-messaging#control-inbound-messages), even when the receiving session doesn't have [cross-session messaging](/docs/en/cross-session-messaging#availability) itself. If you set [`crossSessionInbound`](/docs/en/settings-reference#crosssessioninbound) to `refuse` in the receiving session, Claude Code drops messages from this surface. Claude Code reports the refusal to the Claude desktop app. Before v2.1.234, Claude Code dropped every message from this surface to a receiving session without cross-session messaging.
 * Claude Code quotes each incoming message and attributes it to the session that sent it, and Claude still follows the receiving session's own permission settings when acting on one.
@@ -605,9 +605,17 @@ The `autoPort` field controls what happens when your preferred port is already i
 
 * **`true`**: Claude finds and uses a free port automatically. Suitable for most dev servers.
 * **`false`**: Claude fails with an error. Use this when your server must use a specific port, such as for OAuth callbacks or CORS allowlists.
-* **Not set (default)**: Claude asks whether the server needs that exact port, then saves your answer.
+* **Not set (default)**: your server gets the next free port, as with `true`, except in the one case below. Before Claude Desktop v2.37337.0, Claude asks whether the server needs that exact port instead, then saves your answer in `launch.json`.
 
-When Claude picks a different port, it passes the assigned port to your server via the `PORT` environment variable.
+If your preferred port is in use and `autoPort` is unset, your server stays stopped when all of these hold:
+
+* You start the server through an `npm`, `yarn`, `pnpm`, or `bun` script.
+* Your preferred port is hardcoded in that script, or Claude can't inspect the script.
+* You don't pass the port in `runtimeArgs`.
+
+In that case, free the port, remove the hardcoded value, or change `port` to match the script. Setting `"autoPort": true` instead works only for a script that reads `PORT`.
+
+Have your server read its port from the `PORT` environment variable, which carries the assigned port. When Claude moves your server to a different port, it also rewrites a `--port` or `-p` value in `runtimeArgs` to match.
 
 #### Examples
 
@@ -738,10 +746,10 @@ The remote machine can run Linux, macOS, or [Windows](#windows-remote-machines).
 
 A Linux or macOS remote machine needs a supported processor, an SSH server with SFTP, an install folder that isn't mounted `noexec`, a working shell, and network access. Check each requirement before you connect, or when a connection fails after you log in:
 
-* **System**: an x86\_64 or arm64 processor. The machine also has to meet Claude Code's [system requirements](/docs/en/setup#system-requirements).
+* **System**: an x86\_64 or arm64 processor. The machine also has to meet Claude Code's [system requirements](/docs/en/setup#system-requirements). On Linux, Claude Code needs glibc 2.17 or later, or musl. To see which one the machine has, run `ldd --version` there. On a musl-based distribution such as Alpine Linux, also install the [packages that Claude Code needs](/docs/en/setup#alpine-linux-and-musl-based-distributions).
 * **SFTP**: the SSH server has to offer the SFTP subsystem, which a `Subsystem sftp` line in its `sshd_config` turns on. To check, connect to the same host and port with `sftp` in a terminal on your computer. A working server shows the `sftp>` prompt.
 * **Sessions per connection**: Desktop on macOS and Linux opens several sessions on one SSH connection. If the server's `sshd_config` sets `MaxSessions 1`, raise it, for example to OpenSSH's default of 10.
-* **Install folder**: Desktop installs a helper program and Claude Code under `~/.claude/remote/` in your home directory. It runs them from there, so that folder can't be on a file system mounted `noexec`. Allow about 1 GB of disk space in the home directory of each user who connects.
+* **Install folder**: Desktop installs a helper program and Claude Code under `~/.claude/remote/` in your home directory. It runs them from there, so that folder can't be on a file system mounted `noexec`. Allow about 1 GB of disk space in the home directory of each user who connects. For what that folder holds, see [Files and processes on the remote machine](#files-and-processes-on-the-remote-machine).
 * **Shell**: the shell set for your account on the remote machine has to run commands sent over SSH, as Bash, Zsh, and `sh` do
 * **Network**: Claude Code runs on the remote machine and makes its network requests from there, so the machine needs the [network access that Claude Code requires](/docs/en/network-config#network-access-requirements). If the machine can't download Claude Code, Desktop downloads it on your computer and uploads it. Claude Code's other requests still go out from the remote machine.
 
@@ -813,7 +821,7 @@ If your computer sleeps, you lose your network, or you quit Desktop, the task go
 Claude Code runs as a process on the remote machine, under a background helper that Desktop installs there, so it doesn't need your SSH connection to keep running. The behavior in this section requires Claude Desktop v2.31226.0 or later.
 
 <Warning>
-  If you sign in to Desktop with a Claude account, don't count on a task to run overnight. Desktop renews that sign-in for the task only while Desktop is running and connected, so the task's sign-in can expire after you disconnect, and the task then stops. How much time is left when you disconnect varies.
+  If you sign in to Desktop with a Claude account, don't count on a task to run overnight. Desktop renews that sign-in for the task only while Desktop is running and connected, so the task's sign-in can expire after you disconnect, and the task then stops. How much time is left when you disconnect varies, and it can be only a few minutes.
 
   The work done so far stays on the remote machine, and you can continue with a message when you return.
 
@@ -951,6 +959,47 @@ Each project gets its own subfolder in the folder you set, so with `~/worktrees`
 To set **Worktree folder** on a connection you added earlier or one your organization manages, hover over it in the environment dropdown and click the gear icon.
 
 The field requires Claude Desktop v1.44121.0 or later. If your organization restricts which folders sessions may use, Desktop hides the field and keeps worktrees inside the project.
+
+#### Files and processes on the remote machine
+
+Desktop installs a helper program and Claude Code under `~/.claude/remote/` in the home directory of each user who connects to a Linux or macOS remote machine. The helper listens on no network port, but Claude Code and the programs it starts, such as MCP servers and development servers, can.
+
+| Folder | Contents |
+| - | - |
+| `~/.claude/remote/srv/` | The helper, in one folder per version |
+| `~/.claude/remote/ccd-cli/` | Claude Code, in one file per version |
+| `~/.claude/remote/run/` | The helper's runtime files, such as its socket and log, in one folder per computer that connects |
+| `~/.claude/remote/plugins/` | Plugins that Desktop copies from the user's computer |
+| [`~/.claude/uploads/`](/docs/en/claude-directory#clear-local-data) | Files that the user attaches to messages, in one folder per session |
+
+To list one user's processes, run `pgrep -fl "$HOME/.claude/remote/"` on the remote machine as that user, or with the user's home directory in place of `$HOME`:
+
+* **Helper**: one or more `server` processes for each computer that connects
+* **Claude Code**: the processes that the helper starts for the user's sessions, each from a file named after its version, such as `2.1.295-…`
+
+Desktop reaches the helper through the user's SSH connection, over the Unix socket `rpc.sock` in the helper's folder under `~/.claude/remote/run/`. Apart from root, other users on the machine can't connect to that socket, because it has mode 600 and its folder has mode 700.
+
+For when the helper stops on its own, see [Limits while Desktop is disconnected](#limits-while-desktop-is-disconnected).
+
+To remove the helper and Claude Code for one user:
+
+<Steps>
+  <Step title="Quit Desktop">
+    Quit Desktop on each computer that the user connects from. It installs both programs again the next time it connects, and it can reconnect on its own.
+  </Step>
+
+  <Step title="End the processes">
+    Logged in as that user on the remote machine, run `kill` with each process ID that [`pgrep`](#files-and-processes-on-the-remote-machine) lists, which stops any task that is still running.
+  </Step>
+
+  <Step title="Delete the folder">
+    Delete `~/.claude/remote/`. To remove Claude Code's own files in `~/.claude/` and `~/.claude.json`, see [Remove configuration files](/docs/en/setup#remove-configuration-files).
+  </Step>
+</Steps>
+
+#### Use MCP servers set up on the remote machine
+
+To use an [MCP server](/docs/en/mcp) from `~/.claude.json` or a project's `.mcp.json` in an SSH session, set it up in those files on the remote machine. Claude Code starts their stdio servers there, so install the commands those servers run on the remote machine. For servers from `claude_desktop_config.json`, see [Limits while Desktop is disconnected](#limits-while-desktop-is-disconnected).
 
 #### Open an SSH session from a link
 
@@ -1379,6 +1428,21 @@ If you see "Git LFS is required by this repository but is not installed," instal
 ### MCP servers not working on Windows
 
 If MCP server toggles don't respond or servers fail to connect on Windows, check that the server is properly configured in your settings, restart the app, verify the server process is running in Task Manager, and review server logs for connection errors.
+
+### SSH connection fails after you log in
+
+Find the card's title, or the code that ends the error message, in this table, then do what the last column says. To see the message, select **View details** on the failure card.
+
+| Title on the card | Code | What to do |
+| - | - | - |
+| `<host>'s SSH server has SFTP turned off` | `[SFTP_UNAVAILABLE]` | Turn on SFTP in the server's `sshd_config`, as described under [remote machine requirements](#remote-machine-requirements-for-ssh-sessions) |
+| `SFTP doesn't start on <host>` | `[SFTP_NOT_STARTED]` | Connect to the same host with `sftp` in a terminal on your computer to see what stops it, then check the settings and files that Desktop's message names |
+| `<host> allows too few SSH sessions per connection` | `[SESSION_LIMIT]` | Raise `MaxSessions` in the server's `sshd_config`, for example to OpenSSH's default of 10 |
+| `<host> is out of disk space` | `[ENOSPC]` or `[EDQUOT]` | Free space or quota on the remote machine, in your home directory or `/tmp` |
+| `This computer is out of disk space` | `[ENOSPC]` or `[EDQUOT]`, in a message that starts with `Couldn't prepare the deploy locally` | Free space on your computer |
+| `Claude Code won't start on <host>` | `[CLI_UNRESPONSIVE]` | Wait a minute, then try again. If it keeps failing, run the command that the message names on the remote machine to see whether Claude Code answers there. |
+
+For any other message, check the [remote machine requirements](#remote-machine-requirements-for-ssh-sessions).
 
 ### App won't quit
 

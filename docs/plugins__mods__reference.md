@@ -85,6 +85,24 @@ Prompt events cover the text the user types and the text Claude Code sends to Cl
 | [`skill.prompt`](/docs/en/plugins/mods/events#rewrite-or-add-to-a-prompt) | A skill's text is expanded for Claude | `{ text }` |
 | `attribution.text` | Claude Code composes commit or pull request attribution text | `{ text }` |
 
+<h4 id="skill-prompt-fields">
+  Source and frontmatter fields on `skill.prompt`
+</h4>
+
+In a `skill.prompt` hook, you can read these fields along with the skill's name in `e.skill` and the text Claude reads in `e.text`:
+
+| Field | Type | What it holds |
+| :- | :- | :- |
+| `e.source` | string | Who provides the skill: `policySettings`, `userSettings`, or `projectSettings` for a skill in the enterprise, personal, or project [location](/docs/en/skills#where-skills-live), respectively. Other sources give a word such as `plugin`, `mcp`, `syncedSkills`, or `built-in`. |
+| `e.pluginName` | string | The plugin's name, for a skill whose `e.source` is `plugin` |
+| `e.path` | string | The absolute path of the skill's `SKILL.md` file, or of its `.md` file for a skill written as a [command file](/docs/en/skills#where-skills-live). Absent when the skill has no file on this machine, as with a built-in skill. |
+| `e.frontmatter` | object | The frontmatter of the skill's file, as plain data |
+| `e.frontmatterProblem` | string | The reason `e.frontmatter` is missing the file's frontmatter or one of its keys, as in `is a list or a single value, not a table`. Absent when `e.frontmatter` holds the whole frontmatter or the skill has none. |
+
+A hook can pass a changed `text` or `frontmatter` to `next`: the hooks after it read both, and Claude reads the final `text`. A hook that changes any other field [fails](/docs/en/plugins/mods/events#handle-a-hook-that-fails).
+
+On `skill.prompt`, `e.source`, `e.pluginName`, `e.path`, `e.frontmatter`, and `e.frontmatterProblem` require Claude Code v2.1.299 or later.
+
 ### Commands and configuration
 
 Command and configuration events fire when a command runs or is listed, and when a `/config` row is shown or changed:

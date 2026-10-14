@@ -116,21 +116,21 @@ You add secrets one at a time, and you can't edit a secret after you add it. To 
 
 <Steps>
   <Step title="Open the environment's network secrets">
-    [Open the environment for editing](#configure-your-environment) at [claude.ai/code](https://claude.ai/code). In the **Edit environment** dialog, find the **Network secrets** section. You see the secrets already on the environment, each with the hosts it applies to.
+    [Open the environment for editing](#configure-your-environment) at [claude.ai/code](https://claude.ai/code). In the **Edit cloud environment** dialog, find the **Network secrets** section. You see the secrets already on the environment, each with the hosts it applies to.
   </Step>
 
   <Step title="Add the secret">
-    Select **Add secret** and fill in the form. Keep the default **Credential type**, **Bearer**, for an API key that travels in a request header, and fill in these fields:
+    Select **Add secret** and fill in the form. Keep the default **Secret type**, **Bearer**, for an API key that travels in a request header, and fill in these fields:
 
     * **Name**: a label for the secret, such as `Internal billing API`
     * **Allowed websites**: the API's hosts, such as `api.example.com`. A leading `*.` matches every subdomain
     * **Custom headers**: one row for the header that carries the key. The row starts with `Authorization` as the header's **Name** and `Bearer` as its **Prefix**; paste the key itself as the **Value**. For a header like `X-Api-Key` that takes the bare value, change the name and clear the prefix
 
-    For an API that authenticates another way, pick a different **Credential type**. The list is the same one [Claude Tag](https://claude.com/docs/claude-tag/overview), the Slack integration for Team and Enterprise plans, offers for [connections](https://claude.com/docs/claude-tag/admins/add-connections).
+    For an API that authenticates another way, pick a different **Secret type**. The list is the same one [Claude Tag](https://claude.com/docs/claude-tag/overview), the Slack integration for Team and Enterprise plans, offers for [connections](https://claude.com/docs/claude-tag/admins/add-connections).
   </Step>
 
   <Step title="Save the secret">
-    Select **Connect**. The secret appears in the list with its hosts, saved without the dialog's **Save changes** button. You can't view the value again after saving.
+    Select **Add**. The secret appears in the list with its hosts, saved without the dialog's **Save changes** button. You can't view the value again after saving.
   </Step>
 </Steps>
 
@@ -163,7 +163,7 @@ A [self-hosted environment](/docs/en/self-hosted-environments) ID, which has the
 
 ### Archive an environment
 
-To archive one of your own environments, open it for editing and select **Archive**. An Owner archives a [shared environment](#organization-shared-environments) from the **Cloud environments** page in admin settings. You can't delete an environment, only archive it.
+To archive one of your own environments, open it for editing, select **Archive environment**, and confirm. If the environment is [shared with your organization](#organization-shared-environments), an Owner archives it from the **Cloud environments** page in [admin settings](https://claude.ai/admin-settings) instead, so ask an Owner unless you are one. You can't delete an environment, only archive it.
 
 Archiving affects new sessions, not running ones:
 
