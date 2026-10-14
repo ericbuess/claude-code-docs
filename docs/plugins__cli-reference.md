@@ -485,8 +485,8 @@ The exit code reports how the run ended. To act on it in a pipeline, see [Run ev
 
 | Exit code | Meaning |
 | :- | :- |
-| `0` | Every case meets the threshold |
-| `1` | A failing case, a load error, or an untrusted plugin directory |
+| `0` | The suite passed: every case meets the threshold and nothing else failed the run |
+| `1` | A failing case, a load error, an untrusted plugin directory, a run that [ended on an API error](/docs/en/plugin-evals#runs-ended-on-an-api-error), or another cause listed under [Run evals in CI](/docs/en/plugin-evals#run-evals-in-ci) |
 | `2` | A partial run |
 | `130` | Interrupted |
 | `143` | Terminated |

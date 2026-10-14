@@ -413,8 +413,8 @@ The job's exit code tells you what happened:
 
 | Exit code | Meaning |
 | :- | :- |
-| 0 | Every case scored at or above `--threshold` and every case file loaded |
-| 1 | A case scored below the threshold, a case file failed to load, no cases were found, a run couldn't be started, the plugin directory isn't trusted and `--trust-plugin` wasn't passed, or an option was invalid |
+| 0 | The suite passed: every case scored at or above `--threshold` and nothing else failed the run |
+| 1 | A case scored below the threshold, a case file failed to load, no cases were found, a run couldn't be started, or a run [ended on an API error](#runs-ended-on-an-api-error). Also returned when the plugin directory isn't trusted and `--trust-plugin` wasn't passed, an option was invalid, or the `--json` result couldn't be written |
 | 2 | Partial run: the `--max-cost-usd` ceiling was hit, or your credential was rejected before or at the first run. `results.json` is still written with `partial: true` and the reason |
 | 130 | Interrupted. Partial results are written |
 | 143 | Terminated, such as by a CI timeout |
@@ -467,7 +467,7 @@ These are the fields a gating script usually reads. The document also carries th
 | `cases[].name` | Case name |
 | `cases[].aggregates.score` | Mean with-arm run score for the case |
 | `cases[].aggregates.delta` | With-arm score minus without-arm score. Omitted when the case ran one arm or the arms aren't comparable |
-| `cases[].arms.with[].error` | `null`, or why a run ended abnormally, such as `timed out after 300s`. A run that started but ended badly is still graded on what it produced, so a non-null error doesn't imply score 0 |
+| `cases[].arms.with[].error` | `null`, or why a run ended abnormally, such as `timed out after 300s`. Some of these runs are still graded on what they produced, so a non-null error doesn't imply score 0. A run that [ended on an API error](#runs-ended-on-an-api-error) scores 0 without grading |
 | `cases[].arms.with[].aborted` | Present when a [mock](#mock-mcp-servers) stopped the run through `expect:`, `abort_when`, or the [agent-mock call budget](#mock-call-budget-exceeded), with `server`, `tool`, and `reason`. The run scores 0 and `error` stays `null` |
 | `cases[].arms.with[].skippedPaidGraders` | `true` when the cost ceiling skipped this run's judge graders, so its score isn't comparable |
 | `costUsd`, `durationSeconds`, `claudeVersion` | Estimated cost at list price including judge calls, wall-clock seconds, and the Claude Code version that ran the suite |
@@ -720,7 +720,9 @@ Anything beyond the read-only set needs your grant, such as `--allow-tools Bash 
 
 ### The run exits 1 but the results look fine
 
-The default `--threshold` is 1.0, so the command exits 1 when any case scores below perfect. Set a threshold that matches the score you require. Exit 1 also covers a case file that failed to load, which is reported on stderr above the table.
+When every case scored at or above `--threshold` and the command still exits 1, a line on stderr names the cause, even under `--json`. For example, a case file failed to load, or runs [ended on an API error](#runs-ended-on-an-api-error). For the other causes, see the [exit codes](#run-evals-in-ci).
+
+The default `--threshold` is 1.0, so the command exits 1 when any case scores below perfect. Set a threshold that matches the score you require.
 
 <h3 id="json-output-path-must-end-in-json">
   `--json output path must end in .json`
@@ -732,9 +734,24 @@ You put the target after `--json`, so it was read as the output path. Put the ta
 
 That grader is excluded from the score by design in a two-arm run, and its `scored` field is `false`. See [Score against the no-plugin baseline](#compare-against-a-no-plugin-baseline).
 
+<h3 id="runs-ended-on-an-api-error">
+  "ended on an API error and scored 0 without grading"
+</h3>
+
+This stderr warning means the API answered at least one run's last request with an HTTP error, such as a rate limit or a plan usage limit. Such a run scores 0 with no grader results, and the command exits non-zero whatever the scores and `--threshold` are.
+
+To fix it, find each affected run's error and resolve the cause it reports, then run the suite again:
+
+* **Without `--json`**: the error is at the end of the run's progress line, after `error:`
+* **Under `--json`**: the error is in the [JSON result](#json-result), at `cases[].arms.with[].error` or `cases[].arms.without[].error`
+
+The count includes [baseline](#the-no-plugin-baseline) runs too. Their scores never decide whether a case passes, so every case can pass while the command still fails. In a two-arm run, the affected case's `W/OUT` and `Δ` print as `—`. For a usage or rate limit, see [Runs fail with a usage-limit or rate-limit error](#runs-fail-with-a-usage-limit-or-rate-limit-error-partway-through).
+
+Before v2.1.299, such a run was graded on what it had produced.
+
 ### Runs fail with a usage-limit or rate-limit error partway through
 
-If your account reaches its plan's usage limit or an API rate limit while a suite is running, each later run ends with that error, is graded on what it produced, and usually scores 0. The suite still finishes and isn't marked `partial`, so the result can look like a regression. Check the `NOTES` column or `cases[].arms.with[].error` in the JSON for the limit message before trusting the scores, then re-run after the limit resets, with `--runs 1` or a `--case` filter if you need to stay under it.
+Runs that end with a usage-limit or rate-limit error [score 0 without grading](#runs-ended-on-an-api-error), and the command exits non-zero. The suite still finishes and isn't marked `partial`. Re-run after the limit resets, with `--runs 1` or a `--case` filter if you need to stay under it.
 
 <h3 id="mock-call-budget-exceeded">
   "mock call budget exceeded"
