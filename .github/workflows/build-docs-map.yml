@@ -1,0 +1,44 @@
+name: Build Docs Map
+
+on:
+  workflow_run:
+    workflows: ["Update Claude Code Documentation"]
+    types: [completed]
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/build_docs_map.py'
+      - 'docs/**/*.md'
+
+permissions:
+  contents: write
+
+jobs:
+  build-map:
+    if: github.event.workflow_run.conclusion == 'success' || github.event_name != 'workflow_run'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          ref: main
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Build docs map
+        run: python scripts/build_docs_map.py
+
+      - name: Commit if changed
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          if [[ -n "$(git status --porcelain docs/DOCS_MAP.md)" ]]; then
+            git add docs/DOCS_MAP.md
+            git commit -m "Update DOCS_MAP.md - $(date +'%Y-%m-%d')"
+            git push
+          else
+            echo "No changes to DOCS_MAP.md"
+          fi

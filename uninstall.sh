@@ -104,6 +104,22 @@ if [[ -f ~/.claude/settings.json ]]; then
     echo "✓ Removed hooks (backup: ~/.claude/settings.json.backup)"
 fi
 
+# Remove /query feature files
+echo ""
+echo "Removing /query feature..."
+
+[[ -f ~/.claude/commands/query.md ]] && rm -f ~/.claude/commands/query.md && echo "✓ Removed /query command"
+[[ -f ~/.claude/agents/query-researcher.md ]] && rm -f ~/.claude/agents/query-researcher.md && echo "✓ Removed query-researcher agent"
+[[ -d ~/.claude/skills/query-orchestrator ]] && rm -rf ~/.claude/skills/query-orchestrator && echo "✓ Removed query-orchestrator skill"
+
+if [[ -d "$HOME/.claude-code-docs/query" ]] && [[ -n "$(ls -A "$HOME/.claude-code-docs/query" 2>/dev/null)" ]]; then
+    echo ""
+    echo "⚠️  Found query outputs at $HOME/.claude-code-docs/query/"
+    read -p "Delete query history? (y/N): " -n 1 -r
+    echo
+    [[ $REPLY =~ ^[Yy]$ ]] && rm -rf "$HOME/.claude-code-docs/query" && echo "✓ Removed query history"
+fi
+
 # Remove directories
 if [[ ${#installations[@]} -gt 0 ]]; then
     echo ""
