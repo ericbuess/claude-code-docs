@@ -91,7 +91,7 @@ The progress view shows each phase with its agent counts. The footer lists the k
 | :- | :- |
 | `↑` / `↓` | Select a phase or agent |
 | `Enter` or `→` | Drill into the selected phase, then into an agent's detail. In the detail, `Enter` expands or collapses it |
-| `Esc` or `←` | Back out one level. In v2.1.203 through v2.1.205, `←` didn't step back out of a phase or agent; use `Esc` on those versions |
+| `Esc` or `←` | Back out one level |
 | `j` / `k` | Scroll within the agent detail when it overflows |
 | `f` | Filter the agent list in the selected phase by status. Press again to cycle |
 | `p` | Pause or resume the run |
@@ -149,7 +149,7 @@ Ultracode is a Claude Code setting that turns on automatic workflow orchestratio
 /effort ultracode
 ```
 
-To start a session with ultracode already on, launch with `claude --effort ultracode`, which also sets the effort level to `xhigh`. Requires Claude Code v2.1.203 or later.
+To start a session with ultracode already on, launch with `claude --effort ultracode`, which also sets the effort level to `xhigh`.
 
 To turn it on from the `/effort` slider, press `Tab` to flip the **Ultracode** toggle, then `Enter` to apply it. [Adjust effort level](/docs/en/model-config#adjust-effort-level) lists the routes that turn ultracode on.
 
@@ -461,7 +461,7 @@ When your organization's [`availableModels` allowlist](/docs/en/model-config#res
 
 ### Set a size guideline
 
-A size guideline tells Claude how many agents to aim for when it writes a dynamic workflow. Claude Code sends the guideline to Claude as advice, not a cap, so a prompt that calls for a different scale still overrides it. Requires Claude Code v2.1.202 or later.
+A size guideline tells Claude how many agents to aim for when it writes a dynamic workflow. Claude Code sends the guideline to Claude as advice, not a cap, so a prompt that calls for a different scale still overrides it.
 
 Each value maps to an agent count:
 

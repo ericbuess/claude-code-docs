@@ -40,13 +40,13 @@ The SDK also disables tool search when `ANTHROPIC_BASE_URL` points to a non-firs
 
 | Value | Behavior |
 | :- | :- |
-| (unset) | Tool search is on. Tool definitions are deferred and discovered on demand. Falls back to loading upfront on Google Cloud's Agent Platform models earlier than the Claude 4.5 generation, a non-first-party `ANTHROPIC_BASE_URL`, or a Microsoft Foundry deployment hosted on Azure. |
-| `true` | Tool search is always on, except on a Microsoft Foundry deployment hosted on Azure, where the server-side rejection still forces upfront loading, and on Google Cloud's Agent Platform models earlier than the Claude 4.5 generation, where the SDK keeps loading tool definitions upfront. The SDK sends the beta header through proxies, and requests fail on proxies that don't support `tool_reference` blocks. |
+| (unset) | Tool search is on. Tool definitions are deferred and discovered on demand. Falls back to loading upfront on models earlier than Opus 4 and Sonnet 4, Google Cloud's Agent Platform models earlier than Opus 4.5, Sonnet 4.5, and Haiku 4.5, a non-first-party `ANTHROPIC_BASE_URL`, or a Microsoft Foundry deployment hosted on Azure. |
+| `true` | Tool search stays on with a non-first-party `ANTHROPIC_BASE_URL`. The other (unset) fallbacks still apply. The SDK sends the beta header through proxies, and requests fail on proxies that don't support `tool_reference` blocks. |
 | `auto` | Counts the tokens in the tool definitions that tool search can defer and compares the total against the model's context window. When the total reaches 10% of the window, tool search activates. Below that, the SDK loads every tool definition into context upfront. |
 | `auto:N` | Same as `auto` with a custom percentage. `auto:5` activates when those definitions reach 5% of the context window. Lower values activate sooner. |
 | `false` | Tool search is off. All tool definitions are loaded into context on every turn. |
 
-Setting [`CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS`](/docs/en/env-vars) keeps tool search off. You can't override it by setting `ENABLE_TOOL_SEARCH` yourself. Your organization can keep tool search on through [managed settings](/docs/en/managed-settings), on Claude Code v2.1.227 or later. [Disable pre-release capabilities](/docs/en/llm-gateway-protocol#disable-pre-release-capabilities) covers where the override applies and what the variable strips.
+Setting [`CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS`](/docs/en/env-vars) keeps tool search off. You can't override it by setting `ENABLE_TOOL_SEARCH` yourself. On Claude Code v2.1.227 or later, your organization can keep tool search on under this variable through [managed settings](/docs/en/managed-settings). In a session that [gets the HIPAA configuration](/docs/en/hipaa-setup#check-how-developers-sign-in-and-connect), tool search is off, and neither `ENABLE_TOOL_SEARCH` nor managed settings turns it back on. [Disable pre-release capabilities](/docs/en/llm-gateway-protocol#disable-pre-release-capabilities) covers where the override applies and what the variable strips.
 
 Tool search applies to all registered tools, whether they come from remote MCP servers or [custom SDK MCP servers](/docs/en/agent-sdk/custom-tools). When you use `auto`, the SDK counts every definition that tool search can defer toward one combined threshold: each MCP tool that isn't marked [`alwaysLoad`](/docs/en/mcp#exempt-a-server-from-deferral), from any server, plus the built-in tools that load on demand. The SDK loads core built-in tools such as Bash, Read, and Edit upfront and doesn't count them toward the threshold. A [mod](/docs/en/plugins/mods/reference#tools) in one of your plugins can also defer a tool or load it upfront, which changes that count.
 
@@ -159,7 +159,7 @@ For the full set of system prompt options, see [Modifying system prompts](/docs/
 
 * **Maximum tools:** 10,000 tools in your catalog
 * **Search results:** returns up to five most relevant tools per search by default
-* **Model support:** Claude Sonnet 4.5, Claude Haiku 4.5, Claude Opus 4.5, and later models; see [model compatibility in the API docs](https://platform.claude.com/docs/en/agents-and-tools/tool-use/tool-search-tool#model-compatibility) for the current list. The same minimums apply on Google Cloud's Agent Platform.
+* **Model support:** Opus 4, Sonnet 4, Haiku 4.5, and later models, or Opus 4.5, Sonnet 4.5, Haiku 4.5, and later models on Google Cloud's Agent Platform. On earlier models the SDK loads tool definitions upfront, as [Configure tool search](#configure-tool-search) describes.
 
 ## Related documentation
 

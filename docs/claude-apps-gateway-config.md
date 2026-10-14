@@ -1000,7 +1000,7 @@ Claude Code applies some delivered `env` variables without showing the developer
 
 The gateway's [telemetry](#telemetry) configuration pushes `OTEL_EXPORTER_OTLP_ENDPOINT`, so setting `telemetry.forward_to` triggers the dialog on each interactive client. The dialog protects the developer's machine from a compromised or hostile gateway, not the organization from the developer.
 
-A [non-interactive run](/docs/en/server-managed-settings#security-approval-dialogs), such as `claude -p`, an Agent SDK session, or a session in Claude Desktop's Code tab, can't show the dialog. It applies the pushed settings for that run only and doesn't record them as approved, so the developer's next interactive session still shows the dialog. Before v2.1.207, a non-interactive run saved the settings as approved and no later interactive session showed the dialog for them.
+A [non-interactive run](/docs/en/server-managed-settings#security-approval-dialogs), such as `claude -p`, an Agent SDK session, or a session in Claude Desktop's Code tab, can't show the dialog. It applies the pushed settings for that run only and doesn't record them as approved, so the developer's next interactive session still shows the dialog.
 
 If a developer declines, Claude Code exits that session rather than applying the policy. When you push a new hook, or any env var that triggers the dialog, to a broad policy, every matching developer therefore sees the dialog in their interactive sessions. A running interactive session shows it on the next hourly poll, and otherwise it appears at the developer's next interactive startup.
 

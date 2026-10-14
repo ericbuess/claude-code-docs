@@ -166,7 +166,7 @@ You need Claude Code v2.1.228 or later. If you turned [feature-flag fetching](/d
 
 Your [permission mode](/docs/en/permission-modes) decides what Claude does when a sent comment arrives:
 
-* **Claude replies on its own**: when your permission mode lets Claude post the reply without asking you, Claude reads the thread and replies, and edits the artifact when the comment asks for a change. You see `Auto-replied to comment thread on Artifact: <name>` or `Auto-edited Artifact: <name> in response to a comment thread`.
+* **Claude replies on its own**: if you're in a permission mode that lets Claude post the reply without asking you, Claude reads the thread and replies. You see `Auto-replied to comment thread on Artifact: <name>`.
 * **Claude waits for you**: outside plan mode, when posting the reply would need your approval, you see `Comments are waiting on Artifact: <name>`. Claude then asks you for approval to read the thread, and again to post the reply.
 * **Claude pauses in plan mode**: you see `Comments are waiting on Artifact: <name>`, and Claude doesn't reply until you leave plan mode and ask it to read and reply.
 

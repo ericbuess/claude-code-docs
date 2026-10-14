@@ -599,8 +599,8 @@ Events additionally include the following attributes. These are never attached t
 
 * `prompt.id`: UUID correlating a user prompt with all subsequent events until the next prompt. See [Event correlation attributes](#event-correlation-attributes).
 * `workspace.host_paths`: host workspace directories selected in the desktop app, as a string array
-* `workflow.run_id`: run identifier, prefixed `wf_`, on the API and tool events emitted by agents that belong to a [Workflow](/docs/en/workflows) tool run. Filtering events by one `workflow.run_id` reconstructs that run's API requests and tool results. The identifier covers the agents the workflow script spawns and any agents those spawn in turn, such as skill invocations. It matches the run identifier reported in the Workflow tool result. Absent on all other events. Requires Claude Code v2.1.202 or later
-* `workflow.name`: name of the workflow, its script's `meta.name`, emitted alongside `workflow.run_id`. Built-in workflow names appear verbatim when the run executes the unmodified built-in script. User-authored names, including edited copies of built-in scripts, are replaced with `custom` unless `OTEL_LOG_TOOL_DETAILS=1` is set. Requires Claude Code v2.1.202 or later
+* `workflow.run_id`: run identifier, prefixed `wf_`, on the API and tool events emitted by agents that belong to a [Workflow](/docs/en/workflows) tool run. Filtering events by one `workflow.run_id` reconstructs that run's API requests and tool results. The identifier covers the agents the workflow script spawns and any agents those spawn in turn, such as skill invocations. It matches the run identifier reported in the Workflow tool result. Absent on all other events.
+* `workflow.name`: name of the workflow, its script's `meta.name`, emitted alongside `workflow.run_id`. Built-in workflow names appear verbatim when the run executes the unmodified built-in script. User-authored names, including edited copies of built-in scripts, are replaced with `custom` unless `OTEL_LOG_TOOL_DETAILS=1` is set.
 
 #### Repository attributes
 
@@ -1260,7 +1260,7 @@ Logged when conversation compaction completes.
 * `pre_tokens`: Approximate token count before compaction
 * `post_tokens`: Approximate token count after compaction
 * `error`: Error message when compaction failed
-* `precompute_reuse`: Only set when `trigger` is `"manual"`. Auto-compaction can prepare a summary in the background before the context window fills, and this attribute records whether `/compact` reused that prepared summary. `"hit"` means it was reused; `"miss_custom_instructions"`, `"miss_hook"`, and `"miss_not_ready"` give the reason a fresh summary was computed instead
+* `precompute_reuse`: Only set when `trigger` is `"manual"` or for an [idle compaction](/docs/en/settings-reference#idlecompaction), which reports `trigger` as `"auto"`. Auto-compaction can prepare a summary in the background before the context window fills, and this attribute records whether the compaction reused that prepared summary. `"hit"` means it was reused; `"miss_custom_instructions"`, `"miss_hook"`, and `"miss_not_ready"` give the reason a fresh summary was computed instead
 
 #### Subagent completed event
 

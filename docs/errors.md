@@ -132,6 +132,7 @@ Match the message you see to a section below.
 | `proxy refused the connection` | [Network](#the-proxy-refused-the-connection) |
 | `403` with `GitHub GraphQL is not available from Claude Code sessions` in a cloud session | [GitHub proxy](/docs/en/cloud-environments#github-proxy) |
 | `The cloud environments service returned an empty response` / `The cloud environments service returned a response in an unexpected format` | [Network](#the-cloud-environments-service-returned-an-empty-or-unexpected-response) |
+| `Failed to fetch session from Sessions API: Failed to fetch session logs` | [Network](#failed-to-fetch-session-from-sessions-api) |
 | `Couldn't reconnect to your Remote Control session` | [Network](#couldnt-reconnect-to-your-remote-control-session) |
 | `N sessions ended while this machine was offline — the environment was cleaned up on the server and can't be resumed.` | [Network](#sessions-ended-while-this-machine-was-offline) |
 | `Couldn't share the transcript.` | [Network](#couldnt-share-the-transcript) |
@@ -151,9 +152,12 @@ Match the message you see to a section below.
 | `Request too large for the API's 32MB request limit` | [Request errors](#request-too-large) |
 | `Image was too large` | [Request errors](#image-was-too-large) |
 | `Unable to resize image` | [Request errors](#unable-to-resize-image) |
+| `Request rejected as unprocessable by the model` | [Request errors](#request-rejected-as-unprocessable-by-the-model) |
 | `PDF too large` / `PDF is password protected` / `pdftoppm is not installed` | [Request errors](#pdf-errors) |
 | `Extra inputs are not permitted` | [Request errors](#extra-inputs-are-not-permitted) |
 | `API Error: 400 ... tools.N.custom.input_schema: JSON schema is invalid` / `Property keys should match pattern` | [Request errors](#tool-input-schema-is-invalid) |
+| `Tool "mcp__<server>__<tool>" is not sent to Claude: its name has <N> characters and the API accepts at most 128` | [Request errors](#mcp-tool-name-over-128-characters) |
+| `tools.N.custom.name: String should have at most 128 characters` | [Request errors](#mcp-tool-name-over-128-characters) |
 | `tool_use.name: String should have at most 200 characters` | [Request errors](#tool-use-name-over-200-characters) |
 | `There's an issue with the selected model` | [Request errors](#theres-an-issue-with-the-selected-model) |
 | `Model ... is not a recognized model id` | [Request errors](#model-is-not-a-recognized-model-id) |
@@ -196,8 +200,11 @@ Match the message you see to a section below.
 | `Error: Cannot use both --append-subagent-system-prompt and --append-subagent-system-prompt-file. Please use only one.` | [Command-line errors](#conflict-between-a-system-prompt-flag-and-its-file-form) |
 | `Cloud sessions cannot be created from a --restricted session` | [Command-line errors](#cloud-sessions-cannot-be-created-from-a-restricted-session) |
 | `Cloud sessions are disabled by your organization's policy` | [Command-line errors](#cloud-sessions-are-disabled-by-your-organizations-policy) |
-| `Couldn't verify your organization's policy for cloud sessions` | [Command-line errors](#cloud-sessions-are-disabled-by-your-organizations-policy) |
+| `Cloud sessions use your claude.ai login`, at the end of a policy denial that names a credential | [Command-line errors](#cloud-sessions-use-your-claude-ai-login) |
+| `Couldn't verify your organization's policy for cloud sessions` | [Command-line errors](#couldnt-verify-your-organizations-policy-for-cloud-sessions) |
+| `Cloud sessions aren't available:` followed by why your organization's policy couldn't be loaded | [Command-line errors](#couldnt-verify-your-organizations-policy-for-cloud-sessions) |
 | `Cloud sessions need a claude.ai sign-in` | [Unable to get organization UUID](/docs/en/claude-code-on-the-web#unable-to-get-organization-uuid) |
+| `Nothing was stashed: "<path>" is now a folder in place of a tracked file or link` / `are now folders in place of tracked files or links` | [Command-line errors](#nothing-was-stashed-because-a-folder-replaced-a-tracked-file) |
 | `Error: --json-schema is not a valid JSON Schema` | [Command-line errors](#the-json-schema-value-is-not-a-valid-json-schema) |
 | `Error: Invalid --agents configuration:` | [Command-line errors](#invalid-agents-configuration) |
 | `Error: --agents takes a JSON object, or a file path only with --print (-p)` | [Command-line errors](#invalid-agents-configuration) |
@@ -257,6 +264,7 @@ Match the message you see to a section below.
 | `Output styles are saved to local settings (.claude/settings.local.json), which this session doesn't load` | [Command-line errors](#output-styles-are-saved-to-local-settings-which-this-session-doesnt-load) |
 | `/recap only runs when you ask for it yourself in this session` | [Command-line errors](#recap-only-runs-when-you-ask-for-it-yourself) |
 | `` `plugin eval` is currently in early access `` / `` `plugin eval` is currently unavailable `` | [Plugin errors](#plugin-eval-is-currently-in-early-access) |
+| `cannot be evaluated where sessions load it` | [Test plugins with evals](/docs/en/plugin-evals#cannot-be-evaluated-where-sessions-load-it) |
 | `Marketplace "<name>" is registered from an untrusted source` | [Plugin errors](#marketplace-is-registered-from-an-untrusted-source) |
 | `Claude Code refuses the marketplace name "<name>"` | [Plugin errors](#claude-code-refuses-the-marketplace-name) |
 | `Marketplace name impersonates an official Anthropic/Claude marketplace` | [Plugin errors](#claude-code-refuses-the-marketplace-name) |
@@ -439,6 +447,7 @@ You can tune retry behavior with these environment variables:
 | [`CLAUDE_CODE_RETRY_WATCHDOG`](/docs/en/env-vars) | unset | Set to `1` in unattended sessions such as CI jobs to retry `429` and `529` capacity errors indefinitely instead of failing after `CLAUDE_CODE_MAX_RETRIES` attempts. Claude Code fails at once when a standard-speed request gets a `429` that reports a spend limit or exhausted usage credits, even one from a [gateway spend cap](#spend-limit-reached) that resets on a schedule. Before v2.1.239, the watchdog retried these indefinitely. For fast mode requests, see [Handle rate limits](/docs/en/fast-mode#handle-rate-limits). On v2.1.199 or later it also raises the default retry count for other transient errors, such as server errors, timeouts, and dropped connections, to 300, roughly three hours of backoff, and removes the cap of 15 on `CLAUDE_CODE_MAX_RETRIES` if you set that variable explicitly. |
 | [`CLAUDE_CODE_RETRY_WATCHDOG_MAX_WAIT_MS`](/docs/en/env-vars) | unset | Maximum time in milliseconds that each API request spends waiting out `429` and `529` errors when `CLAUDE_CODE_RETRY_WATCHDOG` is set. When unset, the wait has no limit. Requires Claude Code v2.1.295 or later. |
 | [`CLAUDE_CODE_OVERLOADED_RETRY_BASE_DELAY_MS`](/docs/en/env-vars) | 500 | Starting delay in milliseconds of the backoff between retries of a request that the API rejects with a `529` overloaded error. Raise it, up to 32000, to spread the retries over a longer window when the API is at capacity. Has no effect when `CLAUDE_CODE_RETRY_WATCHDOG` is set to `1`, or when the rejected request was sent in [fast mode](/docs/en/fast-mode#handle-rate-limits). Requires Claude Code v2.1.292 or later. |
+| [`CLAUDE_CODE_OVERLOADED_RETRY_MAX_DELAY_MS`](/docs/en/env-vars) | 32000 | Ceiling in milliseconds on the backoff between retries of a request that the API rejects with a `529` overloaded error. Raise it, up to 64000, so that later retries keep spreading apart when the API is at capacity. Has no effect when `CLAUDE_CODE_RETRY_WATCHDOG` is set to `1`, or when the rejected request was sent in [fast mode](/docs/en/fast-mode#handle-rate-limits). Requires Claude Code v2.1.296 or later. |
 | [`API_TIMEOUT_MS`](/docs/en/env-vars) | 600000 | Per-request timeout in milliseconds. Raise it for slow networks or proxies. It also caps how long Claude Code waits for response headers, described in [No response from API](#no-response-from-api). |
 | [`CLAUDE_CODE_NONSTREAMING_TIMEOUT_RETRIES`](/docs/en/env-vars) | unset | Limit on re-sends of a [non-streaming request](#streaming-response-ended-before-any-complete-data-was-received) that times out. At the limit, the request fails. A response from Claude that takes longer than the timeout to generate times out again on every re-send, so set a low number such as `0` to fail sooner. Each non-streaming attempt times out after 300 seconds in a local session, or after `API_TIMEOUT_MS` when you set a positive value. Requires Claude Code v2.1.285 or later. |
 | [`CLAUDE_STREAM_FIRST_BYTE_TIMEOUT_MS`](/docs/en/env-vars) | unset | Deadline in milliseconds for the first response byte of a streaming request. Requires Claude Code v2.1.242 or later. For how Claude Code picks the deadline when this is unset, see [No response from API](#no-response-from-api). |
@@ -1971,6 +1980,24 @@ The server accepted the request but answered with a body that isn't the environm
 
 Before v2.1.236, Claude Code showed a raw JavaScript TypeError instead of these messages.
 
+<h3 id="failed-to-fetch-session-from-sessions-api">
+  Failed to fetch session from Sessions API
+</h3>
+
+This message means Claude Code found the [cloud session you asked to pull into your terminal](/docs/en/claude-code-on-the-web#from-cloud-to-terminal) but couldn't read its conversation history from Anthropic's servers, so it didn't open it:
+
+```text theme={null}
+Failed to fetch session from Sessions API: Failed to fetch session logs
+```
+
+You see it after `claude --teleport`, `/teleport`, or choosing the session in the [`/tasks`](/docs/en/commands) list. `claude --teleport <session-id>` prints it and exits with code 1.
+
+**What to do:**
+
+* Run the same teleport again. If it fails the same way, [report the problem](#report-an-error)
+
+Before v2.1.296, Claude Code didn't retry a failed read, and after one it could open the session with an empty conversation and report success instead of printing this message.
+
 <h3 id="couldnt-reconnect-to-your-remote-control-session">
   Couldn't reconnect to your Remote Control session
 </h3>
@@ -2206,6 +2233,20 @@ Claude Code normally resizes large images automatically. These errors mean the i
 * If the message reports a dimension or size limit, resize or recompress the image below that limit before attaching.
 * If the message names a cause, such as a CMYK JPEG, an animated WebP, or a possibly damaged file, re-save the image in the format the message suggests and attach it again.
 
+### Request rejected as unprocessable by the model
+
+The API refused the request as one the model can't process. The message is the API's own.
+
+```text theme={null}
+API Error: 400 Request rejected as unprocessable by the model (too many or oversized images, or unsupported parameters)
+```
+
+Claude Code can remove the oldest images and documents from a refused request and send it again. Before v2.1.290, Claude Code didn't remove images on this refusal, so a long session that accumulated hundreds of them could fail with this error on every turn.
+
+**What to do:**
+
+* If the message keeps appearing in a conversation with images or documents, remove them yourself. Press Esc twice to step back past the turns that added them, or run `/clear` to start fresh.
+
 ### PDF errors
 
 The PDF you attached couldn't be processed. The messages are shown here in their non-interactive form; in an interactive session they instead prompt you to double press esc and try again.
@@ -2268,6 +2309,24 @@ Before v2.1.216, no deployment ran the exclusion checks.
 * If your Claude Code version is earlier than v2.1.216, run `claude update`.
 * Remove or [disable](/docs/en/mcp#disable-a-server-without-removing-it) the MCP server that declares the invalid schema. The error names the tool only by position. On v2.1.216 or later, check each server's log for a line naming a tool whose input schema would be rejected. If no log names one, disable servers one at a time.
 * If you maintain the server, fix the tool's `input_schema`. The schema must be valid JSON Schema, and top-level property names must be 1 to 64 characters long and use only ASCII letters and digits, `_`, `.`, and `-`. See [Tools with invalid input schemas](/docs/en/mcp#tools-with-invalid-input-schemas).
+
+<h3 id="mcp-tool-name-over-128-characters">
+  MCP tool name over 128 characters
+</h3>
+
+An MCP server lists a tool whose full name, such as `mcp__<server>__<tool>`, is longer than the 128 characters the API accepts. Claude Code [leaves that tool out of the tools it sends to Claude](/docs/en/mcp#tools-with-names-longer-than-128-characters), and the server's other tools keep working. In a session you start with `claude --debug` from your shell, Claude Code writes this message to the debug log at `~/.claude/debug/<session-id>.txt`:
+
+```text theme={null}
+Tool "mcp__<server>__<tool>" is not sent to Claude: its name has <N> characters and the API accepts at most 128
+```
+
+**What to do:**
+
+* If you maintain the server, shorten the tool's name.
+* If the server is in your [MCP configuration](/docs/en/mcp#mcp-installation-scopes), give it a shorter name there, such as `db` in place of `analytics-database`. Then update what refers to the server or its tools by the old name, such as [permission rules](/docs/en/permissions#mcp) and [hook matchers](/docs/en/hooks#match-mcp-tools).
+* If a [plugin bundles the server](/docs/en/mcp#plugin-provided-mcp-servers), the tool's full name also includes the plugin name. Ask the plugin's maintainer to shorten the server or tool name.
+
+Before v2.1.292, Claude Code sent the tool anyway, and the API rejected every request that included it with `API Error: 400 ... tools.N.custom.name: String should have at most 128 characters`.
 
 <h3 id="tool-use-name-over-200-characters">
   tool\_use.name over 200 characters
@@ -2850,14 +2909,68 @@ Cloud sessions are disabled by your organization's policy. Contact your organiza
 
 The message appears when you [create a cloud session from the terminal](/docs/en/claude-code-on-the-web#from-terminal-to-cloud) and when you submit a command that needs cloud sessions, such as `/teleport`, `/remote-env`, or `/web-setup`. Before v2.1.268, submitting one of those commands returned [`Unknown command`](#unknown-command) instead.
 
-This is a server-side organization policy, so it can't be overridden from local settings, environment variables, or CLI flags.
-
-If Claude Code hasn't loaded your organization's policy yet or can't fetch it, those commands answer `Couldn't verify your organization's policy for cloud sessions. Check your network connection, then restart Claude Code and try again.` instead.
+If the message instead names a credential this session is using and ends with `Cloud sessions use your claude.ai login.`, see [Cloud sessions use your claude.ai login](#cloud-sessions-use-your-claude-ai-login). If Claude Code couldn't load your organization's policy at all, you see [a different message](#couldnt-verify-your-organizations-policy-for-cloud-sessions) instead.
 
 **What to do:**
 
 * Ask an [Owner](/docs/en/server-managed-settings#access-control) in your organization to enable cloud sessions in the Claude Code admin settings at [claude.ai/admin-settings/claude-code](https://claude.ai/admin-settings/claude-code)
-* If the message says it couldn't verify the policy, check your network connection, then restart Claude Code and try again
+
+<h3 id="cloud-sessions-use-your-claude-ai-login">
+  Cloud sessions use your claude.ai login
+</h3>
+
+When the [policy denial](#cloud-sessions-are-disabled-by-your-organizations-policy) names a credential this session is using and ends with this sentence, Claude Code checked the cloud-session policy of the organization that issued that credential. That organization can differ from the one your claude.ai login belongs to:
+
+```text theme={null}
+Cloud sessions are disabled by your organization's policy. This session is using ANTHROPIC_API_KEY, so Claude Code checked the policy for the organization that key belongs to. Cloud sessions use your claude.ai login.
+```
+
+The last sentence means that cloud sessions run on your claude.ai login rather than on that credential. This form appears when you start, resume, or message a cloud session from your shell, such as with `--cloud` or `--teleport`. Before v2.1.296, Claude Code printed the form that tells you to contact your organization admin in this case too.
+
+<h3 id="couldnt-verify-your-organizations-policy-for-cloud-sessions">
+  Couldn't verify your organization's policy for cloud sessions
+</h3>
+
+These messages mean Claude Code couldn't load your organization's policy, which it checks before it creates, resumes, or messages a [cloud session](/docs/en/claude-code-on-the-web). While the policy request hasn't finished, the message is:
+
+```text theme={null}
+Couldn't verify your organization's policy for cloud sessions. Check your network connection and try again.
+```
+
+Inside a session, a command that needs cloud sessions, such as `/teleport` or `/web-setup`, gives this message too. It does so even where your shell would print a `Cloud sessions aren't available:` form, and its second sentence reads `Check your network connection, then restart Claude Code and try again.`
+
+Once the policy request has failed, the message says what failed. This applies when you start, resume, or message a cloud session from your shell with a flag such as `--cloud` or `--teleport`. With no route to the API, it reads:
+
+```text theme={null}
+Cloud sessions aren't available: couldn't reach api.anthropic.com to load your organization's policy. Check your network or proxy.
+```
+
+Other failures follow the same opening with their own cause, such as a proxy that refused the request with HTTP 403, a server error, or credentials the API didn't accept. When the API didn't accept a credential that this session uses in place of your claude.ai login, such as an `ANTHROPIC_API_KEY` environment variable, the message can also name it and say to unset it:
+
+```text theme={null}
+Cloud sessions aren't available: api.anthropic.com didn't accept this session's credentials when Claude Code asked for your organization's policy. Cloud sessions use your claude.ai login. ANTHROPIC_API_KEY is set, so this session is using API-key auth — unset it (or run in a shell without it) to use cloud sessions.
+```
+
+Before v2.1.296, these failures printed the `Couldn't verify` message too.
+
+**What to do:**
+
+* For the `Couldn't verify` message, check your network connection and try again. Inside a session, restart Claude Code first
+* For a `Cloud sessions aren't available:` message, do what its cause calls for, such as checking your proxy or unsetting the credential it names, then run the command again
+
+<h3 id="nothing-was-stashed-because-a-folder-replaced-a-tracked-file">
+  Nothing was stashed because a folder replaced a tracked file
+</h3>
+
+This message means a folder in your checkout now sits where a git-tracked file or link used to be. It appears after you choose the stash option while pulling a [cloud session](/docs/en/claude-code-on-the-web#from-cloud-to-terminal) into your terminal, for example with `claude --teleport` or `/teleport`. Stashing that state could delete the files inside the folder, so Claude Code refuses the stash and leaves your checkout and index unchanged:
+
+```text wrap theme={null}
+Error: Nothing was stashed: "f" is now a folder in place of a tracked file or link, and stashing could delete what's in it for good. Commit the change or move the folder somewhere else, then try again.
+```
+
+**What to do:**
+
+* Commit the change or move the folder somewhere else, as the message says, then run the teleport again
 
 <h3 id="the-json-schema-value-is-not-a-valid-json-schema">
   The `--json-schema` value is not a valid JSON Schema
@@ -3627,7 +3740,7 @@ Each reason the message can show in parentheses:
   Claude Code couldn't restart
 </h3>
 
-Claude Code was restarting, for example to switch to or from fullscreen rendering after you ran [`/tui`](/docs/en/fullscreen#enable-fullscreen-rendering). It closed the session but couldn't start the new process, so it printed this message and exited with status 1:
+When this message says your conversation is saved, the conversation is on disk and you can pick it up where it stopped. Claude Code was restarting itself, for example to switch to or from fullscreen rendering after you ran [`/tui`](/docs/en/fullscreen#enable-fullscreen-rendering), and couldn't start the new process, so it exited with status 1:
 
 ```text theme={null}
 Claude Code couldn't restart. Your conversation is saved. Start Claude Code again and run /resume to pick it up.
@@ -3637,7 +3750,7 @@ When the restart had no conversation to reopen, for example because `/tui` was y
 
 **What to do:**
 
-* Run `claude` again in your shell from the same directory. If the message said your conversation is saved, run [`/resume`](/docs/en/sessions#resume-a-session) in the new session and select it
+* Run `claude` again in your shell. If the message said your conversation is saved, run [`/resume`](/docs/en/sessions#resume-a-session) in the new session and select the conversation. If it isn't in the list, [widen the session picker](/docs/en/sessions#where-the-session-picker-looks)
 * If restarts keep failing, start Claude Code from your shell with [`claude --debug-file claude-debug.log`](/docs/en/cli-reference#cli-flags). If a restart from that session fails, `claude-debug.log` in the directory you started from records a `Failed to relaunch:` line with the operating system's error. Include that line when you [report the problem](#report-an-error)
 
 <h3 id="couldnt-open-claude-desktop">

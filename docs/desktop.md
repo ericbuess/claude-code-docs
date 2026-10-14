@@ -472,7 +472,7 @@ Connectors are [MCP servers](/docs/en/mcp) with a graphical setup flow. Use them
 
 [Skills](/docs/en/skills) extend what Claude can do. Claude loads them automatically when relevant, or you can invoke one directly: type `/` in the prompt box or click the **+** button and select **Slash commands** to browse what's available. This includes [built-in commands](/docs/en/commands), your [custom skills](/docs/en/skills#create-your-first-skill), project skills from your codebase, and skills from any [installed plugins](/docs/en/plugins/install). Select one and it appears highlighted in the input field. Type your task after it and send as usual.
 
-You can send a command while Claude is working, the same as any other message, and the session returns to idle once the turn finishes. Before v2.1.206, a command sent mid-turn could leave the session showing as running and messages you sent afterward weren't delivered.
+You can send a command while Claude is working, the same as any other message, and the session returns to idle once the turn finishes.
 
 Local sessions load your personal skills from `~/.claude/skills/`. An [SSH](#ssh-sessions) session reads `~/.claude/skills/` from the remote host's home directory, not from your machine.
 

@@ -687,6 +687,7 @@ The table lists each message and its fix. To declare dependencies as an author, 
 | Message | Meaning | How to resolve |
 | :- | :- | :- |
 | `Dependency "<dep>" is not installed` | A declared dependency isn't installed. | Install it in your shell with `claude plugin install <dep>@<marketplace>`, or uninstall the plugin. If the dependency's marketplace isn't registered yet, add it and run `/reload-plugins` in your session, which installs the missing dependencies it can resolve. |
+| `"<name>@synced" is loaded from your claude.ai account but meets a marketplace dependency only for other claude.ai plugins`, inside the `is not installed` message | The dependency names a marketplace, and a plugin of that name is loaded from your claude.ai account. The plugin that declares the dependency doesn't load from claude.ai, so the claude.ai plugin doesn't meet it. | In your shell, run `claude plugin install <dep>@<marketplace>` to install the dependency from its marketplace. The marketplace copy then loads instead of the claude.ai one. |
 | `Dependency "<dep>" is disabled` | The dependency is installed but turned off. | Enable the dependency, or uninstall the plugin that needs it. |
 | `Requires "<dep>" <range>, installed <version>` | The installed dependency's version is outside the plugin's declared range. | Update the dependency to a version in the range, or uninstall the plugin. |
 | `<Plugin or Dependency> "<name>" has conflicting version requirements` | No version satisfies every range that pins it. The message lists the ranges. | Uninstall or update one of the conflicting plugins, or ask the upstream author to widen its constraint. |
@@ -694,7 +695,7 @@ The table lists each message and its fix. To declare dependencies as an author, 
 | `... has no git tag satisfying <range>` | The dependency's repository has no `<name>--v*` tag in the range. | Check that the upstream tags releases with that convention, or relax the range. |
 | `Dependency "<dep>" (required by <plugin>) is in <marketplace>, which is not in the allowlist` | The dependency is in a different marketplace, and cross-marketplace resolution is off by default. | Install the dependency yourself at the same scope, in your shell with `claude plugin install <dep>@<marketplace>` plus the `--scope` you're installing the plugin at, then retry. |
 
-To see these programmatically, run `claude plugin list --json` in your shell. Plugins with problems carry an `errors` field with the messages and an `errorDetails` field with a `type` for each: the first two rows are `dependency-unsatisfied` and the third is `dependency-version-unsatisfied`.
+To see these programmatically, run `claude plugin list --json` in your shell. Plugins with problems carry an `errors` field with the messages and an `errorDetails` field with a `type` for each: the first three rows are `dependency-unsatisfied` and the fourth is `dependency-version-unsatisfied`.
 
 ## Plugin installed but not working
 

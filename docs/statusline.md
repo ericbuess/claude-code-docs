@@ -1150,9 +1150,9 @@ Each entry in the `tasks` array describes one subagent row with the fields below
 | `description` | string | Short description of the task, such as the one Claude gave when it spawned the subagent |
 | `label` | string | Short progress summary of the task when Claude Code has one, otherwise the same text as `description` |
 | `startTime` | number | When the task started, in milliseconds since the Unix epoch |
-| `model` | string, optional | ID of the resolved model the task runs on. Omitted until the model is resolved. Requires Claude Code v2.1.205 or later |
+| `model` | string, optional | ID of the resolved model the task runs on. Omitted until the model is resolved |
 | `effort` | string or number, optional | Reasoning effort set for the subagent in its [definition frontmatter](/docs/en/sub-agents#supported-frontmatter-fields) or on the individual invocation: `low`, `medium`, `high`, `xhigh`, `max`, or a numeric token budget. This is the configured value, and the effort Claude Code applies can differ when the model doesn't support that level. Omitted when no effort is set. Requires Claude Code v2.1.213 or later |
-| `contextWindowSize` | number, optional | Context window of `model` in tokens, computed the same way as the main status line's [`context_window.context_window_size`](#context-window-fields), so you can render a per-row percentage from `tokenCount`. Omitted when `model` is. Requires Claude Code v2.1.205 or later |
+| `contextWindowSize` | number, optional | Context window of `model` in tokens, computed the same way as the main status line's [`context_window.context_window_size`](#context-window-fields), so you can render a per-row percentage from `tokenCount`. Omitted when `model` is |
 | `tokenCount` | number | Running token count of the subagent, the figure the default row shows |
 | `tokenSamples` | array of numbers | Up to the last 16 `tokenCount` readings, one per refresh tick, oldest first and ending with the current one |
 | `cwd` | string | Working directory of the subagent: its own directory when it runs in one, such as an isolated worktree, otherwise the session's working directory |

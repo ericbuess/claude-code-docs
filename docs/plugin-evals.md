@@ -670,6 +670,20 @@ For each run, Claude Code switches off git hooks, credential helpers, and other 
 
 Before v2.1.283, `claude plugin eval` didn't check the git version, and on an older git the suite ran with those programs left on.
 
+<h3 id="cannot-be-evaluated-where-sessions-load-it">
+  "cannot be evaluated where sessions load it"
+</h3>
+
+You ran `claude plugin eval` in your shell with the name of a plugin installed from a marketplace you [added from a local path](/docs/en/plugins/loading#in-place-and-copied-plugins). No session could load the plugin from that marketplace now, so the command refuses with this message and exits with code 1.
+
+```text theme={null}
+Error: formatter@my-marketplace cannot be evaluated where sessions load it: no session could load it now. Its marketplace is a folder whose catalog could not be read, or lists it no more. Check the marketplace with `claude plugin marketplace list`, or pass ./<dir> to evaluate a directory.
+```
+
+The sentence after `no session could load it now.` names what failed.
+
+Run `claude plugin marketplace list` in your shell and fix what the message names. For example, restore the marketplace directory or put the plugin's entry back in its catalog. To evaluate the plugin's source without the marketplace, pass its directory as the target, such as `claude plugin eval ./plugins/formatter`.
+
 ### "No eval cases found"
 
 No `<case>/prompt.md` or `<case>/case.yaml` exists beneath the eval directory in effect, or your `--case` and `--tag` filters matched no case. Run from the plugin root, or run `claude plugin eval init` to create a suite.

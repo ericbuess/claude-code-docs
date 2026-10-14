@@ -188,7 +188,7 @@ For the code behind each choice, see [React to events](/docs/en/plugins/mods/eve
 
 ### Where mods run
 
-A mod's hooks run in every kind of session that loads the plugin. Drawing is narrower: only the terminal and the Desktop app show a mod's panes, bands, and replaced rows. This table lists each place you might run Claude Code:
+A mod's hooks run in every kind of session that loads the plugin, whichever provider serves the model, including Amazon Bedrock, Google Cloud's Agent Platform, and Microsoft Foundry. Drawing is narrower: only the terminal and the Desktop app show a mod's panes, bands, and replaced rows. This table lists each place you might run Claude Code:
 
 | Where you run Claude Code | Hooks run | What the mod draws appears |
 | :- | :- | :- |
@@ -233,7 +233,7 @@ This table lists each entry by the name `/plugin` shows:
 | `cc-plugin-plugin-authoring` | Gives Claude the [`plugin-authoring` skill](/docs/en/plugins/mods/create#ask-claude-for-a-mod) for writing mods. It holds a skill and no mod code. | Unless Anthropic has turned installed mods off remotely | Disable it in `/plugin` |
 | `cc-plugin-sec-default` | Guards what your organization manages from the mods a user installs | [Where the guard loads](/docs/en/plugins/mods/admin#know-what-happens-by-default) | You can't. An administrator [sets the order](/docs/en/plugins/mods/admin#install-your-organizations-mods) in managed settings |
 | `cc-plugin-telemetry` | Sends the analytics records that Claude Code and its built-in mods log | Wherever Claude Code's own analytics are on | Disable it in `/plugin`, or turn analytics off, for example with [`DISABLE_TELEMETRY`](/docs/en/env-vars) |
-| `cc-plugin-you-should-know` | Runs a side agent that watches your back while Claude works on longer tasks. When it finds something worth knowing that you might miss, it shows you a note above the prompt. | Disabled by default. Listed in `/plugin` -> **Installed** -> **Show disabled** if available for your org. Enable with [`/plugin enable cc-plugin-you-should-know@builtin`](/docs/en/plugins/cli-reference#plugin-in-a-session). | Disable it in `/plugin` |
+| `cc-plugin-you-should-know` | [You should know](/docs/en/interactive-mode#you-should-know-suggestions): a side agent shows a note above the prompt when it finds something you might have missed | Off until you [turn it on](/docs/en/interactive-mode#you-should-know-suggestions) | Disable it in `/plugin` |
 
 The settings and flags that stop installed mods, such as `disableAllHooks`, `--bare`, and `--safe-mode`, don't stop built-in mods.
 

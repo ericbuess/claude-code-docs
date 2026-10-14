@@ -806,6 +806,7 @@ type SDKControlInitializeResponse = {
     | "malformed"
     | "not_honoured"
   >;
+  claude_code_version?: string;
 };
 ```
 
@@ -819,6 +820,11 @@ Claude Code omits the field when the request carried no hooks. When the request 
 Before Agent SDK v0.3.238, the response never carried the field, and Claude Code ignored `hooks` on every repeated initialize.
 
 The request's `sdkMcpServerManifests` field and the response's `sdk_mcp_manifests_parked` field are for the in-process [SDK MCP servers](/docs/en/agent-sdk/custom-tools) you created with [`createSdkMcpServer()`](#createsdkmcpserver). Your application doesn't set or read either field.
+
+`claude_code_version` is the Claude Code version of the process that runs the session's turns. It is the same value the [`SDKSystemMessage`](#sdksystemmessage) init message carries, so you can read the CLI version before the first turn.
+
+* The field requires Agent SDK v0.3.296 or later, which bundles Claude Code v2.1.296.
+* If the field is `undefined` and you set `pathToClaudeCodeExecutable`, point it at Claude Code v2.1.296 or later.
 
 The response always reports `fast_mode_state`, and when something blocks [fast mode](/docs/en/fast-mode), `fast_mode_disabled_reason` carries the reason code alongside it, so you can explain the blocked state instead of re-deriving availability. Both behaviors require Claude Code v2.1.219 or later. Before v2.1.219, the response omitted `fast_mode_state` when fast mode wasn't available and never carried a reason. For the reason codes and their meanings, see [`fast_mode_disabled_reason`](#sdkresultmessage) on the result message.
 
@@ -1121,7 +1127,7 @@ type AgentDefinition = {
 | `initialPrompt` | No | Auto-submitted as the first user turn when this agent runs as the main thread agent |
 | `maxTurns` | No | Maximum number of agentic turns (API round-trips) before stopping |
 | `background` | No | Run this agent as a non-blocking background task when invoked |
-| `omitClaudeMd` | No | Run this agent without the user, project, and local CLAUDE.md files when it runs as a subagent; managed policy files still load. Use it for agents that take everything they need from the Agent tool prompt. Ignored when this agent runs as the main thread agent. Requires TypeScript Agent SDK v0.3.271 or later |
+| `omitClaudeMd` | No | Leave the user, project, and local CLAUDE.md files out of this agent's initial context; managed policy files still load. Use it for agents that take everything they need from the Agent tool prompt. Ignored when this agent runs as the main thread agent. Requires TypeScript Agent SDK v0.3.271 or later |
 | `memory` | No | Memory source for this agent: `'user'`, `'project'`, or `'local'` |
 | `effort` | No | Reasoning effort level for this agent. Accepts a named level or an integer |
 | `permissionMode` | No | Permission mode for tool execution within this agent. The [subagent inheritance rules](/docs/en/agent-sdk/permissions#available-modes) decide when it applies. See [`PermissionMode`](#permissionmode) |
@@ -3142,10 +3148,14 @@ type FileReadInput = {
   offset?: number;
   limit?: number;
   pages?: string;
+  allow_large?: boolean;
 };
 ```
 
-Reads files from the local filesystem, including text, images, PDFs, and Jupyter notebooks. Use `pages` for PDF page ranges (for example, `"1-5"`).
+Reads files from the local filesystem, including text, images, PDFs, and Jupyter notebooks.
+
+* Use `pages` for PDF page ranges (for example, `"1-5"`).
+* `allow_large` lets Claude read a text file past the [usual size limits](/docs/en/tools-reference#large-files) when the session's context window has room. It requires Agent SDK v0.3.296 or later, which bundles Claude Code v2.1.296.
 
 For a PDF, Claude receives the file's contents inside the Read call's `tool_result` content. A read that returns the `pdf` [output](#tool-output-types) carries a summary `text` block followed by a `document` block. One that returns the `parts` output carries the summary `text` block followed by one block per extracted page: an `image` block, or a `text` block naming the page when Claude Code couldn't render it as an image. Before Agent SDK v0.3.242, Claude Code delivered the file's contents as a separate `user` message after the tool result.
 

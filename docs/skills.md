@@ -29,7 +29,7 @@ Most bundled skills are available in every session. A few depend on a specific f
 To turn bundled skills off, use the [`disableBundledSkills`](/docs/en/settings-reference#disablebundledskills) setting.
 
 <Note>
-  The [`/doctor`](/docs/en/commands#all-commands) setup checkup stays typable when `disableBundledSkills` is on, in Claude Code v2.1.205 and later. To hide it, set the `DISABLE_DOCTOR_COMMAND` environment variable or a [`skillOverrides`](#override-skill-visibility-from-settings) entry of `"doctor": "off"`. Before v2.1.205, `/doctor` was a built-in command rather than a bundled skill.
+  The [`/doctor`](/docs/en/commands#all-commands) setup checkup stays typable when `disableBundledSkills` is on. To hide it, set the `DISABLE_DOCTOR_COMMAND` environment variable or a [`skillOverrides`](#override-skill-visibility-from-settings) entry of `"doctor": "off"`.
 </Note>
 
 Bundled skills are listed alongside built-in commands in the [commands reference](/docs/en/commands), marked **Skill** in the Purpose column.
@@ -63,7 +63,7 @@ Three bundled skills work together to launch your app and confirm changes agains
 
 `/verify` can also record its own recipe. When it has to build and drive your app without a recorded recipe, it writes what worked to `.claude/skills/verify/SKILL.md` at the repo root, or in the touched package directory in a monorepo, so later runs and other agents follow the same steps. At the repo root, the recorded skill replaces the bundled `/verify`.
 
-Claude edits the recorded file only when it steered a run wrong, such as a command that failed or a missing step, so you can commit the file without per-session diffs. Before v2.1.205, the bundled skill told Claude to fold in anything a run learned, which caused frequent merge conflicts.
+Claude edits the recorded file only when it steered a run wrong, such as a command that failed or a missing step, so you can commit the file without per-session diffs.
 
 ### Run your checks before each commit
 
@@ -794,7 +794,9 @@ Skills and [subagents](/docs/en/sub-agents) work together in two directions:
 | Skill with `context: fork` | From agent type | SKILL.md content | CLAUDE.md, per the agent's [startup context](/docs/en/sub-agents#what-loads-at-startup) |
 | Subagent with `skills` field | Subagent's markdown body | Claude's delegation message | Preloaded skills + CLAUDE.md, per the subagent's [startup context](/docs/en/sub-agents#what-loads-at-startup) |
 
-With `context: fork`, you write the task in your skill and pick an agent type to execute it. The built-in Explore and Plan agents [skip CLAUDE.md and git status](/docs/en/sub-agents#what-loads-at-startup) to keep their context small, so a forked skill using `agent: Explore` sees only the SKILL.md content and the agent's own system prompt. For the inverse, where you define a custom subagent that uses skills as reference material, see [Subagents](/docs/en/sub-agents#preload-skills-into-subagents).
+With `context: fork`, you write the task in your skill and pick an agent type to execute it. The built-in Explore and Plan agents [start without CLAUDE.md and git status](/docs/en/sub-agents#what-loads-at-startup) to keep their context small. Put everything the task needs in your SKILL.md. A forked skill using `agent: Explore` starts with that content and the agent's own system prompt, and none of your CLAUDE.md files.
+
+For the inverse, where you define a custom subagent that uses skills as reference material, see [Subagents](/docs/en/sub-agents#preload-skills-into-subagents).
 
 #### Example: Research skill using Explore agent
 

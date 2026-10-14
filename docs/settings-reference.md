@@ -690,6 +690,7 @@ scope: "Which settings files can set the key: user (~/.claude/settings.json), pr
 | [`gcpAuthRefresh`](#gcpauthrefresh) | Refresh [Google Cloud credentials](/docs/en/google-vertex-ai#advanced-credential-configuration) with your own command | Authentication and providers | Any file |
 | [`hooks`](#hooks) | Run your own commands as [hooks](/docs/en/hooks) at points in Claude Code's lifecycle | Hooks and automation | Any file |
 | [`httpHookAllowedEnvVars`](#httphookallowedenvvars) | Limit which env vars [HTTP hooks](/docs/en/hooks) can put in headers | Hooks and automation | Any file |
+| [`idleCompaction`](#idlecompaction) | Stop Claude Code from compacting a long conversation while your terminal session is idle | Memory and context | Any file |
 | [`includeCoAuthoredBy`](#includecoauthoredby) | Deprecated; use `attribution` to hide or change commit and PR attribution | Git and attribution | Any file |
 | [`includeGitInstructions`](#includegitinstructions) | Remove the built-in commit and PR instructions from Claude's context | Git and attribution | Any file |
 | [`inputNeededNotifEnabled`](#inputneedednotifenabled) | Get a [push notification](/docs/en/remote-control#mobile-push-notifications) when Claude is waiting on you | Remote, desktop, and notifications | Any file |
@@ -1369,7 +1370,7 @@ Start sessions with [ultracode](/docs/en/workflows#let-claude-decide-with-ultrac
   * `true`: sessions start with ultracode on when dynamic workflows are enabled for you and your model supports `xhigh`
   * `false`: sessions start with ultracode off
 * **Default**: unset, so ultracode is off
-* **Per-session overrides**: `/effort ultracode` turns ultracode on for one session without this key, and `/effort ultracode off` turns it off for one session when this key is `true`. The `--effort ultracode` flag also turns it on for one session, at `xhigh` effort, and requires Claude Code v2.1.203 or later
+* **Per-session overrides**: `/effort ultracode` turns ultracode on for one session without this key, and `/effort ultracode off` turns it off for one session when this key is `true`. The `--effort ultracode` flag also turns it on for one session, at `xhigh` effort
 
 ```json settings.json theme={null}
 {
@@ -2770,7 +2771,7 @@ Have Claude Code [compact the conversation automatically](/docs/en/context-windo
 }
 ```
 
-The manual `/compact` command keeps working while auto-compact is off.
+The manual `/compact` command keeps working while auto-compact is off. If you turn auto-compact off, [idle compaction](#idlecompaction) turns off too.
 
 ### `autoCompactWindow`
 
@@ -2931,6 +2932,7 @@ This example turns off automatic compaction and routes API requests through a pr
   * Variables that change how Claude Code starts or syncs, such as `CLAUDE_CODE_PROCESS_WRAPPER`, `CLAUDE_CODE_SYNC_SKILLS`, `CLAUDE_CODE_SYNC_PLUGINS`, `CLAUDE_CODE_PLUGIN_CACHE_DIR`, and `CLAUDE_CODE_PLUGIN_SEED_DIR`.
   * Variables that set the timers on an unanswered dialog: [`CLAUDE_CODE_USER_DIALOG_TIMEOUT_MS`, `CLAUDE_AFK_TIMEOUT_MS`, and `CLAUDE_AFK_COUNTDOWN_MS`](/docs/en/env-vars#variables).
   * [`CLAUDE_CODE_DISABLE_ATTACHMENTS`](/docs/en/env-vars#variables), which turns off attachment processing.
+  * [`CLAUDE_CODE_DISABLE_FILE_MENTIONS`](/docs/en/env-vars#variables), which stops Claude Code from expanding `@` mentions of files and directories.
 
   Before v2.1.251, project and local settings could also set the variables in this list that choose where Claude Code writes its files or that export session content, except `HOME` and `XDG_CONFIG_HOME`. Before v2.1.290, they could also set the dialog timer variables and `CLAUDE_CODE_DISABLE_ATTACHMENTS`.
 * Identity variables that Claude Code's hosting environments own, such as `CLAUDE_CODE_REMOTE` and `CLAUDE_CODE_ACCOUNT_UUID`, are ignored from every file.
@@ -2958,6 +2960,49 @@ Have Claude Code snapshot files before each edit so [`/rewind`](/docs/en/checkpo
 ```
 
 In a `-p` run or an Agent SDK session, Claude Code ignores this key. The SDK turns checkpointing on with its `enableFileCheckpointing` option, and a bare `-p` run needs `CLAUDE_CODE_ENABLE_SDK_FILE_CHECKPOINTING=true`. See [File checkpointing in the Agent SDK](/docs/en/agent-sdk/file-checkpointing).
+
+### `idleCompaction`
+
+Idle compaction [compacts](/docs/en/context-window#what-survives-compaction) a long conversation that you've stepped away from, shortly before its prompt cache expires. Your next message then sends a summary instead of the whole conversation. When you come back, the conversation shows `Compacted while idle, before the prompt cache expired`.
+
+Idle compaction is on by default for conversations that meet all of these conditions:
+
+* **Session**: you're in an interactive terminal session
+* **Prompt cache**: the conversation is on the [one-hour prompt cache TTL](/docs/en/prompt-caching#which-ttl-each-request-gets)
+* **Feature flags**: Claude Code can [fetch feature flags from Anthropic](/docs/en/env-vars#features-that-need-feature-flag-fetching)
+* **Size**: the conversation's context has reached the token threshold, which you can [change](#change-the-idle-compaction-threshold) from its default of 200,000
+* **Idle time**: about 54 minutes have passed since the last request, and your computer is awake at that point
+
+To turn idle compaction off, set this key to `false`.
+
+* **Scope**: [`Any file`](#scopes)
+* **Type**: Boolean
+  * `true`: Claude Code compacts idle conversations that meet the conditions
+  * `false`: Claude Code doesn't compact while your session is idle
+* **Default**: `true`
+* **Per-session overrides**: [`DISABLE_AUTO_COMPACT`](/docs/en/env-vars) turns idle compaction off along with auto-compaction
+
+```json settings.json theme={null}
+{
+  "idleCompaction": false
+}
+```
+
+The key requires Claude Code v2.1.290 or later. On an earlier version, which ignores this key, turn off [`autoCompactEnabled`](#autocompactenabled) to stop idle compaction.
+
+#### Change the idle compaction threshold
+
+Set [`CLAUDE_CODE_IDLE_COMPACT_MIN_TOKENS`](/docs/en/env-vars) to the number of tokens a conversation's context must reach before idle compaction applies to it. Use a positive whole number. Values below `100000` are raised to `100000`, the lowest threshold.
+
+At the default, a conversation on a 200K context window auto-compacts before it reaches 200,000 tokens. This example lowers the threshold to 150,000 so that those conversations qualify:
+
+```json settings.json theme={null}
+{
+  "env": {
+    "CLAUDE_CODE_IDLE_COMPACT_MIN_TOKENS": "150000"
+  }
+}
+```
 
 ### `plansDirectory`
 
@@ -4783,7 +4828,7 @@ This example stores the `api_endpoint` option for the `deployer` plugin from `ac
 
 Built-in plugins store their options under the same key with an `@builtin` suffix. For example, the [**Project instructions**](/docs/en/memory#choose-which-instruction-files-load) setting that controls whether Claude Code reads `AGENTS.md` files is `pluginConfigs["cc-plugin-agents-md@builtin"].options.instructionFiles`. Before v2.1.285, the plugin's ID was `agents-md@builtin`. Later versions read an entry under either ID.
 
-Claude Code ignores project and local entries because it substitutes these values into plugin hook, MCP, and LSP configurations, and a cloned repository must not be able to supply them. Before v2.1.207, project and local settings were also read.
+Claude Code ignores project and local entries because it substitutes these values into plugin hook, MCP, and LSP configurations, and a cloned repository must not be able to supply them.
 
 ### `prependPlugins`
 
@@ -5238,7 +5283,7 @@ Choose how [background sessions](/docs/en/agent-view#how-file-edits-are-isolated
 }
 ```
 
-Outside a git repository, a [`WorktreeCreate` hook](/docs/en/worktrees#non-git-version-control) that fails releases the block so the session can edit the working directory in place; that release requires Claude Code v2.1.203 or later.
+Outside a git repository, a [`WorktreeCreate` hook](/docs/en/worktrees#non-git-version-control) that fails releases the block so the session can edit the working directory in place.
 
 ### `worktree.location`
 
