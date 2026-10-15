@@ -67,7 +67,6 @@ A new artifact that Claude publishes in response to a prompt you type goes throu
 | The session is in [plan mode](/docs/en/permission-modes#analyze-before-you-edit-with-plan-mode) | Asks before the first publish of each artifact |
 | The publish declares runtime capabilities for the page, such as [connector calls](#pull-live-data-with-mcp-connectors) or [file downloads](#offer-a-file-download) | Asks before that publish |
 | You shared the artifact publicly | Asks once per conversation before changing it |
-| You turned [feature-flag fetching](/docs/en/env-vars#features-that-need-feature-flag-fetching) off | Asks before the first publish of each artifact |
 | Claude publishes in a turn that a [scheduled task](/docs/en/scheduled-tasks) firing in your session started, rather than a prompt you typed | Asks before the first publish of each artifact |
 | Claude can't read the file without your approval | Asks before publishing it. An allow rule for the `Artifact` tool doesn't skip this prompt |
 | In [Manual](/docs/en/permission-modes) or `acceptEdits` mode, Claude makes a small change to an artifact's file it can't edit without your approval, such as a project file in Manual mode | Asks before publishing the change. You're asked even if an allow rule covers the `Artifact` tool, because the edit to the file needs your approval |
@@ -134,7 +133,7 @@ Claude Code asks for your approval before Claude reads the artifact in these cas
 * **Cloud session without network access**: for a [cloud environment](/docs/en/cloud-environments#access-levels), that's the **None** level. In [auto mode](/docs/en/permission-modes#eliminate-prompts-with-auto-mode), the classifier can approve instead; in a [Cowork](https://claude.com/product/cowork) session, the approval is yours alone.
 * **Another organization's public artifact**: Claude Code asks you first, even in auto mode. Where Claude Code can't ask you, such as in `bypassPermissions` mode, Claude can't read the artifact. Claude can read these artifacts only while [feature-flag fetching](/docs/en/env-vars#features-that-need-feature-flag-fetching) is on.
 * **Unconfirmed owner or network setting**: when Claude Code can't confirm who made the artifact, or can't confirm a cloud session's network setting, it asks, and your approval covers that one request.
-* **Plan mode, or feature-flag fetching turned off**: in [plan mode](/docs/en/permission-modes#analyze-before-you-edit-with-plan-mode), or if you turned [feature-flag fetching](/docs/en/env-vars#features-that-need-feature-flag-fetching) off, Claude Code asks before the Artifact tool reads an artifact someone else in your organization made.
+* **Plan mode**: in [plan mode](/docs/en/permission-modes#analyze-before-you-edit-with-plan-mode), Claude Code asks before the Artifact tool reads an artifact someone else in your organization made.
 
 When Claude reads the artifact with WebFetch, WebFetch's own [prompting rules](/docs/en/tools-reference#webfetch-tool-behavior) still apply.
 

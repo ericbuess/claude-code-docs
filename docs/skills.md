@@ -772,6 +772,10 @@ Which commands get the carveout depends on the shell:
 
 With the default `bash` shell, append `|| true` to any other command you expect to exit non-zero. A check script that exits 1 when it finds problems is one example.
 
+#### Control characters in injected commands
+
+`No shell command in <name> was run` means one of the file's `!` commands contains a raw control character other than tab or newline, so none of them runs. See [how to find and remove the character](/docs/en/errors#no-shell-command-was-run).
+
 #### Permission checks on injected commands
 
 Injected commands never prompt for permission while the skill renders. Claude Code checks each one against your [permission rules](/docs/en/permissions) first. A command a deny rule matches aborts the invocation with `Shell command permission check failed for pattern "..."`.

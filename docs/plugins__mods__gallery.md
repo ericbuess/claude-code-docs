@@ -163,7 +163,7 @@ The terminal draws the URL as text after the label. Whether a click opens it dep
 
 ## Show code and changes
 
-`Code` draws source text with Claude Code's own syntax colors, or a diff.
+`Code` draws source text with Claude Code's own syntax colors, or a diff. In the VS Code extension, `Code` shows its `source` as plain text, with none of the colors, line numbers, or diff shading in these screenshots.
 
 ### `Code`
 
@@ -235,7 +235,7 @@ The border stretches to the width of the pane.
 
 `Button`, `Input`, and `Select` are controls: the user moves between them with Tab and uses the one that has the focus. [Keyboard focus and hotkeys](/docs/en/plugins/mods/interface#know-which-keys-your-mod-can-receive) covers which keys reach them.
 
-Opening a pane with `focus: true` gives the pane keyboard focus. Typed letters reach an `Input` once it has the focus, so add `autoFocus: true` to a field that should take typing as soon as the pane opens.
+Open a pane with `focus: true` to request keyboard focus for it. Typed letters reach an `Input` once it has the focus. To choose which field has the focus when the pane opens, see [Set a hotkey and the first focus](/docs/en/plugins/mods/interface#set-a-hotkey-and-the-first-focus).
 
 ### `Button`
 
@@ -359,7 +359,7 @@ A `Raster` rounds each color to a smaller palette, so `0x2e7d32` draws as `#3377
 
 ### `Svg`
 
-An `Svg` draws an SVG document in the Desktop app:
+An `Svg` draws an SVG document in the Desktop app and the VS Code extension:
 
 ```javascript theme={null}
 Svg({

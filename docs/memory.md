@@ -580,6 +580,7 @@ CLAUDE.md content is delivered as a user message after the system prompt, not as
 To debug:
 
 * Run `/context` and check the list under **Memory files** to verify the CLAUDE.md and CLAUDE.local.md files that should load at launch. If one is missing there, Claude can't see it. Use `/memory` to open and edit the files.
+* If an `Instruction file not loaded` notice appears, see [what it means and what to do about it](/docs/en/errors#instruction-file-not-loaded).
 * A `CLAUDE.md` in a subdirectory of your working directory doesn't appear under **Memory files**, because it loads on demand rather than at launch. When it loads, a `Loaded` line with its path appears in the terminal. To test a new one, create it from your shell rather than asking Claude to write it, then ask Claude to read a file in that subdirectory.
 * Check that the relevant CLAUDE.md is in a location that gets loaded for your session (see [Choose where to put CLAUDE.md files](#choose-where-to-put-claude-md-files)).
 * Make instructions more specific. "Use 2-space indentation" works better than "format code nicely."

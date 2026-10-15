@@ -499,7 +499,7 @@ First, add a SessionStart hook to your repo's `.claude/settings.json`. This conf
 
 The `matcher` limits the hook to the `startup` and `resume` events, and `$CLAUDE_PROJECT_DIR` resolves to the repository root, so the hook finds the script regardless of the session's working directory.
 
-Next, create the script at `scripts/install_pkgs.sh`. It exits immediately outside the cloud, then installs your dependencies:
+Next, create the script at `scripts/install_pkgs.sh`. It exits immediately outside the cloud, then installs your dependencies. It skips `npm install` while `package.json`, `package-lock.json`, and the script itself are unchanged since the last successful install:
 
 ```bash theme={null}
 #!/bin/bash
@@ -508,14 +508,29 @@ if [ "$CLAUDE_CODE_REMOTE" != "true" ]; then
   exit 0
 fi
 
-npm install
+cd "$CLAUDE_PROJECT_DIR" || exit 1
+hashes=node_modules/.install_pkgs.sha256
+
+if ! sha256sum --check --status "$hashes" 2>/dev/null; then
+  # Delete the old hashes first, so a failed install runs again next time
+  rm -f "$hashes"
+  if npm install; then
+    sha256sum scripts/install_pkgs.sh package.json package-lock.json > "$hashes" || rm -f "$hashes"
+  fi
+fi
+
+# pip skips requirements that are already satisfied
 pip install -r requirements.txt
 exit 0
 ```
 
 The `CLAUDE_CODE_REMOTE` check is what scopes the install to cloud sessions: the session VM's environment carries that variable as `true`, it's never `true` locally, so on your laptop the script exits before installing anything.
 
-Together, the two files give every cloud session a fresh `npm install` and `pip install` at startup while leaving local sessions untouched.
+To confirm `npm install` succeeded, start a cloud session and ask Claude to show `node_modules/.install_pkgs.sha256`. The file lists a hash for each of the three files. If the file is missing, ask Claude to run `npm install` and report the error.
+
+<Note>
+  If `npm install` reads other files, such as a workspace's `package.json`, an `.npmrc`, or your `postinstall` script's inputs, add them to the `sha256sum` command that saves the hashes. Otherwise, you keep the old packages after one of those files changes.
+</Note>
 
 #### Limitations in cloud sessions
 
@@ -525,7 +540,7 @@ SessionStart hooks behave the same in the cloud as locally, with these caveats:
 * **No cloud-only scoping**: hooks run in both local and cloud sessions. To skip local execution, exit early unless the `CLAUDE_CODE_REMOTE` environment variable is `true`, the way the [dependency install script](#install-dependencies-with-a-sessionstart-hook) does.
 * **Requires network access**: install commands need to reach package registries. If your environment uses **None** network access, these hooks fail. The [default allowlist](#default-allowed-domains) under **Trusted** covers npm, PyPI, RubyGems, and crates.io.
 * **Proxy compatibility**: in Anthropic-hosted environments, all outbound traffic passes through a [security proxy](#security-proxy), and some package managers don't work correctly with it; Bun is a known example. In a [self-hosted environment](/docs/en/self-hosted-environments-deploy#default-deny-egress), outbound traffic goes through your own network boundary instead.
-* **Adds startup latency**: hooks run each time a session starts or resumes, unlike setup scripts which benefit from [environment caching](#environment-caching). Keep install scripts fast by checking whether dependencies are already present before reinstalling.
+* **Adds startup latency**: hooks run each time a session starts or resumes, unlike setup scripts which benefit from [environment caching](#environment-caching). Keep install scripts fast by skipping work that's already done, the way the [dependency install script](#install-dependencies-with-a-sessionstart-hook) does.
 
 To customize the base image, use a setup script to install what you need on top of the [provided image](#installed-tools), or run your own image as a container alongside Claude with `docker compose`. Replacing the base image entirely isn't supported yet.
 

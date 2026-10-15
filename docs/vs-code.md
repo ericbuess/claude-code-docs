@@ -422,6 +422,22 @@ If the session you opened the dialog from can't reload its plugins, the dialog o
 
 For more about the plugin system, see [Plugins](/docs/en/plugins/overview) and [Plugin marketplaces](/docs/en/plugins/overview).
 
+### Plugins that draw in the panel
+
+A plugin that contains a [mod](/docs/en/plugins/mods/overview) can draw in the chat panel. Drawing requires extension version 2.1.299 or later and a session that [fetches feature flags](/docs/en/env-vars#features-that-need-feature-flag-fetching). From such a plugin you can see:
+
+* A pane beside the conversation or above the prompt box
+* A toast or a status line above the prompt box
+* A message or a tool call drawn the plugin's own way
+
+When a plugin you installed adds or changes something in the panel, a label names it, in phrases such as these:
+
+* **From the token-chart plugin**: the plugin drew or printed this, or this card is the plugin asking you something
+* **Edited by the token-chart plugin**: the plugin changed something Claude Code draws, such as a tool call
+* **Prompt from the token-chart plugin**: the plugin sent this message on your behalf
+
+To stop a plugin from drawing, turn the plugin off in the [plugin dialog](#install-plugins).
+
 ## Automate browser tasks with Chrome
 
 Connect Claude to your Chrome browser to test web apps, debug with console logs, and automate browser workflows without leaving VS Code. This requires the [Claude in Chrome extension](https://chromewebstore.google.com/detail/claude/fcoeoabgfenejglbffodgkkbkcdhcgfn) version 1.0.36 or later.

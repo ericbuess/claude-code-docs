@@ -70,6 +70,7 @@ Match the message you see to a section below.
 | `Claude.ai login was rejected — run /login, then /remote-control` | [Authentication](#remote-control-couldnt-refresh-your-login) |
 | `OAuth token unavailable — run /login to restore Remote Control` | [Authentication](#remote-control-couldnt-refresh-your-login) |
 | `Signed out of Claude — run /login, then /remote-control` | [Authentication](#remote-control-couldnt-refresh-your-login) |
+| `Remote Control could not renew this computer's connection` | [Authentication](#remote-control-could-not-renew-this-computers-connection) |
 | `signed-in claude.ai account or organization changed on this machine` | [Authentication](#remote-control-stopped-because-the-signed-in-account-changed) |
 | `Remote Control stopped — the app running this session is now signed in to a different Claude account` | [Authentication](#remote-control-stopped-because-the-app-running-the-session-signed-out-or-switched-accounts) |
 | `Remote Control stopped — the app running this session is signed out of Claude` | [Authentication](#remote-control-stopped-because-the-app-running-the-session-signed-out-or-switched-accounts) |
@@ -215,6 +216,7 @@ Match the message you see to a section below.
 | `couldn't be resolved to a real location, so its skills, commands, and agents weren't loaded` | [Command-line errors](#directory-couldnt-be-resolved-to-a-real-location) |
 | `Error: Workspace not trusted` when starting Remote Control | [Command-line errors](#workspace-not-trusted-when-starting-remote-control) |
 | `` `<flag>` before `remote-control` is not carried over to the sessions Remote Control starts `` | [Command-line errors](#not-carried-over-to-the-sessions-remote-control-starts) |
+| `--sandbox is not supported by claude remote-control` / `--no-sandbox is not supported by claude remote-control` | [Command-line errors](#sandbox-is-not-supported-by-claude-remote-control) |
 | `` `claude import` is not yet available in this build `` | [Command-line errors](#claude-import-is-not-yet-available-in-this-build) |
 | `Could not read Claude Code config` | [Command-line errors](#could-not-read-claude-code-config) |
 | `Could not import <server>: <reason>` | [Command-line errors](#could-not-import-a-server-from-claude-desktop) |
@@ -231,6 +233,7 @@ Match the message you see to a section below.
 | `Shell command failed for pattern "..."`, from `/security-review` or any skill that injects dynamic context | [Command-line errors](#security-review-fails-without-origin-head) |
 | `Shell command permission check failed for pattern "..."`, from a skill that injects dynamic context | [Command-line errors](#security-review-fails-without-origin-head) |
 | ``Skill <name> requires bash (`shell: bash` in frontmatter) but Git Bash was not found`` | [Command-line errors](#security-review-fails-without-origin-head) |
+| `No shell command in <name> was run, because the <tool> tool does not accept one of them` | [Command-line errors](#no-shell-command-was-run) |
 | `Input must be provided either through stdin or as a prompt argument when using --print` | [Command-line errors](#input-must-be-provided-when-using-print) |
 | `Claude Code can't read the keyboard here: stdin is not a terminal` | [Command-line errors](#claude-code-cant-read-the-keyboard-here) |
 | `Error: Input contained only whitespace` | [Command-line errors](#input-contained-only-whitespace) |
@@ -365,6 +368,7 @@ Match the message you see to a section below.
 | `Claude Code exited after an unrecoverable interface error (...)` | [Configuration warnings](#exited-after-an-unrecoverable-interface-error) |
 | `Agent descriptions are over the 15.0k-token limit` | [Configuration warnings](#agent-descriptions-are-over-the-15000-token-limit) |
 | `hook needs quotes around a path with a space` | [Configuration warnings](#hook-needs-quotes-around-a-path-with-a-space) |
+| `Instruction file not loaded` | [Configuration warnings](#instruction-file-not-loaded) |
 | `Not loaded: rename <path>, then restart — its name uses "<name>", a name reserved for the skills synced from your claude.ai account` | [Configuration warnings](#a-skill-command-or-workflow-wasnt-loaded-because-its-name-is-reserved) |
 | `N skill or command names refused: run with --debug to see which ([names]), rename, then restart` | [Configuration warnings](#skill-or-command-name-refused) |
 | `Ignoring N permissions.allow entries from ... this workspace has not been trusted` | [Configuration warnings](#workspace-has-not-been-trusted) |
@@ -375,6 +379,7 @@ Match the message you see to a section below.
 | `Your organization's managed settings allow Claude Code to use: <providers>` | [Configuration warnings](#managed-settings-dont-allow-this-api-provider) |
 | `Your organization's managed settings allow Claude Code to use no API provider at all` | [Configuration warnings](#managed-settings-dont-allow-this-api-provider) |
 | `MCP server <name> is blocked by enterprise managed policy` | [Configuration warnings](#mcp-server-is-blocked-by-enterprise-managed-policy) |
+| `"<name>" is a reserved MCP server name and was not loaded` | [Configuration warnings](#mcp-server-name-is-reserved) |
 | `Managed settings document could not be parsed as a JSON object; none of its settings are in effect. Fix or remove it.` | [Configuration warnings](#managed-settings-document-could-not-be-parsed) |
 | `Managed settings drop-in directory could not be read` | [Configuration warnings](#managed-settings-document-could-not-be-parsed) |
 | `Unable to read managed policy settings` | [Configuration warnings](#unable-to-read-managed-policy-settings) |
@@ -388,6 +393,7 @@ Match the message you see to a section below.
 | `Denying Bash also turns off the PowerShell tool, so Claude has neither` | [Configuration warnings](#denying-bash-also-turns-off-the-powershell-tool) |
 | `CLAUDE_CODE_DISABLE_1M_CONTEXT is set, but the 200K limit isn't enforced` | [Configuration warnings](#the-200k-limit-isnt-enforced) |
 | `[claude-code:unrecognized_model]` | [Configuration warnings](#unrecognized-model-id-on-a-request) |
+| `is ignored — managed settings set allowManagedReadPathsOnly` / `is ignored — managed settings set allowManagedDomainsOnly` | [Configuration warnings](#sandbox-allow-entries-are-ignored-under-a-managed-lock) |
 | `Stale sandbox mask files left by a killed session` | [Configuration warnings](#stale-sandbox-mask-files-left-by-a-killed-session) |
 | Responses seem lower quality than usual | [Response quality](#responses-seem-lower-quality-than-usual) |
 
@@ -1148,6 +1154,21 @@ Claude Code names the cause in the middle of the message:
 Before v2.1.224, `OAuth token refresh failed — run /login to re-authenticate` read `OAuth token refresh failed — re-authenticate, then re-enable Remote Control`, and `JWT refresh failed: no OAuth token — run /login` read `no OAuth token available for recovery (code <N>)`. The `Claude.ai login expired`, `Claude.ai login was rejected`, and `OAuth token unavailable` messages were added in v2.1.225.
 
 Before v2.1.238, Claude Code reported the cases that now say `Signed out of Claude` as `JWT refresh failed: no OAuth token — run /login`, and stopped Remote Control with `Claude.ai login expired — run /login to restore Remote Control` as soon as one login refresh got no answer.
+
+<h3 id="remote-control-could-not-renew-this-computers-connection">
+  Remote Control could not renew this computer's connection
+</h3>
+
+This warning appears in the terminal running [`claude remote-control`](/docs/en/remote-control#start-a-remote-control-session) when the server can't use your claude.ai login to renew its connection's credential before it expires. The warning's last sentence says how long the current credential still works, or that it has already expired:
+
+```text theme={null}
+Remote Control could not renew this computer's connection: claude.ai did not accept the sign-in it uses. Run `claude /login` to sign in again. The connection keeps working for about 26 hours; if it still cannot sign in then, it stops.
+```
+
+**What to do:**
+
+* If the warning tells you to run `claude /login`, open another terminal on the machine running the server, run `claude /login` there, and sign in with your claude.ai account
+* If the server still can't sign in once the connection's credential has expired, it prints an error containing `Poll: Authentication failed (401)` and stops. Sign in again as the warning's second sentence says, then run `claude remote-control` again in the terminal where the server stopped.
 
 <h3 id="remote-control-stopped-because-the-signed-in-account-changed">
   Remote Control stopped because the signed-in account changed
@@ -3116,6 +3137,24 @@ Claude Code also refuses to start for a global flag it doesn't yet recognize as 
 
 Before v2.1.248, `claude remote-control` didn't accept its own flags when a global flag came first, and the command failed with an `unknown option` error.
 
+<h3 id="sandbox-is-not-supported-by-claude-remote-control">
+  `--sandbox` or `--no-sandbox` is not supported by claude remote-control
+</h3>
+
+This error means the command that starts your [Remote Control](/docs/en/remote-control) server passes `--sandbox` or `--no-sandbox` after `remote-control`, and `claude remote-control` accepts neither flag. The server exits with code 1 instead of starting:
+
+```text theme={null}
+Error: --sandbox is not supported by claude remote-control. The flag had no effect and was removed. To sandbox sessions, set sandbox.enabled to true in settings.
+Error: --no-sandbox is not supported by claude remote-control. The flag had no effect and was removed. Remove it from the command.
+```
+
+**What to do:**
+
+* Remove the flag from the command, including in a script or service definition that starts the server for you, then run it again
+* To sandbox the sessions the server starts, turn on [sandboxing](/docs/en/sandboxing) by setting [`sandbox.enabled`](/docs/en/settings-reference#sandbox-enabled) to `true` in a [settings file](/docs/en/settings#where-settings-live)
+
+Both flags were removed from `claude remote-control` in v2.1.300, so a command written for an earlier version can still carry one.
+
 ### claude import is not yet available in this build
 
 You ran [`claude import`](/docs/en/cli-reference#cli-commands), and Claude Code found the import flow turned off, so the command exits with code 1 instead of starting the import. Before v2.1.222, a build with the import flow off treated `import` as a prompt and started an interactive session instead of printing this message.
@@ -3348,16 +3387,36 @@ The message may quote `git log` or a different `git diff` instead. Git creates `
 * A remote whose server-side HEAD points at a branch nobody pushed
 * A repository with no `origin` remote, or one you never fetched
 
-Claude Code shows the same error for any skill that [injects dynamic context](/docs/en/skills#when-an-injected-command-fails), and a failed injected command aborts that skill's invocation. Two sibling strings fire before the command runs at all:
+Claude Code shows the same error for any skill that [injects dynamic context](/docs/en/skills#when-an-injected-command-fails), and a failed injected command aborts that skill's invocation.
+
+Sibling strings fire before the command runs at all:
 
 * `Shell command permission check failed for pattern "..."`: the command's permission check didn't allow it. [Permission checks on injected commands](/docs/en/skills#permission-checks-on-injected-commands) covers which results abort in each permission mode and how to pre-approve a command with `allowed-tools`
 * ``Skill <name> requires bash (`shell: bash` in frontmatter) but Git Bash was not found``: the skill's frontmatter demands bash on a machine without it. Install Git for Windows or change the frontmatter to `shell: powershell`. See [How injected commands run](/docs/en/skills#how-injected-commands-run)
+* `No shell command in <name> was run`: one of the file's `!` commands contains a raw control character other than tab or newline, so none of them runs. See [how to find and remove the character](#no-shell-command-was-run)
 
 **What to do:**
 
 * Create the ref by naming your remote's default branch: `git remote set-head origin <default-branch>`. This works whenever the local tracking ref `origin/<default-branch>` exists. If it doesn't, as in single-branch clones, fetch the branch first: run `git remote set-branches --add origin <branch>`, then `git fetch origin`, then rerun the set-head command. Rerun `/security-review`.
 * If you'd rather not name the branch, run `git fetch origin` and then `git remote set-head origin --auto`, which asks the remote which branch is its default. It fails with `error: Cannot determine remote HEAD` when the remote advertises no default branch, because it is empty or its HEAD points at a branch nobody pushed; name the branch explicitly instead. It fails with `error: Not a valid ref` when your clone doesn't fetch that branch; widen the refspec as above first.
 * If the repository has no remote, add one with `git remote add origin <url>` and fetch before creating the ref. If the remote is empty, push your branch first with `git push -u origin HEAD` and name that branch in the set-head command; `origin/HEAD` then points at the branch you just pushed, so `/security-review` sees an empty diff until the branch diverges from it.
+
+<h3 id="no-shell-command-was-run">
+  No shell command in a skill or command was run
+</h3>
+
+One of the `` !`<command>` `` [dynamic context commands](/docs/en/skills#inject-dynamic-context) in a skill or custom command file contains a raw control character other than tab or newline. Claude Code refuses the whole invocation before any of the file's commands runs.
+
+The message names the shell tool that would have run the commands, Bash or PowerShell, and ends with the refused command. Each such character is replaced by `�` so you can see where it is:
+
+```text theme={null}
+No shell command in /my-skill was run, because the Bash tool does not accept one of them: command contains control characters that would be hidden in the approval dialog. Unprintable characters are shown as � below: remove them from the skill or command file, or from the arguments or options substituted into it.
+build.sh --target�dist
+```
+
+**What to do:**
+
+* Find each `�` in the command quoted at the end of the message. Remove the character it stands for from the skill or command file, or from the arguments or options substituted into the file.
 
 <h3 id="input-must-be-provided-when-using-print">
   Input must be provided when using `--print`
@@ -5215,6 +5274,34 @@ Stop hook needs quotes around a path with a space (check.py)
 
 * In the `command` of the hook that runs the script the notification names, wrap the path in double quotes. In a JSON file, write it as `"command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/check.py\""`.
 
+<h3 id="instruction-file-not-loaded">
+  Instruction file not loaded
+</h3>
+
+This notice in the conversation view of an interactive session means a [memory file](/docs/en/memory#how-claude-md-files-load) that exists wasn't loaded. A read restriction is in force.
+
+```text theme={null}
+Instruction file not loaded (a Read deny rule covers it):
+path: .claude/rules/shared.md
+```
+
+The parenthetical names the reason, for example:
+
+* **`a Read deny rule covers it`**: a `Read` [deny rule](/docs/en/permissions#read-and-edit) matches the file's path as written or where a link on it leads
+* **`it's read from outside your working directories, where reads are blocked`**: the file resolves outside the [working directories](/docs/en/settings-reference#permissions-blockreadsoutsideworkingdirectories) while [`permissions.blockReadsOutsideWorkingDirectories`](/docs/en/settings-reference#permissions-blockreadsoutsideworkingdirectories) is on
+* **`where it leads couldn't be worked out`**: for example, the file is a link that leads back to itself, directly or through other links
+
+When a subdirectory's own memory file can't be loaded as Claude works with files there, the same lines appear in the conversation during the turn. When more files are withheld than the lines name, a final line counts the rest, such as `and 3 more instruction files not loaded`.
+
+**What to do:**
+
+* Nothing, if the restriction is intended: the session runs without that file's instructions.
+* To load a file withheld because `a Read deny rule covers it`, [remove or narrow that rule](/docs/en/permissions#manage-permissions). Then start a new session.
+* To load a file withheld because `it's read from outside your working directories, where reads are blocked`, move it or its link target inside the working directories. Then start a new session.
+* To load a file withheld because `where it leads couldn't be worked out`, check whether the file is a link that leads back to itself. If it is, point the link at a file that exists or put a regular file in its place. Then start a new session.
+
+Before v2.1.292, the notice named the file at the end of the same line after the reason.
+
 <h3 id="a-skill-command-or-workflow-wasnt-loaded-because-its-name-is-reserved">
   A skill, command, or workflow wasn't loaded because its name is reserved
 </h3>
@@ -5394,6 +5481,21 @@ Any of these settings can produce the message:
 * If none of your own settings explains the block, ask your administrator which managed setting blocks the server
 
 Before v2.1.257, **Reconnect** and re-enable in `/mcp` could connect a server that a mid-session policy update blocked.
+
+<h3 id="mcp-server-name-is-reserved">
+  MCP server name is reserved
+</h3>
+
+This message names one of your MCP servers, whose name is among those Claude Code reserves, such as the names of its built-in servers:
+
+```text theme={null}
+"workspace" is a reserved MCP server name and was not loaded
+```
+
+**What to do:**
+
+* Rename the server where you define it, for example from `workspace` to `my-workspace`
+* For other reserved names to avoid, see [MCP configuration warnings](/docs/en/mcp#configuration-warnings)
 
 <h3 id="managed-settings-document-could-not-be-parsed">
   Managed settings document could not be parsed
@@ -5658,6 +5760,24 @@ Claude Code doesn't write the line for provider IDs it resolves to a model it re
 * If the ID is a typo, fix it in whichever of the [places you can set a model](/docs/en/model-config#setting-your-model) or [alias variables](/docs/en/model-config#environment-variables) holds it. If `query_source` starts with `agent:`, fix it where you set the [subagent's model](/docs/en/sub-agents#choose-a-model) instead.
 
 Before v2.1.233, Claude Code wrote no line when it sent a request for a model ID it didn't recognize.
+
+<h3 id="sandbox-allow-entries-are-ignored-under-a-managed-lock">
+  Sandbox allow entries are ignored under a managed lock
+</h3>
+
+This warning in `/status` and `claude doctor` means managed settings set [`allowManagedReadPathsOnly`](/docs/en/settings-reference#sandbox-filesystem-allowmanagedreadpathsonly) or [`allowManagedDomainsOnly`](/docs/en/settings-reference#sandbox-network-allowmanageddomainsonly), so the [`allowRead`](/docs/en/settings-reference#sandbox-filesystem-allowread) or [`allowedDomains`](/docs/en/settings-reference#sandbox-network-alloweddomains) entries in the file it names don't apply:
+
+```text wrap theme={null}
+sandbox.filesystem.allowRead is ignored — managed settings set allowManagedReadPathsOnly, so only allowRead paths from managed settings are honored. The 3 entries in /home/you/.claude/settings.json will NOT apply (see https://code.claude.com/docs/en/settings#sandbox-settings).
+```
+
+For the network lock, the warning names `sandbox.network.allowedDomains` and `allowManagedDomainsOnly`, and says `only allowed domains (and WebFetch domain rules) from managed settings are honored`.
+
+**What to do:**
+
+* You don't have to act on the warning
+* If you need those paths or domains and your organization's managed settings set the lock, ask your administrator to add them to those settings. The warning stays until you also remove the entries from the named file.
+* To clear the warning, remove the entries from the named file. For a file you share, such as a project's `.claude/settings.json`, you can leave the entries in for teammates without the lock and leave the warning showing.
 
 ### Stale sandbox mask files left by a killed session
 

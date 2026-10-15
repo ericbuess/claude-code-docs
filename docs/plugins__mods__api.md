@@ -212,6 +212,8 @@ A background job can show the user something without starting a turn. Each of th
 | `$.ui.toast(text)` | A toast notification with the mod's name that disappears after a few seconds. It's a box at the top right in [fullscreen rendering](/docs/en/fullscreen), and one line at the right under the prompt in the classic renderer. |
 | `$.ui.log(text)` | A dim line in the transcript that Claude doesn't read. It starts with `●` and the mod's name, as in `● my-mod: build finished`. |
 
+In the [VS Code extension](/docs/en/plugins/mods/interface#draw-in-the-vs-code-extension), status lines and toasts show above the prompt box instead, and log lines in the conversation.
+
 ### Start a turn from a background job
 
 When a background job finds something that needs Claude's attention, it can start a turn by submitting a prompt with `$.prompt.submit({ text })`. Claude reads the text after a sentence that names your mod as the sender. To send it as the user's own words, without that sentence, add `asUser: true`. The call waits until the session is idle and then starts a new turn. It resolves when that turn starts, so don't `await` it in a handler that runs while Claude is working.

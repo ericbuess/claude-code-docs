@@ -225,15 +225,18 @@ Before v2.1.290, Claude Code dropped a toast raised within two seconds of the la
 
 ### Hotkeys do nothing
 
-Your pane doesn't have keyboard focus.
+Your pane doesn't have keyboard focus, or the drawing is in the VS Code extension, where buttons have no hotkeys. Do the one that matches:
 
-Press Ctrl+X then Tab, or click the pane. Open it with `focus: true` from a command.
+* **No keyboard focus**: press Ctrl+X then Tab, or click the pane. To have the pane take focus when it opens, open it with `focus: true` from a command.
+* **In the VS Code extension**: click the button, or press Enter on it once it has focus
 
-### A drawing works in the terminal and not in the Desktop app
+### A drawing works in the terminal and not in the Desktop app or VS Code
 
-The site or element isn't available there.
+Either that app doesn't draw the site or element, or the session is one where the VS Code extension draws nothing for mods. The mod's other hooks still run. Check for these causes:
 
-Check the [render sites](/docs/en/plugins/mods/reference#render-sites) and [elements](/docs/en/plugins/mods/reference#elements) tables.
+* **The site or element isn't drawn in that app**: look up your site in the [render sites](/docs/en/plugins/mods/reference#render-sites) table and your elements in the [elements](/docs/en/plugins/mods/reference#elements) table. For an element the app lacks, check `e.surface` in the hook and return a tree the app can draw.
+* **The VS Code extension is older than 2.1.299**: the chat panel draws for mods from [extension version](/docs/en/vs-code#install-the-extension) 2.1.299. Check the version in VS Code's Extensions view and update the extension there.
+* **The VS Code session doesn't fetch feature flags**: drawing in the chat panel requires it. Sessions on Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry, or through a [Claude apps gateway](/docs/en/claude-apps-gateway), skip it, among others that [Features that need feature-flag fetching](/docs/en/env-vars#features-that-need-feature-flag-fetching) lists. To see the drawing in such a session, run `claude` in a terminal instead, such as VS Code's integrated terminal.
 
 ## An edit or a value is lost
 

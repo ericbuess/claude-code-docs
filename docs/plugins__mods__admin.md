@@ -78,9 +78,12 @@ Mods don't replace the controls you already have:
 * **Network policy covers `$.http.fetch`.**
 
   * **Your organization's policy doesn't allow WebFetch**: Claude Code also refuses every mod's `$.http.fetch` request. See [WebFetch availability](/docs/en/tools-reference#webfetch-availability).
+  * **You turn off the WebFetch tool with [`CLAUDE_CODE_DISABLE_WEB_FETCH`](/docs/en/env-vars#variables) or a `WebFetch` [deny rule](/docs/en/permissions#tool-specific-permission-rules), in managed settings or any other settings file**: mods can still make `$.http.fetch` requests.
+
+    To stop them for every mod your users install, [keep user-installed mods from loading](#stop-user-installed-mods-from-loading), or hook `http.fetch` in a [policy mod](#enforce-a-policy-with-a-mod-of-your-own) and refuse requests from users' mods. Give that hook a [`.catch` handler](/docs/en/plugins/mods/events#handle-a-hook-that-fails) that refuses too, because Claude Code skips a hook that fails and the request then goes ahead. If you only [restrict which plugins users can install](/docs/en/plugins/org#restrict-what-users-can-install), fewer mods load, but those you allow still make these requests.
   * **You set [`CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC`](/docs/en/env-vars)**: a mod that you or your users install can still make these requests. The variable stops only the [mods built into Claude Code](/docs/en/plugins/mods/overview#mods-built-into-claude-code), plus any `$.http.fetch` request that carries the session's Anthropic credentials. Before v2.1.288, the variable stopped every mod's `$.http.fetch` request.
 
-  Neither covers a program the mod starts with `$.process.run`, which reaches the network with the user's own access.
+  None of these covers a program the mod starts with `$.process.run`, which reaches the network with the user's own access.
 * **Plugin controls cover mods.** A mod is a plugin, so the [settings that restrict what users can install](/docs/en/plugins/org#restrict-what-users-can-install), such as `strictKnownMarketplaces`, decide whether it can be installed at all.
 * **Mods can't change the permission prompt.** A mod can restyle much of Claude Code's interface, but not the permission prompt, so it can't change what a prompt shows. A mod can still approve or deny a tool call before the prompt appears, as [Know what happens by default](#know-what-happens-by-default) describes.
 * **Trust prompts come first.** In an interactive session in a directory the user hasn't trusted yet, no mod loads until they answer the trust prompt.
