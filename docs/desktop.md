@@ -1190,6 +1190,72 @@ Programs that Claude Code starts, such as shell commands and MCP servers, start 
 
 To find out who connected to a remote machine, read the SSH server's log on that machine, where a login from Desktop looks like one from a terminal. With Desktop on macOS or Linux, expect an entry each time Desktop connects, not one for each session.
 
+You won't find Desktop's SSH connections in Claude Code's [metrics and events](/docs/en/monitoring-usage#available-metrics-and-events). To find out from them which remote machine an SSH session ran on, see [Attribute telemetry to Desktop SSH sessions](/docs/en/monitoring-usage#attribute-telemetry-to-desktop-ssh-sessions). For Desktop's own record of its connections, see [Get Desktop's logs for an SSH problem](#get-desktops-logs-for-an-ssh-problem).
+
+#### Connections that close before login
+
+If the SSH server's log shows connections that close before any login, they can be Desktop's tests of the SSH port. Desktop tests whether a machine answers, for example after a connection to it failed. It opens a connection to the port and closes it at once, without sending anything. Expect one test or several in a row, for example eight in about two minutes.
+
+If nothing bans or refuses addresses for such connections, you don't have to do anything about Desktop's tests. If an address that Desktop connects from is refused or banned, check [whether the SSH server itself refuses the address](#check-whether-the-ssh-server-itself-refuses-the-address) and [whether fail2ban counts Desktop's tests](#check-whether-fail2ban-counts-desktops-tests).
+
+##### Recognize a test in the SSH server's log
+
+Compare the lines in your log with those that an OpenSSH server on Linux writes for a test at the default `LogLevel`, in the row for your server's version. You can see the lines in the last column instead if the server's greeting arrives before Desktop closes the connection:
+
+| OpenSSH version | Lines for a test | Lines if the greeting arrives first |
+| - | - | - |
+| 6.6 to 7.9 | A line with `Did not receive identification string from 203.0.113.7` | The same line |
+| 8.0 to 8.2 | `error: kex_exchange_identification: Connection closed by remote host` | `error: kex_exchange_identification: read: Connection reset by peer` |
+| 8.3 to 9.4 | `error: kex_exchange_identification: Connection closed by remote host`, then `Connection closed by 203.0.113.7 port 51234` | `error: kex_exchange_identification: read: Connection reset by peer`, then `Connection reset by 203.0.113.7 port 51234` |
+| 9.5 to 10.2 | `Connection closed by 203.0.113.7 port 51234` | `error: kex_exchange_identification: read: Connection reset by peer`, then `Connection reset by 203.0.113.7 port 51234` |
+| 10.3 to 10.5 | `Connection closed by 203.0.113.7 port 51234 [preauth]` | `error: kex_exchange_identification: read: Connection reset by peer [preauth]`, then `Connection reset by 203.0.113.7 port 51234 [preauth]` |
+
+Other programs that open the port and close it can leave the same lines. Where a line has an address, check that it is one that a computer with Desktop connects from.
+
+The lines of 8.0 to 8.2 have no address. To get one, set `LogLevel VERBOSE` in `sshd_config` and run `sshd -T | grep -i loglevel` as root. If it prints `loglevel VERBOSE`, reload the SSH server. Then look for a line with `Connection from 203.0.113.7 port 51234` before the test's line.
+
+<a id="check-whether-the-ssh-server-itself-refuses-the-address" />
+
+##### Check whether the SSH server itself refuses the address
+
+If connections are refused from an address that many computers with Desktop share, look in the SSH server's log for a line that ends like this one:
+
+```text theme={null}
+drop connection #0 from [203.0.113.7]:51234 on [192.0.2.10]:22 penalty: connections without attempting authentication
+```
+
+With the default `LogLevel`, OpenSSH 9.8 and later can write such a line when refusing an address for connections that closed without trying to log in, as Desktop's tests do. With the default settings, you don't see such a line after a few tests alone.
+
+To prevent the refusal, set `PerSourcePenaltyExemptList` in `sshd_config` to the addresses that people connect from, for example `PerSourcePenaltyExemptList 203.0.113.7`. The server then applies none of its penalties to those addresses, including those for failed logins. To check the file, run `sshd -T | grep -i persourcepenalt` as root. If it prints your list, reload the SSH server.
+
+<a id="check-whether-fail2ban-counts-desktops-tests" />
+
+##### Check whether fail2ban counts Desktop's tests
+
+If fail2ban 0.10.5 or later banned an address that Desktop connects from, find your jail's mode in `jail.conf`, `jail.local` or under `jail.d/`:
+
+* **A `filter` line that names a mode in brackets**, such as `filter = sshd[mode=aggressive]`: use that mode.
+* **Only the stock `filter` line**, with `[mode=%(mode)s]`: use the `mode` line, or `normal` if there is none.
+
+If the mode is `normal`, fail2ban doesn't count the lines of Desktop's tests, so look for another cause of the ban.
+
+For another mode, copy the lines from your own log to a file on the remote machine. Copy each line whole, from its date to its end, and both lines where a test leaves two. Run `fail2ban-regex` there with the file and your jail's mode, for example `aggressive`:
+
+```bash theme={null}
+fail2ban-regex -o ip lines.log "sshd[mode=aggressive]"
+```
+
+For each failure that fail2ban counts, the command prints the address on a line of its own, such as `203.0.113.7`. In that case, [prevent a ban](#prevent-a-ban-by-fail2ban). If it prints nothing, fail2ban counts none of those lines in that mode, so look for another cause of the ban.
+
+<a id="prevent-a-ban-by-fail2ban" />
+
+##### Prevent a ban by fail2ban
+
+To keep fail2ban from banning an address for Desktop's tests, change one of two settings of the jail, each at a cost:
+
+* **`mode`**: set it to `normal` wherever your jail sets it, in a `mode` line or in the brackets of a line such as `filter = sshd[mode=aggressive]`. You give up every count that only the other modes make, for example of clients that connect and leave without trying to log in.
+* **`ignoreip`**: set it to the addresses that people connect from, for example `ignoreip = 203.0.113.7`. fail2ban then counts nothing from those addresses, failed logins included.
+
 #### Use MCP servers set up on the remote machine
 
 To use an [MCP server](/docs/en/mcp) from `~/.claude.json` or a project's `.mcp.json` in an SSH session, set it up in those files on the remote machine. Claude Code starts their stdio servers there, so install the commands those servers run on the remote machine. For servers from `claude_desktop_config.json`, see [Limits while Desktop is disconnected](#limits-while-desktop-is-disconnected).
@@ -1637,6 +1703,8 @@ Find the card's title, or the code that ends the error message, in this table, t
 | `Claude Code won't start on <host>` | `[CLI_UNRESPONSIVE]` | Wait a minute, then try again. If it keeps failing, run the command that the message names on the remote machine to see whether Claude Code answers there. |
 
 For any other message, check the [remote machine requirements](#remote-machine-requirements-for-ssh-sessions).
+
+<a id="get-desktops-logs-for-an-ssh-problem" />
 
 ### Get Desktop's logs for an SSH problem
 
