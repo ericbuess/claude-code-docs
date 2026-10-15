@@ -117,6 +117,10 @@ Claude can start a dev server and open it in the Browser pane to verify its chan
 
 The Browser pane can also open static HTML files, PDFs, images, and videos from your project. Click an HTML, PDF, image, or video path in the chat to open it there.
 
+<Note>
+  In an [SSH session](#ssh-sessions), Claude can't open your app in the Browser pane, because it doesn't have the pane's tools there. To look at the app yourself, [forward its port to your computer](#reach-a-port-on-the-remote-machine).
+</Note>
+
 From the Browser pane, you can:
 
 * Interact with your running app directly in the Browser pane
@@ -190,6 +194,8 @@ To turn these on, click **CI** in the status bar. To archive the session automat
 
 <Note>
   PR monitoring requires the [GitHub CLI (`gh`)](https://cli.github.com/) to be installed and authenticated on your machine. If `gh` is not installed, Desktop prompts you to install it the first time you try to create a PR.
+
+  In an [SSH session](#ssh-sessions), set up `git` and `gh` on the remote machine before you click **Create PR**, because Claude pushes the branch and runs `gh pr create` there. Install `gh` there yourself, because Desktop doesn't prompt you to in an SSH session. Then check there that `git push` works and that `gh auth status` reports that you are logged in.
 </Note>
 
 ## Arrange your workspace
@@ -699,7 +705,7 @@ The environment you pick when [starting a session](#start-a-session) determines 
 
 ### Local sessions
 
-The desktop app does not always inherit your full shell environment. On macOS, when you launch the app from the Dock or Finder, it reads your shell profile, such as `~/.zshrc` or `~/.bashrc`, to extract `PATH` and a fixed set of Claude Code variables, but other variables you export there are not picked up. On Windows, the app inherits user and system environment variables but does not read PowerShell profiles.
+The desktop app does not always inherit your full shell environment. On macOS, when you launch the app from the Dock or Finder, it reads your shell profile, such as `~/.zshrc` or `~/.bashrc`, to give Claude Code `PATH` and a fixed set of Claude Code variables, but not other variables you export there. On Windows, the app inherits user and system environment variables but does not read PowerShell profiles.
 
 To set environment variables for local sessions and dev servers on any platform, open the environment dropdown in the prompt box, hover over **Local**, and click the gear icon to open the local environment editor. Variables you save here are stored encrypted on your machine and apply to every local session and preview server you start. You can also add variables to the `env` key in your `~/.claude/settings.json` file, though these reach Claude sessions only and not dev servers. See [environment variables](/docs/en/env-vars) for the full list of supported variables.
 
@@ -751,7 +757,50 @@ A Linux or macOS remote machine needs a supported processor, an SSH server with 
 * **Sessions per connection**: Desktop on macOS and Linux opens several sessions on one SSH connection. If the server's `sshd_config` sets `MaxSessions 1`, raise it, for example to OpenSSH's default of 10.
 * **Install folder**: Desktop installs a helper program and Claude Code under `~/.claude/remote/` in your home directory. It runs them from there, so that folder can't be on a file system mounted `noexec`. Allow about 1 GB of disk space in the home directory of each user who connects. For what that folder holds, see [Files and processes on the remote machine](#files-and-processes-on-the-remote-machine).
 * **Shell**: the shell set for your account on the remote machine has to run commands sent over SSH, as Bash, Zsh, and `sh` do
-* **Network**: Claude Code runs on the remote machine and makes its network requests from there, so the machine needs the [network access that Claude Code requires](/docs/en/network-config#network-access-requirements). If the machine can't download Claude Code, Desktop downloads it on your computer and uploads it. Claude Code's other requests still go out from the remote machine.
+* **Network**: Claude Code runs on the remote machine and makes its network requests from there, so the machine needs the [network access that Claude Code requires](/docs/en/network-config#network-access-requirements). If the machine can't download Claude Code, Desktop downloads it on your computer and uploads it. Claude Code's other requests still go out from the remote machine. On a Linux remote machine, if those requests need a proxy, [set it for SSH sessions](#set-a-proxy-or-a-ca-certificate-for-ssh-sessions).
+
+#### Set a proxy or a CA certificate for SSH sessions
+
+If a Linux remote machine reaches the internet through a proxy or needs a CA certificate, add the [proxy and CA variables](/docs/en/network-config) under `env` in `~/.claude/settings.json` there. Add them even if you already export them in `~/.profile`, `~/.bash_profile`, `~/.zprofile`, or `~/.zshrc` on that machine.
+
+An SSH session doesn't get them from those files, even when `claude` in a terminal on that machine does. The session can then hang, or show **The connection from … to the API failed** or **Authentication failed**, and signing in again doesn't help.
+
+<Steps>
+  <Step title="Add the variables">
+    For the CA file, use [`NODE_EXTRA_CA_CERTS`](/docs/en/network-config#custom-ca-certificates), because Claude Code doesn't trust a CA from `SSL_CERT_FILE` in `~/.claude/settings.json`. This example sets a proxy and a CA file:
+
+    ```json ~/.claude/settings.json theme={null}
+    {
+      "env": {
+        "HTTPS_PROXY": "http://proxy.example.com:8080",
+        "NODE_EXTRA_CA_CERTS": "/etc/ssl/certs/example-ca.pem"
+      }
+    }
+    ```
+  </Step>
+
+  <Step title="Send your message again">
+    Send your message again, because a variable that you add or change in that file takes effect within seconds. Start a new session if it still fails.
+  </Step>
+</Steps>
+
+##### Find a proxy or CA variable set elsewhere on the remote machine
+
+Check whether the Linux remote machine sets the proxy or CA variable elsewhere, because sessions use that value and [ignore the one in any settings file](/docs/en/settings-reference#how-env-values-interact-with-your-shell):
+
+<Steps>
+  <Step title="List the variables that the remote machine sets">
+    In a terminal on your computer, run `ssh devbox env`, with your own host.
+  </Step>
+
+  <Step title="Change the variable where it is set">
+    If the list has the variable, change it in the file that sets it, such as `~/.zshenv`, `/etc/environment`, or `~/.bashrc` on the remote machine.
+  </Step>
+
+  <Step title="Give sessions the new value">
+    Restart the remote machine, or quit Desktop and end the helper's processes, as in the first two steps to [remove the helper](#files-and-processes-on-the-remote-machine). Do this when no task is running, because either way interrupts Claude's work.
+  </Step>
+</Steps>
 
 #### Use your SSH configuration on macOS and Linux
 
@@ -780,6 +829,91 @@ Host devbox
 
 Enter `devbox` in the **SSH host** field.
 
+##### Reach a container on a remote machine
+
+To run a session inside a container that publishes no SSH port, reach it with a `ProxyCommand`, because Desktop doesn't run the `RemoteCommand` of the entry you connect to. If your entry uses `RemoteCommand` to step into the container, the session runs on the machine that the entry logs in to, not in the container.
+
+<Steps>
+  <Step title="Add the entry">
+    Add the following entry at the end of your `~/.ssh/config`, or directly above your first `Host *` entry if you have one. Replace the Docker container `devbox`, its user `dev`, and the machine `build.example.com` with your own. The entry's command starts an SSH server inside the container for each connection:
+
+    ```text ~/.ssh/config theme={null}
+    Host devbox-container
+      User dev
+      ProxyCommand ssh build.example.com docker exec -i devbox /usr/sbin/sshd -i
+    ```
+  </Step>
+
+  <Step title="Prepare the container">
+    * Install the OpenSSH server, with a host key that stays the same when you rebuild the image or recreate the container
+    * Give the account named in `User` a way to log in, such as an `authorized_keys` file
+    * Check that the container meets the [remote machine requirements](#remote-machine-requirements-for-ssh-sessions)
+  </Step>
+
+  <Step title="Check the allowlist">
+    If your administrator [restricts SSH hosts](#restrict-which-ssh-hosts-users-can-connect-to), run `ssh -G devbox-container` in a terminal on your computer. Ask them to allow the `hostname` that it prints, here `devbox-container`, in `sshHostAllowlist`. When they allow that name, they allow whatever your entry's `ProxyCommand` connects to.
+  </Step>
+
+  <Step title="Test the entry, then connect">
+    Run `ssh devbox-container` in a terminal on your computer. Fix what it reports, and run it again until it opens a shell in the container without asking you anything:
+
+    * **If `ssh` asks for a password, passphrase, or code**: switch to a login that works without a prompt, such as a key that your SSH agent holds
+    * **If `ssh` reports `Cannot execute command-line and remote command.` or `Bad packet length`**: take `RemoteCommand` and `RequestTTY` out of your entry for `build.example.com`. After that, `ssh build.example.com` in a terminal on your computer opens a shell on that machine, not in the container.
+    * **If `ssh` reports `Connection closed by UNKNOWN port 65535`**: run `ssh build.example.com docker exec devbox /usr/sbin/sshd -t` in the same terminal.
+      * If it prints `Missing privilege separation directory: /run/sshd`, create that folder in the container.
+      * If it prints `no hostkeys available` and the container has host keys, add `-u root` after `exec` in this command and in the entry.
+
+    Then enter `devbox-container` in the **SSH host** field.
+  </Step>
+</Steps>
+
+##### Use variables from your shell in a `ProxyCommand`
+
+To use an environment variable of your own in a `ProxyCommand` or `Match exec` command, export it in a shell startup file, such as `~/.zshrc`, then quit and reopen Desktop. When Desktop starts, it reads what your login shell exports, and it keeps those values until you quit.
+
+This requires Claude Desktop v2.37337.0 or later and an `env` command that accepts `-0`, which you can check by running `env -0` in a terminal on your computer.
+
+<Note>
+  If your shell sets temporary AWS credentials, [give the AWS CLI a profile](#use-aws-credentials-in-a-proxycommand) instead of exporting `AWS_*` variables.
+</Note>
+
+<a id="use-aws-credentials-in-a-proxycommand" />
+
+##### Use AWS credentials in a `ProxyCommand`
+
+If you set temporary AWS credentials in a shell startup file, a `ProxyCommand` that runs the AWS CLI can connect in a terminal and fail in Desktop. When your shell exports `AWS_SESSION_TOKEN`, `AWS_SECURITY_TOKEN`, or `AWS_CREDENTIAL_EXPIRATION`, `ssh` and your `ProxyCommand` in Desktop don't get the shell's AWS credentials, `AWS_REGION`, or `AWS_PROFILE`.
+
+If the AWS CLI has no other source for a region or credentials, it fails with `You must specify a region` or `Unable to locate credentials`. To connect from Desktop, give the AWS CLI a profile that it reads from `~/.aws/config`:
+
+<Steps>
+  <Step title="Add a profile with a region and a source of credentials">
+    This example adds a profile named `corp` that gets its credentials from a helper program:
+
+    ```ini ~/.aws/config theme={null}
+    [profile corp]
+    region = us-east-1
+    credential_process = /full/path/to/your-credential-helper
+    ```
+
+    * **`region`**: give the AWS Region of the machines you connect to
+    * **`credential_process`**: give the full path of a program that prints credentials in the [JSON form that AWS documents](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sourcing-external.html). Choose a program that needs no input from you, because the AWS CLI runs it at every connection, including reconnects while you're away.
+    * **IAM Identity Center**: add the profile's [IAM Identity Center settings](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sso.html) in place of `credential_process`. Run `aws sso login --profile corp` in a terminal before you connect, and again when that sign-in lapses.
+  </Step>
+
+  <Step title="Name the profile in the ProxyCommand">
+    This example adds `--profile` to the [command that AWS documents for Session Manager](https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-getting-started-enable-ssh-connections.html):
+
+    ```text ~/.ssh/config theme={null}
+    Host i-*
+      ProxyCommand sh -c "aws ssm start-session --profile corp --target %h --document-name AWS-StartSSHSession --parameters 'portNumber=%p'"
+    ```
+  </Step>
+
+  <Step title="Connect again">
+    Run `ssh` with the host in a terminal to confirm that the entry still connects there, then connect from Desktop.
+  </Step>
+</Steps>
+
 ##### Raise the SSH connection timeout
 
 If your SSH configuration sets no `ConnectTimeout` for the host, Desktop gives `ssh` 30 seconds to connect. Through a jump host or a `ProxyCommand`, that time includes the time the route takes to connect. If your route needs longer, add a higher value to the entry:
@@ -793,6 +927,47 @@ Host devbox
 ```
 
 `ssh` uses the first value it finds for a host, so keep the entry above any `Host *` entry that sets `ConnectTimeout`. To confirm, run `ssh -G devbox` in a terminal on your computer. Its output includes `connecttimeout 120`. After you change the value, quit and reopen Desktop.
+
+If the remote machine itself waits for an approval on your phone, approve within 45 seconds, whatever `ConnectTimeout` you set. You can't raise this limit, because Desktop sets `ServerAliveInterval` and `ServerAliveCountMax` itself, and `ssh` then closes a login in which the remote machine sends nothing for that long. If a jump host or a `ProxyCommand` waits for you instead, raise `ConnectTimeout` in the remote machine's entry to cover that time.
+
+##### Fix a `Match host` block that only Desktop applies
+
+If Desktop uses a setting that `ssh devbox` in a terminal doesn't, look for a `Match host` block above the entry's `HostName` line. In a terminal, `ssh` reads a block there before the `HostName` line, so it compares the block with `devbox`. Desktop gives `ssh` the `HostName` value on the command line, so `ssh` compares the block with that value.
+
+To check, run `ssh -G` in a terminal on your computer with the entry's `HostName` and `User` values on the command line, as Desktop does:
+
+```bash theme={null}
+ssh -G -o HostName=devbox.internal.example.com -l alice devbox
+```
+
+Compare the output with that of `ssh -G devbox`. If the block's settings, such as `proxycommand`, show only in the first output, the block takes effect only in Desktop. To have Desktop skip it too, add `!originalhost devbox` to its `Match` line:
+
+```text ~/.ssh/config theme={null}
+Match host *.internal.example.com !originalhost devbox
+```
+
+To confirm, run the first command again. The block's settings no longer show in its output.
+
+##### Forwarding settings that Desktop leaves off
+
+On its connection to the remote machine, Desktop leaves `ForwardAgent`, `ForwardX11`, `LocalForward`, `RemoteForward`, `DynamicForward`, and `Tunnel` off, even where your SSH configuration turns them on. In the [terminal](#run-commands-in-the-terminal) or a `!` command, expect your forwarding settings to apply [only sometimes](#limits-while-desktop-is-disconnected), because Desktop can start a separate `ssh` there that follows them.
+
+* **To reach a port on the remote machine**: [forward it yourself](#reach-a-port-on-the-remote-machine)
+* **To use your own keys from the remote machine**: set up a credential on the remote machine itself, for example for `git push`
+
+To keep Desktop from forwarding your SSH agent or a port, run `ssh -G devbox` in a terminal on your computer. Then run it again as Desktop can run it, with the `hostname` and `user` values that it prints, as in `ssh -G -o HostName=devbox.internal.example.com -l alice devbox`. The second output can show settings from a `Match` block that the first skips.
+
+Look in both outputs for a `forwardagent` line that says anything but `no`, and for lines that begin with `localforward`, `remoteforward`, or `dynamicforward`. If you find one, remove that setting from your SSH configuration. Do the same for a host that your `ProxyCommand` reaches with `ssh`.
+
+#### Reach a port on the remote machine
+
+To open a server that runs on the remote machine, such as a dev server on port 3000, forward the port yourself. In a terminal on your computer, run `ssh` with `-L` and the host you connect to, such as `devbox`:
+
+```bash theme={null}
+ssh -N -L 3000:localhost:3000 devbox
+```
+
+If you filled in **SSH port** or **SSH key (optional)** on the connection, add `-p` or `-i` with the same value. Leave that command running, and open `http://localhost:3000` in a browser on your computer to reach port 3000 of the remote machine. If `ssh` prints `open failed: administratively prohibited`, ask the machine's administrator to allow TCP forwarding, which `AllowTcpForwarding` in the SSH server's `sshd_config` controls.
 
 #### Windows remote machines
 
@@ -989,13 +1164,31 @@ To remove the helper and Claude Code for one user:
   </Step>
 
   <Step title="End the processes">
-    Logged in as that user on the remote machine, run `kill` with each process ID that [`pgrep`](#files-and-processes-on-the-remote-machine) lists, which stops any task that is still running.
+    Logged in as that user on the remote machine, run `kill` with the ID of each Claude Code process that [`pgrep`](#files-and-processes-on-the-remote-machine) lists. Once those are gone from the list, run `kill` with the ID of each `server` process. If you end a `server` process first, a command that Claude Code is running can keep running.
+
+    Then list the user's remaining processes, for example with `ps -u "$(id -un)" -f`, and end any that you recognize as started by Claude Code. Programs that it left in the background can keep running after it ends, without being in the `pgrep` list.
   </Step>
 
   <Step title="Delete the folder">
     Delete `~/.claude/remote/`. To remove Claude Code's own files in `~/.claude/` and `~/.claude.json`, see [Remove configuration files](/docs/en/setup#remove-configuration-files).
   </Step>
 </Steps>
+
+##### End one session's process
+
+To end one session's Claude Code process, [archive the session](#work-in-parallel-with-sessions) in Desktop while Desktop is connected to the remote machine. The process keeps running after its task is done and after you quit Desktop.
+
+Before you archive a session that has a worktree, see [Work in parallel with sessions](#work-in-parallel-with-sessions).
+
+##### See which user the processes run as
+
+The helper and Claude Code run as the user that Desktop logs in as over SSH. Installing and starting them takes no `sudo`. To check the user, run `ps -o user= -p` on the remote machine with a process ID that [`pgrep`](#files-and-processes-on-the-remote-machine) lists.
+
+Programs that Claude Code starts, such as shell commands and MCP servers, start as that user too. Review that user's rights on the remote machine, its `sudo` rules included, as you would for a person who runs commands there.
+
+##### See who connected to the remote machine
+
+To find out who connected to a remote machine, read the SSH server's log on that machine, where a login from Desktop looks like one from a terminal. With Desktop on macOS or Linux, expect an entry each time Desktop connects, not one for each session.
 
 #### Use MCP servers set up on the remote machine
 
@@ -1124,10 +1317,11 @@ The keys apply to the desktop app. They leave other ways to run Claude Code as t
 * **Cowork**: none of the keys applies to [Cowork](https://claude.com/docs/cowork/overview) sessions or Cowork scheduled tasks
 * **Cloud sessions**: none of the keys changes whether [cloud sessions](#cloud-sessions) are available. To turn them off, use the **Cloud sessions** setting under [Admin console controls](#admin-console-controls).
 
-When you adapt the example, check the hostnames and the Desktop version:
+When you adapt the example, check the hostnames, the Desktop version, and the file's permissions:
 
 * **Hostnames**: make sure that a pattern in `sshHostAllowlist` matches the hostname of each `sshConfigs` entry, without `user@`, or developers can't connect to it. For how Desktop matches a hostname, see [Restrict which SSH hosts users can connect to](#restrict-which-ssh-hosts-users-can-connect-to).
 * **Version**: `disableDesktopLocalSessions` requires Claude Desktop v1.37937.0 or later
+* **File permissions**: make sure that each developer's account on the computer can read the managed settings file. Desktop doesn't apply the keys in a file that the account can't read, and Claude Code [starts without them](/docs/en/managed-settings#find-entries-claude-code-dropped) too.
 
 Put the three keys in one [managed source](/docs/en/managed-settings#how-claude-code-combines-managed-sources), the highest-ranked one that you deliver. If you deliver [server-managed settings](/docs/en/server-managed-settings), also keep a copy of the three keys in the highest-ranked MDM policy or managed settings file on each computer. Desktop fetches server-managed settings at launch, and the copy on the computer applies until a fetch succeeds.
 
@@ -1443,6 +1637,18 @@ Find the card's title, or the code that ends the error message, in this table, t
 | `Claude Code won't start on <host>` | `[CLI_UNRESPONSIVE]` | Wait a minute, then try again. If it keeps failing, run the command that the message names on the remote machine to see whether Claude Code answers there. |
 
 For any other message, check the [remote machine requirements](#remote-machine-requirements-for-ssh-sessions).
+
+### Get Desktop's logs for an SSH problem
+
+You get `ssh.log`, Desktop's record of its SSH connections, in a zip file of Desktop's logs that you save from the **Help** menu. To save it, open **Help > Troubleshooting** and select the item for your system:
+
+* **macOS**: **Show Logs in Finder**
+* **Windows**: **Show Logs in File Explorer**
+* **Linux**: **Show Logs in File Manager**
+
+Look through the files before you send them, because they can include names and other details from your environment. `<host>` and `<user>` stand for names that Desktop replaced. Desktop doesn't replace every name, and an SSH host or user name can still appear as written. If you send the zip file to someone, tell them which host failed and when, because the logs may not name it.
+
+The zip file doesn't hold the log of the helper program that Desktop installs on the remote machine. To get that log as well, copy `remote-server.log` from the helper's folder under [`~/.claude/remote/run/`](#files-and-processes-on-the-remote-machine) in the home directory of the user who connected. Look through that file too before you send it.
 
 ### App won't quit
 

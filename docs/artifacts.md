@@ -70,8 +70,11 @@ A new artifact that Claude publishes in response to a prompt you type goes throu
 | You turned [feature-flag fetching](/docs/en/env-vars#features-that-need-feature-flag-fetching) off | Asks before the first publish of each artifact |
 | Claude publishes in a turn that a [scheduled task](/docs/en/scheduled-tasks) firing in your session started, rather than a prompt you typed | Asks before the first publish of each artifact |
 | Claude can't read the file without your approval | Asks before publishing it. An allow rule for the `Artifact` tool doesn't skip this prompt |
+| In [Manual](/docs/en/permission-modes) or `acceptEdits` mode, Claude makes a small change to an artifact's file it can't edit without your approval, such as a project file in Manual mode | Asks before publishing the change. You're asked even if an allow rule covers the `Artifact` tool, because the edit to the file needs your approval |
 
-Claude reads files in your session's [working directories](/docs/en/permissions#working-directories), and in the temporary directory it writes pages to, without asking. To let Claude publish from another folder without the prompt, add the folder as a working directory with [`--add-dir`](/docs/en/cli-reference#cli-flags) at launch or `/add-dir` during the session.
+To let Claude read a file outside your [working directories](/docs/en/permissions#working-directories) without your approval, add its folder as a working directory with [`--add-dir`](/docs/en/cli-reference#cli-flags) at launch or `/add-dir` during the session. Claude already reads files in those directories, and in the temporary directory it writes pages to, without asking.
+
+If a publish prompt includes a sentence such as `Also makes 1 edit to that file on disk.`, Claude is changing the artifact's file and publishing it in one step. When you approve the prompt, Claude Code publishes the page, then writes the change to your file.
 
 ## Update an artifact
 

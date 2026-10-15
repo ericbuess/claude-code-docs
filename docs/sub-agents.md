@@ -866,7 +866,7 @@ You can also type the mention manually without using the picker: `@agent-<name>`
 claude --agent code-reviewer
 ```
 
-Unless the agent's [prompt is empty](#choose-the-subagent-scope), a custom subagent's system prompt replaces the default Claude Code system prompt entirely, the same way [`--system-prompt`](/docs/en/cli-reference) does. `CLAUDE.md` files and project memory still load through the normal message flow, even when the agent's definition sets [`omitClaudeMd`](#supported-frontmatter-fields).
+Unless the agent's [prompt is empty](#choose-the-subagent-scope), a custom subagent's system prompt replaces the default Claude Code system prompt entirely, the same way [`--system-prompt`](/docs/en/cli-reference) does. `CLAUDE.md` files and project memory still load through the normal message flow, even when the agent's definition sets [`omitClaudeMd`](#supported-frontmatter-fields). If you run the session with `-p` as a custom agent that has its own prompt, it also starts without the [git status snapshot](/docs/en/settings-reference#includegitinstructions).
 
 The agent name appears as `@<name>` in the startup header so you can confirm it's active.
 

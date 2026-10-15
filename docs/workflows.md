@@ -185,10 +185,10 @@ Whether you see this prompt depends on your [permission mode](/docs/en/permissio
 
 In `claude -p` and the Agent SDK, Claude Code never shows this prompt. It runs the Workflow tool call through the same [permission evaluation](/docs/en/agent-sdk/permissions#how-permissions-are-evaluated) as the rest of the session, so deny rules, ask rules, and `dontAsk` mode apply to the launch as they apply to every tool call. To let the workflow start in these runs, use one of these:
 
-* **Permission rule**: `Workflow` in your allow rules approves every workflow, and `Workflow(<name>)` approves one saved workflow by name.
-* **Auto permission mode**: the [classifier](/docs/en/permission-modes#eliminate-prompts-with-auto-mode) reviews the call and can approve it.
-* **Bypass permissions mode**: Claude Code approves the call.
-* **A hook**: a [`PreToolUse`](/docs/en/hooks#pretooluse) hook that allows the call approves it.
+* **Permission rule**: add `Workflow` to your allow rules to approve every workflow, or `Workflow(<name>)` to approve one saved workflow by name.
+* **Auto permission mode**: run in [auto mode](/docs/en/permission-modes#eliminate-prompts-with-auto-mode), where the classifier reviews the call and can approve it.
+* **Bypass permissions mode**: run in bypass permissions mode.
+* **A hook**: return `"allow"` for the call from a [`PreToolUse`](/docs/en/hooks#pretooluse) hook. In [plan mode](/docs/en/permission-modes#analyze-before-you-edit-with-plan-mode), the workflow doesn't start on the hook's approval alone, so use a permission rule or your host's approval there instead.
 * **Your host**: a [`--permission-prompt-tool`](/docs/en/cli-reference#cli-flags) or, with the Agent SDK, a [`canUseTool`](/docs/en/agent-sdk/permissions) callback approves it.
 
 In the Desktop app, an approval card shows the workflow name, the phase list, and a token-usage caution, with **Once**, **Always**, and **Deny** actions. The progress view appears in the Background tasks side pane.

@@ -136,7 +136,9 @@ With GitHub connected and an environment created, you're ready to submit tasks.
 
 <Steps>
   <Step title="Select a repository and branch">
-    From [claude.ai/code](https://claude.ai/code) or the Code tab in the Claude mobile app, click the repository selector below the input box and choose a repository for Claude to work in. Each repository shows a branch selector. Change it to start Claude from a feature branch instead of the default. You can add multiple repositories to work across them in one session.
+    From [claude.ai/code](https://claude.ai/code) or the Code tab in the Claude mobile app, click the repository selector below the input box and choose a repository for Claude to work in. You can add multiple repositories to work across them in one session.
+
+    At claude.ai/code, to start Claude from a feature branch instead of the default, change the branch in the control after the repository selector.
   </Step>
 
   <Step title="Choose a permission mode">

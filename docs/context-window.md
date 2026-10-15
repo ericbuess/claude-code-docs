@@ -1598,7 +1598,7 @@ When a long session compacts, Claude Code summarizes the conversation history to
 | System prompt and output style | Both still apply |
 | Project-root CLAUDE.md and unscoped rules | Re-injected from disk |
 | Auto memory | Re-injected from disk |
-| [Git status snapshot](/docs/en/settings-reference#includegitinstructions) | Claude Code reads a fresh one from your repository |
+| [Git status snapshot](/docs/en/settings-reference#includegitinstructions) | If the session started with one, Claude Code reads a fresh one from your repository |
 | The plan Claude wrote in [plan mode](/docs/en/permission-modes#analyze-before-you-edit-with-plan-mode) | Re-injected from disk |
 | Rules with `paths:` frontmatter | Claude Code reloads them [on demand](/docs/en/memory#path-specific-rules) |
 | Nested CLAUDE.md in subdirectories | Claude Code reloads them [on demand](/docs/en/memory#how-claude-md-files-load) |
