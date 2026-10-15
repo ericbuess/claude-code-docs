@@ -74,7 +74,7 @@
   <p className="digest-wins-title">Other wins</p>
 
   <div className="digest-wins-grid">
-    <div><a href="/docs/en/code-review#review-a-diff-locally"><code>/code-review</code></a> now runs as a background subagent with its own context window, so review work stays out of your conversation and the findings arrive when it completes</div>
+    <div><a href="/docs/en/code-review-local"><code>/code-review</code></a> now runs as a background subagent with its own context window, so review work stays out of your conversation and the findings arrive when it completes</div>
     <div><code>/verify</code>, <code>/code-review</code>, and <code>/deep-research</code> run only when you invoke them; Claude no longer launches them on its own</div>
     <div><a href="/docs/en/interactive-mode#emoji-shortcodes">Emoji shortcodes</a> autocomplete in the prompt input: type <code>:heart:</code> to insert an emoji, or two or more characters after <code>:</code> for suggestions; turn it off with <code>emojiCompletionEnabled</code></div>
     <div>Skills with <code>context: fork</code> <a href="/docs/en/skills#run-skills-in-a-subagent">run in the background</a> by default, and <code>background: false</code> in the skill's frontmatter waits for the result in the same turn</div>

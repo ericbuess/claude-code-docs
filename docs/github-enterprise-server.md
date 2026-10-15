@@ -53,7 +53,7 @@ The guided setup generates a GitHub App manifest and redirects you to your GHES 
   </Step>
 
   <Step title="Enable Code Review">
-    Go to [claude.ai/admin-settings/claude-code](https://claude.ai/admin-settings/claude-code) and enable [Code Review](/docs/en/code-review#set-up-code-review) for your GHES repositories using the same configuration as github.com.
+    Go to [claude.ai/admin-settings/claude-code](https://claude.ai/admin-settings/claude-code) and enable [Code Review](/docs/en/code-review-setup) for your GHES repositories using the same configuration as github.com.
   </Step>
 </Steps>
 

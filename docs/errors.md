@@ -152,6 +152,7 @@ Match the message you see to a section below.
 | `Request too large` | [Request errors](#request-too-large) |
 | `Request too large for the API's 32MB request limit` | [Request errors](#request-too-large) |
 | `Image was too large` | [Request errors](#image-was-too-large) |
+| `API Error: an image in the conversation could not be processed and was removed` | [Request errors](#image-was-too-large) |
 | `Unable to resize image` | [Request errors](#unable-to-resize-image) |
 | `Request rejected as unprocessable by the model` | [Request errors](#request-rejected-as-unprocessable-by-the-model) |
 | `PDF too large` / `PDF is password protected` / `pdftoppm is not installed` | [Request errors](#pdf-errors) |
@@ -178,6 +179,7 @@ Match the message you see to a section below.
 | `Effort '<level>' isn't available with thinking turned off on this model` | [Request errors](#effort-isnt-available-with-thinking-turned-off) |
 | `effort '<level>' is not supported when thinking is disabled` | [Request errors](#effort-isnt-available-with-thinking-turned-off) |
 | `max_tokens must be greater than thinking.budget_tokens` | [Request errors](#thinking-budget-exceeds-output-limit) |
+| `Claude's response exceeded the ... output token maximum` | [Request errors](#response-exceeded-the-output-token-maximum) |
 | `API Error: 400 due to tool use concurrency issues` | [Request errors](#tool-use-or-thinking-block-mismatch) |
 | `API Error: 400 orphaned tool_result in conversation history` | [Request errors](#tool-use-or-thinking-block-mismatch) |
 | `API Error: 400 duplicate tool_use ID in conversation history` | [Request errors](#tool-use-or-thinking-block-mismatch) |
@@ -198,6 +200,7 @@ Match the message you see to a section below.
 | `The connection dropped while downloading the update` | [Troubleshoot installation and login](/docs/en/troubleshoot-install#the-connection-dropped-while-downloading-the-update) |
 | `Download timed out: exceeded the total deadline` | [Troubleshoot installation and login](/docs/en/troubleshoot-install#the-connection-dropped-while-downloading-the-update) |
 | `--bg and --print conflict` | [Command-line errors](#conflict-between-bg-and-print) |
+| `Couldn't tell whether --bg is a flag or text here, so nothing was started` | [Command-line errors](#couldnt-tell-whether-bg-is-a-flag-or-text) |
 | `Error: Cannot use both --append-subagent-system-prompt and --append-subagent-system-prompt-file. Please use only one.` | [Command-line errors](#conflict-between-a-system-prompt-flag-and-its-file-form) |
 | `Cloud sessions cannot be created from a --restricted session` | [Command-line errors](#cloud-sessions-cannot-be-created-from-a-restricted-session) |
 | `Cloud sessions are disabled by your organization's policy` | [Command-line errors](#cloud-sessions-are-disabled-by-your-organizations-policy) |
@@ -383,6 +386,7 @@ Match the message you see to a section below.
 | `Managed settings document could not be parsed as a JSON object; none of its settings are in effect. Fix or remove it.` | [Configuration warnings](#managed-settings-document-could-not-be-parsed) |
 | `Managed settings drop-in directory could not be read` | [Configuration warnings](#managed-settings-document-could-not-be-parsed) |
 | `Unable to read managed policy settings` | [Configuration warnings](#unable-to-read-managed-policy-settings) |
+| `Managed settings contain invalid entries, including PreToolUse/PermissionRequest hooks that are NOT loaded; fix or remove each entry:` | [Configuration warnings](#managed-settings-hooks-not-loaded) |
 | `otelHeadersHelper failed; telemetry is not being exported. See /status: ...` | [Configuration warnings](#otelheadershelper-failed) |
 | `"crossSessionInbound" must be one of "accept", "hold", "refuse"` | [Configuration warnings](#crosssessioninbound-must-be-one-of-accept-hold-refuse) |
 | `API Error: ANTHROPIC_FOUNDRY_RESOURCE must be a Foundry resource name` | [Configuration warnings](#anthropic-foundry-resource-must-be-a-foundry-resource-name) |
@@ -392,6 +396,8 @@ Match the message you see to a section below.
 | `... has a wildcard before the rest of the command` | [Configuration warnings](#has-a-wildcard-before-the-rest-of-the-command) |
 | `Denying Bash also turns off the PowerShell tool, so Claude has neither` | [Configuration warnings](#denying-bash-also-turns-off-the-powershell-tool) |
 | `CLAUDE_CODE_DISABLE_1M_CONTEXT is set, but the 200K limit isn't enforced` | [Configuration warnings](#the-200k-limit-isnt-enforced) |
+| `Model "<model>" isn't recognized · context assumed to be 200k tokens` | [Correct the window for a gateway or custom model ID](/docs/en/model-config#correct-the-window-for-a-gateway-or-custom-model-id) |
+| `Claude Code doesn't recognize the model "<model>", so it assumes a context window of 200k tokens` | [Correct the window for a gateway or custom model ID](/docs/en/model-config#correct-the-window-for-a-gateway-or-custom-model-id) |
 | `[claude-code:unrecognized_model]` | [Configuration warnings](#unrecognized-model-id-on-a-request) |
 | `is ignored — managed settings set allowManagedReadPathsOnly` / `is ignored — managed settings set allowManagedDomainsOnly` | [Configuration warnings](#sandbox-allow-entries-are-ignored-under-a-managed-lock) |
 | `Stale sandbox mask files left by a killed session` | [Configuration warnings](#stale-sandbox-mask-files-left-by-a-killed-session) |
@@ -2170,6 +2176,7 @@ Before v2.1.162, Claude Code attempted the compaction anyway and surfaced the ba
 * Disable MCP servers you are not using with `/mcp disable <name>` to remove their tool definitions from context
 * Trim large `CLAUDE.md` memory files, or move instructions into [path-scoped rules](/docs/en/memory#path-specific-rules) that load only when relevant
 * Auto-compact is on by default and normally prevents this error. If you turned it off in `/config` or with [`DISABLE_AUTO_COMPACT`](/docs/en/env-vars), turn it back on. If you keep it off, run `/compact` yourself before the window fills.
+* If the error appears near 200K tokens on a model that accepts more, one cause is a model ID that Claude Code doesn't recognize. Claude Code assumes a 200K window for such an ID, so to keep working past that point, [give it the model's real context window](/docs/en/model-config#correct-the-window-for-a-gateway-or-custom-model-id).
 
 See [Explore the context window](/docs/en/context-window) for an interactive view of how context fills up.
 
@@ -2225,9 +2232,16 @@ A pasted or attached image exceeds the API's size or dimension limits.
 ```text theme={null}
 Image was too large. Double press esc to go back and try again with a smaller image.
 API Error: 400 ... image dimensions exceed max allowed size
+API Error: an image in the conversation could not be processed and was removed.
 ```
 
-Claude Code replaces the unprocessable image with a text placeholder and retries, so subsequent messages succeed. On versions before 2.1.142, a pasted image could remain in the conversation and repeat the same error on every subsequent message. To recover on those versions, press Esc twice and step back past the turn where the image was added.
+The `could not be processed and was removed` line means the API refused an image in the conversation, such as one over the size or dimension limits.
+
+If one of these errors keeps coming back, update Claude Code. On older versions, an image error could repeat for reasons such as these:
+
+* Before v2.1.299, in a long conversation with many images, Claude Code could remove the images you attached last instead of the one over the limit. The `was removed` line then repeated on every turn, and Claude didn't see your new images.
+* Before v2.1.299, in VS Code, the Desktop app, and the Agent SDK, images you attached while Claude was working didn't get the resizing that other attached images get. They reached the API at their original size, which led to repeated image errors in long conversations.
+* Before v2.1.166, a pasted image could remain in the conversation, and the same error then repeated on every subsequent message
 
 **What to do:**
 
@@ -2659,6 +2673,23 @@ API Error: 400 ... max_tokens must be greater than thinking.budget_tokens
 * Raise [`CLAUDE_CODE_MAX_OUTPUT_TOKENS`](/docs/en/env-vars) above the thinking budget
 * See [Extended thinking](/docs/en/model-config#extended-thinking) for how the budget interacts with output length
 
+### Response exceeded the output token maximum
+
+Claude's reply reached the largest number of output tokens the request allowed and was cut off there:
+
+```text theme={null}
+API Error: Claude's response exceeded the ... output token maximum. To configure this behavior, set the CLAUDE_CODE_MAX_OUTPUT_TOKENS environment variable.
+API Error: Claude's response exceeded the 64000 output token maximum for a request sent without streaming. The CLAUDE_CODE_MAX_OUTPUT_TOKENS environment variable cannot raise this limit.
+```
+
+The form that names `a request sent without streaming` means a streaming request failed and Claude Code re-sent it without streaming, which limits the reply to 64,000 output tokens. Before v2.1.299, a reply cut off on such a re-sent request ended the turn without this message, as if the reply were complete.
+
+**What to do:**
+
+* If Claude wrote some text before the reply was cut off, reply `continue` in an interactive session to ask for the rest. That text stays in the conversation.
+* If the message says to set `CLAUDE_CODE_MAX_OUTPUT_TOKENS`, see [`CLAUDE_CODE_MAX_OUTPUT_TOKENS`](/docs/en/env-vars) for how the value is capped and [Set environment variables](/docs/en/env-vars#set-environment-variables) for where to set it
+* To keep each reply under the limit, ask Claude for the output in smaller pieces, such as one file or one section per reply
+
 ### Tool use or thinking block mismatch
 
 The conversation history reached the API in an inconsistent state.
@@ -2787,7 +2818,7 @@ Before v2.1.219, the message read `Claude Code is unable to respond to this requ
 The model's safety measures flagged content in the conversation as a cybersecurity topic. The message names the model that flagged the request:
 
 ```text theme={null}
-API Error: Opus 4.8's safeguards flagged this message. Our intentionally broad safeguards allow us to deliver more capabilities faster, but can sometimes flag legitimate cybersecurity work. Apply to the Cyber Verification Program to reduce these interruptions. Send feedback with /feedback or learn more: https://support.claude.com/en/articles/14604842-real-time-cyber-safeguards-on-claude
+API Error: Opus 4.8's safeguards flagged this message. Our intentionally broad safeguards allow us to deliver more capabilities faster, but can sometimes flag legitimate cybersecurity work. Send feedback with /feedback or learn more: https://support.claude.com/en/articles/14604842-real-time-cyber-safeguards-on-claude
 ```
 
 If the message includes the line `` Details: `[reasoning_extraction]` ``, see [Safeguards flagged a request for Claude's reasoning](#safeguards-flagged-a-request-for-claudes-reasoning).
@@ -2796,15 +2827,17 @@ This message links to the [Cyber Verification Program](https://support.claude.co
 
 On [Amazon Bedrock](/docs/en/amazon-bedrock), [Google Cloud's Agent Platform](/docs/en/google-vertex-ai), and [Microsoft Foundry](/docs/en/microsoft-foundry), a cybersecurity flag produces the [Usage Policy refusal](#usage-policy-refusal) message instead.
 
-The safeguard itself is server-side and predates v2.1.203; client releases since then have changed only the message's wording.
-From v2.1.203 through v2.1.218, the message read `<model> has safety measures that flagged this message for a cybersecurity topic. To learn about the Cyber Verification Program and apply for access, visit our help center:` followed by the same help-center link, and interactive sessions appended `If you were not engaging in a cybersecurity topic, please send feedback via /feedback.`
-Before v2.1.203, it read `<model>'s safeguards flagged this message for a cybersecurity topic. If your work requires this access, you can apply for an exemption:` followed by an exemption form link.
-
 **What to do:**
 
 * If your work requires this content, apply for access through the [Cyber Verification Program](https://support.claude.com/en/articles/14604842-real-time-cyber-safeguards-on-claude)
 * If your request wasn't about a cybersecurity topic, run `/feedback` to report the false positive
 * To keep working in the same session, press Esc twice or run `/rewind` to step back to a checkpoint before the turn that triggered the flag, then take a different approach. See [Checkpointing](/docs/en/checkpointing).
+
+If the message you see is worded like one of these instead, it's the same flag on an earlier Claude Code version:
+
+* From v2.1.219 through v2.1.296, the message could also include `Apply to the Cyber Verification Program to reduce these interruptions.` before its closing sentence
+* From v2.1.203 through v2.1.218, the message read `<model> has safety measures that flagged this message for a cybersecurity topic. To learn about the Cyber Verification Program and apply for access, visit our help center:` followed by the same help-center link. In interactive sessions, it continued with `If you were not engaging in a cybersecurity topic, please send feedback via /feedback.`
+* Before v2.1.203, it read `<model>'s safeguards flagged this message for a cybersecurity topic. If your work requires this access, you can apply for an exemption:` followed by an exemption form link
 
 <h3 id="safeguards-flagged-a-request-for-claudes-reasoning">
   Safeguards flagged a request for Claude's reasoning
@@ -2858,6 +2891,22 @@ This message requires Claude Code v2.1.198 or later. You combined `--bg` with `-
 
 * Drop `-p` or `--print`. `--bg` takes the prompt as its positional argument, so `claude --bg "<task>"` is the complete command. See [Dispatch new agents from your shell](/docs/en/agent-view#from-your-shell).
 * To run the prompt non-interactively and print the result instead of creating a background session, drop `--bg` and run `claude -p "<task>"`
+
+<h3 id="couldnt-tell-whether-bg-is-a-flag-or-text">
+  Couldn't tell whether `--bg` is a flag or text
+</h3>
+
+You ran `claude` with `--bg` or `--background` at a position where Claude Code couldn't tell whether you meant it as the background flag or as text. The command started nothing, printed this line, and exited with code 1:
+
+```text theme={null}
+Couldn't tell whether --bg is a flag or text here, so nothing was started. To start a background session put it first: claude --bg <prompt>
+```
+
+If you typed `--background`, the line names `--background` instead.
+
+**What to do:**
+
+* To start a [background session](/docs/en/agent-view#from-your-shell), run the command again in your shell with the flag first: `claude --bg --name nightly-audit "<task>"`
 
 <h3 id="conflict-between-a-system-prompt-flag-and-its-file-form">
   Conflict between a system prompt flag and its file form
@@ -5550,6 +5599,27 @@ A read that the operating system denied, such as on a root-only file, doesn't pr
 * If you don't, send the message to your administrator. Nothing in your own settings files causes or clears this error
 
 Before v2.1.285, only sessions signed in with claude.ai or Claude Console credentials exited with this message, and a read that the operating system denied produced it too.
+
+<h3 id="managed-settings-hooks-not-loaded">
+  Managed settings contain invalid entries, including PreToolUse/PermissionRequest hooks that are NOT loaded
+</h3>
+
+This stderr block from a `-p` run means that a [managed settings](/docs/en/managed-settings) source holds a hook entry Claude Code can't load. That hook doesn't run, and when a line lists the source's `hooks` field as ignored, none of that source's hooks run.
+
+Each line names the source, the field when there is one, and the problem, such as an unknown hook `type` or a hook declared outside the `hooks` key:
+
+```text theme={null}
+Managed settings contain invalid entries, including PreToolUse/PermissionRequest hooks that are NOT loaded; fix or remove each entry:
+  <source> (<field>): <message>
+```
+
+**What to do:**
+
+* If you administer the source, fix or remove each entry the block lists. [Hook configuration](/docs/en/hooks#configuration) shows the shape Claude Code expects under `hooks`.
+* If a line's source is `parent managed settings`, the application that launched Claude Code passed that entry in as [parent settings](/docs/en/managed-settings#parent-settings-from-embedding-hosts), so report it to that application's developer
+* Otherwise, send the block to your administrator
+
+Before v2.1.300, a `-p` run listed this case under the `Managed settings failed to load; policies from the failed source are NOT in effect:` header.
 
 <h3 id="otelheadershelper-failed">
   otelHeadersHelper failed
