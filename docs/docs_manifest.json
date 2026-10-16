@@ -496,8 +496,8 @@
     "desktop.md": {
       "original_url": "https://code.claude.com/docs/en/desktop",
       "original_md_url": "https://code.claude.com/docs/en/desktop.md",
-      "hash": "f47221576328d5f4015729a4d0b1eeeb1d01576c88d8861405a1805b8077cbc9",
-      "last_updated": "2026-10-15T23:23:16.668754"
+      "hash": "d52aba073096157418773f99dd6d5ed0b7ad9a16674669dcae4ac56a4b5d4e5b",
+      "last_updated": "2026-10-16T18:29:49.934444"
     },
     "desktop-ios-simulator.md": {
       "original_url": "https://code.claude.com/docs/en/desktop-ios-simulator",
@@ -1365,8 +1365,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-10-16T13:38:03.196615",
-    "fetch_duration_seconds": 145.409754,
+    "last_fetch_completed": "2026-10-16T18:31:30.403192",
+    "fetch_duration_seconds": 150.414379,
     "total_pages_discovered": 227,
     "pages_fetched_successfully": 228,
     "pages_failed": 0,
@@ -1376,7 +1376,7 @@
     "total_files": 227,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-10-16T13:38:03.196640",
+  "last_updated": "2026-10-16T18:31:30.403220",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",
