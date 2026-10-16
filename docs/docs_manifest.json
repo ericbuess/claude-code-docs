@@ -886,8 +886,8 @@
     "plugins__mods__admin.md": {
       "original_url": "https://code.claude.com/docs/en/plugins/mods/admin",
       "original_md_url": "https://code.claude.com/docs/en/plugins/mods/admin.md",
-      "hash": "cebdf7526de9a2653ee570efd1f47667d69a4095f16f27e4d07c38ef04e5a1e5",
-      "last_updated": "2026-10-15T18:45:49.309599"
+      "hash": "6a59b1d78310187847b1154dd76af53dea43ca49cd7564699e9a5c44e738cf68",
+      "last_updated": "2026-10-16T07:37:38.134382"
     },
     "plugins__mods__api.md": {
       "original_url": "https://code.claude.com/docs/en/plugins/mods/api",
@@ -1365,8 +1365,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-10-16T02:03:00.348792",
-    "fetch_duration_seconds": 161.410224,
+    "last_fetch_completed": "2026-10-16T07:38:31.257997",
+    "fetch_duration_seconds": 154.038001,
     "total_pages_discovered": 227,
     "pages_fetched_successfully": 228,
     "pages_failed": 0,
@@ -1376,7 +1376,7 @@
     "total_files": 227,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-10-16T02:03:00.348828",
+  "last_updated": "2026-10-16T07:38:31.258027",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",

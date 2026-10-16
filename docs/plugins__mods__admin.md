@@ -72,7 +72,7 @@ The guard's source is public in the [`mods/sec-default` directory of the Claude 
 
 Mods don't replace the controls you already have:
 
-* **Settings hooks keep working.** Command, HTTP, prompt, and agent hooks in settings files and in plugins' `hooks/hooks.json` run as before, alongside mods. Nothing about them is deprecated.
+* **Settings hooks keep working.** Command, HTTP, prompt, and agent hooks in settings files and in plugins' `hooks/hooks.json` run as before, alongside mods.
 * **Deny rules take precedence where the guard loads.** A user's mod can't approve a call that a `deny` rule refuses, unless you set [`allowModsToOverrideDenyRules`](#set-options-on-the-built-in-guard).
 * **Managed hooks run first.** A `PreToolUse` hook in managed settings runs before any mod sees the tool call, and its block is final. If a mod then rewrites the call, your managed hooks run again on the rewritten call, so a block still applies. `PreToolUse` hooks from other settings files and from plugins run after the last mod, so a mod that returns its own result in place of running the tool keeps those from running. See [The order mods run in](/docs/en/plugins/mods/events#the-order-mods-run-in).
 * **Network policy covers `$.http.fetch`.**
