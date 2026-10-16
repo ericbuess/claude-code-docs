@@ -183,6 +183,19 @@ Look them up in [Messages from the built-in guard](#messages-from-the-built-in-g
 
 The mod loaded, and its pane, band, toast, or controls don't behave as you expect.
 
+<h3 id="another-mods-band-shows-and-yours-doesnt">
+  Another mod's band shows and yours doesn't
+</h3>
+
+There is one band above the prompt, and every mod shares it. A mod that runs [before yours](/docs/en/plugins/mods/events#the-order-mods-run-in) replaces your band when it returns a tree without the result of `next(e)` in it. To show both bands, change that mod's hook, or ask its author to:
+
+* **Keep the bands after it**: put the result of `await next(e)` among the children of a `Box` in its tree, as in the Band above the prompt tab of [Pick where to draw](/docs/en/plugins/mods/interface#pick-where-to-draw)
+* **Keep the tree valid**: don't give that `Box`, or any `Box` around it, a `width`, `height`, `minWidth`, `minHeight`, `position`, `top`, `left`, `right`, `bottom`, `display`, or `overflow` prop
+
+To find that mod, [write a debug log](#read-the-debug-log) and search it for `answered ui.render without next()`. A line such as `other-mod (user) answered ui.render without next()` names a mod that returned its tree without calling `next(e)`. It doesn't name the [render site](/docs/en/plugins/mods/reference#render-sites), so a pane-only mod can appear too. A mod that calls `next(e)` and drops the result gets no line, so check the hooks before yours too.
+
+After the change, you see nothing in the band if any of the mods returns a tree that doesn't validate. To read the reason, look for a `ui.render (AbovePrompt) refused:` line in the transcript of a `--plugin-dir` session, or search the debug log for `does not validate`. With several mods in the band, neither line names a mod, so check each mod's tree.
+
 ### A pane or band is empty or shows Claude Code's usual content
 
 The [tree](/docs/en/plugins/mods/interface#build-a-tree-from-elements) your hook returned didn't validate. With `--plugin-dir`, the transcript says `ui.render (Pane) refused:` with the reason, as in `first-mod: ui.render (Pane) refused: Box prop "flexDirection" must be one of row, column, row-reverse, column-reverse; the engine drew its own`. The debug log has `a hook returned a tree that does not validate` with the same reason.

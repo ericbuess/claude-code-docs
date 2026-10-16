@@ -9,7 +9,7 @@
 Hooks are callback functions that run your code in response to agent events, like a tool being called, a session starting, or execution stopping. With hooks, you can:
 
 * **Block dangerous operations** before they execute, like destructive shell commands or unauthorized file access
-* **Log and audit** every tool call for compliance, debugging, or analytics
+* **Log and audit** tool calls for compliance, debugging, or analytics
 * **Transform inputs and outputs** to sanitize data, inject credentials, or redirect file paths
 * **Require human approval** for sensitive actions like database writes or API calls
 * **Track session lifecycle** to manage state, clean up resources, or send notifications
@@ -38,7 +38,7 @@ Hooks are callback functions that run your code in response to agent events, lik
   </Step>
 </Steps>
 
-The following example puts these steps together. It registers a `PreToolUse` hook (step 1) with a `"Write|Edit"` matcher (step 3) so the callback only fires for file-writing tools. When triggered, the callback receives the tool's input (step 4), checks if the file path targets a `.env` file, and returns `permissionDecision: "deny"` to block the operation (step 5):
+This example registers a `PreToolUse` hook (step 1) with a `"Write|Edit"` matcher (step 3) so the callback fires for the Write and Edit tools. When triggered, the callback receives the tool's input (step 4), checks if the file path targets a `.env` file, and returns `permissionDecision: "deny"` to block the operation (step 5):
 
 <CodeGroup>
   ```python Python theme={null}
@@ -59,7 +59,7 @@ The following example puts these steps together. It registers a `PreToolUse` hoo
       file_name = file_path.split("/")[-1]
 
       # Block the operation if targeting a .env file
-      if file_name == ".env":
+      if file_name.lower() == ".env":
           return {
               "hookSpecificOutput": {
                   "hookEventName": input_data["hook_event_name"],
@@ -106,7 +106,7 @@ The following example puts these steps together. It registers a `PreToolUse` hoo
     const fileName = filePath?.split("/").pop();
 
     // Block the operation if targeting a .env file
-    if (fileName === ".env") {
+    if (fileName?.toLowerCase() === ".env") {
       return {
         hookSpecificOutput: {
           hookEventName: preInput.hook_event_name,
@@ -138,7 +138,11 @@ The following example puts these steps together. It registers a `PreToolUse` hoo
   ```
 </CodeGroup>
 
-When you run either script, Claude attempts to create the `.env` file and the hook denies the tool call.
+The hook denies a Write or Edit call whose `file_path` ends in `/.env`, in any letter case. On Windows, `file_path` uses backslashes, such as `C:\project\.env`, and this hook allows a Write or Edit call to `C:\project\.env`.
+
+<Warning>
+  The `Write|Edit` matcher limits this hook to the Write and Edit tools. If Claude writes `.env` with a Bash command, the hook doesn't run. To block Bash writes to a file where [the sandbox runs](/docs/en/sandboxing), see the sandbox configuration for [Python](/docs/en/agent-sdk/python#sandbox-configuration) or [TypeScript](/docs/en/agent-sdk/typescript#sandbox-configuration).
+</Warning>
 
 ## Available hooks
 
@@ -147,7 +151,7 @@ The SDK provides hooks for different stages of agent execution. Some hooks are a
 | Hook Event | Python SDK | TypeScript SDK | What triggers it | Example use case |
 | - | - | - | - | - |
 | `PreToolUse` | Yes | Yes | Tool call request (can block or modify) | Block dangerous shell commands |
-| `PostToolUse` | Yes | Yes | Tool execution result | Log all file changes to audit trail |
+| `PostToolUse` | Yes | Yes | Tool execution result | Log file changes to an audit trail |
 | `PostToolUseFailure` | Yes | Yes | Tool execution failure | Handle or log tool errors |
 | `PostToolBatch` | No | Yes | A full batch of tool calls resolves, once per batch before the next model call | Inject conventions once for the whole batch |
 | [`UserPromptSubmit`](/docs/en/hooks#userpromptsubmit) | Yes | Yes | A prompt is submitted, including a turn Claude Code starts on its own | Inject additional context into prompts |
@@ -227,7 +231,7 @@ SDK matchers follow the same rules as [matchers in settings files](/docs/en/hook
 | `hooks` | `HookCallback[]` | - | Required. Array of callback functions to execute when the pattern matches |
 | `timeout` | `number` | `undefined` | Timeout in seconds. When omitted, Claude Code applies the [event's default timeout](#hook-timeout). Your SDK callbacks follow the `command` hook defaults |
 
-Use the `matcher` pattern to target specific tools whenever possible. A matcher with `'Bash'` only runs for Bash commands, while omitting the pattern runs your callbacks for every occurrence of the event. Omit it on purpose to log every tool call your session makes.
+Use the `matcher` pattern to target specific tools whenever possible. A matcher with `'Bash'` only runs for Bash commands, while omitting the pattern runs your callbacks for every occurrence of the event.
 
 ### Callback functions
 
@@ -254,7 +258,7 @@ Your callback returns an object with two categories of fields:
 Return `{}` to allow the operation without changes. SDK callback hooks use the same JSON output format as [Claude Code shell command hooks](/docs/en/hooks#json-output), which documents every field and event-specific option. For the SDK type definitions, see the [TypeScript](/docs/en/agent-sdk/typescript#synchookjsonoutput) and [Python](/docs/en/agent-sdk/python#synchookjsonoutput) SDK references.
 
 <Note>
-  When multiple hooks or permission rules apply, `deny` takes priority over `defer`, which takes priority over `ask`, which takes priority over `allow`. If any hook returns `deny`, the operation is blocked regardless of other hooks.
+  When multiple `PreToolUse` hooks return different [decisions](/docs/en/hooks#pretooluse-decision-control), `deny` takes priority over `defer`, which takes priority over `ask`, which takes priority over `allow`.
 </Note>
 
 #### Asynchronous output
@@ -293,7 +297,7 @@ Several examples in this section show only the callback function. To run one, re
 
 ### Modify tool input
 
-This example intercepts Write tool calls and rewrites the `file_path` argument to prepend `/sandbox`, redirecting all file writes to a sandboxed directory. The callback returns `updatedInput` with the modified path and `permissionDecision: 'allow'` to auto-approve the rewritten operation:
+This example intercepts Write tool calls and rewrites the `file_path` argument to prepend `/sandbox`. The callback returns `updatedInput` with the modified path and `permissionDecision: 'allow'` to auto-approve the rewritten operation:
 
 <CodeGroup>
   ```python Python theme={null}
@@ -348,10 +352,10 @@ To confirm the redirect, set the prefix to a path you can write to, such as `./s
 
 ### Add context and block a tool
 
-This example blocks writes to the `/etc` directory and explains why to both the model and the user:
+This example denies tool calls whose `file_path` starts with `/etc` and explains why to both the model and the user:
 
 * `permissionDecision: 'deny'` stops the tool call.
-* `permissionDecisionReason` tells the model why, so it avoids retrying.
+* `permissionDecisionReason` tells the model why.
 * `systemMessage` shows the user what happened.
 
 <CodeGroup>
@@ -442,9 +446,9 @@ By default, the agent may prompt for permission before using certain tools. This
 
 ### Register multiple hooks
 
-When an event fires, all matching hooks run in parallel. For permission decisions, the most restrictive result applies: a single `deny` blocks the tool call regardless of what the other hooks return. Because completion order is non-deterministic, write each hook to act independently rather than relying on another hook having run first.
+When an event fires, the matching hooks run in parallel. For permission decisions, the most restrictive result applies. One hook's `deny` blocks the tool call. Because completion order is non-deterministic, write each hook to act independently rather than relying on another hook having run first.
 
-The example below registers three independent checks for every tool call. The hook names in it, such as `audit_logger` in Python or `auditLogger` in TypeScript, stand in for callbacks you define:
+The example below registers three independent checks, each with an [omitted matcher](/docs/en/hooks#matcher-patterns). The hook names in it, such as `audit_logger` in Python or `auditLogger` in TypeScript, stand in for callbacks you define:
 
 <CodeGroup>
   ```python Python theme={null}
@@ -476,9 +480,9 @@ The example below registers three independent checks for every tool call. The ho
 
 Use multi-tool matchers to share one callback across related tools. This example registers three matchers with different scopes, and each hook it names stands in for a callback you define:
 
-* A pipe-separated exact list (`Write|Edit|NotebookEdit`) triggers `file_security_hook` only for file modification tools.
+* A pipe-separated exact list (`Write|Edit|NotebookEdit`) triggers `file_security_hook` for the Write, Edit, and NotebookEdit tools.
 * A regex (`^mcp__`) triggers `mcp_audit_hook` for any MCP tool whose name starts with `mcp__`.
-* An omitted matcher triggers `global_logger` for every tool call regardless of name.
+* An omitted matcher triggers `global_logger` without filtering by tool name.
 
 <CodeGroup>
   ```python Python theme={null}
@@ -790,9 +794,9 @@ Claude Code runs each callback with a timeout, which you set in seconds with the
 
 When a callback exceeds its timeout, Claude Code cancels it and discards its output, and the session continues rather than hanging. What happens next depends on the event:
 
-* `PreToolUse`: Claude Code doesn't run the tool call, Claude receives a tool result stating the hook didn't respond before its timeout, and the turn continues. If another `PreToolUse` hook returned an explicit deny, Claude receives that denial instead of the timeout error. Before v2.1.210, Claude Code reported the timeout to Claude as a user rejection, which made unattended sessions stop and wait for input.
+* `PreToolUse`: Claude Code blocks the tool call. In its place, Claude receives a tool result saying the hook didn't respond before its timeout, and the turn continues. Before v2.1.210, Claude Code reported the timeout to Claude as a user rejection, which made unattended sessions stop and wait for input.
 * `PostToolUse` and `PostToolUseFailure`: Claude Code keeps the tool result and the turn continues.
-* `UserPromptSubmit` and [`UserPromptExpansion`](/docs/en/hooks#userpromptexpansion): Claude Code blocks the prompt with a message naming the hook and the timeout, and the session continues. Because a callback on these events can act as a policy gate, Claude Code never lets a timed-out prompt through unscreened. Before v2.1.208, Claude Code ended the query with `error_during_execution` when a callback on these events timed out.
+* `UserPromptSubmit` and [`UserPromptExpansion`](/docs/en/hooks#userpromptexpansion): Claude Code blocks the prompt with a message naming the hook and the timeout, and the session continues. Before v2.1.208, Claude Code ended the query with `error_during_execution` when a callback on these events timed out.
 * `Stop` and `SubagentStop`: the timed-out callback counts as returning no decision. The agent or subagent stops as if that callback had allowed it, and a decision from your other hooks on the event still applies. Before Claude Code v2.1.273, a timed-out `Stop` or `SubagentStop` callback counted as a failed hook run, and Claude Code discarded the decisions of your other hooks on the event.
 * `SessionStart`: the timed-out callback counts as returning no output, and the session continues with the output of your other `SessionStart` hooks.
 * `PreModelSwitch`: Claude Code blocks the model switch. A hook that doesn't answer hasn't approved the switch.

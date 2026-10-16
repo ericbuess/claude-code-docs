@@ -106,7 +106,7 @@ Three elements put words on screen: `Text` for your own styling, `Markdown` for 
 
 ### `Text`
 
-`Text` draws a string with the styles you give it. This sample shows one line for each style:
+`Text` draws a string with the styles you give it. This sample shows plain text and eight styles, one on each line:
 
 ```javascript theme={null}
 Box({

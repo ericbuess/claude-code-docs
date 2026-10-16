@@ -185,8 +185,8 @@ A sandboxed command that connects to a host you haven't allowed stays in the san
 
 Even in auto-allow mode, the following still apply:
 
-* Explicit [deny rules](/docs/en/permissions) are always respected
-* `rm` or `rmdir` commands that target a [critical path](/docs/en/permission-modes#critical-paths) still go through the regular permission flow
+* A command in a [form that a `Bash` deny rule matches](/docs/en/permissions#bash-rule-limits) is still blocked
+* `rm` or `rmdir` commands recognized as targeting a [critical path](/docs/en/permission-modes#which-paths-are-critical) still go through the regular permission flow
 * Content-scoped [ask rules](/docs/en/permissions) like `Bash(git push *)` still force a prompt even for sandboxed commands
 * A bare `Bash` ask rule, or the equivalent `Bash(*)` form, is skipped for commands that run sandboxed; it still applies to commands that run outside the sandbox. In [plan mode](/docs/en/permission-modes#analyze-before-you-edit-with-plan-mode), the rule isn't skipped: it prompts for sandboxed commands too, including read-only ones
 * [Monitor tool](/docs/en/tools-reference#monitor-tool) commands aren't approved automatically, though they still run in the sandbox. To skip the prompt, add an [allow rule](/docs/en/permissions#bash) that matches the command, such as `Bash(npm run *)`

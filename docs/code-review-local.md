@@ -106,7 +106,7 @@ Pass the merge request as its URL or a `!123` reference. Claude Code treats a ba
 After the effort level and flags, Claude Code reads the rest of the line as the review target. The `ultra` argument changes that reading:
 
 * **With `ultra`**: Claude Code reads a single word as a base branch or PR number. Longer text that doesn't name a branch or PR becomes [a note attached to the review](/docs/en/ultrareview#pass-a-request-in-plain-words). `/code-review ultra check my auth changes` reviews your current branch, and Claude relates the findings to your note.
-* **Without `ultra`**: everything left is the review target, even when it starts with another command name. `/code-review /fix-issue 123` reviews with `/fix-issue 123` as target text instead of loading `/fix-issue` as a second [stacked skill](/docs/en/skills#pass-arguments-to-skills). Before v2.1.218, a command stacked after `/code-review` expanded as its own skill.
+* **Without `ultra`**: everything left is the review target, even when it starts with another command name. `/code-review /fix-issue 123` reviews with `/fix-issue 123` as target text instead of loading `/fix-issue` as a second [stacked skill](/docs/en/skills#stack-several-skills-in-one-message). Before v2.1.218, a command stacked after `/code-review` expanded as its own skill.
 
 ## Run in the foreground
 

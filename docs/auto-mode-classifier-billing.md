@@ -12,7 +12,9 @@ In [auto mode](/docs/en/permission-modes#eliminate-prompts-with-auto-mode), a cl
 We're changing auto mode to no longer charge for classifier requests in Claude Code. However, this session isn't eligible.
 ```
 
-At the prompt, Claude Code holds the first action it would check that way until you answer. Nothing is broken: auto mode keeps working, and its classifier requests are billed as they were before. The most common cause is an LLM gateway or proxy between Claude Code and the API, and when Claude Code can identify one, the notice names it. Press **Enter** to continue, or see [Make the session eligible](#make-the-session-eligible) to keep it from appearing in new sessions.
+At the prompt, Claude Code holds the first action it would check that way until you answer. Auto mode keeps working, and its classifier requests are billed as they were before.
+
+The most common cause is an LLM gateway or proxy between Claude Code and the API, and when Claude Code can identify one, the notice names it. Press **Enter** to continue, or see [Make the session eligible](#make-the-session-eligible) to keep it from appearing in new sessions.
 
 ## Respond to the notice
 

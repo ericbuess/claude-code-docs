@@ -92,7 +92,7 @@ We encourage either writing your own MCP servers or using MCP servers from provi
 
 ## IDE security
 
-See [VS Code security and privacy](/docs/en/vs-code#security-and-privacy) for more information on running Claude Code in an IDE.
+See [The built-in IDE MCP server](/docs/en/vs-code#the-built-in-ide-mcp-server) for more information on running Claude Code in an IDE.
 
 ## Cloud execution security
 

@@ -58,6 +58,7 @@ When ZDR is enabled for a Claude Code organization on Claude for Enterprise, cer
 | Feature | Reason |
 | - | - |
 | [Cloud sessions](/docs/en/claude-code-on-the-web), including those started from the [Desktop app](/docs/en/desktop#cloud-sessions) | Requires server-side storage of session data, including conversation history with prompts and completions. |
+| [Chat and Cowork unified](https://support.claude.com/en/articles/17444462-set-up-and-manage-the-new-unified-claude-experience-for-your-enterprise-organization) | Requires cloud sessions. |
 | [Claude Tag](https://claude.com/docs/claude-tag) | Retains channel memory and session transcripts. |
 | [Artifacts](/docs/en/artifacts) | Requires storing published page content on Anthropic-operated infrastructure. |
 | Feedback submission (`/feedback`, `/bug`, `/share`) | Submitting feedback sends conversation data to Anthropic. |
