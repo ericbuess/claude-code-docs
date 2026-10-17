@@ -5816,7 +5816,7 @@ type SandboxFilesystemConfig = {
 | Property | Type | Default | Description |
 | :- | :- | :- | :- |
 | `allowWrite` | `string[]` | `[]` | File path patterns to allow write access to |
-| `denyWrite` | `string[]` | `[]` | File path patterns to deny write access to. To block sandboxed writes to a file in the session's working directory, list its absolute path. If you list `.env` or `./.env`, sandboxed commands can write to the `.env` file in the session's working directory |
+| `denyWrite` | `string[]` | `[]` | File path patterns to deny write access to. To block sandboxed writes to a file in the session's working directory, list its absolute path. |
 | `denyRead` | `string[]` | `[]` | File path patterns to deny read access to |
 
 ### Permissions Fallback for Unsandboxed Commands

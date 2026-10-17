@@ -3566,7 +3566,7 @@ class SandboxSettings(TypedDict, total=False):
   Set `"failIfUnavailable": True` in your sandbox settings to stop instead. The SDK forwards `failIfUnavailable` to Claude Code along with the declared `SandboxSettings` fields. `query()` then reports a `ResultMessage` with `subtype="error_during_execution"` and the reason in `errors`. Because this is a single-shot `query()` call, the SDK raises after yielding that error result, so wrap the loop in a try block to continue past it. See [Handle the result](/docs/en/agent-sdk/agent-loop#handle-the-result) for the error contract.
 </Note>
 
-To keep sandboxed commands from writing to a file, list its absolute path under [`denyWrite`](/docs/en/settings-reference#sandbox-filesystem-denywrite) in your sandbox settings, such as `"filesystem": {"denyWrite": ["/home/user/project/.env"]}`. The SDK forwards `filesystem` to Claude Code along with the declared `SandboxSettings` fields. Once the sandbox starts, it blocks writes to each listed path. If you list `.env` or `./.env`, sandboxed commands can write to the `.env` file in the session's working directory.
+To keep sandboxed commands from writing to a file, list its absolute path under [`denyWrite`](/docs/en/settings-reference#sandbox-filesystem-denywrite) in your sandbox settings, such as `"filesystem": {"denyWrite": ["/home/user/project/.env"]}`. The SDK forwards `filesystem` to Claude Code along with the declared `SandboxSettings` fields. Once the sandbox starts, it blocks writes to each absolute path you listed.
 
 #### Example usage
 
