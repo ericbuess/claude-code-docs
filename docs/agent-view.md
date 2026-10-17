@@ -682,7 +682,7 @@ Claude Code applies a forwarded gateway to that session's running process only a
 The [permission mode](/docs/en/permissions) depends on how you started the session:
 
 * **Backgrounded with `/bg` or `←`**: Claude Code keeps the permission mode the session was in, so one you switched to `acceptEdits` or `auto` stays there after detaching
-* **Dispatched from an agent view you opened with `←`**: the target's own configuration comes first, and the permission mode of the session you came from applies when nothing else sets one
+* **Dispatched from an agent view you opened with `←`**: Claude Code takes the new session's permission mode from the target directory's configuration first, then from the session you came from
 * **Dispatched from `claude agents` started in a shell, or with `claude --bg`**: the new session starts the way a new `claude` session in that directory would, unless you dispatched it from an agent view you opened with [dispatch defaults](#dispatch-defaults). [Which permission mode a session starts in](/docs/en/permission-modes#which-mode-a-session-starts-in) lists the order
 
 For a session you dispatch from an agent view opened with `←`, Claude Code takes the permission mode from the first of these that applies:
@@ -690,7 +690,7 @@ For a session you dispatch from an agent view opened with `←`, Claude Code tak
 1. The target directory's [`permissions.defaultMode`](/docs/en/settings-reference#permissions-defaultmode). Two source rules apply:
    * `auto` and `bypassPermissions` [take effect only from managed settings, a `--settings` file, or `~/.claude/settings.json`](/docs/en/settings-reference#permissions-defaultmode).
    * Claude Code refuses a `defaultMode` from the project's `.claude/settings.json` or `.claude/settings.local.json` that selects a more permissive mode than the session you came from was in.
-2. The permission mode of the session you came from
+2. The permission mode of the session you came from. If that session was in `bypassPermissions` mode, the new session can start in Manual mode instead, with the notice `Bypass permissions was requested at launch and ignored`. That happens when your acceptance of the bypass disclaimer is only in `.claude/settings.local.json` or a `--settings` file. Continue in Manual mode, or [add that acceptance to `~/.claude/settings.json`](/docs/en/permission-modes#bypass-permissions-acceptance).
 
 When Claude Code refuses a source's mode as too permissive, the next source in the list decides. For example, if you dispatch from a plan-mode session into a directory whose checked-in settings ask for `acceptEdits`, the new session starts in plan mode. If you move that `defaultMode` to `~/.claude/settings.json`, it applies regardless of the permission mode of the session you came from.
 

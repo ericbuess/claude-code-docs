@@ -1003,7 +1003,7 @@ Logged when the permission mode changes, for example from `Shift+Tab` cycling, e
 * `event.sequence`: per-process counter for ordering events, described under [Event correlation attributes](#event-correlation-attributes)
 * `from_mode`: The previous permission mode, for example `"default"`, `"plan"`, `"acceptEdits"`, `"auto"`, or `"bypassPermissions"`
 * `to_mode`: The new permission mode
-* `trigger`: What caused the change. One of `"shift_tab"`, `"exit_plan_mode"`, `"auto_gate_denied"`, or `"auto_opt_in"`. Absent when the transition originates from the SDK or bridge
+* `trigger`: What caused the change. One of `"shift_tab"`, `"exit_plan_mode"`, `"auto_gate_denied"`, or `"auto_opt_in"`. Absent for some changes, such as when the SDK sets the permission mode through [`setPermissionMode()`](/docs/en/agent-sdk/typescript#query-object)
 
 #### Auth event
 

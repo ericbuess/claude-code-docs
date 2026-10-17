@@ -94,18 +94,6 @@ A `claude -p --resume` or `claude -p --continue` run resumes in plan mode only w
 * The run isn't started through [channels](/docs/en/channels)
 * No [deny rule](/docs/en/permissions#manage-permissions) removes the `ExitPlanMode` tool
 
-### Resume from a summary
-
-On a Pro or Max plan, when you resume a session that has been inactive for more than about an hour and is over 100,000 tokens, Claude Code restores the conversation and then opens a dialog before you send your first message. The session's [prompt cache](/docs/en/prompt-caching#cache-lifetime) has expired by then, so the next request processes the full history once no matter which of the dialog's options you pick.
-
-The dialog offers three ways to continue the session:
-
-* **Resume from summary**: runs [`/compact`](/docs/en/context-window#what-survives-compaction) immediately. Later requests carry the summary instead of the full history.
-* **Resume full session as-is**: loads the conversation unchanged.
-* **Don't ask me again**: resumes the full session and stops showing the dialog on all future resumes.
-
-Resuming as-is keeps every detail of the conversation available, at a per-request cost that scales with the conversation's size. Resuming from the summary costs less on each later request because it carries the summary instead of the full history, but whatever the summary leaves out is no longer in Claude's context. See [why usage climbs in a long session](/docs/en/costs#why-usage-climbs-in-a-long-session) for where that per-request cost comes from.
-
 ### Where the session picker looks
 
 Claude Code stores sessions per project directory. By default the session picker shows:

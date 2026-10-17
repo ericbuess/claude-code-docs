@@ -458,7 +458,7 @@ In addition to the [common fields](#common-fields), command hooks accept these f
 | `async` | no | If `true`, runs in the background without blocking. See [Run hooks in the background](#run-hooks-in-the-background) |
 | `asyncRewake` | no | If `true`, runs in the background and wakes Claude on exit code 2. The hook's stderr, or stdout if stderr is empty, is shown to Claude as a [system reminder](/docs/en/glossary#system-reminder) so it can react to a long-running background failure |
 | `shell` | no | Shell to use for this hook. Accepts `"bash"` or `"powershell"`. Defaults to `"bash"`, or to `"powershell"` on Windows when Git Bash isn't installed. Setting `"powershell"` runs the command via PowerShell on Windows. Does not require `CLAUDE_CODE_USE_POWERSHELL_TOOL` since hooks spawn PowerShell directly. Ignored when `args` is set |
-| `onFailure` | no | What happens to the action when the hook fails: `"continue"`, the default, or `"block"`. See [Block the action when a hook fails](#block-the-action-when-a-hook-fails). Requires Claude Code v2.1.295 or later |
+| `onFailure` | no | Whether the action that triggered the hook goes ahead when the hook fails: `"continue"` or `"block"`. See [Block the action when a hook fails](#block-the-action-when-a-hook-fails) for `"block"` and for leaving the field unset. Requires Claude Code v2.1.295 or later |
 
 <a id="exec-form-and-shell-form" />
 
@@ -783,13 +783,13 @@ Your hook's exit code tells Claude Code whether to continue with the action that
 
 * **Success**: your hook exits 0. Claude Code applies any [JSON output](#json-output) fields your hook printed, and the action goes ahead unless those fields block or deny it. [Hooks that start a background process](#hooks-that-start-a-background-process) covers the exception.
 * **Blocking error**: your hook exits 2. On [events that can block](#exit-code-2-behavior-per-event), Claude Code stops the action.
-* **Non-blocking error**: your hook exits with any other code, or fails in some other way, such as not starting or printing invalid JSON. The action goes ahead, and on events such as `PreToolUse` you see a `<hook name> hook error` notice in the transcript. If you want a failed hook to block the action, set [`onFailure: "block"`](#block-the-action-when-a-hook-fails).
+* **Non-blocking error**: your hook exits with any other code, or fails in some other way, such as not starting or printing invalid JSON. The action goes ahead, except for hooks [whose failure blocks the action](#block-the-action-when-a-hook-fails), for example a hook with `onFailure` set to `"block"`. On events such as `PreToolUse`, you see a `<hook name> hook error` notice in the transcript.
 
-What your hook prints to stdout can change the outcome. For example, if a `PreToolUse` hook exits 1 but prints JSON that passes validation, the run is a success and the JSON fields decide what happens. To find your hook's outcome on an event such as `PreToolUse`, match what it printed to stdout in the first column with its exit code along the top:
+What your hook prints to stdout can change the outcome. For example, when a `PreToolUse` hook exits 1 but prints JSON that passes validation, that JSON can still decide what happens. To find your hook's outcome on an event such as `PreToolUse`, match what it printed to stdout in the first column with its exit code along the top:
 
 | Stdout | Exit 0 | Exit 2 | Any other exit code |
 | :- | :- | :- | :- |
-| JSON object that passes [schema validation](#json-output) | Success. The fields apply | Blocking error. Claude Code still reads the fields, but they can't override the block | Success. Claude Code ignores the exit code, and the fields alone decide. With [`onFailure: "block"`](#block-the-action-when-a-hook-fails), this counts as a failure |
+| JSON object that passes [schema validation](#json-output) | Success. The fields apply | Blocking error. Claude Code still reads the fields, but they can't override the block | Success. Claude Code ignores the exit code, and the fields alone decide. For hooks [whose failure blocks the action](#block-the-action-when-a-hook-fails), the run counts as a failure instead |
 | JSON that [can't be parsed](#exit-code-0) or fails schema validation | Non-blocking error. The notice carries the parse or validation message | Blocking error. Your stderr is the reason | Non-blocking error. The notice carries the parse or validation message |
 | [Plain text](#exit-code-0), or nothing | Success | Blocking error. Your stderr is the reason | Non-blocking error. The notice carries the first line of your stderr |
 
@@ -816,7 +816,7 @@ For a hook that isn't [async](#how-async-hooks-execute), Claude Code parses your
 * **Two or more lines that each parse as JSON on their own, the first starting with `{` and the last ending with `}`**: plain text when no line is a JSON output object that sets a field, and a parse failure when one is.
 * **Anything else that starts with `{` and ends with `}` but isn't valid JSON**: a parse failure.
 
-When Claude Code tries to parse your stdout as JSON and can't, or the parsed object fails [schema validation](#json-output), the run is a [non-blocking error](#exit-code-output). The `<hook name> hook error` notice carries the parse or validation message. On the events that add plain-text stdout as context, Claude Code doesn't add stdout it failed to parse.
+Unless the hook is one [whose failure blocks the action](#block-the-action-when-a-hook-fails), a parse failure or a parsed object that fails [schema validation](#json-output) is a [non-blocking error](#exit-code-output). The `<hook name> hook error` notice carries the parse or validation message. On the events that add plain-text stdout as context, Claude Code doesn't add stdout it failed to parse.
 
 Claude never sees stderr from a hook that exits 0. To read it yourself on events such as `PreToolUse`, enable [debug logging](#debug-hooks). To surface a warning to Claude from a `PostToolUse` or `PostToolUseFailure` hook, exit 2 instead so [Claude sees the stderr](#exit-code-2-behavior-per-event) even though the tool already ran.
 
@@ -855,7 +855,9 @@ PreToolUse:Bash hook error: [${CLAUDE_PROJECT_DIR}/.claude/hooks/no-rm.sh]: Bloc
 
 #### Other exit codes
 
-When your hook exits with a code other than 0 or 2 and prints plain text or nothing to stdout, the run is a [non-blocking error](#exit-code-output). You see a `<hook name> hook error` notice in the transcript with `Failed with non-blocking status code:` and the first line of your hook's stderr. For example, when a `PreToolUse` hook on `Bash` prints `something broke` to stderr and exits 1, the `PreToolUse:Bash hook error` notice carries this line:
+Unless the hook is one [whose failure blocks the action](#block-the-action-when-a-hook-fails), an exit code other than 0 or 2 with plain text or nothing on stdout is a [non-blocking error](#exit-code-output). If the action goes ahead, you see a `<hook name> hook error` notice in the transcript with `Failed with non-blocking status code:` and the first line of your hook's stderr.
+
+For example, when a `PreToolUse` hook on `Bash` prints `something broke` to stderr and exits 1, the `PreToolUse:Bash hook error` notice carries this line:
 
 ```text theme={null}
 Failed with non-blocking status code: something broke
@@ -863,10 +865,16 @@ Failed with non-blocking status code: something broke
 
 To capture the full stderr rather than its first line, enable [debug logging](#debug-hooks).
 
-A hook that can't start is a non-blocking error too. In shell form, when the script path doesn't exist or isn't executable, the shell exits with a code like 127 and the notice carries the interpreter's message, for example `Failed with non-blocking status code: /bin/sh: /path/to/hook.sh: No such file or directory`. When you set up a policy hook, watch for this notice on its first run, because a mistyped path in `settings.json` means the hook never runs. To block the action instead, set [`onFailure: "block"`](#block-the-action-when-a-hook-fails).
+Unless the hook is one [whose failure blocks the action](#block-the-action-when-a-hook-fails), a hook that can't start is a non-blocking error too. In shell form, when the script path doesn't exist or isn't executable, the shell exits with a code like 127 and the notice carries the interpreter's message. For example, when the script path doesn't exist, the notice carries a line like this one:
+
+```text theme={null}
+Failed with non-blocking status code: /bin/sh: /path/to/hook.sh: No such file or directory
+```
+
+When you set up a policy hook, watch for this notice on its first run, because a mistyped path in `settings.json` means the hook never runs. To block the action when the hook can't start, set [`onFailure: "block"`](#block-the-action-when-a-hook-fails).
 
 <Warning>
-  Without valid JSON on stdout, Claude Code treats exit code 1 as a non-blocking error, even though 1 is the conventional Unix failure code. If your hook is meant to enforce a policy, use `exit 2`.
+  Exit code 1 without valid JSON output is a non-blocking error unless the hook is one [whose failure blocks the action](#block-the-action-when-a-hook-fails), even though 1 is the conventional Unix failure code. If your hook is meant to enforce a policy, use `exit 2`.
 </Warning>
 
 #### Timeouts
@@ -875,7 +883,7 @@ Apart from a command hook you run with [`async: true`](#run-hooks-in-the-backgro
 
 On [`PreModelSwitch`](#premodelswitch), a hook canceled at its timeout blocks the model switch. On `PreToolUse`, the two hook families differ:
 
-* A timed-out `command`, `http`, or `mcp_tool` hook doesn't block the tool call. The call continues through the normal [permission flow](/docs/en/permissions), so don't count on a stalled hook to act as a gate. To block the call when a `command` or `http` hook times out, set [`onFailure: "block"`](#block-the-action-when-a-hook-fails).
+* A timed-out `command`, `http`, or `mcp_tool` hook doesn't block the tool call, except for hooks [whose failure blocks the action](#block-the-action-when-a-hook-fails). The call continues through the normal [permission flow](/docs/en/permissions), so don't count on a stalled hook to act as a gate. To block the call when a `command` or `http` hook times out, set [`onFailure: "block"`](#block-the-action-when-a-hook-fails).
 * An [Agent SDK callback hook](/docs/en/agent-sdk/hooks) that exceeds its timeout [blocks the tool call](#pretooluse).
 
 #### Hooks that start a background process
@@ -901,7 +909,11 @@ To test the script, make `policy-check.sh` exit 2, then trigger a tool call that
 
 #### Block the action when a hook fails
 
-On most events, when a hook fails or times out, Claude Code still carries out the action, so a policy hook with a wrong path or a crashing script lets everything through. To block the action instead, set `"onFailure": "block"` on a `command` or `http` hook. The default value is `"continue"`. Requires Claude Code v2.1.295 or later.
+On most events, when a hook fails or times out, Claude Code still carries out the action. A policy hook with a wrong path or a crashing script then lets everything through. To block the action instead, set `"onFailure": "block"` on a `command` or `http` hook. Requires Claude Code v2.1.295 or later.
+
+<Note>
+  On Windows without Git Bash, a shell-form `PreToolUse` or `PermissionRequest` command hook that fails with `onFailure` unset can instead [block the tool call](#failed-hooks-on-windows-without-git-bash).
+</Note>
 
 This `PreToolUse` hook in `.claude/settings.json` runs a project script before each Bash command, and blocks the command if the script fails:
 
@@ -948,6 +960,23 @@ The field has no effect on these hooks:
 
 * **`Stop`, `SubagentStop`, `TaskCompleted`, and `TeammateIdle` hooks**: exit code 2 on these events sends Claude back to keep working, and Claude can't repair a hook that won't run
 * **Background command hooks**: command hooks that set [`async` or `asyncRewake`](#run-hooks-in-the-background)
+
+#### Failed hooks on Windows without Git Bash
+
+If the error for a blocked tool call includes this text, a `PreToolUse` or `PermissionRequest` command hook failed or timed out and blocked the call:
+
+```text theme={null}
+blocking because Git Bash wasn't found and this hook doesn't set "shell" to "powershell", so only exit code 0 or 2 counts as its verdict.
+```
+
+A shell-form hook with no `shell` set runs in PowerShell when Git Bash isn't installed, and a script written for Bash may not run as written there. Pick the fix that matches your hook:
+
+* **The hook is written for Bash**: install [Git for Windows](https://git-scm.com/downloads/win), or set [`CLAUDE_CODE_GIT_BASH_PATH`](/docs/en/env-vars) if Git Bash is installed where Claude Code doesn't find it, then start a new session
+* **The hook runs one `.exe`, not a `.cmd` or `.bat` file**: put the program in `command` and its arguments in `args` to use [exec form](#exec-form-and-shell-form), and add [`"onFailure": "block"`](#block-the-action-when-a-hook-fails). Claude Code then starts the program with no shell. Without `"onFailure": "block"`, the call can go ahead when the program fails, is missing, or times out
+* **The hook is written for PowerShell**: add `"shell": "powershell"` and [`"onFailure": "block"`](#block-the-action-when-a-hook-fails) to the hook. Without `"onFailure": "block"`, the call can go ahead when the hook still fails or times out. To find out why the hook failed, check the [debug log](#debug-hooks)
+* **The action should go ahead when the hook fails**: add `"onFailure": "continue"` to the hook
+
+For a hook that shows this error, any exit code other than 0 or 2 counts as a [failure](#block-the-action-when-a-hook-fails), even when the hook prints JSON that doesn't deny the call.
 
 #### Exit code 2 behavior per event
 
@@ -998,11 +1027,11 @@ HTTP hooks use HTTP status codes and response bodies instead of exit codes and s
 * **2xx with an empty body**: success, equivalent to exit code 0 with no output
 * **2xx with a JSON object body**: parsed using the same [JSON output](#json-output) schema as command hooks. A body that fails schema validation is a non-blocking error
 * **2xx with any other body, such as plain text**: non-blocking error, handled the same as a non-2xx status. Claude Code doesn't add the text to Claude's context
-* **Non-2xx status**: non-blocking error, execution continues
-* **Connection failure**: non-blocking error, execution continues
+* **Non-2xx status**: non-blocking error
+* **Connection failure**: non-blocking error
 * **Timeout**: the hook is canceled, as described under [Timeouts](#timeouts)
 
-HTTP hooks can't signal a blocking error through the status code alone: a non-2xx status or a failed connection is a [non-blocking error](#exit-code-output). To block a tool call or deny a permission, return a 2xx response with a JSON body containing the appropriate decision fields. To block the action when the request fails or returns a non-2xx status, set [`onFailure: "block"`](#block-the-action-when-a-hook-fails).
+After a [non-blocking error](#exit-code-output), the action goes ahead unless the hook is one [whose failure blocks the action](#block-the-action-when-a-hook-fails). To block a tool call or deny a permission, return a 2xx response with a JSON body containing the appropriate [decision fields](#decision-control). To block the action when the request fails or returns a non-2xx status, set [`onFailure: "block"`](#block-the-action-when-a-hook-fails).
 
 ### JSON output
 
@@ -1473,6 +1502,8 @@ UserPromptSubmit hooks also receive `session_title` when the session has a custo
 }
 ```
 
+When the prompt is a [skill](/docs/en/skills) or custom command you typed, such as `/deploy staging`, the hook receives that line as you typed it rather than the expanded skill content. If the hook blocks the prompt, the command doesn't run, so shell commands the skill [injects with `` !`<command>` ``](/docs/en/skills#inject-dynamic-context) don't run either. To match on the command's name or arguments instead, use [UserPromptExpansion](#userpromptexpansion).
+
 #### UserPromptSubmit decision control
 
 `UserPromptSubmit` hooks can control whether a submitted prompt is processed and add context. All [JSON output fields](#json-output) are available.
@@ -1930,7 +1961,7 @@ In `PostToolUse`, `tool_response` is an object with `plan` and `filePath` fields
 
 | Field | Description |
 | :- | :- |
-| `permissionDecision` | `"allow"` skips the permission prompt, except for the [actions no mode auto-approves](/docs/en/permission-modes#actions-no-mode-auto-approves), for [reads from network paths](/docs/en/permissions#network-paths), and for `AskUserQuestion` and `ExitPlanMode`, which need [`updatedInput` paired with it](#allow-with-updatedinput). `"deny"` prevents the tool call. `"ask"` prompts the user to confirm. `"defer"` exits gracefully so the tool can be resumed later. [Deny and ask rules](/docs/en/permissions#manage-permissions) are still evaluated regardless of what the hook returns |
+| `permissionDecision` | `"allow"` skips the permission prompt, except for [actions no mode auto-approves](/docs/en/permission-modes#actions-no-mode-auto-approves) and [reads from network paths](/docs/en/permissions#network-paths). `AskUserQuestion` and `ExitPlanMode` need [`updatedInput` paired with `"allow"`](#allow-with-updatedinput). For plan mode, see [Hook approvals in plan mode](/docs/en/permissions#hook-approvals-in-plan-mode). `"deny"` prevents the tool call. `"ask"` prompts the user to confirm. `"defer"` exits gracefully so the tool can be resumed later. [Deny and ask rules](/docs/en/permissions#manage-permissions) are still evaluated regardless of what the hook returns |
 | `permissionDecisionReason` | For `"ask"`, shown to the user in the permission prompt. When Claude Code [denies the call](/docs/en/headless#turn-off-permission-prompts-in-unattended-runs) in a `-p` run where no one can answer that prompt, Claude reads the reason in the tool result instead. For `"deny"`, shown to Claude. For `"allow"` and `"defer"`, written to the [debug log](#debug-hooks) only |
 | `updatedInput` | Modifies the tool's input parameters before execution. Replaces the entire input object, so include unchanged fields alongside modified ones. Claude Code evaluates permission rules and a Bash command's [auto-background eligibility](/docs/en/tools-reference#foreground-commands-that-move-to-the-background) against the input your hook returns, not the input Claude sent. Combine with `"allow"` to auto-approve, or `"ask"` to show the modified input to the user. For `"defer"`, ignored |
 | `additionalContext` | String added to Claude's context alongside the tool result. Ignored when `permissionDecision` is `"defer"`. See [Add context for Claude](#add-context-for-claude) |
@@ -3450,9 +3481,11 @@ When multiple PreModelSwitch hooks return different decisions, precedence is `de
 
 Claude Code shows the user any `systemMessage` your hook returns regardless of the decision, so a cost-report hook can return `{"systemMessage": "..."}` and exit 0.
 
-A PreModelSwitch hook that doesn't respond before its timeout blocks the switch. For what a timeout does on other events, see [Timeouts](#timeouts). The default timeout for this event is 30 seconds. `PreModelSwitch` runs `command`, `http`, and `mcp_tool` hooks only, so the `prompt` and `agent` defaults don't apply.
+#### PreModelSwitch timeouts and other exit codes
 
-A hook that exits with a code other than 0 or 2 and prints no JSON decision is a non-blocking error, as described under [Other exit codes](#other-exit-codes).
+A PreModelSwitch hook that doesn't respond before its timeout blocks the switch. The default timeout for this event is 30 seconds.
+
+For what an exit code other than 0 or 2 does, see [Other exit codes](#other-exit-codes).
 
 ### PostModelSwitch
 

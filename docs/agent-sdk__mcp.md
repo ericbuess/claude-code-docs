@@ -182,7 +182,16 @@ MCP tools require explicit permission before Claude can use them. Without permis
 
 ### Tool naming convention
 
-MCP tools follow the naming pattern `mcp__<server-name>__<tool-name>`. For example, a GitHub server named `"github"` with a `list_issues` tool becomes `mcp__github__list_issues`.
+MCP tools are named `mcp__<server-name>__<tool-name>`, where `<server-name>` is the name you register the server under, such as its key in `mcpServers`.
+
+Characters in the server name such as `.` and spaces are replaced by `_`. This table shows the full name of a `list_issues` tool for two server keys:
+
+| Key in `mcpServers` | Full tool name |
+| :- | :- |
+| `github` | `mcp__github__list_issues` |
+| `my.server` | `mcp__my_server__list_issues` |
+
+Use the full tool names in `allowedTools` and in [MCP permission rules](/docs/en/permissions#mcp). For a server that a [plugin](/docs/en/agent-sdk/plugins) provides, `<server-name>` takes the [plugin-scoped form](/docs/en/mcp#plugin-provided-mcp-servers) and starts with `plugin_`.
 
 ### Auto-approve with allowedTools
 

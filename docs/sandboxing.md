@@ -972,6 +972,18 @@ Managed settings and `--settings` rank above local settings. To see which of the
 * **`Command line arguments`**: if you started Claude Code with [`--settings`](/docs/en/settings#change-a-setting-for-one-session), check whether the file or JSON you passed sets one of those keys. If it does, change the value there, or start Claude Code again without those keys.
 * **`Enterprise managed settings`**: your organization's managed settings are loaded. If they set one of those keys, you can't change that key from `/sandbox` or from any settings file you control, so ask your administrator.
 
+### `/sandbox` prints `Sandbox settings not changed`
+
+This line means `/sandbox` couldn't save the choice you made in its panel to your project's `.claude/settings.local.json`:
+
+```text theme={null}
+✗ Sandbox settings not changed: /home/you/project/.claude/settings.local.json couldn't be updated (EACCES). Start Claude Code in a project folder you can write to.
+```
+
+If the reason in parentheses is `EACCES`, `EPERM`, or `EROFS`, start Claude Code in a project folder you can write to, then run `/sandbox` again in that session.
+
+If the reason begins with `Invalid JSON syntax in settings file`, correct the JSON in your project's `.claude/settings.local.json`, then run `/sandbox` again.
+
 ## Limitations
 
 Sandboxing reduces risk but is not a complete isolation boundary. Review the limitations below before relying on it as a hard security control.

@@ -28,7 +28,7 @@ The mod runs once you approve it, except in [sessions where a mod Claude writes 
     Ask for the mod in your own words, for example `make a mod that shows the current git branch above the prompt`. Claude writes the mod in a directory of its own in the session's mods folder, which is `~/.claude/dev-mods/` followed by the session's ID. A mod's full path looks like `~/.claude/dev-mods/3f2a9c1e-5b7d-4e8a-9c21-6d0f4b8a7e13/git-branch/`.
 
     <Note>
-      In the `default` and `acceptEdits` [permission modes](/docs/en/permission-modes#protected-paths), Claude Code asks before Claude creates each of the mod's files, because `~/.claude` is a protected path. Approve each file as it comes up.
+      In the `default` and `acceptEdits` [permission modes](/docs/en/permission-modes), Claude Code asks before Claude creates each of the mod's files, because the mods folder is a [protected path](/docs/en/permission-modes#protected-paths). Approve each file as it comes up.
     </Note>
   </Step>
 
