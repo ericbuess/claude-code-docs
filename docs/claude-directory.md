@@ -1682,11 +1682,14 @@ Skip the confirmation prompt for use in scripts:
 claude purge ~/work/my-repo --yes
 ```
 
-Pass `--all` instead of a path to purge state for every project at once, which deletes `history.jsonl` outright rather than filtering it. Pass `-i` to step through the deletion plan one item at a time.
+Other options:
+
+* Pass `--all` instead of a path to purge state for every project at once, which deletes `history.jsonl` outright rather than filtering it.
+* Pass `-i` to step through the deletion plan one item at a time.
 
 The command leaves `shell-snapshots/` and `backups/` alone because those are not project-scoped, and warns about them in the plan output. If anyone ran [`/heapdump`](/docs/en/troubleshooting#high-cpu-or-memory-usage) on the machine, delete the `.heapsnapshot` files it wrote too. A heap snapshot contains the full conversation and any credentials the process held, and neither the retention sweep nor the purge touches it.
 
-You can also delete any of the application-data paths above by hand, apart from the [state files to keep](#state-files-to-keep). New sessions are unaffected. The table below shows what you lose for past sessions.
+You can also delete any of the application-data paths above yourself, apart from the [state files to keep](#state-files-to-keep).
 
 | Delete | You lose |
 | - | - |
@@ -1702,7 +1705,7 @@ You can also delete any of the application-data paths above by hand, apart from 
 | `~/.claude/remote-settings.json` | Nothing. Re-fetched on next launch. |
 | `~/.claude/cache/changelog.md` | Nothing. Refreshed in the background. |
 | `~/.claude/policy-limits.json` | Nothing. Refreshed automatically. |
-| `~/.claude/tasks/` | Task lists that a resumed session would pick up |
+| `~/.claude/tasks/` | Your [task lists](/docs/en/interactive-mode#task-list), including any still in use |
 | `~/.claude/skills/.trash/`, `~/.claude/plugins/.trash/` | The chance to recover [synced skills](/docs/en/skills#how-synced-skills-behave) and [synced plugins](/docs/en/plugins/loading#synced-plugins) that Claude Code removed |
 | `~/.claude/plugins/installed_plugins.set-aside.<date>.<hash>.json`, `~/.claude/plugins/installed_plugins.unreadable.<date>.<hash>.kept` | The copies of plugin install records that Claude Code dropped or couldn't read. Nothing reads them back |
 | `~/.claude/debug/`, `~/.claude/plans/`, `~/.claude/session-env/`, `~/.claude/shell-snapshots/`, `~/.claude/backups/` | Nothing user-facing |

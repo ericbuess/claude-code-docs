@@ -93,7 +93,7 @@ Update https://claude.ai/code/artifact/5fbea6f3-... with today's numbers.
 
 ## Find an artifact again
 
-Run `/artifacts` in Claude Code to list the artifacts you own and the ones shared with you. The current session's artifacts come first, under **This session**. Requires Claude Code v2.1.208 or later.
+Run `/artifacts` in Claude Code to list the artifacts you own and the ones shared with you. The current session's artifacts come first, under **This session**.
 
 Select an artifact, then press one of these keys:
 

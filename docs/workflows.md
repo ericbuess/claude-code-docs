@@ -137,10 +137,6 @@ The keyword is an opt-in only in a prompt you type yourself: at the interactive 
 * a scheduled task prompt
 * a webhook payload or pull request comment relayed into the conversation
 
-<Note>
-  Before v2.1.210, the keyword started a workflow from any of these routes too, including a webhook payload or pull request comment relayed into the conversation.
-</Note>
-
 ### Let Claude decide with ultracode
 
 Ultracode is a Claude Code setting that turns on automatic workflow orchestration for the session, at whichever [effort level](/docs/en/model-config#adjust-effort-level) the session runs at. With it on, Claude plans a workflow for each substantive task instead of waiting for you to ask. Turn it on at the Claude Code prompt:

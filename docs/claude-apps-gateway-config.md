@@ -1051,7 +1051,7 @@ The gateway derives much of the bootstrap response from the matched policy's `cl
 
 * The model list, from `availableModels`. [Extended context in Claude Desktop](#extended-context-in-claude-desktop) covers each model's 1M context option
 * Disabled tools, from bare tool-name `permissions.deny` entries. If you set `disabledBuiltinTools` in the policy's `desktop` block, the gateway serves the union of your value and the derived list, so you can disable more tools this way but can't re-enable one you disabled through `permissions.deny`
-* The egress allowlist, from `sandbox.network.allowedDomains`. If you set `coworkEgressAllowedHosts` in the policy's `desktop` block, the gateway uses that value instead of the derived list
+* The egress allowlist, from `sandbox.network.allowedDomains`. If you set `coworkEgressAllowedHosts` in the policy's `desktop` block, the gateway uses that value instead of the derived list. If the allowlist the gateway serves includes `*` and the gateway doesn't also serve Claude Desktop's [`allowedWorkspaceFolders`](https://claude.com/docs/third-party/claude-desktop/code#applied-as-managed-policy), Claude Desktop doesn't turn on the [Bash sandbox](/docs/en/sandboxing) in the Code tab
 * An OTLP endpoint that points at the gateway itself, and the signed-in user's identity attributes. The gateway relays the exports it receives at that endpoint to your `forward_to` destinations. It includes the endpoint and the attributes when you set both [`telemetry.forward_to`](#telemetry) and `listen.public_url`.
 
   Claude Desktop exports every signal with one encoding: `http/protobuf`, or `http/json` when you set `OTEL_EXPORTER_OTLP_PROTOCOL` or one of its per-signal variants to `http/json` in the policy's `env`. Before Claude Code v2.1.261 on the gateway server, the response set `http/json` regardless, so a collector that accepts only protobuf rejected Claude Desktop's exports
@@ -1271,6 +1271,17 @@ Without a `forward_to` destination for a signal, the gateway accepts and discard
 Set it to `1` only in the policies whose groups you want traced. A policy that doesn't set it inherits the value from your `match: {}` catch-all policy if that policy sets one, per the [merge rules](#managed). To keep a group's clients from sending traces even when a developer sets the variable locally, set it to `0` in that group's policy.
 
 Both protobuf and JSON OTLP encodings are relayed, and any OpenTelemetry-compatible backend works as a destination.
+
+#### Send cumulative metrics
+
+If your collector accepts only cumulative metrics, set [`OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE`](/docs/en/monitoring-usage#common-configuration-variables) to `cumulative`. Claude Code sends delta metrics by default, and the gateway relays them without converting them. Set the variable where each kind of session reads it:
+
+* **Terminal sessions**: in the `env` block under a policy's [`cli` or `code` key](#choose-cli-or-code)
+* **Cowork sessions that [run on the user's machine](/docs/en/managed-settings#where-and-when-a-policy-applies)**: in the `env` block of the [client-side managed settings](#client-side-managed-settings) on that machine
+* **Code tab sessions under a `code` policy**: in the policy's `env` block, once you meet the [conditions for `code` settings to apply](#apply-code-settings-in-the-code-tab)
+* **Code tab sessions under a `cli` policy**: in the `env` block of the client-side managed settings on the machine that runs the session. Over SSH, that's the remote host.
+
+If you add the variable to a machine's managed settings, also set [`parentSettingsBehavior: "merge"`](/docs/en/claude-apps-gateway#set-the-opt-in) in the highest-priority source on that machine. Without it, Cowork sessions and Code tab sessions under a `cli` policy run without the egress allowlist and other policy that Claude Desktop passes them as parent settings.
 
 #### Add your own labels
 

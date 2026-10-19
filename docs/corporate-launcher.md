@@ -110,15 +110,17 @@ With a launcher configured, `ps` and Activity Monitor no longer show Claude Code
 When the launcher can't run, Claude Code refuses to start the process instead of starting it unwrapped. On Windows, [the variable is ignored](#what-the-launcher-covers) and processes start unwrapped. Claude Code holds the script to these rules:
 
 * **End with `exec "$@"`.** A launcher that forks a child and exits leaves an orphaned Claude Code process the background service can't track. Agent view marks such a session failed with a message naming the launcher, and the service reaps what the launcher left behind.
-* **Don't reorder, absorb, or prepend arguments.** The first argument is the Claude Code binary and everything after it is its argv.
+* **Don't reorder, absorb, or add to Claude Code's arguments.** Remove the launcher's [own arguments](#pass-arguments-to-the-launcher), which come first, and pass the rest to `exec` as it arrived.
 * **Pass every inherited environment variable through to `exec`.** Adding variables, such as injected credentials, is fine; dropping inherited ones is not.
   * The per-session authentication tokens, the model and provider selection, and `CLAUDE_CODE_PROCESS_WRAPPER` itself all travel on the inherited environment, so a launcher that rebuilds it from an allow list breaks the sessions it starts, and `/status` reports a launcher mismatch.
   * If the launcher must enter a namespace or sandbox that resets the environment, re-export the inherited environment inside it verbatim.
-* **Reach `exec` within about three seconds each time the launcher runs.** A cold background dispatch runs the launcher twice in series before the first byte of output, so do slow work such as a single sign-on exchange lazily or from a cache.
+* **Reach `exec` within about three seconds each time the launcher runs.** A background session can run the launcher three times in series before its first output. Do slow work such as a single sign-on exchange lazily or from a cache, and give any step that waits on the network its own time limit.
 * **Tolerate being invoked from inside itself.** Claude Code applies the launcher to every nested self-spawn, so a launcher that acquires an exclusive resource must detect that it already holds it.
-* **Don't write to the terminal before Claude Code starts.** Anything printed before the `exec` is reported as the crash cause if the session dies before initializing.
+* **Don't write to the terminal or standard output before Claude Code starts.** Anything printed before the `exec` is reported as the crash cause if the session dies before initializing. Text on standard output also reaches a program that reads Claude Code's output, such as a script that parses `claude -p` results.
 * **Don't depend on how arguments are spelled.** A flag's value can arrive as its own argument, `--flag value`, or joined to the flag, `--flag=value`. Which form a flag uses can change between versions.
 * **Run `exec` from the directory the launcher started in.** Claude Code works in the directory it starts in, so a launcher that changes directory can start a session in the wrong project. If the launcher must enter a namespace or sandbox that resets the working directory, change back to the starting directory inside it, before the `exec`.
+* **Don't read standard input.** A command that reads it before the `exec`, such as one that asks for a password, can wait for input that doesn't come and leave the session stuck. It can also take input meant for Claude Code, and the session can then run without that input and report no error. Redirect such a command's input from `/dev/null`.
+* **Call other programs by absolute path.** The launcher can start with a `PATH` that lacks the directories your shell profile adds.
 
 ### Format of the launcher value
 
@@ -126,11 +128,29 @@ When the launcher can't run, Claude Code refuses to start the process instead of
 
 To pass your launcher arguments of its own, write them after the path. Claude Code parses the value as an argument list, not a shell command:
 
-* Whitespace separates tokens, and double quotes group a token that contains spaces.
+* Whitespace separates tokens, and double quotes group a token that contains spaces. A single quote is an ordinary character, so `'a b'` is two tokens.
 * A value that starts with `[` is read as a JSON string array, such as `["/opt/corp/launcher", "--profile", "cc"]`.
 * Shell syntax doesn't work: there is no variable expansion or globbing, and an unquoted operator such as `;`, `|`, `&`, or `$(` is rejected as a configuration error rather than reinterpreted.
 
 When the value can't be used, Claude Code refuses to start the affected process and [reports the reason](/docs/en/errors#claude_code_process_wrapper-launcher-errors).
+
+In a settings file, write the array form inside a JSON string and escape its quotes: `"[\"/opt/corp/launcher\", \"--profile\", \"cc\"]"`.
+
+### Pass arguments to the launcher
+
+Write the launcher's own arguments after its path in [the value](#format-of-the-launcher-value), and remove them in the script before the `exec` call. They reach the script first, ahead of the Claude Code command. The following script, written for the value `/opt/corp/launcher --profile cc`, saves the profile name and then removes both arguments with `shift`:
+
+```bash theme={null}
+#!/bin/sh
+if [ "$1" = "--profile" ]; then
+  profile="$2"
+  shift 2
+fi
+# Your organization's setup for "$profile".
+exec "$@"
+```
+
+Use the [Verify step](#set-up-the-launcher) to see the launch command Claude Code resolved from the value.
 
 ## Relationship to `CLAUDE_CODE_SHELL_PREFIX`
 

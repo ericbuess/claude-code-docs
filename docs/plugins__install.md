@@ -93,7 +93,7 @@ Pick the tab for where you run Claude Code.
 
     <Steps>
       <Step title="Open the plugin browser">
-        Click the **+** button next to the prompt box and select **Plugins**, then **Add plugin**. The plugin browser opens with the plugins from your marketplaces.
+        Click the **+** button next to the prompt box and select **Add plugins**. If the **+** menu shows **Plugins** instead of **Add plugins**, select **Plugins**, then **Browse plugins**. The plugin browser opens with the plugins from your marketplaces.
       </Step>
 
       <Step title="Select the plugin">
@@ -105,7 +105,7 @@ Pick the tab for where you run Claude Code.
       </Step>
     </Steps>
 
-    To enable, disable, or uninstall later, use **+ > Plugins > Manage plugins**. The plugin browser isn't available in the desktop app's cloud sessions. See [Install plugins in the desktop app](/docs/en/desktop#install-plugins).
+    To enable, disable, or uninstall a plugin later, see [Install plugins in the desktop app](/docs/en/desktop#install-plugins).
   </Tab>
 
   <Tab title="VS Code">

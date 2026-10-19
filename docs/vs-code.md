@@ -250,7 +250,7 @@ When you select and copy text that includes a typeset formula, you get the formu
 
 Click the **Session history** button at the top of the Claude Code panel to access your conversation history. You can search by keyword or browse by time.
 
-Click any conversation to resume it with the full message history. If the conversation is already open in another tab of the current window, clicking it switches to that tab. If the messages stay blank at first, see [why they're blank and when they appear](#a-resumed-conversation-is-blank-at-first). For more on resuming sessions, see [Manage sessions](/docs/en/sessions).
+Click any conversation to resume it. If the conversation is already open in another tab of the current window, clicking it switches to that tab. If the conversation opens with no messages showing, see [why a resumed conversation is blank at first](#a-resumed-conversation-is-blank-at-first). For more on resuming sessions, see [Manage sessions](/docs/en/sessions).
 
 * **Session titles**: new sessions receive AI-generated titles based on your first message.
 * **Rename and archive**: hover over a session to reveal these actions. Rename to give it a descriptive title, or archive to move it to the **Archived sessions** group at the bottom of the list.
@@ -378,7 +378,8 @@ After a reload, a new chat with a notice like this above its prompt box means th
 
 An open doesn't finish when the panel crashes or stops responding while loading the conversation, or when you reload or close the window within about three seconds of it opening. The conversation is unchanged and stays in [Session history](#resume-past-conversations).
 
-* **To open it anyway**: click **Open it anyway** or pick the conversation from Session history. If it opens and the panel keeps working, it comes back after later reloads as usual. If the panel stops responding again, reload the window to return to a new chat with the notice.
+* **To open it anyway**: click **Open it anyway** or pick the conversation from Session history. Once the conversation finishes opening, it [comes back after later reloads as usual](#continue-conversations-after-a-reload).
+* **If the panel stops responding while the conversation loads**: reload the window. A new chat opens.
 * **To leave it closed**: keep working in the new chat. The notice disappears once you send a prompt.
 
 ### Run multiple conversations
@@ -558,10 +559,17 @@ Send a long-running command or subagent to the background, then check on it from
 
 When a command or a [subagent](/docs/en/sub-agents) keeps Claude waiting longer than you want, click **Run in background** below its tool call in the conversation. Requires Claude Code v2.1.287 or later.
 
-* **Timing**: the action appears once a command has been running for about two seconds, or as soon as a subagent starts.
+* **Timing**: the action appears once a command has run for about two seconds, or as soon as Claude starts waiting for a [subagent](/docs/en/sub-agents#run-subagents-in-foreground-or-background) it spawned from the main conversation.
 * **After you click**: Claude stops waiting and continues the turn. The command or subagent keeps running as a [background task](/docs/en/tools-reference#background-commands) that notifies Claude when done.
 
 To check on the task or stop it in the meantime, type `/tasks` in the prompt box to open the [agent map](#use-the-prompt-box). A subagent keeps its place in the tree of agents there, and a command is listed below the agents with its [latest output on its card](#monitor-background-processes).
+
+#### The Run in background action is missing under a subagent
+
+By default in VS Code, subagents don't show this action. To see why for one subagent, open its card in the [agent map](#use-the-prompt-box) and read the `Spawned by` line:
+
+* **`Spawned by the main agent`**: the subagent started in the background, so Claude isn't waiting for it and you don't need to do anything. To have Claude wait for subagents instead, see [Let Claude wait for a subagent](/docs/en/sub-agents#let-claude-wait-for-a-subagent).
+* **`Spawned by` names another subagent**: the action appears only for subagents the main agent spawned, not a [nested subagent](/docs/en/sub-agents#let-subagents-spawn-their-own-subagents) another subagent waits for. To end the nested subagent early, click **Stop agent** on its card. The waiting subagent then carries on without that result.
 
 ### Monitor background processes
 
@@ -922,11 +930,17 @@ If none of the math in Claude's responses is typeset, check the extension's vers
 
 If one formula shows as written while others near it are typeset, check it for these causes:
 
-* **It reads as something other than math**: `$…$` text that reads as a word stays as written, such as `$O(n log n)$`. `$…$` text that starts with a digit, such as `$30$` or `$1/N$`, also stays as written unless a character such as `=`, `+`, or `^` marks it as math. Ask Claude for a `$$` block on its own lines instead, which the panel typesets without this check.
-* **It's padded, long, or split across lines**: `$ x^2 $` with spaces inside the dollars, `$…$` content over 60 characters, and `$…$` or `\(…\)` split across two lines aren't typeset. Ask Claude for a `$$` block on its own lines instead, which has none of these limits.
-* **The TeX can't be typeset**: a formula with a syntax error, a macro definition such as `\newcommand` or `\def`, or an unescaped `%` shows as written. Ask Claude to rewrite it with the error corrected, without the macro, or with `\%` for a percent sign.
-* **It's too large**: a formula longer than 8,192 characters, or one that would draw far larger than its source, shows as written. Ask Claude to split it into smaller formulas or to write it more compactly.
-* **It follows a large amount of math**: within one block of text in a response, the panel typesets formulas in order up to a limit. A later formula that would go past the limit shows as written. Ask Claude to send the formula you need again by itself.
+* **The formula is inline and the panel doesn't treat it as math**: ask Claude to send it again as a `$$` block on its own lines. The panel leaves an inline formula as written when the text between its `$…$` delimiters:
+  * Is more than simple arithmetic yet has no character such as `=`, `+`, or `^` to mark it as math, as in `$O(n log n)$`
+  * Starts with a digit and has no such character, as in `$30$` and `$1/N$`
+  * Has spaces inside the dollar signs, as in `$ x^2 $`
+  * Is longer than 60 characters
+  * Is split across two lines. A `\(…\)` formula split across two lines isn't typeset either.
+* **The formula has a TeX syntax error**: ask Claude to rewrite it with the error corrected.
+* **The formula defines a macro**: a formula with a macro definition such as `\newcommand` or `\def` shows as written. Ask Claude to rewrite it without the macro.
+* **The formula contains an unescaped `%`**: ask Claude to rewrite it with `\%` for a percent sign.
+* **The formula is too large**: a formula longer than 8,192 characters, or one whose typeset output would be far larger than its TeX source, shows as written. Ask Claude to split it into smaller formulas or to write it more compactly.
+* **The formula follows a large amount of math**: within one block of text in a response, the panel typesets formulas in order up to a limit. A later formula that would go past the limit shows as written. Ask Claude to send the formula you need again by itself.
 
 ### Claude Code never responds
 

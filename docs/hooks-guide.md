@@ -599,15 +599,13 @@ fi
 exit 0  # exit 0 = no decision; the normal permission flow applies
 ```
 
-The exit code determines what happens next:
+With an exit code besides 0 and 2 and no valid JSON output, the action proceeds on most events, unless the hook is one [whose failure blocks the action](/docs/en/hooks#block-the-action-when-a-hook-fails). A hook with `onFailure` set to `"block"` is one example. Exit 0 to report no objection, or exit 2 to block the action:
 
-* **Exit 0**: your hook reports no objection through its exit code.
-  * For a `PreToolUse` hook this doesn't approve the tool call: the normal [permission flow](/docs/en/permissions) still applies.
-  * For `UserPromptSubmit`, `UserPromptExpansion`, `SessionStart`, and `PostModelSwitch` hooks, Claude Code adds stdout it [treats as plain text](/docs/en/hooks#exit-code-0) to Claude's context.
-* **Exit 2**: Claude Code blocks the action. Write a reason to stderr. Where it lands depends on the event: some events feed it to Claude as feedback so it can adjust, others show it to the user, and a few, such as `ConfigChange` and `Elicitation`, surface no message. Some events can't be blocked: for `SessionStart` and others, exit 2 shows stderr to the user and execution continues. See [exit code 2 behavior per event](/docs/en/hooks#exit-code-2-behavior-per-event) for the full list.
-* **Any other exit code**: for most events, the action proceeds as a [non-blocking error](/docs/en/hooks#exit-code-output), unless the hook is one [whose failure blocks the action](/docs/en/hooks#block-the-action-when-a-hook-fails) or its JSON output passes validation:
-  * A parsed object that passes schema validation: Claude Code ignores the exit code, the JSON alone decides the outcome, and the hook isn't reported as an error. The per-event exceptions, like `WorktreeCreate` failing on any nonzero exit, are listed in the reference's [Exit code output](/docs/en/hooks#exit-code-output) section.
-  * A parsed object that fails schema validation, or stdout that Claude Code [tries to parse as JSON](/docs/en/hooks#exit-code-0) but that isn't valid JSON: a non-blocking error; the notice carries the validation or parse message.
+* **Exit 0**: if you exit 0 from a `PreToolUse` hook, the tool call still goes through the normal [permission flow](/docs/en/permissions), because exit 0 doesn't approve it. For `UserPromptSubmit`, `UserPromptExpansion`, `SessionStart`, and `PostModelSwitch` hooks, Claude Code adds stdout it [treats as plain text](/docs/en/hooks#exit-code-0) to Claude's context.
+* **Exit 2**: write a reason to stderr. Depending on the event, Claude receives it as feedback so it can adjust, the user sees it, or no message appears, as with `ConfigChange` and `Elicitation`. Some events can't be blocked: for `SessionStart` and others, exit 2 shows stderr to the user and execution continues. See [exit code 2 behavior per event](/docs/en/hooks#exit-code-2-behavior-per-event) for the full list.
+* **Any other exit code**: for the per-event exceptions, such as `WorktreeCreate` failing on any nonzero exit, see [Exit code output](/docs/en/hooks#exit-code-output). On other events, unless the hook is one whose failure blocks the action, find your case by what your hook printed to stdout:
+  * A parsed object that passes schema validation: Claude Code ignores the exit code, the JSON alone decides the outcome, and the hook isn't reported as an error.
+  * A parsed object that fails schema validation, or stdout that Claude Code [tries to parse as JSON](/docs/en/hooks#exit-code-0) but that isn't valid JSON: the action proceeds as a non-blocking error. Check the `<hook name> hook error` notice for the validation or parse message.
   * Stdout that Claude Code [treats as plain text](/docs/en/hooks#exit-code-0), or empty stdout: the action proceeds as a non-blocking error. The transcript shows a `<hook name> hook error` notice, then the first line of stderr prefixed with `Failed with non-blocking status code:`. To capture the full stderr, enable [debug logging](/docs/en/hooks#debug-hooks) with `claude --debug` or by running `/debug` mid-session.
 
 #### Structured JSON output
@@ -632,17 +630,13 @@ For example, a `PreToolUse` hook can deny a tool call and tell Claude why, or es
 
 With `"deny"`, Claude Code cancels the tool call and feeds `permissionDecisionReason` back to Claude.
 
-On `PreToolUse`, Claude Code handles each `permissionDecision` value as follows:
+On `PreToolUse`, you can also return `"ask"` to show the user the normal permission prompt, or `"allow"` to skip the interactive permission prompt. With `"allow"`, deny and ask rules, including enterprise managed deny lists, still apply, as do prompts for:
 
-* `"allow"`: skip the interactive permission prompt. Deny and ask rules, including enterprise managed deny lists, still apply, as do prompts for:
+* Reads from [network paths](/docs/en/permissions#network-paths)
+* MCP tools marked [`requiresUserInteraction`](/docs/en/mcp#require-approval-for-a-specific-tool)
+* Connector tools [your organization set to `ask`](/docs/en/mcp#organization-controls-on-connector-tools) in sessions where that setting reaches Claude Code
 
-  * Reads from [network paths](/docs/en/permissions#network-paths)
-  * MCP tools marked [`requiresUserInteraction`](/docs/en/mcp#require-approval-for-a-specific-tool)
-  * Connector tools [your organization set to `ask`](/docs/en/mcp#organization-controls-on-connector-tools) in sessions where that setting reaches Claude Code
-
-  For what `"allow"` does in plan mode, see [Hook approvals in plan mode](/docs/en/permissions#hook-approvals-in-plan-mode).
-* `"deny"`: cancel the tool call and send the reason to Claude
-* `"ask"`: show the permission prompt to the user as normal
+For what `"allow"` does in plan mode, see [Hook approvals in plan mode](/docs/en/permissions#hook-approvals-in-plan-mode).
 
 A fourth value, `"defer"`, is available in [non-interactive mode](/docs/en/headless) with the `-p` flag. It exits the process with the tool call preserved so an Agent SDK wrapper can collect input and resume. See [Defer a tool call for later](/docs/en/hooks#defer-a-tool-call-for-later) in the reference.
 
@@ -855,7 +849,7 @@ The model's only job is to return its decision as JSON:
 * `"ok": true`: the action proceeds
 * `"ok": false`: what happens depends on the event:
   * `Stop` and `SubagentStop`: the `reason` is fed back to Claude so it keeps working, unless the response also sets `"impossible": true` to mark the condition as one that can never be satisfied, in which case Claude Code allows the stop and the turn ends
-  * `PreToolUse`: the tool call is denied; by default the turn ends and the deny `reason` appears in the chat as a warning line. Set `continueOnBlock: true` on the hook to instead return the `reason` to Claude as the tool error, so it can adjust and continue. Before v2.1.210, the deny `reason` was returned to Claude as the tool error and the turn continued
+  * `PreToolUse`: the tool call is denied; by default the turn ends and the deny `reason` appears in the chat as a warning line. Set `continueOnBlock: true` on the hook to instead return the `reason` to Claude as the tool error, so it can adjust and continue
   * `PostToolUse`: by default the turn ends and the `reason` appears in the chat as a warning line. Set `continueOnBlock: true` to feed the `reason` back to Claude and continue the turn instead
   * `PostToolBatch`, `UserPromptSubmit`, and `UserPromptExpansion`: the turn ends and the `reason` appears in the chat as a warning line
 
@@ -971,15 +965,16 @@ Keep these constraints in mind when designing hooks:
 
 ### Hooks and permission modes
 
-`PreToolUse` hooks fire before any permission-mode check, in every [permission mode](/docs/en/permission-modes), including `dontAsk`. A hook that returns `permissionDecision: "deny"` blocks the tool even in `bypassPermissions` mode or with `--dangerously-skip-permissions`. This lets you enforce policy that users can't bypass by changing their permission mode.
+With a hook in a settings file or a plugin's `hooks/hooks.json` you can't loosen restrictions past what permission rules allow, and a hook's `"deny"` holds in every permission mode:
 
-The reverse is not true: hooks in settings files and in a plugin's `hooks/hooks.json` can tighten restrictions but not loosen them past what permission rules allow. A hook returning `"allow"` doesn't bypass deny rules from settings, and it can't suppress the prompt for:
+* **What still holds over `"allow"`**: a hook returning `"allow"` doesn't bypass deny rules from settings, and it can't suppress the prompt for:
 
-* Reads from [network paths](/docs/en/permissions#network-paths)
-* MCP tools marked [`requiresUserInteraction`](/docs/en/mcp#require-approval-for-a-specific-tool)
-* Connector tools [your organization set to `ask`](/docs/en/mcp#organization-controls-on-connector-tools) in sessions where that setting reaches Claude Code
+  * Reads from [network paths](/docs/en/permissions#network-paths)
+  * MCP tools marked [`requiresUserInteraction`](/docs/en/mcp#require-approval-for-a-specific-tool)
+  * Connector tools [your organization set to `ask`](/docs/en/mcp#organization-controls-on-connector-tools) in sessions where that setting reaches Claude Code
 
-In [plan mode](/docs/en/permissions#hook-approvals-in-plan-mode), if your `PreToolUse` hook returns `"allow"` for a file edit, you get the same prompt, block, or approval the edit would get with no hook. To lift this limit on hook approvals, [approve the plan](/docs/en/permission-modes#review-and-approve-a-plan) or switch to another permission mode.
+  In [plan mode](/docs/en/permissions#hook-approvals-in-plan-mode), if your `PreToolUse` hook returns `"allow"` for a file edit, you get the same prompt, block, or approval the edit would get with no hook. To lift this limit on hook approvals, [approve the plan](/docs/en/permission-modes#review-and-approve-a-plan) or switch to another permission mode.
+* **`"deny"` in every permission mode**: a hook that returns `permissionDecision: "deny"` blocks the tool even in `bypassPermissions` mode or with `--dangerously-skip-permissions`. `PreToolUse` hooks fire before any permission-mode check, in every [permission mode](/docs/en/permission-modes), including `dontAsk`. This lets you enforce policy that users can't bypass by changing their permission mode.
 
 A [mod](/docs/en/plugins/mods/overview) you install that handles `tool.check` can approve a call that your `PreToolUse` hook blocked, unless the hook is in managed settings. In plan mode, the mod can approve such a call when it's read-only, but not a file edit or another call that isn't read-only. [Extend permissions with hooks](/docs/en/permissions#extend-permissions-with-hooks) lists which rules hold over a mod.
 

@@ -292,7 +292,7 @@ When you complete authentication from `/mcp` and the connection still fails with
 * For a server in the local, project, or user [scope](#mcp-installation-scopes) or in managed MCP configuration, the origin shows the host as written in that configuration, so a `${VAR}` reference in the host isn't expanded in the message.
 * For a failure with no status or error code, Claude Code shows the error text without the origin.
 
-A remote server whose configuration has an empty `url` shows as `not configured` in `/mcp`, in `claude mcp list`, and in the [`/plugin`](/docs/en/plugins/install) manager, and Claude Code doesn't attempt to connect to it. A plugin can include a placeholder entry like this for a connector you configure later, so Claude Code doesn't report it as an error or a setup issue. The server's detail view in `/mcp` reads `No URL configured for this server`; set the entry's `url` to connect it. Before v2.1.208, Claude Code reported an empty `url` as a configuration issue with a prompt to reconnect.
+A remote server whose configuration has an empty `url` shows as `not configured` in `/mcp`, in `claude mcp list`, and in the [`/plugin`](/docs/en/plugins/install) manager, and Claude Code doesn't attempt to connect to it. A plugin can include a placeholder entry like this for a connector you configure later, so Claude Code doesn't report it as an error or a setup issue. The server's detail view in `/mcp` reads `No URL configured for this server`; set the entry's `url` to connect it.
 
 #### Configuration warnings
 
@@ -361,7 +361,7 @@ An MCP server can change the tools, prompts, or resources it offers while connec
 * **In an interactive terminal session**, Claude Code fetches the updated list from that server, so you don't need to reconnect it.
 * **In [non-interactive mode](/docs/en/headless) with the `-p` flag and in the [Agent SDK](/docs/en/agent-sdk/overview)**, Claude Code refreshes only the tool list on these notifications.
 
-If a refresh request fails, Claude Code keeps the server's previously discovered tools, prompts, and resources until a later refresh succeeds. Before v2.1.214, a transient error during the refresh replaced the server's tools, prompts, and resources with an empty list.
+If a refresh request fails, Claude Code keeps the server's previously discovered tools, prompts, and resources until a later refresh succeeds.
 
 #### Notification streams on the v2 runtime
 
@@ -442,7 +442,7 @@ These timeouts bound how long a call can run, not always how long it blocks the 
 
 ### Automatic backgrounding of long tool calls
 
-An MCP tool call in the main conversation that is still running after two minutes moves to a background task instead of blocking the session. Claude receives the task ID immediately and keeps working, and the result arrives as a task notification when the call settles. Automatic backgrounding requires Claude Code v2.1.212 or later.
+An MCP tool call in the main conversation that is still running after two minutes moves to a background task instead of blocking the session. Claude receives the task ID immediately and keeps working, and the result arrives as a task notification when the call settles.
 
 The task appears in [`/tasks`](/docs/en/commands#all-commands), where you can also stop it, and it doesn't survive exiting the session. The task's entry shows the latest progress the server has reported. If you stop the task, Claude Code cancels the call and tells Claude that no result is coming. Stopping doesn't guarantee the server stops: it may already have done some of the work, or may still finish it.
 
@@ -1181,7 +1181,7 @@ After you remove your entry with `claude mcp remove <name>` and connect the serv
 
 ### How connectors reach Claude Code
 
-Which settings govern a claude.ai connector depends on where your session runs, because only some sessions fetch connectors from claude.ai themselves. Each row below names how connectors arrive in one kind of session and what controls them there. The desktop app's [WSL sessions](/docs/en/desktop-wsl#what-works-in-a-wsl-session) have no row because connectors aren't available in them yet.
+Which settings govern a claude.ai connector depends on where your session runs, because only some sessions fetch connectors from claude.ai themselves. Each row below names how connectors arrive in one kind of session and what controls them there. The desktop app's WSL sessions have no row because connectors are [still rolling out to them](/docs/en/desktop-wsl#check-for-the-terminal-and-connectors).
 
 | Where the session runs | How connectors arrive | What governs them |
 | :- | :- | :- |
@@ -1391,7 +1391,7 @@ The following `tools/list` entry marks one tool as always requiring approval.
 
 Some surfaces, such as [Remote Control](/docs/en/remote-control) and applications built on the [Agent SDK](/docs/en/agent-sdk/overview), normally let you approve tool calls with one tap. For a tool marked with this annotation, Claude Code withholds the one-tap action and shows the tool's full permission prompt instead, so approval still comes from a person answering the prompt rather than a tap.
 
-Claude Code withholds one-tap approval the same way for any permission request that only the terminal dialog can render in full, such as one that carries a safety warning or an always-allow option the remote surface can't show. You answer that request in the terminal dialog rather than from Remote Control. Requires Claude Code v2.1.214 or later.
+Claude Code withholds one-tap approval the same way for any permission request that only the terminal dialog can render in full, such as one that carries a safety warning or an always-allow option the remote surface can't show. You answer that request in the terminal dialog rather than from Remote Control.
 
 ## Respond to MCP elicitation requests
 

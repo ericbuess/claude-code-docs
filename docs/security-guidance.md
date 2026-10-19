@@ -29,7 +29,7 @@ In a terminal Claude Code session, install from the [official Anthropic marketpl
 
 `/plugin` opens an interactive panel in the terminal CLI. If Claude replies that `/plugin` isn't available in this environment, install another way:
 
-* **Claude desktop app, local or SSH session**: open the [plugin browser](/docs/en/desktop#install-plugins) by clicking the **+** button next to the prompt, then **Plugins**, then **Add plugin**
+* **Claude desktop app, local or SSH session**: use the **Desktop app** tab under [Install a plugin](/docs/en/plugins/install#install-a-plugin)
 * **VS Code extension**: install from the [**Manage plugins** dialog](/docs/en/vs-code#manage-plugins)
 * **Cloud sessions**: a cloud session doesn't load plugins from your user settings or from the repository's `.claude/settings.json`, as [What carries over from your setup](/docs/en/cloud-environments#what-carries-over-from-your-setup) explains. For plugins your organization distributes through managed settings, see [Manage plugins for your organization](/docs/en/plugins/org)
 

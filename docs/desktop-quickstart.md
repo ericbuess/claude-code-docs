@@ -59,7 +59,9 @@ With the Code tab open, choose a project and give Claude something to do.
 
 <Steps>
   <Step title="Choose an environment and folder">
-    Select **Local** to run Claude on your machine using your files directly. Click **Select folder** and choose your project directory.
+    In the [row under the prompt box](/docs/en/desktop#start-a-session), click the first control, the environment selector, and select the top entry in the **Local** group. Then click the project folder control beside the environment selector, select **Open folder…**, and choose your project's directory.
+
+    If no environment selector appears under your prompt box, you have the earlier layout. See [Check which layout you have](/docs/en/desktop#check-which-layout-you-have).
 
     <Tip>
       Start with a small project you know well. It's the fastest way to see what Claude Code can do.
@@ -68,12 +70,12 @@ With the Code tab open, choose a project and give Claude something to do.
     You can also select:
 
     * **Cloud**: Run sessions in the cloud that continue even if you close the app. See [Use Claude Code in the cloud](/docs/en/claude-code-on-the-web) for how cloud sessions work.
-    * **SSH**: Connect to a remote machine over SSH, such as your own servers, cloud VMs, or dev containers. Desktop installs Claude Code on the remote machine automatically the first time you connect. A running task can [keep going while Desktop is disconnected](/docs/en/desktop#keep-a-task-running-while-desktop-is-disconnected), but with a Claude account it can stop when its sign-in expires.
+    * **SSH**: Connect to a remote machine over SSH, such as your own servers, cloud VMs, or dev containers. [Add a connection](/docs/en/desktop#ssh-sessions) first. Desktop installs Claude Code on the remote machine automatically the first time you connect. A running task can [keep going while Desktop is disconnected](/docs/en/desktop#keep-a-task-running-while-desktop-is-disconnected), but with a Claude account it can stop when its sign-in expires.
     * **WSL** (Windows): Run the session inside a [WSL 2 distribution](/docs/en/desktop-wsl); Claude Code, tools, and git execute on the Linux side with native paths.
   </Step>
 
   <Step title="Choose a model">
-    Select a model from the dropdown next to the send button. See [models](/docs/en/model-config#available-models) for a comparison of the available models. You can change the model later from the same dropdown.
+    Select a model from the model picker toward the right end of the row under the prompt box. See [models](/docs/en/model-config#available-models) for a comparison of the available models. You can change the model later from the model picker.
   </Step>
 
   <Step title="Tell Claude what to do">
@@ -87,10 +89,10 @@ With the Code tab open, choose a project and give Claude something to do.
   </Step>
 
   <Step title="Review and accept changes">
-    What happens next depends on the [permission mode](/docs/en/desktop#choose-a-permission-mode) shown in the selector next to the send button:
+    Check your [permission mode](/docs/en/desktop#choose-a-permission-mode) in the row under the prompt box to see whether Claude waits for your approval:
 
     * **Auto or Accept edits**: Claude applies its file changes, and an indicator such as `+12 -1` appears so you can review them in the diff view
-    * **Manual**: Claude proposes each change and waits for your approval before applying it. Your files aren't modified until you accept, and if you reject a change, Claude asks how you'd like to proceed instead
+    * **Manual**: Claude proposes each change and waits for your approval before applying it
 
     In Manual mode, you'll see:
 
@@ -106,7 +108,7 @@ You've made your first edit. For the full reference on everything Desktop can do
 
 **Interrupt and steer.** You can redirect Claude at any point. Click the stop button to interrupt immediately, or type a correction and press **Enter** to send it without stopping the running action. Either way, you don't have to wait for it to finish or start over.
 
-**Give Claude more context.** Type `@filename` in the prompt box to pull a specific file into the conversation, attach images and PDFs using the attachment button, or drag and drop files directly into the prompt. The more context Claude has, the better the results. See [Add files and context](/docs/en/desktop#add-files-and-context-to-prompts).
+**Give Claude more context.** Type `@filename` in the prompt box to pull a specific file into the conversation. The more context Claude has, the better the results. See [Add files and context](/docs/en/desktop#add-files-and-context-to-prompts).
 
 **Use skills for repeatable tasks.** Type `/` or click **+** → **Slash commands** to browse [built-in commands](/docs/en/commands), [custom skills](/docs/en/skills), and plugin skills. Skills are reusable prompts you can invoke whenever you need them, like code review checklists or deployment steps.
 
@@ -119,13 +121,13 @@ You've made your first edit. For the full reference on everything Desktop can do
 * **Accept edits**: Claude auto-accepts file edits for faster iteration.
 * **Plan**: Claude proposes an approach without editing any files, which is useful before a large refactor.
 
-**Add plugins for more capabilities.** Click the **+** button next to the prompt box and select **Plugins** to browse and install [plugins](/docs/en/desktop#install-plugins) that add skills, agents, MCP servers, and more.
+**Add plugins for more capabilities.** Install [plugins](/docs/en/desktop#install-plugins) that add skills, agents, MCP servers, and more.
 
-**Arrange your workspace.** Drag the chat, diff, terminal, file, and browser panes into whatever layout you want. Open the terminal with **Ctrl+\`** to run commands alongside your session, or click a file path to open it in the file pane. See [Arrange your workspace](/docs/en/desktop#arrange-your-workspace).
+**Arrange your workspace.** Drag the chat, diff, terminal, file, and browser panes into whatever layout you want. Open the terminal with **Ctrl+\`** to run commands alongside your session, or click a file path to open it. See [Arrange your workspace](/docs/en/desktop#arrange-your-workspace).
 
 **Preview your app.** When you run your dev server in the desktop, your app opens in the Browser pane, which can also [open external sites](/docs/en/desktop#browse-external-sites). Claude can view the running app, test endpoints, inspect logs, and iterate on what it sees. See [Preview your app](/docs/en/desktop#preview-your-app).
 
-**Track your pull request.** After opening a PR, Claude Code monitors CI check results and can automatically fix failures or merge the PR once all checks pass. See [Monitor pull request status](/docs/en/desktop#monitor-pull-request-status).
+**Track your pull request.** After opening a PR, Claude Code monitors CI check results and can automatically fix failures. See [Monitor pull request status](/docs/en/desktop#monitor-pull-request-status).
 
 **Put Claude on a schedule.** Set up [scheduled tasks](/docs/en/desktop-scheduled-tasks) to run Claude automatically on a recurring basis: a daily code review every morning, a weekly dependency audit, or a briefing that pulls from your connected tools.
 

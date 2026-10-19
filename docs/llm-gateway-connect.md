@@ -190,7 +190,7 @@ The desktop app reads gateway routing from its [third-party inference configurat
 * **Distributed by an administrator**: if your organization has [deployed the configuration](/docs/en/llm-gateway-rollout#distribute-through-managed-settings), the desktop app routes through the gateway with no setup on your part
 * **Configured locally**: for devices without an administrator-distributed configuration, open Help → Troubleshooting → Enable Developer Mode, which restarts the app with a Developer menu. Then open Developer → Configure Third-Party Inference and enter your gateway base URL. An administrator-distributed configuration takes precedence and makes this form read-only
 
-With the gateway configuration active, the environment picker doesn't offer Anthropic-hosted cloud environments, and [Remote Control](/docs/en/remote-control) is unavailable.
+With the gateway configuration active, the environment selector doesn't offer Anthropic-hosted cloud environments, and [Remote Control](/docs/en/remote-control) is unavailable.
 
 SSH sessions are in beta with a gateway configuration and require Claude Desktop v1.40609.0 or later. Before you connect, check the allowlist and the gateway's address:
 

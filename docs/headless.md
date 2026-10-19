@@ -124,7 +124,7 @@ With `--output-format json`, the response payload includes `total_cost_usd` and 
   Piped stdin is capped at 10MB. If you exceed the cap, Claude Code exits with a clear error and a non-zero status. To work with larger inputs, write the content to a file and reference the file path in your prompt instead of piping it.
 </Note>
 
-If Claude Code can't read stdin, for example because the process that started it disconnected its end, Claude Code prints a warning to stderr and continues with the prompt from the command line. Before v2.1.211, an unreadable stdin on Windows crashed the session or made it exit silently with no output.
+If Claude Code can't read stdin, for example because the process that started it disconnected its end, Claude Code prints a warning to stderr and continues with the prompt from the command line.
 
 ### Add Claude to a build script
 
@@ -193,7 +193,7 @@ claude -p "Explain recursion" --output-format stream-json --verbose --include-pa
 
 The last line of the stream is a `result` message with the final response text, cost, and session metadata.
 
-If your consumer reads the stream slowly, Claude Code waits for the queued output to drain before exiting, scaling the wait with how much is still queued, capped at 30 seconds. Before v2.1.214 the exit wait was capped at about two seconds, which could cut off the end of a large response.
+If your consumer reads the stream slowly, Claude Code waits for the queued output to drain before exiting, scaling the wait with how much is still queued, capped at 30 seconds.
 
 The following example uses [jq](https://jqlang.org/) to filter for text deltas and display only the streaming text. The `-r` flag outputs raw strings (no quotes) and `-j` joins without newlines so tokens stream continuously:
 
@@ -227,7 +227,6 @@ For a forked skill started from the prompt, match `parent_tool_use_id` on the `f
 
 If some of these messages are missing from your stream, check your Claude Code version against these minimums:
 
-* **`--forward-subagent-text` and `CLAUDE_CODE_FORWARD_SUBAGENT_TEXT`**: v2.1.211 or later
 * **Forwarding at every nesting depth**: v2.1.219 or later
 * **A forked skill that Claude starts with the Skill tool from the main conversation**: v2.1.86 or later for its `tool_use` and `tool_result` blocks, and v2.1.265 or later for its first `user` message and its text and thinking blocks
 * **Messages of subagents that a forked skill spawns, and of forked skills started inside a subagent or another forked skill**: v2.1.275 or later
@@ -304,7 +303,9 @@ claude -p "Run the test suite and fix any failures" \
   --allowedTools "Bash,Read,Edit"
 ```
 
-To set a baseline for the whole session instead of listing individual tools, pass a [permission mode](/docs/en/permission-modes). A run where nothing sets a permission mode takes the [built-in starting permission mode](/docs/en/permission-modes#which-mode-a-session-starts-in), which can be `auto`, so pass the one you want:
+Calls to tools you didn't list run if they need no approval. In a [Manual mode](/docs/en/permission-modes#available-modes) `claude -p` run, a call that needs approval is denied unless something approves it, such as a [`PermissionRequest` hook](/docs/en/hooks#permissionrequest) or a [`--permission-prompt-tool`](/docs/en/cli-reference#cli-flags). With Claude Code v2.1.302 or later, `claude -p` runs start in Manual mode when [nothing sets a permission mode](/docs/en/permission-modes#which-mode-a-non-interactive-run-starts-in).
+
+To set a baseline for the whole session instead of listing individual tools, pass a [permission mode](/docs/en/permission-modes) with `--permission-mode`, such as `auto`, `dontAsk`, or `acceptEdits`:
 
 * **`auto`**: pass `--permission-mode auto` to have a classifier review most actions instead of you
 * **`dontAsk`**: Claude Code denies every call that would otherwise prompt, which is useful for locked-down CI runs. Actions that need no approval in Manual mode still run, such as file reads in your working directories and the [read-only command set](/docs/en/permissions#read-only-commands), and so do actions your `--allowedTools` entries or `permissions.allow` rules cover. `AskUserQuestion`, connector tools [your organization set to `ask`](/docs/en/mcp#organization-controls-on-connector-tools), MCP tools marked [`requiresUserInteraction`](/docs/en/mcp#require-approval-for-a-specific-tool), and [reads from network paths](/docs/en/permissions#network-paths) are denied even when an allow rule matches

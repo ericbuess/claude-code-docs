@@ -412,10 +412,7 @@ Actions for the band above the prompt, the shared strip where [mods](/docs/en/pl
 | `abovePrompt:highlightNext` | Down | Highlight the next option in a focused select |
 | `abovePrompt:highlightPrevious` | Up | Highlight the previous option in a focused select |
 
-Two contexts bind more keys to these actions by default:
-
-* **`AbovePrompt`**: Right and Left also run `abovePrompt:next` and `abovePrompt:previous`, and Space also runs `abovePrompt:press`
-* **`AbovePromptInput`**: Down and Up also run `abovePrompt:next` and `abovePrompt:previous`
+In the [`AbovePrompt` context](#contexts), Right and Left also run `abovePrompt:next` and `abovePrompt:previous` by default, and Space also runs `abovePrompt:press`.
 
 The `AbovePrompt` context also binds Up, Down, PageUp, PageDown, Home, and End to the [pane scroll actions](#pane-actions) `pane:scrollUp` through `pane:bottom`, so to change one of those keys for the band, bind the scroll action in an `AbovePrompt` block.
 
@@ -686,6 +683,8 @@ When vim mode is enabled via `/config` → Editor mode, keybindings and vim mode
 * Vim keys aren't remappable through the keybindings file. To map a two-key INSERT-mode sequence such as `jj` to Escape, use the [`vimInsertModeRemaps`](/docs/en/interactive-mode#remap-insert-mode-key-sequences) setting
 * In vim NORMAL mode, `?` shows the help menu (vim behavior)
 * In vim NORMAL mode, `/` opens history search, the same as Ctrl+R in standard mode
+
+In the `Other` row of a question Claude asks, Escape doesn't cancel the question right away in vim mode. Except in [screen reader mode](/docs/en/accessibility), the row starts in INSERT mode each time you focus it. When you press Escape in the `Other` row, the row switches to NORMAL mode or drops a half-typed vim command, and the question stays open. Press Escape again in NORMAL mode to cancel the question.
 
 ## Validation
 

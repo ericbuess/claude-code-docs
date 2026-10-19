@@ -259,7 +259,7 @@ Here's how each component affects context in the SDK:
 | :- | :- | :- |
 | **System prompt** | Every request | Small fixed cost, always present |
 | **CLAUDE.md files** | Session start, via [`settingSources`](/docs/en/agent-sdk/claude-code-features) | Full content in every request (but prompt-cached, so only the first request pays full cost) |
-| **Tool definitions** | Every request; MCP schemas deferred by default | Built-in tool schemas load every request. [Tool search](/docs/en/agent-sdk/mcp#mcp-tool-search) defers MCP tool schemas by default, falling back to upfront loading on unsupported models and certain platforms. See [Configure tool search](/docs/en/agent-sdk/tool-search#configure-tool-search) for the full matrix |
+| **Tool definitions** | Every request for core built-in tools such as Bash, Read, and Edit; on demand for MCP tools and other built-in tools, which [tool search](/docs/en/agent-sdk/mcp#mcp-tool-search) defers by default | Every schema loads upfront in the cases under [Configure tool search](/docs/en/agent-sdk/tool-search#configure-tool-search) |
 | **Conversation history** | Accumulates over turns | Grows with each turn: prompts, responses, tool inputs, tool outputs |
 | **Skill descriptions** | Session start, via setting sources | Short summaries; full content loads only when invoked |
 
@@ -295,7 +295,7 @@ You can customize compaction behavior in several ways:
 
 A few strategies for long-running agents:
 
-* **Use subagents for subtasks.** Each subagent starts with a fresh conversation (no prior message history, though it does load its own system prompt and project-level context like CLAUDE.md). It does not see the parent's turns, and only its final response returns to the parent. The main agent's context grows by that summary, not by the full subtask transcript. See [What subagents inherit](/docs/en/agent-sdk/subagents#what-subagents-inherit) for details.
+* **Use subagents for subtasks.** A subagent returns only its final response, so your main agent's context grows by a summary, not by the subtask's transcript.
 * **Be selective with tools.** Every tool definition takes context space. Use the `tools` field on [`AgentDefinition`](/docs/en/agent-sdk/subagents#agentdefinition-configuration) to scope subagents to the minimum set they need.
 * **Watch MCP server costs.** [MCP tool search](/docs/en/agent-sdk/mcp#mcp-tool-search) defers MCP tool schemas by default and loads them on demand. When tool search is off or has fallen back to upfront loading, each MCP server adds all its tool schemas to every request, so a few servers with many tools can consume significant context before the agent does any work. See [Configure tool search](/docs/en/agent-sdk/tool-search#configure-tool-search) for the configurations where the fallback applies.
 * **Use lower effort for routine tasks.** Set [effort](#effort-level) to `"low"` for agents that only need to read files or list directories. This reduces token usage and cost.

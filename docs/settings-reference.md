@@ -793,7 +793,7 @@ scope: "Which settings files can set the key: user (~/.claude/settings.json), pr
 | [`spinnerTipsEnabled`](#spinnertipsenabled) | Hide tips in the spinner while Claude works | Interface and terminal | Any file |
 | [`spinnerTipsOverride`](#spinnertipsoverride) | Add your own tips to the spinner rotation, or replace the built-in tips | Interface and terminal | Any file |
 | [`spinnerVerbs`](#spinnerverbs) | Add or replace the verbs shown while a turn runs | Interface and terminal | Any file |
-| [`sshConfigs`](#sshconfigs) | Add [SSH connections](/docs/en/desktop#pre-configure-ssh-connections-for-your-team) to the Desktop environment dropdown | Remote, desktop, and notifications | User or managed |
+| [`sshConfigs`](#sshconfigs) | Add [SSH connections](/docs/en/desktop#pre-configure-ssh-connections-for-your-team) to the Desktop environment selector | Remote, desktop, and notifications | User or managed |
 | [`sshHostAllowlist`](#sshhostallowlist) | Limit which hosts [Desktop SSH sessions](/docs/en/desktop#restrict-which-ssh-hosts-users-can-connect-to) can reach | Remote, desktop, and notifications | Managed |
 | [`statusLine`](#statusline) | Run your own command to render a [status line](/docs/en/statusline) below the prompt | Interface and terminal | Any file |
 | [`strictKnownMarketplaces`](#strictknownmarketplaces) | Allowlist the [marketplace](/docs/en/plugins/overview) sources users can add and install from | Plugins and skills | Managed |
@@ -3802,7 +3802,7 @@ Set the transcript view Claude Code starts in: `"default"`, `"verbose"`, or `"fo
 
 ### `vimInsertModeRemaps`
 
-Map two-key INSERT-mode sequences to Escape in [vim editor mode](/docs/en/interactive-mode#vim-editor-mode). Each key is exactly two printable characters typed in sequence, and `"<Esc>"` is the only supported target; Claude Code ignores other entries. Requires Claude Code v2.1.208 or later.
+Map two-key INSERT-mode sequences to Escape in [vim editor mode](/docs/en/interactive-mode#vim-editor-mode). Each key is exactly two printable characters typed in sequence, and `"<Esc>"` is the only supported target; Claude Code ignores other entries.
 
 * **Scope**: [`User or managed`](#scopes). A repository can't remap your keystrokes.
 * **Type**: object mapping a two-character sequence to `"<Esc>"`
@@ -3816,7 +3816,7 @@ Map two-key INSERT-mode sequences to Escape in [vim editor mode](/docs/en/intera
 }
 ```
 
-Has no effect unless `editorMode` is `"vim"`. See [Remap INSERT-mode key sequences](/docs/en/interactive-mode#remap-insert-mode-key-sequences). Requires Claude Code v2.1.208 or later.
+Has no effect unless `editorMode` is `"vim"`. See [Remap INSERT-mode key sequences](/docs/en/interactive-mode#remap-insert-mode-key-sequences).
 
 ### `voice`
 
@@ -5390,7 +5390,14 @@ Stop Claude Code from registering the `claude-cli://` protocol handler with the 
 
 ### `disableDesktopLocalSessions`
 
-Turn off Code sessions that run on the device in the [desktop app](/docs/en/desktop#local-sessions-on-managed-devices), for deployments where developers should work on remote machines over SSH. In the Code tab, the **Local** environment stays in the environment dropdown but is grayed out and can't be selected, with a tooltip saying your organization turned it off; on Windows the WSL entry is grayed out the same way, though whether WSL sessions run on a managed device at all is [governed separately](/docs/en/admin-setup#wsl-sessions-in-claude-code-desktop). New sessions default to the first [SSH connection](/docs/en/desktop#ssh-sessions) if one is configured, and the app refuses to start or resume a session on the device, including an SSH connection back to the same machine. SSH sessions to other hosts and cloud sessions are unaffected. The desktop app reads this key; the terminal CLI ignores it. Requires Claude Desktop v1.37937.0 or later.
+Turn off Code sessions that run on the device in the [desktop app](/docs/en/desktop#local-sessions-on-managed-devices), for deployments where developers should work on remote machines over SSH. With the key set to `true`, users see this in the Code tab:
+
+* **Environment selector**: the entry for the user's computer is grayed out and unselectable, with the tooltip **Disabled by your organization**. On Windows the WSL entry is grayed out the same way, though whether WSL sessions run on a managed device at all is [governed separately](/docs/en/admin-setup#wsl-sessions-in-claude-code-desktop).
+* **New sessions**: default to the first [SSH connection](/docs/en/desktop#ssh-sessions) if one is configured
+* **Sessions on the device**: the app refuses to start or resume a session on the device, including an SSH connection back to the same machine
+* **SSH sessions to other hosts and cloud sessions**: unaffected
+
+The desktop app reads this key; the terminal CLI ignores it. Requires Claude Desktop v1.37937.0 or later.
 
 * **Scope**: [`Managed`](#scopes). By default, the desktop app reads the key from [one managed source](/docs/en/managed-settings#how-claude-code-combines-managed-sources).
 * **Type**: Boolean; only the JSON Boolean `true` takes effect
@@ -5523,7 +5530,7 @@ Claude Code ignores a `true` from project or local settings, so a repository can
 
 ### `sshConfigs`
 
-Add SSH connections to the [Desktop](/docs/en/desktop#pre-configure-ssh-connections-for-your-team) environment dropdown. Administrators use it to distribute shared connections to a team. Connections you define in managed settings show as managed. Users can select them and [set their own **Worktree folder**](/docs/en/desktop#choose-where-ssh-session-worktrees-go) for them, but can't edit anything else or delete them in the app.
+Add SSH connections to the [Desktop](/docs/en/desktop#pre-configure-ssh-connections-for-your-team) environment selector. Administrators use `sshConfigs` to distribute shared connections to a team. Users can select a managed connection and [set their own **Worktree folder**](/docs/en/desktop#set-the-worktree-folder-on-an-existing-connection) for it. They can't edit its other fields or delete it in the app.
 
 * **Scope**: [`User or managed`](#scopes). The desktop app reads this key. By default, it reads managed connections from [one managed source](/docs/en/managed-settings#how-claude-code-combines-managed-sources).
 * **Type**: array of objects, each with required `id`, `name`, and `sshHost` and optional `sshPort` and `sshIdentityFile`

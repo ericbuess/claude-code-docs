@@ -38,7 +38,7 @@ In the VS Code extension panel, only a `/plugin` line with something after it, s
 
 Install the plugin from the surface you're on instead:
 
-* **Claude desktop app, local or SSH session**: click the **+** button next to the prompt, then **Plugins**, then **Add plugin** to open the [plugin browser](/docs/en/desktop#install-plugins)
+* **Claude desktop app, local or SSH session**: use the **Desktop app** tab under [Install a plugin](/docs/en/plugins/install#install-a-plugin)
 * **VS Code extension**: use the **VS Code** tab under [Install a plugin](/docs/en/plugins/install#install-a-plugin)
 * **Claude Code on the web, or a desktop cloud session**: a cloud session has no plugin browser. See the **Cloud session** tab under [Install a plugin](/docs/en/plugins/install#install-a-plugin) for what a cloud session loads
 * **A terminal you have access to**: run `claude` and type `/plugin` there, or run `claude plugin install <plugin>@<marketplace>` in your shell without starting a session

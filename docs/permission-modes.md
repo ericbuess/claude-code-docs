@@ -82,11 +82,9 @@ The built-in default depends on how you run Claude Code. The first row that matc
 | How you run Claude Code | Built-in starting permission mode |
 | :- | :- |
 | Any settings file sets `disableAutoMode` to `"disable"` | `default` |
-| `claude -p` or the [Agent SDK](/docs/en/agent-sdk/permissions#permission-modes) | `default` in sessions that [fetch feature flags](/docs/en/env-vars#features-that-need-feature-flag-fetching). In sessions that don't, such as on a third-party provider or with telemetry off, `auto` with Claude Code v2.1.285 or later and `default` on earlier versions. A session in an organization whose policy withholds the `auto` default starts in `default` instead |
+| `claude -p` or the [Agent SDK](/docs/en/agent-sdk/permissions#permission-modes) | `default` |
 | Your organization has the [HIPAA configuration](#hipaa-configuration) applied and the session is [eligible for it](/docs/en/hipaa-setup#check-how-developers-sign-in-and-connect) | `default` with Claude Code v2.1.285 or later; auto mode stays available to switch to |
 | In a terminal or through the [VS Code extension](/docs/en/vs-code) | `auto` with Claude Code v2.1.283 or later; on earlier versions, `auto` on Pro, Max, or Team plans in sessions that [fetch feature flags](/docs/en/env-vars#features-that-need-feature-flag-fetching), and `default` otherwise |
-
-In your [first session after an install or upgrade](/docs/en/env-vars#first-session-after-an-install-or-upgrade), Claude Code can choose the starting permission mode before its feature flags arrive. That session can start in a different permission mode than the table gives.
 
 When the flag, a settings file, or the built-in default selects `auto` but auto mode isn't available to the session, Claude Code starts the session in Manual instead. Auto mode is unavailable when the session doesn't meet the [availability requirements](#eliminate-prompts-with-auto-mode), such as a settings file turning it off or a model that doesn't support it, or when Anthropic has temporarily turned it off server-side.
 
@@ -96,6 +94,45 @@ The first time the built-in default starts one of your sessions in auto mode, Cl
 * In the VS Code extension, as a card on the new-conversation screen that stays until you dismiss it
 
 If your `~/.claude/settings.json` sets a `defaultMode` other than `auto` and no other settings file sets one, your sessions keep starting in that mode. On Pro, Max, and Team plans, and in sessions that [don't fetch feature flags](/docs/en/env-vars#features-that-need-feature-flag-fetching), Claude Code asks once, in the terminal or in the VS Code extension, whether to change the setting to auto mode. If you decline, your setting stays as it is.
+
+<h3 id="which-mode-a-non-interactive-run-starts-in">
+  Tool calls denied in `claude -p` and Agent SDK runs
+</h3>
+
+In Claude Code v2.1.302 or later, `claude -p` and [Agent SDK](/docs/en/agent-sdk/permissions#permission-modes) runs with [no permission mode set](#which-mode-a-session-starts-in) start in Manual mode. This mode appears as `default` in SDK options and settings. Calls needing approval are denied unless you approve them with an allow rule, hook, `canUseTool` callback, or `--permission-prompt-tool`.
+
+To get these calls approved, add allow rules or start in auto mode:
+
+* **[Add allow rules](/docs/en/permissions#manage-permissions)**: Claude runs the calls you list. Pass [`--allowedTools "Bash(npm test)"`](/docs/en/headless#auto-approve-tools) to `claude -p`, or set your SDK's [allowed-tools option](/docs/en/agent-sdk/permissions#allow-and-deny-rules).
+* **Start in [auto mode](#eliminate-prompts-with-auto-mode)**: a classifier model reviews calls, so you list nothing beforehand. Pass `--permission-mode auto` to `claude -p`, or set your SDK's [permission mode option](/docs/en/agent-sdk/permissions#set-permission-mode).
+
+These examples show the auto mode form for the CLI and each SDK:
+
+<Tabs>
+  <Tab title="CLI">
+    ```bash theme={null}
+    claude -p "Run the test suite and fix any failures" --permission-mode auto
+    ```
+  </Tab>
+
+  <Tab title="TypeScript">
+    ```typescript theme={null}
+    const options = {
+      permissionMode: "auto"
+    };
+    ```
+  </Tab>
+
+  <Tab title="Python">
+    ```python theme={null}
+    from claude_agent_sdk import ClaudeAgentOptions
+
+    options = ClaudeAgentOptions(permission_mode="auto")
+    ```
+  </Tab>
+</Tabs>
+
+Before v2.1.302, these runs could start in auto mode if they didn't [fetch feature flags](/docs/en/env-vars#features-that-need-feature-flag-fetching), for example on a [third-party provider](/docs/en/third-party-integrations) or with `DISABLE_TELEMETRY`.
 
 <h3 id="start-in-a-different-mode">
   Start in a different permission mode
@@ -210,7 +247,7 @@ Each interface has its own control for switching permission modes during a sessi
   </Tab>
 
   <Tab title="Desktop">
-    **During a session**: in the Code tab, use the mode selector next to the send button. Not every mode appears in the selector:
+    **During a session**: in the Code tab, use the mode selector in the row under the prompt box. Not every mode appears in the selector:
 
     * **Auto**: appears when [auto mode is available](#eliminate-prompts-with-auto-mode)
     * **Bypass permissions**: requires the **Allow bypass permissions mode** toggle in Desktop settings on Pro and Max plans; on Team and Enterprise plans, organization policy controls it instead
@@ -331,7 +368,10 @@ If you set `defaultMode: "auto"` in [settings](/docs/en/settings-reference#all-s
   Auto mode on Bedrock, Agent Platform, or Foundry
 </h3>
 
-On [Amazon Bedrock](/docs/en/amazon-bedrock), [Google Cloud's Agent Platform](/docs/en/google-vertex-ai), [Microsoft Foundry](/docs/en/microsoft-foundry), and signed-in [Claude apps gateway](/docs/en/claude-apps-gateway) sessions, auto mode is available by default. When nothing else sets a permission mode, it's also the [built-in starting permission mode](#which-mode-a-session-starts-in), on the versions that section's table lists. To choose the starting permission mode yourself, set `permissions.defaultMode` as [Start in a different permission mode](#start-in-a-different-mode) describes, or pick a permission mode from the VS Code extension's mode indicator.
+On [Amazon Bedrock](/docs/en/amazon-bedrock), [Google Cloud's Agent Platform](/docs/en/google-vertex-ai), [Microsoft Foundry](/docs/en/microsoft-foundry), and signed-in [Claude apps gateway](/docs/en/claude-apps-gateway) sessions, auto mode is available by default. If you don't set a permission mode there, interactive sessions start in auto mode, and `claude -p` or Agent SDK runs start in Manual mode, whose config value is `default`:
+
+* **Interactive terminal and VS Code sessions**: to start them in a permission mode other than auto, set `permissions.defaultMode` as [Start in a different permission mode](#start-in-a-different-mode) describes, or pick one from the VS Code extension's [mode indicator](#switch-permission-modes). [Which mode a session starts in](#which-mode-a-session-starts-in) lists the Claude Code versions that start them in auto mode.
+* **`claude -p` and Agent SDK runs**: to start one in auto mode, pass `--permission-mode auto` to `claude -p`, or pass `permissionMode: "auto"` in TypeScript or `permission_mode="auto"` in Python. If you pass no permission mode, see [Tool calls denied in `claude -p` and Agent SDK runs](#which-mode-a-non-interactive-run-starts-in), which also covers earlier Claude Code versions.
 
 Only Claude Sonnet 5 or later, Opus 4.7 or later, Haiku 5.5, and the Fable models are supported on these providers. On any other model, the session starts in Manual instead. Auto mode with Haiku 5.5 on these providers requires Claude Code v2.1.293 or later.
 
@@ -352,6 +392,63 @@ Where the server reviews the actions, its verdicts decide them. Two other outcom
 
 To skip asking the server and always use Claude Code's own classifier requests, set [`CLAUDE_CODE_AUTO_MODE_SERVER=0`](/docs/en/env-vars). On a direct connection to the Anthropic API, the variable requires Claude Code v2.1.281 or later. Setting it to `1` there turns server review on in a session that doesn't have it yet, unless you've also set `CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS=1`. If you set `CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS=1` and leave `CLAUDE_CODE_AUTO_MODE_SERVER` unset, Claude Code also stops asking the server, except as [Disable pre-release capabilities](/docs/en/llm-gateway-protocol#disable-pre-release-capabilities) describes.
 
+<h3 id="default-classifier-model">
+  Default classifier model
+</h3>
+
+By default, classifier requests go to Claude Sonnet 5. If `/status` shows `Auto mode server` as `Enabled`, they're sent only for calls outside [the server's review](#server-side-classifier-review).
+
+Find the first row in this table that matches your session. You get that row's model in place of Sonnet 5.
+
+| Your session | Classifier model |
+| - | - |
+| Has an Anthropic-configured classifier model | The configured model. [Check the debug log](#classifier-model-check) to see which |
+| Runs on Claude Sonnet 4.6 | Sonnet 4.6 |
+| Has [`ANTHROPIC_DEFAULT_SONNET_MODEL`](/docs/en/model-config#environment-variables) set | Its value, or Sonnet 5 if its value is Claude Sonnet 5.5 or Claude Opus 5.5 |
+
+If Sonnet 5 or the model in `ANTHROPIC_DEFAULT_SONNET_MODEL` is unavailable from your provider or excluded by your organization's [model policy](/docs/en/model-config#restrict-model-selection), Claude Code uses a fallback model. That's your session's model, or an Opus model in a [Fable session](/docs/en/model-config#work-with-fable).
+
+### Choose the classifier model
+
+With Claude Code v2.1.302 or later, set [`CLAUDE_CODE_AUTO_MODE_MODEL`](/docs/en/env-vars) to a full model ID to run the classifier on a model other than the [default](#default-classifier-model). Your cloud provider's own full model IDs work too. This `~/.claude/settings.json` example sets Claude Sonnet 4.6:
+
+```json theme={null}
+{
+  "env": {
+    "CLAUDE_CODE_AUTO_MODE_MODEL": "claude-sonnet-4-6"
+  }
+}
+```
+
+<h4 id="classifier-model-not-reviewing">
+  When your model isn't the one reviewing
+</h4>
+
+| Situation | What happens | What to do |
+| - | - | - |
+| In a session, `/status` shows [`Auto mode server`](#server-side-classifier-review) as `Enabled` | Your model reviews only what the server doesn't | None needed |
+| You set Claude Opus 5, Claude Sonnet 5.5, Claude Opus 5.5 or a model your organization's [model policy](/docs/en/model-config#restrict-model-selection) excludes | The [default classifier model](#default-classifier-model) reviews | Set a different model |
+| Anthropic configured a classifier model for your session | That model reviews | None needed |
+| Your provider can't serve the model | Requests fail and Claude Code [denies every reviewed action](/docs/en/errors#auto-mode-cannot-determine-the-safety-of-an-action) | Set a model it serves, or remove the variable |
+
+<h4 id="classifier-model-check">
+  Check which model the classifier used
+</h4>
+
+From your shell, start an auto mode session with [`--debug-file`](/docs/en/cli-reference#cli-flags):
+
+```bash theme={null}
+claude --permission-mode auto --debug-file classifier-debug.log
+```
+
+Have Claude run a shell command that isn't read-only, then search the log for `classifier_request_started`:
+
+* **Your model after `model=`**: the variable took effect
+* **A different model after `model=`**: search the log for `ignoring CLAUDE_CODE_AUTO_MODE_MODEL`, which gives the reason and any step to take
+* **No such line**: read `Auto mode server` in `/status` at the Claude Code prompt:
+  * **`Enabled`**: the [server](#server-side-classifier-review) is set to review this session's calls. Nothing to change.
+  * **`Disabled`**: make sure the [permission mode](#switch-permission-modes) is auto, then have Claude run another command that isn't read-only.
+
 ### What the classifier blocks by default
 
 The classifier trusts your working directory and the remotes that were configured for it when the session started. A remote added or repointed during the session with `git remote add` or `git remote set-url` isn't trusted, and everything else is treated as external until you [configure trusted infrastructure](/docs/en/auto-mode-config).
@@ -366,7 +463,7 @@ The classifier trusts your working directory and the remotes that were configure
 * Modifying shared infrastructure
 * Irreversibly destroying files that existed before the session
 * Force push
-* Committing or pushing a change that would send secrets or sensitive data outside the repository when it runs, or widen what a deploy exposes. This covers a CI workflow or deploy configuration that passes a secret to a destination that doesn't already receive it, a script or setup step that reads a secret store and sends the data out, and a config change that widens what a deploy publishes, such as a registry, visibility, artifact, or sourcemap setting. The check applies on any branch, applies even when the repository is public, and fires when the change is committed or pushed, whether or not that commit or push triggers the pipeline; clearing it requires naming the execution effect, not only the commit or push. Before v2.1.211, this check was scoped to the default branch instead: a push there was blocked when it carried sensitive content, changes concealed or misdescribed relative to what you asked for, content ported in from outside the repository, or routed around a review you asked for
+* Committing or pushing a change that would send secrets or sensitive data outside the repository when it runs, or widen what a deploy exposes. This covers a CI workflow or deploy configuration that passes a secret to a destination that doesn't already receive it, a script or setup step that reads a secret store and sends the data out, and a config change that widens what a deploy publishes, such as a registry, visibility, artifact, or sourcemap setting. The check applies on any branch, applies even when the repository is public, and fires when the change is committed or pushed, whether or not that commit or push triggers the pipeline; clearing it requires naming the execution effect, not only the commit or push
 * `git reset --hard`, `git checkout -- .`, `git restore .`, `git clean -fd`, `git stash drop`, or `git stash clear`, which the classifier presumes would discard uncommitted changes
 * `git commit --amend` when the commit at HEAD was not created in this session
 * From v2.1.198, `git commit --amend` when the commit at HEAD has already been pushed. A message-only reword is not blocked: `--amend -m` with nothing newly staged, on a commit that Claude created during this session
@@ -540,9 +637,7 @@ The following sections cover the order Claude Code evaluates an action in, how t
   </Accordion>
 
   <Accordion title="Cost and latency">
-    The classifier runs on Claude Sonnet 5 by default rather than on your `/model` selection. A classifier model that Anthropic configures server-side takes precedence over that default. When your session's model is Claude Sonnet 4.6, or when [`availableModels`](/docs/en/model-config#restrict-model-selection) excludes Sonnet 5, the classifier runs on the session's model instead, or on an Opus model when the session runs on a [Fable model](/docs/en/model-config#work-with-fable). On providers other than the Anthropic API, that Opus fallback is the model you set in [`ANTHROPIC_DEFAULT_OPUS_MODEL`](/docs/en/model-config#environment-variables), or Opus 5 if you haven't set one.
-
-    The session's first auto-mode request validates the Sonnet 5 default: if the request succeeds, Sonnet 5 stays the session's classifier model, and if it fails because the model isn't available, the session uses the fallback instead.
+    Claude Code's classifier requests can run on a model other than your `/model` selection. See [which model they run on](#default-classifier-model).
 
     On Enterprise plans and on accounts that use the Claude API, [Claude Platform on AWS](/docs/en/claude-platform-on-aws), Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry, classifier calls count toward your token usage. Each check sends a portion of the transcript plus the pending action, adding a round-trip before execution. Reads and working-directory edits outside protected paths skip the classifier, so the overhead comes mainly from shell commands and network operations. Where the server reviews the actions as part of the session's model requests, there are no separate classifier calls to count; see [Server-side classifier review](#server-side-classifier-review).
 
