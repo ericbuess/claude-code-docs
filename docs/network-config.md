@@ -220,6 +220,7 @@ Claude Code requires access to the following URLs. Allowlist these in your proxy
 | `claude.ai` | claude.ai account authentication |
 | `claude.com` | claude.ai account sign-in opens a `claude.com` page in the browser, which redirects to `claude.ai`; pre-approved WebFetch documentation lookups also reach this host from the CLI |
 | `platform.claude.com` | Anthropic Console account authentication. OAuth token exchange, refresh, and revocation also go to this host for claude.ai accounts, so both Console and claude.ai sign-ins require it |
+| `sso.claude.com` | Part of the browser sign-in flow for organizations that use single sign-on (SSO). If a proxy blocks this host, those sign-ins can fail |
 | `mcp-proxy.anthropic.com` | [MCP connectors from claude.ai](/docs/en/mcp#use-mcp-servers-from-claude-ai), including connectors an organization administrator configures. Connector traffic routes through this proxy; connectors are enabled by default for claude.ai-authenticated users. To stop Claude Code from fetching them, set [`ENABLE_CLAUDEAI_MCP_SERVERS=false`](/docs/en/env-vars) or the [`disableClaudeAiConnectors`](/docs/en/settings-reference#disableclaudeaiconnectors) setting |
 | `downloads.claude.ai` | Plugin executable downloads; native installer, native auto-updater, and update version checks |
 | `storage.googleapis.com` | Plugin install counts and metadata shown in `/plugin` |

@@ -345,13 +345,20 @@ In the terminal, a pane that returns only an `Svg` opens empty. To draw somethin
 
 Two more elements have no sample here. `Image` draws a PNG or raw pixels in the terminal. `Client` is a region that a second file of yours draws, for animation and pointer input. The [elements reference](/docs/en/plugins/mods/reference#elements) lists their props.
 
-Unless Claude Code detects that the terminal draws kitty graphics protocol images with Unicode placeholders, the user sees an `Image`'s `alt` text, dimmed, in place of the picture. Write `alt` text that stands on its own. Detection runs at startup: it succeeds in kitty 0.28 or later and in Ghostty, once the terminal answers Claude Code's graphics query, and fails in these cases:
+An `Image` draws as a picture in these terminals:
 
-* **Other terminals**: any terminal that isn't one of those two, or that doesn't answer the query.
-* **tmux and screen**: a session running inside tmux or screen, in any terminal, kitty and Ghostty included.
+* kitty 0.28 or later
+* Ghostty
+* iTerm2 3.5 or later. Drawing in iTerm2 requires Claude Code v2.1.305 or later.
+
+In any other terminal, the user sees the `Image`'s `alt` text, dimmed, in place of the picture. Write `alt` text that stands on its own, because it also shows in these cases, among others:
+
+* **tmux and screen**: a session running inside tmux or screen, in any terminal.
 * **Background sessions**: every [background session](/docs/en/agent-view), whatever terminal it's attached from.
+* **iTerm2 outside fullscreen rendering**: in iTerm2 the picture draws only under [fullscreen rendering](/docs/en/fullscreen), and not while [`CLAUDE_CODE_ALT_SCREEN_FULL_REPAINT`](/docs/en/env-vars) is set to `1`. To see the picture, run `/tui fullscreen` at the Claude Code prompt and leave that variable unset.
+* **A file path source in iTerm2**: iTerm2 draws an `Image` whose `source` prop holds `png` or `rgba` bytes, and shows the `alt` text for one whose `source` names a `file`. If your mod has iTerm2 users, pass the picture as base64 in `source.png` or `source.rgba` rather than as a path in `source.file`.
 
-If your mod's users see the dimmed text in a terminal that does draw those placeholder images, they can set [`CLAUDE_CODE_FORCE_TERMINAL_IMAGES`](/docs/en/env-vars) to `1`, which skips detection. Inside tmux or screen that doesn't help: the `alt` text goes away, and Claude Code sends the picture without wrapping it for tmux or screen passthrough.
+If your mod's users see the dimmed text in a terminal that draws kitty graphics protocol images with Unicode placeholders, they can set [`CLAUDE_CODE_FORCE_TERMINAL_IMAGES`](/docs/en/env-vars) to `1`. Inside tmux or screen that doesn't help: the `alt` text goes away, and Claude Code sends the picture without wrapping it for tmux or screen passthrough.
 
 ## See where a mod can draw
 

@@ -306,7 +306,7 @@ Besides `id`, `$.ui.open` takes these optional fields:
 | `closeOnEscape` | Makes Esc close the pane |
 | `holdToasts` | In the terminal, holds toasts while this pane is the one showing. See [Hold toasts behind a dialog](#hold-toasts-behind-a-dialog). |
 | `rows` | The height to ask for when the pane sits above the prompt. The default is a third of the space. |
-| `columns` | The width to ask for when the pane sits beside the transcript |
+| `columns` | The width to ask for when the pane sits beside the transcript, at most 45% of the terminal's width. Once the user has resized a pane beside the transcript, in this session or an earlier one, panes open there at the width they set instead. The same 45% limit applies to that width. |
 
 The [VS Code extension](#draw-in-the-vs-code-extension) ignores `rows` and `columns` and sizes the pane itself.
 
@@ -537,7 +537,7 @@ This table lists what a key does while your pane or band has keyboard focus:
 | Enter | Presses the focused `Button`, submits the focused `Input`, or picks in a `Select` |
 | A button's hotkey | Presses that button. While an `Input` has the focus, every printable key goes to the field. |
 | Page Up, Page Down, Home, and End | Scroll your pane or band when it has more rows than it can show |
-| Ctrl+X then an arrow key | Resizes your pane. Left or Up gives it more room, and Right or Down gives the room back. |
+| Ctrl+X then an arrow key | Resizes your pane. Left or Up gives it more room, and Right or Down gives the room back. A pane beside the transcript stops widening at 45% of the terminal's width. |
 | Ctrl+X then X | Closes your pane, even while one of its fields has the focus |
 | Esc | Returns keyboard focus to the prompt. With `closeOnEscape: true`, it also closes the pane. |
 

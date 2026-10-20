@@ -446,6 +446,7 @@ Actions available in the `Settings` context. The `select:accept` and `confirm:no
 | :- | :- | :- |
 | `settings:search` | / | Enter search mode |
 | `settings:retry` | R | Retry loading usage data on error |
+| `settings:fixUsage` | F | Send your session the [`/usage` recommendations](/docs/en/costs#apply-recommendations-with-the-fix-shortcut) Claude Code can apply, when the `/usage` footer offers a fix. Requires v2.1.305 or later |
 | `select:accept` | Enter, Space | Change the selected setting or open its submenu |
 | `confirm:no` | Escape | Close the panel. Changes are already saved |
 

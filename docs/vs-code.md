@@ -252,6 +252,7 @@ Click any conversation to resume it. If the conversation is already open in anot
 
 * **Session titles**: new sessions receive AI-generated titles based on your first message.
 * **Rename and archive**: hover over a session to reveal these actions. Rename to give it a descriptive title, or archive to move it to the **Archived sessions** group at the bottom of the list.
+* **Conversations missing with [`claudeProcessWrapper`](#extension-settings) set**: update the extension to version 2.1.304 or later. The list then includes the conversations that were missing, along with sessions that `claude -p` or the [Agent SDK](/docs/en/agent-sdk/overview) started in this workspace.
 
 If the conversation is open in another Claude Code process, such as `claude` in a terminal or another VS Code window, this notice appears in place of the prompt box:
 
@@ -308,7 +309,13 @@ Run `/usage` to open the Account & usage dialog, which shows your signed-in acco
 
 * **claude.ai plan**: usage bars for your plan's limits, such as the current session and the week. Each bar shows how long until its limit resets.
 
-  The dialog also breaks down what is contributing to your plan limits. It flags behaviors that account for 10% or more of recent usage, such as cache misses, long context, and subagent-heavy or highly parallel sessions. Each flagged behavior comes with a tip to reduce it. Attribution tables show how much usage came from each skill, subagent, plugin, and MCP server.
+  The dialog also breaks down what is contributing to your plan limits:
+
+  * **Recommendations**: changes that lower your usage, one per row with the share of recent usage it addresses, such as `Trim ~/code/api/CLAUDE.md · 49k tokens per request`
+  * **Fix button**: to have Claude Code apply the recommendations it can, click the button under them, such as **Fix both**. To learn which rows the button acts on and what then happens in your session, see [Apply recommendations with the fix shortcut](/docs/en/costs#apply-recommendations-with-the-fix-shortcut). Requires Claude Code v2.1.305 or later.
+
+    The button isn't shown while [Remote Control](/docs/en/remote-control) is connected. If a warning reads `The usage fix wasn’t fully sent. Open usage and try again.` after Remote Control connected, [disconnect Remote Control](/docs/en/remote-control#check-connection-status) before you try again.
+  * **Attribution**: tables of how much usage came from each skill, subagent, plugin, and MCP server
 
   Use the Day and Week toggle to switch between the last 24 hours and the last 7 days. The figures are approximate and computed from local sessions on this machine, so usage from other devices or claude.ai is not included.
 * **Other sign-ins**: when plan limits don't apply to your sign-in, such as on a [third-party provider](#use-third-party-providers) or with an API key, the Usage section shows the session's own cost and token usage instead. The CLI's `/usage` shows the same totals in its [Session block](/docs/en/costs#track-your-costs). The sessions list in the Activity Bar also shows the active session's totals under its **Account & usage** header. Requires Claude Code v2.1.277 or later.
@@ -573,6 +580,10 @@ Type `/tasks` in the prompt box to open the [agent map](#use-the-prompt-box), wh
 
 For a background shell command, or a [monitor](/docs/en/tools-reference#monitor-tool) that runs a command, the card also shows the command's latest output and refreshes it while the command runs.
 
+#### See a background subagent's tool calls
+
+When a subagent shows as one status line with no tool calls, type `/tasks` in the prompt box to open the [agent map](#use-the-prompt-box) and click the subagent there. The subagent is [running in the background](#the-run-in-background-action-is-missing-under-a-subagent), and its card shows its tool calls and a button that opens its transcript.
+
 ## VS Code commands and shortcuts
 
 To open the Command Palette, press `Cmd+Shift+P` on Mac or `Ctrl+Shift+P` on Windows/Linux. Type "Claude Code" there to see all available VS Code commands for the Claude Code extension.
@@ -726,7 +737,7 @@ During a conversation, the extension announces:
 
 * **Claude's replies**: the extension announces each reply once, when it's complete, and stays silent while text streams in. Your screen reader reads code blocks as a line-count summary, reads links by their label, and reads tables cell by cell; the full reply stays readable in the transcript.
 * **Permission requests and questions**: the extension announces a request when its permission prompt appears, naming the tool Claude wants to use. It announces in the same way when Claude asks you a question and when Claude finishes a plan and waits for your review.
-* **Status changes**: the extension announces when Claude starts working, when Claude is ready for your input, and when Claude Code starts compacting the conversation.
+* **Status changes**: the extension announces when Claude starts working, when Claude is ready for your input, and when Claude Code starts compacting the conversation. If you send a prompt while the session's [SessionStart](/docs/en/hooks#sessionstart) hooks are still running, your screen reader also says "Running start-up hooks."
 * **Queued messages**: when you send a message while Claude is working, the extension announces "Message queued." for that message.
 * **Errors and model prompts**: the extension announces errors in the conversation, and announces when the [usage-credits consent prompt](/docs/en/model-config#fable-and-usage-credits) or the [flagged-request prompt](/docs/en/model-config#ask-before-switching) appears.
 

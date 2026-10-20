@@ -55,7 +55,13 @@ The check run concludes as neutral, or as skipped when an automatic review didn'
 
 ### Read the result from a script
 
-To gate a merge or post a summary from your own CI, parse the last line of the Details text with `gh` and jq. That line is a machine-readable comment.
+To gate a merge or post a summary from your own CI, parse the last line of the Details text with `gh` and jq. That line is an HTML comment that holds the severity counts as JSON:
+
+```text theme={null}
+<!-- bughunter-severity: {"nit":1,"normal":2,"pre_existing":0} -->
+```
+
+The lines above it can include file names from the pull request. If you parse the text your own way, take the counts from the last line only, as the command in these steps does.
 
 **1. Find the check run ID**
 
@@ -67,11 +73,13 @@ gh api repos/OWNER/REPO/commits/<commit-sha>/check-runs --jq '.check_runs[] | {i
 
 **2. Read the severity counts**
 
-Read the counts from that check run, replacing `CHECK_RUN_ID` with the ID:
+Read the counts from the check run's `output.text` field, which holds the Details text. Replace `CHECK_RUN_ID` with the ID:
 
 ```bash theme={null}
-gh api repos/OWNER/REPO/check-runs/CHECK_RUN_ID \
-  --jq '.output.text | split("bughunter-severity: ")[1] | split(" -->")[0] | fromjson'
+gh api repos/OWNER/REPO/check-runs/CHECK_RUN_ID --jq '
+  (.output.text | split("\n") | last
+    | scan("^<!-- bughunter-severity: (.*) -->$")[0] | fromjson)?
+  // error("no severity line")'
 ```
 
 This prints a JSON object with a count per severity and its keys in alphabetical order, for example `{"nit": 1, "normal": 2, "pre_existing": 0}`. The counts include findings from earlier reviews of the pull request whose threads are still open.
@@ -80,8 +88,8 @@ This prints a JSON object with a count per severity and its keys in alphabetical
 
 Have your script handle these cases:
 
-* **`normal` is above zero**: fail the job if you want to gate the merge. The `normal` key holds the count of Important findings, so Claude found at least one bug worth fixing before merge.
-* **The line is missing**: treat it as no verdict rather than as zero findings. A check run for a review that failed, timed out, was canceled, or was superseded by a newer one has no such line, and some completed reviews have none either.
+* **`normal` is above zero**: fail the job if you want to gate the merge. The `normal` key holds the count of Important findings, so Claude found at least one bug worth fixing before merge. To print only that count, add `| .normal` before the closing single quote.
+* **The line is missing**: the command prints an error that contains `no severity line` instead of counts, and exits with a non-zero status. Treat that as no verdict rather than as zero findings. A check run for a review that failed, timed out, was canceled, or was superseded by a newer one has no such line, and some completed reviews have none either.
 
 ## Request a review
 
@@ -102,9 +110,10 @@ Post one of these commands as a comment on the pull request:
 | `@claude review` | Starts a single review without subscribing the PR to future pushes | You want one review now, such as on a pull request in a repository set to **Manual**, or another review right away in the other modes |
 | `@claude review always` | Starts a review and subscribes the PR to push-triggered reviews going forward | You want every subsequent push to start a fresh review, such as on a high-priority PR in a repository set to **Manual** |
 | `@claude review once` | Same as `@claude review`: starts a single review without subscribing | The same cases as `@claude review` |
-| `@claude review stop` | Ends the PR's subscription to push-triggered reviews, without starting a review or canceling one that's already running. Claude replies with a comment instead of a check run. | You subscribed a PR with `@claude review always` in a repository set to **Manual** or **Once after PR creation**, and no longer want each push to start a review |
+| `@claude review stop` | Ends the PR's subscription to push-triggered reviews, without starting a review or canceling one that's already queued or running. Claude replies with a comment instead of a check run. | You subscribed a PR with `@claude review always` in a repository set to **Manual** or **Once after PR creation**, and no longer want each push to start a review |
+| `@claude review off` or `@claude review pause` | Same as `@claude review stop` | The same cases as `@claude review stop` |
 
-In a repository set to **After every push**, you can't stop reviews with a comment, because pushes there start reviews with or without a subscription. To pause reviews on one pull request there, convert it to a draft.
+In a repository set to **After every push**, you can't stop reviews with a comment, because pushes there start reviews with or without a subscription. To stop pushes from starting reviews on one pull request there, convert it to a [draft](#review-drafts-and-pull-requests-from-forks). When you mark it ready for review again, a review starts.
 
 For any comment command to take effect, all of these conditions have to hold:
 

@@ -98,8 +98,9 @@ Select an artifact, then press one of these keys:
 * **`Enter`**: opens it in your browser when it's already attached to the current session, and attaches it when it isn't. Before v2.1.216, `Enter` opened it in your browser
 * **`o`**: opens it in your browser
 * **`c`**: copies its link
+* **`d`**: outside a [cloud session](/docs/en/claude-code-on-the-web), permanently deletes an artifact you own after you confirm. Its link stops working for everyone, including you
 
-Claude Code reads the list from your claude.ai account, so it works in a new session and after `/clear`, when the link has scrolled out of the terminal.
+Claude Code reads the list from your claude.ai account, so `/artifacts` works in a new session and after `/clear`, when an artifact's link has scrolled out of the terminal.
 
 ## Share an artifact
 
@@ -424,11 +425,11 @@ The [Compliance API](https://docs.claude.com/en/api/compliance) provides endpoin
 
 | Method | Endpoint |
 | :- | :- |
-| `GET` | `/v1/compliance/code/artifacts` |
-| `GET` | `/v1/compliance/code/artifacts/{artifact_id}/versions/{version_id}` |
-| `DELETE` | `/v1/compliance/code/artifacts/{artifact_id}` |
+| `GET` | `/v1/compliance/apps/code/artifacts` |
+| `GET` | `/v1/compliance/apps/code/artifacts/{artifact_id}/versions/{version_id}` |
+| `DELETE` | `/v1/compliance/apps/code/artifacts/{artifact_id}` |
 
-For the request and response schemas, see the [Compliance API reference](https://docs.claude.com/en/api/compliance/code/artifacts).
+For the request and response schemas, see the [Compliance API reference](https://platform.claude.com/docs/en/api/compliance/apps/code/artifacts).
 
 ## Related resources
 

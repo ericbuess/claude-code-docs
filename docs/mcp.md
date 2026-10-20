@@ -509,7 +509,12 @@ Or inline in `plugin.json`:
 
 Plugin servers appear in `/mcp` with indicators showing they come from plugins.
 
-For a plugin's stdio server, `claude mcp get` prints `Command: stdio`, an empty `Args:` line, and each environment variable as `NAME=[REDACTED]`. The values are hidden because they can carry credentials.
+`claude mcp get` hides the values configured for a plugin's stdio or WebSocket server, because they can carry credentials:
+
+* **stdio server**: it prints `Command: stdio`, an empty `Args:` line, and each environment variable as `NAME=[REDACTED]`
+* **WebSocket server**: it prints `URL: ws` and each header as `<name>: [REDACTED]`, and `claude mcp list` shows `ws` in place of the URL
+
+To see what the plugin configured, [find the plugin on disk](/docs/en/plugins/loading#find-plugins-on-disk) and read its `.mcp.json` or `plugin.json`.
 
 **Plugin MCP tool names**:
 

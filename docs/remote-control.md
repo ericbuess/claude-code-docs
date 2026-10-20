@@ -60,7 +60,7 @@ Pass any of these flags after `remote-control`:
 | `--remote-control-session-name-prefix <prefix>` | Prefix for auto-generated session names when no explicit name is set. Defaults to your machine's hostname, producing names like `myhost-graceful-unicorn`. Set `CLAUDE_REMOTE_CONTROL_SESSION_NAME_PREFIX` for the same effect. |
 | `-c`, `--continue` | Bring back the session that the last server in this directory started with, instead of creating a new one. See [Resume sessions after stopping the server](#resume-sessions-after-stopping-the-server). Can't be combined with `--session-id`, `--spawn`, `--capacity`, or `--create-session-in-dir`. Requires Claude Code v2.1.200 or later. |
 | `--session-id <id>` | Bring back one session by its ID. See [Resume sessions after stopping the server](#resume-sessions-after-stopping-the-server). Can't be combined with `--continue`, `--spawn`, `--capacity`, or `--create-session-in-dir`. Requires Claude Code v2.1.200 or later. |
-| `--spawn <mode>` | How the server creates sessions. • `same-dir` (default): all sessions share the current working directory, so they can conflict if editing the same files. • `worktree`: each on-demand session gets its own [git worktree](/docs/en/worktrees). Requires a git repository or a [`WorktreeCreate` hook](/docs/en/hooks#worktreecreate). • `session`: single-session mode. Serves exactly one session and rejects additional connections. Set at startup only. Press `w` at runtime to toggle between `same-dir` and `worktree`. |
+| `--spawn <mode>` | How the server creates sessions. • `same-dir` (default when no mode is saved): all sessions share the current working directory, so they can conflict if editing the same files. • `worktree`: each on-demand session gets its own [git worktree](/docs/en/worktrees). Requires a git repository or a [`WorktreeCreate` hook](/docs/en/hooks#worktreecreate). • `session`: single-session mode. Serves exactly one session and rejects additional connections. Set at startup only. Press `w` at runtime to toggle between `same-dir` and `worktree`. The mode you switch to becomes the [default for this project](#set-the-default-spawn-mode-for-a-project). |
 | `--capacity <N>` | Maximum number of concurrent sessions. Default is 32. Cannot be used with `--spawn=session`. |
 | `--[no-]create-session-in-dir` | Pre-create one session in the current directory when the server starts, so you have somewhere to type immediately. In `worktree` mode this session stays in the current directory while on-demand sessions get isolated worktrees. On by default. If you pass `--no-create-session-in-dir` to start with none, Claude Code archives the server's sessions when you stop it, so there's nothing to [resume](#resume-sessions-after-stopping-the-server). |
 | `--permission-mode <mode>` | Set the starting [permission mode](/docs/en/permission-modes) for the server's sessions, such as `acceptEdits`. Accepts `manual` as an alias for `default`; an unrecognized mode stops the server at startup and lists the valid modes. |
@@ -223,6 +223,15 @@ To bring back a session you started with `claude --remote-control` or `/remote-c
 If you resume the conversation in a second terminal while the first one still has Remote Control on, Claude Code prints a `Remote Control not started here` notice in the second terminal and leaves Remote Control off there instead of taking the session away from the first. Run `/remote-control` in the second terminal to move Remote Control to it.
 
 When you resume a conversation in Claude Desktop or an IDE extension that had Remote Control on, Claude Code reattaches it to the existing claude.ai session instead of adding a new one to the session list.
+
+### Set the default spawn mode for a project
+
+If `claude remote-control` prints `Spawn mode: <mode> (saved for this folder; press w to change)` at startup, the server is starting in a spawn mode saved earlier for this project.
+
+The saved mode comes from a choice you made in your own terminal. If `claude remote-control` asked `Spawn mode for this project:` there, Claude Code kept what you answered: `1` for `same-dir` or `2` for `worktree`. If you pressed `w` while it ran, Claude Code kept the mode you switched to, even on a run you started with `--spawn same-dir` or `--spawn worktree`.
+
+* While the server runs in `same-dir` or `worktree` mode, press `w` in the server's terminal to switch to the other one. Switching requires a git repository or a `WorktreeCreate` hook.
+* To use a different mode for one run, pass `--spawn <mode>`.
 
 ## Connection and security
 

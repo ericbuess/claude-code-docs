@@ -830,6 +830,7 @@ The **Errors** tab shows one of these messages:
 
 * **`Failed to load hooks from <path>: <reason>`**: `hooks/hooks.json` isn't valid JSON or fails the hooks schema. The reason names the parse or validation error. Fix the file. To catch a JSON syntax problem in `hooks/hooks.json` before you publish the plugin, run `claude plugin validate <plugin-directory>` in your shell
 * **`hooks path not found: <path>`**: the manifest's `hooks` field names a file that doesn't exist at that path relative to the plugin root. Fix the path or add the file
+* **`hooks path escapes plugin directory: <path>`**: see [Path escapes plugin directory](/docs/en/errors#path-escapes-plugin-directory)
 
 #### `hook error` notices in the transcript
 

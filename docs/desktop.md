@@ -1659,6 +1659,7 @@ downloads.claude.ai
 *.livepreview.claude.ai
 claude.com
 platform.claude.com
+sso.claude.com
 *.livepreview.claude.app
 *.claudeusercontent.com
 *.claudemcpcontent.com

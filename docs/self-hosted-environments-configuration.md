@@ -306,7 +306,7 @@ The contract has four rules, whichever platform your hook provisions on:
    * **Exit 1, or still running when `--hook-timeout` ends**: retryable failure. The session backs off and is re-offered.
    * **Exit 2 or higher**: non-retryable failure. The session is blocked from spawning again until a user sends it a new message or an [Owner](/docs/en/cloud-environments#organization-shared-environments) selects **Retry** on it in the environment's **Activity** tab.
 
-   On non-zero exit, the tail of the hook's stderr appears in the **Activity** tab as the failure reason, so write the actionable error to stderr and never write secrets there. In a shell hook, [keep transient failures retryable](#keep-transient-failures-retryable-in-a-shell-hook).
+   While a session backs off, it shows **Queued** in the **Activity** tab with no spawn error, so read the hook's output in the orchestrator's log. Once blocked, the session shows **Failed**. Expand it to read the spawn error, taken from the last 512 characters of the hook's stderr. Write an actionable error to stderr, and no secrets. In a shell hook, [keep transient failures retryable](#keep-transient-failures-retryable-in-a-shell-hook).
 
    A pre-warming request has no session to fail: the orchestrator logs a non-zero exit locally only, and the server re-requests the spawn after the `--expected-spawn-seconds` lease expires.
 4. **Set `--expected-spawn-seconds` to at least your p99 time from spawn request to runner registration.** Measure from when the orchestrator receives the spawn request, and include any wait for capacity on your platform as well as boot time. This value is the server-side lease, and the work order expires with it, so a runner whose workload takes longer can't register. All orchestrator replicas must use the same value.
@@ -326,6 +326,26 @@ By default, a runner your hook starts doesn't exit when its session's turn finis
 | `--exit-if-unused-min 60` | Standby runners, which your hook starts for pre-warming requests | A standby that never takes a session exits after that many minutes. If you set [`--min-idle`](/docs/en/self-hosted-environments-reference#orchestrator-cli-flags), you get a replacement unless the standby was surplus, so use a value well above your boot time. |
 
 Remove the workload when the runner exits, for example by setting `ttlSecondsAfterFinished` on a Kubernetes Job or by having the VM's start script delete the VM afterwards.
+
+#### Send a background process's output to a file
+
+If your `spawn-runner` hook leaves a process running in the background, send that process's output to a file that the hook's user can create. For example, append `>> "$HOME/claude-runner.log" 2>&1` to the command that starts the process, ahead of any `&`. This hook line shows where the redirect goes, with `your-background-command` standing in for the command your hook backgrounds:
+
+```bash theme={null}
+your-background-command >> "$HOME/claude-runner.log" 2>&1 &
+```
+
+Without the redirect, the process writes to the hook's stdout and stderr:
+
+* About a second after the hook exits, the orchestrator logs `exited, but a process it started still has the hook's stdout or stderr open`. From that line on, it logs up to 64 KB more of that output under `[runner:hook:spawn-runner:after-exit jti=<order id>]` and then drops the rest.
+* Once the orchestrator exits, the process's writes there fail.
+
+A runner your hook starts itself runs sessions on the orchestrator host, which holds the [environment secret](/docs/en/self-hosted-environments-deploy#harden-your-deployment).
+
+Before v2.1.305, a hook that had exited still reached [`--hook-timeout`](/docs/en/self-hosted-environments-reference#orchestrator-cli-flags) while a process it started had the hook's stdout or stderr open, shown as:
+
+* **Activity tab**, in a failed session's spawn error: `spawn-runner hook timed out after 60000ms`, or the last lines on the hook's stderr.
+* **Orchestrator log**: `timed out after 60000ms, sending SIGTERM to process tree`.
 
 #### Keep transient failures retryable in a shell hook
 
@@ -461,6 +481,10 @@ Claude Code also loads MCP servers from other sources:
 * A [`--mcp-config`](/docs/en/cli-reference#cli-flags) file from your wrapper script: append the flag after `"$@"`, as in `exec "$CLAUDE_RUNNER_CLAUDE_BIN" "$@" --mcp-config /etc/claude/mcp.json`. To keep that file's servers running when the session's delivered servers are updated mid-session, have your wrapper pass the [full environment](#wrapper-scripts) to the child, as `exec` does. Before v2.1.299, the stdio, HTTP, and SSE servers in that file shut down at the first such update that didn't name them.
 
 When connector delivery is enabled for your organization, Anthropic's control plane delivers the connectors you've configured on claude.ai to interactively-created sessions through server-provided MCP configuration, routed through `api.anthropic.com`. Sessions created programmatically, such as [CLI dispatches](/docs/en/self-hosted-environments-testing#run-the-test-loop), don't receive connector delivery; give them MCP servers through any of the other sources this section lists instead. The child's OAuth token doesn't carry a scope for fetching connectors directly, so the child doesn't attempt that fetch itself; delivery is server-driven.
+
+> [!NOTE]
+>
+> In a session that received a connector, a server of the same name from the host's `.claude.json` or a repository's `.mcp.json` isn't connected. To use both, give your server a different name.
 
 `settings.json` doesn't carry MCP server definitions, and there is no top-level `mcpServers` field in the settings schema. In managed settings, provide servers with the [`managedMcpServers`](/docs/en/settings-reference#managedmcpservers) key instead.
 

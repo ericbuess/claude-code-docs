@@ -93,6 +93,7 @@ Allow the hosts in this table through your proxy and firewall, over HTTPS on por
 | :- | :- |
 | `api.anthropic.com` | Claude API requests, telemetry, and the organization policy that tells Claude Code the HIPAA configuration is on |
 | `claude.ai`, `claude.com`, `platform.claude.com` | Sign-in and token refresh |
+| `sso.claude.com` | Sign-in, when your organization uses single sign-on |
 | `downloads.claude.ai` | The native installer and its updates |
 | `mcp-proxy.anthropic.com` | [Connectors from claude.ai](/docs/en/mcp#use-mcp-servers-from-claude-ai) |
 

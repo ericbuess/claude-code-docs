@@ -161,7 +161,7 @@ Run `/auto-mode-setup` to have Claude Code draft `autoMode.environment` entries,
 
 > [!NOTE]
 >
-> `/auto-mode-setup` requires a Pro, Max, or Team plan and Claude Code v2.1.228 or later. On native Windows it requires v2.1.233 or later. You can't run it in a [cloud session](/docs/en/claude-code-on-the-web). It also needs [feature-flag fetching](/docs/en/env-vars#features-that-need-feature-flag-fetching), so you can't run it in a session where you've turned flag fetching off.
+> `/auto-mode-setup` is available on Pro, Max, Team, and Enterprise plans and with a Claude Console API key. On a Pro, Max, or Team plan, you need v2.1.228 or later, or v2.1.233 or later on native Windows. On an Enterprise plan or with a Claude Console API key, you need v2.1.283 or later. If the command is missing from your session, see [`/auto-mode-setup` returns "Unknown command"](#auto-mode-setup-returns-unknown-command).
 
 ### What `/auto-mode-setup` reads
 
@@ -201,6 +201,16 @@ To turn off both the command and the offer, add this [`skillOverrides`](/docs/en
 ```
 
 `/auto-mode-setup` is a built-in command rather than a [bundled skill](/docs/en/skills#bundled-skills), so this `skillOverrides` entry still applies to it, but [`disableBundledSkills`](/docs/en/settings-reference#disablebundledskills) doesn't turn it off.
+
+### `/auto-mode-setup` returns "Unknown command"
+
+If typing `/auto-mode-setup` at the Claude Code prompt prints `Unknown command: /auto-mode-setup`, check for these causes:
+
+* **First session after an install or upgrade**: start a new session. If the command is still missing there, see the [setups where later sessions also start without it](/docs/en/env-vars#first-session-after-an-install-or-upgrade).
+* **Outdated version**: run `claude --version` in your shell. If the version is below [the minimum for your plan](#generate-environment-entries), [update Claude Code](/docs/en/setup#update-claude-code).
+* **Telemetry off, third-party provider, or Claude apps gateway**: before v2.1.304, the command isn't available in [sessions where feature-flag fetching is off](/docs/en/env-vars#features-that-need-feature-flag-fetching). If your session is one of them, [update Claude Code](/docs/en/setup#update-claude-code) to v2.1.304 or later.
+
+In a [cloud session](/docs/en/claude-code-on-the-web), the command prints `/auto-mode-setup isn't available in this environment.` instead. Run it in an interactive session in your terminal.
 
 ## Override the block and allow rules
 

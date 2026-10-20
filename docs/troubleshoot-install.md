@@ -31,6 +31,8 @@ Match the error message or symptom you're seeing to a fix:
 | `CRYPT_E_NO_REVOCATION_CHECK` or `CRYPT_E_REVOCATION_OFFLINE` | [Work around blocked revocation checks](#tls-or-ssl-connection-errors) |
 | `Failed to fetch version` or can't reach download server | [Check network and proxy settings](#check-network-connectivity) |
 | `The connection dropped while downloading the update` or `Download timed out: exceeded the total deadline` | [Run the update again or set your proxy](#the-connection-dropped-while-downloading-the-update) |
+| `Release verification failed for Claude Code` | [Run `claude update` or `claude install` again](#release-verification-failed) |
+| `Auto-update failed · Run claude doctor` in red in the session footer | [Run `claude update` from your shell](#auto-update-failed) |
 | `irm is not recognized` or `The token '&&' is not a valid statement separator` | [Use the right command for your shell](#wrong-install-command-on-windows) |
 | `Cask 'claude-code' is unavailable: No Cask with this name exists` | [Update Homebrew](#homebrew-cask-unavailable-or-outdated) |
 | `Cask 'claude-code@latest' is not installed` | [Upgrade the cask you installed](#cask-is-not-installed) |
@@ -630,6 +632,27 @@ A proxy or gateway can close a long transfer before it finishes, and the Claude 
 * If your network requires a proxy, set `HTTPS_PROXY` before running the installer or `claude update`. See [Check network connectivity](#check-network-connectivity).
 * If a corporate proxy keeps closing the transfer, ask your network team to allow the full download from `downloads.claude.ai`. See [Network access requirements](/docs/en/network-config#network-access-requirements).
 * Run `claude doctor` from your shell for installation diagnostics
+
+### Release verification failed for Claude Code
+
+This message from `claude update` or `claude install` means Claude Code couldn't confirm that the release it was about to install is genuine, so it installed nothing. Any version you already have keeps working.
+
+```text theme={null}
+Release verification failed for Claude Code <version> (<reason>). The update was not installed.
+```
+
+Take the step that matches the value in parentheses in your message:
+
+* **A value that starts with `sidecar_fetch_`**: run the same command again from your shell. `claude update` succeeded if it prints a line that starts with `Successfully updated from`, and `claude install` succeeded if it prints `Claude Code successfully installed!`.
+* **Any other value**: try the same command again later
+
+With any value, if the message repeats, [report the problem](#still-stuck) and include the full message.
+
+### `Auto-update failed · Run claude doctor` in the session footer
+
+This red line means Claude Code tried to update itself in the background and the update didn't install. You can keep working without doing anything.
+
+The line points you to `claude doctor`, whose `Last update attempt: failed (install_failed)` line gives a date but no cause. To finish the update or see why it failed, run `claude update` in your shell instead. If that install fails too, look for the error `claude update` prints under [Find your error](#find-your-error).
 
 ### Wrong install command on Windows
 

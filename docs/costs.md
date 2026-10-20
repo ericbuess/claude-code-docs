@@ -55,17 +55,36 @@ Status line scripts can read the same numbers from the [`prompt_cache` object](/
 
 #### Plan usage breakdown
 
-On a Pro, Max, Team, or Enterprise plan, `/usage` also shows a breakdown of what counts against your plan limits:
+On a Pro, Max, Team, or Enterprise plan, `/usage` also shows a breakdown of what counts against your plan limits, with recommendations:
 
 * **Attribution**: recent usage attributed to skills, subagents, plugins, and individual MCP servers, each shown as a percentage of the total. An MCP server's share counts only the requests that consumed one of its tool results. Before v2.1.222, after one call to an MCP server, Claude Code attributed every subsequent request to that server, overstating its share.
-* **Behavior flags**: behaviors such as long context or cache misses, flagged when one accounts for 10% or more of recent usage.
+* **Recommendations**: changes that lower your usage, one per row. Each row starts with the share of recent usage it addresses, at least 10%, as in `25%  Trim ~/code/api/CLAUDE.md · 49k tokens per request`. To have Claude Code apply the ones it can, see [Apply recommendations with the fix shortcut](#apply-recommendations-with-the-fix-shortcut).
 * **Loops**: a row for each of the heaviest [`/loop` or other session-scoped scheduled tasks](/docs/en/scheduled-tasks) that ran recently, ordered by total tokens, with a count of the rest. Requires Claude Code v2.1.242 or later.
   * **What each row reports**: how often the task fires, how many times it ran, its total and per-run tokens, and when it last ran
   * **Stopped and re-created loops**: Claude Code keys a row by the task's prompt, so a loop you stop and re-create stays one row
 
 Press `d` or `w` to switch between the last 24 hours and the last 7 days. The figures are approximate and computed from local session history on this machine, so usage from other devices or claude.ai is not included.
 
-In the [VS Code extension](/docs/en/vs-code#check-account-and-usage), the attribution shares and behavior flags appear in the Account & usage dialog with a Day and Week toggle, without the Loops rows.
+In the [VS Code extension](/docs/en/vs-code#check-account-and-usage), the attribution shares and recommendations appear in the Account & usage dialog with a Day and Week toggle, without the Loops rows.
+
+#### Apply recommendations with the fix shortcut
+
+When the `/usage` footer shows a hint such as `f to fix 2 of 3`, press `f` to have Claude Code act on the recommendations it can. The `f` shortcut requires Claude Code v2.1.305 or later.
+
+1. After any turn in progress ends, Claude Code runs each [`/effort`](/docs/en/model-config#adjust-effort-level) command shown in a row without `run`.
+2. Claude then gets one prompt with a step for each of the other rows it can act on. The prompt asks Claude to show you each change before making it.
+
+To see what pressing `f` does with each of your rows, find the row's shape in the first column:
+
+| Row shape | Example row | When you press `f` |
+| :- | :- | :- |
+| Ends in an `/effort` command with no `run` before it | `40%  Switch from max to high effort · /effort high` | Claude Code runs the command |
+| Ends in `run` and a command | `30%  Compact before you step away · run /compact` | Nothing happens for this row. Run the command yourself at the Claude Code prompt |
+| Ends in anything else | `25%  Trim ~/code/api/CLAUDE.md · 49k tokens per request` | Claude gets a step in the prompt for some of these rows, and nothing happens for the rest. If Claude shows you no change for a row, follow that recommendation yourself |
+
+In `f to fix 2 of 3`, the first number counts the rows Claude Code acts on when you press `f`, and the second counts the rows shown. A hint with no `of` in it, such as `f to fix both`, means Claude Code acts on every row shown.
+
+While [Remote Control](/docs/en/remote-control) is connected, the footer shows no `f` hint. If pressing `f` closes `/usage` with `Nothing was sent. Turn off Remote Control to use fixes.`, Remote Control connected while `/usage` was open. To use `f` again, [disconnect Remote Control](/docs/en/remote-control#check-connection-status), then run `/usage` at the Claude Code prompt and press `f` again.
 
 #### Check your usage-credits spend
 
@@ -367,7 +386,7 @@ When prompt suggestions are on, Claude Code also sends a short request to the mo
 A session that has been open for hours can use far more of your plan limits than your activity suggests, usually for one of these reasons:
 
 * **Long context**: Claude Code sends your full conversation with every request, and each time Claude uses tools it sends another request carrying that batch of tool results. With [prompt caching](/docs/en/prompt-caching), Claude Code re-reads that history at the [cached token rate](https://platform.claude.com/docs/en/about-claude/pricing), so a one-line question in a session that has been open all day still draws usage for the whole conversation. See [Manage context proactively](#manage-context-proactively) for ways to keep your context small
-* **Cache misses**: your first message after a break longer than the [cache lifetime](/docs/en/prompt-caching#cache-lifetime) misses the cache and reprocesses your full context. The lifetime is an hour on a subscription and drops to five minutes once you're drawing on [usage credits](https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans); on an API key or cloud provider, it's five minutes by default. To keep the one-hour lifetime while drawing on usage credits, [choose the TTL yourself](/docs/en/prompt-caching#choose-the-ttl-yourself)
+* **Cache misses**: your first message after a break longer than the [cache lifetime](/docs/en/prompt-caching#cache-lifetime) misses the cache and reprocesses your full context. See [which lifetime your requests get](/docs/en/prompt-caching#which-ttl-each-request-gets) and [the controls for setting it](/docs/en/prompt-caching#choose-the-ttl-yourself)
 * **Scheduled tasks**: a [session-scoped scheduled task](/docs/en/scheduled-tasks) fires on its interval even while the session is idle, sending your full context each time
 * **Cross-session messages**: Claude Code delivers a [message from another of your sessions](/docs/en/cross-session-messaging) as a new turn when this session sits idle, sending your full context each time. To hold inbound messages instead of delivering them, set [`crossSessionInbound`](/docs/en/settings-reference#crosssessioninbound) to `hold`
 * **Goal check-ins**: while background work keeps an active [goal](/docs/en/goal) waiting, Claude Code [asks Claude to check on that work](/docs/en/goal#background-work-defers-evaluation) even when the session sits idle, starting a new turn that sends your full context. Claude Code starts at most three idle check-ins per goal between your prompts. Before v2.1.246, idle check-ins were uncapped. To turn check-ins off, set [`CLAUDE_CODE_GOAL_CHECKIN_MINUTES`](/docs/en/env-vars) to `0`. Idle check-ins require Claude Code v2.1.236 or later
@@ -375,7 +394,7 @@ A session that has been open for hours can use far more of your plan limits than
 * **Agent teammates**: each active [teammate](#agent-team-token-costs) keeps consuming tokens until it exits
 * **Compaction**: `/compact` reads the conversation it summarizes, so [compacting a large context](/docs/en/prompt-caching#compacting-the-conversation) is itself a large request. When you want a fresh start instead of continuity, `/clear` costs nothing
 
-On a Pro, Max, Team, or Enterprise plan, the `/usage` breakdown flags behaviors that account for 10% or more of your recent usage, such as long context or cache misses, each with a tip to reduce it.
+On a Pro, Max, Team, or Enterprise plan, the [`/usage` breakdown](#plan-usage-breakdown) recommends a change for behaviors behind 10% or more of your recent usage, such as long context or cache misses.
 
 ## Understanding changes in Claude Code behavior
 
