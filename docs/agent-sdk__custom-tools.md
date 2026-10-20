@@ -155,7 +155,7 @@ The [`get_precipitation_chance` tool below](#add-more-tools) shows both patterns
 
 ### Call a custom tool
 
-Pass the MCP server you created to `query` via the `mcpServers` option. Each tool's [fully qualified name](/docs/en/agent-sdk/mcp#tool-naming-convention) is `mcp__{server_name}__{tool_name}`, where `{server_name}` is the key you give the server in `mcpServers`. If the key contains characters such as `.` or spaces, replace them with `_` when you write `{server_name}`. List the fully qualified name in `allowedTools` so the tool runs without a permission prompt.
+Pass the MCP server you created to `query` via the `mcpServers` option, and list each tool's [fully qualified name](/docs/en/agent-sdk/mcp#tool-naming-convention) in `allowedTools` so the tool runs without a permission prompt. That name is `mcp__{server_name}__{tool_name}`, where `{server_name}` is the key you give the server in `mcpServers`. If the key contains characters such as `.` or spaces, replace them with `_` when you write `{server_name}`.
 
 These snippets reuse the `weatherServer` from the [weather tool example](#weather-tool-example) to ask Claude what the weather is in a specific location.
 

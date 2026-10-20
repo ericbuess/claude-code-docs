@@ -780,12 +780,16 @@ The auto-compact window is how full the context window can get before Claude Cod
 
 ### Set the auto-compact window
 
+<Note>
+  If Claude Code warned about the value of `CLAUDE_CODE_AUTO_COMPACT_WINDOW`, see [the variable's values and warnings](#claude_code_auto_compact_window-values).
+</Note>
+
 You can set the auto-compact window in these places:
 
 * **For the current model, in this session and later ones**: run `/autocompact` with a value, like `/autocompact 500k`. Claude Code saves it to your user settings under the current model in [`modelSettings`](/docs/en/settings-reference#modelsettings) and applies it to the current session. If a higher-priority [settings scope](/docs/en/settings#settings-precedence) such as managed settings sets its own window for that model or for every model, the command saves your value but the session keeps that scope's window, and the command says so. Run `/autocompact auto` to return to the window tuned for your model. Before v2.1.288, the command saved one window for every model, as the top-level `autoCompactWindow`.
 * **For every model**: set [`autoCompactWindow`](/docs/en/settings-reference#autocompactwindow) in a settings file, such as `"autoCompactWindow": 200000` in `~/.claude/settings.json`. A window you saved for a model with `/autocompact` takes precedence over this key in the same file for that model.
 * **For one launch**: pass [`--autocompact`](/docs/en/cli-reference#cli-flags) when starting Claude Code. The flag overrides your saved setting for that launch without changing it, and `claude --autocompact auto` runs the session at the tuned window even if your saved setting has a value. Unlike `/autocompact`, the flag isn't preempted by a higher-priority settings scope such as managed settings.
-* **In scripts and cloud environments**: set [`CLAUDE_CODE_AUTO_COMPACT_WINDOW`](/docs/en/env-vars). While it's set, it takes precedence over the command, the flag, and the setting, and `/autocompact` reports the override instead of changing the window.
+* **In scripts and cloud environments**: set [`CLAUDE_CODE_AUTO_COMPACT_WINDOW`](/docs/en/env-vars) to a token count such as `200000`. Unless Claude Code [ignores the value](#claude_code_auto_compact_window-values), the variable takes precedence over the command, the flag, and the `autoCompactWindow` setting. `/autocompact` then reports the override without saving. The status line's `used_percentage` measures against the model's full context window, so while the variable is set, that percentage doesn't indicate when compaction will run.
 * **For one subagent**: see [Set the auto-compact window for one subagent](/docs/en/sub-agents#subagent-auto-compact-window).
 
 The command and the flag accept a window size from 100K to 1M tokens, in any of these forms:
@@ -794,7 +798,23 @@ The command and the flag accept a window size from 100K to 1M tokens, in any of 
 * A `k` or `M` suffix, such as `500k` or `1M`
 * A bare number from 100 to 1000, meaning thousands, so `200` sets 200,000
 
-The environment variable accepts only the plain token count. Claude Code caps the window at the model's context window.
+Whichever way you set the window, Claude Code caps it at the model's context window.
+
+<h4 id="claude_code_auto_compact_window-values">
+  Values and warnings for `CLAUDE_CODE_AUTO_COMPACT_WINDOW`
+</h4>
+
+A warning that quotes your `CLAUDE_CODE_AUTO_COMPACT_WINDOW` value means the value falls outside 100,000 to 1,000,000 or isn't a token count. To stop the warning, set a number in that range, such as `CLAUDE_CODE_AUTO_COMPACT_WINDOW=200000`. On Claude Code v2.1.304 or later, you can also write the number with `k` for thousands or `M` for millions, as in `200k` or `1M`.
+
+Find your warning's wording in the first column, then read across for the window your session uses and what to change:
+
+| Your warning contains | Window the session uses | What to change |
+| :- | :- | :- |
+| `reads as <N> tokens, so Claude Code treats it as the 100k minimum` | The smaller of 100,000 tokens and your model's context window | Set at least `100000`, such as `200000`, or `200k` if you meant `200` as thousands |
+| `is too large, so Claude Code treats it as the 1M maximum` | The smaller of 1,000,000 tokens and your model's context window | You already have the largest window. To stop the warning, set `1M` or `1000000` |
+| `isn't a usable size, so Claude Code ignores it` | The window from `--autocompact`, `/autocompact`, or `autoCompactWindow`, or the [default](#default-auto-compact-thresholds) when none is set | Set a number such as `200000`, or unset the variable |
+
+A number with no suffix is read as that many tokens, so `CLAUDE_CODE_AUTO_COMPACT_WINDOW=200` means 200 tokens even though `/autocompact 200` means 200,000.
 
 ### Default auto-compact thresholds
 

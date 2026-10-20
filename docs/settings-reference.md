@@ -2780,7 +2780,7 @@ Set how full the context window gets before Claude Code [compacts automatically]
 * **Scope**: [`Any file`](#scopes)
 * **Type**: number of tokens, from `100000` to `1000000`. Claude Code caps the value at your model's context window; the [models overview](https://platform.claude.com/docs/en/about-claude/models/overview) lists each model's window
 * **Default**: unset, so Claude Code picks a window tuned for your model
-* **Per-session overrides**: [`--autocompact`](/docs/en/cli-reference#cli-flags) takes precedence over this key for one session, and [`CLAUDE_CODE_AUTO_COMPACT_WINDOW`](/docs/en/env-vars) takes precedence over both
+* **Per-session overrides**: [`--autocompact`](/docs/en/cli-reference#cli-flags) takes precedence over this key for one session, and [`CLAUDE_CODE_AUTO_COMPACT_WINDOW`](/docs/en/env-vars) takes precedence over both unless Claude Code [ignores the variable's value](/docs/en/model-config#claude_code_auto_compact_window-values)
 
 ```json settings.json theme={null}
 {

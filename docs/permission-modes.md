@@ -421,15 +421,17 @@ With Claude Code v2.1.302 or later, set [`CLAUDE_CODE_AUTO_MODE_MODEL`](/docs/en
 ```
 
 <h4 id="classifier-model-not-reviewing">
-  When your model isn't the one reviewing
+  When your model doesn't review
 </h4>
 
 | Situation | What happens | What to do |
 | - | - | - |
-| In a session, `/status` shows [`Auto mode server`](#server-side-classifier-review) as `Enabled` | Your model reviews only what the server doesn't | None needed |
-| You set Claude Opus 5, Claude Sonnet 5.5, Claude Opus 5.5 or a model your organization's [model policy](/docs/en/model-config#restrict-model-selection) excludes | The [default classifier model](#default-classifier-model) reviews | Set a different model |
-| Anthropic configured a classifier model for your session | That model reviews | None needed |
-| Your provider can't serve the model | Requests fail and Claude Code [denies every reviewed action](/docs/en/errors#auto-mode-cannot-determine-the-safety-of-an-action) | Set a model it serves, or remove the variable |
+| The [debug log](#classifier-model-check) reports an Anthropic-configured classifier model | That model reviews | None needed |
+| You set Claude Opus 5, Sonnet 5.5, Opus 5.5 or one your organization's [model policy](/docs/en/model-config#restrict-model-selection) excludes | The [default classifier model](#default-classifier-model) reviews | Set another model |
+| Your provider can't serve the model | Classifier checks fail, so Claude Code [denies each action it checks](/docs/en/errors#auto-mode-cannot-determine-the-safety-of-an-action) | Set a model it serves, or remove the variable |
+| In a session, `/status` shows [`Auto mode server`](#server-side-classifier-review) as `Enabled` | The server reviews without your model | None needed |
+
+If several situations apply, go by the first listed.
 
 <h4 id="classifier-model-check">
   Check which model the classifier used
@@ -446,7 +448,7 @@ Have Claude run a shell command that isn't read-only, then search the log for `c
 * **Your model after `model=`**: the variable took effect
 * **A different model after `model=`**: search the log for `ignoring CLAUDE_CODE_AUTO_MODE_MODEL`, which gives the reason and any step to take
 * **No such line**: read `Auto mode server` in `/status` at the Claude Code prompt:
-  * **`Enabled`**: the [server](#server-side-classifier-review) is set to review this session's calls. Nothing to change.
+  * **`Enabled`**: the [server](#server-side-classifier-review) is set to review this session's calls.
   * **`Disabled`**: make sure the [permission mode](#switch-permission-modes) is auto, then have Claude run another command that isn't read-only.
 
 ### What the classifier blocks by default

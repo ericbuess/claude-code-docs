@@ -1185,7 +1185,7 @@ The `preTokens` value shows how many tokens were used before compaction occurred
 
 ##### Set the auto-compact window for one subagent
 
-To make one subagent compact earlier than it otherwise would, set `autoCompactWindow` in its [frontmatter](#supported-frontmatter-fields) to a token count from `100000` to `1000000`. If you set [`CLAUDE_CODE_AUTO_COMPACT_WINDOW`](/docs/en/env-vars#variables) to a positive integer, the subagent uses that variable's window instead and the field has no effect. Requires Claude Code v2.1.296 or later.
+To make one subagent compact earlier than it otherwise would, set `autoCompactWindow` in its [frontmatter](#supported-frontmatter-fields) to a token count from `100000` to `1000000`. If you set [`CLAUDE_CODE_AUTO_COMPACT_WINDOW`](/docs/en/env-vars#variables), the subagent uses that variable's window instead and the field has no effect, unless Claude Code [ignores the variable's value](/docs/en/model-config#claude_code_auto_compact_window-values). Requires Claude Code v2.1.296 or later.
 
 This frontmatter sets `autoCompactWindow` to 200,000 tokens for a subagent that reads long log files:
 

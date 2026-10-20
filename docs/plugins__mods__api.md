@@ -222,6 +222,89 @@ When a background job finds something that needs Claude's attention, it can star
 
 Timers stop when the module reloads. For long-running work inside a hook, [`next.signal`](/docs/en/plugins/mods/reference#the-hook-function) is an `AbortSignal` that aborts when the event your hook is handling is abandoned, for example when the user interrupts, so pass it to anything long-running.
 
+### Calls and background work after the user interrupts a turn
+
+The reason `the session was stopped and nobody has sent input since` in a result or error means the user stopped a running turn, such as with Esc or **Stop**. After that interruption, calls that start new work in the session are refused until the user's next input, such as a message at the prompt.
+
+Apart from `$.prompt.submit` and `$.command.run`, this handling of calls and background work after an interruption requires Claude Code v2.1.304 or later.
+
+#### Retry a refused or dropped call
+
+Make a refused or dropped call again from a [`turn.complete`](/docs/en/plugins/mods/events#follow-a-turn) hook. Calls stay refused until the user's next input, and nothing queues or repeats them for you.
+
+When a call's result or error contains one of these strings, keep its arguments for a later retry:
+
+* **`the session was stopped and nobody has sent input since`**: the call was refused
+* **`was removed from the queue before it ran`**: the prompt or command left the queue without running and was dropped, for example when the user stopped the turn
+
+In this example, call `submitPrompt` from your background job in place of [`$.prompt.submit`](#start-a-turn-from-a-background-job). When the result or the error carries one of those strings, `submitPrompt` keeps the text in `pendingText` for the `turn.complete` hook to submit again:
+
+```javascript theme={null}
+// The text of the last refused or dropped prompt, or null
+let pendingText = null
+
+async function submitPrompt($, text) {
+  let reason
+  try {
+    const result = await $.prompt.submit({ text })
+    reason = result?.drop ?? ''
+  } catch (error) {
+    reason = String(error?.message ?? error)
+  }
+  if (reason.includes('the session was stopped and nobody has sent input since') ||
+      reason.includes('was removed from the queue before it ran')) {
+    pendingText = text
+  }
+  // Any other result or error isn't retried
+}
+
+on('turn.complete', async ($, e, next) => {
+  if (pendingText !== null) {
+    const text = pendingText
+    // Empty pendingText before retrying, so that a second run of this hook
+    // doesn't submit the same text.
+    pendingText = null
+    // Not awaited: the hook would stay open until the new turn starts
+    submitPrompt($, text)
+  }
+  return next(e)
+})
+```
+
+Before the user's next input, `turn.complete` can fire for the interrupted turn itself and for a subagent's turn, and calls made then are refused again. In that case `submitPrompt` keeps the text for a later `turn.complete`.
+
+For a call that rejects, such as `$.command.run`, catch the error and test its message the way `submitPrompt` tests `reason`.
+
+#### What refused calls return
+
+In the results, `<reason>` stands for `the session was stopped and nobody has sent input since`:
+
+| Some refused calls | Result until the user's next input |
+| :- | :- |
+| `$.prompt.submit` | Resolves with `{ drop: '<reason>' }` and queues no prompt |
+| `$.command.run` | Rejects with an error whose message ends with `<reason>` |
+| [`$.agent.spawn`](/docs/en/plugins/mods/reference#mods-api-methods) | Resolves with `{ deny: '<reason>' }` and starts no subagent |
+| `$.session.send` to a subagent that finished | Resolves with `{ isDelivered: false, reason: 'Agent "<id>" was not resumed: <reason>.' }`, where `<id>` is the subagent's id. A subagent that's still running receives the message. |
+| `$.session.send` to an [agent team](/docs/en/agent-teams) teammate | Resolves with `{ isDelivered: false, reason: 'Teammate "<name>" was not messaged: <reason>.' }`, where `<name>` is the teammate's name |
+| [`$.tool.call`](/docs/en/plugins/mods/reference#mods-api-methods) of Bash with `run_in_background: true`, Monitor, or CronCreate | Resolves with `{ deny: '<tool> was not run: it starts background work, a schedule or a goal, and <reason>' }`, where `<tool>` is the tool's name |
+
+Along with these `$.session.send` and `$.tool.call` results, the user can see the [`Stopped:` toast](/docs/en/plugins/mods/troubleshoot#stopped-type-a-message-to-continue).
+
+#### Work your mod started before the interruption
+
+After the user stops a running turn, for example with Esc, some work your mod had already started is dropped and some waits for the user's next input.
+
+| Work | What happens until the user's next input | What to do |
+| :- | :- | :- |
+| A prompt from `$.prompt.submit` still in the queue | Dropped. The call resolves with `{ drop: 'the prompt was removed from the queue before it ran' }`. | Submit it again as [Retry a refused or dropped call](#retry-a-refused-or-dropped-call) shows |
+| A command from `$.command.run` still in the queue | Dropped. The call rejects with an error whose message includes `the command was removed from the queue before it ran`. | Run it again as [Retry a refused or dropped call](#retry-a-refused-or-dropped-call) shows |
+| A one-time job scheduled with a tool such as CronCreate that comes due before the user's next input | Starts no turn then, and runs after that input | Nothing needed |
+| A recurring job scheduled with a tool such as CronCreate that comes due before the user's next input | Starts no turn then. The job loses that run and keeps its schedule. | Nothing needed |
+| An event from a monitor your mod started | The monitor keeps running. An event the monitor raises before the user's next input is dropped, except the notice that the monitor ended, which arrives after that input. | Nothing can be done |
+| A subagent your mod spawned and later resumed with `$.session.send` that finishes before the user's next input | Its finish notice waits, and reaches the conversation after that input | Nothing needed |
+
+When a scheduled job comes due or a monitor raises an event before the user's next input, the user can see the [`Stopped:` toast](/docs/en/plugins/mods/troubleshoot#stopped-type-a-message-to-continue).
+
 ## Send and receive messages between sessions
 
 A mod can send a plain-text message to another of your sessions, to one of this session's subagents, or to a teammate in its [agent team](/docs/en/agent-teams). It can also observe the messages that arrive and leave.
