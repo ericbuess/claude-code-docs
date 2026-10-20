@@ -31,7 +31,7 @@ A project is worth creating when the work has a goal that outlasts one session a
 * **A build or migration bigger than a session**: "Build what `docs/spec.md` describes" or "Move the app off the deprecated ORM." The work splits into threads that each take a part, decisions you ask Claude to remember early on reach the later cloud threads, and the spec changes and bugs you find during the build go into the same conversation.
 * **Work that isn't code**: a folder of contracts or a support-ticket export you keep coming back to with new questions, such as "find the ten most common integration mistakes in these tickets." Upload the documents instead of adding a repository, and threads deliver each write-up as a file on the project's [**Library** tab](#see-what-needs-you-in-overview).
 
-In any of them you can send a batch of tasks, tell Claude to start without asking you to confirm, walk away, and find the threads that need you under [**Waiting on you**](#see-what-needs-you-in-overview) when you're back, or ask Claude to put part of the work on a schedule as a [routine](/docs/en/routines). If one of these is your situation, [create a project](#create-a-project).
+In any of them you can send a batch of tasks, tell Claude to start without asking you to confirm, and walk away. When you're back, you can find the threads that need you under [**Waiting on you**](#see-what-needs-you-in-overview). You can also ask Claude to put part of the work on a schedule as a [cloud scheduled task](/docs/en/routines). If one of these is your situation, [create a project](#create-a-project).
 
 ### When something else fits better
 
@@ -39,7 +39,7 @@ A project still fits when only some tasks need your machine. Cloud threads work 
 
 * **One task that fits in a session**: "Fix the flaky login test." Start a [cloud session](/docs/en/claude-code-on-the-web) yourself.
 * **Work where every task needs your machine**: a local database, a device emulator, or an API behind your VPN. Use a local session, or [agent view](/docs/en/agent-view) to run several at once. If the work only needs local files, upload them to the project instead.
-* **One task that repeats on a schedule with no conversation around it**: "Post a dependency report every Monday." Create a [routine](/docs/en/routines) on its own.
+* **One task that repeats on a schedule with no conversation around it**: "Post a dependency report every Monday." Create a [cloud scheduled task](/docs/en/routines) on its own.
 * **Several people giving Claude work and steering it together in a Slack channel**: see [Claude Tag](https://claude.com/docs/claude-tag/overview).
 
 A project draws on the same plan limits as your other Claude Code sessions and uses them faster. [Usage and cost](#usage-and-cost) covers what draws on your plan and how to keep it down.
@@ -55,7 +55,7 @@ A project is one coordinating conversation with Claude plus the threads it start
   * The `CLAUDE.md` and skills in [each of the project's repositories](#what-threads-pick-up-from-your-repositories), and in a project with one repository, that repository's permission rules and hooks too
   * The [connectors](#get-skills-plugins-connectors-and-tools-into-threads) on your claude.ai account
   * A [cloud environment](#choose-an-environment-for-threads) that sets its network access, environment variables, network secrets, and installed tools
-* **The Overview pane**: where you [see all the threads at once](#see-what-needs-you-in-overview) and which of them need you. Its other tabs are **Library** for the files you added and the files threads produced, **Pull requests** for the ones threads opened, and **Routines** for scheduled work in the project.
+* **The Overview pane**: where you [see all the threads at once](#see-what-needs-you-in-overview) and which of them need you. Its other tabs are **Library** for the files you added and the files threads produced, **Pull requests** for the ones threads opened, and **Scheduled tasks** for scheduled work in the project.
 
 Cloud threads don't pick up anything from the Claude Code setup on your own machine. [Get skills, plugins, connectors, and tools into threads](#get-skills-plugins-connectors-and-tools-into-threads) covers how to give them what they'd otherwise be missing.
 
@@ -109,7 +109,7 @@ Starting a project from scratch means opening the **New project** dialog, naming
     On your first project, Claude takes a turn of its own as soon as the project is created, unless you send a message first. That turn uses your plan. In it, Claude may:
 
     * Start one thread that explores the repository without changing anything and proposes next steps, if the project has a repository it can read.
-    * Post **Setup recommendations** drawn from your recent cloud sessions: repositories to add, routines to create, and threads it could start. Every recommended repository and routine starts switched on. Switch off the ones you don't want, then click **Update setup** to add the rest, or ignore the recommendations and describe work yourself.
+    * Post **Setup recommendations** drawn from your recent cloud sessions: repositories to add, scheduled tasks to create, and threads it could start. Every recommended repository and scheduled task starts switched on. Switch off the ones you don't want, then click **Update setup** to add the rest, or ignore the recommendations and describe work yourself.
   </Step>
 </Steps>
 
@@ -204,7 +204,11 @@ The pane's **Threads** tab groups threads by state:
 | **Idle** | Threads that finished and aren't waiting on anything |
 | **Resolved** | Threads marked done: by you from the thread's menu, by Claude once you've taken the last step, such as merging its pull request, or automatically after a week with no activity. You can reopen one from the same menu |
 
-The pane's other tabs are **Library** for the files and folders you added and the files threads produced, **Pull requests** once threads have opened any, and **Routines** for the [routines](/docs/en/routines) Claude set up from this project.
+The pane's other tabs are:
+
+* **Library**: the files and folders you added and the files threads produced
+* **Pull requests**: shown once threads have opened any
+* **Scheduled tasks**: the [cloud scheduled tasks](/docs/en/routines) Claude set up from this project
 
 ### Open a thread when you need control
 
@@ -393,9 +397,9 @@ Settings save as you change them; a text field you're editing, such as the goal 
 
 All three controls are at the bottom of **Project settings > General**:
 
-* **Pause**: stops everything at once. Every running thread and the conversation are interrupted, no new threads start, routines don't run, and the project doesn't accept messages until you resume it. Click **Resume** in the same place or on the banner above the project's message box; a paused thread continues when you send it a message after that.
-* **Archive**: hides the project from the sidebar and archives its threads, which stops any thread that was running or watching a pull request. Routines in the project don't run while it's archived. To bring the project back, open it from the Projects page and click **Unarchive**. Its threads stay archived until you unarchive them individually from the session list.
-* **Delete**: permanently removes the project along with its threads, its memory, and its files, and turns off the project's routines. This can't be undone. Branches and pull requests the threads pushed to GitHub aren't affected.
+* **Pause**: stops everything at once. Every running thread and the conversation are interrupted, no new threads start, scheduled tasks don't run, and the project doesn't accept messages until you resume it. Click **Resume** in the same place or on the banner above the project's message box; a paused thread continues when you send it a message after that.
+* **Archive**: hides the project from the sidebar and archives its threads, which stops any thread that was running or watching a pull request. Scheduled tasks in the project don't run while it's archived. To bring the project back, open it from the Projects page and click **Unarchive**. Its threads stay archived until you unarchive them individually from the session list.
+* **Delete**: permanently removes the project along with its threads, its memory, and its files, and turns off the project's scheduled tasks. This can't be undone. Branches and pull requests the threads pushed to GitHub aren't affected.
 
 ## Usage and cost
 
@@ -429,7 +433,7 @@ Several Claude Code features let more than one session work at the same time, so
 
 * **Claude Tag**: [Claude Tag](https://claude.com/docs/claude-tag/overview) is Claude in your team's Slack channels, on Team and Enterprise plans. Anyone in a channel can give it work, everyone in the channel sees and steers it, and it uses connections an admin set up for that channel. A project is yours alone: you're the only one who sends it work or sees its threads, it uses your own GitHub access and connectors, and it's on Pro and Max. [How Claude Tag differs from Cowork and Claude Code](https://claude.com/docs/claude-tag/concepts/how-it-works#how-claude-tag-differs-from-cowork-and-claude-code) has the side-by-side.
 * **Cloud sessions**: every thread is a [cloud session](/docs/en/claude-code-on-the-web) unless you ask Claude to run it on your machine. Either way, Claude starts and tracks it instead of you. A cloud session you started yourself can become a project or feed one through [**Continue as project** or **Move to project**](#start-from-an-existing-cloud-session).
-* **Routines**: when you ask for scheduled work in a project, Claude creates a [routine](/docs/en/routines) that runs as threads in that project and appears on its **Routines** tab. Routines you create outside a project keep working on their own.
+* **Scheduled tasks**: when you ask for scheduled work in a project, Claude creates a [cloud scheduled task](/docs/en/routines) that runs as threads in that project and appears on its **Scheduled tasks** tab. Scheduled tasks you create outside a project keep working on their own.
 * **Remote Control**: [Remote Control](/docs/en/remote-control) connects claude.ai to a Claude Code session running on your machine. When you ask Claude in a project to run a thread on your computer, the project [uses Remote Control to do it](#run-a-thread-on-your-own-computer).
 * **Local sessions and agent view**: a session you start yourself in your terminal, IDE, or the desktop app's local environment can't be added to a project. [Agent view](/docs/en/agent-view) is a screen for tracking several local sessions side by side, and you still start each one and give it its task yourself.
 * **Worktrees**: a [worktree](/docs/en/worktrees) gives each local session its own working copy of a repository. Cloud threads don't need them: each clones its repositories into its own cloud sandbox and works on its own branch.
@@ -486,9 +490,9 @@ To fix any of them, click the button the message offers, such as **Install GitHu
   A thread hit the usage limit
 </h3>
 
-When a thread or the project conversation reaches your plan's five-hour or weekly limit, it keeps retrying on its own and continues when the limit resets. While it waits, the thread shows **Service is busy** with "Claude is still retrying and will continue automatically." You don't need to do anything for the work to continue. If you'd rather it not use your next usage window, click **Stop** in the thread, or [pause the project](#pause-archive-or-delete-a-project) to hold every thread. A thread that a routine started doesn't wait: its turn stops with a limit error, and you send it a message after the limit resets.
+When a thread or the project conversation reaches your plan's five-hour or weekly limit, it keeps retrying on its own and continues when the limit resets. A thread that a scheduled task started doesn't wait: its turn stops with a limit error, and you send it a message after the limit resets.
 
-[Usage limit errors](/docs/en/errors#youve-hit-your-session-limit) explain the limits and when they reset.
+While a thread waits, it shows **Service is busy** with "Claude is still retrying and will continue automatically." You don't need to do anything for the work to continue. If you'd rather it not use your next usage window, click **Stop** in the thread, or [pause the project](#pause-archive-or-delete-a-project) to hold every thread. [Usage limit errors](/docs/en/errors#youve-hit-your-session-limit) explain the limits and when they reset.
 
 <h3 id="additional-usage-credits-are-required">
   Additional usage credits are required
@@ -522,6 +526,6 @@ These messages name their own cause. The table gives the next step for each.
 
 * [Use Claude Code in the cloud](/docs/en/claude-code-on-the-web): how the cloud sessions behind each cloud thread work, including GitHub access options and auto-fix on pull requests
 * [Configure cloud environments](/docs/en/cloud-environments): change what cloud threads can reach on the network, give them environment variables and network secrets, and install tools with a setup script
-* [Automate work with routines](/docs/en/routines): schedules, triggers, and management for routines, including the ones Claude creates from a project
+* [Automate work with scheduled tasks](/docs/en/routines): schedules, triggers, and management for scheduled tasks, including the ones Claude creates from a project
 * [Manage multiple agents with agent view](/docs/en/agent-view): run and track several sessions on your own machine when the work needs tools or services only your machine can reach
 * [Projects redesigned: from folder to conversation](https://claude.com/blog/projects-redesigned): the launch announcement, with the thinking behind making a project a conversation with Claude

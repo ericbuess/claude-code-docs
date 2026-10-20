@@ -123,9 +123,9 @@ Before v2.1.218, the review ran inside your conversation.
 Claude can start `/code-review` on its own, without you typing the command:
 
 * **When you ask in plain language**: ask Claude to review your changes and it can run the skill
-* **From a scheduled task**: a [scheduled task](/docs/en/scheduled-tasks) with `/code-review` as its prompt runs the review
+* **From a scheduled task**: a [session-scoped scheduled task](/docs/en/scheduled-tasks) with `/code-review` as its prompt runs the review
 
-A scheduled task never launches the [cloud review](#escalate-to-ultrareview), so schedule `/code-review` without the `ultra` argument.
+A session-scoped scheduled task never launches the [cloud review](#escalate-to-ultrareview), so schedule `/code-review` without the `ultra` argument.
 
 To stop both Claude and scheduled tasks from starting the review while keeping `/code-review` available for you to type, add a [`skillOverrides`](/docs/en/skills#override-skill-visibility-from-settings) entry to a [settings file](/docs/en/settings#where-settings-live) such as `~/.claude/settings.json`:
 

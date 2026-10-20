@@ -510,6 +510,10 @@ Allow more time if you set either of these flags:
 * **With [`--retire-at`](/docs/en/self-hosted-environments-reference#runner-cli-flags)**: leave enough time between the retire time and the time the host stops for typical turns to finish, plus the wait for background tasks that [Runner lifecycle](/docs/en/self-hosted-environments#runner-lifecycle) describes, plus the logged time. Compute the retire time at each launch, for example `date +%s` plus the runner's intended lifetime.
 * **With [`--defer-shutdown-max-min`](#defer-the-drain-past-the-first-signal)**: the stop timeout must also cover the minutes you configure and a further wait before the drain starts, 75 seconds at default settings. [Defer the drain past the first signal](#defer-the-drain-past-the-first-signal) explains both. The runner logs this longer time at startup too.
 
+### Post a status message before a restart
+
+Before a restart that will interrupt sessions, have an [Owner](/docs/en/cloud-environments#organization-shared-environments) post a status message on the environment from the [**Cloud environments** admin page](https://claude.ai/admin-settings/cloud-environments). At [claude.ai/code](https://claude.ai/code), members see the message in their sessions in that environment. Have the Owner set an expiry with the post, or remove the message once the runners are back.
+
 ### Defer the drain past the first signal
 
 Set [`--defer-shutdown-max-min <n>`](/docs/en/self-hosted-environments-reference#runner-cli-flags) if you want a runner you're restarting to go on serving the sessions it holds for up to `n` minutes, instead of draining them on the first signal. On the first `SIGTERM` or `SIGINT`, the runner stops taking new work and goes on serving the sessions it holds. It keeps polling so that the control plane doesn't requeue those sessions. Requires Claude Code v2.1.238 or later.
@@ -574,7 +578,7 @@ What the reuse path does and doesn't guarantee:
 
 ## Pin the version
 
-Each session's child Claude Code process runs the runner's own binary, and the runner turns off auto-update inside the sessions it spawns, so every session runs the version you installed on the host or built into the image. A host-level update takes effect the next time the runner starts.
+Each session's child process runs the runner's own binary by default, and the runner turns off auto-update inside the sessions it spawns. With that default, every session runs the version you installed on the host or built into the image. A host-level update takes effect the next time the runner starts.
 
 Choose which version your sessions run and when it changes:
 
@@ -582,6 +586,7 @@ Choose which version your sessions run and when it changes:
 * **To hold a fleet on one version**: build the image with a pinned version, or on a bare host install a specific version and [disable auto-updates](/docs/en/setup#disable-auto-updates)
 * **To upgrade a fixed fleet**: read the [changelog](/docs/en/changelog) entries between your version and the one you're installing, then install the newer version or rebuild the image and restart the runners
 * **To upgrade on-demand runners**: read the [changelog](/docs/en/changelog) entries between your version and the one you're installing, then change the image your [`spawn-runner` hook](/docs/en/self-hosted-environments-configuration#the-spawn-runner-hook) starts. Each new runner gets the new version. A runner that's already up, including a standby runner that [`--min-idle`](/docs/en/self-hosted-environments-reference#orchestrator-cli-flags) started, keeps its version until it exits. Don't restart it, because its work order is single-use.
+* **If sessions start a different binary**: if you use [`--exec-path`](/docs/en/self-hosted-environments-reference#runner-cli-flags) or a [`command` hook](/docs/en/self-hosted-environments-configuration#command) to start a Claude Code binary other than the runner's own, sessions run that binary's version. Update that binary when you update the runner.
 * **Plugins**: plugin marketplaces don't auto-update either; set `FORCE_AUTOUPDATE_PLUGINS=1` in the runner's environment to let plugins auto-update while the binary stays pinned
 
 ## Scale the fleet
@@ -631,6 +636,7 @@ Set the flag above your longest expected session, such as `--kill-session-after-
   * **Before enabling the flag**: restrict who can push to `claude/*` refs on the source remote. On resume, the runner fetches the previously pushed branch without verifying who pushed it.
 * **A repository added mid-session can fail to clone**: Claude clones it with `git clone` over HTTPS. On a runner without [`--use-anthropic-git-proxy`](#use-the-anthropic-git-proxy), the clone fails with a git authentication error if nothing on the host can read the repository. Where you can, select every repository the session needs when you create it.
 * **Some connectors don't appear in self-hosted sessions**: a connector you haven't yet connected in claude.ai Settings isn't listed in a self-hosted session, and the session won't prompt you to connect it. Connect it in Settings first, then start a fresh session. Adding a connector to an already-running session also doesn't make its tools available to Claude; start a fresh session to pick up a newly added connector.
+* **When someone archives or deletes a session, or releases its runner from the session's menu**: don't count on the [`--push-outcome-on-release`](/docs/en/self-hosted-environments-reference#runner-cli-flags) push. To save commits in those cases, push `HEAD` to a rescue branch from a [`post-session` hook](/docs/en/self-hosted-environments-configuration#post-session). If you start from the example there, make it push even when nothing is uncommitted, because it pushes only after a snapshot commit.
 
 ### Report an issue
 
@@ -673,6 +679,7 @@ Common issues:
   If every call starts failing about 30 minutes into a session, a wrapper script has likely severed the session's stdin, so token rotations can't reach it; see [Keep stdin and file descriptor 3 attached](/docs/en/self-hosted-environments-configuration#keep-stdin-and-file-descriptor-3-attached).
 
   Before v2.1.274, the runner stopped retrying a failed fetch after a few attempts and waited for the next scheduled one. A failed turn didn't trigger a fetch, so every turn failed with a 401 until the next scheduled fetch.
+* **A turn fails in claude.ai/code with `This model needs a newer version of Claude Code`**: the Claude Code version that your runners start sessions with is older than the session's model requires, so the API [rejects the request](/docs/en/errors#claude-code-does-not-support-this-model). Upgrade the runners to the version the message asks for, or a later one, as described in [Pin the version](#pin-the-version). Until then, people can pick a different model in the session.
 * **Pod is killed mid-drain**: raise `terminationGracePeriodSeconds` to at least the value the runner logs at startup. See [Shutdown timing](#shutdown-timing).
 
 Once logging is initialized, the runner writes its lifecycle log, including `[runner:fatal]` lines, to stdout, and debug output to stderr, all as plain-text lines rather than JSON. The base directory failures described in the troubleshooting entries above print to stderr before that point. Capture both streams with `--log-file`, which also lets `self-hosted-runner doctor` tail them, or with your platform's log collection.

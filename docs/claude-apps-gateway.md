@@ -8,6 +8,8 @@
 
 <Note>
   The Claude apps gateway is designed for organizations that must, or prefer to, route inference through their own cloud provider, for example to meet [data residency](/docs/en/claude-apps-gateway-deploy#compliance-posture) requirements. If you don't have this requirement, and want access to other features such as SCIM provisioning or Claude Code on web and mobile, Claude Enterprise may be a better fit. See the [feature availability](/docs/en/feature-availability) page for a full comparison of all deployment methods.
+
+  Claude Code uses one sign-in at a time: a gateway sign-in takes the place of a Claude for Teams or Enterprise login. Gateway sessions don't fetch the [server-managed settings](/docs/en/server-managed-settings) you set in the claude.ai admin console, so deliver them from the gateway's [`managed` block](/docs/en/claude-apps-gateway-config#managed). Leave `forceLoginMethod` and `forceLoginOrgUUID` out of that block, or [some signed-in sessions exit at startup](/docs/en/claude-apps-gateway-config#client-side-managed-settings). See [Availability and limitations](#availability-and-limitations) for what gateway sessions lose.
 </Note>
 
 Claude apps gateway is a self-hosted service that sits between your developers' Claude Code clients and your model provider. Developers sign in with your corporate identity provider (IdP) instead of holding API keys or cloud credentials. The gateway holds the upstream credential, enforces model access and [managed settings](/docs/en/managed-settings) by IdP group, and relays usage telemetry to your own observability stack.
@@ -25,7 +27,7 @@ Companion pages go deeper. The [configuration reference](/docs/en/claude-apps-ga
 
 ## Why Claude apps gateway
 
-The [gateway overview](/docs/en/gateways) covers what a gateway does and why you'd run one. Claude apps gateway is Anthropic's own gateway, built into the `claude` binary and tested alongside each Claude Code release, so it forwards the headers and request fields Claude Code sends without operators maintaining a separate allowlist. Once deployed it gives you:
+The [gateway overview](/docs/en/gateways) covers what a gateway does and why you'd run one. Claude apps gateway is Anthropic's own gateway, built into the `claude` binary and tested alongside each Claude Code release, so it forwards the `anthropic-beta` values and request fields Claude Code sends without operators maintaining a separate allowlist. Once deployed it gives you:
 
 * **Credentials**: the upstream API key or cloud credential lives only in your infrastructure. Developers authenticate with corporate SSO and receive short-lived bearer tokens, so offboarding happens in your IdP. Deprovision a user and their gateway access expires within the session lifetime, one hour by default.
 * **Access control**: your IdP groups map to model allowlists and [managed settings](/docs/en/managed-settings) policies. The gateway enforces model access server-side, rejecting requests for non-granted models, and selects each group's managed settings policy, which the CLI applies at the [managed settings tier](/docs/en/settings#settings-precedence). Different teams get different models, tools, and permissions, and a developer can't override what their policy locks.
@@ -50,6 +52,10 @@ If you already run an LLM gateway or API gateway that meets your needs, keep usi
 The [gateway compatibility guide](/docs/en/llm-gateway-protocol) documents what Claude Code expects from any gateway: the endpoints it calls, the headers and body fields to forward, and what stops working when they're stripped. A running Claude apps gateway also serves its own protocol reference at `GET /protocol`, which describes the endpoints it exposes to Claude Code clients: SSO sign-in, inference, managed settings delivery, model discovery, and telemetry. Fetch it with `curl https://claude-gateway.internal.example.com/protocol` from any deployed gateway, such as the one the [quickstart](#quickstart) below produces.
 
 Breaking changes to the protocol are announced in advance, but indefinite backwards compatibility isn't guaranteed.
+
+<Note>
+  A gateway sign-in token identifies the developer who approved the sign-in, not the program that uses it. Claude Code signs in without a client ID or secret of its own, so a gateway has no way to verify which program is signing in. Any client can set `User-Agent` and other request fields, so use them for routing or metrics, not as proof that a request comes from Claude Code.
+</Note>
 
 ## Quickstart
 
@@ -466,7 +472,7 @@ Once connected, Claude Desktop sends model requests from every enabled tab throu
 
 ### CI pipelines and remote machines
 
-There is no service-token flow for unattended pipelines. Gateway sign-in always runs the browser device flow, so a CI job with no developer to approve the sign-in can't authenticate; configure those against your provider directly.
+There is no service-token flow for unattended pipelines. Gateway sign-in always runs the browser device flow, so a CI job with no developer to approve the sign-in can't authenticate; configure those against your provider directly. Deploy `forceLoginMethod` and `forceLoginGatewayUrl` to developer machines and leave them off CI runners. On a machine whose managed settings set them, a session that authenticates with `ANTHROPIC_API_KEY`, `ANTHROPIC_AUTH_TOKEN`, or `apiKeyHelper` [exits at startup](/docs/en/errors#administrator-policy-requires-a-cloud-gateway-sign-in).
 
 Once a developer has signed in, each Claude Code session on that machine uses the gateway session, including non-interactive `claude -p` runs and sessions started by the Agent SDK. Claude Code applies the [gateway policy](/docs/en/claude-apps-gateway-config#managed) to each of them.
 

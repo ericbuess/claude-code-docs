@@ -225,7 +225,7 @@ The mods API is the `$` argument every hook receives. Its methods are grouped in
 
 A render site is an extension point in Claude Code's interface. Each row is a value of `e.component` in a `ui.render` hook, with the fields of `e.props` and the apps that render it. `e.surface` names the app that's drawing, such as `terminal`, `desktop`, or `vscode`. [Change what Claude Code already draws](/docs/en/plugins/mods/interface#change-what-claude-code-already-draws) shows what a hook can do at a site, with an example of each choice.
 
-Rendering in the VS Code extension requires extension version 2.1.299 or later and a session that [fetches feature flags](/docs/en/env-vars#features-that-need-feature-flag-fetching). [Draw in the VS Code extension](/docs/en/plugins/mods/interface#draw-in-the-vs-code-extension) lists what the extension draws differently.
+Rendering in the VS Code extension requires extension version 2.1.299 or later. A session that [doesn't fetch feature flags](/docs/en/env-vars#features-that-need-feature-flag-fetching) needs 2.1.304 or later. [Draw in the VS Code extension](/docs/en/plugins/mods/interface#draw-in-the-vs-code-extension) lists what the extension draws differently.
 
 | Site | `e.props` | `e.requestId` | Rendered on |
 | :- | :- | :- | :- |
@@ -381,7 +381,7 @@ These are the settings and environment variables that affect mods. The Where col
 | :- | :- | :- |
 | `CLAUDE_CODE_PLUGIN_DIRS` | Environment, or `env` in `~/.claude/settings.json` | Plugin directories to load as `--plugin-dir` does, for apps you can't pass a flag to. Absolute paths separated by `:`, or `;` on Windows. |
 | `CLAUDE_CODE_PLUGIN_DIR_WATCH` | Environment | `1` makes a long-running non-interactive session reload `--plugin-dir` mods on save |
-| `prependPlugins`, `appendPlugins` | Managed settings. User settings only on a machine with no managed settings, for a user who isn't signed in with a Team or Enterprise plan. | Lists of plugin ids, such as `acme-guard@acme-tools`. Mods in `prependPlugins` run before every mod a user installs, and mods in `appendPlugins` run after, in the listed order. See [The order mods run in](/docs/en/plugins/mods/events#the-order-mods-run-in). |
+| `prependPlugins`, `appendPlugins` | Managed settings. User settings only on a machine with no managed settings, in a session whose credential isn't a Team or Enterprise `/login`. | Lists of plugin ids, such as `acme-guard@acme-tools`. Mods in `prependPlugins` run before every mod a user installs, and mods in `appendPlugins` run after, in the listed order. See [The order mods run in](/docs/en/plugins/mods/events#the-order-mods-run-in). |
 | `allowManagedModsOnly` | Managed settings, as an [option on the built-in guard](/docs/en/plugins/mods/admin#set-options-on-the-built-in-guard) | Only mods that [count as your organization's](/docs/en/plugins/mods/admin#install-your-organizations-mods), and mods built into Claude Code, run their hooks. Users' settings hooks keep running. |
 | `allowModsToOverrideDenyRules` | Managed settings, as an [option on the built-in guard](/docs/en/plugins/mods/admin#set-options-on-the-built-in-guard) | Lets a mod a user installed approve a tool call that a `deny` rule refuses |
 | `allowManagedHooksOnly` | Managed settings | Blocks hooks and installed mods that aren't your organization's. See [what keeps running](/docs/en/settings-reference#what-runs-under-allowmanagedhooksonly). |
@@ -389,7 +389,9 @@ These are the settings and environment variables that affect mods. The Where col
 | `disableSideloadFlags` | Managed settings | Rejects `--plugin-dir` and `--plugin-url` at startup |
 | `pluginConfigs` | User or managed settings | Holds `userConfig` values for a mod, keyed by the plugin's id, such as `acme-guard@acme-tools`, or its name and `@inline`, such as `first-mod@inline`, for one loaded with `--plugin-dir` |
 
-`sec-default@builtin` is a guard built into Claude Code, listed as `cc-plugin-sec-default` in `/plugin` and the debug log. It loads ahead of every mod a person installs on a machine with managed settings, or for a user signed in with a Team or Enterprise plan. If managed `prependPlugins` is set, the guard loads only when that list names it, at the position listed. Its source is in the [`mods/sec-default` directory of the Claude Code repository](https://github.com/anthropics/claude-code/tree/main/mods/sec-default).
+`sec-default@builtin` is a guard built into Claude Code, listed as `cc-plugin-sec-default` in `/plugin` and the debug log. It loads ahead of every mod a person installs on a machine with managed settings, or in a session whose credential is a Team or Enterprise [`/login`](/docs/en/authentication#authentication-precedence). If managed `prependPlugins` is set, the guard loads only when that list names it, at the position listed.
+
+Its source is in the [`mods/sec-default` directory of the Claude Code repository](https://github.com/anthropics/claude-code/tree/main/mods/sec-default).
 
 ## Commands
 

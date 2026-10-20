@@ -68,7 +68,7 @@ Each of these follows `hooks module`, the mod's name, and `not loaded:` in the d
 
 ### Messages from the built-in guard
 
-On a machine with managed settings, or for a user signed in with a Team or Enterprise plan, the [built-in guard](/docs/en/plugins/mods/admin#know-what-happens-by-default) can refuse a mod or one of its answers. Each message names the option your organization's administrator sets to change the rule.
+On a machine with managed settings, or in a session whose credential is a Team or Enterprise `/login`, the [built-in guard](/docs/en/plugins/mods/admin#know-what-happens-by-default) can refuse a mod or one of its answers. Each message names the option your organization's administrator sets to change the rule.
 
 | Message contains | What it means | Where it appears |
 | :- | :- | :- |
@@ -249,7 +249,7 @@ Either that app doesn't draw the site or element, or the session is one where th
 
 * **The site or element isn't drawn in that app**: look up your site in the [render sites](/docs/en/plugins/mods/reference#render-sites) table and your elements in the [elements](/docs/en/plugins/mods/reference#elements) table. For an element the app lacks, check `e.surface` in the hook and return a tree the app can draw.
 * **The VS Code extension is older than 2.1.299**: the chat panel draws for mods from [extension version](/docs/en/vs-code#install-the-extension) 2.1.299. Check the version in VS Code's Extensions view and update the extension there.
-* **The VS Code session doesn't fetch feature flags**: drawing in the chat panel requires it. Sessions on Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry, or through a [Claude apps gateway](/docs/en/claude-apps-gateway), skip it, among others that [Features that need feature-flag fetching](/docs/en/env-vars#features-that-need-feature-flag-fetching) lists. To see the drawing in such a session, run `claude` in a terminal instead, such as VS Code's integrated terminal.
+* **The extension is older than 2.1.304 and the session doesn't fetch feature flags**: update the extension, or run `claude` in VS Code's integrated terminal instead. Sessions on Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry skip the fetch. For the others that skip it, such as a [Claude apps gateway](/docs/en/claude-apps-gateway) session, see [Features that need feature-flag fetching](/docs/en/env-vars#features-that-need-feature-flag-fetching).
 
 ## An edit or a value is lost
 

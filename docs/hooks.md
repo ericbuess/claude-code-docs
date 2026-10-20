@@ -409,7 +409,9 @@ Each object in the inner `hooks` array is a hook handler: the shell command, HTT
 * **[Prompt hooks](#prompt-and-agent-hook-fields)** (`type: "prompt"`): send a prompt to a Claude model for single-turn evaluation. The model returns its decision as JSON. See [Prompt-based hooks](#prompt-based-hooks).
 * **[Agent hooks](#prompt-and-agent-hook-fields)** (`type: "agent"`): spawn a subagent that can use tools like Read, Grep, and Glob to verify conditions before returning a decision. Agent hooks are experimental and may change. See [Agent-based hooks](#agent-based-hooks).
 
-All matching hooks run in parallel. If you define the same handler in more than one settings file, it runs once. A plugin's or skill's copy of the same handler stays separate.
+When an event fires, its matching hooks run in parallel. If more than 12 of them are prompt or agent hooks, 12 of those run at once and the rest start as running ones finish. Each waiting hook's [`timeout`](#common-fields) starts counting when that hook starts.
+
+If you define the same handler in more than one settings file, it runs once. A plugin's or skill's copy of the same handler stays separate.
 
 Handlers run in the current directory with Claude Code's environment. If the current directory no longer exists, for example a worktree or temp directory that another shell deleted mid-session, Claude Code runs command hooks from the first of these that still exists: the directory the session started in, the project root, your home directory, or the system temp directory. Claude Code records a warning naming the fallback directory in the [debug log](#debug-hooks). For a worktree session that you start from the desktop app, see [What worktrees share with the main checkout](/docs/en/worktrees#what-worktrees-share-with-the-main-checkout).
 
@@ -1467,7 +1469,7 @@ block certain types of prompts.
 
 `UserPromptSubmit` hooks don't fire only on prompts you type. Claude Code also runs them on:
 
-* A [scheduled task](/docs/en/scheduled-tasks) firing, including a `/loop` iteration
+* A [session-scoped scheduled task](/docs/en/scheduled-tasks) firing, including a `/loop` iteration
 * A [background subagent](/docs/en/sub-agents#run-subagents-in-foreground-or-background) reporting back to the session that started it
 * A [message another session sends](/docs/en/cross-session-messaging) to your main conversation
 

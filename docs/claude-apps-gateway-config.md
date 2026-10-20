@@ -306,9 +306,15 @@ The gateway adds these headers to every request it forwards to that upstream.
 
 When the IdP token carries no email, the gateway sends only `x-claude-gateway-user-id` and omits the two email headers. If your IdP puts the email in a different claim, set [`oidc.email_claim`](#oidc) to that claim.
 
+Your proxy doesn't receive the [`x-claude-code-*` headers](/docs/en/llm-gateway-protocol#request-headers) that Claude Code sends, such as `x-claude-code-session-id`. The gateway doesn't pass them to any upstream, so group requests by developer with the headers in the table above.
+
 When your proxy answers `429` to a request that carried the developer's email, the gateway returns that response to the developer as-is instead of failing over to the next upstream, so your proxy's per-user budget or rate limit holds. The proxy's other responses follow the ordinary [failover rules](#upstreams). If a developer's IdP token carries no email, the gateway forwards their requests without the email headers, so a `429` to one of those requests counts as upstream capacity and fails over. Before v2.1.267 on the gateway server, every `429` failed over.
 
 Set `forward_user_identity` only on an upstream whose `base_url` is a proxy you operate. The gateway sends developer emails to whatever server that `base_url` names. If the `base_url` is the Anthropic API, which is the default, the gateway refuses to start.
+
+<Note>
+  If you set `forward_user_identity` on an Amazon Bedrock upstream, the gateway exits at startup with `Unrecognized key(s) in object: 'forward_user_identity'`. If your proxy sits in front of Bedrock, list it as a `provider: anthropic` upstream instead. The gateway sends that upstream the Anthropic Messages format, so your proxy has to [translate requests for Bedrock](/docs/en/llm-gateway-protocol#format-mismatch-with-the-upstream). To name each developer to AWS instead, see [Per-developer AWS cost attribution](#per-developer-aws-cost-attribution).
+</Note>
 
 #### Amazon Bedrock
 

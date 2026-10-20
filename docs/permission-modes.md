@@ -20,7 +20,7 @@ Each mode makes a different tradeoff between convenience and oversight. The tabl
 | [`acceptEdits`](#auto-approve-file-edits-with-acceptedits-mode) | Reads, file edits, and common filesystem commands (`mkdir`, `touch`, `mv`, `cp`, etc.) | Iterating on code you're reviewing |
 | [`plan`](#analyze-before-you-edit-with-plan-mode) | Reads, plus classifier-approved commands when [auto mode](#eliminate-prompts-with-auto-mode) is available | Exploring a codebase before changing it |
 | [`auto`](#eliminate-prompts-with-auto-mode) | Everything, with background safety checks | Long tasks, reducing prompt fatigue |
-| [`dontAsk`](#allow-only-pre-approved-tools-with-dontask-mode) | File reads inside your working directories and pre-approved tools; anything that would prompt is denied | Locked-down CI and scripts |
+| [`dontAsk`](#allow-only-pre-approved-tools-with-dontask-mode) | File reads inside your working directories and pre-approved tools; anything that would prompt is denied, though a [mod](/docs/en/plugins/mods/overview) you installed can still approve some of those calls | Locked-down CI and scripts |
 | [`bypassPermissions`](#skip-all-checks-with-bypasspermissions-mode) | Everything | Isolated containers and VMs only |
 
 The mode that reviews every action is named **Manual** in the CLI, in `claude --help`, in the VS Code and JetBrains extensions, and in the desktop app. Its config value is `default`, which is what hooks and SDK integrations use. The CLI accepts `manual` as an alias wherever you type the value, for example `claude --permission-mode manual` or `"defaultMode": "manual"`.
@@ -519,7 +519,9 @@ Claude Code v2.1.261 and later also block these by default:
 * Installing dependencies declared in your lock files or manifests
 * Reading `.env` and sending credentials to their matching API
 * Read-only HTTP requests
-* Pushing to any branch of the repository you're working in, including the default branch. A non-default branch whose name marks it as a deploy or publication target, such as `production` or `gh-pages`, isn't covered: the classifier judges a push there on its own terms. The push's content is still checked against the other rules, [`permissions.deny` rules](/docs/en/permissions#manage-permissions) can still block push commands [as written](/docs/en/permissions#bash-rule-limits) in every mode, and the remote's own branch protection still applies. Before v2.1.211, only pushes to the branch you started on, branches Claude created, and routine pushes to the default branch were allowed by default
+* Pushing to any branch of the repository you're working in, including the default branch. A non-default branch whose name marks it as a deploy or publication target, such as `production` or `gh-pages`, isn't covered: the classifier judges a push there on its own terms.
+
+  A push's content is still checked against the classifier's other rules, and [`permissions.deny` rules](/docs/en/permissions#manage-permissions) can still block push commands [as written](/docs/en/permissions#bash-rule-limits) in every mode. The remote's own branch protection still applies. From v2.1.203 until v2.1.211, only routine default-branch pushes and pushes to the branch you started on or to branches Claude created were allowed by default.
 * Deleting the exact jobs Claude created earlier in the same session
 * Reading, reviewing, or writing security-related code, configs, and threat models as part of your task
 * Messages between agents working together in the same multi-agent session
@@ -605,7 +607,7 @@ The following sections cover the order Claude Code evaluates an action in, how t
     3. Everything else goes to the classifier, apart from [critical-path removals](#critical-paths) under their default handling. The connector tools and `requiresUserInteraction` MCP tools that prompt you directly in step 1 never reach the classifier either, so neither an org-required approval nor a consent step is auto-approved
     4. If the classifier blocks, Claude receives the reason. In most sessions the reason names the rule the classifier matched, such as `[Data Exfiltration]`, rather than giving a written explanation; see [Review denials](/docs/en/auto-mode-config#review-denials)
 
-    A [mod](/docs/en/plugins/mods/overview) you install that handles `tool.check` can approve an action before step 3, and the classifier doesn't check an action the mod approves. See [Extend permissions with hooks](/docs/en/permissions#extend-permissions-with-hooks).
+    A [mod](/docs/en/plugins/mods/overview) you install that handles `tool.check` can also approve an action. For the cases where its approval doesn't get past your rules and hooks, see [Extend permissions with hooks](/docs/en/permissions#precedence-among-rules-hooks-and-mods).
 
     In the VS Code extension, how [Claude in Chrome](/docs/en/chrome) browser actions get approved depends on how the session connected to the browser: see [Permission prompts in VS Code sessions](/docs/en/chrome#permission-prompts-in-vs-code-sessions).
 
@@ -647,7 +649,9 @@ The following sections cover the order Claude Code evaluates an action in, how t
 
 ## Allow only pre-approved tools with dontAsk mode
 
-If you set `dontAsk` mode, Claude Code auto-denies every tool call that would otherwise prompt you. Claude still runs actions that need no approval in Manual mode, such as file reads inside your working directories and [read-only Bash commands](/docs/en/permissions#read-only-commands), plus actions matching your `permissions.allow` rules and calls approved by a [PreToolUse hook](/docs/en/permissions#extend-permissions-with-hooks). Use this mode for CI pipelines or restricted environments where you pre-define what Claude may do; the session never waits for input. The status bar shows `⏵⏵ don't ask on` while this mode is active.
+If you set `dontAsk` mode, Claude Code auto-denies every tool call that would otherwise prompt you, though a [mod](/docs/en/plugins/mods/overview) you installed can still approve some of those calls. To check which calls a mod can approve, see [Extend permissions with hooks](/docs/en/permissions#precedence-among-rules-hooks-and-mods).
+
+Claude still runs actions that need no approval in Manual mode, such as file reads inside your working directories and [read-only Bash commands](/docs/en/permissions#read-only-commands). Actions matching your `permissions.allow` rules and calls approved by a [PreToolUse hook](/docs/en/permissions#extend-permissions-with-hooks) run too. Use this mode for CI pipelines or restricted environments where you pre-define what Claude may do; the session never waits for input. The status bar shows `⏵⏵ don't ask on` in this mode.
 
 Claude Code denies calls matching your explicit [`ask` rules](/docs/en/permissions#manage-permissions) rather than prompting. It also denies the built-in `AskUserQuestion` tool even if your allow rules match it, and does the same to connector tools [your organization set to `ask`](/docs/en/mcp#organization-controls-on-connector-tools) in sessions where that setting reaches Claude Code. It denies MCP tools marked [`_meta["anthropic/requiresUserInteraction"]`](/docs/en/mcp#require-approval-for-a-specific-tool) the same way, because their approval card needs an answer this mode never collects.
 
@@ -789,6 +793,8 @@ Claude Code treats an `rm` or `rmdir` target as a critical path when it is any o
 * Your working directory and its parents
 * Your additional working directories and their parents, but only when the removal is a glob under one of them, such as `rm -rf <dir>/*`. `rm -rf <dir>` on the directory itself doesn't trigger this check
 
+For mounted drive paths such as `/mnt/c` or `/Volumes/USB`, see [The mounted drive prompt](#the-mounted-drive-prompt).
+
 The checks on the home directory's 8.3 short name and on the `\\?\C:\` and `\\localhost\C$` spellings require Claude Code v2.1.292 or later.
 
 ### Other targets that count as critical paths
@@ -830,6 +836,52 @@ How to rewrite a command so it passes the check depends on which of the [other t
 * **A target that is only command substitution output**: run the substitution on its own first, then remove the literal paths it prints. The prompt tells Claude to do the same.
 
 For a glob or trailing slash under a variable, the prompt names the flagged `rm` and says how to rewrite it so the check passes.
+
+### The mounted drive prompt
+
+The mounted drive prompt appears on macOS, Linux, and WSL when a recursive `rm` targets a listed [mounted drive path](#paths-that-get-the-mounted-drive-prompt), such as `/mnt/c` or `/Volumes/USB/build`. Its reason reads `Dangerous rm operation on mounted drive path: <path>`. A `/*` target gets the prompt without the recursive flag, since Claude Code reads `rm /Volumes/USB/build/*` as a removal of `/Volumes/USB/build`.
+
+Even with an allow rule for `rm`, Claude Code handles the command as a [critical-path removal](#critical-paths): a prompt or a denial [depending on your permission mode](#critical-path-removals-in-each-permission-mode). Approve the prompt to let the `rm` run, or [turn the prompt off](#turn-off-the-mounted-drive-prompt).
+
+#### Paths that get the mounted drive prompt
+
+Match the target of your recursive `rm` or `/*` removal against these path shapes, where each placeholder such as `<drive>` or `<name>` stands for exactly one path segment:
+
+| Under | Path shapes that get the prompt | Examples |
+| :- | :- | :- |
+| `/Volumes` | `/Volumes/<drive>`, `/Volumes/<drive>/<name>` | `/Volumes/USB`, `/Volumes/USB/build` |
+| `/System/Volumes` | `/System/Volumes`, `/System/Volumes/<volume>`, `/System/Volumes/<volume>/<name>` | `/System/Volumes/Data` |
+| `/media` | `/media/<user>`, `/media/<user>/<drive>`, `/media/<user>/<drive>/<name>` | `/media/alex` |
+| `/run/media` | `/run/media`, `/run/media/<user>`, `/run/media/<user>/<drive>`, `/run/media/<user>/<drive>/<name>` | `/run/media/alex/USB/build` |
+| `/mnt` | `/mnt/<name>`, and `/mnt/<letter>/<name>` under a one-letter mount such as WSL's `/mnt/c` | `/mnt/data`, `/mnt/c/Users` |
+
+For a recursive or non-recursive `rm` on `/Volumes`, `/media`, or `/mnt` itself, you see the [critical path](#which-paths-are-critical) reason `Dangerous rm operation on critical path: <path>` instead.
+
+A relative target counts from your working directory, so `rm -rf build` while you work in `/Volumes/USB` targets `/Volumes/USB/build` and gets the prompt.
+
+#### Turn off the mounted drive prompt
+
+To stop getting the mounted drive prompt while [prompts from other causes](#removals-that-still-prompt-with-the-mounted-drive-prompt-off) stay, start Claude Code with [`CLAUDE_CODE_DISABLE_MOUNTED_DRIVE_RM_PROMPT=1`](/docs/en/env-vars#variables) in its environment. For example, set the variable in [your shell](/docs/en/env-vars#set-variables-in-your-shell) and start `claude` from it:
+
+```bash theme={null}
+export CLAUDE_CODE_DISABLE_MOUNTED_DRIVE_RM_PROMPT=1
+claude
+```
+
+In a session started that way, the mounted drive prompt stops for a whole drive such as `/Volumes/USB` and for the other [listed paths](#paths-that-get-the-mounted-drive-prompt). If you allow `Bash(rm *)`, use Manual mode, and work in `/Volumes/USB`, then `rm -rf build` runs with no prompt.
+
+A prompt that still shows `Dangerous rm operation on mounted drive path` means the variable isn't reaching the session:
+
+* **Variable in a settings file**: Claude Code [ignores the variable in a settings file's `env` block](/docs/en/settings-reference#variables-claude-code-ignores-in-env), whichever kind of settings file, so set the variable where you start `claude` instead
+* **Session started without the variable**: start `claude` again from an environment where the variable is set, since a running session doesn't pick it up
+
+#### Removals that still prompt with the mounted drive prompt off
+
+In Manual mode with an allow rule for `rm`, an `rm` on a mounted drive path can still prompt, without the `Dangerous rm operation on mounted drive path` reason:
+
+* **Target outside your working directories**: `rm -rf /Volumes/USB/other` while you work in `/Volumes/USB/project` gets a prompt. To stop that prompt, [add a directory that contains the target](/docs/en/permissions#working-directories) to the session
+* **Target with a `*`**: `rm -rf build/*` gets a prompt. Approve that prompt to run the command, or ask Claude to name each target without a `*`
+* **Target that is a critical path**: `/mnt` itself and your working directory itself stay [critical paths](#which-paths-are-critical), so `rm -rf` on either gets a prompt. Approve that prompt to let the `rm` run
 
 ### Critical-path removals in each permission mode
 

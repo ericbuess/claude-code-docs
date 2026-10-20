@@ -78,7 +78,7 @@ A mod runs with your permissions, so before you install one, know what it has ac
 
 Mods aren't sandboxed. If you turn on [sandboxing](/docs/en/sandboxing), the sandbox isolates the Bash commands Claude runs, and a process that a mod starts runs outside it.
 
-A mod that approves tool calls can approve one that an `ask` rule would prompt for, or that one of your own `PreToolUse` hooks blocked. [Extend permissions with hooks](/docs/en/permissions#extend-permissions-with-hooks) lists what such a mod can approve, including when it can approve a call that a `deny` rule refuses.
+With [managed settings](/docs/en/settings#check-what-your-organization-enforces) or a Team or Enterprise [`/login`](/docs/en/authentication#authentication-precedence) as the session's credential, by default a mod's approval doesn't get a call past your `ask` rules or `PreToolUse` hooks. Without either, a mod can approve a call that an `ask` rule would prompt for, or that your `PreToolUse` hook blocked. To check when a mod can also approve a call that a `deny` rule refuses, see [Extend permissions with hooks](/docs/en/permissions#precedence-among-rules-hooks-and-mods).
 
 A mod can restyle much of Claude Code's interface, but not the permission prompt. It can't change what a prompt shows you.
 
@@ -195,7 +195,7 @@ A mod's hooks run in every kind of session that loads the plugin, whichever prov
 | `claude` in a terminal, including an editor's integrated terminal and the JetBrains plugin | Yes | Yes |
 | The Code tab of the Desktop app, except in a WSL session | Yes | Yes, except elements the [elements table](/docs/en/plugins/mods/reference#elements) marks terminal-only |
 | A [WSL session](/docs/en/desktop-wsl) in the Desktop app | No, because plugins aren't available in WSL sessions | No |
-| The VS Code extension's chat panel | Yes | Yes, with extension version 2.1.299 or later, in a session that [fetches feature flags](/docs/en/env-vars#features-that-need-feature-flag-fetching). The [render sites](/docs/en/plugins/mods/reference#render-sites) and [elements](/docs/en/plugins/mods/reference#elements) tables mark what the panel draws. |
+| The VS Code extension's chat panel | Yes | Yes, with extension version 2.1.299 or later. A session that [doesn't fetch feature flags](/docs/en/env-vars#features-that-need-feature-flag-fetching), such as one on Amazon Bedrock, needs 2.1.304 or later. The [render sites](/docs/en/plugins/mods/reference#render-sites) and [elements](/docs/en/plugins/mods/reference#elements) tables mark what the panel draws. |
 | `claude -p` and the [Agent SDK](/docs/en/agent-sdk/overview) | Yes | No |
 | [Remote Control](/docs/en/remote-control) from claude.ai or the mobile app | Yes, in the session on your machine | In the terminal on your machine |
 | A [cloud session](/docs/en/claude-code-on-the-web) | Yes, for a plugin that [reaches the cloud session](/docs/en/cloud-environments#what-carries-over-from-your-setup) | No |

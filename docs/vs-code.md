@@ -501,7 +501,7 @@ For more about the plugin system, see [Plugins](/docs/en/plugins/overview) and [
 
 ### Plugins that draw in the panel
 
-A plugin that contains a [mod](/docs/en/plugins/mods/overview) can draw in the chat panel. Drawing requires extension version 2.1.299 or later and a session that [fetches feature flags](/docs/en/env-vars#features-that-need-feature-flag-fetching). From such a plugin you can see:
+A plugin that contains a [mod](/docs/en/plugins/mods/overview) can draw in the chat panel. Drawing requires extension version 2.1.299 or later. A session that [doesn't fetch feature flags](/docs/en/env-vars#features-that-need-feature-flag-fetching), such as one on Amazon Bedrock, needs 2.1.304 or later. From such a plugin you can see:
 
 * A pane beside the conversation or above the prompt box
 * A toast or a status line above the prompt box

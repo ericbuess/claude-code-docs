@@ -20,7 +20,7 @@ You can start a cloud session from any of these surfaces:
 * **Mobile**: the **Code** tab in the [Claude app](/docs/en/mobile)
 * **Desktop app**: select **Cloud** instead of **Local** when you [start a session](/docs/en/desktop#run-long-running-tasks-in-the-cloud)
 * **Terminal**: [`claude --cloud`](#from-terminal-to-cloud)
-* **Routines**: [scheduled and triggered runs](/docs/en/routines) each run as a cloud session
+* **Cloud scheduled tasks**: [scheduled and triggered runs](/docs/en/routines) each run as a cloud session
 
 Once you're set up, use this page to move work between your terminal and the cloud, manage and share sessions, turn on auto-fix for pull requests, and troubleshoot.
 
@@ -436,14 +436,16 @@ Before relying on cloud sessions for a workflow, account for these constraints:
 * **Time limits**: commands Claude runs and SessionStart hooks have default timeouts you can change, and a setup script is cached only when it finishes in roughly five minutes. See [Time limits](/docs/en/cloud-environments#time-limits)
 * **Repository authentication**: you can only pull a cloud session into your terminal when you are authenticated to the same account
 * **Platform restrictions**: repository cloning and pull request creation require GitHub. Self-hosted [GitHub Enterprise Server](/docs/en/github-enterprise-server) instances are supported for Team and Enterprise plans. You can send a GitLab, Bitbucket, or other non-GitHub repository to a cloud session as a [local bundle](#send-local-repositories-without-github) by setting `CCR_FORCE_BUNDLE=1`, but the session can't push results back to that remote
-* **Organization IP allowlist**: cloud sessions call the Anthropic API from Anthropic-managed infrastructure, not your network, while sessions in a [self-hosted environment](/docs/en/self-hosted-environments) call it from your own network. If your organization has [IP allowlisting](https://support.claude.com/en/articles/13200993-restrict-access-to-claude-with-ip-allowlisting) enabled, every Anthropic-hosted cloud session fails with an authentication error. The same applies to [Code Review](/docs/en/code-review) and to [routines](/docs/en/routines) that run on Anthropic-hosted environments; a routine routed to a self-hosted environment calls the API from your own network. Contact [Anthropic support](https://support.claude.com/) to exempt Anthropic-hosted services from your organization's IP allowlist.
+* **Organization IP allowlist**: cloud sessions call the Anthropic API from Anthropic-managed infrastructure, not your network, while sessions in a [self-hosted environment](/docs/en/self-hosted-environments) call it from your own network. If your organization has [IP allowlisting](https://support.claude.com/en/articles/13200993-restrict-access-to-claude-with-ip-allowlisting) enabled, every Anthropic-hosted cloud session fails with an authentication error.
+  * **Code Review and scheduled tasks**: the same applies to [Code Review](/docs/en/code-review) and to [cloud scheduled tasks](/docs/en/routines) that run on Anthropic-hosted environments. A scheduled task routed to a self-hosted environment calls the API from your own network.
+  * **Getting an exemption**: contact [Anthropic support](https://support.claude.com/) to exempt Anthropic-hosted services from your organization's IP allowlist.
 
 ## Related resources
 
 * [Cloud environments](/docs/en/cloud-environments): configure network access, environment variables, and setup scripts for cloud sessions
 * [Projects](/docs/en/claude-projects): one conversation where Claude coordinates parallel cloud sessions on your repositories and reports back
 * [Ultrareview](/docs/en/ultrareview): run a deep multi-agent code review in a cloud sandbox
-* [Routines](/docs/en/routines): automate work on a schedule, via API call, or in response to GitHub events
+* [Cloud scheduled tasks](/docs/en/routines): automate work on a schedule, via API call, or in response to GitHub events
 * [Hooks configuration](/docs/en/hooks): run scripts at session lifecycle events
 * [All settings](/docs/en/settings-reference): all configuration options
 * [Security](/docs/en/security): isolation guarantees and data handling

@@ -58,13 +58,15 @@ With no mod settings of your own, this is what your users get:
 * **A built-in guard runs first.** Claude Code loads a built-in mod named `sec-default@builtin` ahead of every mod a user installs. Users can't turn it off. `/plugin` and the debug log list it as `cc-plugin-sec-default`. The guard loads when either of these is true:
 
   * The machine has managed settings
-  * The user is signed in to Claude Code with a Team or Enterprise plan
+  * The session runs on [`/login` credentials](/docs/en/authentication#authentication-precedence) for a Team or Enterprise plan
 
-  A user who authenticates with an API key, or through Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry, gets the guard only on a machine that has managed settings.
+  A user who authenticates with an API key, or through Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry, gets the guard only on a machine that has managed settings. A session that runs on a long-lived [`CLAUDE_CODE_OAUTH_TOKEN`](/docs/en/authentication#generate-a-long-lived-token) doesn't count as that login either, even when a Team or Enterprise login is stored on the machine.
 * **The guard protects what you manage.** A user's mod can't change what your managed hooks receive or decide, the system prompt, your managed `CLAUDE.md` and other managed instructions, what any mod reads as settings, or the tools and descriptions of your managed MCP servers.
-* **Everything else is allowed.** The guard adds no other restrictions. A user's mod can still read and write files, start processes, make network requests, rewrite tool calls and prompts, deny a tool call, approve one that would otherwise prompt, and draw in the interface, all with that user's permissions.
-* **Deny rules and your managed hooks take precedence.** Where the guard loads, a user's mod can't approve a call that a `deny` rule refuses, whichever settings file holds the rule. A block from a `PreToolUse` hook in managed settings is final too. Both apply to Claude's tool calls. Neither applies to a mod's own [`$.fs` and `$.process` calls](/docs/en/plugins/mods/api#reach-files-processes-and-the-network): with `Read(.env)` denied, a mod can still read that file with `$.fs.read` or start a program that does. To limit those calls, keep the mod from loading or handle the call in a [policy mod](#enforce-a-policy-with-a-mod-of-your-own).
-* **Other permission checks can be overridden.** A user's mod that approves tool calls can approve a call that an `ask` rule would prompt for, or that a `PreToolUse` hook outside managed settings blocked. In auto mode, a call the mod approves runs without a classifier check. For the prompts a mod's `tool.check` approval doesn't skip, see [Extend permissions with hooks](/docs/en/permissions#extend-permissions-with-hooks).
+* **Outside what you manage, a user's mod acts as that user.** The mod keeps that user's permissions: it can still read and write files, start processes, and make network requests. It can also rewrite tool calls and prompts, deny a tool call, and draw in the interface.
+* **Permission rules and `PreToolUse` hooks take precedence over a user's mod.** With the guard loaded, by default a user's mod can't approve a call that a `deny` rule refuses or an `ask` rule prompts for, whichever settings file holds the rule. The mod can't approve a call that any `PreToolUse` hook blocked, either.
+
+  Permission rules and `PreToolUse` hooks apply to Claude's tool calls, not to a mod's [`$.fs` and `$.process` calls](/docs/en/plugins/mods/api#reach-files-processes-and-the-network). With `Read(.env)` denied, a mod can still read that file with `$.fs.read` or start a program that does. To limit a mod's own `$.fs` and `$.process` calls, [keep the mod from loading](#stop-user-installed-mods-from-loading) or handle them in a [policy mod](#enforce-a-policy-with-a-mod-of-your-own).
+* **A user's mod can still skip some prompts.** In [auto mode](/docs/en/permission-modes#eliminate-prompts-with-auto-mode), a call the mod approves runs without a classifier check, unless the guard is loaded and the session runs with [`--permission-prompt-tool`](/docs/en/cli-reference#cli-flags) or an Agent SDK [`canUseTool` callback](/docs/en/agent-sdk/user-input#handle-tool-approval-requests). There the classifier checks the call first. For the prompts a mod's approval doesn't skip, see [Extend permissions with hooks](/docs/en/permissions#precedence-among-rules-hooks-and-mods).
 
 The guard's source is public in the [`mods/sec-default` directory of the Claude Code repository](https://github.com/anthropics/claude-code/tree/main/mods/sec-default).
 
@@ -74,7 +76,9 @@ Mods don't replace the controls you already have:
 
 * **Settings hooks keep working.** Command, HTTP, prompt, and agent hooks in settings files and in plugins' `hooks/hooks.json` run as before, alongside mods.
 * **Deny rules take precedence where the guard loads.** A user's mod can't approve a call that a `deny` rule refuses, unless you set [`allowModsToOverrideDenyRules`](#set-options-on-the-built-in-guard).
-* **Managed hooks run first.** A `PreToolUse` hook in managed settings runs before any mod sees the tool call, and its block is final. If a mod then rewrites the call, your managed hooks run again on the rewritten call, so a block still applies. `PreToolUse` hooks from other settings files and from plugins run after the last mod, so a mod that returns its own result in place of running the tool keeps those from running. See [The order mods run in](/docs/en/plugins/mods/events#the-order-mods-run-in).
+* **Managed hooks run first.** A `PreToolUse` hook in managed settings runs before any mod's [`tool.call`](/docs/en/plugins/mods/reference#tools) hook, and when that managed hook blocks a tool call, no mod's `tool.call` hook runs for that call. If the call goes ahead and a mod rewrites it, your managed hooks run again on the rewritten call, so they can still block it.
+
+  `PreToolUse` hooks from other settings files and from plugins run after the last mod. If a mod answers the tool call itself, the tool never runs and neither do those hooks. See [The order mods run in](/docs/en/plugins/mods/events#the-order-mods-run-in).
 * **Network policy covers `$.http.fetch`.**
 
   * **Your organization's policy doesn't allow WebFetch**: Claude Code also refuses every mod's `$.http.fetch` request. See [WebFetch availability](/docs/en/tools-reference#webfetch-availability).
@@ -311,7 +315,7 @@ These rules decide which ids in the two lists take effect:
 
 * **The list replaces the default**: when you set `prependPlugins` in managed settings, name `sec-default@builtin` in it to keep the built-in guard. The guard is built in and needs no `enabledPlugins` entry.
 * **Your own ids must count as yours**: in managed settings, Claude Code skips an id whose plugin doesn't meet the conditions for an organization's mod
-* **Repositories can't set them**: Claude Code reads both settings from managed settings and never from a repository's settings file. A user can set them in `~/.claude/settings.json` to order their own mods only on a machine with no managed settings, and only when they aren't signed in with a Team or Enterprise plan. Anywhere else, Claude Code ignores both keys in user settings. A list there neither adds nor removes the built-in guard.
+* **Repositories can't set them**: Claude Code reads both settings from managed settings, never from a repository's settings file. A user can set them in `~/.claude/settings.json` to order their own mods only on a machine with no managed settings, and only when the session's credential isn't a Team or Enterprise `/login`. Anywhere else, Claude Code ignores both keys in user settings. A list there neither adds nor removes the built-in guard.
 
 ### Enforce a policy with a mod of your own
 

@@ -477,7 +477,7 @@ Keep the matcher as narrow as possible. Matching on `.*` or leaving the matcher 
 
 ## How hooks work
 
-Claude Code fires hook events at specific points in its lifecycle. When an event fires, Claude Code runs all matching hooks in parallel; see [Hook handler fields](/docs/en/hooks#hook-handler-fields) for how duplicate handlers are treated. The table below shows each event and when it triggers:
+Claude Code fires hook events at specific points in its lifecycle. When an event fires, Claude Code runs the matching hooks in parallel; see [Hook handler fields](/docs/en/hooks#hook-handler-fields) for how duplicate handlers are treated. The table below shows each event and when it triggers:
 
 | Event | When it fires |
 | :- | :- |
@@ -976,7 +976,11 @@ With a hook in a settings file or a plugin's `hooks/hooks.json` you can't loosen
   In [plan mode](/docs/en/permissions#hook-approvals-in-plan-mode), if your `PreToolUse` hook returns `"allow"` for a file edit, you get the same prompt, block, or approval the edit would get with no hook. To lift this limit on hook approvals, [approve the plan](/docs/en/permission-modes#review-and-approve-a-plan) or switch to another permission mode.
 * **`"deny"` in every permission mode**: a hook that returns `permissionDecision: "deny"` blocks the tool even in `bypassPermissions` mode or with `--dangerously-skip-permissions`. `PreToolUse` hooks fire before any permission-mode check, in every [permission mode](/docs/en/permission-modes), including `dontAsk`. This lets you enforce policy that users can't bypass by changing their permission mode.
 
-A [mod](/docs/en/plugins/mods/overview) you install that handles `tool.check` can approve a call that your `PreToolUse` hook blocked, unless the hook is in managed settings. In plan mode, the mod can approve such a call when it's read-only, but not a file edit or another call that isn't read-only. [Extend permissions with hooks](/docs/en/permissions#extend-permissions-with-hooks) lists which rules hold over a mod.
+<Note>
+  If your machine has no [managed settings](/docs/en/settings#check-what-your-organization-enforces) and your session doesn't use [`/login` credentials](/docs/en/authentication#authentication-precedence) for a Team or Enterprise plan, a [mod](/docs/en/plugins/mods/overview) can approve a call your `PreToolUse` hook blocked. A session that runs on an API key or a long-lived [`CLAUDE_CODE_OAUTH_TOKEN`](/docs/en/authentication#generate-a-long-lived-token) instead isn't using that login, even when that login is stored.
+
+  In plan mode, a mod can approve such a blocked call only when it's read-only, so not a file edit. For the cases where a mod's approval doesn't get past your rules and hooks, see [Extend permissions with hooks](/docs/en/permissions#precedence-among-rules-hooks-and-mods).
+</Note>
 
 ### Hook not firing
 

@@ -8,7 +8,12 @@
 
 Scheduled tasks start a new session automatically at a time and frequency you choose. Use them for recurring work like daily code reviews, dependency update checks, or morning briefings that pull from your calendar and inbox.
 
-The Desktop app's **Routines** page lets you create both local scheduled tasks and remote [routines](/docs/en/routines). A local task runs on your machine with direct access to your files and tools, but only fires while the app is open and your computer is awake. A remote routine runs in the cloud even when your computer is off, and can also fire on API calls or GitHub events. This page covers local scheduled tasks; for remote routines and their trigger options, see [Routines](/docs/en/routines).
+The Desktop app's **Scheduled tasks** page lists both local scheduled tasks and [cloud scheduled tasks](/docs/en/routines), formerly routines:
+
+* **Local task**: runs on your machine with direct access to your files and tools, but only fires while the app is open and your computer is awake
+* **Cloud task**: runs even when your computer is off, and can also start on API calls or GitHub events
+
+This page covers local scheduled tasks; for cloud scheduled tasks and their trigger options, see [Automate work with scheduled tasks](/docs/en/routines).
 
 ## Compare scheduling options
 
@@ -31,43 +36,94 @@ Claude Code offers three ways to schedule recurring or one-off work:
 </Tip>
 
 <Note>
-  By default, scheduled tasks run against whatever state your working directory is in, including uncommitted changes. Enable the worktree toggle when creating the task to give each run its own [isolated Git worktree](/docs/en/desktop#run-a-session-in-its-own-worktree).
+  By default, local scheduled tasks run against whatever state your working directory is in, including uncommitted changes. To give each run its own [isolated Git worktree](/docs/en/desktop#run-a-session-in-its-own-worktree) instead, select **Worktree** in the task's [**Edit** form](#manage-scheduled-tasks) after you create it. The checkbox is available when the task's folder is a Git repository.
 </Note>
 
 ## Create a scheduled task
 
-On Claude Desktop before 1.1.5368, local scheduled tasks aren't available. In the [**Code** tab](/docs/en/desktop), click **Routines** in the sidebar or in the sidebar's **More** menu, then click **New routine** and choose **Local**. Configure these fields:
+Local scheduled tasks require Claude Desktop 1.1.5368 or later.
 
-| Field | Description |
-| - | - |
-| Name | Identifier for the task. Converted to lowercase kebab-case and used as the folder name on disk. Must be unique across your tasks. |
-| Description | Short summary shown in the task list. |
-| Instructions | What Claude should do when the task runs. Write this the same way you'd write any message in the prompt box. The instructions input includes pickers for the permission mode and model, and below it you select the working folder and whether to run in an isolated worktree. |
-| Schedule | How often the task runs. See [schedule options](#schedule-options) below. |
+<Steps>
+  <Step title="Open the Scheduled tasks page">
+    In the [**Code** tab](/docs/en/desktop), click **Scheduled** in the sidebar or in the sidebar's **More** menu.
+  </Step>
 
-A folder is required before you can save the task. If you haven't trusted that folder yet, Desktop prompts you to trust it before saving.
+  <Step title="Start a new task">
+    Click **New task**. If a menu opens with **Create with Claude** and **Set up manually**, select **Set up manually**. The **New scheduled task** dialog opens. If **Only on this computer** is at the top of the dialog, go to [Dialog with Only on this computer at the top](#dialog-with-only-on-this-computer-at-the-top) before you enter anything.
+  </Step>
 
-You can also create a task by describing what you want in any session. For example, "set up a daily code review that runs every morning at 9am" creates a recurring task, and "remind me at 3pm tomorrow to check the deploy" creates a one-time task that disables itself after it fires.
+  <Step title="Name the task">
+    Enter a name in the **Name** field. Desktop converts it to lowercase kebab-case and uses it as the task's folder name on disk, so the name must be unique across your tasks.
+  </Step>
+
+  <Step title="Write the instructions">
+    In the box below the name, enter what Claude should do when the task runs.
+  </Step>
+
+  <Step title="Turn on Only on this computer">
+    Skip past the **Trigger** card for now and expand **Advanced settings** below it. On the **General** tab, turn on **Only on this computer**. With it on, the task runs on your machine in a local folder, and the **Trigger** card offers the presets listed in [Schedule options](#schedule-options).
+
+    If the switch is unavailable, clear the repository or the GitHub event or API trigger, because those make the task a [cloud scheduled task](/docs/en/routines).
+  </Step>
+
+  <Step title="Pick the local folder">
+    In the **Local folder** row, select a folder. **Create** stays unavailable until you pick one.
+  </Step>
+
+  <Step title="Set the schedule">
+    Back in the **Trigger** card, select a [schedule preset](#schedule-options).
+  </Step>
+
+  <Step title="Choose the permission mode and model">
+    In the instructions box's toolbar, select a [permission mode](#permissions-for-scheduled-tasks) and model. If you leave them unchanged, runs use your Claude Code settings and the default model.
+  </Step>
+
+  <Step title="Create the task">
+    Click **Create**. If you haven't trusted the folder yet, Desktop asks you to trust it at this point. The task's detail page opens.
+  </Step>
+</Steps>
+
+On the detail page, click the pencil icon to open the [**Edit** form](#manage-scheduled-tasks). There you can change the **Description** that Desktop filled in from your instructions, select **Worktree**, or switch the schedule to **Manual**.
+
+You can also create a task by describing what you want in any session. For example, "set up a daily code review that runs every morning at 9am" creates a recurring task. A request like "remind me at 3pm tomorrow to check the deploy" creates a one-time task that disables itself after it fires.
+
+### Dialog with Only on this computer at the top
+
+If **Only on this computer** is at the top of the **New scheduled task** dialog when it opens, turn it on before you enter anything. When you turn it on, a separate blank form for a local task replaces the form.
+
+Then fill in the local form's fields:
+
+* **Name**: enter a name, as in the [steps to create a scheduled task](#create-a-scheduled-task).
+* **Description**: enter a description. **Create** stays unavailable until you do.
+* **The instructions box**: enter what Claude should do when the task runs. Select the permission mode and model from the menus in the box.
+* **Working folder**: select the folder the task runs in. **Create** stays unavailable until you select one.
+* **Trigger**: select a schedule. **Custom** takes a cron expression. For the other presets, see [Schedule options](#schedule-options).
+
+Click **Create**. The task's detail page opens.
 
 ## Schedule options
 
-Pick a preset from the Schedule control:
+When you turn on **Only on this computer** under **Advanced settings**, the **Trigger** card offers Hourly, Daily, Weekdays, and Weekly. The task's [**Edit** form](#manage-scheduled-tasks) also offers **Manual**.
 
-* **Manual**: no schedule, only runs when you click **Run now**. Useful for saving a prompt you trigger on demand
 * **Hourly**: runs every hour
 * **Daily**: runs every day at the local time you pick
 * **Weekdays**: same as Daily but skips Saturday and Sunday
 * **Weekly**: shows a time picker and a day picker
+* **Manual**: no schedule, only runs when you click **Run now**. Useful for saving a prompt you trigger on demand
 
 For intervals the picker doesn't offer, such as every 15 minutes, the first of each month, or a single run at a specific future time, ask Claude in any Desktop session to set the schedule. Use plain language; for example, "schedule a task to run all the tests every 6 hours."
 
 ## How scheduled tasks run
 
-Scheduled tasks run on your machine. Desktop checks the schedule every minute while the app is open and starts a fresh session when a task is due, independent of any manual sessions you have open. Each task gets a small delay of a few minutes after the scheduled time to stagger API traffic. The delay is deterministic: the same task always starts at the same offset.
+Local scheduled tasks run on your machine. Desktop checks the schedule every minute while the app is open and starts a fresh session when a task is due, independent of any manual sessions you have open. Each task gets a small delay of a few minutes after the scheduled time to stagger API traffic. The delay is deterministic: the same task always starts at the same offset.
 
-When a task fires, you get a desktop notification and a new session appears under a **Scheduled** section in the sidebar. Open it to see what Claude did, review changes, or respond to permission prompts. Claude can edit files, run commands, create commits, and open pull requests, the same as in a session you start yourself, but can't send or receive [messages between your desktop sessions](/docs/en/desktop#work-across-sessions) through the desktop app's session surface.
+Tasks only run while the desktop app is running and your computer is awake. If your computer sleeps through a scheduled time, the run is skipped. To prevent idle-sleep, turn on **Keep computer awake** in **Settings > This computer > System**. Closing the laptop lid still puts it to sleep.
 
-Tasks only run while the desktop app is running and your computer is awake. If your computer sleeps through a scheduled time, the run is skipped. To prevent idle-sleep, turn on **Keep computer awake** in **Settings > This computer > System**. Closing the laptop lid still puts it to sleep. For tasks that need to run even when your computer is off, or that should trigger on an API call or GitHub event, create a remote [routine](/docs/en/routines) instead.
+<Note>
+  For tasks that need to run even when your computer is off, or that should trigger on an API call or GitHub event, create a [cloud scheduled task](/docs/en/routines) instead.
+</Note>
+
+When a local task fires, a new session appears under a **Scheduled** section in the sidebar. Open it to see what Claude did, review changes, or respond to permission prompts. Claude can edit files, run commands, create commits, and open pull requests, the same as in a session you start yourself.
 
 ## Missed runs
 
@@ -85,7 +141,7 @@ MCP tools marked [`requiresUserInteraction`](/docs/en/mcp#require-approval-for-a
 
 ## Manage scheduled tasks
 
-In the **Code** tab, click a task in the **Routines** list to open its detail page. From here you can:
+In the **Code** tab, click **Scheduled** in the sidebar, then click a task in the list to open its detail page. From here you can:
 
 * **Run now**: start the task immediately without waiting for the next scheduled time
 * **Status**: toggle between Active and Paused to pause or resume scheduled runs without deleting the task
@@ -102,7 +158,7 @@ To edit a task's prompt on disk, open `~/.claude/scheduled-tasks/<task-name>/SKI
 
 ## Related resources
 
-* [Routines](/docs/en/routines): run tasks in the cloud on a schedule, via API call, or in response to GitHub events, even when your computer is off
+* [Cloud scheduled tasks](/docs/en/routines): run tasks in the cloud on a schedule, via API call, or in response to GitHub events, even when your computer is off
 * [Run prompts on a schedule](/docs/en/scheduled-tasks): session-scoped scheduling with `/loop` in the CLI
 * [Claude Code GitHub Actions](/docs/en/github-actions): run Claude on a schedule in CI instead of on your machine
 * [Use Claude Code Desktop](/docs/en/desktop): the full Desktop app guide

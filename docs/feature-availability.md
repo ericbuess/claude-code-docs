@@ -48,7 +48,7 @@ These require signing in with a claude.ai account and are not reachable with an 
 * [Cloud sessions](/docs/en/claude-code-on-the-web) and Claude Code on mobile
 * [Claude Code in Slack](/docs/en/slack): Pro and Max plans
 * [Claude Code Desktop](/docs/en/desktop)
-* [Routines](/docs/en/routines) (`/schedule`)
+* [Cloud scheduled tasks](/docs/en/routines) (`/schedule`)
 * [Ultrareview](/docs/en/ultrareview)
 * [Code Review](/docs/en/code-review): Team and Enterprise plans
 * [Remote Control](/docs/en/remote-control)
@@ -294,7 +294,7 @@ In Enterprise organizations with the [HIPAA configuration](/docs/en/hipaa-setup)
 | Feature | Pro | Max | Team | Enterprise |
 | :- | :- | :- | :- | :- |
 | [Cloud sessions](/docs/en/claude-code-on-the-web) | ✓ | ✓ | ✓ | ✓ <sup><a href="#fn6">6</a></sup> |
-| [Routines](/docs/en/routines) | ✓ | ✓ | ✓ | ✓ |
+| [Cloud scheduled tasks](/docs/en/routines) | ✓ | ✓ | ✓ | ✓ |
 | [Remote Control](/docs/en/remote-control) | ✓ | ✓ | Admin-enabled | Admin-enabled |
 | [Channels](/docs/en/channels) | ✓ | ✓ | Admin-enabled | Admin-enabled |
 | [Computer use](/docs/en/computer-use) | ✓ | ✓ | ✗ | ✗ |

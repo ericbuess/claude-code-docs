@@ -106,7 +106,7 @@ Then start a cloud session. Claude detects the GHES host from your git remote an
 claude --cloud "Add retry logic to the payment webhook handler"
 ```
 
-The session clones your repository from GHES and pushes changes back to a branch. Monitor progress at [claude.ai/code](https://claude.ai/code). See [Use Claude Code in the cloud](/docs/en/claude-code-on-the-web) for the full cloud session workflow including diff review, auto-fix, and routines.
+The session clones your repository from GHES and pushes changes back to a branch. Monitor progress at [claude.ai/code](https://claude.ai/code). See [Use Claude Code in the cloud](/docs/en/claude-code-on-the-web) for the full cloud session workflow including diff review, auto-fix, and cloud scheduled tasks.
 
 ### Teleport sessions to your terminal
 
