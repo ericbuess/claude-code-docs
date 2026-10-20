@@ -8,12 +8,12 @@
 
 [Auto mode](/docs/en/permission-modes#eliminate-prompts-with-auto-mode) lets Claude Code run without routine permission prompts by routing tool calls through a classifier that blocks anything irreversible, destructive, or aimed outside your environment. Deny and explicit ask rules are evaluated before the classifier and still block or prompt. Use the `autoMode` settings block to tell that classifier which repos, buckets, and domains your organization trusts, so it stops blocking routine internal operations.
 
-<Note>
-  This page is the configuration reference. Turning auto mode on and off is covered on the Permission modes page:
-
-  * **Switch to auto mode mid-session, or back out of it**: see [Switch permission modes](/docs/en/permission-modes#switch-permission-modes)
-  * **Start a session in auto mode**: see [Start in a different permission mode](/docs/en/permission-modes#start-in-a-different-mode)
-</Note>
+> [!NOTE]
+>
+> This page is the configuration reference. Turning auto mode on and off is covered on the Permission modes page:
+>
+> * **Switch to auto mode mid-session, or back out of it**: see [Switch permission modes](/docs/en/permission-modes#switch-permission-modes)
+> * **Start a session in auto mode**: see [Start in a different permission mode](/docs/en/permission-modes#start-in-a-different-mode)
 
 Auto mode is available to all users on every provider, including the Anthropic API, [Claude Platform on AWS](/docs/en/claude-platform-on-aws), Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry, and signed-in [Claude apps gateway](/docs/en/claude-apps-gateway) sessions. If Claude Code reports auto mode as unavailable for your account, check the [full requirements](/docs/en/permission-modes#eliminate-prompts-with-auto-mode), which also cover the supported models and the organization-level control on Team and Enterprise plans.
 
@@ -73,9 +73,9 @@ The classifier doesn't read `autoMode` from project settings in `.claude/setting
 
 Entries from each scope are combined. A developer can extend `environment`, `allow`, `soft_deny`, and `hard_deny` with personal entries but can't remove entries that managed settings provide. Because allow rules act as exceptions to soft block rules inside the classifier, a developer-added `allow` entry can override an organization `soft_deny` entry: the combination is additive, not a hard policy boundary.
 
-<Note>
-  The classifier is a second gate that runs after the [permissions system](/docs/en/permissions). For actions that must never run regardless of user intent or classifier configuration, use `permissions.deny` in managed settings, which blocks the action before the classifier is consulted and can't be overridden.
-</Note>
+> [!NOTE]
+>
+> The classifier is a second gate that runs after the [permissions system](/docs/en/permissions). For actions that must never run regardless of user intent or classifier configuration, use `permissions.deny` in managed settings, which blocks the action before the classifier is consulted and can't be overridden.
 
 ## Define trusted infrastructure
 
@@ -155,19 +155,15 @@ A useful starting template: fill in the bracketed fields and remove any lines th
 
 You don't need to fill everything in at once. A reasonable rollout: start with the defaults and add your source control org and key internal services, which resolves the most common false positives like pushing to your own repos. Add trusted domains and cloud buckets next. Fill the rest as blocks come up.
 
-<h2 id="generate-environment-entries">
-  Generate environment entries with `/auto-mode-setup`
-</h2>
+## Generate environment entries with `/auto-mode-setup`
 
 Run `/auto-mode-setup` to have Claude Code draft `autoMode.environment` entries, and sometimes [rule entries](#override-the-block-and-allow-rules) too, from your project and your recent sessions in it. If you accept the draft, Claude Code writes it to `~/.claude/settings.json`.
 
-<Note>
-  `/auto-mode-setup` requires a Pro, Max, or Team plan and Claude Code v2.1.228 or later. On native Windows it requires v2.1.233 or later. You can't run it in a [cloud session](/docs/en/claude-code-on-the-web). It also needs [feature-flag fetching](/docs/en/env-vars#features-that-need-feature-flag-fetching), so you can't run it in a session where you've turned flag fetching off.
-</Note>
+> [!NOTE]
+>
+> `/auto-mode-setup` requires a Pro, Max, or Team plan and Claude Code v2.1.228 or later. On native Windows it requires v2.1.233 or later. You can't run it in a [cloud session](/docs/en/claude-code-on-the-web). It also needs [feature-flag fetching](/docs/en/env-vars#features-that-need-feature-flag-fetching), so you can't run it in a session where you've turned flag fetching off.
 
-<h3 id="what-auto-mode-setup-reads">
-  What `/auto-mode-setup` reads
-</h3>
+### What `/auto-mode-setup` reads
 
 If `~/.claude/settings.json` already holds `autoMode` entries, Claude Code starts by asking whether to add to your environment list or replace it, and keeps the rules you wrote either way. Claude Code then asks how you use this project and offers two optional scans before it scans anything. In the scan, Claude Code always reads these sources:
 
@@ -190,9 +186,7 @@ Claude Code scans in the background, then shows you the draft. You accept or dis
 
 Then run `claude auto-mode config` to [see the effective result](#inspect-the-defaults-and-your-effective-config).
 
-<h3 id="turn-off-auto-mode-setup">
-  Turn off `/auto-mode-setup`
-</h3>
+### Turn off `/auto-mode-setup`
 
 Once auto mode has blocked several actions and you still have no `autoMode.environment` entries, Claude Code shows a dialog titled "Teach auto mode about your environment?" at the end of a turn and offers to run `/auto-mode-setup` for you. To stop the offer but keep the command, select **Don't show again** in that dialog.
 
@@ -258,20 +252,18 @@ The following example keeps the defaults in all four lists and adds organization
 }
 ```
 
-<Danger>
-  Setting any of `environment`, `allow`, `soft_deny`, or `hard_deny` without `"$defaults"` replaces the entire default list for that section. If you set an array without `"$defaults"`, you discard the built-in rules for that section:
-
-  * `soft_deny`: every built-in soft block rule, including force push, `curl | bash`, production deploys, and auto-mode bypass
-  * `hard_deny`: the built-in data exfiltration rule
-</Danger>
+> [!CAUTION]
+>
+> Setting any of `environment`, `allow`, `soft_deny`, or `hard_deny` without `"$defaults"` replaces the entire default list for that section. If you set an array without `"$defaults"`, you discard the built-in rules for that section:
+>
+> * `soft_deny`: every built-in soft block rule, including force push, `curl | bash`, production deploys, and auto-mode bypass
+> * `hard_deny`: the built-in data exfiltration rule
 
 Each section is evaluated independently, so setting `environment` alone leaves the default `allow`, `soft_deny`, and `hard_deny` lists intact.
 
 Only omit `"$defaults"` when you intend to take full ownership of the list. To do that safely, run `claude auto-mode defaults` to print the built-in rules, copy them into your settings file, then review each rule against your own pipeline and risk tolerance.
 
-<h2 id="edit-rules-from-permissions">
-  Edit rules from `/permissions`
-</h2>
+## Edit rules from `/permissions`
 
 To view and edit classifier rules and `environment` entries without opening a settings file, run [`/permissions`](/docs/en/permissions#manage-permissions) and select the **Auto mode** tab. The tab requires Claude Code v2.1.246 or later, and it appears only when [auto mode is available](/docs/en/permission-modes#eliminate-prompts-with-auto-mode) to your session.
 

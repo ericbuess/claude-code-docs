@@ -132,31 +132,29 @@ The objective is to establish a small number of lightweight habits that allow mo
 
 If a loose plan is helpful, the sequence below reflects what tends to work across most teams. Adjust freely to fit your context.
 
-<Steps>
-  <Step title="Week 1: Seed the channel">
-    Create the channel, pin the [Quickstart](/docs/en/quickstart), and post two or three of your own examples with the prompts included.
+**1. Week 1: Seed the channel**
 
-    **Signal that it is working:** a few colleagues react or reply, and at least one question is asked in the channel.
-  </Step>
+Create the channel, pin the [Quickstart](/docs/en/quickstart), and post two or three of your own examples with the prompts included.
 
-  <Step title="Week 2: Start the rhythm">
-    Start the weekly show-and-tell thread, answer every question publicly, and share one custom skill or `CLAUDE.md` snippet.
+**Signal that it is working:** a few colleagues react or reply, and at least one question is asked in the channel.
 
-    **Signal that it is working:** someone other than you posts an example of their own.
-  </Step>
+**2. Week 2: Start the rhythm**
 
-  <Step title="Week 3: Pair and consolidate">
-    Offer two or three short pairing sessions and consolidate the most common questions and answers into a pinned FAQ message.
+Start the weekly show-and-tell thread, answer every question publicly, and share one custom skill or `CLAUDE.md` snippet.
 
-    **Signal that it is working:** you see repeat usage, with the same colleagues returning rather than trying once and stopping.
-  </Step>
+**Signal that it is working:** someone other than you posts an example of their own.
 
-  <Step title="Week 4: Hand off">
-    Identify a second champion and share a brief summary of what is working and what is not with your lead or administrator.
+**3. Week 3: Pair and consolidate**
 
-    **Signal that it is working:** questions in the channel are being answered by people other than you.
-  </Step>
-</Steps>
+Offer two or three short pairing sessions and consolidate the most common questions and answers into a pinned FAQ message.
+
+**Signal that it is working:** you see repeat usage, with the same colleagues returning rather than trying once and stopping.
+
+**4. Week 4: Hand off**
+
+Identify a second champion and share a brief summary of what is working and what is not with your lead or administrator.
+
+**Signal that it is working:** questions in the channel are being answered by people other than you.
 
 ### When someone wants to go deeper
 
@@ -188,6 +186,6 @@ The techniques below are the ones that most reliably move someone from a first t
 | Recover from an incorrect result | Rather than rephrasing the request, paste the failing test or stack trace back to Claude and ask it to address that specific failure. |
 | Keep edits surgical | Ask for a diff, or specify "only change X." Claude respects scope when scope is stated. |
 
-<Tip>
-  Claude Code is updated frequently. Verify version-specific details against the [documentation home page](/docs/en/overview) before distributing this material internally.
-</Tip>
+> [!TIP]
+>
+> Claude Code is updated frequently. Verify version-specific details against the [documentation home page](/docs/en/overview) before distributing this material internally.

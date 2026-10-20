@@ -6,13 +6,13 @@
 
 > Register the gateway with your IdP, build the container, deploy on Kubernetes or Cloud Run, and operate it: health checks, secret rotation, upgrades, and security.
 
-<Info>
-  **Plan your gateway's network first.** At sign-in, Claude Code refuses a Claude apps gateway whose hostname resolves to a public IP address, even one the internet can't reach.
-
-  A Claude apps gateway can push settings to users' machines, including hooks that run shell commands. The check helps keep users from accidentally signing in to a malicious gateway on the public internet. Keep your own gateway off the internet too.
-
-  Choose the gateway's address before you choose where it runs. Usually that's a private address that users reach on your internal network or over a VPN. If your internal network uses public IPv4 ranges, you can list one range that holds both the gateway and your users' machines. Claude Code takes that match as a sign that the gateway is on your internal network. See [Choose an address for the gateway](#choose-an-address-for-the-gateway). If neither fits your network, contact your Anthropic account team.
-</Info>
+> [!NOTE]
+>
+> **Plan your gateway's network first.** At sign-in, Claude Code refuses a Claude apps gateway whose hostname resolves to a public IP address, even one the internet can't reach.
+>
+> A Claude apps gateway can push settings to users' machines, including hooks that run shell commands. The check helps keep users from accidentally signing in to a malicious gateway on the public internet. Keep your own gateway off the internet too.
+>
+> Choose the gateway's address before you choose where it runs. Usually that's a private address that users reach on your internal network or over a VPN. If your internal network uses public IPv4 ranges, you can list one range that holds both the gateway and your users' machines. Claude Code takes that match as a sign that the gateway is on your internal network. See [Choose an address for the gateway](#choose-an-address-for-the-gateway). If neither fits your network, contact your Anthropic account team.
 
 This page covers the operational side of running [Claude apps gateway](/docs/en/claude-apps-gateway): registering an OAuth client in your identity provider (IdP), deploying the gateway as a container, and running it day-to-day. For every option in the `gateway.yaml` file the gateway reads at boot, see the [Configuration reference](/docs/en/claude-apps-gateway-config).
 
@@ -43,11 +43,11 @@ A few providers handle email and group claims differently:
 * **Microsoft Entra ID**: `issuer` = `https://login.microsoftonline.com/<tenant-id>/v2.0`. Entra emits group Object IDs rather than names, so use the GUIDs in `managed.policies.match.groups`, or use App Roles for human-readable names. If your tenant emits roles under `roles` instead of `groups`, set `oidc.groups_claim: roles`.
 * **Google Workspace**: `issuer` = `https://accounts.google.com`. Google's id\_token doesn't carry groups. To use group-based `allowed_groups` or `managed.policies` with Google as the IdP, configure [`oidc.google_groups`](/docs/en/claude-apps-gateway-config#oidc), which looks up each user's groups through the Admin SDK Directory API using a service account with domain-wide delegation. Without it, use `oidc.allowed_email_domains` for membership gating and `managed.policies.match.email_domain` for policy assignment. Google also ignores the standard `offline_access` scope. For refresh tokens, set `oidc.scopes: [openid, profile, email]` and `oidc.extra_auth_params: { access_type: offline, prompt: consent }`.
 
-<Warning>
-  Refresh tokens let the gateway renew a developer's session silently, without sending the developer back to the browser. They also drive deprovisioning, because when the IdP disables a user, the next refresh fails and the session ends within `ttl_hours`. The gateway requests `offline_access` by default to get a refresh token. If your IdP requires explicit consent for offline access, configure the OAuth client to allow it.
-
-  If your IdP can't issue refresh tokens at all, the gateway still works, but there is no silent renewal, so developers re-run the browser login when their session expires. To keep that from happening every hour, raise [`session.ttl_hours`](/docs/en/claude-apps-gateway-config#session) to `8` or `12`. The tradeoff is deprovisioning latency, because without refresh tokens a disabled user keeps access until the longer TTL elapses.
-</Warning>
+> [!WARNING]
+>
+> Refresh tokens let the gateway renew a developer's session silently, without sending the developer back to the browser. They also drive deprovisioning, because when the IdP disables a user, the next refresh fails and the session ends within `ttl_hours`. The gateway requests `offline_access` by default to get a refresh token. If your IdP requires explicit consent for offline access, configure the OAuth client to allow it.
+>
+> If your IdP can't issue refresh tokens at all, the gateway still works, but there is no silent renewal, so developers re-run the browser login when their session expires. To keep that from happening every hour, raise [`session.ttl_hours`](/docs/en/claude-apps-gateway-config#session) to `8` or `12`. The tradeoff is deprovisioning latency, because without refresh tokens a disabled user keeps access until the longer TTL elapses.
 
 ## Deployment
 
@@ -197,9 +197,9 @@ A replica fills its limit at a request rate of about the limit divided by the av
 
 If you autoscale on CPU, a replica at the limit queues requests without triggering a scale-out, so set the target below the CPU level your replicas show when they log the `client requests are open` warning.
 
-<Warning>
-  Every open request holds memory in the gateway process while it streams and while it waits for a slot. If you keep the limit at 256, memory on an overloaded replica still grows, because waiting requests keep their request bodies. Size the container's memory for the number of requests open at peak, and watch memory when you change the limit. A replica that runs out of memory is killed and drops every stream it holds.
-</Warning>
+> [!WARNING]
+>
+> Every open request holds memory in the gateway process while it streams and while it waits for a slot. If you keep the limit at 256, memory on an overloaded replica still grows, because waiting requests keep their request bodies. Size the container's memory for the number of requests open at peak, and watch memory when you change the limit. A replica that runs out of memory is killed and drops every stream it holds.
 
 ### Outage behavior
 

@@ -16,74 +16,72 @@ Make sure you have:
 * A code project to work with
 * A [Claude subscription](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=quickstart_prereq) (Pro, Max, Team, or Enterprise), [Claude Console](https://platform.claude.com/) account, or access through a [supported cloud provider](/docs/en/third-party-integrations)
 
-<Note>
-  These cases are covered on other pages:
-
-  * **Never used a terminal before**: start with the [terminal guide](/docs/en/terminal-guide)
-  * **Want Claude Code somewhere other than the terminal**: Claude Code is also available on the [web](https://claude.ai/code), as a [desktop app](/docs/en/desktop), in [VS Code](/docs/en/vs-code) and [JetBrains IDEs](/docs/en/jetbrains), in [Slack](/docs/en/slack), and in CI/CD with [GitHub Actions](/docs/en/github-actions) and [GitLab](/docs/en/gitlab-ci-cd). See [all interfaces](/docs/en/overview#use-claude-code-everywhere).
-</Note>
+> [!NOTE]
+>
+> These cases are covered on other pages:
+>
+> * **Never used a terminal before**: start with the [terminal guide](/docs/en/terminal-guide)
+> * **Want Claude Code somewhere other than the terminal**: Claude Code is also available on the [web](https://claude.ai/code), as a [desktop app](/docs/en/desktop), in [VS Code](/docs/en/vs-code) and [JetBrains IDEs](/docs/en/jetbrains), in [Slack](/docs/en/slack), and in CI/CD with [GitHub Actions](/docs/en/github-actions) and [GitLab](/docs/en/gitlab-ci-cd). See [all interfaces](/docs/en/overview#use-claude-code-everywhere).
 
 ## Step 1: Install Claude Code
 
 To install Claude Code, open a terminal and run the command for your system. If you haven't used a terminal before, the [terminal guide](/docs/en/terminal-guide) shows how to open one and paste the command.
 
-<Tabs>
-  <Tab title="Native Install (Recommended)">
-    **macOS, Linux, WSL:**
+**Native Install (Recommended)**
 
-    ```bash theme={null}
-    curl -fsSL https://claude.ai/install.sh | bash
-    ```
+**macOS, Linux, WSL:**
 
-    On Windows, your prompt shows `PS C:\` when you're in PowerShell and `C:\` without the `PS` when you're in CMD.
+```bash theme={null}
+curl -fsSL https://claude.ai/install.sh | bash
+```
 
-    **Windows PowerShell:**
+On Windows, your prompt shows `PS C:\` when you're in PowerShell and `C:\` without the `PS` when you're in CMD.
 
-    ```powershell theme={null}
-    irm https://claude.ai/install.ps1 | iex
-    ```
+**Windows PowerShell:**
 
-    **Windows CMD:**
+```powershell theme={null}
+irm https://claude.ai/install.ps1 | iex
+```
 
-    ```batch theme={null}
-    curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd && del install.cmd
-    ```
+**Windows CMD:**
 
-    The install command shows no progress while it downloads Claude Code. When the installer finishes, open a new terminal window and run `claude --version`. A working installation prints a version number. If your shell says `claude` isn't found or isn't recognized, the install directory isn't on your PATH yet: see [Fix your PATH](/docs/en/troubleshoot-install#command-not-found-claude-after-installation).
+```batch theme={null}
+curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd && del install.cmd
+```
 
-    If you see `The token '&&' is not a valid statement separator`, you're in PowerShell, not CMD. If you see `'irm' is not recognized as an internal or external command`, you're in CMD, not PowerShell.
+The install command shows no progress while it downloads Claude Code. When the installer finishes, open a new terminal window and run `claude --version`. A working installation prints a version number. If your shell says `claude` isn't found or isn't recognized, the install directory isn't on your PATH yet: see [Fix your PATH](/docs/en/troubleshoot-install#command-not-found-claude-after-installation).
 
-    If the install command fails with `syntax error near unexpected token '<'`, a `403`, or any other error, see [Troubleshoot installation](/docs/en/troubleshoot-install#find-your-error) to match the error to a fix and for alternative install methods.
+If you see `The token '&&' is not a valid statement separator`, you're in PowerShell, not CMD. If you see `'irm' is not recognized as an internal or external command`, you're in CMD, not PowerShell.
 
-    [Git for Windows](https://git-scm.com/downloads/win) is recommended on native Windows so Claude Code can use the Bash tool. If Git for Windows is not installed, Claude Code uses PowerShell as the shell tool instead. WSL setups do not need Git for Windows.
+If the install command fails with `syntax error near unexpected token '<'`, a `403`, or any other error, see [Troubleshoot installation](/docs/en/troubleshoot-install#find-your-error) to match the error to a fix and for alternative install methods.
 
-    <Info>
-      Native installations automatically update in the background to keep you on the latest version.
-    </Info>
-  </Tab>
+[Git for Windows](https://git-scm.com/downloads/win) is recommended on native Windows so Claude Code can use the Bash tool. If Git for Windows is not installed, Claude Code uses PowerShell as the shell tool instead. WSL setups do not need Git for Windows.
 
-  <Tab title="Homebrew">
-    ```bash theme={null}
-    brew install --cask claude-code
-    ```
+> [!NOTE]
+>
+> Native installations automatically update in the background to keep you on the latest version.
 
-    Homebrew offers two casks. `claude-code` tracks the stable release channel, which is typically about a week behind and skips releases with major regressions. `claude-code@latest` tracks the latest channel and receives new versions as soon as they ship.
+**Homebrew**
 
-    <Info>
-      Homebrew installations do not auto-update. Run `brew upgrade claude-code` or `brew upgrade claude-code@latest`, depending on which cask you installed, to get the latest features and security fixes.
-    </Info>
-  </Tab>
+```bash theme={null}
+brew install --cask claude-code
+```
 
-  <Tab title="WinGet">
-    ```powershell theme={null}
-    winget install Anthropic.ClaudeCode
-    ```
+Homebrew offers two casks. `claude-code` tracks the stable release channel, which is typically about a week behind and skips releases with major regressions. `claude-code@latest` tracks the latest channel and receives new versions as soon as they ship.
 
-    <Info>
-      WinGet installations do not auto-update. Run `winget upgrade Anthropic.ClaudeCode` periodically to get the latest features and security fixes.
-    </Info>
-  </Tab>
-</Tabs>
+> [!NOTE]
+>
+> Homebrew installations do not auto-update. Run `brew upgrade claude-code` or `brew upgrade claude-code@latest`, depending on which cask you installed, to get the latest features and security fixes.
+
+**WinGet**
+
+```powershell theme={null}
+winget install Anthropic.ClaudeCode
+```
+
+> [!NOTE]
+>
+> WinGet installations do not auto-update. Run `winget upgrade Anthropic.ClaudeCode` periodically to get the latest features and security fixes.
 
 You can also install with [apt, dnf, or apk](/docs/en/setup#install-with-linux-package-managers) on Debian, Fedora, RHEL, and Alpine.
 
@@ -155,9 +153,9 @@ how do I create custom skills in Claude Code?
 can Claude Code work with Docker?
 ```
 
-<Note>
-  Claude Code reads your project files as needed. You don't have to manually add context.
-</Note>
+> [!NOTE]
+>
+> Claude Code reads your project files as needed. You don't have to manually add context.
 
 ## Step 4: Make your first code change
 
@@ -231,9 +229,9 @@ update the README with installation instructions
 review my changes and suggest improvements
 ```
 
-<Tip>
-  Talk to Claude like you would a helpful colleague. Describe what you want to achieve, and it will help you get there.
-</Tip>
+> [!TIP]
+>
+> Talk to Claude like you would a helpful colleague. Describe what you want to achieve, and it will help you get there.
 
 ## Essential commands
 
@@ -269,42 +267,40 @@ See the [commands reference](/docs/en/commands) for the complete list of session
 
 For more, see [best practices](/docs/en/best-practices) and [common workflows](/docs/en/common-workflows).
 
-<AccordionGroup>
-  <Accordion title="Be specific with your requests">
-    Instead of: "fix the bug"
+> **Be specific with your requests**
+>
+> Instead of: "fix the bug"
+>
+> Try: "fix the login bug where users see a blank screen after entering wrong credentials"
 
-    Try: "fix the login bug where users see a blank screen after entering wrong credentials"
-  </Accordion>
+> **Use step-by-step instructions**
+>
+> Break complex tasks into steps:
+>
+> ```text wrap theme={null}
+> 1. create a new database table for user profiles
+> 2. create an API endpoint to get and update user profiles
+> 3. build a webpage that allows users to see and edit their information
+> ```
 
-  <Accordion title="Use step-by-step instructions">
-    Break complex tasks into steps:
+> **Let Claude explore first**
+>
+> Before making changes, let Claude understand your code:
+>
+> ```text wrap theme={null}
+> analyze the database schema
+> ```
+>
+> ```text wrap theme={null}
+> build a dashboard showing products that are most frequently returned by our UK customers
+> ```
 
-    ```text wrap theme={null}
-    1. create a new database table for user profiles
-    2. create an API endpoint to get and update user profiles
-    3. build a webpage that allows users to see and edit their information
-    ```
-  </Accordion>
-
-  <Accordion title="Let Claude explore first">
-    Before making changes, let Claude understand your code:
-
-    ```text wrap theme={null}
-    analyze the database schema
-    ```
-
-    ```text wrap theme={null}
-    build a dashboard showing products that are most frequently returned by our UK customers
-    ```
-  </Accordion>
-
-  <Accordion title="Save time with shortcuts">
-    * Type `/` to see the commands and skills available to you
-    * Use Tab for command completion
-    * Press ↑ for command history
-    * Press `Shift+Tab` to cycle permission modes
-  </Accordion>
-</AccordionGroup>
+> **Save time with shortcuts**
+>
+> * Type `/` to see the commands and skills available to you
+> * Use Tab for command completion
+> * Press ↑ for command history
+> * Press `Shift+Tab` to cycle permission modes
 
 ## What's next?
 

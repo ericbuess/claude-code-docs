@@ -8,12 +8,12 @@
 
 Session-scoped scheduled tasks let Claude re-run a prompt automatically on an interval within a Claude Code session. Use them to poll a deployment, babysit a PR, check back on a long-running build, or remind yourself to do something later in the session.
 
-<Note>
-  These cases are covered on other pages:
-
-  * **Reacting to events as they happen instead of polling**: see [Channels](/docs/en/channels). Your CI can push the failure into the session directly.
-  * **Keeping the session working turn after turn toward a condition rather than on an interval**: see [`/goal`](/docs/en/goal).
-</Note>
+> [!NOTE]
+>
+> These cases are covered on other pages:
+>
+> * **Reacting to events as they happen instead of polling**: see [Channels](/docs/en/channels). Your CI can push the failure into the session directly.
+> * **Keeping the session working turn after turn toward a condition rather than on an interval**: see [`/goal`](/docs/en/goal).
 
 Tasks are session-scoped. When you resume with `--resume` or `--continue`, Claude Code restores tasks that haven't [expired](#seven-day-expiry), except those listed under [Limitations](#limitations). For scheduling that survives independently of any session, create a [cloud scheduled task](/docs/en/routines), set up a [Desktop scheduled task](/docs/en/desktop-scheduled-tasks), or use [GitHub Actions](/docs/en/github-actions).
 
@@ -33,9 +33,9 @@ Claude Code offers three ways to schedule recurring or one-off work:
 | Customizable schedule | Via `/schedule` in the CLI | Yes | Yes |
 | Minimum interval | 1 hour | 1 minute | 1 minute |
 
-<Tip>
-  Use **cloud tasks** for work that should run reliably without your machine. Use **Desktop tasks** when you need access to local files and tools. Use **`/loop`** for quick polling during a session.
-</Tip>
+> [!TIP]
+>
+> Use **cloud tasks** for work that should run reliably without your machine. Use **Desktop tasks** when you need access to local files and tools. Use **`/loop`** for quick polling during a session.
 
 ## Run a prompt repeatedly with /loop
 
@@ -80,11 +80,9 @@ In a session where the [Monitor tool is available](/docs/en/tools-reference#moni
 
 A dynamically scheduled loop appears in your [scheduled task list](#manage-scheduled-tasks) like any other task, so you can list or cancel it the same way. The list shows its pending wakeup as a one-shot task, so a wakeup scheduled for `:00` or `:30` can [run a little early](#when-a-one-shot-task-runs-early). The [seven-day expiry](#seven-day-expiry) applies to the loop too.
 
-<span id="loop-provider-differences" />
-
-<Note>
-  Dynamically chosen intervals and the [built-in maintenance prompt](#run-the-built-in-maintenance-prompt) work on every provider, and with [feature-flag fetching](/docs/en/env-vars#features-that-need-feature-flag-fetching) turned off. On Amazon Bedrock, Claude Platform on AWS, Google Cloud's Agent Platform, and Microsoft Foundry, or with fetching turned off, both require Claude Code v2.1.248 or later.
-</Note>
+> [!NOTE]
+>
+> Dynamically chosen intervals and the [built-in maintenance prompt](#run-the-built-in-maintenance-prompt) work on every provider, and with [feature-flag fetching](/docs/en/env-vars#features-that-need-feature-flag-fetching) turned off. On Amazon Bedrock, Claude Platform on AWS, Google Cloud's Agent Platform, and Microsoft Foundry, or with fetching turned off, both require Claude Code v2.1.248 or later.
 
 ### Run the built-in maintenance prompt
 
@@ -146,8 +144,6 @@ in 45 minutes, check whether the integration tests passed
 
 Claude pins the fire time to a specific minute and hour using a cron expression and confirms when it will fire.
 
-<span id="manage-scheduled-tasks" />
-
 ## Manage session-scoped scheduled tasks
 
 Ask Claude in natural language to list or cancel tasks, or reference the underlying tools directly.
@@ -169,8 +165,6 @@ These are the underlying tools Claude uses:
 | `CronDelete` | Cancel a task by ID. |
 
 Each scheduled task has an 8-character ID you can pass to `CronDelete`. A session can hold up to 50 scheduled tasks at once.
-
-<span id="how-scheduled-tasks-run" />
 
 ## How session-scoped scheduled tasks run
 
@@ -227,8 +221,6 @@ Recurring tasks automatically expire 7 days after creation. The task fires one f
 Day-of-week uses `0` or `7` for Sunday through `6` for Saturday. Extended syntax like `L`, `W`, `?`, and name aliases such as `MON` or `JAN` is not supported.
 
 When both day-of-month and day-of-week are constrained, a date matches if either field matches. This follows standard vixie-cron semantics.
-
-<span id="disable-scheduled-tasks" />
 
 ## Disable session-scoped scheduled tasks
 

@@ -10,9 +10,9 @@ Claude Code supports various enterprise network and security configurations thro
 
 Set these environment variables before you launch Claude Code. Variables exported in your shell are read once at startup, so a running session doesn't pick up later changes to your shell environment.
 
-<Note>
-  All environment variables shown on this page can also be configured in [`settings.json`](/docs/en/settings).
-</Note>
+> [!NOTE]
+>
+> All environment variables shown on this page can also be configured in [`settings.json`](/docs/en/settings).
 
 ## Proxy configuration
 
@@ -39,9 +39,9 @@ Lowercase variants also work, and Claude Code uses the first one that's set in t
 
 Claude Code never sends its WebSocket connections to `localhost`, `::1`, or `127.0.0.0/8` through the proxy, so you don't need a loopback entry in `NO_PROXY` for them.
 
-<Note>
-  Claude Code does not support SOCKS proxies.
-</Note>
+> [!NOTE]
+>
+> Claude Code does not support SOCKS proxies.
 
 ### Basic authentication
 
@@ -51,13 +51,13 @@ If your proxy requires basic authentication, include credentials in the proxy UR
 export HTTPS_PROXY=http://username:password@proxy.example.com:8080
 ```
 
-<Warning>
-  Avoid hardcoding passwords in scripts. Use environment variables or secure credential storage instead.
-</Warning>
+> [!WARNING]
+>
+> Avoid hardcoding passwords in scripts. Use environment variables or secure credential storage instead.
 
-<Tip>
-  For proxies requiring advanced authentication (NTLM, Kerberos, etc.), consider using an LLM Gateway service that supports your authentication method.
-</Tip>
+> [!TIP]
+>
+> For proxies requiring advanced authentication (NTLM, Kerberos, etc.), consider using an LLM Gateway service that supports your authentication method.
 
 ## CA certificate store
 
@@ -77,9 +77,9 @@ To trust only the OS certificate store:
 export CLAUDE_CODE_CERT_STORE=system
 ```
 
-<Note>
-  `CLAUDE_CODE_CERT_STORE` has no dedicated `settings.json` schema key. Set it via the `env` block in `~/.claude/settings.json` or directly in the process environment.
-</Note>
+> [!NOTE]
+>
+> `CLAUDE_CODE_CERT_STORE` has no dedicated `settings.json` schema key. Set it via the `env` block in `~/.claude/settings.json` or directly in the process environment.
 
 ## Custom CA certificates
 
@@ -175,9 +175,9 @@ Some organizations require every Claude Code process to start through a corporat
 
 Set the [`processWrapper`](/docs/en/settings-reference#processwrapper) setting to prefix the supervisor, its workers, and the other background processes listed under [What the launcher covers](/docs/en/corporate-launcher#what-the-launcher-covers) with your launcher. The equivalent [`CLAUDE_CODE_PROCESS_WRAPPER`](/docs/en/env-vars) environment variable takes precedence when both are set, and it is subject to the same rule: deliver it through managed settings or `~/.claude/settings.json`, not a shell export. [Run Claude Code behind a corporate launcher](/docs/en/corporate-launcher) covers the contract the launcher must satisfy, what it does and doesn't reach, and how to roll it out.
 
-<Note>
-  An already-running supervisor keeps the launch configuration it started with. After deploying the launcher setting, run [`claude daemon stop --any`](/docs/en/agent-view#the-supervisor-process) so the next `claude agents` or `--bg` starts a supervisor that honors it.
-</Note>
+> [!NOTE]
+>
+> An already-running supervisor keeps the launch configuration it started with. After deploying the launcher setting, run [`claude daemon stop --any`](/docs/en/agent-view#the-supervisor-process) so the next `claude agents` or `--bg` starts a supervisor that honors it.
 
 ## Streaming idle watchdogs
 

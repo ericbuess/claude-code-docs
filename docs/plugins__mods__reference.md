@@ -8,9 +8,9 @@
 
 Look up any event a [mod](/docs/en/plugins/mods/overview) can handle, mods API method it can call, or render site it can draw in. Entries cover the Claude Code CLI and the Desktop app as of v2.1.290, and the VS Code extension as of v2.1.299. Each entry gives the name and a one-line description, and links to the guide section that explains it where there is one.
 
-<Note>
-  The complete reference is Claude Code's [TypeScript declarations for mods](https://github.com/anthropics/claude-code/blob/main/mods/types/claude-code.d.ts), which describe every event, method, and element, with examples. The copy on GitHub can be older than the Claude Code version you have installed. When the two disagree, trust [the copy Claude Code writes for your version](/docs/en/plugins/mods/create#get-the-types-for-your-build).
-</Note>
+> [!NOTE]
+>
+> The complete reference is Claude Code's [TypeScript declarations for mods](https://github.com/anthropics/claude-code/blob/main/mods/types/claude-code.d.ts), which describe every event, method, and element, with examples. The copy on GitHub can be older than the Claude Code version you have installed. When the two disagree, trust [the copy Claude Code writes for your version](/docs/en/plugins/mods/create#get-the-types-for-your-build).
 
 ## Files
 
@@ -56,7 +56,7 @@ Tool events fire around each tool call Claude makes, from the description Claude
 | Event | Fires when | A hook can return |
 | :- | :- | :- |
 | [`tool.call`](/docs/en/plugins/mods/events#guard-or-change-a-tool-call) | A tool is about to run | `next(e)`, `{ deny: reason }`, or `{ result }` |
-| [`tool.check`](/docs/en/plugins/mods/events#where-settings-hooks-run-in-the-order) | Claude Code decides whether a tool call may run, after the `tool.call` and `PreToolUse` hooks. `next(e)` resolves to the decision the rules, the permission mode, and those hooks reached. | `{ decision }`, which is `allow`, `ask`, or `deny` |
+| [`tool.check`](/docs/en/plugins/mods/events#where-settings-hooks-run-in-the-order) | Claude Code decides whether a tool call may run, after the `tool.call` and `PreToolUse` hooks. `next(e)` resolves to the decision the rules, the permission mode, and those hooks reached. | `next(e)` or `{ decision }`, with `decision` set to `allow`, `ask`, or `deny` and an optional `reason` |
 | `tool.describe` | Once for each tool, when its description is first sent to Claude. A second time for an MCP tool when Claude loads it through [tool search](/docs/en/mcp#scale-with-mcp-tool-search), with `e.description` set to the text Claude reads for the loaded tool. | `{ description }`, optionally with `isDeferred` set to `true` to put the tool behind tool search or `false` to load it upfront |
 
 #### Agent and organization fields on `tool.check`
@@ -67,6 +67,12 @@ In a `tool.check` hook, read these fields to tell a subagent's call from the mai
 * **`e.ceiling`**: `ask` for a connector tool your organization set to `ask`, in [sessions where that setting reaches Claude Code](/docs/en/mcp#organization-controls-on-connector-tools)
 
 On `tool.check`, `e.agentId` and `e.ceiling` require Claude Code v2.1.290 or later.
+
+#### The `e.isReadOnly` field on `tool.check`
+
+In a `tool.check` hook, `e.isReadOnly` is `true` when the tool reports this call as read-only. Otherwise the field is absent, not `false`. The value is the tool's own report, so read [Check whether a tool call is read-only](/docs/en/plugins/mods/events#check-whether-a-tool-call-is-read-only) before you approve a call on this field alone.
+
+On `tool.check`, `e.isReadOnly` requires Claude Code v2.1.304 or later.
 
 ### Prompts and what Claude reads
 
@@ -86,9 +92,7 @@ Prompt events cover the text the user types and the text Claude Code sends to Cl
 | [`skill.prompt`](/docs/en/plugins/mods/events#rewrite-or-add-to-a-prompt) | A skill's text is expanded for Claude | `{ text }` |
 | `attribution.text` | Claude Code composes commit or pull request attribution text | `{ text }` |
 
-<h4 id="skill-prompt-fields">
-  Source and frontmatter fields on `skill.prompt`
-</h4>
+#### Source and frontmatter fields on `skill.prompt`
 
 In a `skill.prompt` hook, you can read these fields along with the skill's name in `e.skill` and the text Claude reads in `e.text`:
 
@@ -125,9 +129,7 @@ Turn events follow one answer from start to finish, including each request to th
 | [`turn.step`](/docs/en/plugins/mods/events#follow-a-turn) | One request is about to go to the model | `yield* next(e)`, or `next({ ...e, model })`, `next({ ...e, effort })` |
 | [`turn.complete`](/docs/en/plugins/mods/events#follow-a-turn) | A turn ended | `next(e)`, or `{ text }` to show a line under the answer |
 
-<h3 id="session">
-  Session
-</h3>
+### Session
 
 Session events mark the session starting, ending, compacting, and exchanging messages with other sessions:
 
@@ -282,9 +284,7 @@ The VS Code extension ignores some element props and draws the element as if you
 * **`Code`**: `language`, `path`, `startLine`, `format`, and `wrap`, so code draws without colors or line numbers, and a `format: 'diff'` block shows the diff's raw text
 * **`Input` and `Select`**: `autoFocus`
 
-<h3 id="box-border-styles">
-  `Box` border styles
-</h3>
+### `Box` border styles
 
 To draw a border around a `Box`, set its `borderStyle` to one of these names, as in `borderStyle: 'round'`. Each row says what the terminal draws for that name and shows the top edge of the border.
 
@@ -303,9 +303,7 @@ To draw a border around a `Box`, set its `borderStyle` to one of these names, as
 
 A `Box` whose `borderStyle` names anything else, such as `'rounded'`, draws with no border.
 
-<h3 id="box-spacing-steps">
-  `Box` spacing steps
-</h3>
+### `Box` spacing steps
 
 The `Box` spacing props are `gap`, `columnGap`, `rowGap`, `padding`, `margin`, and the one-side and one-axis forms of `padding` and `margin`, such as `paddingX` and `marginTop`. Each takes a number of terminal cells such as `gap: 1`, or a step name such as `gap: 'md'`. In the terminal and the VS Code extension, each step is this many cells:
 
@@ -321,9 +319,7 @@ If you set `gap`, `padding`, or `margin` to a step, the step applies across and 
 
 Step names require Claude Code v2.1.299 or later. On an earlier release, Claude Code [draws its own version of the site](/docs/en/plugins/mods/interface#build-a-tree-from-elements) in place of a tree that uses a step name.
 
-<h3 id="text-typography">
-  `Text` typography props
-</h3>
+### `Text` typography props
 
 Set `size`, `weight`, `mono`, or `tabular` on a `Text` to ask the app drawing your tree for a text size, a weight, a monospaced typeface, or equal-width digits. Before you rely on a prop, check what the terminal and the VS Code extension do with it. If an app ignores a prop you set, your tree still draws there, with the text as if you'd left that prop out.
 
@@ -336,9 +332,7 @@ Set `size`, `weight`, `mono`, or `tabular` on a `Text` to ask the app drawing yo
 
 These four props require Claude Code v2.1.299 or later. On an earlier release, Claude Code [draws its own version of the site](/docs/en/plugins/mods/interface#build-a-tree-from-elements) in place of a tree that sets `size`, `weight`, `mono`, or `tabular`.
 
-<h4 id="text-bold">
-  Replace `bold` with `weight`
-</h4>
+#### Replace `bold` with `weight`
 
 `bold` on a `Text` is deprecated in favor of `weight` and still works. To replace it on a `Text` with no `weight`, change `bold: true` to `weight: 'semibold'` for the same result on Claude Code v2.1.299 or later.
 

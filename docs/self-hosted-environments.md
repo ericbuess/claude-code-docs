@@ -6,9 +6,9 @@
 
 > Run Claude Code cloud sessions on infrastructure you control: set up a self-hosted environment, deploy runners, and route sessions to your own compute.
 
-<Note>
-  Self-hosted environments are in public beta on Team and Enterprise plans and are off by default. See [Availability and limitations](#availability-and-limitations) for the enablement path and what's excluded.
-</Note>
+> [!NOTE]
+>
+> Self-hosted environments are in public beta on Team and Enterprise plans and are off by default. See [Availability and limitations](#availability-and-limitations) for the enablement path and what's excluded.
 
 A self-hosted environment executes Claude Code cloud sessions on infrastructure your organization operates. A [cloud session](/docs/en/claude-code-on-the-web) is any session that runs somewhere other than the developer's machine. Developers start them from claude.ai, the mobile and desktop apps, the terminal with [`claude --cloud`](/docs/en/claude-code-on-the-web#from-terminal-to-cloud), and [cloud scheduled tasks](/docs/en/routines). By default, cloud sessions execute on Anthropic's infrastructure.
 
@@ -26,13 +26,7 @@ Self-hosting has three parts:
 
 When a developer starts a cloud session, the session-start UI shows an environment picker listing Anthropic-hosted environments alongside any your organization has created. If they choose yours, Anthropic's control plane places the session on your environment's queue, where a runner claims it, clones the repository the developer chose, and starts a Claude Code process on your host to run it. The runner authenticates to your git host with credentials you configure; [Configure git](/docs/en/self-hosted-environments-deploy#configure-git) covers the options. Sessions reach your internal services from inside your network, and your git host the same way when it's internal; the traffic to Anthropic, queue polling, the session's event stream, and by default model inference, is outbound HTTPS to `api.anthropic.com`, with the short list of further hosts sessions can reach in [Network requirements](/docs/en/self-hosted-environments-deploy#network-requirements). Anthropic never connects into your network.
 
-<div style={{maxWidth: "640px", margin: "0 auto"}}>
-  <Frame>
-    <img src="https://mintcdn.com/claude-code/Y0sJ2uDoOVbOVZrQ/images/self-hosted-network-paths.svg?fit=max&auto=format&n=Y0sJ2uDoOVbOVZrQ&q=85&s=8056103fc1c5564c7f0ef219d260b99d" className="dark:hidden" alt="Architecture diagram of a self-hosted environment: your network boundary contains a runner, two Claude Code session processes inside it, and your git host, with api.anthropic.com outside holding queue, session stream, and inference. The runner polls the queue and reaches the git host, each session process opens its own stream, inference, and git connections, and every connection is outbound from your network, with none inbound." width="680" height="320" data-path="images/self-hosted-network-paths.svg" />
-
-    <img src="https://mintcdn.com/claude-code/Y0sJ2uDoOVbOVZrQ/images/self-hosted-network-paths-dark.svg?fit=max&auto=format&n=Y0sJ2uDoOVbOVZrQ&q=85&s=fec6aef3b0740d80eaf6d6a7000a2233" className="hidden dark:block" alt="Architecture diagram of a self-hosted environment: your network boundary contains a runner, two Claude Code session processes inside it, and your git host, with api.anthropic.com outside holding queue, session stream, and inference. The runner polls the queue and reaches the git host, each session process opens its own stream, inference, and git connections, and every connection is outbound from your network, with none inbound." width="680" height="320" data-path="images/self-hosted-network-paths-dark.svg" />
-  </Frame>
-</div>
+![Architecture diagram of a self-hosted environment: your network boundary contains a runner, two Claude Code session processes inside it, and your git host, with api.anthropic.com outside holding queue, session stream, and inference. The runner polls the queue and reaches the git host, each session process opens its own stream, inference, and git connections, and every connection is outbound from your network, with none inbound.](https://mintcdn.com/claude-code/Y0sJ2uDoOVbOVZrQ/images/self-hosted-network-paths.svg?fit=max\&auto=format\&n=Y0sJ2uDoOVbOVZrQ\&q=85\&s=8056103fc1c5564c7f0ef219d260b99d)
 
 The two Claude Code boxes in the diagram are session processes: one runner executing two sessions at once, up to its configured capacity. A runner serves one [owner](#key-concepts) at a time and locks to that owner when it claims its first session, so checked-out code never mixes between owners; [Runner lifecycle](#runner-lifecycle) covers the rule.
 

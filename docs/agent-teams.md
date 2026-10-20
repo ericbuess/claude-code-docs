@@ -6,9 +6,9 @@
 
 > Coordinate multiple Claude Code instances working together as a team, with shared tasks, inter-agent messaging, and centralized management.
 
-<Warning>
-  Agent teams are experimental and disabled by default. Enable them by setting `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` in your [settings.json](/docs/en/settings) or environment. Without that variable, no team is set up at session start, no team directories are written, and Claude does not spawn or propose teammates. Agent teams have [known limitations](#limitations) around session resumption, task coordination, and shutdown behavior.
-</Warning>
+> [!WARNING]
+>
+> Agent teams are experimental and disabled by default. Enable them by setting `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` in your [settings.json](/docs/en/settings) or environment. Without that variable, no team is set up at session start, no team directories are written, and Claude does not spawn or propose teammates. Agent teams have [known limitations](#limitations) around session resumption, task coordination, and shutdown behavior.
 
 Agent teams let you coordinate multiple Claude Code instances working together. One session acts as the team lead, coordinating work, assigning tasks, and synthesizing results. Teammates work independently, each in its own context window, and communicate directly with each other. You can also talk to any teammate directly without going through the lead.
 
@@ -29,11 +29,7 @@ Agent teams add coordination overhead and use significantly more tokens than a s
 
 Both agent teams and [subagents](/docs/en/sub-agents) let you parallelize work, but they operate differently. For separate sessions that pass messages to each other without a team, see [cross-session messaging](/docs/en/cross-session-messaging).
 
-<Frame caption="Subagents report results back to the main agent. In agent teams, teammates share a task list, claim work, and communicate directly with each other.">
-  <img src="https://mintcdn.com/claude-code/nsvRFSDNfpSU5nT7/images/subagents-vs-agent-teams-light.png?fit=max&auto=format&n=nsvRFSDNfpSU5nT7&q=85&s=2f8db9b4f3705dd3ab931fbe2d96e42a" className="dark:hidden" alt="Diagram comparing subagent and agent team architectures. Subagents are spawned by the main agent, do work, and report results back. Agent teams coordinate through a shared task list, with teammates communicating directly with each other." width="4245" height="1615" data-path="images/subagents-vs-agent-teams-light.png" />
-
-  <img src="https://mintcdn.com/claude-code/nsvRFSDNfpSU5nT7/images/subagents-vs-agent-teams-dark.png?fit=max&auto=format&n=nsvRFSDNfpSU5nT7&q=85&s=d573a037540f2ada6a9ae7d8285b46fd" className="hidden dark:block" alt="Diagram comparing subagent and agent team architectures. Subagents are spawned by the main agent, do work, and report results back. Agent teams coordinate through a shared task list, with teammates communicating directly with each other." width="4245" height="1615" data-path="images/subagents-vs-agent-teams-dark.png" />
-</Frame>
+![Diagram comparing subagent and agent team architectures. Subagents are spawned by the main agent, do work, and report results back. Agent teams coordinate through a shared task list, with teammates communicating directly with each other.](https://mintcdn.com/claude-code/nsvRFSDNfpSU5nT7/images/subagents-vs-agent-teams-light.png?fit=max\&auto=format\&n=nsvRFSDNfpSU5nT7\&q=85\&s=2f8db9b4f3705dd3ab931fbe2d96e42a)
 
 | | Subagents | Agent teams |
 | :- | :- | :- |
@@ -100,9 +96,9 @@ Agent teams support two display modes:
 * **In-process**: all teammates run inside your main terminal. Use the up and down arrow keys in the agent panel to select a teammate, then press Enter to view it and type to message it directly. Works in any terminal, no extra setup required.
 * **Split panes**: each teammate gets its own pane. You can see everyone's output at once and click into a pane to interact directly. Requires tmux, or iTerm2.
 
-<Note>
-  `tmux` has known limitations on certain operating systems and traditionally works best on macOS. Using `tmux -CC` in iTerm2 is the suggested entrypoint into `tmux`.
-</Note>
+> [!NOTE]
+>
+> `tmux` has known limitations on certain operating systems and traditionally works best on macOS. Using `tmux -CC` in iTerm2 is the suggested entrypoint into `tmux`.
 
 The default is `"in-process"`. Set `"auto"` to enable split panes when you're already running inside a tmux session, or when your terminal is iTerm2 with the `it2` CLI installed, falling back to in-process otherwise. The `"tmux"` setting enables split-pane mode and auto-detects whether to use tmux or iTerm2 based on your terminal.
 
@@ -151,9 +147,9 @@ If you set [`CLAUDE_CODE_SUBAGENT_MODEL_FORCE=1`](/docs/en/sub-agents#run-every-
 
 Before v2.1.251, `CLAUDE_CODE_SUBAGENT_MODEL` came first in this order.
 
-<Note>
-  `teammateDefaultModel` was removed in v2.1.234; Claude Code ignores a leftover value. Name the model in your prompt instead.
-</Note>
+> [!NOTE]
+>
+> `teammateDefaultModel` was removed in v2.1.234; Claude Code ignores a leftover value. Name the model in your prompt instead.
 
 Claude Code checks the model it selects for a teammate against your organization's [`availableModels`](/docs/en/model-config#restrict-model-selection) allowlist. When the allowlist blocks a value, Claude Code substitutes another model:
 
@@ -386,9 +382,9 @@ Scale up only when the work benefits from having teammates work simultaneously. 
 * **Too large**: teammates work too long without check-ins, increasing risk of wasted effort
 * **Just right**: self-contained units that produce a clear deliverable, such as a function, a test file, or a review
 
-<Tip>
-  The lead breaks work into tasks and assigns them to teammates automatically. If it isn't creating enough tasks, ask it to split the work into smaller pieces. Having 5-6 tasks per teammate keeps everyone productive and lets the lead reassign work if someone gets stuck.
-</Tip>
+> [!TIP]
+>
+> The lead breaks work into tasks and assigns them to teammates automatically. If it isn't creating enough tasks, ask it to split the work into smaller pieces. Having 5-6 tasks per teammate keeps everyone productive and lets the lead reassign work if someone gets stuck.
 
 ### Wait for teammates to finish
 

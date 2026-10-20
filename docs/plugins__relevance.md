@@ -10,12 +10,12 @@ Claude Code can suggest installing a plugin from your organization's marketplace
 
 A marketplace operator writes the `relevance` entries. An administrator then allowlists the marketplace in managed settings. Users see no suggestions from a marketplace until it's allowlisted.
 
-<Note>
-  These cases are covered on other pages:
-
-  * **You want to install plugins**: see [Install and manage plugins](/docs/en/plugins/install)
-  * **You want to turn suggestions off**: see [Understand how plugin relevance works](#understand-how-plugin-relevance-works)
-</Note>
+> [!NOTE]
+>
+> These cases are covered on other pages:
+>
+> * **You want to install plugins**: see [Install and manage plugins](/docs/en/plugins/install)
+> * **You want to turn suggestions off**: see [Understand how plugin relevance works](#understand-how-plugin-relevance-works)
 
 Start with the sections for your role:
 

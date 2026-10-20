@@ -6,9 +6,9 @@
 
 > Run a deep, multi-agent code review in the cloud with /code-review ultra to find and verify bugs before you merge.
 
-<Note>
-  Ultrareview is a research preview feature. The feature, pricing, and availability may change based on feedback. The command is `/code-review ultra`. When ultrareview is available to your account, `/ultrareview` is an alias.
-</Note>
+> [!NOTE]
+>
+> Ultrareview is a research preview feature. The feature, pricing, and availability may change based on feedback. The command is `/code-review ultra`. When ultrareview is available to your account, `/ultrareview` is an alias.
 
 Ultrareview is a deep code review that runs as a [cloud session](/docs/en/claude-code-on-the-web) on Anthropic's infrastructure. When you run `/code-review ultra`, Claude Code launches a fleet of reviewer agents in a cloud sandbox to find bugs in your branch or pull request.
 
@@ -95,9 +95,9 @@ The review still covers your current branch, the same scope as running with no a
 
 Claude Code treats your text as a note only when it has more than one word and isn't a branch name or PR reference. It reads a single word as a branch name or PR reference, so a mistyped branch name gets the closest-branch error from [Review against a different base](#review-against-a-different-base) instead of launching with a note. If your text combines a PR reference with other words, such as `check PR 123 again`, Claude Code doesn't launch either; it asks you to rerun with the PR number alone to review that PR, or without the reference to review your current branch.
 
-<Tip>
-  If your repository is too large to bundle, Claude Code prompts you to use PR mode instead. For a repository on `github.com`, push your branch and open a draft PR, then run `/code-review ultra <PR-number>`.
-</Tip>
+> [!TIP]
+>
+> If your repository is too large to bundle, Claude Code prompts you to use PR mode instead. For a repository on `github.com`, push your branch and open a draft PR, then run `/code-review ultra <PR-number>`.
 
 ### Diff limits and fallbacks
 

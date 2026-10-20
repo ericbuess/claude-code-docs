@@ -31,57 +31,55 @@ Claude Code offers three ways to schedule recurring or one-off work:
 | Customizable schedule | Via `/schedule` in the CLI | Yes | Yes |
 | Minimum interval | 1 hour | 1 minute | 1 minute |
 
-<Tip>
-  Use **cloud tasks** for work that should run reliably without your machine. Use **Desktop tasks** when you need access to local files and tools. Use **`/loop`** for quick polling during a session.
-</Tip>
+> [!TIP]
+>
+> Use **cloud tasks** for work that should run reliably without your machine. Use **Desktop tasks** when you need access to local files and tools. Use **`/loop`** for quick polling during a session.
 
-<Note>
-  By default, local scheduled tasks run against whatever state your working directory is in, including uncommitted changes. To give each run its own [isolated Git worktree](/docs/en/desktop#run-a-session-in-its-own-worktree) instead, select **Worktree** in the task's [**Edit** form](#manage-scheduled-tasks) after you create it. The checkbox is available when the task's folder is a Git repository.
-</Note>
+> [!NOTE]
+>
+> By default, local scheduled tasks run against whatever state your working directory is in, including uncommitted changes. To give each run its own [isolated Git worktree](/docs/en/desktop#run-a-session-in-its-own-worktree) instead, select **Worktree** in the task's [**Edit** form](#manage-scheduled-tasks) after you create it. The checkbox is available when the task's folder is a Git repository.
 
 ## Create a scheduled task
 
 Local scheduled tasks require Claude Desktop 1.1.5368 or later.
 
-<Steps>
-  <Step title="Open the Scheduled tasks page">
-    In the [**Code** tab](/docs/en/desktop), click **Scheduled** in the sidebar or in the sidebar's **More** menu.
-  </Step>
+**1. Open the Scheduled tasks page**
 
-  <Step title="Start a new task">
-    Click **New task**. If a menu opens with **Create with Claude** and **Set up manually**, select **Set up manually**. The **New scheduled task** dialog opens. If **Only on this computer** is at the top of the dialog, go to [Dialog with Only on this computer at the top](#dialog-with-only-on-this-computer-at-the-top) before you enter anything.
-  </Step>
+In the [**Code** tab](/docs/en/desktop), click **Scheduled** in the sidebar or in the sidebar's **More** menu.
 
-  <Step title="Name the task">
-    Enter a name in the **Name** field. Desktop converts it to lowercase kebab-case and uses it as the task's folder name on disk, so the name must be unique across your tasks.
-  </Step>
+**2. Start a new task**
 
-  <Step title="Write the instructions">
-    In the box below the name, enter what Claude should do when the task runs.
-  </Step>
+Click **New task**. If a menu opens with **Create with Claude** and **Set up manually**, select **Set up manually**. The **New scheduled task** dialog opens. If **Only on this computer** is at the top of the dialog, go to [Dialog with Only on this computer at the top](#dialog-with-only-on-this-computer-at-the-top) before you enter anything.
 
-  <Step title="Turn on Only on this computer">
-    Skip past the **Trigger** card for now and expand **Advanced settings** below it. On the **General** tab, turn on **Only on this computer**. With it on, the task runs on your machine in a local folder, and the **Trigger** card offers the presets listed in [Schedule options](#schedule-options).
+**3. Name the task**
 
-    If the switch is unavailable, clear the repository or the GitHub event or API trigger, because those make the task a [cloud scheduled task](/docs/en/routines).
-  </Step>
+Enter a name in the **Name** field. Desktop converts it to lowercase kebab-case and uses it as the task's folder name on disk, so the name must be unique across your tasks.
 
-  <Step title="Pick the local folder">
-    In the **Local folder** row, select a folder. **Create** stays unavailable until you pick one.
-  </Step>
+**4. Write the instructions**
 
-  <Step title="Set the schedule">
-    Back in the **Trigger** card, select a [schedule preset](#schedule-options).
-  </Step>
+In the box below the name, enter what Claude should do when the task runs.
 
-  <Step title="Choose the permission mode and model">
-    In the instructions box's toolbar, select a [permission mode](#permissions-for-scheduled-tasks) and model. If you leave them unchanged, runs use your Claude Code settings and the default model.
-  </Step>
+**5. Turn on Only on this computer**
 
-  <Step title="Create the task">
-    Click **Create**. If you haven't trusted the folder yet, Desktop asks you to trust it at this point. The task's detail page opens.
-  </Step>
-</Steps>
+Skip past the **Trigger** card for now and expand **Advanced settings** below it. On the **General** tab, turn on **Only on this computer**. With it on, the task runs on your machine in a local folder, and the **Trigger** card offers the presets listed in [Schedule options](#schedule-options).
+
+If the switch is unavailable, clear the repository or the GitHub event or API trigger, because those make the task a [cloud scheduled task](/docs/en/routines).
+
+**6. Pick the local folder**
+
+In the **Local folder** row, select a folder. **Create** stays unavailable until you pick one.
+
+**7. Set the schedule**
+
+Back in the **Trigger** card, select a [schedule preset](#schedule-options).
+
+**8. Choose the permission mode and model**
+
+In the instructions box's toolbar, select a [permission mode](#permissions-for-scheduled-tasks) and model. If you leave them unchanged, runs use your Claude Code settings and the default model.
+
+**9. Create the task**
+
+Click **Create**. If you haven't trusted the folder yet, Desktop asks you to trust it at this point. The task's detail page opens.
 
 On the detail page, click the pencil icon to open the [**Edit** form](#manage-scheduled-tasks). There you can change the **Description** that Desktop filled in from your instructions, select **Worktree**, or switch the schedule to **Manual**.
 
@@ -119,9 +117,9 @@ Local scheduled tasks run on your machine. Desktop checks the schedule every min
 
 Tasks only run while the desktop app is running and your computer is awake. If your computer sleeps through a scheduled time, the run is skipped. To prevent idle-sleep, turn on **Keep computer awake** in **Settings > This computer > System**. Closing the laptop lid still puts it to sleep.
 
-<Note>
-  For tasks that need to run even when your computer is off, or that should trigger on an API call or GitHub event, create a [cloud scheduled task](/docs/en/routines) instead.
-</Note>
+> [!NOTE]
+>
+> For tasks that need to run even when your computer is off, or that should trigger on an API call or GitHub event, create a [cloud scheduled task](/docs/en/routines) instead.
 
 When a local task fires, a new session appears under a **Scheduled** section in the sidebar. Open it to see what Claude did, review changes, or respond to permission prompts. Claude can edit files, run commands, create commits, and open pull requests, the same as in a session you start yourself.
 

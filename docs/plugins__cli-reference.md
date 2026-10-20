@@ -10,13 +10,13 @@ You run plugin commands either as `claude plugin` from your shell or a script, o
 
 The tables below list each subcommand's commonly used options, not every option. Run `claude plugin --help` in your shell to see which subcommands your version has, and `claude plugin <subcommand> --help` for a subcommand's full option list.
 
-<Note>
-  These cases are covered on other pages:
-
-  * **Install and manage steps, and where `/plugin` runs**: see [Install and manage plugins](/docs/en/plugins/install)
-  * **What a command changes on disk and which scope takes precedence**: see [Plugin loading reference](/docs/en/plugins/loading)
-  * **What an error message means**: see [Troubleshoot plugins](/docs/en/plugins/troubleshooting)
-</Note>
+> [!NOTE]
+>
+> These cases are covered on other pages:
+>
+> * **Install and manage steps, and where `/plugin` runs**: see [Install and manage plugins](/docs/en/plugins/install)
+> * **What a command changes on disk and which scope takes precedence**: see [Plugin loading reference](/docs/en/plugins/loading)
+> * **What an error message means**: see [Troubleshoot plugins](/docs/en/plugins/troubleshooting)
 
 ## claude plugin commands
 
@@ -106,9 +106,7 @@ Claude Code prints `Successfully installed plugin: formatter@my-marketplace (sco
 * **You decline a command-source prompt**: the output is `Aborted.` and the exit code is `1`
 * **You decline a `headersHelper` prompt, or it can't be confirmed without a TTY**: the output is `Aborted — the command was not run.` and the exit code is `1`
 
-<h4 id="plugin-json-result">
-  JSON result format
-</h4>
+#### JSON result format
 
 When you pass `--json` to `plugin install`, the last line of stdout is one JSON object. Parse only that line, because Claude Code prints any command the marketplace declares ahead of it.
 
@@ -378,7 +376,17 @@ Claude Code prints the plugin's name, version, description, and source, then the
 
 For what the two cost figures mean, see [Measure plugin cost and usage](/docs/en/plugins/measure).
 
-For a plugin that isn't loaded, Claude Code prints ``Plugin "formatter" not found. Run `claude plugin list` to see installed plugins, or pass --plugin-dir <path> to load one from disk.`` and exits `1`.
+For a plugin that isn't loaded, Claude Code prints this message and exits `1`:
+
+```text theme={null}
+Plugin "formatter" not found. Run `claude plugin list` to see installed plugins, or pass --plugin-dir <path> to load one from disk.
+```
+
+An ID that ends in `@builtin` names one of the [plugins built into Claude Code](/docs/en/plugins/mods/overview#mods-built-into-claude-code). If you pass such an ID and Claude Code doesn't find that plugin, the message reads instead:
+
+```text theme={null}
+Plugin "<name>@builtin" not found. Built-in plugins don't appear in `claude plugin list`. To see the ones available in a session, run /plugin in Claude Code and open the Installed tab.
+```
 
 ### plugin configure
 
@@ -744,11 +752,11 @@ The `--json` output covers configured marketplaces only and leaves the section o
 
 Remove a marketplace's declaration from your settings. `rm` is an alias for `remove`.
 
-<Warning>
-  When you remove a marketplace from the last scope that declares it, Claude Code also deletes its cache and uninstalls every plugin you installed from it. It also deletes their saved [options and secrets](/docs/en/plugins/manifest-reference#user-configuration) and [data](/docs/en/plugins/components#path-variables-and-persistent-data) where it can.
-
-  To refresh a marketplace without losing its plugins, run `plugin marketplace update` instead.
-</Warning>
+> [!WARNING]
+>
+> When you remove a marketplace from the last scope that declares it, Claude Code also deletes its cache and uninstalls every plugin you installed from it. It also deletes their saved [options and secrets](/docs/en/plugins/manifest-reference#user-configuration) and [data](/docs/en/plugins/components#path-variables-and-persistent-data) where it can.
+>
+> To refresh a marketplace without losing its plugins, run `plugin marketplace update` instead.
 
 ```bash theme={null}
 claude plugin marketplace remove <name> [options]
@@ -791,9 +799,7 @@ claude plugin marketplace update your-marketplace
 
 Claude Code prints `Successfully updated marketplace: your-marketplace`. When you omit the name, it prints a count such as `Successfully updated 2 marketplaces`.
 
-<h2 id="plugin-in-a-session">
-  /plugin in a session
-</h2>
+## /plugin in a session
 
 Inside an interactive session, `/plugin` opens the plugin panel. Each subcommand opens the panel on a tab, runs an action there, or prints a result inline. `/plugins` and `/marketplace` are aliases for `/plugin`.
 
@@ -830,9 +836,7 @@ The table below lists every session form. The shell subcommands `init`, `update`
 
 If you name a plugin that isn't installed in the current project in `/plugin enable`, `disable`, `uninstall`, or `configure`, Claude Code prints `Plugin "<plugin>" is not installed in this project` instead of acting.
 
-<h2 id="reload-plugins">
-  /reload-plugins
-</h2>
+## /reload-plugins
 
 Apply pending plugin changes to the running session without restarting it. Pending changes are plugins you installed, updated, enabled, disabled, or edited on disk since the session started.
 

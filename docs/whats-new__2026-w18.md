@@ -6,108 +6,75 @@
 
 > Claude Code on Windows runs without Git Bash, claude auth login accepts a pasted OAuth code when the browser callback can't reach localhost, claude project purge cleans up local state per project, and pasting a PR URL into /resume finds the session that created it.
 
-<div className="digest-meta">
-  <span>Releases <a href="/docs/en/changelog#2-1-120">v2.1.120 → v2.1.126</a></span>
-  <span>4 features · April 27 – May 1</span>
-</div>
+Releases [v2.1.120 → v2.1.126](/docs/en/changelog#2-1-120)
+4 features · April 27 – May 1
 
-<div className="digest-feature">
-  <div className="digest-feature-header">
-    <span className="digest-feature-title">Sign in without a browser callback</span>
-    <span className="digest-feature-pill">v2.1.126</span>
-  </div>
+Sign in without a browser callback
+v2.1.126
 
-  <p className="digest-feature-lede"><code>claude auth login</code> now accepts the OAuth code pasted directly into the terminal when the browser callback can't reach localhost. That covers WSL2, SSH sessions, and containers, where the redirect to a local port doesn't work. The same release also fixes login timeouts on slow or proxied connections and in IPv6-only devcontainers.</p>
+`claude auth login` now accepts the OAuth code pasted directly into the terminal when the browser callback can't reach localhost. That covers WSL2, SSH sessions, and containers, where the redirect to a local port doesn't work. The same release also fixes login timeouts on slow or proxied connections and in IPv6-only devcontainers.
 
-  <p className="digest-feature-try">Sign in, then paste the code from the browser:</p>
+Sign in, then paste the code from the browser:
 
-  ```bash theme={null}
-  claude auth login
-  ```
+```bash theme={null}
+claude auth login
+```
 
-  <a className="digest-feature-link" href="/docs/en/cli-reference#cli-commands">CLI reference</a>
-</div>
+[CLI reference](/docs/en/cli-reference#cli-commands)
 
-<div className="digest-feature">
-  <div className="digest-feature-header">
-    <span className="digest-feature-title">claude project purge</span>
-    <span className="digest-feature-pill">v2.1.124</span>
-  </div>
+claude project purge
+v2.1.124
 
-  <p className="digest-feature-lede">Delete all Claude Code state for a project: transcripts, tasks, file history, and the project's config entry. Supports `--dry-run` to preview, `-y`/`--yes` to skip confirmation, `-i`/`--interactive` to choose, and `--all` to clear every project.</p>
+Delete all Claude Code state for a project: transcripts, tasks, file history, and the project's config entry. Supports `--dry-run` to preview, `-y`/`--yes` to skip confirmation, `-i`/`--interactive` to choose, and `--all` to clear every project.
 
-  <p className="digest-feature-try">Preview what would be removed:</p>
+Preview what would be removed:
 
-  ```bash theme={null}
-  claude project purge --dry-run
-  ```
+```bash theme={null}
+claude project purge --dry-run
+```
 
-  <p className="digest-feature-try">Then run it for real:</p>
+Then run it for real:
 
-  ```bash theme={null}
-  claude project purge
-  ```
+```bash theme={null}
+claude project purge
+```
 
-  <a className="digest-feature-link" href="/docs/en/cli-reference">CLI reference</a>
-</div>
+[CLI reference](/docs/en/cli-reference)
 
-<div className="digest-feature">
-  <div className="digest-feature-header">
-    <span className="digest-feature-title">Resume by PR URL</span>
-    <span className="digest-feature-pill">v2.1.122</span>
-  </div>
+Resume by PR URL
+v2.1.122
 
-  <p className="digest-feature-lede">When you create a pull request with <code>gh pr create</code>, Claude Code links it to the session that produced it. Now you can get back to that session from the PR URL alone, without remembering its name.</p>
+When you create a pull request with `gh pr create`, Claude Code links it to the session that produced it. Now you can get back to that session from the PR URL alone, without remembering its name.
 
-  <p className="digest-feature-try">Open the session picker:</p>
+Open the session picker:
 
-  ```text Claude Code theme={null}
-  > /resume
-  ```
+```text Claude Code theme={null}
+> /resume
+```
 
-  <p className="digest-feature-try">Paste the PR URL into the picker. The first character of the paste drops you into search mode, and the list filters to the session that created that PR. Press Enter to resume it. GitHub, GitHub Enterprise, GitLab, and Bitbucket pull and merge request URLs all work.</p>
+Paste the PR URL into the picker. The first character of the paste drops you into search mode, and the list filters to the session that created that PR. Press Enter to resume it. GitHub, GitHub Enterprise, GitLab, and Bitbucket pull and merge request URLs all work.
 
-  ```text Claude Code theme={null}
-  https://github.com/your-org/your-repo/pull/1234
-  ```
+```text Claude Code theme={null}
+https://github.com/your-org/your-repo/pull/1234
+```
 
-  <p className="digest-feature-try">To open the picker already filtered to the PR, pass the PR number on the command line:</p>
+To open the picker already filtered to the PR, pass the PR number on the command line:
 
-  ```bash theme={null}
-  claude --from-pr 1234
-  ```
+```bash theme={null}
+claude --from-pr 1234
+```
 
-  <a className="digest-feature-link" href="/docs/en/sessions#use-the-session-picker">Sessions: use the session picker</a>
-</div>
+[Sessions: use the session picker](/docs/en/sessions#use-the-session-picker)
 
-<div className="digest-feature">
-  <div className="digest-feature-header">
-    <span className="digest-feature-title">Windows without Git Bash</span>
-    <span className="digest-feature-pill">Windows</span>
-  </div>
+Windows without Git Bash
+Windows
 
-  <p className="digest-feature-lede">Git for Windows is no longer required. When Bash is absent, Claude Code uses PowerShell as the shell tool, and when the PowerShell tool is enabled it is treated as the primary shell. PowerShell 7 installed via the Microsoft Store, MSI without PATH, or a <code>.NET</code> global tool is now detected automatically.</p>
+Git for Windows is no longer required. When Bash is absent, Claude Code uses PowerShell as the shell tool, and when the PowerShell tool is enabled it is treated as the primary shell. PowerShell 7 installed via the Microsoft Store, MSI without PATH, or a `.NET` global tool is now detected automatically.
 
-  <a className="digest-feature-link" href="/docs/en/setup">Setup guide</a>
-</div>
+[Setup guide](/docs/en/setup)
 
-<div className="digest-wins">
-  <p className="digest-wins-title">Other wins</p>
+Other wins
 
-  <div className="digest-wins-grid">
-    <div>MCP servers can opt out of tool-search deferral with <code>alwaysLoad: true</code> in their config so all of that server's tools are always available</div>
-    <div>New <code>claude plugin prune</code> removes orphaned auto-installed plugin dependencies, and `plugin uninstall --prune` cascades</div>
-    <div><code>/skills</code> now has a type-to-filter search box so you can find a skill in a long list without scrolling</div>
-    <div><code>PostToolUse</code> hooks can replace tool output for any tool via <code>hookSpecificOutput.updatedToolOutput</code>, not only MCP tools</div>
-    <div>New <a href="/docs/en/ultrareview"><code>claude ultrareview</code></a> subcommand runs <code>/ultrareview</code> non-interactively from CI or scripts: prints findings to stdout (`--json` for raw output) and exits 0 on completion or 1 on failure</div>
-    <div>`--dangerously-skip-permissions` now bypasses prompts for writes to <code>.claude/</code>, <code>.git/</code>, <code>.vscode/</code>, shell config files, and other previously protected paths, while catastrophic removal commands still prompt as a safety net</div>
-    <div>The <code>/model</code> picker can list models from your gateway's <code>/v1/models</code> endpoint when <code>ANTHROPIC\_BASE\_URL</code> points at an Anthropic-compatible gateway; opt in with <code>CLAUDE\_CODE\_ENABLE\_GATEWAY\_MODEL\_DISCOVERY=1</code> since v2.1.129</div>
-    <div>MCP servers that hit a transient error during startup now auto-retry up to 3 times instead of staying disconnected</div>
-    <div><code>ANTHROPIC\_BEDROCK\_SERVICE\_TIER</code> selects an Amazon Bedrock service tier: <code>default</code>, <code>flex</code>, or <code>priority</code></div>
-    <div><code>/terminal-setup</code> enables iTerm2's clipboard access setting so <code>/copy</code> works, including from tmux</div>
-    <div>Google Cloud's Agent Platform now supports X.509 certificate-based Workload Identity Federation (mTLS ADC)</div>
-    <div>Significant memory leak fixes: image-heavy sessions, <code>/usage</code> on large transcript histories, and long-running tools without progress events</div>
-  </div>
-</div>
+MCP servers can opt out of tool-search deferral with `alwaysLoad: true` in their config so all of that server's tools are always availableNew `claude plugin prune` removes orphaned auto-installed plugin dependencies, and `plugin uninstall --prune` cascades`/skills` now has a type-to-filter search box so you can find a skill in a long list without scrolling`PostToolUse` hooks can replace tool output for any tool via `hookSpecificOutput.updatedToolOutput`, not only MCP toolsNew [`claude ultrareview`](/docs/en/ultrareview) subcommand runs `/ultrareview` non-interactively from CI or scripts: prints findings to stdout (`--json` for raw output) and exits 0 on completion or 1 on failure`--dangerously-skip-permissions` now bypasses prompts for writes to `.claude/`, `.git/`, `.vscode/`, shell config files, and other previously protected paths, while catastrophic removal commands still prompt as a safety netThe `/model` picker can list models from your gateway's `/v1/models` endpoint when `ANTHROPIC_BASE_URL` points at an Anthropic-compatible gateway; opt in with `CLAUDE_CODE_ENABLE_GATEWAY_MODEL_DISCOVERY=1` since v2.1.129MCP servers that hit a transient error during startup now auto-retry up to 3 times instead of staying disconnected`ANTHROPIC_BEDROCK_SERVICE_TIER` selects an Amazon Bedrock service tier: `default`, `flex`, or `priority``/terminal-setup` enables iTerm2's clipboard access setting so `/copy` works, including from tmuxGoogle Cloud's Agent Platform now supports X.509 certificate-based Workload Identity Federation (mTLS ADC)Significant memory leak fixes: image-heavy sessions, `/usage` on large transcript histories, and long-running tools without progress events
 
 [Full changelog for v2.1.120–v2.1.126 →](/docs/en/changelog#2-1-120)

@@ -10,9 +10,9 @@ Claude Code enforces organization policy through managed settings that take prec
 
 This page walks through the deployment decisions in order. Each row links to the section below and to the reference page for that area.
 
-<Note>
-  SSO, SCIM provisioning, and seat assignment are configured at the Claude account level. See the [Claude Enterprise Administrator Guide](https://claude.com/resources/tutorials/claude-enterprise-administrator-guide) and [seat assignment](https://support.claude.com/en/articles/11845131-use-claude-code-with-your-team-or-enterprise-plan) for those steps.
-</Note>
+> [!NOTE]
+>
+> SSO, SCIM provisioning, and seat assignment are configured at the Claude account level. See the [Claude Enterprise Administrator Guide](https://claude.com/resources/tutorials/claude-enterprise-administrator-guide) and [seat assignment](https://support.claude.com/en/articles/11845131-use-claude-code-with-your-team-or-enterprise-plan) for those steps.
 
 | Decision | What you're choosing | Reference |
 | :- | :- | :- |
@@ -47,8 +47,8 @@ Managed settings define organization policy. Claude Code checks the four sources
 | Mechanism | Delivery | Priority | Platforms |
 | :- | :- | :- | :- |
 | Server-managed | claude.ai admin console, or a self-hosted [Claude apps gateway](/docs/en/claude-apps-gateway) for gateway sign-ins | Highest | All |
-| plist / registry policy | macOS: `com.anthropic.claudecode` plist<br />Windows: `HKLM\SOFTWARE\Policies\ClaudeCode` | High | macOS, Windows |
-| File-based managed | macOS: `/Library/Application Support/ClaudeCode/managed-settings.json`<br />Linux and WSL: `/etc/claude-code/managed-settings.json`<br />Windows: `C:\Program Files\ClaudeCode\managed-settings.json` | Medium | All |
+| plist / registry policy | macOS: `com.anthropic.claudecode` plist Windows: `HKLM\SOFTWARE\Policies\ClaudeCode` | High | macOS, Windows |
+| File-based managed | macOS: `/Library/Application Support/ClaudeCode/managed-settings.json` Linux and WSL: `/etc/claude-code/managed-settings.json` Windows: `C:\Program Files\ClaudeCode\managed-settings.json` | Medium | All |
 | Windows user registry | `HKCU\SOFTWARE\Policies\ClaudeCode` | Lowest | Windows only |
 
 Claude Code fetches server-managed settings at startup and refreshes them hourly during the session, with no endpoint infrastructure to deploy. Delivery through the claude.ai admin console requires a Claude for Teams or Enterprise plan. Deployments on Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry can get the same remote delivery by running a [Claude apps gateway](/docs/en/claude-apps-gateway), or use one of the file-based or OS-level mechanisms instead.

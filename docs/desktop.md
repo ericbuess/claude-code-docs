@@ -8,19 +8,17 @@
 
 The Claude Desktop app has three tabs: **Chat** for conversations, **Cowork** for [Dispatch and longer agentic work](https://claude.com/product/cowork), and **Code** for software development. This page is the reference for the Code tab.
 
-<CardGroup cols={3}>
-  <Card title="Download for macOS" icon="apple" href="https://claude.ai/api/desktop/darwin/universal/dmg/latest/redirect?utm_source=claude_code&utm_medium=docs">
-    Universal build for Intel and Apple Silicon
-  </Card>
+> **[Download for macOS](https://claude.ai/api/desktop/darwin/universal/dmg/latest/redirect?utm_source=claude_code\&utm_medium=docs)**
+>
+> Universal build for Intel and Apple Silicon
 
-  <Card title="Download for Windows" icon="windows" href="https://claude.ai/api/desktop/win32/x64/setup/latest/redirect?utm_source=claude_code&utm_medium=docs">
-    For x64 processors
-  </Card>
+> **[Download for Windows](https://claude.ai/api/desktop/win32/x64/setup/latest/redirect?utm_source=claude_code\&utm_medium=docs)**
+>
+> For x64 processors
 
-  <Card title="Get Claude for Linux (beta)" icon="linux" href="/docs/en/desktop-linux">
-    apt or .deb for Ubuntu and Debian
-  </Card>
-</CardGroup>
+> **[Get Claude for Linux (beta)](/docs/en/desktop-linux)**
+>
+> apt or .deb for Ubuntu and Debian
 
 For Windows ARM64, download the [ARM64 installer](https://claude.ai/api/desktop/win32/arm64/setup/latest/redirect?utm_source=claude_code\&utm_medium=docs). On Linux, install with apt; see [Claude Desktop on Linux](/docs/en/desktop-linux).
 
@@ -100,17 +98,15 @@ Earlier versions of the Code tab labeled these modes Ask permissions, Auto accep
 
 The `dontAsk` permission mode is available only in the [CLI](/docs/en/permission-modes#allow-only-pre-approved-tools-with-dontask-mode).
 
-<Tip title="Best practice">
-  Start complex tasks in Plan so Claude maps out an approach before making changes. Once you approve the plan, switch to Accept edits or Manual to execute it. See [explore first, then plan, then code](/docs/en/best-practices#explore-first-then-plan-then-code) for more on this workflow.
-</Tip>
+> [!TIP]
+>
+> Start complex tasks in Plan so Claude maps out an approach before making changes. Once you approve the plan, switch to Accept edits or Manual to execute it. See [explore first, then plan, then code](/docs/en/best-practices#explore-first-then-plan-then-code) for more on this workflow.
 
 Cloud sessions support Accept edits, Plan, and Auto. Accept edits corresponds to `default` mode: cloud sessions pre-approve file edits, so the selector shows Accept edits instead of Manual. Bypass permissions isn't available in cloud sessions, including sessions in a [self-hosted environment](/docs/en/self-hosted-environments).
 
 Enterprise admins can restrict which permission modes are available. See [enterprise configuration](#enterprise-configuration) for details.
 
-<h4 id="auto-mode-availability">
-  Auto mode availability
-</h4>
+#### Auto mode availability
 
 Auto mode is available to all users on the Anthropic API and requires Claude Opus 4.6 or later, Sonnet 4.6 or later, Haiku 5.5, or a [Fable model](/docs/en/model-config#work-with-fable). Organization administrators can turn auto mode off with the `disableAutoMode` key in [managed settings](#managed-settings).
 
@@ -122,9 +118,9 @@ Claude can start a dev server and open it in the Browser pane to verify its chan
 
 In a local session, click an HTML, PDF, or video path in the chat to open it in the Browser pane.
 
-<Note>
-  In an [SSH session](#ssh-sessions), Claude can't open your app in the Browser pane, because it doesn't have the pane's tools there. To look at the app yourself, [forward its port to your computer](#reach-a-port-on-the-remote-machine).
-</Note>
+> [!NOTE]
+>
+> In an [SSH session](#ssh-sessions), Claude can't open your app in the Browser pane, because it doesn't have the pane's tools there. To look at the app yourself, [forward its port to your computer](#reach-a-port-on-the-remote-machine).
 
 If the Browser pane isn't open after Claude starts a server in a local session, click **Open** on the server's card in the chat.
 
@@ -200,11 +196,11 @@ To have Claude fix failing checks, or to have GitHub merge the pull request, tur
 
 To archive the session automatically once the PR merges or closes, turn on [auto-archive](#archive-a-session) in **Settings > Claude Code**.
 
-<Note>
-  PR monitoring requires the [GitHub CLI (`gh`)](https://cli.github.com/) to be installed and authenticated on your machine. If `gh` is not installed, Desktop prompts you to install it the first time you try to create a PR.
-
-  In an [SSH session](#ssh-sessions), set up `git` and `gh` on the remote machine before you click **Create PR**, because Claude pushes the branch and runs `gh pr create` there. Install `gh` there yourself, because Desktop doesn't prompt you to in an SSH session. Then check there that `git push` works and that `gh auth status` reports that you are logged in.
-</Note>
+> [!NOTE]
+>
+> PR monitoring requires the [GitHub CLI (`gh`)](https://cli.github.com/) to be installed and authenticated on your machine. If `gh` is not installed, Desktop prompts you to install it the first time you try to create a PR.
+>
+> In an [SSH session](#ssh-sessions), set up `git` and `gh` on the remote machine before you click **Create PR**, because Claude pushes the branch and runs `gh pr create` there. Install `gh` there yourself, because Desktop doesn't prompt you to in an SSH session. Then check there that `git push` works and that `gh auth status` reports that you are logged in.
 
 ## Arrange your workspace
 
@@ -212,9 +208,9 @@ The Code tab is built around panes you can arrange in any layout: chat, diff, br
 
 To work across screens, pop a pane such as the diff or terminal out into its own window, and dock it back when you're done. Claude keeps working in the main window.
 
-<Note>
-  The pane layout, terminal, file editor, and view modes in this section require Claude Desktop v1.2581.0 or later. Open **Claude > Check for Updates…** on macOS or **Help > Check for Updates…** on Windows to update.
-</Note>
+> [!NOTE]
+>
+> The pane layout, terminal, file editor, and view modes in this section require Claude Desktop v1.2581.0 or later. Open **Claude > Check for Updates…** on macOS or **Help > Check for Updates…** on Windows to update.
 
 ### See session details
 
@@ -308,17 +304,17 @@ Click the usage ring next to the model picker to see your current context window
 
 Computer use lets Claude open your apps, control your screen, and work directly on your machine the way you would. Ask Claude to interact with a desktop tool that has no CLI, or automate something that only works through a GUI. For running and testing iOS apps, Desktop opens the dedicated [iOS Simulator pane](/docs/en/desktop-ios-simulator) instead of controlling your screen; the pane works without enabling computer use.
 
-<Note>
-  Computer use is a research preview on macOS and Windows that requires a Pro or Max plan. It is not available on Team or Enterprise plans. The Claude Desktop app must be running.
-</Note>
+> [!NOTE]
+>
+> Computer use is a research preview on macOS and Windows that requires a Pro or Max plan. It is not available on Team or Enterprise plans. The Claude Desktop app must be running.
 
 Computer use is off by default. [Enable it in Settings](#enable-computer-use) before Claude can control your screen. On macOS, you also need to grant Accessibility and Screen Recording permissions.
 
 On macOS, computer use can also run in the background: Claude works in the apps you've approved while you keep working.
 
-<Warning>
-  Unlike the [sandboxed Bash tool](/docs/en/sandboxing), computer use runs on your actual desktop with access to whatever you approve. Claude checks each action and flags potential prompt injection from on-screen content, but the trust boundary is different. See the [computer use safety guide](https://support.claude.com/en/articles/14128542) for best practices.
-</Warning>
+> [!WARNING]
+>
+> Unlike the [sandboxed Bash tool](/docs/en/sandboxing), computer use runs on your actual desktop with access to whatever you approve. Claude checks each action and flags potential prompt injection from on-screen content, but the trust boundary is different. See the [computer use safety guide](https://support.claude.com/en/articles/14128542) for best practices.
 
 ### When computer use applies
 
@@ -336,26 +332,24 @@ The [per-app access tiers](#app-permissions) reinforce this: browsers are capped
 
 Computer use is off by default. If you ask Claude to do something that needs it while it's off, Claude tells you it could do the task if you enable computer use in Settings.
 
-<Steps>
-  <Step title="Update the desktop app">
-    Make sure you have the latest version of Claude Desktop. On macOS and Windows, download or update at [claude.com/download](https://claude.com/download); on Linux, update through your package manager ([instructions](/docs/en/desktop-linux)). Then restart the app.
-  </Step>
+**1. Update the desktop app**
 
-  <Step title="Turn on the toggle">
-    In the desktop app, go to **Settings > This computer > System**. Under **Computer use**, turn on **Enable computer use**. On Windows, the toggle takes effect immediately and setup is complete. On macOS, continue to the next step.
+Make sure you have the latest version of Claude Desktop. On macOS and Windows, download or update at [claude.com/download](https://claude.com/download); on Linux, update through your package manager ([instructions](/docs/en/desktop-linux)). Then restart the app.
 
-    If you don't see the toggle, confirm you're on macOS or Windows with a Pro or Max plan, then update and restart the app.
-  </Step>
+**2. Turn on the toggle**
 
-  <Step title="Grant macOS permissions">
-    On macOS, grant two system permissions before the toggle takes effect:
+In the desktop app, go to **Settings > This computer > System**. Under **Computer use**, turn on **Enable computer use**. On Windows, the toggle takes effect immediately and setup is complete. On macOS, continue to the next step.
 
-    * **Accessibility**: lets Claude click, type, and scroll
-    * **Screen Recording**: lets Claude see what's on your screen
+If you don't see the toggle, confirm you're on macOS or Windows with a Pro or Max plan, then update and restart the app.
 
-    The Settings page shows the current status of each permission. If either is denied, click the badge to open the relevant System Settings pane.
-  </Step>
-</Steps>
+**3. Grant macOS permissions**
+
+On macOS, grant two system permissions before the toggle takes effect:
+
+* **Accessibility**: lets Claude click, type, and scroll
+* **Screen Recording**: lets Claude see what's on your screen
+
+The Settings page shows the current status of each permission. If either is denied, click the badge to open the relevant System Settings pane.
 
 ### App permissions
 
@@ -402,9 +396,9 @@ You can also set a **Branch prefix** in **Settings > Claude Code**. Desktop prep
 
 To include gitignored files like `.env` in new worktrees, create a [`.worktreeinclude` file](/docs/en/worktrees#copy-gitignored-files-into-worktrees) in your project root. See [What worktrees share with the main checkout](/docs/en/worktrees#what-worktrees-share-with-the-main-checkout) for where a worktree session reads project settings, hooks, and skills.
 
-<Note>
-  Session isolation requires [Git](https://git-scm.com/downloads). Most Macs include Git by default. Run `git --version` in Terminal to check; if it prints a version number, Git is installed. If you run into Git errors, ask Claude in the [Cowork tab](https://claude.com/product/cowork) to help troubleshoot your setup.
-</Note>
+> [!NOTE]
+>
+> Session isolation requires [Git](https://git-scm.com/downloads). Most Macs include Git by default. Run `git --version` in Terminal to check; if it prints a version number, Git is installed. If you run into Git errors, ask Claude in the [Cowork tab](https://claude.com/product/cowork) to help troubleshoot your setup.
 
 ### Add folders to a session
 
@@ -488,9 +482,9 @@ Cloud sessions also support multiple repositories. Choose the repositories:
 
 See [Use Claude Code in the cloud](/docs/en/claude-code-on-the-web) for more on how cloud sessions work. When one body of work needs many cloud sessions, select **Projects** in the sidebar to create a [project](/docs/en/claude-projects), where Claude starts and tracks the sessions for you from one conversation.
 
-<Note>
-  A task in an [SSH session](#ssh-sessions) can also [keep going while Desktop is disconnected](#keep-a-task-running-while-desktop-is-disconnected), but with a Claude account it can stop when its sign-in expires.
-</Note>
+> [!NOTE]
+>
+> A task in an [SSH session](#ssh-sessions) can also [keep going while Desktop is disconnected](#keep-a-task-running-while-desktop-is-disconnected), but with a Claude account it can stop when its sign-in expires.
 
 ### Continue in another surface
 
@@ -544,12 +538,12 @@ Connectors are [MCP servers](/docs/en/mcp) with a graphical setup flow.
 
 Click **+** next to the prompt box, before or during the session, to add connectors in a local or [SSH](#ssh-sessions) session with a Claude account. Select **Add connectors** to open the connector directory. If the menu shows **Connectors** instead, select it, then **Browse connectors**.
 
-<Note>
-  These cases are covered on other pages:
-
-  * **Connectors is grayed out in a WSL session**: see [If the terminal or connectors are unavailable](/docs/en/desktop-wsl#check-for-the-terminal-and-connectors)
-  * **Cloud sessions**: see [How connectors reach Claude Code](/docs/en/mcp#how-connectors-reach-claude-code)
-</Note>
+> [!NOTE]
+>
+> These cases are covered on other pages:
+>
+> * **Connectors is grayed out in a WSL session**: see [If the terminal or connectors are unavailable](/docs/en/desktop-wsl#check-for-the-terminal-and-connectors)
+> * **Cloud sessions**: see [How connectors reach Claude Code](/docs/en/mcp#how-connectors-reach-claude-code)
 
 Once connected, Claude can read your calendar, send messages, create issues, and interact with your tools directly. You can ask Claude what connectors are configured in your session. To manage or disconnect connectors, go to **Settings > Connectors** in the desktop app.
 
@@ -637,15 +631,11 @@ Each entry in the `configurations` array accepts the following fields:
 | `args` | string\[] | Arguments passed to `program`. Only used when `program` is set |
 | `url` | string | The address the preview opens instead of `http://localhost:<port>`. See [open the preview at a specific URL](#open-the-preview-at-a-specific-url) |
 
-<a id="when-to-use-program-vs-runtimeexecutable" />
-
 ##### When to use `program` vs `runtimeExecutable`
 
 Use `runtimeExecutable` with `runtimeArgs` to start a dev server through a package manager. For example, `"runtimeExecutable": "npm"` with `"runtimeArgs": ["run", "dev"]` runs `npm run dev`.
 
 Use `program` when you have a standalone script you want to run with `node` directly. For example, `"program": "server.js"` runs `node server.js`. Pass additional flags with `args`.
-
-<a id="open-the-preview-at-a-specific-url" />
 
 ##### Open the preview at a specific URL
 
@@ -708,72 +698,70 @@ Have your server read its port from the `PORT` environment variable, which carri
 
 These configurations show common setups for different project types:
 
-<Tabs>
-  <Tab title="Next.js">
-    This configuration runs a Next.js app using Yarn on port 3000:
+**Next.js**
 
-    ```json theme={null}
+This configuration runs a Next.js app using Yarn on port 3000:
+
+```json theme={null}
+{
+  "version": "0.0.1",
+  "configurations": [
     {
-      "version": "0.0.1",
-      "configurations": [
-        {
-          "name": "web",
-          "runtimeExecutable": "yarn",
-          "runtimeArgs": ["dev"],
-          "port": 3000
-        }
-      ]
+      "name": "web",
+      "runtimeExecutable": "yarn",
+      "runtimeArgs": ["dev"],
+      "port": 3000
     }
-    ```
-  </Tab>
+  ]
+}
+```
 
-  <Tab title="Multiple servers">
-    For a monorepo with a frontend and an API server, define multiple configurations. The frontend uses `autoPort: true` so it picks a free port if 3000 is taken, while the API server requires port 8080 exactly:
+**Multiple servers**
 
-    ```json theme={null}
+For a monorepo with a frontend and an API server, define multiple configurations. The frontend uses `autoPort: true` so it picks a free port if 3000 is taken, while the API server requires port 8080 exactly:
+
+```json theme={null}
+{
+  "version": "0.0.1",
+  "configurations": [
     {
-      "version": "0.0.1",
-      "configurations": [
-        {
-          "name": "frontend",
-          "runtimeExecutable": "npm",
-          "runtimeArgs": ["run", "dev"],
-          "cwd": "apps/web",
-          "port": 3000,
-          "autoPort": true
-        },
-        {
-          "name": "api",
-          "runtimeExecutable": "npm",
-          "runtimeArgs": ["run", "start"],
-          "cwd": "server",
-          "port": 8080,
-          "env": { "NODE_ENV": "development" },
-          "autoPort": false
-        }
-      ]
-    }
-    ```
-  </Tab>
-
-  <Tab title="Node.js script">
-    To run a Node.js script directly instead of using a package manager command, use the `program` field:
-
-    ```json theme={null}
+      "name": "frontend",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "cwd": "apps/web",
+      "port": 3000,
+      "autoPort": true
+    },
     {
-      "version": "0.0.1",
-      "configurations": [
-        {
-          "name": "server",
-          "program": "server.js",
-          "args": ["--verbose"],
-          "port": 4000
-        }
-      ]
+      "name": "api",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "start"],
+      "cwd": "server",
+      "port": 8080,
+      "env": { "NODE_ENV": "development" },
+      "autoPort": false
     }
-    ```
-  </Tab>
-</Tabs>
+  ]
+}
+```
+
+**Node.js script**
+
+To run a Node.js script directly instead of using a package manager command, use the `program` field:
+
+```json theme={null}
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "server",
+      "program": "server.js",
+      "args": ["--verbose"],
+      "port": 4000
+    }
+  ]
+}
+```
 
 ## Environment configuration
 
@@ -788,19 +776,17 @@ The environment you pick when [starting a session](#start-a-session) determines 
 
 A saved environment is an entry in the [environment selector](#start-a-session) that records where Claude runs, so you can start later sessions there. A local or SSH environment also holds the folders Claude works in. Saved local and SSH environments [require Claude Desktop v2.37337.0 or later](#check-which-layout-you-have).
 
-<Steps>
-  <Step title="Open the New environment dialog">
-    Open the environment selector under the prompt box and select **New environment** at the bottom of its menu.
-  </Step>
+**1. Open the New environment dialog**
 
-  <Step title="Choose where Claude runs">
-    Select the **Local**, **SSH**, or [**Cloud**](#cloud-sessions) tab and fill in the form on that tab. On the **SSH** tab, choose a [connection](#ssh-sessions) and a folder on the remote machine.
-  </Step>
+Open the environment selector under the prompt box and select **New environment** at the bottom of its menu.
 
-  <Step title="Save the environment">
-    Select **Create environment**, or **Add environment** on the **Cloud** tab.
-  </Step>
-</Steps>
+**2. Choose where Claude runs**
+
+Select the **Local**, **SSH**, or [**Cloud**](#cloud-sessions) tab and fill in the form on that tab. On the **SSH** tab, choose a [connection](#ssh-sessions) and a folder on the remote machine.
+
+**3. Save the environment**
+
+Select **Create environment**, or **Add environment** on the **Cloud** tab.
 
 #### Environments that Desktop creates for you
 
@@ -822,23 +808,21 @@ The desktop app does not always inherit your full shell environment. On macOS, w
 
 Add the variables to a saved local environment and start your sessions from it. Desktop [sets some variables itself](#environment-variables-desktop-sets-itself), such as `API_TIMEOUT_MS`, and your sessions get its value for those instead of yours.
 
-<Note>
-  If your environment selector is above the prompt box, you have the [earlier layout](#check-which-layout-you-have), which has no saved local environments. Use the [local environment editor](#use-the-local-environment-editor) instead.
-</Note>
+> [!NOTE]
+>
+> If your environment selector is above the prompt box, you have the [earlier layout](#check-which-layout-you-have), which has no saved local environments. Use the [local environment editor](#use-the-local-environment-editor) instead.
 
-<Steps>
-  <Step title="Open the environment's form">
-    Open [**New environment**](#create-a-saved-environment) or [**Edit environment**](#use-edit-or-remove-a-saved-environment).
-  </Step>
+**1. Open the environment's form**
 
-  <Step title="Enter the variables">
-    Select **Environment variables**, enter one `KEY=value` per line, and select **Done**.
-  </Step>
+Open [**New environment**](#create-a-saved-environment) or [**Edit environment**](#use-edit-or-remove-a-saved-environment).
 
-  <Step title="Save the environment">
-    Select **Create environment** or **Save**.
-  </Step>
-</Steps>
+**2. Enter the variables**
+
+Select **Environment variables**, enter one `KEY=value` per line, and select **Done**.
+
+**3. Save the environment**
+
+Select **Create environment** or **Save**.
 
 Only sessions you start from that environment get the variables.
 
@@ -901,33 +885,31 @@ See [Configure cloud environments](/docs/en/cloud-environments) for details on c
 
 SSH sessions let you run Claude Code on a remote machine while using the desktop app as your interface. This is useful for working with codebases that live on cloud VMs, dev containers, or servers with specific hardware or dependencies.
 
-<Note>
-  If you use Desktop with a [third-party provider](/docs/en/third-party-integrations), SSH sessions need their own setup. See [SSH remote sessions in Claude Desktop on 3P](https://claude.com/docs/third-party/claude-desktop/ssh-remote-sessions).
-</Note>
+> [!NOTE]
+>
+> If you use Desktop with a [third-party provider](/docs/en/third-party-integrations), SSH sessions need their own setup. See [SSH remote sessions in Claude Desktop on 3P](https://claude.com/docs/third-party/claude-desktop/ssh-remote-sessions).
 
 Add an SSH connection in the [**New environment** dialog](#create-a-saved-environment), then start a session on that connection. If a new session has no environment selector under the prompt box, you have the earlier layout. See [Check which layout you have](#check-which-layout-you-have).
 
-<Steps>
-  <Step title="Open the New environment dialog">
-    Before you start a session, open the environment selector under the prompt box and select **New environment** at the bottom of its menu.
-  </Step>
+**1. Open the New environment dialog**
 
-  <Step title="Add the connection">
-    On the **SSH** tab of the **New environment** dialog, open the **Host** list, select **Add SSH connection…**, and fill in the connection details:
+Before you start a session, open the environment selector under the prompt box and select **New environment** at the bottom of its menu.
 
-    * **Name**: a friendly label for this connection.
-    * **SSH host**: `user@hostname` or a host defined in `~/.ssh/config`.
-    * **SSH port**: defaults to 22 if left empty, or uses the port from your SSH config.
-    * **SSH key (optional)**: path to your private key, such as `~/.ssh/id_ed25519`. Leave empty to use your SSH config or SSH agent.
-    * **Worktree folder**: a folder on the remote machine, such as `~/worktrees`, where new sessions create their worktrees. Leave empty to use the [remote machine's default](#choose-where-ssh-session-worktrees-go).
+**2. Add the connection**
 
-    Then select **Add SSH connection**.
-  </Step>
+On the **SSH** tab of the **New environment** dialog, open the **Host** list, select **Add SSH connection…**, and fill in the connection details:
 
-  <Step title="Start a session on the connection">
-    Select a folder on the remote machine and click **Create environment**. You keep the machine and folder together as a [saved environment](#create-a-saved-environment) for later sessions. Desktop selects it for the new session, so type your task and press **Enter**.
-  </Step>
-</Steps>
+* **Name**: a friendly label for this connection.
+* **SSH host**: `user@hostname` or a host defined in `~/.ssh/config`.
+* **SSH port**: defaults to 22 if left empty, or uses the port from your SSH config.
+* **SSH key (optional)**: path to your private key, such as `~/.ssh/id_ed25519`. Leave empty to use your SSH config or SSH agent.
+* **Worktree folder**: a folder on the remote machine, such as `~/worktrees`, where new sessions create their worktrees. Leave empty to use the [remote machine's default](#choose-where-ssh-session-worktrees-go).
+
+Then select **Add SSH connection**.
+
+**3. Start a session on the connection**
+
+Select a folder on the remote machine and click **Create environment**. You keep the machine and folder together as a [saved environment](#create-a-saved-environment) for later sessions. Desktop selects it for the new session, so type your task and press **Enter**.
 
 The remote machine can run Linux, macOS, or [Windows](#windows-remote-machines). Desktop installs Claude Code on the remote machine automatically the first time you connect. Once connected, SSH sessions support permission modes, connectors, plugins, and MCP servers.
 
@@ -948,42 +930,38 @@ If a Linux remote machine reaches the internet through a proxy or needs a CA cer
 
 An SSH session doesn't get them from those files, even when `claude` in a terminal on that machine does. The session can then hang, or show **The connection from … to the API failed** or **Authentication failed**, and signing in again doesn't help.
 
-<Steps>
-  <Step title="Add the variables">
-    For the CA file, use [`NODE_EXTRA_CA_CERTS`](/docs/en/network-config#custom-ca-certificates), because Claude Code doesn't trust a CA from `SSL_CERT_FILE` in `~/.claude/settings.json`. This example sets a proxy and a CA file:
+**1. Add the variables**
 
-    ```json ~/.claude/settings.json theme={null}
-    {
-      "env": {
-        "HTTPS_PROXY": "http://proxy.example.com:8080",
-        "NODE_EXTRA_CA_CERTS": "/etc/ssl/certs/example-ca.pem"
-      }
-    }
-    ```
-  </Step>
+For the CA file, use [`NODE_EXTRA_CA_CERTS`](/docs/en/network-config#custom-ca-certificates), because Claude Code doesn't trust a CA from `SSL_CERT_FILE` in `~/.claude/settings.json`. This example sets a proxy and a CA file:
 
-  <Step title="Send your message again">
-    Send your message again, because a variable that you add or change in that file takes effect within seconds. Start a new session if it still fails.
-  </Step>
-</Steps>
+```json ~/.claude/settings.json theme={null}
+{
+  "env": {
+    "HTTPS_PROXY": "http://proxy.example.com:8080",
+    "NODE_EXTRA_CA_CERTS": "/etc/ssl/certs/example-ca.pem"
+  }
+}
+```
+
+**2. Send your message again**
+
+Send your message again, because a variable that you add or change in that file takes effect within seconds. Start a new session if it still fails.
 
 ##### Find a proxy or CA variable set elsewhere on the remote machine
 
 Check whether the Linux remote machine sets the proxy or CA variable elsewhere, because sessions use that value and [ignore the one in any settings file](/docs/en/settings-reference#how-env-values-interact-with-your-shell):
 
-<Steps>
-  <Step title="List the variables that the remote machine sets">
-    In a terminal on your computer, run `ssh devbox env`, with your own host.
-  </Step>
+**1. List the variables that the remote machine sets**
 
-  <Step title="Change the variable where it is set">
-    If the list has the variable, change it in the file that sets it, such as `~/.zshenv`, `/etc/environment`, or `~/.bashrc` on the remote machine.
-  </Step>
+In a terminal on your computer, run `ssh devbox env`, with your own host.
 
-  <Step title="Give sessions the new value">
-    Restart the remote machine, or quit Desktop and end the helper's processes, as in the first two steps to [remove the helper](#files-and-processes-on-the-remote-machine). Do this when no task is running, because either way interrupts Claude's work.
-  </Step>
-</Steps>
+**2. Change the variable where it is set**
+
+If the list has the variable, change it in the file that sets it, such as `~/.zshenv`, `/etc/environment`, or `~/.bashrc` on the remote machine.
+
+**3. Give sessions the new value**
+
+Restart the remote machine, or quit Desktop and end the helper's processes, as in the first two steps to [remove the helper](#files-and-processes-on-the-remote-machine). Do this when no task is running, because either way interrupts Claude's work.
 
 #### Use your SSH configuration on macOS and Linux
 
@@ -1016,39 +994,37 @@ Enter `devbox` in the **SSH host** field.
 
 To run a session inside a container that publishes no SSH port, reach it with a `ProxyCommand`, because Desktop doesn't run the `RemoteCommand` of the entry you connect to. If your entry uses `RemoteCommand` to step into the container, the session runs on the machine that the entry logs in to, not in the container.
 
-<Steps>
-  <Step title="Add the entry">
-    Add the following entry at the end of your `~/.ssh/config`, or directly above your first `Host *` entry if you have one. Replace the Docker container `devbox`, its user `dev`, and the machine `build.example.com` with your own. The entry's command starts an SSH server inside the container for each connection:
+**1. Add the entry**
 
-    ```text ~/.ssh/config theme={null}
-    Host devbox-container
-      User dev
-      ProxyCommand ssh build.example.com docker exec -i devbox /usr/sbin/sshd -i
-    ```
-  </Step>
+Add the following entry at the end of your `~/.ssh/config`, or directly above your first `Host *` entry if you have one. Replace the Docker container `devbox`, its user `dev`, and the machine `build.example.com` with your own. The entry's command starts an SSH server inside the container for each connection:
 
-  <Step title="Prepare the container">
-    * Install the OpenSSH server, with a host key that stays the same when you rebuild the image or recreate the container
-    * Give the account named in `User` a way to log in, such as an `authorized_keys` file
-    * Check that the container meets the [remote machine requirements](#remote-machine-requirements-for-ssh-sessions)
-  </Step>
+```text ~/.ssh/config theme={null}
+Host devbox-container
+  User dev
+  ProxyCommand ssh build.example.com docker exec -i devbox /usr/sbin/sshd -i
+```
 
-  <Step title="Check the allowlist">
-    If your administrator [restricts SSH hosts](#restrict-which-ssh-hosts-users-can-connect-to), run `ssh -G devbox-container` in a terminal on your computer. Ask them to allow the `hostname` that it prints, here `devbox-container`, in `sshHostAllowlist`. When they allow that name, they allow whatever your entry's `ProxyCommand` connects to.
-  </Step>
+**2. Prepare the container**
 
-  <Step title="Test the entry, then connect">
-    Run `ssh devbox-container` in a terminal on your computer. Fix what it reports, and run it again until it opens a shell in the container without asking you anything:
+* Install the OpenSSH server, with a host key that stays the same when you rebuild the image or recreate the container
+* Give the account named in `User` a way to log in, such as an `authorized_keys` file
+* Check that the container meets the [remote machine requirements](#remote-machine-requirements-for-ssh-sessions)
 
-    * **If `ssh` asks for a password, passphrase, or code**: switch to a login that works without a prompt, such as a key that your SSH agent holds
-    * **If `ssh` reports `Cannot execute command-line and remote command.` or `Bad packet length`**: take `RemoteCommand` and `RequestTTY` out of your entry for `build.example.com`. After that, `ssh build.example.com` in a terminal on your computer opens a shell on that machine, not in the container.
-    * **If `ssh` reports `Connection closed by UNKNOWN port 65535`**: run `ssh build.example.com docker exec devbox /usr/sbin/sshd -t` in the same terminal.
-      * If it prints `Missing privilege separation directory: /run/sshd`, create that folder in the container.
-      * If it prints `no hostkeys available` and the container has host keys, add `-u root` after `exec` in this command and in the entry.
+**3. Check the allowlist**
 
-    Then enter `devbox-container` in the **SSH host** field.
-  </Step>
-</Steps>
+If your administrator [restricts SSH hosts](#restrict-which-ssh-hosts-users-can-connect-to), run `ssh -G devbox-container` in a terminal on your computer. Ask them to allow the `hostname` that it prints, here `devbox-container`, in `sshHostAllowlist`. When they allow that name, they allow whatever your entry's `ProxyCommand` connects to.
+
+**4. Test the entry, then connect**
+
+Run `ssh devbox-container` in a terminal on your computer. Fix what it reports, and run it again until it opens a shell in the container without asking you anything:
+
+* **If `ssh` asks for a password, passphrase, or code**: switch to a login that works without a prompt, such as a key that your SSH agent holds
+* **If `ssh` reports `Cannot execute command-line and remote command.` or `Bad packet length`**: take `RemoteCommand` and `RequestTTY` out of your entry for `build.example.com`. After that, `ssh build.example.com` in a terminal on your computer opens a shell on that machine, not in the container.
+* **If `ssh` reports `Connection closed by UNKNOWN port 65535`**: run `ssh build.example.com docker exec devbox /usr/sbin/sshd -t` in the same terminal.
+  * If it prints `Missing privilege separation directory: /run/sshd`, create that folder in the container.
+  * If it prints `no hostkeys available` and the container has host keys, add `-u root` after `exec` in this command and in the entry.
+
+Then enter `devbox-container` in the **SSH host** field.
 
 ##### Use variables from your shell in a `ProxyCommand`
 
@@ -1056,11 +1032,9 @@ To use an environment variable of your own in a `ProxyCommand` or `Match exec` c
 
 This requires Claude Desktop v2.37337.0 or later and an `env` command that accepts `-0`, which you can check by running `env -0` in a terminal on your computer.
 
-<Note>
-  If your shell sets temporary AWS credentials, [give the AWS CLI a profile](#use-aws-credentials-in-a-proxycommand) instead of exporting `AWS_*` variables.
-</Note>
-
-<a id="use-aws-credentials-in-a-proxycommand" />
+> [!NOTE]
+>
+> If your shell sets temporary AWS credentials, [give the AWS CLI a profile](#use-aws-credentials-in-a-proxycommand) instead of exporting `AWS_*` variables.
 
 ##### Use AWS credentials in a `ProxyCommand`
 
@@ -1068,34 +1042,32 @@ If you set temporary AWS credentials in a shell startup file, a `ProxyCommand` t
 
 If the AWS CLI has no other source for a region or credentials, it fails with `You must specify a region` or `Unable to locate credentials`. To connect from Desktop, give the AWS CLI a profile that it reads from `~/.aws/config`:
 
-<Steps>
-  <Step title="Add a profile with a region and a source of credentials">
-    This example adds a profile named `corp` that gets its credentials from a helper program:
+**1. Add a profile with a region and a source of credentials**
 
-    ```ini ~/.aws/config theme={null}
-    [profile corp]
-    region = us-east-1
-    credential_process = /full/path/to/your-credential-helper
-    ```
+This example adds a profile named `corp` that gets its credentials from a helper program:
 
-    * **`region`**: give the AWS Region of the machines you connect to
-    * **`credential_process`**: give the full path of a program that prints credentials in the [JSON form that AWS documents](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sourcing-external.html). Choose a program that needs no input from you, because the AWS CLI runs it at every connection, including reconnects while you're away.
-    * **IAM Identity Center**: add the profile's [IAM Identity Center settings](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sso.html) in place of `credential_process`. Run `aws sso login --profile corp` in a terminal before you connect, and again when that sign-in lapses.
-  </Step>
+```ini ~/.aws/config theme={null}
+[profile corp]
+region = us-east-1
+credential_process = /full/path/to/your-credential-helper
+```
 
-  <Step title="Name the profile in the ProxyCommand">
-    This example adds `--profile` to the [command that AWS documents for Session Manager](https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-getting-started-enable-ssh-connections.html):
+* **`region`**: give the AWS Region of the machines you connect to
+* **`credential_process`**: give the full path of a program that prints credentials in the [JSON form that AWS documents](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sourcing-external.html). Choose a program that needs no input from you, because the AWS CLI runs it at every connection, including reconnects while you're away.
+* **IAM Identity Center**: add the profile's [IAM Identity Center settings](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sso.html) in place of `credential_process`. Run `aws sso login --profile corp` in a terminal before you connect, and again when that sign-in lapses.
 
-    ```text ~/.ssh/config theme={null}
-    Host i-*
-      ProxyCommand sh -c "aws ssm start-session --profile corp --target %h --document-name AWS-StartSSHSession --parameters 'portNumber=%p'"
-    ```
-  </Step>
+**2. Name the profile in the ProxyCommand**
 
-  <Step title="Connect again">
-    Run `ssh` with the host in a terminal to confirm that the entry still connects there, then connect from Desktop.
-  </Step>
-</Steps>
+This example adds `--profile` to the [command that AWS documents for Session Manager](https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-getting-started-enable-ssh-connections.html):
+
+```text ~/.ssh/config theme={null}
+Host i-*
+  ProxyCommand sh -c "aws ssm start-session --profile corp --target %h --document-name AWS-StartSSHSession --parameters 'portNumber=%p'"
+```
+
+**3. Connect again**
+
+Run `ssh` with the host in a terminal to confirm that the entry still connects there, then connect from Desktop.
 
 ##### Raise the SSH connection timeout
 
@@ -1178,18 +1150,18 @@ If your computer sleeps, you lose your network, or you quit Desktop, the task go
 
 Claude Code runs as a process on the remote machine, under a background helper that Desktop installs there, so it doesn't need your SSH connection to keep running. The behavior in this section requires Claude Desktop v2.31226.0 or later.
 
-<Warning>
-  If you sign in to Desktop with a Claude account, don't count on a task to run overnight. Desktop renews that sign-in for the task only while Desktop is running and connected, so the task's sign-in can expire after you disconnect, and the task then stops. How much time is left when you disconnect varies, and it can be only a few minutes.
-
-  The work done so far stays on the remote machine, and you can continue with a message when you return.
-
-  If the task must run through the night:
-
-  * [Keep your computer awake](/docs/en/desktop-scheduled-tasks#how-scheduled-tasks-run) and online, with the lid open and Desktop running
-  * Use a login that works without a prompt, such as a key that your SSH agent holds, for the remote machine and for any jump host on the way. Desktop can then reconnect on its own after a drop.
-
-  For a task that must run while your computer is asleep or off, start a [cloud session](#run-long-running-tasks-in-the-cloud) instead.
-</Warning>
+> [!WARNING]
+>
+> If you sign in to Desktop with a Claude account, don't count on a task to run overnight. Desktop renews that sign-in for the task only while Desktop is running and connected, so the task's sign-in can expire after you disconnect, and the task then stops. How much time is left when you disconnect varies, and it can be only a few minutes.
+>
+> The work done so far stays on the remote machine, and you can continue with a message when you return.
+>
+> If the task must run through the night:
+>
+> * [Keep your computer awake](/docs/en/desktop-scheduled-tasks#how-scheduled-tasks-run) and online, with the lid open and Desktop running
+> * Use a login that works without a prompt, such as a key that your SSH agent holds, for the remote machine and for any jump host on the way. Desktop can then reconnect on its own after a drop.
+>
+> For a task that must run while your computer is asleep or off, start a [cloud session](#run-long-running-tasks-in-the-cloud) instead.
 
 * **After sleep or a network loss**: you get the running task back if the process [still runs](#limits-while-desktop-is-disconnected) and Desktop can log in without a prompt. If it can't, [send a message](#reconnect-after-sleep-or-a-network-loss).
 * **After a quit**: the task keeps running, but you lose it when the session opens again unless Desktop can rejoin its process. Check [when Desktop can rejoin](#reopen-a-session-after-you-quit-desktop) before you quit. If you lost the task, send a message to continue.
@@ -1201,8 +1173,6 @@ When you come back and the task isn't done, check for word that Desktop can't re
 * **Waiting request**: [answer it](#handle-requests-that-arrive-while-you-are-away)
 * **None of these**: send a message to continue
 
-<a id="prepare-a-long-task" />
-
 ##### Prepare a long task
 
 * **Update first**: update Desktop before you start a long task. On macOS and Windows, Desktop can restart on its own to install an update that it has downloaded. That restart waits while Claude is working on an SSH task. On macOS with a Claude account, by default the restart can go ahead anyway once the update has waited 72 hours.
@@ -1211,8 +1181,6 @@ When you come back and the task isn't done, check for word that Desktop can't re
 * **Check the jump host**: if your jump host asks for a sign-in, for example a push to a phone, switch to a login that works without a prompt. Otherwise Desktop can send another push each time it tries to reconnect.
 * **Test the remote machine**: start a short task, quit Desktop while the task is still running, and open the session again well after the task should be done. If the task isn't finished and the session shows no authentication error, check the remote machine for [what can end a task](#limits-while-desktop-is-disconnected).
 * **Keep commands out of Desktop's terminal**: if the remote machine [logs out idle terminals](#limits-while-desktop-is-disconnected), run your own commands from an SSH login outside Desktop
-
-<a id="limits-while-desktop-is-disconnected" />
 
 ##### Limits while Desktop is disconnected
 
@@ -1232,23 +1200,19 @@ File edits and some tools can fail while Desktop is disconnected. If the task ne
 * **Workflows**: Desktop checks each new [workflow](/docs/en/workflows) before it starts, so while Desktop is disconnected a new one waits up to 10 minutes and then fails
 * **MCP servers**: MCP servers that Claude Code starts on the remote machine don't run through Desktop, so Claude can still call their tools. Servers from `claude_desktop_config.json` are among them only if Desktop doesn't use its [built-in SSH client](#worktree-edits-while-disconnected). Otherwise, and on [some Windows remote machines](#windows-remote-machines), Claude can't call their tools while Desktop is disconnected.
 
-<span id="worktree-edits-while-disconnected" />
-
-<Accordion title="When edits in a worktree keep working">
-  On a Linux or macOS remote machine, the check doesn't go through Desktop, so edits inside the worktree keep working while Desktop is disconnected. Before Claude Desktop v2.37337.0, this holds on a Linux remote machine only.
-
-  Edits still fail in some cases, including these:
-
-  * **Built-in SSH client**: Desktop uses it, for example in a Microsoft Store install, on a Windows computer without Microsoft's OpenSSH 9.4 or later, or by default on Windows with a third-party provider
-  * **Repository location**: the repository is your home directory, a folder above it, or `~/.claude`
-  * **macOS paths**: on a macOS remote machine, the repository is under `/Volumes`, or a folder name in the path of the repository or the worktree has a `~` or a non-ASCII character
-  * **Folder restrictions**: your organization restricts which folders sessions may use
-  * **Corporate launcher**: before Claude Desktop v2.37337.0, you sign in with a Claude account, and your organization starts Claude Code on the remote machine through a [corporate launcher](/docs/en/corporate-launcher)
-
-  A session without a worktree has no such check, unless your organization restricts which folders sessions may use.
-</Accordion>
-
-<a id="handle-requests-that-arrive-while-you-are-away" />
+> **When edits in a worktree keep working**
+>
+> On a Linux or macOS remote machine, the check doesn't go through Desktop, so edits inside the worktree keep working while Desktop is disconnected. Before Claude Desktop v2.37337.0, this holds on a Linux remote machine only.
+>
+> Edits still fail in some cases, including these:
+>
+> * **Built-in SSH client**: Desktop uses it, for example in a Microsoft Store install, on a Windows computer without Microsoft's OpenSSH 9.4 or later, or by default on Windows with a third-party provider
+> * **Repository location**: the repository is your home directory, a folder above it, or `~/.claude`
+> * **macOS paths**: on a macOS remote machine, the repository is under `/Volumes`, or a folder name in the path of the repository or the worktree has a `~` or a non-ASCII character
+> * **Folder restrictions**: your organization restricts which folders sessions may use
+> * **Corporate launcher**: before Claude Desktop v2.37337.0, you sign in with a Claude account, and your organization starts Claude Code on the remote machine through a [corporate launcher](/docs/en/corporate-launcher)
+>
+> A session without a worktree has no such check, unless your organization restricts which folders sessions may use.
 
 ##### Handle requests that arrive while you are away
 
@@ -1270,8 +1234,6 @@ If your organization [runs managed hooks only](/docs/en/settings-reference#allow
 
 Claude Code doesn't auto-approve [a few actions](/docs/en/permission-modes#actions-no-mode-auto-approves) in any permission mode, including Bypass permissions. Depending on the permission mode, Claude Code denies such an action or asks you, and the task then waits for your answer.
 
-<a id="reconnect-after-sleep-or-a-network-loss" />
-
 ##### Reconnect after sleep or a network loss
 
 If Desktop hasn't reconnected when you come back, send a message in the session. Desktop reconnects on its own only where it can log in without a prompt, for example with a key that your SSH agent holds.
@@ -1279,15 +1241,13 @@ If Desktop hasn't reconnected when you come back, send a message in the session.
 * **Remembered password**: a password that you let Desktop remember also works without a prompt, but for a long absence prefer a key that your SSH agent holds. If sign-ins with that password break off or hang, Desktop can stop reconnecting and wait for you.
 * **Any other prompt**: if the remote machine prompts for anything else, such as a one-time code, you can get a notification on your computer. Click the notification, or send a message in the session, and Desktop shows the prompt.
 
-<Accordion title="If a jump host asks for a sign-in, the outage is long, output is missing, or the process is gone">
-  - **Jump host, pushes stop while you're away**: this can happen with Desktop on macOS or Linux when nobody answers a jump host's sign-in, for example a push to a phone. Desktop then stops reconnecting while nobody is at your computer. When you unlock or use the computer, you can get another push, because Desktop can try again. After three unanswered attempts it waits until you retry or send a message.
-  - **Jump host, pushes keep coming**: where Desktop can't tell that nobody answers, as with Desktop on Windows, it keeps trying while it has a process to rejoin, whether or not that process still runs. You can get another push with each attempt. To end the attempts, quit Desktop, which [can cost you the running task](#reopen-a-session-after-you-quit-desktop).
-  - **Long outage**: Desktop slows to about one attempt every five minutes. To reconnect sooner, retry in the session or send a message, which Desktop delivers once it is connected.
-  - **Missing output**: while Desktop is disconnected, the helper keeps each session's most recent Claude Code output in a 16 MiB buffer and drops older output. After Desktop reconnects, the session can show `Loading recent output from <host>…`. If Desktop can't load all of the output, you see the row `Some output produced while you were disconnected may be missing here.` The row doesn't mean that the task stopped.
-  - **Process gone**: the process ended while Desktop was disconnected, as when the remote machine restarts. Desktop can then start a new one from the conversation's saved history and tell Claude to continue the task. If the task stays stopped, send a message. With a third-party provider, update to Claude Desktop v2.42304.0 or later, because earlier versions never continue the task on their own.
-</Accordion>
-
-<a id="reopen-a-session-after-you-quit-desktop" />
+> **If a jump host asks for a sign-in, the outage is long, output is missing, or the process is gone**
+>
+> * **Jump host, pushes stop while you're away**: this can happen with Desktop on macOS or Linux when nobody answers a jump host's sign-in, for example a push to a phone. Desktop then stops reconnecting while nobody is at your computer. When you unlock or use the computer, you can get another push, because Desktop can try again. After three unanswered attempts it waits until you retry or send a message.
+> * **Jump host, pushes keep coming**: where Desktop can't tell that nobody answers, as with Desktop on Windows, it keeps trying while it has a process to rejoin, whether or not that process still runs. You can get another push with each attempt. To end the attempts, quit Desktop, which [can cost you the running task](#reopen-a-session-after-you-quit-desktop).
+> * **Long outage**: Desktop slows to about one attempt every five minutes. To reconnect sooner, retry in the session or send a message, which Desktop delivers once it is connected.
+> * **Missing output**: while Desktop is disconnected, the helper keeps each session's most recent Claude Code output in a 16 MiB buffer and drops older output. After Desktop reconnects, the session can show `Loading recent output from <host>…`. If Desktop can't load all of the output, you see the row `Some output produced while you were disconnected may be missing here.` The row doesn't mean that the task stopped.
+> * **Process gone**: the process ended while Desktop was disconnected, as when the remote machine restarts. Desktop can then start a new one from the conversation's saved history and tell Claude to continue the task. If the task stays stopped, send a message. With a third-party provider, update to Claude Desktop v2.42304.0 or later, because earlier versions never continue the task on their own.
 
 ##### Reopen a session after you quit Desktop
 
@@ -1301,9 +1261,9 @@ When Desktop can't rejoin, you also lose any approval or question that was waiti
 
 For third-party deployments, see [SSH remote sessions in Claude Desktop on 3P](https://claude.com/docs/third-party/claude-desktop/ssh-remote-sessions).
 
-<Warning>
-  While a conversation's Claude Code process is still running, don't run [`claude --resume`](/docs/en/cli-reference#cli-flags) for it on the remote machine. Claude Code doesn't stop you, and both processes then write to the same conversation. If you aren't sure, add `--fork-session`, which continues in a copy of the conversation, but both processes still work on the same files.
-</Warning>
+> [!WARNING]
+>
+> While a conversation's Claude Code process is still running, don't run [`claude --resume`](/docs/en/cli-reference#cli-flags) for it on the remote machine. Claude Code doesn't stop you, and both processes then write to the same conversation. If you aren't sure, add `--fork-session`, which continues in a copy of the conversation, but both processes still work on the same files.
 
 #### Choose where SSH session worktrees go
 
@@ -1315,25 +1275,21 @@ Unless your organization restricts which folders sessions may use, new SSH sessi
 
 Each project gets its own subfolder in the folder you set, so with `~/worktrees` a worktree's path is `~/worktrees/<project>-<id>/<worktree-name>`. If the folder you set is inside the project, Desktop ignores it for that project and uses the default. On a [Windows remote machine](#windows-remote-machines), Desktop always uses the default.
 
-<a id="set-the-worktree-folder-on-an-existing-connection" />
-
 ##### Set the worktree folder on an existing connection
 
 Set **Worktree folder** in the settings of a connection you added earlier or one your organization manages. The field requires Claude Desktop v1.44121.0 or later. If your organization restricts which folders sessions may use, Desktop hides the field and keeps worktrees inside the project.
 
-<Steps>
-  <Step title="Find the connection">
-    Open the [environment selector](#start-a-session) and find the connection under **SSH**.
-  </Step>
+**1. Find the connection**
 
-  <Step title="Open the connection's settings">
-    Hover over the connection and click the gear icon. If the dialog that opens shows **Edit connection…** next to **Host**, select **Edit connection…**.
-  </Step>
+Open the [environment selector](#start-a-session) and find the connection under **SSH**.
 
-  <Step title="Set the folder">
-    In **Worktree folder**, enter a folder on the remote machine, such as `~/worktrees`, and select **Save changes**.
-  </Step>
-</Steps>
+**2. Open the connection's settings**
+
+Hover over the connection and click the gear icon. If the dialog that opens shows **Edit connection…** next to **Host**, select **Edit connection…**.
+
+**3. Set the folder**
+
+In **Worktree folder**, enter a folder on the remote machine, such as `~/worktrees`, and select **Save changes**.
 
 #### Files and processes on the remote machine
 
@@ -1358,21 +1314,19 @@ For when the helper stops on its own, see [Limits while Desktop is disconnected]
 
 To remove the helper and Claude Code for one user:
 
-<Steps>
-  <Step title="Quit Desktop">
-    Quit Desktop on each computer that the user connects from. It installs both programs again the next time it connects, and it can reconnect on its own.
-  </Step>
+**1. Quit Desktop**
 
-  <Step title="End the processes">
-    Logged in as that user on the remote machine, run `kill` with the ID of each Claude Code process that [`pgrep`](#files-and-processes-on-the-remote-machine) lists. Once those are gone from the list, run `kill` with the ID of each `server` process. If you end a `server` process first, a command that Claude Code is running can keep running.
+Quit Desktop on each computer that the user connects from. It installs both programs again the next time it connects, and it can reconnect on its own.
 
-    Then list the user's remaining processes, for example with `ps -u "$(id -un)" -f`, and end any that you recognize as started by Claude Code. Programs that it left in the background can keep running after it ends, without being in the `pgrep` list.
-  </Step>
+**2. End the processes**
 
-  <Step title="Delete the folder">
-    Delete `~/.claude/remote/`. To remove Claude Code's own files in `~/.claude/` and `~/.claude.json`, see [Remove configuration files](/docs/en/setup#remove-configuration-files).
-  </Step>
-</Steps>
+Logged in as that user on the remote machine, run `kill` with the ID of each Claude Code process that [`pgrep`](#files-and-processes-on-the-remote-machine) lists. Once those are gone from the list, run `kill` with the ID of each `server` process. If you end a `server` process first, a command that Claude Code is running can keep running.
+
+Then list the user's remaining processes, for example with `ps -u "$(id -un)" -f`, and end any that you recognize as started by Claude Code. Programs that it left in the background can keep running after it ends, without being in the `pgrep` list.
+
+**3. Delete the folder**
+
+Delete `~/.claude/remote/`. To remove Claude Code's own files in `~/.claude/` and `~/.claude.json`, see [Remove configuration files](/docs/en/setup#remove-configuration-files).
 
 ##### End one session's process
 
@@ -1414,8 +1368,6 @@ Other programs that open the port and close it can leave the same lines. Where a
 
 The lines of 8.0 to 8.2 have no address. To get one, set `LogLevel VERBOSE` in `sshd_config` and run `sshd -T | grep -i loglevel` as root. If it prints `loglevel VERBOSE`, reload the SSH server. Then look for a line with `Connection from 203.0.113.7 port 51234` before the test's line.
 
-<a id="check-whether-the-ssh-server-itself-refuses-the-address" />
-
 ##### Check whether the SSH server itself refuses the address
 
 If connections are refused from an address that many computers with Desktop share, look in the SSH server's log for a line that ends like this one:
@@ -1427,8 +1379,6 @@ drop connection #0 from [203.0.113.7]:51234 on [192.0.2.10]:22 penalty: connecti
 With the default `LogLevel`, OpenSSH 9.8 and later can write such a line when refusing an address for connections that closed without trying to log in, as Desktop's tests do. With the default settings, you don't see such a line after a few tests alone.
 
 To prevent the refusal, set `PerSourcePenaltyExemptList` in `sshd_config` to the addresses that people connect from, for example `PerSourcePenaltyExemptList 203.0.113.7`. The server then applies none of its penalties to those addresses, including those for failed logins. To check the file, run `sshd -T | grep -i persourcepenalt` as root. If it prints your list, reload the SSH server.
-
-<a id="check-whether-fail2ban-counts-desktops-tests" />
 
 ##### Check whether fail2ban counts Desktop's tests
 
@@ -1446,8 +1396,6 @@ fail2ban-regex -o ip lines.log "sshd[mode=aggressive]"
 ```
 
 For each failure that fail2ban counts, the command prints the address on a line of its own, such as `203.0.113.7`. In that case, [prevent a ban](#prevent-a-ban-by-fail2ban). If it prints nothing, fail2ban counts none of those lines in that mode, so look for another cause of the ban.
-
-<a id="prevent-a-ban-by-fail2ban" />
 
 ##### Prevent a ban by fail2ban
 
@@ -1546,11 +1494,11 @@ The following example allows connections to any host under `devboxes.example.com
 }
 ```
 
-<Warning>
-  If your organization delivers [server-managed settings](/docs/en/server-managed-settings), set `sshHostAllowlist` there. By default, Desktop reads the key only from the [highest-ranked managed source that delivers a policy key](/docs/en/managed-settings#how-claude-code-combines-managed-sources). If that source leaves the key unset, Desktop ignores a list in a lower-ranked MDM policy or managed settings file and treats the key as [unset](/docs/en/settings-reference#sshhostallowlist). Desktop shows no warning.
-
-  Also keep the same list on each user's machine, in the highest-ranked MDM policy or managed settings file there. Desktop fetches server-managed settings at launch and keeps no cached copy, so until a fetch succeeds the machine's list is the one that applies.
-</Warning>
+> [!WARNING]
+>
+> If your organization delivers [server-managed settings](/docs/en/server-managed-settings), set `sshHostAllowlist` there. By default, Desktop reads the key only from the [highest-ranked managed source that delivers a policy key](/docs/en/managed-settings#how-claude-code-combines-managed-sources). If that source leaves the key unset, Desktop ignores a list in a lower-ranked MDM policy or managed settings file and treats the key as [unset](/docs/en/settings-reference#sshhostallowlist). Desktop shows no warning.
+>
+> Also keep the same list on each user's machine, in the highest-ranked MDM policy or managed settings file there. Desktop fetches server-managed settings at launch and keeps no cached copy, so until a fetch succeeds the machine's list is the one that applies.
 
 Patterns are case-insensitive. `*` matches any host, and `*.example.com` matches `example.com` and any subdomain. Anything else is an exact match. The check runs against the hostname after `~/.ssh/config` resolution via `ssh -G`, so `Host` aliases and `ProxyCommand`/`ProxyJump` entries are permitted as long as the resolved `HostName` matches.
 
@@ -1560,9 +1508,9 @@ Patterns are case-insensitive. `*` matches any host, and `*.example.com` matches
 
 To turn off local sessions and limit SSH sessions to hosts that you choose, deploy [`disableDesktopLocalSessions`](/docs/en/settings-reference#disabledesktoplocalsessions), [`sshConfigs`](#pre-configure-ssh-connections-for-your-team), and [`sshHostAllowlist`](#restrict-which-ssh-hosts-users-can-connect-to) together.
 
-<Note>
-  This setup is for users who sign in with a Claude account. With a [third-party provider](/docs/en/third-party-integrations), SSH sessions are off by default, and setting `sshHostAllowlist` can turn them on. Read [SSH remote sessions in Claude Desktop on 3P](https://claude.com/docs/third-party/claude-desktop/ssh-remote-sessions) before you deploy these keys.
-</Note>
+> [!NOTE]
+>
+> This setup is for users who sign in with a Claude account. With a [third-party provider](/docs/en/third-party-integrations), SSH sessions are off by default, and setting `sshHostAllowlist` can turn them on. Read [SSH remote sessions in Claude Desktop on 3P](https://claude.com/docs/third-party/claude-desktop/ssh-remote-sessions) before you deploy these keys.
 
 The following example turns off local sessions, adds one connection, and limits SSH sessions to that connection's host:
 
@@ -1596,24 +1544,22 @@ Put the three keys in one [managed source](/docs/en/managed-settings#how-claude-
 
 To confirm that the settings apply, check a developer's computer:
 
-<Steps>
-  <Step title="Check the environment selector">
-    Quit and reopen Desktop, then open the [environment selector](#start-a-session). The settings applied if it shows:
+**1. Check the environment selector**
 
-    * The entry for that computer, in gray
-    * **Shared Dev VM** under **SSH**. If it isn't listed there, click the single **SSH** row, or **More** at the end of the group.
+Quit and reopen Desktop, then open the [environment selector](#start-a-session). The settings applied if it shows:
 
-    If the entry for the computer is still available, check for these causes:
+* The entry for that computer, in gray
+* **Shared Dev VM** under **SSH**. If it isn't listed there, click the single **SSH** row, or **More** at the end of the group.
 
-    * **Desktop version**: update Desktop if it's earlier than v1.37937.0.
-    * **Managed settings file**: make sure that the file is valid JSON.
-    * **Managed source**: make sure that the computer reads the [managed source](/docs/en/managed-settings#how-claude-code-combines-managed-sources) that holds the keys.
-  </Step>
+If the entry for the computer is still available, check for these causes:
 
-  <Step title="Add a host that isn't on the allowlist">
-    [Add an SSH connection](#ssh-sessions) with a hostname that isn't on the allowlist, such as `other.example.com`. Desktop saves the connection but refuses to connect, and says that your organization's settings don't allow the connection.
-  </Step>
-</Steps>
+* **Desktop version**: update Desktop if it's earlier than v1.37937.0.
+* **Managed settings file**: make sure that the file is valid JSON.
+* **Managed source**: make sure that the computer reads the [managed source](/docs/en/managed-settings#how-claude-code-combines-managed-sources) that holds the keys.
+
+**2. Add a host that isn't on the allowlist**
+
+[Add an SSH connection](#ssh-sessions) with a hostname that isn't on the allowlist, such as `other.example.com`. Desktop saves the connection but refuses to connect, and says that your organization's settings don't allow the connection.
 
 ## Enterprise configuration
 
@@ -1629,13 +1575,13 @@ These settings are configured through the [admin settings console](https://claud
 
 In Enterprise organizations that have HIPAA enabled, the **Desktop** toggle is off by default and an [Owner](/docs/en/server-managed-settings#access-control) can turn it on. Applying the [HIPAA configuration](/docs/en/hipaa-setup) turns it off, even if it was on, so an Owner has to turn it on afterward. **Cloud sessions** and **Remote Control** are also off by default, and an Owner can't turn them on once the organization has the HIPAA configuration applied.
 
-<Note>
-  The OpenTelemetry form for Cowork under **Monitoring** in the admin console's [Data and privacy settings](https://claude.ai/admin-settings/data-privacy-controls) applies to Cowork sessions only. In a Cowork session on this machine, the desktop app passes that collector to Claude Code as `OTEL_*` environment variables, so the form takes effect even though Claude Code in that session [never fetches admin-console settings](#managed-settings).
-
-  To export telemetry from Code tab sessions, set `CLAUDE_CODE_ENABLE_TELEMETRY` and the `OTEL_*` variables in the `env` block of your Claude Code managed settings, as shown in [administrator configuration for monitoring](/docs/en/monitoring-usage#administrator-configuration). Local, cloud, and SSH sessions each read [managed settings from different sources](#managed-settings). For the hosts a cloud session can reach, see [network access](/docs/en/cloud-environments#network-access). For the `service.name` that Code tab sessions report, see [service information](/docs/en/monitoring-usage#service-information).
-
-  To find out which remote machine an SSH session ran on, see [Attribute telemetry to Desktop SSH sessions](/docs/en/monitoring-usage#attribute-telemetry-to-desktop-ssh-sessions).
-</Note>
+> [!NOTE]
+>
+> The OpenTelemetry form for Cowork under **Monitoring** in the admin console's [Data and privacy settings](https://claude.ai/admin-settings/data-privacy-controls) applies to Cowork sessions only. In a Cowork session on this machine, the desktop app passes that collector to Claude Code as `OTEL_*` environment variables, so the form takes effect even though Claude Code in that session [never fetches admin-console settings](#managed-settings).
+>
+> To export telemetry from Code tab sessions, set `CLAUDE_CODE_ENABLE_TELEMETRY` and the `OTEL_*` variables in the `env` block of your Claude Code managed settings, as shown in [administrator configuration for monitoring](/docs/en/monitoring-usage#administrator-configuration). Local, cloud, and SSH sessions each read [managed settings from different sources](#managed-settings). For the hosts a cloud session can reach, see [network access](/docs/en/cloud-environments#network-access). For the `service.name` that Code tab sessions report, see [service information](/docs/en/monitoring-usage#service-information).
+>
+> To find out which remote machine an SSH session ran on, see [Attribute telemetry to Desktop SSH sessions](/docs/en/monitoring-usage#attribute-telemetry-to-desktop-ssh-sessions).
 
 ### Managed settings
 
@@ -1769,9 +1715,9 @@ To continue a terminal session in Desktop:
 
 Desktop continues the same session rather than a copy, so `claude --resume` in the terminal still finds it afterwards.
 
-<Tip>
-  When to use Desktop vs CLI: use Desktop when you want to manage parallel sessions in one window, arrange panes side by side, or review changes visually. Use the CLI when you need scripting, automation, or prefer a terminal workflow.
-</Tip>
+> [!TIP]
+>
+> When to use Desktop vs CLI: use Desktop when you want to manage parallel sessions in one window, arrange panes side by side, or review changes visually. Use the CLI when you need scripting, automation, or prefer a terminal workflow.
 
 ### CLI flag equivalents
 
@@ -1808,9 +1754,9 @@ If you define the same server name in `claude_desktop_config.json` and in `~/.cl
 
 The app also re-delivers stdio servers from `~/.claude.json` to the embedded CLI in local sessions. When the top level of `~/.claude.json` (user scope) and `.mcp.json` define the same stdio server name, the Code tab uses the `~/.claude.json` definition, departing from the CLI [scope hierarchy](/docs/en/mcp#scope-hierarchy-and-precedence).
 
-<Note>
-  The standalone CLI does not read `claude_desktop_config.json`. On macOS and WSL, run `claude mcp add-from-claude-desktop` to copy those servers into `~/.claude.json`. See [Import MCP servers from Claude Desktop](/docs/en/mcp#import-mcp-servers-from-claude-desktop) for the import flow and scope options.
-</Note>
+> [!NOTE]
+>
+> The standalone CLI does not read `claude_desktop_config.json`. On macOS and WSL, run `claude mcp add-from-claude-desktop` to copy those servers into `~/.claude.json`. See [Import MCP servers from Claude Desktop](/docs/en/mcp#import-mcp-servers-from-claude-desktop) for the import flow and scope options.
 
 ### Feature comparison
 
@@ -1924,8 +1870,6 @@ Find the card's title, or the code that ends the error message, in this table, t
 | `Claude Code won't start on <host>` | `[CLI_UNRESPONSIVE]` | Wait a minute, then try again. If it keeps failing, run the command that the message names on the remote machine to see whether Claude Code answers there. |
 
 For any other message, check the [remote machine requirements](#remote-machine-requirements-for-ssh-sessions).
-
-<a id="get-desktops-logs-for-an-ssh-problem" />
 
 ### Get Desktop's logs for an SSH problem
 

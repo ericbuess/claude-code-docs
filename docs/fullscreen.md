@@ -6,17 +6,17 @@
 
 > Enable a smoother, flicker-free rendering mode with mouse support and stable memory usage in long conversations.
 
-<Note>
-  Fullscreen rendering is a [research preview](#research-preview). Whether you [start in fullscreen or in the classic renderer](#fullscreen-by-default) depends on your setup. Run `/tui fullscreen` or `/tui default` to switch in your current conversation. Behavior may change based on feedback.
-</Note>
+> [!NOTE]
+>
+> Fullscreen rendering is a [research preview](#research-preview). Whether you [start in fullscreen or in the classic renderer](#fullscreen-by-default) depends on your setup. Run `/tui fullscreen` or `/tui default` to switch in your current conversation. Behavior may change based on feedback.
 
 Fullscreen rendering is an alternative rendering path for the Claude Code CLI that eliminates flicker, keeps memory usage flat in long conversations, and adds mouse support. It draws the interface on the terminal's alternate screen buffer, like `vim` or `htop`, and only renders messages that are currently visible. This reduces the amount of data sent to your terminal on each update.
 
 The difference is most noticeable in terminal emulators where rendering throughput is the bottleneck, such as the VS Code integrated terminal, tmux, and iTerm2. If your terminal scroll position jumps to the top while Claude is working, or the screen flashes as tool output streams in, this mode addresses those.
 
-<Note>
-  The term fullscreen describes how Claude Code takes over the terminal's drawing surface, the way `vim` does. It has nothing to do with maximizing your terminal window, and works at any window size.
-</Note>
+> [!NOTE]
+>
+> The term fullscreen describes how Claude Code takes over the terminal's drawing surface, the way `vim` does. It has nothing to do with maximizing your terminal window, and works at any window size.
 
 ## Enable fullscreen rendering
 
@@ -298,9 +298,7 @@ CLAUDE_CODE_ALT_SCREEN_FULL_REPAINT=1 claude
 
 On Windows, Claude Code already enables full repaint automatically for background sessions and [agent view](/docs/en/agent-view), so you only need to set the variable for an interactive fullscreen session you launched directly.
 
-<h3 id="fullscreen-renderer-didnt-finish-starting">
-  `Claude Code's fullscreen renderer didn't finish starting last time` appears at startup
-</h3>
+### `Claude Code's fullscreen renderer didn't finish starting last time` appears at startup
 
 If a fullscreen session on this machine crashes before it has started successfully, Claude Code starts your next session in the classic renderer and prints one of two lines. A session has started successfully once it has drawn its first frame and then either stayed up for 10 seconds or you ended it with `/exit`, Ctrl+C, or Ctrl+D. The line you see tells you what Claude Code does after this session:
 

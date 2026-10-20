@@ -63,9 +63,9 @@ The right combination depends on your threat model and operational requirements.
 
 Different isolation technologies offer different tradeoffs between security strength, performance, and operational complexity.
 
-<Info>
-  In all of these configurations, Claude Code (or your Agent SDK application) runs inside the isolation boundary (the sandbox, container, or VM). The security controls described below restrict what the agent can access from within that boundary.
-</Info>
+> [!NOTE]
+>
+> In all of these configurations, Claude Code (or your Agent SDK application) runs inside the isolation boundary (the sandbox, container, or VM). The security controls described below restrict what the agent can access from within that boundary.
 
 | Technology | Isolation strength | Performance overhead | Complexity |
 | - | - | - | - |
@@ -281,9 +281,9 @@ This approach handles any HTTP-based service without writing custom tools, but a
 
 Note that not all programs respect `HTTP_PROXY`/`HTTPS_PROXY`. Most tools (curl, pip, npm, git) do, but some may bypass these variables and connect directly. For example, Node.js `fetch()` ignores these variables by default; in Node 24+ you can set `NODE_USE_ENV_PROXY=1` to enable support. To cover tools that ignore these variables, you can use [proxychains](https://github.com/haad/proxychains) to intercept network calls, or configure iptables to redirect outbound traffic to a transparent proxy.
 
-<Info>
-  A **transparent proxy** intercepts traffic at the network level, so the client doesn't need to be configured to use it. Regular proxies require clients to explicitly connect and speak HTTP CONNECT or SOCKS. Transparent proxies (like Squid or mitmproxy in transparent mode) can handle raw redirected TCP connections.
-</Info>
+> [!NOTE]
+>
+> A **transparent proxy** intercepts traffic at the network level, so the client doesn't need to be configured to use it. Regular proxies require clients to explicitly connect and speak HTTP CONNECT or SOCKS. Transparent proxies (like Squid or mitmproxy in transparent mode) can handle raw redirected TCP connections.
 
 Both approaches still require the TLS-terminating proxy and trusted CA certificate. They just ensure traffic actually reaches the proxy.
 
@@ -299,24 +299,24 @@ When the agent needs to analyze code but not modify it, mount the directory read
 docker run -v /path/to/code:/workspace:ro agent-image
 ```
 
-<Warning>
-  Even read-only access to a code directory can expose credentials. Common files to exclude or sanitize before mounting:
-
-  | File | Risk |
-  | - | - |
-  | `.env`, `.env.local` | API keys, database passwords, secrets |
-  | `~/.git-credentials` | Git passwords/tokens in plaintext |
-  | `~/.aws/credentials` | AWS access keys |
-  | `~/.config/gcloud/application_default_credentials.json` | Google Cloud ADC tokens |
-  | `~/.azure/` | Azure CLI credentials |
-  | `~/.docker/config.json` | Docker registry auth tokens |
-  | `~/.kube/config` | Kubernetes cluster credentials |
-  | `.npmrc`, `.pypirc` | Package registry tokens |
-  | `*-service-account.json` | GCP service account keys |
-  | `*.pem`, `*.key` | Private keys |
-
-  Consider copying only the source files needed, or using `.dockerignore`-style filtering.
-</Warning>
+> [!WARNING]
+>
+> Even read-only access to a code directory can expose credentials. Common files to exclude or sanitize before mounting:
+>
+> | File | Risk |
+> | - | - |
+> | `.env`, `.env.local` | API keys, database passwords, secrets |
+> | `~/.git-credentials` | Git passwords/tokens in plaintext |
+> | `~/.aws/credentials` | AWS access keys |
+> | `~/.config/gcloud/application_default_credentials.json` | Google Cloud ADC tokens |
+> | `~/.azure/` | Azure CLI credentials |
+> | `~/.docker/config.json` | Docker registry auth tokens |
+> | `~/.kube/config` | Kubernetes cluster credentials |
+> | `.npmrc`, `.pypirc` | Package registry tokens |
+> | `*-service-account.json` | GCP service account keys |
+> | `*.pem`, `*.key` | Private keys |
+>
+> Consider copying only the source files needed, or using `.dockerignore`-style filtering.
 
 ### Writable locations
 

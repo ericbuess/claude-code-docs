@@ -6,9 +6,9 @@
 
 > Set up your first self-hosted environment: install Claude Code, create the environment, start a runner, and route a session to it.
 
-<Note>
-  Self-hosted environments are in public beta on Team and Enterprise plans; [Availability and limitations](/docs/en/self-hosted-environments#availability-and-limitations) covers the enablement path. This page gets your first session running; see [Self-hosted environments](/docs/en/self-hosted-environments) for what they are and [Deploy to production](/docs/en/self-hosted-environments-deploy) for hardening and fleet recipes.
-</Note>
+> [!NOTE]
+>
+> Self-hosted environments are in public beta on Team and Enterprise plans; [Availability and limitations](/docs/en/self-hosted-environments#availability-and-limitations) covers the enablement path. This page gets your first session running; see [Self-hosted environments](/docs/en/self-hosted-environments) for what they are and [Deploy to production](/docs/en/self-hosted-environments-deploy) for hardening and fleet recipes.
 
 A [self-hosted environment](/docs/en/self-hosted-environments) runs Claude Code [cloud sessions](/docs/en/claude-code-on-the-web) on infrastructure your organization operates, executed by runner processes you deploy. This quickstart stands up your first one, the smallest that works: one runner on a single host, running one test session. There are two steps: [create the environment, start a runner, and route a session to it](#set-up-an-environment-and-runner), then [message that session from your terminal](#send-a-follow-up-message-to-a-running-session). You'll move between two surfaces: claude.ai for creating the environment, checking its status, and routing a session, and a terminal on the host for everything the runner does.
 
@@ -69,60 +69,58 @@ The setup doesn't start a test session itself: it tells you to start one at clau
 
 Create the environment on claude.ai, start the runner from a terminal on the host, then return to claude.ai to confirm the runner appears and route a session to it. If someone who holds the Owner role already created the environment and handed you its secret, start at step 2.
 
-<Steps>
-  <Step title="Create an environment">
-    Go to the [**Cloud environments** page](https://claude.ai/admin-settings/cloud-environments) in admin settings. Under **Self-hosted environments**, select **New**, name the environment, and select **Create**. On the wizard's second step, select **Copy environment key** to copy the environment secret, which the admin UI labels an environment key. claude.ai shows the secret once, and you can't retrieve it later; it expires 365 days after creation. The environment's `ccpool_...` ID stays visible in its detail dialog; you'll need it for the `aud` check in [token verification](/docs/en/self-hosted-environments-identity) and for dispatching [test sessions from CI](/docs/en/self-hosted-environments-testing#run-the-test-loop).
+**1. Create an environment**
 
-    If you lose the secret or need to rotate it, create a new secret from the environment's **Configuration** tab, roll the new secret out to your runners, then revoke the old one. Runners holding a revoked secret fail their next authenticated poll and exit, logging `poll auth failed`, and your orchestrator restarts them with the new secret.
-  </Step>
+Go to the [**Cloud environments** page](https://claude.ai/admin-settings/cloud-environments) in admin settings. Under **Self-hosted environments**, select **New**, name the environment, and select **Create**. On the wizard's second step, select **Copy environment key** to copy the environment secret, which the admin UI labels an environment key. claude.ai shows the secret once, and you can't retrieve it later; it expires 365 days after creation. The environment's `ccpool_...` ID stays visible in its detail dialog; you'll need it for the `aud` check in [token verification](/docs/en/self-hosted-environments-identity) and for dispatching [test sessions from CI](/docs/en/self-hosted-environments-testing#run-the-test-loop).
 
-  <Step title="Start a runner">
-    Create the secret directory. This command and the next use `/etc/claude`, which needs root, and the secret file they create is readable only by the user who runs them. If the runner will run as another user, it exits with `error: Failed to read environment secret file <path> (EACCES: permission denied, open '<path>')`. In that case, run both commands as the runner's user with a directory that user can write to in place of `/etc/claude`, and pass the same path to `--environment-secret-file`. Any path the runner process can read works.
+If you lose the secret or need to rotate it, create a new secret from the environment's **Configuration** tab, roll the new secret out to your runners, then revoke the old one. Runners holding a revoked secret fail their next authenticated poll and exit, logging `poll auth failed`, and your orchestrator restarts them with the new secret.
 
-    ```bash theme={null}
-    mkdir -p /etc/claude
-    ```
+**2. Start a runner**
 
-    Write the environment secret to a file. The command below reads from your terminal so the secret stays out of shell history: paste the value you copied, press Enter, then Ctrl-D, and the subshell's `umask` makes the file readable only by its owner.
+Create the secret directory. This command and the next use `/etc/claude`, which needs root, and the secret file they create is readable only by the user who runs them. If the runner will run as another user, it exits with `error: Failed to read environment secret file <path> (EACCES: permission denied, open '<path>')`. In that case, run both commands as the runner's user with a directory that user can write to in place of `/etc/claude`, and pass the same path to `--environment-secret-file`. Any path the runner process can read works.
 
-    ```bash theme={null}
-    (umask 077 && cat > /etc/claude/environment-secret)
-    ```
+```bash theme={null}
+mkdir -p /etc/claude
+```
 
-    Choose a base directory, replacing `<writable-dir>` in the runner command below with an absolute path that the runner can write to or create. The runner creates the directory at startup, then checks repositories out and creates per-session directories under it. Without `--base-dir` it uses `/workspace`, which only works if that directory already exists and is writable or you start the runner as root.
+Write the environment secret to a file. The command below reads from your terminal so the secret stays out of shell history: paste the value you copied, press Enter, then Ctrl-D, and the subshell's `umask` makes the file readable only by its owner.
 
-    <Warning>
-      Use a directory dedicated to the runner, not your home directory or a directory of your own clones. The runner treats whatever it finds at `<writable-dir>/<repo-owner>/<repo>` as its own clone, and can reset it and overwrite or delete files in it.
-    </Warning>
+```bash theme={null}
+(umask 077 && cat > /etc/claude/environment-secret)
+```
 
-    If the runner can't create or write to the base directory, it exits at startup with an error naming the directory instead of registering. See [Troubleshooting](/docs/en/self-hosted-environments-deploy#troubleshooting).
+Choose a base directory, replacing `<writable-dir>` in the runner command below with an absolute path that the runner can write to or create. The runner creates the directory at startup, then checks repositories out and creates per-session directories under it. Without `--base-dir` it uses `/workspace`, which only works if that directory already exists and is writable or you start the runner as root.
 
-    Then start the runner with `--environment-secret-file` and `--base-dir`:
+> [!WARNING]
+>
+> Use a directory dedicated to the runner, not your home directory or a directory of your own clones. The runner treats whatever it finds at `<writable-dir>/<repo-owner>/<repo>` as its own clone, and can reset it and overwrite or delete files in it.
 
-    ```bash theme={null}
-    claude self-hosted-runner --environment-secret-file '/etc/claude/environment-secret' --base-dir '<writable-dir>'
-    ```
+If the runner can't create or write to the base directory, it exits at startup with an error naming the directory instead of registering. See [Troubleshooting](/docs/en/self-hosted-environments-deploy#troubleshooting).
 
-    The runner logs `Registered: runner_id=<runner-id>` once it has registered with your environment, then begins polling for work. Started with this command, it exits by design after serving one session, not after each turn. To serve more sessions, start the runner again each time it exits. See [If the runner exits](#if-the-runner-exits) for when that happens and what the runner logs.
-  </Step>
+Then start the runner with `--environment-secret-file` and `--base-dir`:
 
-  <Step title="Verify the runner appears">
-    Return to the [**Cloud environments** page](https://claude.ai/admin-settings/cloud-environments). Your environment's status changes from **No runners deployed** to **Healthy** within a few seconds of the runner starting; open the environment and select **Activity** to see the runner itself. If you don't have access to the admin page, the `Registered: runner_id=<runner-id>` line in the runner's log from the previous step gives you the same signal.
-  </Step>
+```bash theme={null}
+claude self-hosted-runner --environment-secret-file '/etc/claude/environment-secret' --base-dir '<writable-dir>'
+```
 
-  <Step title="Route a session to the environment">
-    <span id="route-a-session" />Start a session at claude.ai/code and select your environment from the environment picker, where self-hosted environments appear alongside Anthropic-hosted ones. For the repository, pick the one from the [prerequisites](#host-and-network): a public repository, or one this host can already clone by its HTTPS URL without being asked for credentials.
+The runner logs `Registered: runner_id=<runner-id>` once it has registered with your environment, then begins polling for work. Started with this command, it exits by design after serving one session, not after each turn. To serve more sessions, start the runner again each time it exits. See [If the runner exits](#if-the-runner-exits) for when that happens and what the runner logs.
 
-    The next available runner picks up the queued session and logs `Picked up session <session-id>` along with its active count and capacity, so you can confirm from the runner's own output which host took the session. Watch the session work and read Claude's replies at [claude.ai/code](https://claude.ai/code).
+**3. Verify the runner appears**
 
-    <span id="session-doesnt-start" />If the session doesn't start working, match what you see:
+Return to the [**Cloud environments** page](https://claude.ai/admin-settings/cloud-environments). Your environment's status changes from **No runners deployed** to **Healthy** within a few seconds of the runner starting; open the environment and select **Activity** to see the runner itself. If you don't have access to the admin page, the `Registered: runner_id=<runner-id>` line in the runner's log from the previous step gives you the same signal.
 
-    * **The session sits queued**: see [Troubleshooting](/docs/en/self-hosted-environments-deploy#troubleshooting).
-    * **The session fails to start with a git error**: if the error includes git's `could not read Username for` followed by your git host's URL, the runner had no HTTPS credentials for that host.
-      * **Supply HTTPS credentials**: see [Configure git](/docs/en/self-hosted-environments-deploy#configure-git)
-      * **Clone over SSH instead**: if the runner host already has an SSH key, see [Rewrite git URLs for private networks](/docs/en/self-hosted-environments-deploy#rewrite-git-urls-for-private-networks)
-  </Step>
-</Steps>
+**4. Route a session to the environment**
+
+Start a session at claude.ai/code and select your environment from the environment picker, where self-hosted environments appear alongside Anthropic-hosted ones. For the repository, pick the one from the [prerequisites](#host-and-network): a public repository, or one this host can already clone by its HTTPS URL without being asked for credentials.
+
+The next available runner picks up the queued session and logs `Picked up session <session-id>` along with its active count and capacity, so you can confirm from the runner's own output which host took the session. Watch the session work and read Claude's replies at [claude.ai/code](https://claude.ai/code).
+
+If the session doesn't start working, match what you see:
+
+* **The session sits queued**: see [Troubleshooting](/docs/en/self-hosted-environments-deploy#troubleshooting).
+* **The session fails to start with a git error**: if the error includes git's `could not read Username for` followed by your git host's URL, the runner had no HTTPS credentials for that host.
+  * **Supply HTTPS credentials**: see [Configure git](/docs/en/self-hosted-environments-deploy#configure-git)
+  * **Clone over SSH instead**: if the runner host already has an SSH key, see [Rewrite git URLs for private networks](/docs/en/self-hosted-environments-deploy#rewrite-git-urls-for-private-networks)
 
 ### If the runner exits
 

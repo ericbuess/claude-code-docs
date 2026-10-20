@@ -31,15 +31,13 @@ The Claude Code plugin works with most JetBrains IDEs, including:
 
 The plugin runs the `claude` command in your IDE's integrated terminal and connects to it. It does not bundle its own copy of the CLI, so install both pieces:
 
-<Steps>
-  <Step title="Install the Claude Code CLI">
-    Follow the [quickstart](/docs/en/quickstart) to install the CLI if you haven't already. The plugin shows a "Cannot launch Claude Code" notification when `claude` isn't on your PATH.
-  </Step>
+**1. Install the Claude Code CLI**
 
-  <Step title="Install the JetBrains plugin">
-    Install the [Claude Code plugin](https://plugins.jetbrains.com/plugin/27310-claude-code-beta-) from the JetBrains Marketplace and restart your IDE.
-  </Step>
-</Steps>
+Follow the [quickstart](/docs/en/quickstart) to install the CLI if you haven't already. The plugin shows a "Cannot launch Claude Code" notification when `claude` isn't on your PATH.
+
+**2. Install the JetBrains plugin**
+
+Install the [Claude Code plugin](https://plugins.jetbrains.com/plugin/27310-claude-code-beta-) from the JetBrains Marketplace and restart your IDE.
 
 If `claude` is installed somewhere your IDE can't find, set the full path in the plugin's [Claude command setting](#general-settings).
 
@@ -47,13 +45,9 @@ Claude Code works with any paid Claude subscription (Pro, Max, Team, or Enterpri
 
 ## Usage
 
-<span id="from-your-ide" />
-
 ### Run Claude Code from your IDE
 
 Run `claude` from your IDE's integrated terminal, and all integration features will be active.
-
-<span id="from-external-terminals" />
 
 ### Connect from an external terminal
 
@@ -94,9 +88,9 @@ Configure the Claude Code plugin by going to **Settings → Tools → Claude Cod
 * **Enable using Option+Enter for multi-line prompts**: on macOS only. When enabled, Option+Enter inserts new lines in Claude Code prompts. Disable if the Option key is being captured unexpectedly. Requires a terminal restart.
 * **Enable automatic updates**: automatically check for and install plugin updates, applied on restart
 
-<Tip>
-  For WSL users: Set `wsl -d Ubuntu -- bash -lic "claude"` as your Claude command (replace `Ubuntu` with your WSL distribution name)
-</Tip>
+> [!TIP]
+>
+> For WSL users: Set `wsl -d Ubuntu -- bash -lic "claude"` as your Claude command (replace `Ubuntu` with your WSL distribution name)
 
 #### ESC key configuration
 
@@ -114,9 +108,9 @@ This allows the ESC key to properly interrupt Claude Code operations.
 
 ### Remote development
 
-<Warning>
-  When using JetBrains Remote Development, you must install the plugin on the remote host via **Settings → Plugin (Host)**, not on your local client machine.
-</Warning>
+> [!WARNING]
+>
+> When using JetBrains Remote Development, you must install the plugin on the remote host via **Settings → Plugin (Host)**, not on your local client machine.
 
 ### WSL configuration
 
@@ -126,29 +120,27 @@ If you're using Claude Code on WSL2 with a JetBrains IDE and see "No available I
 
 This is the recommended fix because it keeps your existing WSL2 networking mode.
 
-<Steps>
-  <Step title="Find your WSL2 IP address">
-    From inside your WSL shell, run:
+**1. Find your WSL2 IP address**
 
-    ```bash theme={null}
-    hostname -I
-    ```
+From inside your WSL shell, run:
 
-    Note your subnet: take the first two segments of the address and follow them with `.0.0/16`. For example, if the address is `172.21.123.45`, your subnet is `172.21.0.0/16`.
-  </Step>
+```bash theme={null}
+hostname -I
+```
 
-  <Step title="Create a firewall rule">
-    Open PowerShell as Administrator and run the following, adjusting the IP range to match your subnet:
+Note your subnet: take the first two segments of the address and follow them with `.0.0/16`. For example, if the address is `172.21.123.45`, your subnet is `172.21.0.0/16`.
 
-    ```powershell theme={null}
-    New-NetFirewallRule -DisplayName "Allow WSL2 Internal Traffic" -Direction Inbound -Protocol TCP -Action Allow -RemoteAddress 172.21.0.0/16 -LocalAddress 172.21.0.0/16
-    ```
-  </Step>
+**2. Create a firewall rule**
 
-  <Step title="Restart your IDE and Claude Code">
-    Close and reopen both so the new rule takes effect.
-  </Step>
-</Steps>
+Open PowerShell as Administrator and run the following, adjusting the IP range to match your subnet:
+
+```powershell theme={null}
+New-NetFirewallRule -DisplayName "Allow WSL2 Internal Traffic" -Direction Inbound -Protocol TCP -Action Allow -RemoteAddress 172.21.0.0/16 -LocalAddress 172.21.0.0/16
+```
+
+**3. Restart your IDE and Claude Code**
+
+Close and reopen both so the new rule takes effect.
 
 #### Switch WSL2 to mirrored networking
 
@@ -227,6 +219,6 @@ The JetBrains plugin does not expose a code-execution tool to the model.
 
 **Listening interface.** Which network interface the server binds to is controlled by **Accept connections from all network interfaces** under **Settings → Tools → Claude Code \[Beta] → Networking (Advanced)**. With the setting disabled, the server listens on `127.0.0.1` only and is not reachable from other hosts. With it enabled, the port is reachable from your local network. The setting exists for cases where the CLI cannot reach the IDE over loopback, such as WSL2 with default NAT networking or a remote-IDE setup; see [WSL configuration](#wsl-configuration) for that scenario.
 
-<Warning>
-  Enabling **Accept connections from all network interfaces** makes the IDE MCP port reachable from your local network. Connections still require the auth token from the lock file, but because the transport is unencrypted `ws://`, both the session traffic and that token cross the network in cleartext when the setting is on. Only turn it on when loopback can't work. For WSL2, prefer [mirrored networking](#switch-wsl2-to-mirrored-networking) so the Windows loopback interface is shared with the Linux VM and the socket can stay on loopback.
-</Warning>
+> [!WARNING]
+>
+> Enabling **Accept connections from all network interfaces** makes the IDE MCP port reachable from your local network. Connections still require the auth token from the lock file, but because the transport is unencrypted `ws://`, both the session traffic and that token cross the network in cleartext when the setting is on. Only turn it on when loopback can't work. For WSL2, prefer [mirrored networking](#switch-wsl2-to-mirrored-networking) so the Windows loopback interface is shared with the Linux VM and the socket can stay on loopback.

@@ -10,12 +10,12 @@ Every session where a plugin is enabled includes the names and descriptions of i
 
 This page is for plugin authors and maintainers. If you administer Claude Code for an organization, [Measure across a fleet](#measure-across-a-fleet) covers the same questions across every machine.
 
-<Note>
-  These cases are covered on other pages:
-
-  * **Testing how reliably the plugin changes Claude's behavior**: see [Test plugins with evals](/docs/en/plugin-evals)
-  * **Trimming your own session's context**: see [Manage installed plugins](/docs/en/plugins/install#manage-installed-plugins) and the [context window](/docs/en/context-window) page
-</Note>
+> [!NOTE]
+>
+> These cases are covered on other pages:
+>
+> * **Testing how reliably the plugin changes Claude's behavior**: see [Test plugins with evals](/docs/en/plugin-evals)
+> * **Trimming your own session's context**: see [Manage installed plugins](/docs/en/plugins/install#manage-installed-plugins) and the [context window](/docs/en/context-window) page
 
 Start with [Measure what a plugin costs](#measure-what-a-plugin-costs).
 
@@ -125,9 +125,7 @@ If you administer Claude Code for an organization, you can measure plugin cost a
 * **OpenTelemetry events**: Claude Code exports these to your own backend once you [configure an exporter](/docs/en/monitoring-usage). See [OpenTelemetry events for plugin installs and use](#pick-the-opentelemetry-event-for-each-question).
 * **Analytics API**: served from Anthropic's records, with no exporter needed. See [Query the Analytics API](#query-the-analytics-api).
 
-<h3 id="pick-the-opentelemetry-event-for-each-question">
-  OpenTelemetry events for plugin installs and use
-</h3>
+### OpenTelemetry events for plugin installs and use
 
 These OpenTelemetry events and attributes answer each plugin question from your backend:
 

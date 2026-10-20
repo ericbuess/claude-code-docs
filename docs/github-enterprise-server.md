@@ -6,9 +6,9 @@
 
 > Connect Claude Code to your self-hosted GitHub Enterprise Server instance for cloud sessions, code review, and plugin marketplaces.
 
-<Note>
-  GitHub Enterprise Server support is available for Team and Enterprise plans.
-</Note>
+> [!NOTE]
+>
+> GitHub Enterprise Server support is available for Team and Enterprise plans.
 
 GitHub Enterprise Server (GHES) support lets your organization use Claude Code with repositories hosted on your self-managed GitHub instance instead of github.com. Once an Owner connects your GHES instance, developers can run cloud sessions and get automated code reviews without any per-repository configuration. Plugin marketplaces hosted on your instance are also supported; credential requirements vary by surface, as described in [Plugin marketplaces on GHES](#plugin-marketplaces-on-ghes).
 
@@ -35,27 +35,25 @@ An Owner connects your GHES instance to Claude Code once. You need the Owner or 
 
 The guided setup generates a GitHub App manifest and redirects you to your GHES instance to create the app in one click. If your environment blocks the redirect flow, an [alternative manual setup](#manual-setup) is available.
 
-<Steps>
-  <Step title="Open Git providers settings">
-    Go to [**Organization settings > Git providers**](https://claude.ai/admin-settings/source-control#github-enterprise) and find the GitHub Enterprise section.
-  </Step>
+**1. Open Git providers settings**
 
-  <Step title="Start the guided setup">
-    Click **Connect**, or **Add instance** if an instance is already connected, then select **Set up automatically**. Enter a display name of up to 20 characters for the connection and your GHES hostname, for example `github.example.com`. If your GHES instance uses a self-signed or private certificate authority, paste the CA certificate in the optional field.
-  </Step>
+Go to [**Organization settings > Git providers**](https://claude.ai/admin-settings/source-control#github-enterprise) and find the GitHub Enterprise section.
 
-  <Step title="Create the GitHub App">
-    Click **Continue to GitHub Enterprise**. Your browser redirects to your GHES instance with a pre-filled app manifest. Review the configuration and click **Create GitHub App**. GHES redirects you back to Claude with the app credentials stored automatically.
-  </Step>
+**2. Start the guided setup**
 
-  <Step title="Install the app on your repositories">
-    From the GitHub App page on your GHES instance, install the app on the repositories or organizations you want Claude to access. You can start with a subset and add more later.
-  </Step>
+Click **Connect**, or **Add instance** if an instance is already connected, then select **Set up automatically**. Enter a display name of up to 20 characters for the connection and your GHES hostname, for example `github.example.com`. If your GHES instance uses a self-signed or private certificate authority, paste the CA certificate in the optional field.
 
-  <Step title="Enable Code Review">
-    Go to [claude.ai/admin-settings/claude-code](https://claude.ai/admin-settings/claude-code) and enable [Code Review](/docs/en/code-review-setup) for your GHES repositories using the same configuration as github.com.
-  </Step>
-</Steps>
+**3. Create the GitHub App**
+
+Click **Continue to GitHub Enterprise**. Your browser redirects to your GHES instance with a pre-filled app manifest. Review the configuration and click **Create GitHub App**. GHES redirects you back to Claude with the app credentials stored automatically.
+
+**4. Install the app on your repositories**
+
+From the GitHub App page on your GHES instance, install the app on the repositories or organizations you want Claude to access. You can start with a subset and add more later.
+
+**5. Enable Code Review**
+
+Go to [claude.ai/admin-settings/claude-code](https://claude.ai/admin-settings/claude-code) and enable [Code Review](/docs/en/code-review-setup) for your GHES repositories using the same configuration as github.com.
 
 ### GitHub App permissions
 
@@ -124,9 +122,9 @@ Host plugin marketplaces on your GHES instance to distribute internal tooling ac
 | claude.ai user settings | Anthropic's backend fetches the repository using the submitting user's GitHub Enterprise connection | Their own GitHub Enterprise account connected to Claude |
 | Cloud sessions | Cloud sessions clone marketplaces inside the session sandbox. The sandbox can reach your GHES instance only when the session's repository is on that same instance, and its git credentials are scoped to the session's repositories | Not reliable for GHES-hosted marketplaces: a different host than the session's repository is not reachable, and even same-instance installs can fail. Use the CLI, managed settings, or claude.ai instead |
 
-<Warning>
-  GitHub Enterprise connections on claude.ai are per user when a marketplace is added from user settings. The [admin setup](#admin-setup) connects your GHES instance to your organization, but it does not connect individual user accounts: each user who adds a GHES marketplace from their own settings must first connect their own GitHub Enterprise account, and one user's connection, including the Owner's, does not cover anyone else. Marketplaces added by an Owner in the organization plugin settings do not put this requirement on users, because ongoing fetches use the organization's GitHub App. The Owner adding the marketplace still needs their own GitHub Enterprise account connected at add time.
-</Warning>
+> [!WARNING]
+>
+> GitHub Enterprise connections on claude.ai are per user when a marketplace is added from user settings. The [admin setup](#admin-setup) connects your GHES instance to your organization, but it does not connect individual user accounts: each user who adds a GHES marketplace from their own settings must first connect their own GitHub Enterprise account, and one user's connection, including the Owner's, does not cover anyone else. Marketplaces added by an Owner in the organization plugin settings do not put this requirement on users, because ongoing fetches use the organization's GitHub App. The Owner adding the marketplace still needs their own GitHub Enterprise account connected at add time.
 
 ### Add a GHES marketplace
 

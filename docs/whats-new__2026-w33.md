@@ -6,82 +6,52 @@
 
 > Claude Code Desktop auto-continues after a usage limit resets, fork mode turns on by default, and GitLab merge requests and marketplaces join GitHub.
 
-<div className="digest-meta">
-  <span>Releases <a href="/docs/en/changelog#2-1-225">v2.1.225 → v2.1.233</a></span>
-  <span>3 features · August 10–14</span>
-</div>
+Releases [v2.1.225 → v2.1.233](/docs/en/changelog#2-1-225)
+3 features · August 10–14
 
-<div className="digest-feature">
-  <div className="digest-feature-header">
-    <span className="digest-feature-title">Auto-continue after a usage limit on Desktop</span>
-    <span className="digest-feature-pill">Desktop</span>
-  </div>
+Auto-continue after a usage limit on Desktop
+Desktop
 
-  <p className="digest-feature-lede">When you hit your session limit in the Code tab of Claude Code Desktop, the limit card now offers an <strong>Auto-continue when limits reset</strong> checkbox. Check it, and the Desktop app retries the interrupted turn after the reset. The card shows the retry time. The weekly-limit card doesn't offer it.</p>
+When you hit your session limit in the Code tab of Claude Code Desktop, the limit card now offers an **Auto-continue when limits reset** checkbox. Check it, and the Desktop app retries the interrupted turn after the reset. The card shows the retry time. The weekly-limit card doesn't offer it.
 
-  <Frame>
-    <video autoPlay muted loop playsInline className="w-full" src="https://mintcdn.com/claude-code/2SnAdpL4dJ18nKb3/images/whats-new/desktop-auto-continue.mp4?fit=max&auto=format&n=2SnAdpL4dJ18nKb3&q=85&s=1937f489695feaea715e48ecfd7e62cd" data-path="images/whats-new/desktop-auto-continue.mp4" />
-  </Frame>
+<video autoPlay muted loop playsInline src="https://mintcdn.com/claude-code/2SnAdpL4dJ18nKb3/images/whats-new/desktop-auto-continue.mp4?fit=max&auto=format&n=2SnAdpL4dJ18nKb3&q=85&s=1937f489695feaea715e48ecfd7e62cd" />
 
-  <p className="digest-feature-try">The next time a session-limit card appears, check <strong>Auto-continue when limits reset</strong> and leave the session open. The card shows <code>Auto-resuming at</code> followed by the reset time, and the turn picks up on its own once the limit resets.</p>
+The next time a session-limit card appears, check **Auto-continue when limits reset** and leave the session open. The card shows `Auto-resuming at` followed by the reset time, and the turn picks up on its own once the limit resets.
 
-  <a className="digest-feature-link" href="/docs/en/errors#youve-hit-your-session-limit">What to do when you hit a usage limit</a>
-</div>
+[What to do when you hit a usage limit](/docs/en/errors#youve-hit-your-session-limit)
 
-<div className="digest-feature">
-  <div className="digest-feature-header">
-    <span className="digest-feature-title">Fork mode on by default</span>
-    <span className="digest-feature-pill">v2.1.232</span>
-  </div>
+Fork mode on by default
+v2.1.232
 
-  <p className="digest-feature-lede">Fork mode is now on by default in interactive sessions. Claude can request the <code>fork</code> subagent type, which inherits the full conversation and prompt cache instead of starting fresh, so you don't have to re-explain the context for a side task. Subagents Claude spawns in interactive sessions, apart from the ones an agent-team teammate spawns, also run in the background by default.</p>
+Fork mode is now on by default in interactive sessions. Claude can request the `fork` subagent type, which inherits the full conversation and prompt cache instead of starting fresh, so you don't have to re-explain the context for a side task. Subagents Claude spawns in interactive sessions, apart from the ones an agent-team teammate spawns, also run in the background by default.
 
-  <p className="digest-feature-try">Start a fork yourself with a task that needs everything you've discussed so far:</p>
+Start a fork yourself with a task that needs everything you've discussed so far:
 
-  ```text Claude Code theme={null}
-  > /subtask draft unit tests for the parser changes so far
-  ```
+```text Claude Code theme={null}
+> /subtask draft unit tests for the parser changes so far
+```
 
-  <p className="digest-feature-try">The fork appears in the panel below your prompt and its result arrives in your conversation when it finishes. To turn fork mode off, set <code>CLAUDE\_CODE\_FORK\_SUBAGENT=0</code>.</p>
+The fork appears in the panel below your prompt and its result arrives in your conversation when it finishes. To turn fork mode off, set `CLAUDE_CODE_FORK_SUBAGENT=0`.
 
-  <a className="digest-feature-link" href="/docs/en/sub-agents#turn-fork-mode-on-or-off">Turn fork mode on or off</a>
-</div>
+[Turn fork mode on or off](/docs/en/sub-agents#turn-fork-mode-on-or-off)
 
-<div className="digest-feature">
-  <div className="digest-feature-header">
-    <span className="digest-feature-title">GitLab merge requests and marketplaces</span>
-    <span className="digest-feature-pill">v2.1.232</span>
-  </div>
+GitLab merge requests and marketplaces
+v2.1.232
 
-  <p className="digest-feature-lede">Plugin marketplaces clone bare <code>gitlab.com</code> URLs, including nested subgroups. On v2.1.233 or later, pass a GitLab merge request URL to `--worktree` to branch from it, and the <code>claude agents</code> view labels sessions linked to a merge request as <code>!N</code>. Claude Code also redacts GitLab token families such as <code>glpat-</code> and <code>glrt-</code>, and protects the <code>glab</code> CLI's config store the same way it protects <code>gh</code>.</p>
+Plugin marketplaces clone bare `gitlab.com` URLs, including nested subgroups. On v2.1.233 or later, pass a GitLab merge request URL to `--worktree` to branch from it, and the `claude agents` view labels sessions linked to a merge request as `!N`. Claude Code also redacts GitLab token families such as `glpat-` and `glrt-`, and protects the `glab` CLI's config store the same way it protects `gh`.
 
-  <p className="digest-feature-try">Start a session in a worktree branched from a merge request:</p>
+Start a session in a worktree branched from a merge request:
 
-  ```bash terminal theme={null}
-  claude --worktree https://gitlab.com/group/project/-/merge_requests/42
-  ```
+```bash terminal theme={null}
+claude --worktree https://gitlab.com/group/project/-/merge_requests/42
+```
 
-  <p className="digest-feature-try">When <code>origin</code> is on gitlab.com, Claude Code fetches <code>merge-requests/42/head</code> and opens the session on that branch in its own worktree.</p>
+When `origin` is on gitlab.com, Claude Code fetches `merge-requests/42/head` and opens the session on that branch in its own worktree.
 
-  <a className="digest-feature-link" href="/docs/en/worktrees#branch-from-a-pull-request">Branch a worktree from a pull or merge request</a>
-</div>
+[Branch a worktree from a pull or merge request](/docs/en/worktrees#branch-from-a-pull-request)
 
-<div className="digest-wins">
-  <p className="digest-wins-title">Other wins</p>
+Other wins
 
-  <div className="digest-wins-grid">
-    <div>Type <code>@</code> in the prompt to <a href="/docs/en/cross-session-messaging#message-another-session">mention another Claude session</a> by name, and Claude messages it directly with <code>SendMessage</code>; a bare name that matches exactly one live session now delivers without a confirmation step</div>
-    <div>Interactive sessions on one machine keep <a href="/docs/en/cross-session-messaging#see-which-sessions-claude-can-reach">unique names</a>: if you start or rename a session with a name another live session already uses, Claude Code gives yours a <code>name-word-word</code> variant and tells you</div>
-    <div>Plugin marketplaces accept <a href="/docs/en/plugins/marketplace-reference#command-plugin-source"><code>command</code> sources</a>: a local command prints the plugin directory, which Claude Code re-resolves each session and applies without a restart</div>
-    <div>On Linux and WSL, set <a href="/docs/en/tools-reference#memory-limit-on-linux-and-wsl"><code>CLAUDE\_CODE\_TOOL\_MEMORY\_LIMIT</code></a> to a size such as <code>4G</code> to cap the memory Bash and PowerShell tool commands can use</div>
-    <div>The task-tracking tools, such as <code>TaskCreate</code>, <code>TaskUpdate</code>, and <code>TodoWrite</code>, are <a href="/docs/en/tools-reference#task-tool-availability">no longer available on Opus 4.8, Sonnet 5, Fable 5, Mythos 5, and later models in those families</a>; set <code>CLAUDE\_CODE\_ENABLE\_TODO\_TOOLS=1</code> to re-enable them</div>
-    <div><a href="/docs/en/code-review-local"><code>/code-review</code></a> at high, xhigh, and max effort now runs in a background agent like the other levels</div>
-    <div><a href="/docs/en/plugins/install#install-a-plugin"><code>/plugin install plugin\@marketplace</code></a> refreshes the marketplace first, so newly published plugins install without a manual marketplace update</div>
-    <div>Settings accept <a href="/docs/en/settings-reference#marketplace-key-aliases"><code>additionalMarketplaces</code> and <code>allowedMarketplaces</code></a> as aliases for <code>extraKnownMarketplaces</code> and <code>strictKnownMarketplaces</code></div>
-    <div>On newer models, Claude can <a href="/docs/en/tools-reference#write-tool-behavior">overwrite an existing file with the Write tool</a> without reading it first this session, matching the Edit tool's rules; older models require the read</div>
-    <div>The VS Code extension can <a href="/docs/en/vs-code#organize-sessions-into-groups">organize the sessions list into groups</a>: right-click to create, rename, or delete a group, and Cmd/Ctrl- or Shift-click to move several sessions at once</div>
-    <div>If your organization routes Claude Code through a <a href="/docs/en/claude-apps-gateway-spend-limits">Claude apps gateway with spend limits</a>, Claude Code shows the limit period, its reset time, and the operator's message when you reach the limit</div>
-  </div>
-</div>
+Type `@` in the prompt to [mention another Claude session](/docs/en/cross-session-messaging#message-another-session) by name, and Claude messages it directly with `SendMessage`; a bare name that matches exactly one live session now delivers without a confirmation stepInteractive sessions on one machine keep [unique names](/docs/en/cross-session-messaging#see-which-sessions-claude-can-reach): if you start or rename a session with a name another live session already uses, Claude Code gives yours a `name-word-word` variant and tells youPlugin marketplaces accept [`command` sources](/docs/en/plugins/marketplace-reference#command-plugin-source): a local command prints the plugin directory, which Claude Code re-resolves each session and applies without a restartOn Linux and WSL, set [`CLAUDE_CODE_TOOL_MEMORY_LIMIT`](/docs/en/tools-reference#memory-limit-on-linux-and-wsl) to a size such as `4G` to cap the memory Bash and PowerShell tool commands can useThe task-tracking tools, such as `TaskCreate`, `TaskUpdate`, and `TodoWrite`, are [no longer available on Opus 4.8, Sonnet 5, Fable 5, Mythos 5, and later models in those families](/docs/en/tools-reference#task-tool-availability); set `CLAUDE_CODE_ENABLE_TODO_TOOLS=1` to re-enable them[`/code-review`](/docs/en/code-review-local) at high, xhigh, and max effort now runs in a background agent like the other levels[`/plugin install plugin@marketplace`](/docs/en/plugins/install#install-a-plugin) refreshes the marketplace first, so newly published plugins install without a manual marketplace updateSettings accept [`additionalMarketplaces` and `allowedMarketplaces`](/docs/en/settings-reference#marketplace-key-aliases) as aliases for `extraKnownMarketplaces` and `strictKnownMarketplaces`On newer models, Claude can [overwrite an existing file with the Write tool](/docs/en/tools-reference#write-tool-behavior) without reading it first this session, matching the Edit tool's rules; older models require the readThe VS Code extension can [organize the sessions list into groups](/docs/en/vs-code#organize-sessions-into-groups): right-click to create, rename, or delete a group, and Cmd/Ctrl- or Shift-click to move several sessions at onceIf your organization routes Claude Code through a [Claude apps gateway with spend limits](/docs/en/claude-apps-gateway-spend-limits), Claude Code shows the limit period, its reset time, and the operator's message when you reach the limit
 
 [Full changelog for v2.1.225–v2.1.233 →](/docs/en/changelog#2-1-225)

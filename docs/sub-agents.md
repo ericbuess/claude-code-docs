@@ -10,9 +10,9 @@ Subagents are specialized AI assistants that handle specific types of tasks. Use
 
 Each subagent runs in its own context window with a custom system prompt, specific tool access, and independent permissions. It also sends its own requests, which count toward the same [usage limits](/docs/en/costs#plan-usage-breakdown) as your main conversation. When Claude encounters a task that matches a subagent's description, it delegates to that subagent, which works independently and returns results. To see the context savings in practice, the [context window visualization](/docs/en/context-window) walks through a session where a subagent handles research in its own separate window.
 
-<Note>
-  Subagents work within a single session. To run many independent sessions in parallel and monitor them from one place, see [background agents](/docs/en/agent-view). For separate sessions that pass messages to each other, see [cross-session messaging](/docs/en/cross-session-messaging). For a coordinated team of sessions Claude spawns and supervises, see [agent teams](/docs/en/agent-teams).
-</Note>
+> [!NOTE]
+>
+> Subagents work within a single session. To run many independent sessions in parallel and monitor them from one place, see [background agents](/docs/en/agent-view). For separate sessions that pass messages to each other, see [cross-session messaging](/docs/en/cross-session-messaging). For a coordinated team of sessions Claude spawns and supervises, see [agent teams](/docs/en/agent-teams).
 
 Subagents help you:
 
@@ -32,53 +32,51 @@ Claude Code includes built-in subagents that Claude automatically uses when appr
 
 Explore and Plan start without your CLAUDE.md files and the git status snapshot to keep research fast and inexpensive. Other built-in and [custom subagents](#configure-subagents) load both, unless you set [`omitClaudeMd`](#supported-frontmatter-fields) in a custom subagent's definition to start it without the user, project, and local CLAUDE.md files. For the full breakdown of what reaches a subagent, see [what loads at startup](#what-loads-at-startup).
 
-<Tabs>
-  <Tab title="Explore">
-    A fast, read-only agent optimized for searching and analyzing codebases.
+**Explore**
 
-    * **Model**: the main conversation's model. When the main conversation runs Fable, Explore's model depends on how you connect:
-      * With a Claude subscription, an Anthropic Console account, or an [LLM gateway](/docs/en/llm-gateway) reached through `ANTHROPIC_BASE_URL`, Explore runs on the Opus model that the [`opus` alias](/docs/en/model-config#model-aliases) resolves to.
-      * On Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry, [Claude Platform on AWS](/docs/en/claude-platform-on-aws), or a [Claude apps gateway](/docs/en/claude-apps-gateway), Explore stays on the main conversation's model.
-    * **Tools**: read-only tools; Write and Edit are denied
-    * **Purpose**: file discovery, code search, codebase exploration
+A fast, read-only agent optimized for searching and analyzing codebases.
 
-    A [user or project subagent](#choose-the-subagent-scope) named `Explore` overrides the built-in and keeps its own `model` field, so define one with `model: haiku` to run exploration on a lower-cost model. To force one model onto every subagent, Explore included, see [Run every subagent on one model](#run-every-subagent-on-one-model).
+* **Model**: the main conversation's model. When the main conversation runs Fable, Explore's model depends on how you connect:
+  * With a Claude subscription, an Anthropic Console account, or an [LLM gateway](/docs/en/llm-gateway) reached through `ANTHROPIC_BASE_URL`, Explore runs on the Opus model that the [`opus` alias](/docs/en/model-config#model-aliases) resolves to.
+  * On Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry, [Claude Platform on AWS](/docs/en/claude-platform-on-aws), or a [Claude apps gateway](/docs/en/claude-apps-gateway), Explore stays on the main conversation's model.
+* **Tools**: read-only tools; Write and Edit are denied
+* **Purpose**: file discovery, code search, codebase exploration
 
-    Claude delegates to Explore when it needs to search or understand a codebase without making changes. This keeps exploration results out of your main conversation context.
+A [user or project subagent](#choose-the-subagent-scope) named `Explore` overrides the built-in and keeps its own `model` field, so define one with `model: haiku` to run exploration on a lower-cost model. To force one model onto every subagent, Explore included, see [Run every subagent on one model](#run-every-subagent-on-one-model).
 
-    When invoking Explore, Claude specifies a thoroughness level: **quick** for targeted lookups, **medium** for balanced exploration, or **very thorough** for comprehensive analysis.
-  </Tab>
+Claude delegates to Explore when it needs to search or understand a codebase without making changes. This keeps exploration results out of your main conversation context.
 
-  <Tab title="Plan">
-    A research agent used during [plan mode](/docs/en/permission-modes#analyze-before-you-edit-with-plan-mode) to gather context before presenting a plan.
+When invoking Explore, Claude specifies a thoroughness level: **quick** for targeted lookups, **medium** for balanced exploration, or **very thorough** for comprehensive analysis.
 
-    * **Model**: inherits from the main conversation, unless you set `CLAUDE_CODE_SUBAGENT_MODEL` and [force it onto every subagent](#run-every-subagent-on-one-model)
-    * **Tools**: read-only tools; Write and Edit are denied
-    * **Purpose**: codebase research for planning
+**Plan**
 
-    When you're in plan mode and Claude needs to understand your codebase, it delegates research to the Plan subagent so that exploration output stays in a separate context window while the main conversation remains read-only.
-  </Tab>
+A research agent used during [plan mode](/docs/en/permission-modes#analyze-before-you-edit-with-plan-mode) to gather context before presenting a plan.
 
-  <Tab title="General-purpose">
-    A capable agent for complex, multi-step tasks that require both exploration and action.
+* **Model**: inherits from the main conversation, unless you set `CLAUDE_CODE_SUBAGENT_MODEL` and [force it onto every subagent](#run-every-subagent-on-one-model)
+* **Tools**: read-only tools; Write and Edit are denied
+* **Purpose**: codebase research for planning
 
-    * **Model**: the [`CLAUDE_CODE_SUBAGENT_MODEL`](#choose-a-model) model if you set one and nothing assigns a model another way, otherwise the main conversation's model; [Choose a model](#choose-a-model) states the full order, and [Run every subagent on one model](#run-every-subagent-on-one-model) shows how to make the variable override those sources
-    * **Tools**: every tool [available to subagents](#available-tools)
-    * **Purpose**: complex research, multi-step operations, code modifications
+When you're in plan mode and Claude needs to understand your codebase, it delegates research to the Plan subagent so that exploration output stays in a separate context window while the main conversation remains read-only.
 
-    Claude delegates to general-purpose when the task requires both exploration and modification, complex reasoning to interpret results, or multiple dependent steps.
-  </Tab>
+**General-purpose**
 
-  <Tab title="Other">
-    Claude Code includes additional helper agents for specific tasks. These are typically invoked automatically, so you don't need to use them directly.
+A capable agent for complex, multi-step tasks that require both exploration and action.
 
-    | Agent | Model | When Claude uses it |
-    | :- | :- | :- |
-    | claude | None of its own; follows the [model order](#choose-a-model) when Claude spawns it as a subagent | When a task doesn't fit a more specialized agent. A catch-all with every tool [available to subagents](#available-tools). Also the default agent for a dispatched [background session](/docs/en/agent-view); [which permission mode it starts in](/docs/en/agent-view#permission-mode-model-and-effort) depends on how the session was started |
-    | statusline-setup | Sonnet | When you run `/statusline` to configure your status line |
-    | claude-code-guide | Haiku | When you ask questions about Claude Code features |
-  </Tab>
-</Tabs>
+* **Model**: the [`CLAUDE_CODE_SUBAGENT_MODEL`](#choose-a-model) model if you set one and nothing assigns a model another way, otherwise the main conversation's model; [Choose a model](#choose-a-model) states the full order, and [Run every subagent on one model](#run-every-subagent-on-one-model) shows how to make the variable override those sources
+* **Tools**: every tool [available to subagents](#available-tools)
+* **Purpose**: complex research, multi-step operations, code modifications
+
+Claude delegates to general-purpose when the task requires both exploration and modification, complex reasoning to interpret results, or multiple dependent steps.
+
+**Other**
+
+Claude Code includes additional helper agents for specific tasks. These are typically invoked automatically, so you don't need to use them directly.
+
+| Agent | Model | When Claude uses it |
+| :- | :- | :- |
+| claude | None of its own; follows the [model order](#choose-a-model) when Claude spawns it as a subagent | When a task doesn't fit a more specialized agent. A catch-all with every tool [available to subagents](#available-tools). Also the default agent for a dispatched [background session](/docs/en/agent-view); [which permission mode it starts in](/docs/en/agent-view#permission-mode-model-and-effort) depends on how the session was started |
+| statusline-setup | Sonnet | When you run `/statusline` to configure your status line |
+| claude-code-guide | Haiku | When you ask questions about Claude Code features |
 
 Built-in subagents are registered by default in interactive sessions. To restrict them:
 
@@ -97,59 +95,57 @@ Subagents are Markdown files with YAML frontmatter. To create one, ask Claude to
 
 This walkthrough creates a user-level subagent that reviews code and suggests improvements.
 
-<Steps>
-  <Step title="Ask Claude to create the subagent">
-    In Claude Code, describe the subagent you want and where to save it:
+**1. Ask Claude to create the subagent**
 
-    ```text wrap theme={null}
-    Create a personal code-improver subagent in ~/.claude/agents/ that scans
-    files and suggests improvements for readability, performance, and best
-    practices. It should explain each issue, show the current code, and
-    provide an improved version. Make it read-only and have it use Sonnet.
-    ```
+In Claude Code, describe the subagent you want and where to save it:
 
-    Claude writes the file with a `name`, a `description`, a `tools` list, a `model`, and a system prompt.
-  </Step>
+```text wrap theme={null}
+Create a personal code-improver subagent in ~/.claude/agents/ that scans
+files and suggests improvements for readability, performance, and best
+practices. It should explain each issue, show the current code, and
+provide an improved version. Make it read-only and have it use Sonnet.
+```
 
-  <Step title="Review the file">
-    Open `~/.claude/agents/code-improver.md` and confirm the frontmatter matches what you asked for. The result looks like this:
+Claude writes the file with a `name`, a `description`, a `tools` list, a `model`, and a system prompt.
 
-    ```markdown theme={null}
-    ---
-    name: code-improver
-    description: Scans files and suggests improvements for readability, performance, and best practices. Use after writing or modifying code.
-    tools: Read, Grep, Glob
-    model: sonnet
-    ---
+**2. Review the file**
 
-    You are a code improvement specialist. For each issue you find, explain
-    the problem, show the current code, and provide an improved version.
-    ```
+Open `~/.claude/agents/code-improver.md` and confirm the frontmatter matches what you asked for. The result looks like this:
 
-    Because the file lives in `~/.claude/agents/`, the subagent is available in every project on your machine. To scope it to one project instead, move it to that project's `.claude/agents/` directory. [Choose the subagent scope](#choose-the-subagent-scope) compares the two.
-  </Step>
+```markdown theme={null}
+---
+name: code-improver
+description: Scans files and suggests improvements for readability, performance, and best practices. Use after writing or modifying code.
+tools: Read, Grep, Glob
+model: sonnet
+---
 
-  <Step title="Try it out">
-    Ask Claude to delegate to the new subagent:
+You are a code improvement specialist. For each issue you find, explain
+the problem, show the current code, and provide an improved version.
+```
 
-    ```text wrap theme={null}
-    Use the code-improver agent to suggest improvements in this project
-    ```
+Because the file lives in `~/.claude/agents/`, the subagent is available in every project on your machine. To scope it to one project instead, move it to that project's `.claude/agents/` directory. [Choose the subagent scope](#choose-the-subagent-scope) compares the two.
 
-    Claude delegates to your new subagent, which scans the codebase and returns improvement suggestions. In the transcript, the delegation appears as a tool call row showing the subagent's name followed by a short task description, such as `code-improver(Suggest code improvements)`.
+**3. Try it out**
 
-    If Claude can't find the new subagent, restart Claude Code and try again. This happens only when `~/.claude/agents/` didn't exist before the session started, because a running session doesn't detect a newly created `agents` directory.
-  </Step>
-</Steps>
+Ask Claude to delegate to the new subagent:
+
+```text wrap theme={null}
+Use the code-improver agent to suggest improvements in this project
+```
+
+Claude delegates to your new subagent, which scans the codebase and returns improvement suggestions. In the transcript, the delegation appears as a tool call row showing the subagent's name followed by a short task description, such as `code-improver(Suggest code improvements)`.
+
+If Claude can't find the new subagent, restart Claude Code and try again. This happens only when `~/.claude/agents/` didn't exist before the session started, because a running session doesn't detect a newly created `agents` directory.
 
 You now have a subagent you can use in any project on your machine to analyze codebases and suggest improvements.
 
 You can also write subagent files by hand, define them via CLI flags, or distribute them through plugins. The following sections cover all configuration options.
 
-<Note>
-  Running `/agents` prints a reminder to ask Claude or edit `.claude/agents/` and `~/.claude/agents/` directly.
-  On Claude Code v2.1.197 and earlier, `/agents` opens an interactive wizard with a **Running** tab that lists live subagents and a **Library** tab for creating, editing, and deleting them.&#x20;
-</Note>
+> [!NOTE]
+>
+> Running `/agents` prints a reminder to ask Claude or edit `.claude/agents/` and `~/.claude/agents/` directly.
+> On Claude Code v2.1.197 and earlier, `/agents` opens an interactive wizard with a **Running** tab that lists live subagents and a **Library** tab for creating, editing, and deleting them.&#x20;
 
 ## Configure subagents
 
@@ -183,43 +179,41 @@ Plugin `agents/` directories are also scanned recursively. Unlike project and us
 
 **CLI-defined subagents** are passed as JSON when launching Claude Code. They exist only for that session and aren't saved to disk, making them useful for quick testing or automation scripts. You can define multiple subagents in a single `--agents` call:
 
-<Tabs>
-  <Tab title="macOS, Linux, WSL">
-    ```bash theme={null}
-    claude --agents '{
-      "code-reviewer": {
-        "description": "Expert code reviewer. Use proactively after code changes.",
-        "prompt": "You are a senior code reviewer. Focus on code quality, security, and best practices.",
-        "tools": ["Read", "Grep", "Glob", "Bash"],
-        "model": "sonnet"
-      },
-      "debugger": {
-        "description": "Debugging specialist for errors and test failures.",
-        "prompt": "You are an expert debugger. Analyze errors, identify root causes, and provide fixes."
-      }
-    }'
-    ```
-  </Tab>
+**macOS, Linux, WSL**
 
-  <Tab title="Windows PowerShell">
-    ```powershell theme={null}
-    claude --agents @'
-    {
-      "code-reviewer": {
-        "description": "Expert code reviewer. Use proactively after code changes.",
-        "prompt": "You are a senior code reviewer. Focus on code quality, security, and best practices.",
-        "tools": ["Read", "Grep", "Glob", "Bash"],
-        "model": "sonnet"
-      },
-      "debugger": {
-        "description": "Debugging specialist for errors and test failures.",
-        "prompt": "You are an expert debugger. Analyze errors, identify root causes, and provide fixes."
-      }
-    }
-    '@
-    ```
-  </Tab>
-</Tabs>
+```bash theme={null}
+claude --agents '{
+  "code-reviewer": {
+    "description": "Expert code reviewer. Use proactively after code changes.",
+    "prompt": "You are a senior code reviewer. Focus on code quality, security, and best practices.",
+    "tools": ["Read", "Grep", "Glob", "Bash"],
+    "model": "sonnet"
+  },
+  "debugger": {
+    "description": "Debugging specialist for errors and test failures.",
+    "prompt": "You are an expert debugger. Analyze errors, identify root causes, and provide fixes."
+  }
+}'
+```
+
+**Windows PowerShell**
+
+```powershell theme={null}
+claude --agents @'
+{
+  "code-reviewer": {
+    "description": "Expert code reviewer. Use proactively after code changes.",
+    "prompt": "You are a senior code reviewer. Focus on code quality, security, and best practices.",
+    "tools": ["Read", "Grep", "Glob", "Bash"],
+    "model": "sonnet"
+  },
+  "debugger": {
+    "description": "Debugging specialist for errors and test failures.",
+    "prompt": "You are an expert debugger. Analyze errors, identify root causes, and provide fixes."
+  }
+}
+'@
+```
 
 In [non-interactive mode](/docs/en/headless), `--agents` also accepts the path to a JSON file holding the same object, for definitions too large to pass on the command line. For example, `claude -p --agents ./agents.json "Review my changes"` reads the definitions from that file. In an interactive session, Claude Code refuses a file path. The file form requires Claude Code v2.1.281 or later.
 
@@ -235,11 +229,11 @@ For what Claude Code does with a value it can't load, and the flags and environm
 
 **Plugin subagents** come from [plugins](/docs/en/plugins/overview) you've installed. They load automatically alongside your custom subagents and appear in the @-mention typeahead under their scoped name. See the [plugin components reference](/docs/en/plugins/components#agents) for details on creating plugin subagents.
 
-<Note>
-  For security reasons, plugin subagents don't support the `hooks`, `mcpServers`, or `permissionMode` frontmatter fields. These fields are ignored when loading agents from a plugin. If you need them, copy the agent file into `.claude/agents/` or `~/.claude/agents/`. You can also add rules to [`permissions.allow`](/docs/en/settings-reference#permissions-allow) in `settings.json` or `settings.local.json`, but these rules apply to the entire session, not only the plugin subagent.
-
-  If you're the plugin's author, ship the hooks in the plugin's [`hooks/hooks.json`](/docs/en/plugins/components#hooks) and the MCP servers in its [`.mcp.json`](/docs/en/plugins/components#mcp-servers) instead. They apply whenever the plugin is enabled rather than only inside the subagent.
-</Note>
+> [!NOTE]
+>
+> For security reasons, plugin subagents don't support the `hooks`, `mcpServers`, or `permissionMode` frontmatter fields. These fields are ignored when loading agents from a plugin. If you need them, copy the agent file into `.claude/agents/` or `~/.claude/agents/`. You can also add rules to [`permissions.allow`](/docs/en/settings-reference#permissions-allow) in `settings.json` or `settings.local.json`, but these rules apply to the entire session, not only the plugin subagent.
+>
+> If you're the plugin's author, ship the hooks in the plugin's [`hooks/hooks.json`](/docs/en/plugins/components#hooks) and the MCP servers in its [`.mcp.json`](/docs/en/plugins/components#mcp-servers) instead. They apply whenever the plugin is enabled rather than only inside the subagent.
 
 You can also reuse a subagent definition as an [agent team](/docs/en/agent-teams) teammate: name the subagent type when you ask Claude to spawn the teammate, and Claude Code applies parts of that definition to it. [Use subagent definitions for teammates](/docs/en/agent-teams#use-subagent-definitions-for-teammates) says which scopes and which parts apply in each display mode.
 
@@ -247,15 +241,15 @@ You can also reuse a subagent definition as an [agent team](/docs/en/agent-teams
 
 Subagent files use YAML frontmatter for configuration, followed by the system prompt in Markdown:
 
-<Note>
-  Claude Code watches `~/.claude/agents/` and `.claude/agents/`. When you add or edit a subagent file on disk, or ask Claude to write one for you, Claude Code detects the change within a few seconds and the next delegation uses the updated definition, with no restart needed.
-
-  Three cases still need a restart:
-
-  * The watcher covers only directories that existed when the session started, so after creating a scope's first agent file in a new `agents` directory, restart to load it.
-  * Claude Code doesn't watch `.claude/agents/` inside directories added with `--add-dir` or `/add-dir`, so after adding or editing a subagent there, restart to load the change.
-  * Sessions started with `--disable-slash-commands` don't watch these directories at all.
-</Note>
+> [!NOTE]
+>
+> Claude Code watches `~/.claude/agents/` and `.claude/agents/`. When you add or edit a subagent file on disk, or ask Claude to write one for you, Claude Code detects the change within a few seconds and the next delegation uses the updated definition, with no restart needed.
+>
+> Three cases still need a restart:
+>
+> * The watcher covers only directories that existed when the session started, so after creating a scope's first agent file in a new `agents` directory, restart to load it.
+> * Claude Code doesn't watch `.claude/agents/` inside directories added with `--add-dir` or `/add-dir`, so after adding or editing a subagent there, restart to load the change.
+> * Sessions started with `--disable-slash-commands` don't watch these directories at all.
 
 ```markdown .claude/agents/code-reviewer.md theme={null}
 ---
@@ -290,9 +284,7 @@ The redirect vectors and the shape rules are listed under [How Claude Code enfor
 
 When the main conversation itself runs isolated in a worktree, Claude Code applies the same checks to the session and to every subagent it spawns, including subagents without `isolation: worktree`; see [How Claude Code enforces isolation](/docs/en/worktrees#how-claude-code-enforces-isolation).
 
-<h3 id="supported-frontmatter-fields">
-  Frontmatter reference
-</h3>
+### Frontmatter reference
 
 Configure a subagent with YAML [frontmatter](/docs/en/glossary#frontmatter) between `---` markers at the top of its file, and write its system prompt as Markdown after the closing `---`. Only `name` and `description` are required.
 
@@ -501,7 +493,9 @@ A `disallowedTools` entry with a specifier, such as `Bash(git push *)`, still re
 
 When an agent runs as the main thread with `claude --agent`, it can spawn subagents using the Agent tool. To restrict which subagent types it can spawn, use `Agent(agent_type)` syntax in the `tools` field.
 
-<Note>In version 2.1.63, the Task tool was renamed to Agent. Existing `Task(...)` references in settings and agent definitions still work as aliases.</Note>
+> [!NOTE]
+>
+> In version 2.1.63, the Task tool was renamed to Agent. Existing `Task(...)` references in settings and agent definitions still work as aliases.
 
 ```yaml theme={null}
 ---
@@ -527,14 +521,14 @@ The `Agent(agent_type)` allowlist syntax applies only to an agent running as the
 
 Use the `mcpServers` field to give a subagent access to [MCP](/docs/en/mcp) servers that aren't available in the main conversation. Inline servers defined here are connected when the subagent starts, subject to the [trust rule for the agent file's folder](#inline-server-trust), and disconnected when it finishes. String references share the parent session's connection.
 
-<Note>
-  The `mcpServers` field applies in both contexts where an agent file can run:
-
-  * As a subagent, spawned through the Agent tool or an @-mention
-  * As the main session, launched with [`--agent`](#invoke-subagents-explicitly) or the `agent` setting
-
-  When the agent is the main session, inline server definitions connect at startup alongside servers from [`.mcp.json`](/docs/en/mcp) and settings files, under the same [trust rule for the agent file's folder](#inline-server-trust). In `/mcp`, a remote (HTTP or SSE) server you've used before can show the [`cached` status](/docs/en/mcp#managing-your-servers) instead; Claude Code connects it when Claude first calls one of its tools.
-</Note>
+> [!NOTE]
+>
+> The `mcpServers` field applies in both contexts where an agent file can run:
+>
+> * As a subagent, spawned through the Agent tool or an @-mention
+> * As the main session, launched with [`--agent`](#invoke-subagents-explicitly) or the `agent` setting
+>
+> When the agent is the main session, inline server definitions connect at startup alongside servers from [`.mcp.json`](/docs/en/mcp) and settings files, under the same [trust rule for the agent file's folder](#inline-server-trust). In `/mcp`, a remote (HTTP or SSE) server you've used before can show the [`cached` status](/docs/en/mcp#managing-your-servers) instead; Claude Code connects it when Claude first calls one of its tools.
 
 Each entry in the list is either an inline server definition or a string referencing an MCP server already configured in your session:
 
@@ -569,9 +563,7 @@ When one of these blocks a server, Claude Code skips it and shows a warning nami
 
 Managed-settings restrictions apply to every subagent regardless of how it is defined. `--strict-mcp-config` doesn't filter servers you pass inline via `--agents` or the SDK `agents` option, since those are explicit caller input.
 
-<h4 id="inline-server-trust">
-  Trust required for inline MCP servers
-</h4>
+#### Trust required for inline MCP servers
 
 Claude Code loads an [inline MCP server](#scope-mcp-servers-to-a-subagent) from an agent file in your project's `.claude/agents/` directory, or in an `--add-dir` directory's `.claude/agents/`, only after you [trust the folder the agent file came from](/docs/en/permissions#what-runs-before-you-trust-a-folder). Before v2.1.238, Claude Code loaded these servers without checking trust.
 
@@ -628,9 +620,9 @@ You can't preload skills that set [`disable-model-invocation: true`](/docs/en/sk
 
 If a listed skill is missing or disabled, for example by your organization's policy, Claude Code skips it and logs a warning to the debug log.
 
-<Note>
-  This is the inverse of [running a skill in a subagent](/docs/en/skills#run-skills-in-a-subagent). With `skills` in a subagent, the subagent controls the system prompt and loads skill content. With `context: fork` in a skill, the skill content is injected into the agent you specify. In both cases the subagent starts without your conversation history.
-</Note>
+> [!NOTE]
+>
+> This is the inverse of [running a skill in a subagent](/docs/en/skills#run-skills-in-a-subagent). With `skills` in a subagent, the subagent controls the system prompt and loads skill content. With `context: fork` in a skill, the skill content is injected into the agent you specify. In both cases the subagent starts without your conversation history.
 
 #### Enable persistent memory
 
@@ -758,9 +750,9 @@ Hooks from [settings files, managed policy settings, and plugins](/docs/en/hooks
 
 Define hooks directly in the subagent's markdown file. These hooks only run while that specific subagent is active and are cleaned up when it finishes.
 
-<Note>
-  Frontmatter hooks fire when the agent is spawned as a subagent through the Agent tool or an @-mention, and when the agent runs as the main session via [`--agent`](#invoke-subagents-explicitly) or the `agent` setting. In the main-session case they run alongside any hooks defined in [`settings.json`](/docs/en/hooks).
-</Note>
+> [!NOTE]
+>
+> Frontmatter hooks fire when the agent is spawned as a subagent through the Agent tool or an @-mention, and when the agent runs as the main session via [`--agent`](#invoke-subagents-explicitly) or the `agent` setting. In the main-session case they run alongside any hooks defined in [`settings.json`](/docs/en/hooks).
 
 To let a project-level subagent's frontmatter hooks run, accept the [workspace trust dialog](/docs/en/permissions#project-allow-rules-and-workspace-trust) for the folder that contains the agent file. Hooks from user-level subagents in `~/.claude/agents/` and from definitions you pass with `--agents` run without this step. If you added a folder with `--add-dir` from outside your trusted workspace's repository, trust that folder separately: its `.claude/agents/` hooks don't inherit the workspace's grant.
 
@@ -1013,9 +1005,9 @@ Research the authentication, database, and API modules in parallel using separat
 
 Each subagent explores its area independently, then Claude synthesizes the findings. This works best when the research paths don't depend on each other.
 
-<Warning>
-  When subagents complete, their results return to your main conversation. Running many subagents that each return detailed results can consume significant context, and each subagent spends tokens of its own while it runs.
-</Warning>
+> [!WARNING]
+>
+> When subagents complete, their results return to your main conversation. Running many subagents that each return detailed results can consume significant context, and each subagent spends tokens of its own while it runs.
 
 For work that needs to keep running in parallel or won't fit in one context window, run it in [separate sessions](/docs/en/agents) and let Claude [pass findings between them](/docs/en/cross-session-messaging).
 
@@ -1071,12 +1063,12 @@ A nested subagent is configured the same way as a top-level one and resolves fro
 
 In the terminal, Claude Code shows nested subagents as a tree in the subagent panel below the prompt input and marks each row that still has descendants in the panel with a `(+N)` count of them. Open a row to see that subagent's siblings and direct children with a path back to `main`.
 
-<Note>
-  Earlier versions used different defaults:
-
-  * **v2.1.172 through v2.1.216**: subagents could nest by default, up to five layers deep, and the limit couldn't be changed.
-  * **v2.1.217 through v2.1.218**: the limit defaulted to one, so a subagent couldn't spawn its own unless you raised it; v2.1.219 raised the default to three.
-</Note>
+> [!NOTE]
+>
+> Earlier versions used different defaults:
+>
+> * **v2.1.172 through v2.1.216**: subagents could nest by default, up to five layers deep, and the limit couldn't be changed.
+> * **v2.1.217 through v2.1.218**: the limit defaulted to one, so a subagent couldn't spawn its own unless you raised it; v2.1.219 raised the default to three.
 
 ### Concurrent subagent limit
 
@@ -1181,8 +1173,6 @@ Compaction events are logged in subagent transcript files:
 
 The `preTokens` value shows how many tokens were used before compaction occurred.
 
-<a id="subagent-auto-compact-window" />
-
 ##### Set the auto-compact window for one subagent
 
 To make one subagent compact earlier than it otherwise would, set `autoCompactWindow` in its [frontmatter](#supported-frontmatter-fields) to a token count from `100000` to `1000000`. If you set [`CLAUDE_CODE_AUTO_COMPACT_WINDOW`](/docs/en/env-vars#variables), the subagent uses that variable's window instead and the field has no effect, unless Claude Code [ignores the variable's value](/docs/en/model-config#claude_code_auto_compact_window-values). Requires Claude Code v2.1.296 or later.
@@ -1206,9 +1196,9 @@ If the value is in range and you still see no change, check for these causes:
 
 ## Fork the current conversation
 
-<Note>
-  When [agent view is turned off](/docs/en/agent-view#turn-off-agent-view), `/subtask` isn't available and `/fork` starts the forked subagent instead; otherwise `/fork` copies the whole session into a new [background session](/docs/en/agent-view#from-inside-a-session).
-</Note>
+> [!NOTE]
+>
+> When [agent view is turned off](/docs/en/agent-view#turn-off-agent-view), `/subtask` isn't available and `/fork` starts the forked subagent instead; otherwise `/fork` copies the whole session into a new [background session](/docs/en/agent-view#from-inside-a-session).
 
 A fork is a subagent that inherits the entire conversation so far instead of starting fresh. This drops the input isolation that subagents otherwise provide: a fork sees the same system prompt, tools, model, and message history as the main session, so you can hand it a side task without re-explaining the situation. The fork's own tool calls still stay out of your conversation and only its final result comes back, so your main context window stays clean. Use a fork when any other subagent would need too much background to be useful, or when you want to try several approaches in parallel from the same starting point.
 
@@ -1259,9 +1249,7 @@ Because a fork's system prompt and tool definitions are identical to the parent,
 
 When Claude spawns a fork through the Agent tool, it can pass `isolation: "worktree"` so the fork's file edits are written to a separate git worktree instead of your checkout. A fork can't spawn further forks.
 
-<h3 id="turn-fork-mode-on-or-off">
-  Turn fork mode off
-</h3>
+### Turn fork mode off
 
 Fork mode lets Claude start a fork on its own. To stop Claude from starting forks:
 
@@ -1274,14 +1262,14 @@ While fork mode is on, Claude also can't [wait for a subagent](#run-subagents-in
 
 These examples demonstrate effective patterns for building subagents. Use them as starting points, or generate a customized version with Claude.
 
-<Tip>
-  **Best practices:**
-
-  * **Design focused subagents:** each subagent should excel at one specific task
-  * **Write descriptions that single out one subagent:** Claude uses the description to decide when to delegate. Make each description specific enough to route to the right subagent, and keep the combined set within the [15,000-token description budget](#understand-automatic-delegation)
-  * **Limit tool access:** grant only necessary permissions for security and focus
-  * **Check into version control:** share project subagents with your team
-</Tip>
+> [!TIP]
+>
+> **Best practices:**
+>
+> * **Design focused subagents:** each subagent should excel at one specific task
+> * **Write descriptions that single out one subagent:** Claude uses the description to decide when to delegate. Make each description specific enough to route to the right subagent, and keep the combined set within the [15,000-token description budget](#understand-automatic-delegation)
+> * **Limit tool access:** grant only necessary permissions for security and focus
+> * **Check into version control:** share project subagents with your team
 
 ### Code reviewer
 

@@ -6,9 +6,9 @@
 
 > Let Claude list and message your other Claude Code sessions on this machine, and reach your sessions on other machines or in the cloud.
 
-<Note>
-  Cross-session messaging requires Claude Code v2.1.224 or later on macOS and Linux, including Linux inside WSL 2. On native Windows, it requires Claude Code v2.1.234 or later. When a session meets the requirements, messaging is on with nothing to enable. See [Availability](#availability) for provider requirements and how to confirm a session has it.
-</Note>
+> [!NOTE]
+>
+> Cross-session messaging requires Claude Code v2.1.224 or later on macOS and Linux, including Linux inside WSL 2. On native Windows, it requires Claude Code v2.1.234 or later. When a session meets the requirements, messaging is on with nothing to enable. See [Availability](#availability) for provider requirements and how to confirm a session has it.
 
 Cross-session messaging lets Claude deliver a message from one of your Claude Code sessions to another. When a change in one session breaks what another is building on, Claude can warn that session before you notice. When one session settles a question another is blocked on, Claude can send the answer across.
 
@@ -73,7 +73,7 @@ The receiving session checks each arriving message against its own [inbound cont
 * **Held**: Claude Code sets the message aside undelivered. A held message reaches Claude only when you approve it or a later mode or settings change allows it.
 * **Refused**: Claude Code drops the message without delivering it.
 
-Once delivered, the message counts toward [usage](/docs/en/costs) like a prompt you type, and the receiving Claude can reply to the sender the same way, except in the [one-way cross-machine case](#message-sessions-on-other-machines).
+Once delivered, the message counts toward [usage](/docs/en/costs) like a prompt you type. The receiving Claude can reply to the sender with `SendMessage`, except in the cases under [Replies from other machines and cloud sessions](#replies-from-other-machines-and-cloud-sessions) and [Turn off cross-session messaging](#turn-off-cross-session-messaging).
 
 Permission boundaries stay per-session. Claude is instructed never to ask another session for an action that was denied or blocked in its own session, or that its own permission settings would block, and to route that work back to you instead. On the receiving side, the [receiving session's own permission prompts and rules still apply](#how-a-session-treats-an-incoming-message) to anything the message asks for.
 
@@ -150,9 +150,13 @@ A session's row in [the listing](#see-which-sessions-claude-can-reach) can show 
 
 A session inside a container and a session on the host can't reach each other. Two sessions inside the same container can still message each other, including on a [self-hosted runner](/docs/en/self-hosted-environments). A session inside WSL 2 and a native Windows session on the same computer can't reach each other either.
 
-If this session isn't connected to Remote Control when Claude sends to a session beyond this machine, the message still goes through, but without a [reply address](#what-a-message-looks-like), so the receiving Claude can't answer it.
-
 To require your approval before any message goes beyond this machine, set [`isolatePeerMachines`](#require-approval-for-cross-machine-messages).
+
+#### Replies from other machines and cloud sessions
+
+A [cloud session](/docs/en/claude-code-on-the-web), including one on a [self-hosted runner](/docs/en/self-hosted-environments), can't use `SendMessage` to answer a message from another machine, even when the message carries a [reply address](#what-a-message-looks-like). The message still arrives. Read the cloud session's response in its transcript at [claude.ai/code](https://claude.ai/code).
+
+If this session isn't connected to Remote Control when Claude sends to a session beyond this machine, the message still goes through, but without a [reply address](#what-a-message-looks-like). The receiving Claude can't answer it.
 
 ## How a session treats an incoming message
 
@@ -163,9 +167,7 @@ When session A messages session B, Claude Code tells B's Claude that the message
 * **Commands don't run**: a command in the message's text, such as `/compact`, arrives as plain text. Claude Code never executes it.
 * **Permission prompts still fire**: if acting on the message requires a permission the receiving session doesn't have, you see the same prompt you'd see for any other work.
 
-<h3 id="what-a-message-looks-like">
-  What a message looks like
-</h3>
+### What a message looks like
 
 When a message arrives, Claude Code shows it in the conversation as a dim one-line preview, and the preview line stays in the conversation afterward. The preview carries the sender's name and the first line of the message, cut with `…` when it's long, such as `› Message from @api-worker: Schema migration finished (ctrl+o to expand)`.
 
@@ -230,9 +232,7 @@ Set `dialogExpiry` to `"never"` to keep default-held messages until the session 
 
 To let a `-p` worker take messages unattended, start it with `crossSessionInbound` set to `accept` in its `--settings` value. An `accept` in your user settings also works but applies to every session you run.
 
-<h3 id="the-sessions-inbox-socket">
-  The session's inbox socket
-</h3>
+### The session's inbox socket
 
 Read this section when a session you expect isn't in the agent list, when you want a script or hook to post into a session, or when a sandboxed command can't reach the socket.
 
@@ -255,7 +255,7 @@ Alongside the socket's path, Claude Code exports a per-session token as [`CLAUDE
 
 Open the connection only when the message you're posting is ready. Claude Code closes a connection that hasn't sent a complete line within 30 seconds, so capture a slow command's output first and then open the connection to send it.
 
-<span id="own-child-messages" />Claude Code runs messages arriving on the socket through the same [inbound controls](#control-inbound-messages) as any other peer message, with one exception and one prerequisite:
+Claude Code runs messages arriving on the socket through the same [inbound controls](#control-inbound-messages) as any other peer message, with one exception and one prerequisite:
 
 * **Own-child messages**: when no `crossSessionInbound` value applies, Claude Code delivers a message it verifies came from the session's own child processes, such as a hook or Bash command posting back to its own session's socket.
   * On Linux, including inside WSL 2, Claude Code can verify by process evidence even for a child that has already exited. On macOS it can verify that way only while the posting process is still running, and in a container where Claude Code runs as process ID 1 it has no process evidence at all. On native Windows it also has none.

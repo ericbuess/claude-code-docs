@@ -19,64 +19,56 @@ This page covers how to:
 
 A variable you set in your shell lasts for that terminal session, while a variable in a settings file applies every time `claude` runs.
 
-<span id="in-your-shell" />
-
 ### Set variables in your shell
 
 Set the variable before launching `claude`:
 
-<Tabs>
-  <Tab title="macOS, Linux, WSL">
-    ```bash theme={null}
-    export API_TIMEOUT_MS="1200000"
-    claude
-    ```
+**macOS, Linux, WSL**
 
-    To set it for every session, add the `export` line to `~/.bashrc`, `~/.zshrc`, or your shell's profile file.
-  </Tab>
+```bash theme={null}
+export API_TIMEOUT_MS="1200000"
+claude
+```
 
-  <Tab title="Windows PowerShell">
-    ```powershell theme={null}
-    $env:API_TIMEOUT_MS = "1200000"
-    claude
-    ```
+To set it for every session, add the `export` line to `~/.bashrc`, `~/.zshrc`, or your shell's profile file.
 
-    To set it for every session, run `[Environment]::SetEnvironmentVariable("API_TIMEOUT_MS", "1200000", "User")` and open a new terminal.
-  </Tab>
+**Windows PowerShell**
 
-  <Tab title="Windows CMD">
-    ```batch theme={null}
-    set API_TIMEOUT_MS=1200000
-    claude
-    ```
+```powershell theme={null}
+$env:API_TIMEOUT_MS = "1200000"
+claude
+```
 
-    To set it for every session, run `setx API_TIMEOUT_MS "1200000"` and open a new terminal.
-  </Tab>
-</Tabs>
+To set it for every session, run `[Environment]::SetEnvironmentVariable("API_TIMEOUT_MS", "1200000", "User")` and open a new terminal.
+
+**Windows CMD**
+
+```batch theme={null}
+set API_TIMEOUT_MS=1200000
+claude
+```
+
+To set it for every session, run `setx API_TIMEOUT_MS "1200000"` and open a new terminal.
 
 The assignment line prints nothing on success. To confirm the variable is set, print it in the same shell:
 
-<Tabs>
-  <Tab title="macOS, Linux, WSL">
-    ```bash theme={null}
-    echo $API_TIMEOUT_MS
-    ```
-  </Tab>
+**macOS, Linux, WSL**
 
-  <Tab title="Windows PowerShell">
-    ```powershell theme={null}
-    echo $env:API_TIMEOUT_MS
-    ```
-  </Tab>
+```bash theme={null}
+echo $API_TIMEOUT_MS
+```
 
-  <Tab title="Windows CMD">
-    ```batch theme={null}
-    echo %API_TIMEOUT_MS%
-    ```
-  </Tab>
-</Tabs>
+**Windows PowerShell**
 
-<span id="in-settings-files" />
+```powershell theme={null}
+echo $env:API_TIMEOUT_MS
+```
+
+**Windows CMD**
+
+```batch theme={null}
+echo %API_TIMEOUT_MS%
+```
 
 ### Set variables in settings files
 
@@ -122,20 +114,20 @@ Claude Code reads shell environment variables at startup, so changes to them tak
 
 Numeric variables such as timeouts, token budgets, and retry counts accept scientific notation and digit-separator spellings in addition to plain digits, except where a variable's row notes it takes plain digits only. For example, Claude Code reads `2e3` as 2000 and `64_000` as 64000. Before v2.1.211, these spellings could silently set a much smaller value, such as `1e6` setting a timeout to 1.
 
-<Note>
-  For variables that turn a behavior on or off, set `1`, `true`, `yes`, or `on` to turn it on and `0`, `false`, `no`, or `off` to turn it off, in any casing.
-
-  Some variables read only whether you set them at all, so any non-empty value including `0` turns the behavior on, and you turn the behavior off by unsetting the variable or setting it to an empty value. These variables work that way:
-
-  * `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC`
-  * `DISABLE_TELEMETRY`
-  * `DISABLE_ERROR_REPORTING`
-  * `CLAUDE_CODE_TMUX_TRUECOLOR`
-  * `FALLBACK_FOR_ALL_PRIMARY_MODELS`
-  * `IS_DEMO`
-
-  One other variable has its own rule: `FORCE_HYPERLINK` reads a number, so only `0` turns it off. Each variable's row also states its own rule.
-</Note>
+> [!NOTE]
+>
+> For variables that turn a behavior on or off, set `1`, `true`, `yes`, or `on` to turn it on and `0`, `false`, `no`, or `off` to turn it off, in any casing.
+>
+> Some variables read only whether you set them at all, so any non-empty value including `0` turns the behavior on, and you turn the behavior off by unsetting the variable or setting it to an empty value. These variables work that way:
+>
+> * `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC`
+> * `DISABLE_TELEMETRY`
+> * `DISABLE_ERROR_REPORTING`
+> * `CLAUDE_CODE_TMUX_TRUECOLOR`
+> * `FALLBACK_FOR_ALL_PRIMARY_MODELS`
+> * `IS_DEMO`
+>
+> One other variable has its own rule: `FORCE_HYPERLINK` reads a number, so only `0` turns it off. Each variable's row also states its own rule.
 
 | Variable | Purpose |
 | :- | :- |

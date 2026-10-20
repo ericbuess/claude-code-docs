@@ -10,10 +10,10 @@ This page documents the requests Claude Code sends to a gateway, including the e
 
 The [Claude apps gateway](/docs/en/claude-apps-gateway), Anthropic's self-hosted gateway, serves its own endpoint reference at `GET /protocol`, covering that gateway's sign-in, inference, managed settings, model discovery, and telemetry endpoints. It is a separate document from this guide.
 
-<Note>
-  * To roll out an existing or third-party gateway for your organization, see [Roll out an LLM gateway](/docs/en/llm-gateway-rollout)
-  * If you're an individual developer authenticating Claude Code to a gateway with a credential you were given, see [Connect Claude Code to an LLM gateway](/docs/en/llm-gateway-connect)
-</Note>
+> [!NOTE]
+>
+> * To roll out an existing or third-party gateway for your organization, see [Roll out an LLM gateway](/docs/en/llm-gateway-rollout)
+> * If you're an individual developer authenticating Claude Code to a gateway with a credential you were given, see [Connect Claude Code to an LLM gateway](/docs/en/llm-gateway-connect)
 
 This page covers:
 
@@ -100,7 +100,7 @@ The table below compares the three connection methods, one behavior per row. It 
 | :- | :- | :- | :- |
 | Model IDs in requests by default | The provider's form, such as `us.anthropic.claude-opus-4-8` on Amazon Bedrock | Anthropic IDs, such as `claude-opus-4-8` | Anthropic IDs |
 | `anthropic-beta` values sent | The subset Amazon Bedrock and Agent Platform accept | The full set described under [feature pass-through](#feature-pass-through), unless the developer sets [`CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS`](#disable-pre-release-capabilities) | The subset Amazon Bedrock and Agent Platform accept |
-| Request fields for a model ID Claude Code doesn't recognize, such as a gateway alias | Thinking with a fixed budget rather than adaptive reasoning, and no effort or context management fields | Everything current Claude models accept on the Claude API, including adaptive reasoning, effort, and context management, which an Amazon Bedrock or Agent Platform upstream can reject | Same as the Amazon Bedrock or Agent Platform format |
+| Request fields for a model ID Claude Code doesn't recognize, such as a gateway alias | Thinking with a fixed budget rather than adaptive reasoning, and no effort or context management fields. Claude Code still sends [mid-conversation system messages](#feature-pass-through) | Everything current Claude models accept on the Claude API, including adaptive reasoning, effort, and context management, which an Amazon Bedrock or Agent Platform upstream can reject | Same as the Amazon Bedrock or Agent Platform format |
 | One-hour [prompt cache TTL](/docs/en/prompt-caching#choose-the-ttl-yourself) when a developer opts in | Requested through the `ttl` field in `cache_control`, with no beta value | Requested through the `ttl` field plus an `extended-cache-ttl` value in `anthropic-beta`, which you must forward | See the Claude apps gateway [availability and limitations](/docs/en/claude-apps-gateway#availability-and-limitations) table |
 | Model for [background tasks](/docs/en/costs#background-token-usage) unless `ANTHROPIC_DEFAULT_HAIKU_MODEL` pins one | The default Sonnet model, or the main model once one is selected, as the [Amazon Bedrock](/docs/en/amazon-bedrock#4-pin-model-versions) and [Agent Platform](/docs/en/google-vertex-ai#5-pin-model-versions) pages describe | The main model, or the default Haiku model when `ANTHROPIC_API_KEY` or `apiKeyHelper` supplies an Anthropic Console key and `ANTHROPIC_AUTH_TOKEN` is unset | The main model |
 
@@ -218,6 +218,8 @@ Fine-grained tool streaming is one of the direct-connection defaults: it is off 
 | [Extended context](https://platform.claude.com/docs/en/build-with-claude/context-windows#context-window-sizes-by-model) and [interleaved thinking](https://platform.claude.com/docs/en/build-with-claude/extended-thinking#interleaved-thinking) | Beta headers only, no body field | Silently unavailable when the header is stripped; the upstream never sees the capability request | Forward `anthropic-beta` verbatim |
 | Beta [tool fields](https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview) | Tool-related beta headers pair with tool schema fields such as `strict` and `defer_loading` | `400` naming the unrecognized tool schema field when the body passes through without its header | Forward both, or [`CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS=1`](#disable-pre-release-capabilities) |
 | [Effort](https://platform.claude.com/docs/en/build-with-claude/effort) and [structured outputs](https://platform.claude.com/docs/en/build-with-claude/structured-outputs) | The `output_config` body field carries effort, structured-output format, and task budget settings; each pairs with its own beta header | `400` naming `output_config`, often `Extra inputs are not permitted`, on Amazon Bedrock and Google Cloud's Agent Platform upstreams | Forward the field and its headers together, or have developers set [`CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS=1`](#disable-pre-release-capabilities), which removes the format and task budget settings but not effort. To remove only the format, they can set [`CLAUDE_CODE_DISABLE_STRUCTURED_OUTPUTS=1`](/docs/en/env-vars) instead, which requires v2.1.288 or later |
+| Mid-conversation system messages | No beta header. Claude Code sends some reminder and attachment text as `role: "system"` entries in `messages` for Claude Opus 4.8, models released after it, and unrecognized model IDs | `400` such as `Unexpected role "system"` | Claude Code [retries without system messages](#automatic-retry-and-error-forwarding). To stop system messages on an alias of a model released before Claude Opus 4.8, add a [`modelOverrides` entry](#settings-for-unrecognized-model-ids) to the settings you distribute |
+| [Effort set per turn](/docs/en/prompt-caching#changing-effort-level) | On Opus 5.5, Sonnet 5.5, Haiku 5.5, and Fable 5.1, a beta header pairs with `output_config.effort` on `role: "system"` entries, either a system message or an entry with empty content | `400` with `messages.N: system content must contain at least one block` when your gateway strips the field from an empty entry | Forward both, or have developers set [`CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS=1`](#disable-pre-release-capabilities) to stop the field and the empty entries |
 | [Prompt caching](/docs/en/prompt-caching) | No beta pairing. Claude Code attaches `cache_control` markers to `system` blocks and to `messages` entries, including `role: "system"` entries appended mid-conversation | No error: the conversation bills as uncached input on every turn, visible as high `input_tokens` with little or no cache activity in `usage` | Forward `cache_control` unchanged wherever it appears, and don't convert block-form `system` or message content to plain strings |
 | [Token counting](https://platform.claude.com/docs/en/build-with-claude/token-counting) | No beta pairing; uses the `count_tokens` endpoint | No error: Claude Code falls back to a character-based estimate, so `/context` shows approximate counts | Expose the endpoint for exact token counts |
 
@@ -250,8 +252,9 @@ When your gateway or its upstream rejects pre-release `anthropic-beta` values or
 The variable doesn't strip every `anthropic-beta` value. What it leaves in place includes:
 
 * The `anthropic-beta` values for extended context, interleaved thinking, and effort, which cloud providers also accept
-* The `output_config.effort` field. [Automatic retry and error forwarding](#automatic-retry-and-error-forwarding) covers an upstream that rejects it
+* The top-level `output_config.effort` field. [Automatic retry and error forwarding](#automatic-retry-and-error-forwarding) covers an upstream that rejects it
 * The adaptive reasoning `thinking` field, which has no beta header
+* The `role: "system"` entries that carry [mid-conversation system messages](#feature-pass-through)
 * The OAuth `anthropic-beta` value that subscription authentication requires
 * Header values and body fields developers add themselves through [`ANTHROPIC_BETAS`](/docs/en/env-vars) or [`CLAUDE_CODE_EXTRA_BODY`](/docs/en/env-vars)
 

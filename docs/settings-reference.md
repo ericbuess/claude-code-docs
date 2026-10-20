@@ -6,586 +6,13 @@
 
 > Complete reference for every Claude Code settings.json key: where each one goes, its type and default, and a paste-ready example, with an index of every key.
 
-export const BackToIndex = ({href = '#all-settings', label = 'Back to index'}) => {
-  const [show, setShow] = useState(false);
-  useEffect(() => {
-    const onScroll = () => setShow(window.scrollY > window.innerHeight);
-    onScroll();
-    window.addEventListener('scroll', onScroll, {
-      passive: true
-    });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
-  return <div className="not-prose">
-      <style>{`
-        .bti-btn {
-          position: fixed; right: 20px; bottom: 20px; z-index: 40;
-          display: inline-flex; align-items: center; gap: 6px;
-          padding: 8px 12px; border-radius: 999px;
-          font-size: 13px; font-weight: 500; line-height: 1; text-decoration: none;
-          color: #1f1f1f; background: #ffffff; border: 1px solid #d9d9d9;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.12);
-          opacity: 0; pointer-events: none; transform: translateY(6px);
-          transition: opacity 160ms ease, transform 160ms ease;
-        }
-        .bti-btn.bti-show { opacity: 1; pointer-events: auto; transform: translateY(0); }
-        .bti-btn:hover { border-color: #b3b3b3; }
-        .dark .bti-btn { color: #ececec; background: #1e1e1e; border-color: #3a3a3a; box-shadow: 0 2px 8px rgba(0,0,0,0.5); }
-        .dark .bti-btn:hover { border-color: #5a5a5a; }
-        @media (max-width: 1279px) { .bti-btn { bottom: 112px; } }
-        @media print { .bti-btn { display: none; } }
-      `}</style>
-      <a className={'bti-btn' + (show ? ' bti-show' : '')} href={href} aria-hidden={!show} tabIndex={show ? 0 : -1}>
-        <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M8 13V3M3.5 7.5 8 3l4.5 4.5" /></svg>
-        {label}
-      </a>
-    </div>;
-};
-
-export const ReferenceFilter = ({placeholder, noun, facets, facetOrder, columnHelp, children}) => {
-  const useLive = init => {
-    const [v, setV] = useState(init);
-    const ref = useRef(init);
-    return [v, ref, x => {
-      ref.current = x;
-      setV(x);
-    }];
-  };
-  const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
-  const plural = s => s.endsWith('y') ? s.slice(0, -1) + 'ies' : s + 's';
-  const facetNames = facets || ['category', 'topic', 'scope', 'where'];
-  const orderOf = {};
-  Object.keys(facetOrder || ({})).forEach(k => {
-    orderOf[k] = facetOrder[k].map(x => String(x).toLowerCase());
-  });
-  const rankIn = (col, v) => {
-    const list = orderOf[col];
-    if (!list) return -1;
-    const i = list.indexOf(String(v).toLowerCase());
-    return i < 0 ? list.length : i;
-  };
-  const cmpValues = col => (a, b) => {
-    const ra = rankIn(col, a);
-    const rb = rankIn(col, b);
-    if (ra !== rb) return ra - rb;
-    return a < b ? -1 : a > b ? 1 : 0;
-  };
-  const help = columnHelp || ({});
-  const FIRST_COL_HELP = 'Click an entry to open it.';
-  const optionLabel = (f, c) => c === 'All' ? 'All ' + plural(f.label.toLowerCase()) : c;
-  const nounText = noun || 'entries';
-  const placeholderText = placeholder || 'Filter this reference';
-  const rootRef = useRef(null);
-  const tablesRef = useRef(null);
-  const searchRef = useRef(null);
-  const menuRef = useRef({});
-  const [q, qRef, setQ] = useLive('');
-  const [sel, selRef, setSel] = useLive({});
-  const [sortBy, sortRef, setSortBy] = useLive(null);
-  const [menuOpen, menuOpenRef, setMenu] = useLive(null);
-  const [facetList, setFacetList] = useState([]);
-  const [firstHead, setFirstHead] = useState('');
-  const [counts, setCounts] = useState({
-    shown: 0,
-    total: 0
-  });
-  const [disabled, setDisabled] = useState(false);
-  const menuBtn = name => menuRef.current[name] ? menuRef.current[name].querySelector(':scope > button') : null;
-  const menuList = name => menuRef.current[name] ? menuRef.current[name].querySelector('[role="listbox"]') : null;
-  const closeMenu = name => {
-    setMenu(null);
-    const btn = menuBtn(name);
-    if (btn) btn.focus();
-  };
-  const focusSelected = name => {
-    const list = menuList(name);
-    if (!list) return;
-    const btn = list.querySelector('button[aria-selected="true"]') || list.querySelector('button');
-    if (btn) btn.focus();
-  };
-  const setFacet = (name, value) => {
-    setSel(Object.assign({}, selRef.current, {
-      [name]: value
-    }));
-    apply(qRef.current);
-    closeMenu(name);
-  };
-  const sortTables = by => {
-    (tablesRef.current || []).forEach(tab => {
-      const t = tab.el;
-      const idx = tab.heads.indexOf(by);
-      const body = t.querySelector('tbody');
-      if (idx < 0 || !body) return;
-      const rows = [...body.querySelectorAll('tr')];
-      const keyOf = r => r.children[idx] ? r.children[idx].textContent.trim().toLowerCase() : '';
-      const cmp = cmpValues(by);
-      rows.map((r, i) => ({
-        r,
-        i: Number(r.dataset.sfIndex !== undefined ? r.dataset.sfIndex : i),
-        k: keyOf(r)
-      })).sort((a, b) => cmp(a.k, b.k) || a.i - b.i).forEach(x => body.appendChild(x.r));
-      [...t.querySelectorAll('thead th')].forEach((h, i) => {
-        const sortable = tab.heads[i] === tab.heads[0] || facetNames.indexOf(tab.heads[i]) > -1;
-        if (sortable) h.setAttribute('aria-sort', i === idx ? 'ascending' : 'none'); else h.removeAttribute('aria-sort');
-      });
-    });
-  };
-  const scan = () => {
-    const tables = [];
-    let el = rootRef.current ? rootRef.current.nextElementSibling : null;
-    while (el) {
-      if (el.tagName === 'H2' || el.querySelector(':scope > h2')) break;
-      const found = el.tagName === 'TABLE' ? [el] : [...el.querySelectorAll('table')];
-      found.forEach(t => {
-        const headCells = [...t.querySelectorAll('thead th, thead td')];
-        const heads = headCells.map(h => h.textContent.trim().toLowerCase());
-        if (heads.length === 0) return;
-        const facetIdx = {};
-        heads.forEach((h, i) => {
-          if (facetNames.indexOf(h) > -1) facetIdx[h] = i;
-        });
-        if (!t.dataset.sfDecorated) {
-          t.dataset.sfDecorated = '1';
-          headCells.forEach((h, i) => {
-            const text = i === 0 ? help[heads[0]] || FIRST_COL_HELP : help[heads[i]];
-            if (text) h.title = text;
-          });
-        }
-        const rows = [...t.querySelectorAll('tbody tr')].map((r, i) => {
-          if (r.dataset.sfIndex === undefined) r.dataset.sfIndex = String(i);
-          const cells = r.querySelectorAll('td');
-          const fv = {};
-          Object.keys(facetIdx).forEach(h => {
-            fv[h] = cells[facetIdx[h]] ? cells[facetIdx[h]].textContent.trim() : '';
-          });
-          return {
-            el: r,
-            text: [...cells].map(c => c.textContent).join(' ').toLowerCase(),
-            facets: fv,
-            anchors: [...r.querySelectorAll('a[href^="#"]')].map(a => a.getAttribute('href').slice(1)),
-            ids: [...r.querySelectorAll('[id]')].map(n => n.id)
-          };
-        });
-        tables.push({
-          el: t,
-          box: t.closest('[data-table-wrapper]') || t,
-          rows,
-          heads
-        });
-      });
-      el = el.nextElementSibling;
-    }
-    tablesRef.current = tables;
-    if (sortRef.current) sortTables(sortRef.current);
-    return tables;
-  };
-  const apply = query => {
-    let tables = tablesRef.current || scan();
-    if (tables.some(t => !t.el.isConnected)) tables = scan();
-    const needle = query.trim().toLowerCase();
-    const sel = selRef.current;
-    const activeFacets = Object.keys(sel).filter(h => sel[h] && sel[h] !== 'All');
-    const show = (el, on) => {
-      const want = on ? '' : 'none';
-      if (el.style.display !== want) el.style.display = want;
-    };
-    let total = 0;
-    let shown = 0;
-    const visibleTargets = new Set();
-    tables.forEach(t => {
-      let tableVisible = 0;
-      t.rows.forEach(row => {
-        total += 1;
-        const catOk = activeFacets.every(h => {
-          const v = row.facets[h];
-          return v === sel[h] || v === '' || v === undefined;
-        });
-        const match = catOk && (needle === '' || row.text.includes(needle));
-        show(row.el, match);
-        if (match) {
-          tableVisible += 1;
-          row.anchors.forEach(a => visibleTargets.add(a));
-        }
-      });
-      show(t.box, !(t.rows.length > 0 && tableVisible === 0));
-      shown += tableVisible;
-    });
-    if (shown < total && visibleTargets.size > 0) {
-      tables.forEach(t => {
-        t.rows.forEach(row => {
-          if (row.el.style.display === 'none' && row.ids.some(id => visibleTargets.has(id))) {
-            show(row.el, true);
-            show(t.box, true);
-            shown += 1;
-          }
-        });
-      });
-    }
-    setCounts({
-      shown,
-      total
-    });
-    return total;
-  };
-  const deriveFacets = tables => {
-    const seen = {};
-    tables.forEach(t => t.rows.forEach(r => {
-      Object.keys(r.facets).forEach(h => {
-        if (!seen[h]) seen[h] = [];
-        if (r.facets[h] && seen[h].indexOf(r.facets[h]) === -1) seen[h].push(r.facets[h]);
-      });
-    }));
-    const list = facetNames.filter(h => seen[h] && seen[h].length > 0).map(h => ({
-      name: h,
-      label: cap(h),
-      values: seen[h].sort(cmpValues(h))
-    }));
-    setFacetList(list);
-    const first = tables[0] ? tables[0].heads[0] : '';
-    setFirstHead(first);
-    if (!sortRef.current && first) {
-      setSortBy(first);
-      sortTables(first);
-    }
-    const init = {};
-    list.forEach(f => {
-      init[f.name] = selRef.current[f.name] || 'All';
-    });
-    setSel(init);
-  };
-  const onChange = value => {
-    setQ(value);
-    apply(value);
-  };
-  const clearAll = () => {
-    const next = {};
-    Object.keys(selRef.current).forEach(k => {
-      next[k] = 'All';
-    });
-    setSel(next);
-    setQ('');
-    apply('');
-    if (searchRef.current) searchRef.current.focus();
-  };
-  useEffect(() => {
-    const tables = scan();
-    deriveFacets(tables);
-    const total = apply('');
-    let retryTimer;
-    if (total === 0) {
-      retryTimer = setTimeout(() => {
-        tablesRef.current = null;
-        if (apply(qRef.current) > 0) deriveFacets(tablesRef.current); else setDisabled(true);
-      }, 500);
-    }
-    const onKey = e => {
-      if (e.key === 'Escape' && menuOpenRef.current !== null) closeMenu(menuOpenRef.current);
-      if (!searchRef.current) return;
-      if (e.metaKey || e.ctrlKey || e.altKey) return;
-      const active = document.activeElement;
-      const tag = active && active.tagName;
-      const editable = active && active.isContentEditable;
-      const interactive = tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || tag === 'BUTTON' || tag === 'A' || editable || active && active.getAttribute && active.getAttribute('role');
-      if (e.key === '/' && !interactive) {
-        const r = rootRef.current ? rootRef.current.getBoundingClientRect() : null;
-        if (r && r.bottom > 0 && r.top < (window.innerHeight || 0)) {
-          e.preventDefault();
-          setMenu(null);
-          searchRef.current.focus();
-        }
-      }
-      if (e.key === 'Escape' && menuOpenRef.current === null && active === searchRef.current) {
-        onChange('');
-        searchRef.current.blur();
-      }
-    };
-    const onDocClick = e => {
-      const open = menuOpenRef.current;
-      if (open !== null && menuRef.current[open] && !menuRef.current[open].contains(e.target)) setMenu(null);
-    };
-    window.addEventListener('keydown', onKey);
-    document.addEventListener('mousedown', onDocClick);
-    return () => {
-      if (retryTimer) clearTimeout(retryTimer);
-      window.removeEventListener('keydown', onKey);
-      document.removeEventListener('mousedown', onDocClick);
-      (tablesRef.current || []).forEach(t => {
-        t.box.style.display = '';
-        t.rows.forEach(row => {
-          row.el.style.display = '';
-        });
-      });
-    };
-  }, []);
-  useEffect(() => {
-    if (menuOpen !== null) focusSelected(menuOpen);
-  }, [menuOpen]);
-  if (disabled) return null;
-  const facetActive = Object.keys(sel).some(h => sel[h] && sel[h] !== 'All');
-  const sortOptions = [firstHead].concat(facetList.map(f => f.name)).filter((h, i, a) => h && a.indexOf(h) === i);
-  return <>
-      <style>{`
-        .sf-root {
-          --sf-accent: #D97757;
-          --sf-bg: #fff;
-          --sf-border: #E8E6DC;
-          --sf-text: #141413;
-          --sf-text-3: #73726C;
-          --sf-text-4: #9C9A92;
-        }
-        .dark .sf-root {
-          --sf-bg: #1a1918;
-          --sf-border: #3a3936;
-          --sf-text: #e8e6dc;
-          --sf-text-3: #9c9a92;
-          --sf-text-4: #73726c;
-        }
-        .sf-root .sf-end {
-          position: absolute;
-          right: 10px;
-          top: 50%;
-          transform: translateY(-50%);
-        }
-        .sf-root .sf-x {
-          background: none;
-          border: none;
-          cursor: pointer;
-          color: var(--sf-text-3);
-          font-size: 14px;
-          padding: 2px 4px;
-          line-height: 1;
-        }
-      `}</style>
-      <div ref={rootRef} className="sf-root" style={{
-    margin: '16px 0 8px'
-  }}>
-        <div style={{
-    display: 'flex',
-    gap: '8px',
-    flexWrap: 'wrap',
-    alignItems: 'center'
-  }}>
-        <div style={{
-    position: 'relative',
-    flex: '1 1 260px',
-    maxWidth: '480px'
-  }}>
-          <input ref={searchRef} value={q} onChange={e => onChange(e.target.value)} placeholder={placeholderText} aria-label={placeholderText} style={{
-    width: '100%',
-    padding: '8px 56px 8px 12px',
-    borderRadius: '8px',
-    border: '1px solid var(--sf-border)',
-    background: 'var(--sf-bg)',
-    color: 'var(--sf-text)',
-    fontSize: '14px',
-    outline: 'none',
-    boxSizing: 'border-box'
-  }} />
-          {q ? <button type="button" onClick={() => {
-    onChange('');
-    if (searchRef.current) searchRef.current.focus();
-  }} aria-label="Clear text" className="sf-end sf-x">
-              ×
-            </button> : <span className="sf-end" style={{
-    fontFamily: 'var(--font-mono, ui-monospace, monospace)',
-    fontSize: '11px',
-    color: 'var(--sf-text-4)',
-    border: '1px solid var(--sf-border)',
-    borderRadius: '3px',
-    padding: '0 5px',
-    pointerEvents: 'none'
-  }}>
-              /
-            </span>}
-        </div>
-        {facetList.map(f => {
-    const cur = sel[f.name] || 'All';
-    const isOpen = menuOpen === f.name;
-    return <div key={f.name} ref={el => {
-      menuRef.current[f.name] = el;
-    }} style={{
-      position: 'relative'
-    }}>
-            <button type="button" onClick={() => setMenu(isOpen ? null : f.name)} onKeyDown={e => {
-      if (e.key === 'ArrowDown') {
-        e.preventDefault();
-        if (!isOpen) setMenu(f.name); else focusSelected(f.name);
-      }
-    }} aria-haspopup="listbox" aria-expanded={isOpen} style={{
-      display: 'flex',
-      alignItems: 'center',
-      gap: '8px',
-      padding: cur !== 'All' ? '8px 30px 8px 12px' : '8px 12px',
-      borderRadius: '8px',
-      border: '1px solid ' + (cur !== 'All' ? 'var(--sf-accent)' : 'var(--sf-border)'),
-      background: 'var(--sf-bg)',
-      color: cur === 'All' ? 'var(--sf-text-3)' : 'var(--sf-text)',
-      fontSize: '13.5px',
-      cursor: 'pointer',
-      whiteSpace: 'nowrap',
-      maxWidth: '260px'
-    }}>
-              <span style={{
-      overflow: 'hidden',
-      textOverflow: 'ellipsis'
-    }}>
-                {f.label + ': ' + optionLabel(f, cur)}
-              </span>
-              <span aria-hidden="true" style={{
-      fontSize: '9px',
-      color: 'var(--sf-text-4)',
-      transform: isOpen ? 'rotate(180deg)' : 'none',
-      transition: 'transform 120ms'
-    }}>
-                ▼
-              </span>
-            </button>
-            {cur !== 'All' && <button type="button" onClick={() => setFacet(f.name, 'All')} aria-label={'Clear ' + f.label + ' filter'} title={'Clear ' + f.label + ' filter'} className="sf-end sf-x">
-                ×
-              </button>}
-            {isOpen && <div role="listbox" aria-label={f.label} onKeyDown={e => {
-      const items = [...e.currentTarget.querySelectorAll('button')];
-      const idx = items.indexOf(document.activeElement);
-      if (e.key === 'ArrowDown') {
-        e.preventDefault();
-        (items[idx + 1] || items[0]).focus();
-      } else if (e.key === 'ArrowUp') {
-        e.preventDefault();
-        (items[idx - 1] || items[items.length - 1]).focus();
-      } else if (e.key === 'Home') {
-        e.preventDefault();
-        if (items[0]) items[0].focus();
-      } else if (e.key === 'End') {
-        e.preventDefault();
-        if (items[items.length - 1]) items[items.length - 1].focus();
-      } else if (e.key === 'Tab') {
-        closeMenu(f.name);
-      }
-    }} style={{
-      position: 'absolute',
-      top: 'calc(100% + 6px)',
-      left: 0,
-      zIndex: 1000,
-      minWidth: '260px',
-      maxHeight: '340px',
-      overflowY: 'auto',
-      background: 'var(--sf-bg)',
-      border: '1px solid var(--sf-border)',
-      borderRadius: '10px',
-      boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
-      padding: '5px'
-    }}>
-                {['All'].concat(f.values).map(c => {
-      const selected = cur === c;
-      return <button key={c} role="option" aria-selected={selected} tabIndex={-1} onClick={() => setFacet(f.name, c)} style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: '8px',
-        width: '100%',
-        textAlign: 'left',
-        padding: '7px 10px',
-        borderRadius: '6px',
-        border: 'none',
-        background: 'transparent',
-        color: selected ? 'var(--sf-accent)' : 'var(--sf-text)',
-        fontWeight: selected ? 600 : 400,
-        fontSize: '13.5px',
-        cursor: 'pointer'
-      }}>
-                      <span aria-hidden="true" style={{
-        width: '14px',
-        color: 'var(--sf-accent)',
-        flexShrink: 0
-      }}>
-                        {selected ? '✓' : ''}
-                      </span>
-                      {optionLabel(f, c)}
-                    </button>;
-    })}
-              </div>}
-          </div>;
-  })}
-        {sortOptions.length > 1 && <div role="group" aria-label="Sort by" style={{
-    display: 'flex',
-    alignItems: 'center',
-    gap: '4px',
-    fontSize: '13px',
-    color: 'var(--sf-text-3)',
-    whiteSpace: 'nowrap'
-  }}>
-            <span style={{
-    marginRight: '4px'
-  }}>Sort by</span>
-            {sortOptions.map(o => {
-    const on = sortBy === o;
-    return <button key={o} type="button" aria-pressed={on} onClick={() => {
-      setSortBy(o);
-      sortTables(o);
-    }} style={{
-      padding: '6px 10px',
-      borderRadius: '8px',
-      border: '1px solid ' + (on ? 'var(--sf-accent)' : 'var(--sf-border)'),
-      background: 'var(--sf-bg)',
-      color: on ? 'var(--sf-text)' : 'var(--sf-text-3)',
-      fontSize: '13px',
-      cursor: 'pointer'
-    }}>
-                  {o.charAt(0).toUpperCase() + o.slice(1)}
-                </button>;
-  })}
-          </div>}
-        </div>
-        <div aria-live="polite" style={{
-    margin: '8px 0 0',
-    fontSize: '13px',
-    color: 'var(--sf-text-3)',
-    minHeight: '1px'
-  }}>
-          {q.trim() === '' && !facetActive ? <>{counts.total} {nounText}</> : counts.shown === 0 ? <>
-                {q.trim() === '' ? 'No ' + nounText + ' match the selected filters.' : facetActive ? 'No ' + nounText + ' match \u201c' + q + '\u201d with the selected filters.' : 'No ' + nounText + ' match \u201c' + q + '\u201d.'}{' '}
-                <button type="button" onClick={clearAll} style={{
-    background: 'none',
-    border: 'none',
-    padding: 0,
-    color: 'var(--sf-accent)',
-    cursor: 'pointer',
-    font: 'inherit',
-    textDecoration: 'underline'
-  }}>
-                  Clear filters
-                </button>
-                {children ? <> {children}</> : null}
-              </> : <>
-                Showing {counts.shown} of {counts.total} {nounText}
-              </>}
-        </div>
-      </div>
-    </>;
-};
-
-<BackToIndex href="#all-settings" label="Back to index" />
+[Back to index](#all-settings)
 
 This reference page lists each key Claude Code reads from a settings file, plus the [short group of keys](#global-config-settings) it keeps in `~/.claude.json` instead. To pick a file, or check precedence, start with [Settings files and precedence](/docs/en/settings).
-
-<span id="available-settings" />
-
-<span id="scopes" />
-
-<span id="all-settings" />
 
 ## Settings index
 
 Every key below links to its entry. Scope lists the [files](/docs/en/settings#settings-files-and-who-they-affect) it can go in: `User` is `~/.claude/settings.json`, `Project` is `.claude/settings.json`, `Local` is `.claude/settings.local.json`, and `Managed` is [what your organization deploys](/docs/en/managed-settings). `Any file` means all four, and `Global config` means [`~/.claude.json`](#global-config-settings).
-
-<ReferenceFilter
-  noun="settings"
-  placeholder="Filter settings by key or purpose"
-  facetOrder={{ scope: ["Any file", "User, local, or managed", "User or managed", "User", "Managed", "Global config"] }}
-  columnHelp={{
-topic: "The section of this page that holds the entry. Use Sort by to group the table by topic.",
-scope: "Which settings files can set the key: user (~/.claude/settings.json), project (.claude/settings.json), local (.claude/settings.local.json), or managed (deployed by your organization). Global config keys are in ~/.claude.json instead.",
-}}
-/>
 
 | Key | Description | Topic | Scope |
 | :- | :- | :- | :- |
@@ -1151,10 +578,6 @@ This example adds two Bedrock deployments after the built-in lineup, under names
 }
 ```
 
-<span id="modelpicker-options" />
-
-<span id="modelpicker-replacebuiltinoptions" />
-
 #### Fields for `modelPicker`
 
 The key takes two fields, one for the rows themselves and one for whether they replace the built-in lineup or add to it.
@@ -1207,10 +630,6 @@ This example sets contracted rates for Sonnet 4.6 and then reduces every figure,
 Set `multiplier` above 1, up to 10, to mark every figure up. A markup requires Claude Code v2.1.271 or later. Earlier versions ignore a `multiplier` above 1 with a warning and keep the rest of the setting.
 
 For the steps, including how to confirm the rates are in effect, see [Report spend at your contracted rates](/docs/en/costs#report-spend-at-your-contracted-rates).
-
-<span id="modelpricing-multiplier" />
-
-<span id="modelpricing-overrides" />
 
 #### Fields for `modelPricing`
 
@@ -1561,8 +980,6 @@ List the tool uses that prompt you for confirmation even in a permission mode th
   }
 }
 ```
-
-<span id="exclude-sensitive-files" />
 
 ### `permissions.deny`
 
@@ -2291,18 +1708,6 @@ Paths use the same [prefixes](#sandbox-path-prefixes) as the `sandbox.filesystem
 
 `mask` substitution runs only through the sandbox proxy, so set [`sandbox.network.tlsTerminate`](#sandbox-network-tlsterminate), or [`allowPlaintextInject`](#sandbox-credentials-allowplaintextinject) for plain-HTTP test networks. `mask` applies to a single file, so list each credential file individually. Claude Code accepts but ignores the `mask` fields on a `deny` entry. [Mask credentials](/docs/en/sandboxing#mask-credentials) covers which settings sources are honored, and [Mask credential files](/docs/en/sandboxing#mask-credential-files) covers when an entry falls back to `deny`.
 
-<span id="sandbox-credentials-files-extract" />
-
-<span id="sandbox-credentials-files-onextractnomatch" />
-
-<span id="sandbox-credentials-files-decode" />
-
-<span id="sandbox-credentials-files-maskclaims" />
-
-<span id="sandbox-credentials-files-maskduplicates" />
-
-<span id="sandbox-credentials-files-injecthosts" />
-
 #### Mask fields for files
 
 A `mask` entry accepts these optional fields. Without `extract` or `decode`, Claude Code replaces the entire file content with one sentinel. On macOS with filesystem isolation on, Claude Code applies a `mask` entry as `deny` before `extract` or `decode` runs; see [Mask credential files](/docs/en/sandboxing#mask-credential-files).
@@ -2363,16 +1768,6 @@ This removes `NPM_TOKEN` from sandboxed commands and masks `GITHUB_TOKEN`, subst
 The `name` must start with a letter or underscore and contain only letters, digits, and underscores. Claude Code merges the arrays from every settings scope the session loads, and applies `deny` when the same variable appears with both modes. [Protect credentials](/docs/en/sandboxing#protect-credentials) covers what still applies from sources you exclude with `--setting-sources`.
 
 `mask` substitution runs only through the sandbox proxy, so set [`sandbox.network.tlsTerminate`](#sandbox-network-tlsterminate), or [`allowPlaintextInject`](#sandbox-credentials-allowplaintextinject) for plain-HTTP test networks; see [Mask credentials](/docs/en/sandboxing#mask-credentials). Claude Code accepts but ignores the `mask` fields on a `deny` entry.
-
-<span id="sandbox-credentials-envvars-extract" />
-
-<span id="sandbox-credentials-envvars-onextractnomatch" />
-
-<span id="sandbox-credentials-envvars-decode" />
-
-<span id="sandbox-credentials-envvars-maskclaims" />
-
-<span id="sandbox-credentials-envvars-injecthosts" />
 
 #### Mask fields for environment variables
 
@@ -2748,8 +2143,6 @@ Make the sandbox proxy terminate TLS so it can read the contents of HTTPS reques
 
 When more than one honored source sets it, Claude Code uses the value from the highest-precedence source: managed settings, then the `--settings` flag, then user settings.
 
-<span id="context-and-memory" />
-
 ## Memory and context
 
 Control what Claude Code loads into context, how it compacts, and where it keeps memory and plans. See [Manage context](/docs/en/context-window) and [Memory](/docs/en/memory).
@@ -2873,8 +2266,6 @@ Skip specific `CLAUDE.md` files when Claude Code loads [memory](/docs/en/memory#
 
 Exclusions apply only to user, project, and local memory files; managed policy CLAUDE.md files can't be excluded.
 
-<span id="environment-variables" />
-
 ### `env`
 
 Set environment variables for every session and for the subprocesses Claude Code starts from it. Most variables in the [environment variables reference](/docs/en/env-vars) can go here, which is how you apply one to every session or roll it out to your team. Project and local settings can't set [some of them](#variables-claude-code-ignores-in-env).
@@ -2963,7 +2354,7 @@ In a `-p` run or an Agent SDK session, Claude Code ignores this key. The SDK tur
 
 ### `idleCompaction`
 
-Idle compaction [compacts](/docs/en/context-window#what-survives-compaction) a long conversation that you've stepped away from, shortly before its prompt cache expires. Your next message then sends a summary instead of the whole conversation. When you come back, the conversation shows `Compacted while idle, before the prompt cache expired`.
+Idle compaction [compacts](/docs/en/context-window#what-survives-compaction) a long conversation that you've stepped away from, shortly before its prompt cache expires. Your next message then sends a summary instead of the whole conversation. When you come back, the conversation shows a line that starts with `Compacted while idle, before the prompt cache expired`.
 
 Idle compaction is on by default for conversations that meet all of these conditions:
 
@@ -2987,6 +2378,11 @@ To turn idle compaction off, set this key to `false`.
   "idleCompaction": false
 }
 ```
+
+To turn idle compaction off or on from inside a session, run `/config` and change the **Idle compaction** row. Your choice is saved to your user settings and applies right away. The row requires Claude Code v2.1.302 or later. If you run one of those versions and `/config` doesn't show the row, check for these causes:
+
+* **Another settings source sets the key**: a value in managed settings, the `--settings` flag, or a project or local settings file overrides your user settings. Change the key in that source instead
+* **Feature flags are unavailable**: where Claude Code can't [fetch feature flags from Anthropic](/docs/en/env-vars#features-that-need-feature-flag-fetching), idle compaction doesn't run, so there is nothing to turn off
 
 The key requires Claude Code v2.1.290 or later. On an earlier version, which ignores this key, turn off [`autoCompactEnabled`](#autocompactenabled) to stop idle compaction.
 
@@ -3057,9 +2453,9 @@ Raise it to keep long descriptions intact at the cost of more context per turn; 
 
 ### `taskOutputMaxChars`
 
-<Warning>
-  Removed in v2.1.277, together with the `TaskOutput` tool it sized. Setting it has no effect on current versions. Claude reads a background task's [output file](/docs/en/tools-reference#background-commands) with `Read` instead.
-</Warning>
+> [!WARNING]
+>
+> Removed in v2.1.277, together with the `TaskOutput` tool it sized. Setting it has no effect on current versions. Claude reads a background task's [output file](/docs/en/tools-reference#background-commands) with `Read` instead.
 
 Through v2.1.276, you set this key to the number of characters of a [background task's](/docs/en/tools-reference#background-commands) output that Claude received inline when it read the task with the `TaskOutput` tool.
 
@@ -3245,8 +2641,6 @@ Show emoji suggestions when you type `:` plus a shortcode in the prompt input, a
 
 See [Emoji shortcodes](/docs/en/interactive-mode#emoji-shortcodes). Requires Claude Code v2.1.217 or later.
 
-<span id="file-suggestion-settings" />
-
 ### `fileSuggestion`
 
 Run your own command to supply `@` file path autocomplete instead of the built-in file suggestion. The built-in suggestion uses fast filesystem traversal; a large monorepo may do better with project-specific indexing such as a pre-built file index.
@@ -3291,8 +2685,6 @@ query=$(cat | jq -r '.query')
 your-repo-file-index --query "$query" | head -20
 ```
 
-<span id="footer-link-badges" />
-
 ### `footerLinksRegexes`
 
 Render extra clickable badges in the footer below the input box when a regex matches turn output: tool results, including file contents and fetched pages, and Claude's own responses. Use it to turn IDs printed by project CLIs, such as review tools and issue trackers, into session links.
@@ -3336,9 +2728,9 @@ Footer badges render alongside a [custom status line](/docs/en/statusline) when 
 
 ### `keybindingFlavor`
 
-<Warning>
-  Deprecated since v2.1.261 and has no effect. The prompt's word-editing keys always [follow readline conventions](/docs/en/interactive-mode#make-ctrl-w-delete-back-to-whitespace), as in Bash. Claude Code still accepts `keybindingFlavor`, so a settings file that sets it stays valid.
-</Warning>
+> [!WARNING]
+>
+> Deprecated since v2.1.261 and has no effect. The prompt's word-editing keys always [follow readline conventions](/docs/en/interactive-mode#make-ctrl-w-delete-back-to-whitespace), as in Bash. Claude Code still accepts `keybindingFlavor`, so a settings file that sets it stays valid.
 
 In v2.1.238 through v2.1.260, setting it to `"readline"` made `Ctrl+W` delete back to the previous whitespace instead of only the previous word.
 
@@ -3843,9 +3235,9 @@ This example turns dictation on and makes the key tap once to start recording an
 
 ### `voiceEnabled`
 
-<Warning>
-  Deprecated since v2.1.92, when the [`voice`](#voice) object replaced it. Claude Code still reads it so older settings files keep working, but new configurations should set `voice.enabled`.
-</Warning>
+> [!WARNING]
+>
+> Deprecated since v2.1.92, when the [`voice`](#voice) object replaced it. Claude Code still reads it so older settings files keep working, but new configurations should set `voice.enabled`.
 
 Turn voice dictation on with the single Boolean form that predates the `voice` object. When both are set, `voice.enabled` applies.
 
@@ -3881,8 +3273,6 @@ Accelerate mouse-wheel scroll speed during fast scrolls in [fullscreen rendering
 
 Control the attribution Claude Code adds to commits and pull requests and how it works with git.
 
-<span id="attribution-settings" />
-
 ### `attribution`
 
 Customize the attribution Claude Code adds to git commits and pull requests. Commits get a [git trailer](https://git-scm.com/docs/git-interpret-trailers) such as `Co-Authored-By` by default; pull request descriptions get plain text. Set each part separately with the sub-keys below.
@@ -3911,9 +3301,9 @@ Claude Code tells Claude that your own instructions about attribution, such as a
 
 ### `includeCoAuthoredBy`
 
-<Warning>
-  Deprecated since v2.0.62, when [`attribution`](#attribution) replaced it. Claude Code still reads it, but new configurations should set `attribution`.
-</Warning>
+> [!WARNING]
+>
+> Deprecated since v2.0.62, when [`attribution`](#attribution) replaced it. Claude Code still reads it, but new configurations should set `attribution`.
 
 Use [`attribution`](#attribution) instead, which replaces this key and lets you change or hide the commit trailer, the pull request text, and the session link separately. Claude Code still honors `includeCoAuthoredBy: false` from settings files that predate `attribution`, but ignores it once you set `attribution.commit` or `attribution.pr`.
 
@@ -4024,10 +3414,6 @@ Choose whether Claude Code appends the claude.ai session link when it commits or
   }
 }
 ```
-
-<span id="hook-configuration" />
-
-<span id="hook-and-skill-settings" />
 
 ## Hooks and automation
 
@@ -4239,12 +3625,6 @@ Set the [agent count Claude aims for](/docs/en/workflows#set-a-size-guideline) i
 ```
 
 Requires Claude Code v2.1.219 or later; on v2.1.202 through v2.1.218, set the guideline in `/config` instead.
-
-<span id="plugin-configuration" />
-
-<span id="manage-plugins" />
-
-<span id="plugin-settings" />
 
 ## Plugins and skills
 
@@ -4652,7 +4032,14 @@ Lock the `agents` surface. Claude Code stops loading agents from `~/.claude/agen
 
 ### `strictPluginOnlyCustomization.hooks`
 
-Lock the `hooks` surface. Claude Code stops running hooks from user, project, and local `settings.json`, and keeps running plugin hooks and hooks in managed settings.
+Lock the `hooks` surface:
+
+* **Stops running**:
+  * Hooks from user, project, and local `settings.json`
+  * Frontmatter hooks in skills, custom commands, and agents, from the sources that a [`skills`](#strictpluginonlycustomization-skills) or [`agents`](#strictpluginonlycustomization-agents) lock would block
+* **Keeps running**: plugin hooks and hooks in managed settings
+
+Skills, custom commands, and agents whose frontmatter hooks stop running still load while their own surface isn't locked.
 
 * **Scope**: [`Managed`](#scopes)
 * **Type**: the string `"hooks"` in the [`strictPluginOnlyCustomization`](#strictpluginonlycustomization) array
@@ -5189,8 +4576,6 @@ Choose where Claude Code shows [agent team](/docs/en/agent-teams) teammates: ins
 }
 ```
 
-<span id="worktree-settings" />
-
 ### `worktree`
 
 Configure how Claude Code creates and manages [git worktrees](/docs/en/worktrees) for `--worktree`, the `EnterWorktree` tool, and isolated subagents and background sessions.
@@ -5353,9 +4738,9 @@ Claude Code never shows the recap in non-interactive mode.
 
 ### `disableArtifact`
 
-<Warning>
-  Deprecated, and replaced by [`enableArtifact`](#enableartifact). Claude Code still honors `disableArtifact: true` as equivalent to `enableArtifact: false`, and ignores `disableArtifact: false`.
-</Warning>
+> [!WARNING]
+>
+> Deprecated, and replaced by [`enableArtifact`](#enableartifact). Claude Code still honors `disableArtifact: true` as equivalent to `enableArtifact: false`, and ignores `disableArtifact: false`.
 
 Use [`enableArtifact`](#enableartifact) instead to turn off the [Artifact](/docs/en/artifacts) tool, which publishes session output as a private web page on claude.ai. When you turn the **Artifacts** row off in `/config`, Claude Code writes `enableArtifact` to your user settings and clears this key.
 
@@ -5569,8 +4954,6 @@ This example allows `devboxes.example.com` and its subdomains, plus the exact ho
 A value that Desktop can't read as a list of hosts, such as `true` or an object, counts as an empty array until you correct it, except `null`, which counts as unset. Requires Claude Desktop v2.26454.0 or later.
 
 If you set [`managedSourcesBehavior`](#managedsourcesbehavior) to `"merge"` in your highest-ranked source, Desktop combines the lists from every [admin source](/docs/en/managed-settings#how-claude-code-combines-managed-sources) and allows a host that matches any of them. If you set an empty array in one source, SSH sessions stay on for the hosts another source lists.
-
-<span id="authentication-and-login" />
 
 ## Authentication and providers
 
@@ -5917,8 +5300,6 @@ Block Claude's tools for the desktop app's [iOS Simulator pane](/docs/en/desktop
 
 The desktop app ignores any other value, and a value that isn't a Boolean, such as the string `"true"` or `1`, also logs a warning.
 
-<span id="data-and-privacy" />
-
 ## Privacy and telemetry
 
 Control how long Claude Code keeps session data and what it sends. The switches that turn off usage metrics and error reports are environment variables, not settings keys: set `DISABLE_TELEMETRY`, `DISABLE_ERROR_REPORTING`, or `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` in the [`env`](#env) key or in the shell. [Telemetry services](/docs/en/data-usage#telemetry-services) says what each one stops. Two exceptions turn off from a settings file: [`feedbackDrafts`](#feedbackdrafts) below for Claude-drafted feedback, and [`feedbackSurveyRate`](#feedbacksurveyrate) below for the session survey.
@@ -6007,8 +5388,6 @@ Skip the [WebFetch domain safety check](/docs/en/data-usage#webfetch-domain-safe
 ```
 
 With the check skipped, WebFetch attempts any URL without consulting the blocklist, so pair it with [`WebFetch` permission rules](/docs/en/permissions#webfetch) if you need to restrict which domains Claude can reach.
-
-<span id="managed-policy" />
 
 ## Enterprise and managed settings
 
@@ -6122,8 +5501,6 @@ Choose whether Claude Code applies managed settings supplied by an embedding hos
 ```
 
 This key has no effect when no admin-deployed managed tier exists: the host's settings then apply as the only managed tier, still filtered to restrictive values. For the filter's limits and how the managed sources interact, see [Parent settings from embedding hosts](/docs/en/managed-settings#parent-settings-from-embedding-hosts) and [Restrict parent settings](/docs/en/claude-apps-gateway#restrict-parent-settings).
-
-<span id="compute-managed-settings-with-a-policy-helper" />
 
 ### `policyHelper`
 
@@ -6448,9 +5825,9 @@ Claude Code ignores this key in `settings.json`.
 
 ### `permissionExplainerEnabled`
 
-<Warning>
-  Removed in v2.1.257, together with the `Ctrl+E` command explanation on Bash and PowerShell permission prompts. Setting it has no effect on current versions.
-</Warning>
+> [!WARNING]
+>
+> Removed in v2.1.257, together with the `Ctrl+E` command explanation on Bash and PowerShell permission prompts. Setting it has no effect on current versions.
 
 Through v2.1.256, you could press `Ctrl+E` on a Bash or PowerShell permission prompt to see a model-generated explanation of the command, and set this key to `false` to turn that shortcut off.
 
@@ -6478,9 +5855,9 @@ Claude Code ignores this key in `settings.json`.
 
 ### `teammateDefaultModel`
 
-<Warning>
-  Removed in v2.1.234, together with its `/config` row **Default teammate model**. Setting it has no effect on current versions.
-</Warning>
+> [!WARNING]
+>
+> Removed in v2.1.234, together with its `/config` row **Default teammate model**. Setting it has no effect on current versions.
 
 Through v2.1.233, you set this key to the model for [agent team](/docs/en/agent-teams#specify-teammates-and-models) teammates your prompt didn't name a model for: an alias such as `"sonnet"`, or `null` to follow the lead's model. For the model Claude Code picks for such teammates now, see [specify teammates and models](/docs/en/agent-teams#specify-teammates-and-models).
 

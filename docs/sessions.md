@@ -23,9 +23,7 @@ Sessions are saved continuously to [local transcript files](#export-and-locate-s
 | `claude --from-pr <number>` | Opens the session picker filtered to sessions linked to that pull request |
 | `/resume` | Switches to a different session from inside an active session |
 
-<h3 id="resume-a-running-background-session">
-  Resume a running background session
-</h3>
+### Resume a running background session
 
 When the conversation you resume with `claude --resume` or `/resume` belongs to a [background session](/docs/en/agent-view) that is still running, Claude Code opens the running session itself. With `--bg` on the command line, the resume is a [background dispatch](/docs/en/agent-view#from-your-shell) instead. Before v2.1.285, Claude Code refused and told you to open the session with `claude attach <id>`, or to stop it with `claude stop <id>` first.
 
@@ -82,8 +80,6 @@ Restoring plan mode on the non-interactive and VS Code paths requires Claude Cod
 | `plan` | Non-interactive, under the [conditions below](#resume-in-plan-mode-with-p) | Plan mode |
 | Any mode | Non-interactive, in any other case | The permission mode a new `claude -p` run would start in |
 | `plan` | VS Code | Plan mode, with [the exceptions on the VS Code page](/docs/en/vs-code#resume-past-conversations) |
-
-<a id="resume-in-plan-mode-with-p" />
 
 ##### Resume in plan mode with `-p`
 

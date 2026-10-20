@@ -6,9 +6,9 @@
 
 > Verify a self-hosted runner image from CI: dispatch a session with the CLI, read Claude's replies through a Stop hook, and script the full loop.
 
-<Note>
-  Self-hosted environments are in public beta on Team and Enterprise plans; [Availability and limitations](/docs/en/self-hosted-environments#availability-and-limitations) covers the enablement path. This page is the CI test recipe; see the [quickstart](/docs/en/self-hosted-environments-quickstart) for setup and [Deploy to production](/docs/en/self-hosted-environments-deploy) for the fleet recipes.
-</Note>
+> [!NOTE]
+>
+> Self-hosted environments are in public beta on Team and Enterprise plans; [Availability and limitations](/docs/en/self-hosted-environments#availability-and-limitations) covers the enablement path. This page is the CI test recipe; see the [quickstart](/docs/en/self-hosted-environments-quickstart) for setup and [Deploy to production](/docs/en/self-hosted-environments-deploy) for the fleet recipes.
 
 In a [self-hosted environment](/docs/en/self-hosted-environments), Claude Code [cloud sessions](/docs/en/claude-code-on-the-web) run on a runner image you build and maintain. Before rolling a new image to your production environment, drive a full session against a test environment from a script: create a session, read Claude's reply, send a follow-up, and read that reply too. This is the shape of a CI smoke test that verifies your runner image, git access, and any custom tools before you promote a change.
 

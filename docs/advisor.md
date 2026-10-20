@@ -6,9 +6,9 @@
 
 > Pair your main model with a stronger advisor model that Claude consults at key moments during a task.
 
-<Note>
-  The advisor tool is experimental and requires the Anthropic API. It is not available on Amazon Bedrock, Claude Platform on AWS, Google Cloud's Agent Platform, or Microsoft Foundry. Behavior, pricing, and availability may change.
-</Note>
+> [!NOTE]
+>
+> The advisor tool is experimental and requires the Anthropic API. It is not available on Amazon Bedrock, Claude Platform on AWS, Google Cloud's Agent Platform, or Microsoft Foundry. Behavior, pricing, and availability may change.
 
 The advisor tool lets Claude consult a second, typically stronger model at key moments during a task, such as before committing to an approach, when stuck on a recurring error, or before declaring a task complete. The advisor receives the full conversation, including every tool call and result, and returns guidance that Claude applies before continuing.
 

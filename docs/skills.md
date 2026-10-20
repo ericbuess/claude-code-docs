@@ -10,11 +10,11 @@ Skills extend what Claude can do. Create a `SKILL.md` file with instructions, an
 
 Create a skill when you keep pasting the same instructions, checklist, or multi-step procedure into chat, or when a section of CLAUDE.md has grown into a procedure rather than a fact. Unlike CLAUDE.md content, a skill's body loads only when it's used, so long reference material costs almost nothing until you need it.
 
-<Note>
-  For built-in commands like `/help` and `/compact`, and bundled skills like `/debug` and `/code-review`, see the [commands reference](/docs/en/commands).
-
-  **Custom commands have been merged into skills.** A file at `.claude/commands/deploy.md` and a skill at `.claude/skills/deploy/SKILL.md` both create `/deploy` and work the same way. Your existing `.claude/commands/` files keep working. Skills add optional features: a directory for supporting files, frontmatter to [control whether you or Claude invokes them](#control-who-invokes-a-skill), and the ability for Claude to load them automatically when relevant.
-</Note>
+> [!NOTE]
+>
+> For built-in commands like `/help` and `/compact`, and bundled skills like `/debug` and `/code-review`, see the [commands reference](/docs/en/commands).
+>
+> **Custom commands have been merged into skills.** A file at `.claude/commands/deploy.md` and a skill at `.claude/skills/deploy/SKILL.md` both create `/deploy` and work the same way. Your existing `.claude/commands/` files keep working. Skills add optional features: a directory for supporting files, frontmatter to [control whether you or Claude invokes them](#control-who-invokes-a-skill), and the ability for Claude to load them automatically when relevant.
 
 Claude Code skills follow the [Agent Skills](https://agentskills.io) open standard, which works across multiple AI tools. Claude Code extends the standard with additional features like [invocation control](#control-who-invokes-a-skill), [subagent execution](#run-skills-in-a-subagent), and [dynamic context injection](#inject-dynamic-context). See [Using skill frontmatter outside Claude Code](#using-skill-frontmatter-outside-claude-code) for which frontmatter fields are part of the standard and which are Claude Code extensions.
 
@@ -28,9 +28,9 @@ Most bundled skills are available in every session. A few depend on a specific f
 
 To turn bundled skills off, use the [`disableBundledSkills`](/docs/en/settings-reference#disablebundledskills) setting.
 
-<Note>
-  The [`/doctor`](/docs/en/commands#all-commands) setup checkup stays typable when `disableBundledSkills` is on. To hide it, set the `DISABLE_DOCTOR_COMMAND` environment variable or a [`skillOverrides`](#override-skill-visibility-from-settings) entry of `"doctor": "off"`.
-</Note>
+> [!NOTE]
+>
+> The [`/doctor`](/docs/en/commands#all-commands) setup checkup stays typable when `disableBundledSkills` is on. To hide it, set the `DISABLE_DOCTOR_COMMAND` environment variable or a [`skillOverrides`](#override-skill-visibility-from-settings) entry of `"doctor": "off"`.
 
 Bundled skills are listed alongside built-in commands in the [commands reference](/docs/en/commands), marked **Skill** in the Purpose column.
 
@@ -86,6 +86,7 @@ To start one of the skill's workflows, type a subcommand after the skill name at
 | `managed-agents-onboard` | Walk through creating a new Managed Agent | Earlier than v2.1.221 |
 | `managed-agents-onboard <url>` | Build the Managed Agent that the page at the URL describes, such as a page in the [Managed Agents docs](https://platform.claude.com/docs/en/managed-agents/overview) | v2.1.290 or later |
 | `managed-agents-onboard <quickstart-name>` | Build one of the Console's quickstart templates, such as `deep-researcher`. If you give one word that isn't a template name, Claude lists the valid names | v2.1.290 or later |
+| `managed-agents-secure [<agent-id>]` | Read the settings of one Managed Agent and report where they match the [Secure your Managed Agents deployment](https://platform.claude.com/docs/en/managed-agents/secure-deployment) guide or differ from it. Requires the [`ant` CLI](https://platform.claude.com/docs/en/cli-sdks-libraries/cli/quickstart) | v2.1.304 or later |
 | `prompt-audit` | Flag instructions written for older models in your prompts, skills, and tool descriptions and propose fixes as a diff | v2.1.221 or later |
 | `cost-optimize` | Profile where your project's Claude API spend goes and propose savings from options such as prompt caching, trimming unneeded input and output tokens, batch processing, effort, and model choice, one change at a time | v2.1.247 or later |
 | `build-eval` | Build an eval set for your Claude-powered app | v2.1.259 or later |
@@ -98,59 +99,55 @@ To start one of the skill's workflows, type a subcommand after the skill name at
 
 This example creates a skill that summarizes the uncommitted changes in your git repository and flags anything risky. It pulls the live diff into the prompt before Claude reads it, so the response is grounded in your actual working tree rather than what Claude can guess from open files. Claude loads the skill automatically when you ask about your changes, or you can invoke it directly with `/summarize-changes`.
 
-<Steps>
-  <Step title="Create the skill directory">
-    Create a directory for the skill in your personal skills folder. Personal skills are available across all your projects.
+**1. Create the skill directory**
 
-    ```bash theme={null}
-    mkdir -p ~/.claude/skills/summarize-changes
-    ```
-  </Step>
+Create a directory for the skill in your personal skills folder. Personal skills are available across all your projects.
 
-  <Step title="Write SKILL.md">
-    Every skill needs a `SKILL.md` file with two parts: YAML frontmatter between `---` markers that tells Claude when to use the skill, and markdown content with the instructions Claude follows when the skill runs. The directory name, or the frontmatter `name` when you set one, becomes the command you type, and the `description` helps Claude decide when to load the skill automatically.
+```bash theme={null}
+mkdir -p ~/.claude/skills/summarize-changes
+```
 
-    Save this to `~/.claude/skills/summarize-changes/SKILL.md`:
+**2. Write SKILL.md**
 
-    ```yaml theme={null}
-    ---
-    description: Summarizes uncommitted changes and flags anything risky. Use when the user asks what changed, wants a commit message, or asks to review their diff.
-    ---
+Every skill needs a `SKILL.md` file with two parts: YAML frontmatter between `---` markers that tells Claude when to use the skill, and markdown content with the instructions Claude follows when the skill runs. The directory name, or the frontmatter `name` when you set one, becomes the command you type, and the `description` helps Claude decide when to load the skill automatically.
 
-    ## Current changes
+Save this to `~/.claude/skills/summarize-changes/SKILL.md`:
 
-    !`git diff HEAD`
+```yaml theme={null}
+---
+description: Summarizes uncommitted changes and flags anything risky. Use when the user asks what changed, wants a commit message, or asks to review their diff.
+---
 
-    ## Instructions
+## Current changes
 
-    Summarize the changes above in two or three bullet points, then list any risks you notice such as missing error handling, hardcoded values, or tests that need updating. If the diff is empty, say there are no uncommitted changes.
-    ```
+!`git diff HEAD`
 
-    The `` !`git diff HEAD` `` line uses [dynamic context injection](#inject-dynamic-context): Claude Code runs the command and replaces the line with its output before Claude sees the skill content, so the instructions arrive with the current diff already inlined.
-  </Step>
+## Instructions
 
-  <Step title="Test the skill">
-    Open a git project, make a small edit to any file, and start Claude Code by running `claude`. You can test the skill two ways.
+Summarize the changes above in two or three bullet points, then list any risks you notice such as missing error handling, hardcoded values, or tests that need updating. If the diff is empty, say there are no uncommitted changes.
+```
 
-    **Let Claude invoke it automatically** by asking something that matches the description:
+The `` !`git diff HEAD` `` line uses [dynamic context injection](#inject-dynamic-context): Claude Code runs the command and replaces the line with its output before Claude sees the skill content, so the instructions arrive with the current diff already inlined.
 
-    ```text theme={null}
-    What did I change?
-    ```
+**3. Test the skill**
 
-    **Or invoke it directly** with the skill name:
+Open a git project, make a small edit to any file, and start Claude Code by running `claude`. You can test the skill two ways.
 
-    ```text theme={null}
-    /summarize-changes
-    ```
+**Let Claude invoke it automatically** by asking something that matches the description:
 
-    Either way, Claude should respond with a short summary of your edit and a list of risks.
-  </Step>
-</Steps>
+```text theme={null}
+What did I change?
+```
 
-<h2 id="where-skills-live">
-  Choose where skills load
-</h2>
+**Or invoke it directly** with the skill name:
+
+```text theme={null}
+/summarize-changes
+```
+
+Either way, Claude should respond with a short summary of your edit and a list of risks.
+
+## Choose where skills load
 
 Where you save a skill decides which sessions load it. Save it under your home directory to get it in every project, commit it to a repository to share it with everyone who works there, or distribute it through a plugin or managed settings to reach a whole team.
 
@@ -173,9 +170,7 @@ Skill folders also follow these rules:
 * **Command files**: a Markdown file in `.claude/commands/` is the older format and still works. It supports the same [frontmatter](#frontmatter-reference) except `name` and `paths`. To find the name you type to invoke it, see [How a skill gets its command name](#how-a-skill-gets-its-command-name). Prefer a skill for new work, since skills also support [supporting files](#add-supporting-files).
 * **Skill folder as a plugin**: add a `.claude-plugin/plugin.json` to a skill folder and it loads as a [plugin](/docs/en/plugins/loading#plugins-shared-through-a-repository) named `<name>@skills-dir`, so it can bundle agents, hooks, and MCP servers. In a project's `.claude/skills/`, this requires accepting the workspace trust dialog first.
 
-<h3 id="discovery-from-parent-and-nested-directories">
-  Load skills in monorepos and subdirectories
-</h3>
+### Load skills in monorepos and subdirectories
 
 Claude Code loads project skills from `.claude/skills/` in the directory where you start it and in every parent directory up to the repository root, so starting in `packages/frontend/` still picks up skills defined at the root. When you [move the session with `/cd`](/docs/en/permissions#move-the-session-to-another-directory) on v2.1.246 or later, Claude Code adds the new directory's project skills.
 
@@ -188,9 +183,7 @@ When a nested skill's directory name matches another skill's name, both stay ava
 * `/deploy` runs the root skill. Claude Code also lists the directory-qualified variants for Claude, with an instruction to invoke the one whose directory holds the files it's working on, so the nested skill still applies to work in `apps/web/`.
 * `/apps/web:deploy` runs the nested skill on its own. Its description names the directory it applies to.
 
-<h3 id="skills-from-additional-directories">
-  Load skills from a directory outside the project
-</h3>
+### Load skills from a directory outside the project
 
 When you add a directory with `--add-dir` or `/add-dir`, Claude Code loads the skills in that directory's `.claude/skills/`, along with its `.claude/commands/` and `.claude/agents/`. Directories the Agent SDK adds through [`additionalDirectories`](/docs/en/agent-sdk/typescript#options) in TypeScript or [`add_dirs`](/docs/en/agent-sdk/python#claudeagentoptions) in Python load the same way, because the SDK passes them as `--add-dir`. The `permissions.additionalDirectories` setting in `settings.json` grants file access only and loads none of these.
 
@@ -212,9 +205,7 @@ When two skills share a directory or file name, where each one came from decides
 | A plugin skill and a skill at any of the locations above | Both load, because plugin skills are namespaced as `/plugin-name:skill-name` |
 | Any of the above and the short name of a skill [synced from your claude.ai account](#how-synced-skills-behave) | The other skill or command. The synced skill is then listed and runs only under its full name. See [When a synced skill name matches another command](#when-a-synced-skill-name-matches-another-command) |
 
-<h3 id="skills-in-cowork-and-cloud-sessions">
-  Use skills in Cowork and cloud sessions
-</h3>
+### Use skills in Cowork and cloud sessions
 
 [Cowork](https://claude.com/product/cowork) sessions and [cloud sessions](/docs/en/cloud-environments#what-carries-over-from-your-setup), including [cloud scheduled tasks](/docs/en/routines), don't read `~/.claude/skills/` on your machine. Both interactive and scheduled Cowork sessions load the skills enabled for your claude.ai account, synced at session start. Manage them from **Customize** in the Desktop app sidebar or from the skills settings on claude.ai. Cloud sessions additionally load project skills committed to the cloned repository's `.claude/skills/`.
 
@@ -225,9 +216,7 @@ If a skill exists only in `~/.claude/skills/` on your machine, Claude Code repor
 
 [Desktop scheduled tasks](/docs/en/desktop-scheduled-tasks) run locally on your machine, so they do load `~/.claude/skills/`.
 
-<h3 id="how-synced-skills-behave">
-  Skills synced from claude.ai
-</h3>
+### Skills synced from claude.ai
 
 This section applies to you if you use Cowork or cloud sessions, or sign in to Claude Code in your terminal with a claude.ai account. In those sessions, Claude Code loads the skills enabled for your claude.ai account, with no setup on your part, as [Where synced skills load](#where-synced-skills-load) describes. Those skills include the ones you create or turn on in your claude.ai settings, skills your organization provides there, and Anthropic's built-in skills such as `pdf` and `xlsx`.
 
@@ -288,9 +277,7 @@ When it compares names, Claude Code ignores case, spacing, and invisible charact
 
 A name that differs only by a look-alike letter from another alphabet counts as a different name, and the `claude.ai sync` label is how you tell the two apart. These checks and labels require Claude Code v2.1.228 or later.
 
-<h4 id="names-reserved-for-synced-skills">
-  Names reserved for synced skills
-</h4>
+#### Names reserved for synced skills
 
 Claude Code reserves the name `anthropic-skills`, and every name inside that namespace such as `anthropic-skills:pdf`, for skills synced from claude.ai, so a synced skill's full name never runs anything else. The name is reserved in every session, whether or not you sign in with a claude.ai account.
 
@@ -313,9 +300,7 @@ What Claude Code does with a synced skill's body depends on where the session ru
 * In a Cowork session on your desktop, the body keeps the behavior a local skill has, except that Claude Code replaces every `!` command line with the [`disableSkillShellExecution` placeholder](#inject-dynamic-context), as it does for every skill you supply there.
 * In any other session on your machine, Claude Code doesn't run [`!` commands](#inject-dynamic-context), doesn't attach the files that `@` references name the way it does for a local skill, and doesn't substitute the `${CLAUDE_PROJECT_DIR}` and `${CLAUDE_SESSION_ID}` placeholders, so the `@` references and both placeholders reach Claude as literal text. A `!` command line reaches Claude as literal text too, or as that placeholder when `disableSkillShellExecution` is on. This handling requires Claude Code v2.1.228 or later.
 
-<h3 id="live-change-detection">
-  Edit a skill during a session
-</h3>
+### Edit a skill during a session
 
 Claude Code watches skill directories for file changes, except in [bare mode](/docs/en/headless#start-faster-with-bare-mode). When you add, edit, or remove a skill under `~/.claude/skills/`, the project `.claude/skills/`, or a `.claude/skills/` inside an `--add-dir` directory, Claude Code picks up the change within the current session, without a restart.
 
@@ -460,9 +445,7 @@ In [non-interactive sessions](/docs/en/headless), the names `help` and `feedback
 
 For a plugin-root `SKILL.md`, there is no skill directory to take the name from, so `name` supplies the whole final segment. Without a `name` field, Claude Code falls back to the plugin's directory name.
 
-<h4 id="characters-a-skill-name-cant-hold">
-  Characters a skill name can't hold
-</h4>
+#### Characters a skill name can't hold
 
 If a skill or custom command is missing from the `/` menu, or the menu doesn't show a skill's frontmatter `name`, check the name. Claude Code refuses a command name or a frontmatter `name` that contains characters such as these:
 
@@ -553,7 +536,9 @@ Reference supporting files from `SKILL.md` so Claude knows what each file contai
 - For usage examples, see [examples.md](examples.md)
 ```
 
-<Tip>Keep `SKILL.md` under 500 lines. Move detailed reference material to separate files.</Tip>
+> [!TIP]
+>
+> Keep `SKILL.md` under 500 lines. Move detailed reference material to separate files.
 
 ### Control who invokes a skill
 
@@ -590,9 +575,9 @@ Here's how the two fields affect invocation and context loading:
 | `disable-model-invocation: true` | Yes | Not on its own | Description not in context, full skill loads when invoked |
 | `user-invocable: false` | No | Yes | Description always in context, full skill loads when invoked |
 
-<Note>
-  In a regular session, skill descriptions are loaded into context so Claude knows what's available, but full skill content only loads when invoked. [Subagents with preloaded skills](/docs/en/sub-agents#preload-skills-into-subagents) work differently: the full skill content is injected at startup.
-</Note>
+> [!NOTE]
+>
+> In a regular session, skill descriptions are loaded into context so Claude knows what's available, but full skill content only loads when invoked. [Subagents with preloaded skills](/docs/en/sub-agents#preload-skills-into-subagents) work differently: the full skill content is injected at startup.
 
 #### Where you write the skill's name
 
@@ -740,9 +725,9 @@ To disable this behavior for skills and custom commands from user, project, plug
 
 Claude Code never runs these commands on your machine when they appear in skills [synced from your claude.ai account](#how-synced-skills-behave), regardless of this setting. This restriction requires Claude Code v2.1.228 or later. [How Claude Code handles the body of a synced skill](#how-claude-code-handles-the-body-of-a-synced-skill) says what Claude receives in place of the command in each kind of session.
 
-<Tip>
-  To request deeper reasoning when a skill runs, include `ultrathink` anywhere in the skill content. See [Use ultrathink for one-off deep reasoning](/docs/en/model-config#use-ultrathink-for-one-off-deep-reasoning).
-</Tip>
+> [!TIP]
+>
+> To request deeper reasoning when a skill runs, include `ultrathink` anywhere in the skill content. See [Use ultrathink for one-off deep reasoning](/docs/en/model-config#use-ultrathink-for-one-off-deep-reasoning).
 
 #### How injected commands run
 
@@ -790,9 +775,9 @@ In auto mode, a command that would otherwise need your approval doesn't abort th
 
 Add `context: fork` to your frontmatter when you want a skill to run in isolation. Claude Code starts a new subagent of the type set in the `agent` field and gives it the skill content as its prompt. The subagent doesn't see your conversation history, so the skill's instructions have to stand on their own.
 
-<Note>
-  Despite the name, a skill with `context: fork` doesn't run in a [fork of the current conversation](/docs/en/sub-agents#fork-the-current-conversation), which would hand the subagent everything you've discussed so far. When the task depends on that history, fork the conversation instead of using `context: fork`.
-</Note>
+> [!NOTE]
+>
+> Despite the name, a skill with `context: fork` doesn't run in a [fork of the current conversation](/docs/en/sub-agents#fork-the-current-conversation), which would hand the subagent everything you've discussed so far. When the task depends on that history, fork the conversation instead of using `context: fork`.
 
 The forked subagent runs in the [background](/docs/en/sub-agents#run-subagents-in-foreground-or-background): you keep working while it runs, and its result arrives in your conversation when it completes. Set `background: false` in the frontmatter to instead wait for the result in the turn that invoked the skill. Before v2.1.218, forked skills always blocked the turn until they finished.
 
@@ -803,15 +788,15 @@ Claude Code also waits for the result, even when the skill doesn't set `backgrou
 * When you invoke a forked skill while an earlier invocation of the same skill is still running
 * When a [session-scoped scheduled task](/docs/en/scheduled-tasks) fires with the skill as its prompt
 
-When an agent in a [dynamic workflow](/docs/en/workflows) invokes a forked skill, that agent waits for and receives the result, even when the skill doesn't set `background: false`. Before v2.1.295, Claude Code didn't wait in this case, and when the skill ran in the background, its result arrived in your main conversation instead of reaching that agent.
+When an agent in a [dynamic workflow](/docs/en/workflows) invokes a forked skill, that agent waits for and receives the result, even when the skill doesn't set `background: false`. Before v2.1.295, when the skill ran in the background, that agent didn't wait for it. The skill's result then arrived in your main conversation instead of reaching the agent.
 
 A backgrounded fork also runs with the [narrower tool set that applies to background subagents](/docs/en/sub-agents#run-subagents-in-foreground-or-background): the skill's subagent is a regular agent type, so the exemption for subagents that fork the conversation doesn't cover it. If your skill's steps depend on a tool outside that set, set `background: false` to keep the full tool set.
 
 A forked skill that runs in the background applies its edits outside your session's [checkpoints](/docs/en/checkpointing#subagent-edits-not-restored). After one, `/rewind` restores only the files Claude had already edited in your conversation. The skill's edits to other files stay, so use git to revert them.
 
-<Warning>
-  `context: fork` only makes sense for skills with explicit instructions. If your skill contains guidelines like "use these API conventions" without a task, the subagent receives the guidelines but no actionable prompt, and returns without meaningful output.
-</Warning>
+> [!WARNING]
+>
+> `context: fork` only makes sense for skills with explicit instructions. If your skill contains guidelines like "use these API conventions" without a task, the subagent receives the guidelines but no actionable prompt, and returns without meaningful output.
 
 Skills and [subagents](/docs/en/sub-agents) work together in two directions:
 
@@ -898,9 +883,9 @@ Claude Code matches an `allow` rule only against the skill's own name and the na
 
 **Hide individual skills** by adding `disable-model-invocation: true` to their frontmatter. This removes the skill from Claude's context entirely.
 
-<Note>
-  With `user-invocable: false`, you can't invoke the skill, but Claude still can. To keep Claude from invoking it through the Skill tool, set `disable-model-invocation: true`.
-</Note>
+> [!NOTE]
+>
+> With `user-invocable: false`, you can't invoke the skill, but Claude still can. To keep Claude from invoking it through the Skill tool, set `disable-model-invocation: true`.
 
 ### Override skill visibility from settings
 

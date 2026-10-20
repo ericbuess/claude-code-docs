@@ -12,13 +12,13 @@ Where a message names a plugin or marketplace, the entry shows a placeholder suc
 
 Use this page whether you install plugins, build them, host a marketplace, or administer plugins for an organization.
 
-<Note>
-  These cases are covered on other pages:
-
-  * **Why scopes, the cache, and precedence behave the way they do**: read [Plugin loading reference](/docs/en/plugins/loading)
-  * **Looking up a flag, field, or command**: use the [plugin commands reference](/docs/en/plugins/cli-reference), the [manifest reference](/docs/en/plugins/manifest-reference), or the [marketplace reference](/docs/en/plugins/marketplace-reference)
-  * **A `hooks module not loaded` or `hooks module did not load` message**: the plugin is a [mod](/docs/en/plugins/mods/overview), so read [The mod doesn't load](/docs/en/plugins/mods/troubleshoot#the-mod-doesn’t-load)
-</Note>
+> [!NOTE]
+>
+> These cases are covered on other pages:
+>
+> * **Why scopes, the cache, and precedence behave the way they do**: read [Plugin loading reference](/docs/en/plugins/loading)
+> * **Looking up a flag, field, or command**: use the [plugin commands reference](/docs/en/plugins/cli-reference), the [manifest reference](/docs/en/plugins/manifest-reference), or the [marketplace reference](/docs/en/plugins/marketplace-reference)
+> * **A `hooks module not loaded` or `hooks module did not load` message**: the plugin is a [mod](/docs/en/plugins/mods/overview), so read [The mod doesn't load](/docs/en/plugins/mods/troubleshoot#the-mod-doesn’t-load)
 
 Search for the exact message you saw. Each message is listed under the stage that produces it, which isn't always the command you ran. For example, an install can fail because a marketplace is missing, so that message is under [Add a marketplace](#add-a-marketplace).
 
@@ -26,9 +26,7 @@ Search for the exact message you saw. Each message is listed under the stage tha
 
 `/plugin` is a command you type inside a running Claude Code terminal session, and it opens an interactive panel. The entries in this section cover the places where you can type it but it can't run, and the command spellings that don't exist.
 
-<h3 id="plugin-isnt-available-in-this-environment">
-  `/plugin isn't available in this environment`
-</h3>
+### `/plugin isn't available in this environment`
 
 You typed `/plugin` somewhere other than a Claude Code terminal session, and Claude replied with this line instead of opening anything.
 
@@ -45,9 +43,7 @@ Install the plugin from the surface you're on instead:
 
 When a terminal install works, `/plugin` prints an install summary that starts with `✓ Installed <plugin>.` and `claude plugin install` prints `Successfully installed plugin: <plugin>@<marketplace>`.
 
-<h3 id="zsh-no-such-file-or-directory-plugin">
-  `zsh: no such file or directory: /plugin`
-</h3>
+### `zsh: no such file or directory: /plugin`
 
 You typed `/plugin ...` at a shell prompt, and the shell reported that no file named `/plugin` exists. Bash reports `bash: /plugin: No such file or directory`.
 
@@ -67,9 +63,7 @@ A successful install prints a summary that starts with `✓ Installed <plugin>.`
 
 To install from the shell without starting a session, run `claude plugin install <plugin>@<marketplace>` instead.
 
-<h3 id="the-term-plugin-is-not-recognized-as-the-name-of-a-cmdlet">
-  `The term '/plugin' is not recognized as the name of a cmdlet`
-</h3>
+### `The term '/plugin' is not recognized as the name of a cmdlet`
 
 You typed `/plugin ...` at a PowerShell prompt, and `/plugin` is a Claude Code command, not a program. Bash and Zsh report [their own form of this error](#zsh-no-such-file-or-directory-plugin).
 
@@ -78,17 +72,13 @@ Use either of these instead:
 * Run `claude`, then type `/plugin` at the Claude Code prompt
 * Run `claude plugin install <plugin>@<marketplace>` in PowerShell without starting a session
 
-<h3 id="claude-command-not-found-after-claude-plugin">
-  `claude: command not found` after `claude plugin ...`
-</h3>
+### `claude: command not found` after `claude plugin ...`
 
 You ran `claude plugin install ...` in your shell, and the shell couldn't find `claude` at all. On Windows the message is `'claude' is not recognized as the name of a cmdlet` or `'claude' is not recognized as an internal or external command`.
 
 The cause isn't the plugin command. Follow [Verify your PATH](/docs/en/troubleshoot-install#verify-your-path), then retry the plugin command.
 
-<h3 id="unknown-command-and-command-spellings-that-dont-exist">
-  `Unknown command` and command spellings that don't exist
-</h3>
+### `Unknown command` and command spellings that don't exist
 
 You typed a plugin command you saw somewhere and got `Unknown command: /<name>` in a session, or `error: unknown command '<name>'` or `error: unknown option '<flag>'` from the `claude` binary in your shell.
 
@@ -112,9 +102,7 @@ These spellings look wrong but work:
 
 A marketplace is a catalog you add to Claude Code from a git repository, a URL, or a local path. These entries cover the messages you get when adding one fails or a later refresh fails.
 
-<h3 id="marketplace-claude-plugins-official-not-found">
-  `Marketplace "claude-plugins-official" not found`
-</h3>
+### `Marketplace "claude-plugins-official" not found`
 
 You ran `/plugin install <plugin>@claude-plugins-official` in a session, and Claude Code reported that it has no marketplace by that name.
 
@@ -138,9 +126,7 @@ For any other marketplace name in this message, see [`Marketplace "<name>" not f
 
 The same string also appears in the `/plugin` **Errors** tab, the panel's list of load failures, when a plugin listed in your settings names a marketplace you haven't added.
 
-<h3 id="marketplace-not-found">
-  `Marketplace "<name>" not found`
-</h3>
+### `Marketplace "<name>" not found`
 
 You ran `/plugin install` in a session and Claude Code reported that it has no marketplace by that name. Two forms of the command reach this message:
 
@@ -155,9 +141,7 @@ A marketplace someone sends you is third-party, so [review the plugin before you
 
 If you already added the marketplace, check the spelling against `/plugin marketplace list`.
 
-<h3 id="invalid-marketplace-source-format">
-  `Invalid marketplace source format`
-</h3>
+### `Invalid marketplace source format`
 
 You ran `/plugin marketplace add <source>`, `claude plugin marketplace add <source>`, or `claude plugin install <plugin> --marketplace <source>`, and Claude Code replied `Invalid marketplace source format. Try: owner/repo, https://..., or ./path`.
 
@@ -178,9 +162,7 @@ Retype the source in one of the accepted forms:
 
 Claude Code prints `Successfully added marketplace: <name>` when the add works.
 
-<h3 id="is-not-a-valid-github-owner-repo-shorthand">
-  `'<source>' is not a valid GitHub owner/repo shorthand`
-</h3>
+### `'<source>' is not a valid GitHub owner/repo shorthand`
 
 You passed a source with a slash that isn't `owner/repo`, such as `github.com/owner/repo` or a `gitlab.example.com/group/project` path. Claude Code refused it with this message and a list of accepted forms.
 
@@ -198,9 +180,7 @@ For example, to add the official marketplace by its clone URL, in a session:
 
 A successful add prints `Successfully added marketplace: <name>`.
 
-<h3 id="invalid-git-url">
-  `Invalid git URL`
-</h3>
+### `Invalid git URL`
 
 You added a marketplace, installed a plugin, or ran an update from a git address, and the command failed with `Invalid git URL` in its message.
 
@@ -210,9 +190,7 @@ The text after the address names what to change. Rewrite the address as the mess
 
 A refusal that instead says `is blocked by enterprise policy` comes from your organization's settings. See [Marketplace source is blocked by enterprise policy](#marketplace-source-is-blocked-by-enterprise-policy).
 
-<h3 id="path-does-not-exist">
-  `Path does not exist: <path>`
-</h3>
+### `Path does not exist: <path>`
 
 You passed a local path to `marketplace add`, and nothing exists at that path. A relative path resolves against your current directory.
 
@@ -220,9 +198,7 @@ Check the resolved path in the message. Then run the command from the directory 
 
 Claude Code accepts a directory that contains `.claude-plugin/marketplace.json`, or a path to a `.json` file. A path to any other file fails with `File path must point to a .json file (marketplace.json)`.
 
-<h3 id="marketplace-file-not-found-at-claude-plugin-marketplace-json">
-  `Marketplace file not found at <path>/.claude-plugin/marketplace.json`
-</h3>
+### `Marketplace file not found at <path>/.claude-plugin/marketplace.json`
 
 Claude Code cloned or downloaded the marketplace but found no `marketplace.json` at the expected path inside it. The add command reports it as `Failed to add marketplace: Marketplace file not found at ...`.
 
@@ -233,9 +209,7 @@ The fix differs for the owner and for everyone else:
 * **You own the marketplace**: put the file at that location and re-add the marketplace
 * **Someone else hosts it**: ask the owner for the exact source they publish
 
-<h3 id="cannot-install-plugins-from-a-marketplace-with-this-name">
-  `Cannot add marketplace "<name>": Claude Code cannot install plugins from a marketplace with this name`
-</h3>
+### `Cannot add marketplace "<name>": Claude Code cannot install plugins from a marketplace with this name`
 
 You added a marketplace, and the [`name`](/docs/en/plugins/marketplace-reference#top-level-fields) in its `marketplace.json` isn't valid as the part after `@` in a [plugin id](/docs/en/plugins/loading#find-where-a-plugin-came-from) such as `my-plugin@my-marketplace`. Claude Code refuses the add and registers nothing.
 
@@ -252,9 +226,7 @@ Give the marketplace a name that fits that rule, then add it again:
 
 Before v2.1.295, Claude Code reported the add in this example as successful.
 
-<h3 id="claude-code-reserves-this-name">
-  `Cannot add marketplace "<name>": Claude Code reserves this name and cannot register a marketplace under it`
-</h3>
+### `Cannot add marketplace "<name>": Claude Code reserves this name and cannot register a marketplace under it`
 
 You added a marketplace, and the [`name`](/docs/en/plugins/marketplace-reference#top-level-fields) in its `marketplace.json` is one of the member names that every JavaScript object has, such as `constructor`, `toString`, or `valueOf`. Claude Code reserves those names, so it refuses the add and registers nothing. [Reserved names](/docs/en/plugins/marketplace-reference#reserved-names) lists them.
 
@@ -273,9 +245,7 @@ Give the marketplace another name, then add it again:
 
 Before v2.1.296, adding such a marketplace failed with an internal error in place of this message.
 
-<h3 id="ssh-authentication-failed-or-https-authentication-failed">
-  `SSH authentication failed` or `HTTPS authentication failed`
-</h3>
+### `SSH authentication failed` or `HTTPS authentication failed`
 
 You added or updated a marketplace from a git repository, and the clone failed with `Failed to clone marketplace repository:` followed by one of these lines.
 
@@ -292,9 +262,7 @@ To make Claude Code skip SSH for GitHub `owner/repo` sources, set `CLAUDE_CODE_P
 
 For what background auto-updates can and can't do with your credentials, see [What background auto-update does with credentials](/docs/en/plugins/host-marketplace#what-background-auto-update-does-with-credentials).
 
-<h3 id="ssh-host-key-is-not-in-your-known-hosts-file">
-  `SSH host key is not in your known_hosts file`
-</h3>
+### `SSH host key is not in your known_hosts file`
 
 You added a marketplace over SSH from a host you've never connected to, and the clone failed with this line and a `ssh -T git@<host>` hint. For a host whose key changed, the message is `SSH host key has changed` with a `ssh-keygen -R <host>` hint instead.
 
@@ -306,61 +274,51 @@ ssh -T git@github.com
 
 For a public repository, add the marketplace by its `https://` URL instead to avoid SSH entirely.
 
-<h3 id="command-git-not-found-or-is-in-an-unsafe-location">
-  `Command 'git' not found or is in an unsafe location`
-</h3>
+### `Command 'git' not found or is in an unsafe location`
 
 On Windows, you added a marketplace and Claude Code reported `Failed to clone marketplace repository: Command 'git' not found or is in an unsafe location (current directory)`.
 
 Claude Code looks for `git` on your `PATH` and refuses to run one found only in the current directory. To fix it, install Git and retry:
 
-<Steps>
-  <Step title="Install Git for Windows">
-    Install Git for Windows so that `git` is on your `PATH`.
-  </Step>
+**1. Install Git for Windows**
 
-  <Step title="Open a new terminal">
-    Open a new terminal so the updated `PATH` applies.
-  </Step>
+Install Git for Windows so that `git` is on your `PATH`.
 
-  <Step title="Confirm git runs">
-    Confirm `git --version` prints a version.
-  </Step>
+**2. Open a new terminal**
 
-  <Step title="Retry the add">
-    Run the `marketplace add` command again.
-  </Step>
-</Steps>
+Open a new terminal so the updated `PATH` applies.
 
-<h3 id="git-clone-timed-out-after-120s">
-  `Git clone timed out after 120s`
-</h3>
+**3. Confirm git runs**
+
+Confirm `git --version` prints a version.
+
+**4. Retry the add**
+
+Run the `marketplace add` command again.
+
+### `Git clone timed out after 120s`
 
 You added or updated a marketplace, and it failed with `Git clone timed out after 120s`, followed by a hint to set `CLAUDE_CODE_PLUGIN_GIT_TIMEOUT_MS`.
 
 Cloning a marketplace, and re-cloning one to update it, gets 120 seconds by default. For a large repository or a slow connection, raise the limit. The value is in milliseconds:
 
-<Tabs>
-  <Tab title="Bash or Zsh">
-    ```bash theme={null}
-    export CLAUDE_CODE_PLUGIN_GIT_TIMEOUT_MS=300000
-    ```
-  </Tab>
+**Bash or Zsh**
 
-  <Tab title="PowerShell">
-    ```powershell theme={null}
-    $env:CLAUDE_CODE_PLUGIN_GIT_TIMEOUT_MS = "300000"
-    ```
-  </Tab>
-</Tabs>
+```bash theme={null}
+export CLAUDE_CODE_PLUGIN_GIT_TIMEOUT_MS=300000
+```
+
+**PowerShell**
+
+```powershell theme={null}
+$env:CLAUDE_CODE_PLUGIN_GIT_TIMEOUT_MS = "300000"
+```
 
 Then retry in the same shell.
 
 If the repository is a monorepo, limit the checkout to the directories you name with `claude plugin marketplace add <source> --sparse <paths>`.
 
-<h3 id="marketplace-updates-keep-failing-offline">
-  Marketplace updates keep failing offline
-</h3>
+### Marketplace updates keep failing offline
 
 You work in an environment where the marketplace's git host is unreachable, and every session repeats a failed refresh in the background. Your existing checkout of the marketplace stays in place and startup isn't delayed.
 
@@ -368,27 +326,23 @@ Each session, for a marketplace with [auto-update on](/docs/en/plugins/loading#w
 
 Set this variable to skip the re-clone attempt and keep using the existing checkout when the check can't reach the host:
 
-<Tabs>
-  <Tab title="Bash or Zsh">
-    ```bash theme={null}
-    export CLAUDE_CODE_PLUGIN_KEEP_MARKETPLACE_ON_FAILURE=1
-    ```
-  </Tab>
+**Bash or Zsh**
 
-  <Tab title="PowerShell">
-    ```powershell theme={null}
-    $env:CLAUDE_CODE_PLUGIN_KEEP_MARKETPLACE_ON_FAILURE = "1"
-    ```
-  </Tab>
-</Tabs>
+```bash theme={null}
+export CLAUDE_CODE_PLUGIN_KEEP_MARKETPLACE_ON_FAILURE=1
+```
+
+**PowerShell**
+
+```powershell theme={null}
+$env:CLAUDE_CODE_PLUGIN_KEEP_MARKETPLACE_ON_FAILURE = "1"
+```
 
 With the variable set, Claude Code skips the re-clone only for a checkout that already contains `.claude-plugin/marketplace.json`. A marketplace that was never cloned or whose clone stopped partway still gets the clone attempt, so add it once while online.
 
 For a fully offline deployment, pre-populate the plugins directory at image build time with `CLAUDE_CODE_PLUGIN_SEED_DIR` instead, following [Seed containers and CI](/docs/en/plugins/org#seed-containers-and-ci).
 
-<h3 id="marketplace-add-fails-on-a-github-enterprise-server-host">
-  Marketplace add fails on a GitHub Enterprise Server host
-</h3>
+### Marketplace add fails on a GitHub Enterprise Server host
 
 You added a marketplace from a GitHub Enterprise Server (GHES) URL and got a policy error, or you added it from claude.ai and got a GitHub access error.
 
@@ -401,17 +355,13 @@ Both cases are on the GHES page:
 
 You added a marketplace and ran an install, and the install stopped with a message instead of installing anything. These entries cover those messages. They also cover the related messages that appear later in the `/plugin` **Errors** tab, or as an empty **Discover** tab, when a plugin or its marketplace can't be found, read, or trusted.
 
-<h3 id="plugin-not-found-in-marketplace">
-  `Plugin "<name>" not found in marketplace "<marketplace>"`
-</h3>
+### `Plugin "<name>" not found in marketplace "<marketplace>"`
 
 You ran `/plugin install <name>@<marketplace>` or `claude plugin install <name>@<marketplace>`, and the plugin name isn't in the copy of that marketplace's catalog on your machine.
 
 `claude plugin install` in your shell prints the same message when you haven't added the marketplace at all. If `claude plugin marketplace update <marketplace>` then answers `Marketplace '<marketplace>' not found`, [add the marketplace](#add-a-marketplace) first.
 
-<h4 id="the-message-ends-with-a-refresh-hint">
-  `not found in marketplace` with a refresh hint
-</h4>
+#### `not found in marketplace` with a refresh hint
 
 The hint reads `Your local copy may be out of date — try claude plugin marketplace update <marketplace>` or `The marketplace couldn't be refreshed (...)`. Claude Code didn't refresh the marketplace before the lookup, such as when you're offline, so your copy of the catalog may be stale. Refresh with the marketplace's name, then install again:
 
@@ -421,17 +371,13 @@ The hint reads `Your local copy may be out of date — try claude plugin marketp
 
 `claude plugin marketplace update` prints `Successfully updated marketplace: <name>`, and `/plugin marketplace update` shows `✔ Updated 1 marketplace`. If the retried install prints the same message, check the name as [`not found in marketplace` with no hint](#the-message-has-no-hint) describes. [When Claude Code refreshes a marketplace before an install](/docs/en/plugins/loading#when-claude-code-refreshes-a-marketplace-before-an-install) lists the other cases where the refresh doesn't run.
 
-<h4 id="the-message-has-no-hint">
-  `not found in marketplace` with no hint
-</h4>
+#### `not found in marketplace` with no hint
 
 The name is the likeliest problem. Open `/plugin`, go to **Discover**, and copy the name from the list.
 
 Before v2.1.232, Claude Code refreshed the named marketplace only after the lookup missed, and only when auto-update was on for it.
 
-<h3 id="plugin-not-found-in-any-marketplace">
-  `Plugin "<name>" not found in any marketplace`
-</h3>
+### `Plugin "<name>" not found in any marketplace`
 
 You ran `/plugin install <name>` with no `@marketplace`, and no registered marketplace has that plugin. `claude plugin install <name>` reports `Plugin "<name>" not found in any configured marketplace`.
 
@@ -445,9 +391,7 @@ When the install works, you see `✓ Installed <plugin>.` in a session, or `Succ
 
 If you don't know which marketplace lists the plugin, run `/plugin marketplace list` for the marketplaces you have, and browse **Discover** in `/plugin` for the plugin name.
 
-<h3 id="plugin-is-already-installed-globally">
-  `Plugin '<name>@<marketplace>' is already installed globally`
-</h3>
+### `Plugin '<name>@<marketplace>' is already installed globally`
 
 You ran `/plugin install` for a plugin that's already installed at user scope or by managed settings, and Claude Code refused with `Use '/plugin' to manage existing plugins.` If you typed the plugin name without `@<marketplace>`, the message omits `globally`.
 
@@ -457,9 +401,7 @@ A plugin installed only at project or local scope doesn't trigger this message. 
 
 `claude plugin install` in your shell prints a different message. For a plugin already installed at the target scope, it prints `Plugin "<name>@<marketplace>" is already installed (scope: user)` and exits 0. If its cache directory is missing, the same command re-downloads it.
 
-<h3 id="plugin-would-share-its-folder">
-  `"<plugin>" was not installed: it would share its folder with "<other>"`
-</h3>
+### `"<plugin>" was not installed: it would share its folder with "<other>"`
 
 You installed a plugin through `claude plugin install`, `/plugin`, or an install suggestion in a session, and Claude Code refused it with this line, or with `would share its saved data with`.
 
@@ -470,17 +412,13 @@ The message names the way out:
 * **The other plugin is installed**: the message says `Only one of the two can be installed.` and names the `claude plugin uninstall` command, or the uninstall step in `/plugin`, that removes the other plugin. Run it, then install again. For what the uninstall removes, see [What an uninstall deletes and keeps](/docs/en/plugins/cli-reference#what-an-uninstall-deletes-and-keeps).
 * **Both ids arrive in one install**, such as a plugin and a dependency it needs: no install order helps. Only a maintainer of the marketplace that lists the two plugins can fix it, by renaming one of them. When the two come from different marketplaces, a maintainer of either one can.
 
-<h3 id="this-plugin-uses-a-source-type-your-claude-code-version-does-not-suppo">
-  `This plugin uses a source type your Claude Code version does not support`
-</h3>
+### `This plugin uses a source type your Claude Code version does not support`
 
 You installed a plugin whose marketplace entry uses a source type this version of Claude Code can't fetch, and Claude Code stopped with this message and `Update Claude Code and try again.`
 
 Update Claude Code, then retry the install. Source types are on the [marketplace reference](/docs/en/plugins/marketplace-reference).
 
-<h3 id="plugin-archive-integrity-check-failed">
-  `Plugin archive integrity check failed`
-</h3>
+### `Plugin archive integrity check failed`
 
 You installed a plugin that's distributed as a zip archive, and Claude Code refused it with this line and `The archive was not installed.` The plugin's marketplace entry uses an [`archive` source](/docs/en/plugins/marketplace-reference) with a `sha256` pin, and the downloaded file's digest doesn't match the pin.
 
@@ -495,9 +433,7 @@ The fix differs for the publisher and the installer:
 * **You publish the plugin**: recompute the digest of the exact file the URL serves and update the `sha256` in the marketplace entry. Use `shasum -a 256 my-plugin.zip`, or `Get-FileHash -Algorithm SHA256 my-plugin.zip` in PowerShell
 * **You install the plugin**: run `/plugin marketplace update <name>` in a session to refresh the catalog in case the entry was corrected, then retry the install. If the digests still disagree after the refresh, ask the marketplace owner which file they pinned before installing
 
-<h3 id="an-npm-plugin-source-must-name-a-registry-package">
-  `An npm plugin source must name a registry package`
-</h3>
+### `An npm plugin source must name a registry package`
 
 A plugin whose marketplace entry uses an [`npm` source](/docs/en/plugins/marketplace-reference#npm-plugin-source) failed to install, update, or load, and the message includes this sentence. Claude Code checked the entry's `package` value before fetching anything and refused it. The message names the value and the reason:
 
@@ -510,9 +446,7 @@ The marketplace's owner has to change the entry:
 * **If that's you**: change `package` to a value the [npm plugin source reference](/docs/en/plugins/marketplace-reference#npm-plugin-source) accepts, or switch the entry to a `github`, `url`, or `git-subdir` source
 * **If it isn't you**: report the message to the marketplace owner
 
-<h3 id="marketplace-is-registered-from-an-untrusted-source">
-  `Marketplace "<name>" is registered from an untrusted source`
-</h3>
+### `Marketplace "<name>" is registered from an untrusted source`
 
 A marketplace you added earlier stopped loading, and so did its plugins. This line appears in the `/plugin` **Errors** tab or on the next refresh.
 
@@ -531,9 +465,7 @@ The fix differs for users and publishers:
 
 Before v2.1.205, Claude Code checked the name only when you added the marketplace, so an entry registered before its name became reserved kept loading.
 
-<h3 id="marketplace-is-added-but-ignored">
-  `Marketplace "<name>" is added but ignored`
-</h3>
+### `Marketplace "<name>" is added but ignored`
 
 The marketplace has an entry in `~/.claude/plugins/known_marketplaces.json`, but the entry failed a check Claude Code runs every time it reads that file, so the marketplace and the plugins installed from it stop loading. In your shell, `claude plugin list` reports each affected plugin with a line that names the reason and the fix:
 
@@ -560,9 +492,7 @@ When `(see the debug log)` follows `is added but ignored` in place of a reason, 
 
 Before v2.1.286, whatever the reason, `claude plugin list` reported such a marketplace as `Marketplace <name> not found`, and the `/plugin` **Errors** tab reported it as `Marketplace "<name>" is registered but was refused (see the debug log)`. The reason appeared only in the debug log. In v2.1.286, the reason and fix sentences used different wording, such as `Its recorded location is network-shaped or unclassifiable (never probed)`.
 
-<h3 id="plugin-has-a-corrupt-manifest-file-or-has-an-invalid-manifest-file">
-  `Plugin <name> has a corrupt manifest file` or `has an invalid manifest file`
-</h3>
+### `Plugin <name> has a corrupt manifest file` or `has an invalid manifest file`
 
 Claude Code fetched the plugin, then failed to read its `.claude-plugin/plugin.json`. In the shell, the `<name>` in this line can be a temporary directory name; the `Failed to install plugin "<name>@<marketplace>"` prefix carries the plugin's real name. The wording says which check failed:
 
@@ -576,17 +506,13 @@ The plugin's author has to fix the file, and the plugin can't be installed until
 * **If that's you**: run `claude plugin validate <plugin-directory>` in your shell to see the same error with the offending path, then fix the file
 * **If it isn't you**: report the message to the marketplace owner
 
-<h3 id="plugin-directory-not-found-at-path">
-  `Plugin directory not found at path: <path>`
-</h3>
+### `Plugin directory not found at path: <path>`
 
 The **Errors** tab in `/plugin` shows this for an enabled plugin that its marketplace lists by a relative path, such as `./plugins/my-plugin`, when no directory exists at that path inside the marketplace. If you maintain the marketplace, correct the entry's `source` path or restore the folder. Otherwise, report the message to the marketplace owner.
 
 `Marketplace directory not found at path: <path>` means the marketplace's own directory is missing instead. For a marketplace you added from a local path, that directory moved or was deleted. Restore it, or remove the marketplace and add it again from its new location.
 
-<h3 id="no-plugins-available-or-no-marketplaces-configured">
-  `No plugins available` or `No marketplaces configured`
-</h3>
+### `No plugins available` or `No marketplaces configured`
 
 You opened `/plugin` and the **Discover** tab is empty, or `claude plugin marketplace list` printed `No marketplaces configured`.
 
@@ -598,9 +524,7 @@ No marketplace is registered, so there's no catalog to show. In a session, add t
 
 Claude Code prints `Successfully added marketplace: claude-plugins-official`, and **Discover** lists its plugins. The [Anthropic marketplaces](/docs/en/plugins/anthropic-marketplaces) page lists the other marketplaces you can add.
 
-<h3 id="marketplace-is-already-added-from-a-different-source">
-  `Marketplace "<name>" is already added from a different source`
-</h3>
+### `Marketplace "<name>" is already added from a different source`
 
 You named a new marketplace source with [`--marketplace <source>` on the install command](/docs/en/plugins/install#add-a-marketplace-and-install-in-one-command), in a session or from your shell. The catalog Claude Code fetched from that source has the same name as a marketplace you already added from a different source. Claude Code keeps the existing marketplace instead of replacing it, and the plugin isn't installed.
 
@@ -615,9 +539,7 @@ Choose which source you want:
 * **The marketplace you already added**: install from it by name with `/plugin install <plugin>@<name>`
 * **The new source**: run `/plugin marketplace remove <name>`, then retry the install
 
-<h3 id="cannot-add-marketplace-source-doesnt-match">
-  `Cannot add marketplace "<name>": its source doesn't match its extraKnownMarketplaces entry in user or managed settings`
-</h3>
+### `Cannot add marketplace "<name>": its source doesn't match its extraKnownMarketplaces entry in user or managed settings`
 
 You added a marketplace, and the `name` in its `marketplace.json` already has an [`extraKnownMarketplaces`](/docs/en/settings-reference#extraknownmarketplaces) entry in your user settings or managed settings. The source you gave differs from the one that entry lists, so Claude Code refuses the add and registers nothing.
 
@@ -635,9 +557,7 @@ Two sources match when they have the same type and the same value in every field
 
 Before v2.1.287, the message read `Cannot add marketplace "<name>": its network source differs from the one declared for it in settings (kind, target, or a fetch-shaping field such as headers / ref / path / sparsePaths)`.
 
-<h3 id="failed-to-install-from-the-plugin-menu">
-  `Failed to install: <plugin> (<reason>)`
-</h3>
+### `Failed to install: <plugin> (<reason>)`
 
 You selected plugins to install in the `/plugin` menu, none of them installed, and the menu closed with this summary of what failed.
 
@@ -648,9 +568,7 @@ What to do depends on whether the summary shortened the reason:
 * Fix what the reason in parentheses names
 * When the reason was shortened, run `/plugin`, select the plugin on the **Discover** tab, and press **Enter** to install it from its details. If the install fails there, the details view shows the whole error
 
-<h3 id="could-not-move-the-new-copy-of-this-plugin-version">
-  `Could not move the new copy of this plugin version into <path>`
-</h3>
+### `Could not move the new copy of this plugin version into <path>`
 
 When you install a plugin, Claude Code downloads a fresh copy of its files and moves it into that version's folder in the [plugin cache](/docs/en/plugins/loading#find-plugins-on-disk). This message means the move failed, usually because another program was using the folder while the install ran. The file-system code appears in parentheses:
 
@@ -673,9 +591,7 @@ To fix the install:
 * Close other Claude Code sessions, editors, and terminals that are using the plugin's folder under `~/.claude/plugins/cache`, then run the install again
 * When the message says to check the plugin cache folder's permissions, restore your write permission on the folder it names and free disk space, then run the install again
 
-<h3 id="dependency-errors">
-  Dependency errors
-</h3>
+### Dependency errors
 
 A plugin that declares dependencies can fail to install, or install and stay disabled, when a dependency can't be satisfied. The message reaches you at install time or at load time:
 
@@ -701,36 +617,30 @@ To see these programmatically, run `claude plugin list --json` in your shell. Pl
 
 The install succeeded, but the plugin's skills, hooks, or servers aren't doing anything. Start with [Plugin doesn't appear or its skills don't show up](#plugin-doesnt-appear-or-its-skills-dont-show-up), which tells you where Claude Code reports what it loaded, then match the message.
 
-<h3 id="plugin-doesnt-appear-or-its-skills-dont-show-up">
-  Plugin doesn't appear or its skills don't show up
-</h3>
+### Plugin doesn't appear or its skills don't show up
 
 You installed a plugin and typed `/` expecting its skills, or asked Claude to use it, and nothing happened.
 
 Check the plugin's state before changing anything:
 
-<Steps>
-  <Step title="Confirm the plugin is installed and enabled">
-    Run `/plugin` and open **Installed**. Confirm the plugin is listed and enabled. `claude plugin list` in your shell prints the same list with each plugin's version, scope, and `Status: ✔ enabled`.
-  </Step>
+**1. Confirm the plugin is installed and enabled**
 
-  <Step title="Read the Errors tab">
-    Open the **Errors** tab in the same panel. Each entry pairs a message with a guidance line. Most messages in the rest of this section come from that tab.
-  </Step>
+Run `/plugin` and open **Installed**. Confirm the plugin is listed and enabled. `claude plugin list` in your shell prints the same list with each plugin's version, scope, and `Status: ✔ enabled`.
 
-  <Step title="Reload if you installed during this session">
-    If the plugin is installed and error-free but you installed it during this session, run `/reload-plugins`. It prints `Reloaded:` with counts of plugins, skills, agents, hooks, and servers. When something failed it adds `N errors during load. Run /plugin for details.`
-  </Step>
-</Steps>
+**2. Read the Errors tab**
+
+Open the **Errors** tab in the same panel. Each entry pairs a message with a guidance line. Most messages in the rest of this section come from that tab.
+
+**3. Reload if you installed during this session**
+
+If the plugin is installed and error-free but you installed it during this session, run `/reload-plugins`. It prints `Reloaded:` with counts of plugins, skills, agents, hooks, and servers. When something failed it adds `N errors during load. Run /plugin for details.`
 
 If the plugin loads with no error and its skills still don't appear, the next step differs for your own plugin and for someone else's:
 
 * **A plugin you're building**: see [Plugin loads but its skills are missing](#plugin-loads-but-its-skills-are-missing)
 * **A plugin someone else published**: open **Installed** in `/plugin` and open the plugin's details pane, which lists what the plugin contains. A plugin that lists no skills there has none to offer when you type `/`
 
-<h3 id="run-reload-plugins-to-activate">
-  `Run /reload-plugins to apply.`
-</h3>
+### `Run /reload-plugins to apply.`
 
 The install summary in `/plugin` ended with `Run /reload-plugins to apply.` instead of `Plugin is now active.` A `Plugins changed. Run /reload-plugins to activate.` notice can appear above the prompt at the same time.
 
@@ -747,9 +657,7 @@ Before v2.1.268, an install that didn't activate during the install stayed pendi
 
 Before v2.1.246, the skills count in that summary included only a plugin's `commands/` entries, so a reload could load a plugin's `SKILL.md` skills and still report `0 skills`.
 
-<h3 id="the-packages-it-lists-are-not-installed">
-  `The packages it lists are not installed` or `were not installed, because ...`
-</h3>
+### `The packages it lists are not installed` or `were not installed, because ...`
 
 `/plugin` and `claude plugin list` show one of these notes on a plugin whose dependency install left no `node_modules` directory. The plugin loads, but the parts that need the missing packages may not work.
 
@@ -763,9 +671,7 @@ Before v2.1.246, the skills count in that summary included only a plugin's `comm
 
 * **`were not installed, because ...`**: the install can't run for this plugin, and the note names the reason, such as a Yarn, pnpm, or `bun.lockb` lockfile, or a lockfile whose package manager isn't installed on this computer. Updating the plugin doesn't install the packages while that reason stands. If the reason is the lockfile, the plugin's author has to replace it. If it's a missing package manager, install it, then update the plugin
 
-<h3 id="plugin-not-cached-at">
-  `Plugin "<name>" not cached at <path>`
-</h3>
+### `Plugin "<name>" not cached at <path>`
 
 The **Errors** tab shows this line with the guidance `Run /plugin to refresh the plugin cache`. Claude Code has an install record for the plugin, but the directory the record points at is missing, for example after you cleared the cache.
 
@@ -777,9 +683,7 @@ claude plugin install <name>@<marketplace>
 
 Then run `/reload-plugins` in your session. The **Errors** tab entry disappears and the plugin is back under **Installed**.
 
-<h3 id="installed-plugins-json-holds-a-record-this-version-cannot-read">
-  `installed_plugins.json holds a record under "<id>" that this version of Claude Code cannot read`
-</h3>
+### `installed_plugins.json holds a record under "<id>" that this version of Claude Code cannot read`
 
 The message surfaces in these forms:
 
@@ -799,9 +703,7 @@ Take the message's options in order:
 2. If you can't update, uninstall the named plugin with the version of Claude Code that wrote the record.
 3. If neither helps, delete the record from `installed_plugins.json` by hand, then restart Claude Code or run `/reload-plugins`.
 
-<h3 id="installed-plugins-json-could-not-be-read-and-was-rebuilt">
-  `installed_plugins.json could not be read and was rebuilt`
-</h3>
+### `installed_plugins.json could not be read and was rebuilt`
 
 `claude plugin list` prints this note, with the path of a kept file named `installed_plugins.unreadable.<date>.<hash>.kept`, for as long as that file sits beside `installed_plugins.json`.
 
@@ -809,9 +711,7 @@ An `installed_plugins.json` that isn't valid JSON, or isn't a list of plugins, c
 
 Open the `.kept` file to see what the old file recorded, and reinstall the plugins you're missing. Claude Code never reads the file back, and the file ages out on the [`cleanupPeriodDays`](/docs/en/settings-reference#cleanupperioddays) schedule.
 
-<h3 id="install-records-under-names-that-no-version-can-use">
-  `install records under names that no version of Claude Code can use were removed from installed_plugins.json`
-</h3>
+### `install records under names that no version of Claude Code can use were removed from installed_plugins.json`
 
 `claude plugin list` prints this note, with the path of a copy named `installed_plugins.set-aside.<date>.<hash>.json`, for as long as that copy sits beside `installed_plugins.json`. The note ends `Nothing needs doing about these copies.`
 
@@ -819,9 +719,7 @@ A record in `installed_plugins.json` sat under a key that isn't a valid plugin i
 
 Claude Code copies the unusable records into the `.set-aside` file and drops them from the list. Claude Code never reads the copies back, and the copies age out on the [`cleanupPeriodDays`](/docs/en/settings-reference#cleanupperioddays) schedule.
 
-<h3 id="does-not-load-so-claude-code-ignores-the-whole-file">
-  `does not load (...), so Claude Code ignores the whole file`
-</h3>
+### `does not load (...), so Claude Code ignores the whole file`
 
 The command worked. The settings file the warning names has an error, so Claude Code ignores the whole file, including anything the command wrote there, until you fix it.
 
@@ -838,9 +736,7 @@ The text in parentheses names the error:
 * **`its "<key>" is not valid`**: the quoted setting holds a value Claude Code doesn't accept. Look up the setting in the [settings reference](/docs/en/settings-reference) for the values it takes. When more than one value fails, the text names the first setting and counts the others, as in `its "permissions" and 1 other value are not valid`.
 * **`it is not a JSON object`**: the file's top level isn't a JSON object, such as a file whose top level is an array.
 
-<h3 id="a-plugin-you-disabled-still-loads">
-  `Disabled in ~/.claude/settings.json but still loads`
-</h3>
+### `Disabled in ~/.claude/settings.json but still loads`
 
 You set a plugin to `false` in `~/.claude/settings.json`, and its row in `claude plugin list` or `/plugin` shows this message followed by the source that enables it, such as `— project settings enable it, which overrides your user setting`. A `true` in that higher-precedence source is overriding your user setting.
 
@@ -848,9 +744,7 @@ To opt out of a project-enabled plugin on your machine, set the id to `false` in
 
 If `claude plugin list` instead marks the plugin `required by your org`, no settings file is involved: your organization marks that synced plugin as required on claude.ai, and it loads even if you disabled it earlier. See [Plugins synced from claude.ai](/docs/en/plugins/loading#synced-plugins).
 
-<h3 id="plugin-is-enabled-in-project-settings-but-isnt-installed-here">
-  `Plugin "<name>" is enabled in project settings but isn't installed here`
-</h3>
+### `Plugin "<name>" is enabled in project settings but isn't installed here`
 
 The **Errors** tab shows this line for a plugin your project's `.claude/settings.json` enables, with the guidance `Run claude plugin install <name>@<marketplace> --scope project to install it for this project`.
 
@@ -864,9 +758,7 @@ After you run `/reload-plugins` in your session, the **Errors** tab entry is gon
 
 If your organization pre-installs plugins for you, it does so through managed settings instead. See [Pre-install and require plugins](/docs/en/plugins/org#pre-install-and-require-plugins).
 
-<h3 id="a-plugin-stays-installed-after-plugin-uninstall-on-windows">
-  A plugin stays installed after `plugin uninstall` on Windows
-</h3>
+### A plugin stays installed after `plugin uninstall` on Windows
 
 On Windows, you run `claude plugin uninstall` at project or local scope and it reports success, but `claude plugin list` or `/plugin` still lists the plugin.
 
@@ -882,9 +774,53 @@ Then run `claude plugin list --json` again to confirm that the row is gone.
 
 Before v2.1.295, the second run fails with `Plugin "<name>" is not installed in project scope`. Run `claude update`, then run the uninstall again.
 
-<h3 id="failed-to-load-hooks-from-and-hooks-that-dont-fire">
-  `Failed to load hooks from <path>` and hooks that don't fire
-</h3>
+### A plugin installed from a git repository shows version `unknown`
+
+`Version: unknown` in `claude plugin list` can mean Claude Code couldn't read the commit it uses as a git-sourced plugin's version. The plugin may have its own repository or be inside a git-hosted marketplace.
+
+Run these commands in your shell, replacing `formatter@my-marketplace` with the plugin's `name@marketplace` line from `claude plugin list`:
+
+**1. Update Claude Code**
+
+[Update Claude Code](/docs/en/setup#update-claude-code) to v2.1.302 or later, which clones in a format it can read the commit from:
+
+```shell theme={null}
+claude update
+```
+
+**2. Update the marketplace**
+
+Update Claude Code's copy of the marketplace, which holds the commit for plugins inside the marketplace repository:
+
+```shell theme={null}
+claude plugin marketplace update my-marketplace
+```
+
+**3. Update the plugin**
+
+Update the plugin to rewrite its recorded version:
+
+```shell theme={null}
+claude plugin update formatter@my-marketplace
+```
+
+**4. Check the version**
+
+Check the `Version:` line for a value such as a [12-character commit ID](/docs/en/plugins/loading#how-claude-code-computes-the-version):
+
+```shell theme={null}
+claude plugin list
+```
+
+`claude plugin update` [changes one scope's block per run](/docs/en/plugins/cli-reference#which-scope-the-command-updates). For a block still showing `unknown`, rerun it with that block's `Scope:` value:
+
+```shell theme={null}
+claude plugin update formatter@my-marketplace --scope project
+```
+
+If the block still shows `unknown` after the rerun, see [Get more help](/docs/en/troubleshooting#get-more-help).
+
+### `Failed to load hooks from <path>` and hooks that don't fire
 
 A plugin's hooks don't run, or one blocks an action. Either the **Errors** tab shows a load failure for them, the hooks load and you see `<Event> hook error` notices or a blocking error in the transcript, or a hook loads without error and never fires.
 
@@ -915,27 +851,23 @@ If that message shows the plugin's path cut off at a space, apply the [unquoted 
 
 If a hook loads without error but never fires, first run `/plugin` in your session and open the plugin's details. A note there that begins `Its hooks.json hooks do not run` means another enabled plugin with the same name registered its hooks instead, and [Hooks when two enabled plugins share a name](/docs/en/plugins/loading#hooks-when-two-enabled-plugins-share-a-name) says which copy that is and how to switch. Otherwise, check the hook's definition and then watch it run:
 
-<Steps>
-  <Step title="Check the event name">
-    Event names are case-sensitive, so confirm yours matches exactly, for example `PostToolUse`.
-  </Step>
+**1. Check the event name**
 
-  <Step title="Check the matcher">
-    Confirm the hook's `matcher` matches the tool name.
-  </Step>
+Event names are case-sensitive, so confirm yours matches exactly, for example `PostToolUse`.
 
-  <Step title="Trigger the event on purpose">
-    For a `PostToolUse` hook, ask Claude to edit a file.
-  </Step>
+**2. Check the matcher**
 
-  <Step title="Read the debug log">
-    Open the [debug log](/docs/en/hooks#debug-hooks), which records which hooks matched. A hook that ran shows up there with its exit code.
-  </Step>
-</Steps>
+Confirm the hook's `matcher` matches the tool name.
 
-<h3 id="plugin-directory-does-not-exist">
-  `Plugin directory does not exist: <path>`
-</h3>
+**3. Trigger the event on purpose**
+
+For a `PostToolUse` hook, ask Claude to edit a file.
+
+**4. Read the debug log**
+
+Open the [debug log](/docs/en/hooks#debug-hooks), which records which hooks matched. A hook that ran shows up there with its exit code.
+
+### `Plugin directory does not exist: <path>`
 
 Run `/reload-plugins` at the Claude Code prompt first, even though the message says to reinstall. A plugin's hook fails with `Failed to run: Plugin directory does not exist: <path> (<plugin> — run /plugin to reinstall)`, and the hook doesn't run, when the directory your session loaded the plugin's hooks from is gone from disk. [`Plugin directory not found at path: <path>`](#plugin-directory-not-found-at-path) is a different message, about a marketplace entry.
 
@@ -945,9 +877,7 @@ The reload loads the plugin's hooks from its current directory. The failure is s
 * **`N errors during load. Run /plugin for details.`**: open the **Errors** tab in `/plugin` and follow this page's entry for the message it shows
 * **A line that ends `Run /reload-plugins --force to apply.`**: nothing reloaded, and the hooks keep failing. Run `/reload-plugins --force` at the Claude Code prompt
 
-<h3 id="invalid-mcp-server-config-for-and-mcp-servers-that-dont-start">
-  `Invalid MCP server config for "<server>"` and MCP servers that don't start
-</h3>
+### `Invalid MCP server config for "<server>"` and MCP servers that don't start
 
 A plugin bundles an MCP server, and the **Errors** tab shows `Invalid MCP server config for "<server>": <error>`, or the server is listed but `/mcp` never shows it connected.
 
@@ -983,9 +913,7 @@ Claude Code copies an installed plugin into its cache, so a path that only works
 
 For paths that reach outside the plugin directory, see [Files the plugin references outside its directory aren't found](#files-the-plugin-references-outside-its-directory-arent-found).
 
-<h3 id="language-server-doesnt-start">
-  Language server doesn't start, uses too much memory, or reports wrong diagnostics
-</h3>
+### Language server doesn't start, uses too much memory, or reports wrong diagnostics
 
 You installed a [code intelligence plugin](/docs/en/plugins/code-intelligence) and Claude isn't seeing diagnostics, or the language server is using too much memory or reporting errors that aren't real.
 
@@ -1014,9 +942,7 @@ Two failures that also reach a plugin's users have their entries under [Plugin i
 * **A hook that doesn't fire**: see [hooks that don't fire](#failed-to-load-hooks-from-and-hooks-that-dont-fire)
 * **An MCP server that doesn't start**: see [MCP servers that don't start](#invalid-mcp-server-config-for-and-mcp-servers-that-dont-start)
 
-<h3 id="commands-path-not-found">
-  `commands path not found: <path>`
-</h3>
+### `commands path not found: <path>`
 
 The **Errors** tab shows `commands path not found: <absolute path>` with the guidance `Check that the path in your manifest or marketplace config is correct`. The same message appears for `skills`, `agents`, and `hooks`.
 
@@ -1024,9 +950,7 @@ Claude Code resolved a path from your `plugin.json` or marketplace entry against
 
 Paths in the manifest are relative to the plugin root and start with `./`. A path that resolves outside the plugin root is reported as `<component> path escapes plugin directory` instead and is dropped.
 
-<h3 id="plugin-dir-loads-a-plugin-with-no-components">
-  `--plugin-dir` at a marketplace root doesn't load the plugins under `plugins/`
-</h3>
+### `--plugin-dir` at a marketplace root doesn't load the plugins under `plugins/`
 
 You started `claude --plugin-dir <path>` and see no error, but the plugin's skills, agents, and hooks aren't there.
 
@@ -1038,17 +962,13 @@ claude --plugin-dir ./my-marketplace/plugins/my-plugin
 
 Then open **Installed** in `/plugin`, where the plugin's details pane lists its components.
 
-<h3 id="files-the-plugin-references-outside-its-directory-arent-found">
-  Files the plugin references outside its directory aren't found
-</h3>
+### Files the plugin references outside its directory aren't found
 
 A plugin works from its source directory with `--plugin-dir` but fails after install, with errors about a path such as `../shared-utils`.
 
 Claude Code copies an installed plugin into its cache and loads it from there, so a path that reaches outside the plugin's own directory points at nothing in the cache. Move the shared files inside the plugin directory, or reference them through a symlink inside it. For where the cache is and how paths resolve, see [Find plugins on disk](/docs/en/plugins/loading#find-plugins-on-disk).
 
-<h3 id="claude-plugin-root-shows-forward-slashes-on-windows">
-  `${CLAUDE_PLUGIN_ROOT}` shows forward slashes on Windows
-</h3>
+### `${CLAUDE_PLUGIN_ROOT}` shows forward slashes on Windows
 
 On Windows, a plugin hook receives `${CLAUDE_PLUGIN_ROOT}` as `C:/Users/you/...` rather than `C:\Users\you\...`, and a script that expected backslashes breaks.
 
@@ -1059,9 +979,7 @@ If your script needs backslashes, switch the hook to one of the forms that keep 
 * An exec-form hook, which spawns the process directly with an `args` array
 * A hook with `"shell": "powershell"`
 
-<h3 id="plugin-loads-but-its-skills-are-missing">
-  Plugin loads but its skills are missing
-</h3>
+### Plugin loads but its skills are missing
 
 Your plugin is listed under **Installed** with no errors, but its skills aren't offered when you type `/`.
 
@@ -1069,9 +987,7 @@ Skills load from `skills/` at the plugin root and commands from `commands/` at t
 
 Each skill is a directory containing `SKILL.md`. A `skills` entry in the manifest that points at a `SKILL.md` file rather than its directory is reported as `path is a file; skills entries must be directories containing SKILL.md`.
 
-<h3 id="skill-loads-but-claude-never-invokes-the-skill">
-  Skill loads but Claude never invokes the skill
-</h3>
+### Skill loads but Claude never invokes the skill
 
 Your plugin's skill runs when you type its `/<plugin>:<skill>` command, but Claude never invokes it in response to a plain request.
 
@@ -1083,17 +999,13 @@ Check these causes in order:
 
 To measure how often the skill triggers across realistic prompts rather than checking one at a time, write an eval case with a [`tool_used: Skill` grader](/docs/en/plugin-evals#create-your-first-eval-suite) and run it with `claude plugin eval` after each description change.
 
-<h3 id="is-not-a-plugin-or-skill-folder">
-  `<directory> is not a plugin or skill folder` from `claude plugin eval init`
-</h3>
+### `<directory> is not a plugin or skill folder` from `claude plugin eval init`
 
 You ran `claude plugin eval init` from a directory that isn't a plugin's root, such as your home directory or the root of a repository that keeps the plugin in a subdirectory. `init` writes the suite under the working directory, so it stops instead of creating an `evals/` directory the plugin would never see.
 
 Change to the plugin's root, the directory that holds `.claude-plugin/plugin.json` or the skill's `SKILL.md`, and run the command again. To scaffold the suite somewhere else on purpose, pass `--eval-dir`. See [Test plugins with evals](/docs/en/plugin-evals).
 
-<h3 id="the-userconfig-dialog-never-appears">
-  The `userConfig` dialog never appears
-</h3>
+### The `userConfig` dialog never appears
 
 Your plugin declares `userConfig` options, but no configuration dialog appears when you install it.
 
@@ -1117,9 +1029,7 @@ If you pass a `--config` key the manifest doesn't declare, the plugin still inst
 
 For a plugin that ships an [MCPB bundle file](/docs/en/plugins/components#include-a-packaged-mcpb-server) declaring `user_config` of its own, the message reads `isn't declared in this plugin's userConfig or by its bundled MCP servers.` instead, and the known keys include that server's keys, written `<server>.<key>`. A bundle the manifest references by URL isn't read at install time, so its keys aren't listed and the message says to configure it in `/plugin`. Setting `<server>.<key>` keys requires Claude Code v2.1.285 or later.
 
-<h3 id="claude-plugin-validate-reports-errors">
-  `claude plugin validate` reports errors
-</h3>
+### `claude plugin validate` reports errors
 
 You ran `claude plugin validate <path>`, or `/plugin validate <path>` in a session, and it printed `Found N errors` and `Validation failed`, then exited with code 1.
 
@@ -1143,17 +1053,13 @@ Run the command again after each fix until it prints no errors.
 
 `plugin.json` fields are on the [manifest reference](/docs/en/plugins/manifest-reference), and marketplace-level messages are under [Marketplace validation errors](#marketplace-validation-errors).
 
-<h3 id="plugin-has-conflicting-manifests">
-  `Plugin <name> has conflicting manifests`
-</h3>
+### `Plugin <name> has conflicting manifests`
 
 The plugin fails to load with `Plugin <name> has conflicting manifests: both plugin.json and marketplace entry specify components.`
 
 The plugin has its own `plugin.json`, and its marketplace entry sets `strict: false` while also declaring any of `commands`, `agents`, `skills`, `hooks`, `outputStyles`, or `themes`. Remove those fields from the entry, or set `strict: true` in the entry so Claude Code appends them to `plugin.json`. See [Strict mode](/docs/en/plugins/marketplace-reference#strict-mode).
 
-<h3 id="warning-no-commands-found-in-plugin-custom-directory">
-  `Warning: No commands found in plugin <name> custom directory`
-</h3>
+### `Warning: No commands found in plugin <name> custom directory`
 
 When the plugin loads, the `claude --debug` log at `~/.claude/debug/<session-id>.txt` records `Warning: No commands found in plugin <name> custom directory: <path>. Expected .md files or SKILL.md in subdirectories.` Nothing appears in the session or the **Errors** tab.
 
@@ -1163,9 +1069,7 @@ The `commands` path in the manifest exists but holds no `.md` files and no `SKIL
 
 You publish a marketplace and a user reports an error, or your own validation fails. These entries are for the marketplace owner.
 
-<h3 id="plugins-with-relative-paths-fail-in-url-based-marketplaces">
-  Plugins with relative paths fail in URL-based marketplaces
-</h3>
+### Plugins with relative paths fail in URL-based marketplaces
 
 Users added your marketplace with an `https://example.com/marketplace.json` URL. Installs of plugins whose `source` is a relative path, such as `./plugins/my-plugin`, fail with `its marketplace entry path does not stay inside the marketplace directory`. Already-installed plugins fail to load with `Plugin source path refused`. Both messages have an [error reference entry](/docs/en/errors#marketplace-entry-path-does-not-stay-inside-the-marketplace-directory).
 
@@ -1177,9 +1081,7 @@ When a user adds a URL-based marketplace, Claude Code downloads only the `market
 
 Alternatively, host the marketplace in a git repository and tell users to add it with the repository URL. For a git source, Claude Code clones the whole repository, so relative paths resolve. Source types are on the [marketplace reference](/docs/en/plugins/marketplace-reference).
 
-<h3 id="marketplace-validation-errors">
-  Marketplace validation errors
-</h3>
+### Marketplace validation errors
 
 You ran `claude plugin validate .` from your marketplace directory and it reported errors or warnings on the marketplace file itself.
 
@@ -1208,9 +1110,7 @@ Before v2.1.247, a marketplace name containing control or bidirectional-formatti
 
 Your organization deploys managed settings that restrict plugins, and a command was refused with a policy message. These entries name the setting behind each refusal so you know what to ask your administrator for. For the admin side, see [Manage plugins for your organization](/docs/en/plugins/org).
 
-<h3 id="marketplace-source-is-blocked-by-enterprise-policy">
-  `Marketplace source '<source>' is blocked by enterprise policy`
-</h3>
+### `Marketplace source '<source>' is blocked by enterprise policy`
 
 You ran `/plugin marketplace add`, `update`, or an install, and Claude Code refused with this line. For a GitHub or git source, the host follows the source in parentheses, as in `'github:owner/repo' (github.com)`.
 
@@ -1224,25 +1124,19 @@ Match the rest of the message to see what kind of policy blocked the source:
 
 A marketplace you added before the policy became more restrictive stops refreshing too, because the policy applies on every refresh.
 
-<h3 id="marketplace-is-not-in-the-allowed-marketplace-list">
-  `Marketplace "<name>" is not in the allowed marketplace list`
-</h3>
+### `Marketplace "<name>" is not in the allowed marketplace list`
 
 The **Errors** tab shows this line, or `Marketplace "<name>" is blocked by enterprise policy`, for a marketplace you already have registered.
 
 The same managed settings that block a [marketplace source](#marketplace-source-is-blocked-by-enterprise-policy) apply at load time. `strictKnownMarketplaces` doesn't include this marketplace, or `blockedMarketplaces` names it, so Claude Code stops loading it and its plugins. For the allowlist variant, the guidance line shows the allowed sources, or `Contact your administrator to configure allowed marketplace sources`. For the blocklist variant it reads `This marketplace source is explicitly blocked by your administrator`.
 
-<h3 id="plugin-is-blocked-by-your-organizations-policy-and-cannot-be-installed">
-  `Plugin "<name>" is blocked by your organization's policy and cannot be installed`
-</h3>
+### `Plugin "<name>" is blocked by your organization's policy and cannot be installed`
 
 An install was refused with this line, an enable with the same line ending `cannot be enabled`, or an install or update with one naming the reason: `Plugin "<name>" is from marketplace "<marketplace>", which is blocked by your organization's policy`, or `Plugin "<name>" depends on "<dep>", which is blocked by your organization's policy`.
 
 Managed settings block this plugin, its marketplace, or a dependency it needs. Ask your administrator which entry applies. A blocked dependency means the plugin can't install until the dependency's marketplace is allowed.
 
-<h3 id="plugin-dir-is-disabled-by-your-organizations-managed-settings-disables">
-  `--plugin-dir is disabled by your organization's managed settings (disableSideloadFlags)`
-</h3>
+### `--plugin-dir is disabled by your organization's managed settings (disableSideloadFlags)`
 
 You started `claude` with `--plugin-dir`, `--plugin-url`, `--agents`, or `--mcp-config`. Claude Code exited with this message and `Plugins, custom agents, and MCP servers can only be loaded from sources your administrator has approved.`
 
@@ -1250,25 +1144,19 @@ Your administrator set `disableSideloadFlags` in managed settings, which turns o
 
 A related message in the `/plugin` **Errors** tab is `--plugin-dir copy of "<name>" ignored: plugin is locked by managed settings`. Managed settings enable or disable that plugin by name, and Claude Code ignores your `--plugin-dir` copy of it so the flag can't override the policy.
 
-<h3 id="plugins-from-claude-skills-are-blocked-by-your-organizations-managed-s">
-  `Plugins from ~/.claude/skills/ are blocked by your organization's managed settings`
-</h3>
+### `Plugins from ~/.claude/skills/ are blocked by your organization's managed settings`
 
 You ran `claude plugin init` or `claude plugin enable`, and it stopped with this line. The message names `strictKnownMarketplaces or blockedMarketplaces` and asks your administrator to add `{"source":"skills-dir"}` to `strictKnownMarketplaces` or remove it from `blockedMarketplaces`.
 
 The `skills-dir` source stands for plugins Claude Code loads from your `~/.claude/skills/` directory. Ask your administrator to make the change the message names.
 
-<h3 id="command-sourced-plugins-are-disabled-by-your-organizations-managed-set">
-  `Command-sourced plugins are disabled by your organization's managed settings`
-</h3>
+### `Command-sourced plugins are disabled by your organization's managed settings`
 
 You installed or updated a plugin with a `command` source, and it stopped with this line and `The plugin was not installed or updated and its command was not run.`
 
 Your administrator set `disableCommandPluginSources`, so Claude Code refuses to run the marketplace-declared command that produces the plugin. Setting `allowManagedHooksOnly` alone has the same effect when `disableCommandPluginSources` is unset. Ask your administrator whether the plugin can be published from a source type the policy allows.
 
-<h3 id="marketplace-is-seed-managed">
-  `Marketplace '<name>' is seed-managed`
-</h3>
+### `Marketplace '<name>' is seed-managed`
 
 You ran `claude plugin marketplace update <name>`, and it failed with `Marketplace '<name>' is seed-managed (<dir>)` and a hint to ask your admin.
 

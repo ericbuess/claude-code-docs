@@ -15,9 +15,9 @@ The extension collects the tabs Claude opens into a Chrome tab group tied to you
 * When you type `/clear`, Claude Code closes the group, open pages included, unless work that survives the clear is still running
 * When you switch sessions with a command like `/resume`, exit Claude Code, or run a `/clear` while work that survives it is still running, Claude Code closes the group only if it holds nothing but empty new tabs, so pages you may still be reading stay open
 
-<Note>
-  Chrome integration works with Google Chrome and Microsoft Edge. Claude Code also detects the extension and sets up the connection in other Chromium-based browsers, including Brave, Arc, Vivaldi, and Opera. Chrome integration isn't supported in Windows Subsystem for Linux (WSL).
-</Note>
+> [!NOTE]
+>
+> Chrome integration works with Google Chrome and Microsoft Edge. Claude Code also detects the extension and sets up the connection in other Chromium-based browsers, including Brave, Arc, Vivaldi, and Opera. Chrome integration isn't supported in Windows Subsystem for Linux (WSL).
 
 ## Capabilities
 
@@ -45,36 +45,34 @@ In Enterprise organizations that have HIPAA enabled, Claude in Chrome is off by 
 
 Chrome integration also requires signing in with `/login`. If you authenticate with an API key or a long-lived token from [`claude setup-token`](/docs/en/authentication#generate-a-long-lived-token), Claude Code keeps Chrome integration off, even when you pass `--chrome`, because the browser extension can't authenticate with those credentials. Before v2.1.216, these sessions could enable Chrome integration, but every attempt to connect to the browser extension failed with a 403 error.
 
-<Note>
-  Chrome integration is not available through third-party providers like Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry. If you access Claude exclusively through a third-party provider, you need a separate claude.ai account to use this feature.
-</Note>
+> [!NOTE]
+>
+> Chrome integration is not available through third-party providers like Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry. If you access Claude exclusively through a third-party provider, you need a separate claude.ai account to use this feature.
 
 ## Get started in the CLI
 
-<Steps>
-  <Step title="Launch Claude Code with Chrome">
-    Start Claude Code with the `--chrome` flag:
+**1. Launch Claude Code with Chrome**
 
-    ```bash theme={null}
-    claude --chrome
-    ```
+Start Claude Code with the `--chrome` flag:
 
-    The first time you launch with Chrome, Claude Code shows a one-time dialog that introduces the integration and explains how site permissions work. Press Enter to continue.
+```bash theme={null}
+claude --chrome
+```
 
-    To enable Chrome for future sessions without the flag, see [Enable Chrome by default](#enable-chrome-by-default).
-  </Step>
+The first time you launch with Chrome, Claude Code shows a one-time dialog that introduces the integration and explains how site permissions work. Press Enter to continue.
 
-  <Step title="Ask Claude to use the browser">
-    This example navigates to a page, interacts with it, and reports what it finds, all from your terminal or editor:
+To enable Chrome for future sessions without the flag, see [Enable Chrome by default](#enable-chrome-by-default).
 
-    ```text wrap theme={null}
-    Go to code.claude.com/docs, click on the search box,
-    type "hooks", and tell me what results appear
-    ```
+**2. Ask Claude to use the browser**
 
-    If Claude Code asks for permission before a browser action, approve it. The dialog starts with `Claude in Chrome wants to` and offers an option to allow all actions on that site for the session. Claude opens a new tab and starts the task.
-  </Step>
-</Steps>
+This example navigates to a page, interacts with it, and reports what it finds, all from your terminal or editor:
+
+```text wrap theme={null}
+Go to code.claude.com/docs, click on the search box,
+type "hooks", and tell me what results appear
+```
+
+If Claude Code asks for permission before a browser action, approve it. The dialog starts with `Claude in Chrome wants to` and offers an option to allow all actions on that site for the session. Claude opens a new tab and starts the task.
 
 Run `/chrome` at any time to check the connection status, manage permissions, reconnect the extension, or choose which connected browser to use. The integration is working when the status panel shows "Status: Enabled" and "Extension: Installed".
 
@@ -105,9 +103,9 @@ With the setting on and Claude Code v2.1.287 or later, each VS Code session conn
 
 Claude Code starts normally when Chrome isn't running.
 
-<Note>
-  Enabling Chrome by default increases context usage since the browser tools and their instructions are always loaded. If you notice increased context consumption, turn the setting off and connect only when needed, with `--chrome` in the CLI or by typing [`@browser`](/docs/en/vs-code#automate-browser-tasks-with-chrome) in the VS Code prompt box.
-</Note>
+> [!NOTE]
+>
+> Enabling Chrome by default increases context usage since the browser tools and their instructions are always loaded. If you notice increased context consumption, turn the setting off and connect only when needed, with `--chrome` in the CLI or by typing [`@browser`](/docs/en/vs-code#automate-browser-tasks-with-chrome) in the VS Code prompt box.
 
 ### Manage site permissions
 
@@ -307,9 +305,9 @@ If you belong to more than one claude.ai organization, the extension must be sig
 
 To see which organization Claude Code is signed in to, run [`/status`](/docs/en/commands) at the Claude Code prompt and read the `Organization` row.
 
-<Warning>
-  If you log out of the extension, you lose the shortcuts and scheduled tasks saved in it. Try the other fixes under [Common error messages](#common-error-messages) first.
-</Warning>
+> [!WARNING]
+>
+> If you log out of the extension, you lose the shortcuts and scheduled tasks saved in it. Try the other fixes under [Common error messages](#common-error-messages) first.
 
 To change the extension's organization, log out in the extension's settings, then log in and select the organization that `/status` shows.
 
@@ -331,6 +329,7 @@ These are the most frequently encountered errors and how to resolve them:
 | Extension shows "Not detected" in `/chrome` | Chrome extension is not installed or is disabled | Install or enable the extension in `chrome://extensions` |
 | "No tab available" | Claude tried to act before a tab was ready | Ask Claude to create a new tab and retry |
 | "Receiving end does not exist" | Extension service worker went idle | Run `/chrome` and select "Reconnect extension" |
+| "No browsers are connected" | Chrome isn't open with the extension signed in to the same claude.ai account and organization as Claude Code, or Claude Code can't reach `bridge.claudeusercontent.com` | Confirm Chrome is open and the extension is signed in to the same claude.ai account and [organization](#extension-signed-in-to-a-different-organization) as Claude Code. If so, check that your network lets Claude Code reach `bridge.claudeusercontent.com`, listed under [Network access requirements](/docs/en/network-config#network-access-requirements) |
 
 ## See also
 

@@ -8,10 +8,10 @@
 
 This page walks an administrator through rolling out an LLM gateway for Claude Code. It assumes you have a gateway product deployed that meets the [gateway requirements](#gateway-requirements). Deploying or operating any specific product isn't covered here; deploy yours following its vendor's documentation.
 
-<Note>
-  * To connect Claude Code on your own machine to an existing gateway, see [Connect Claude Code to an LLM gateway](/docs/en/llm-gateway-connect)
-  * For what Claude Code sends to a gateway and what to forward, see the [gateway compatibility guide](/docs/en/llm-gateway-protocol)
-</Note>
+> [!NOTE]
+>
+> * To connect Claude Code on your own machine to an existing gateway, see [Connect Claude Code to an LLM gateway](/docs/en/llm-gateway-connect)
+> * For what Claude Code sends to a gateway and what to forward, see the [gateway compatibility guide](/docs/en/llm-gateway-protocol)
 
 ## Prerequisites
 
@@ -62,34 +62,32 @@ Your gateway should already be configured with your provider credential, listeni
 * `<gateway-key>` is whatever credential lets you call the gateway right now: an administrative key, a test key, or your own developer key if you've already issued one. Not every gateway product has a separate admin credential; if yours doesn't, issue yourself a developer key in [Issue developer credentials](#issue-developer-credentials) first
 * `model` is a Claude model name your gateway is configured to route. The example uses `claude-sonnet-4-6`; substitute a name you've configured
 
-<Tabs>
-  <Tab title="Bash or Zsh">
-    ```bash theme={null}
-    curl -X POST "https://llm-gateway.example.com/v1/messages" \
-      -H "Authorization: Bearer <gateway-key>" \
-      -H "anthropic-version: 2023-06-01" \
-      -H "content-type: application/json" \
-      -d '{"model": "claude-sonnet-4-6", "max_tokens": 1, "messages": [{"role": "user", "content": "."}]}'
-    ```
-  </Tab>
+**Bash or Zsh**
 
-  <Tab title="PowerShell">
-    ```powershell theme={null}
-    Invoke-RestMethod -Method Post -Uri "https://llm-gateway.example.com/v1/messages" `
-      -Headers @{ "Authorization" = "Bearer <gateway-key>"; "anthropic-version" = "2023-06-01" } `
-      -ContentType "application/json" `
-      -Body '{"model": "claude-sonnet-4-6", "max_tokens": 1, "messages": [{"role": "user", "content": "."}]}'
-    ```
-  </Tab>
-</Tabs>
+```bash theme={null}
+curl -X POST "https://llm-gateway.example.com/v1/messages" \
+  -H "Authorization: Bearer <gateway-key>" \
+  -H "anthropic-version: 2023-06-01" \
+  -H "content-type: application/json" \
+  -d '{"model": "claude-sonnet-4-6", "max_tokens": 1, "messages": [{"role": "user", "content": "."}]}'
+```
+
+**PowerShell**
+
+```powershell theme={null}
+Invoke-RestMethod -Method Post -Uri "https://llm-gateway.example.com/v1/messages" `
+  -Headers @{ "Authorization" = "Bearer <gateway-key>"; "anthropic-version" = "2023-06-01" } `
+  -ContentType "application/json" `
+  -Body '{"model": "claude-sonnet-4-6", "max_tokens": 1, "messages": [{"role": "user", "content": "."}]}'
+```
 
 **Checkpoint**: a `200` with a `content` field means the gateway reached the provider with that model name. A `404` means that name isn't routed at the gateway; a `401` from the provider means the gateway's provider credential is wrong.
 
 Repeat the request once per Claude model name in your gateway's routing configuration. A name the gateway doesn't route returns `404` to any developer who selects it, so test every name before rollout.
 
-<Note>
-  Avoid serving the gateway behind a redirect. A redirect can drop the request body or strip the credential header on inference requests, and [model discovery](/docs/en/llm-gateway-protocol#model-discovery) treats any redirect as a failure so the credential cannot leak to a redirect target.
-</Note>
+> [!NOTE]
+>
+> Avoid serving the gateway behind a redirect. A redirect can drop the request body or strip the credential header on inference requests, and [model discovery](/docs/en/llm-gateway-protocol#model-discovery) treats any redirect as a failure so the credential cannot leak to a redirect target.
 
 ### Issue developer credentials
 
@@ -97,26 +95,24 @@ Each developer needs their own gateway key to authenticate. Create a credential 
 
 Confirm a freshly issued key works against the gateway with the same request as [Confirm the gateway routes your models](#confirm-the-gateway-routes-your-models), replacing `<gateway-key>` with the new `<developer-key>`:
 
-<Tabs>
-  <Tab title="Bash or Zsh">
-    ```bash theme={null}
-    curl -X POST "https://llm-gateway.example.com/v1/messages" \
-      -H "Authorization: Bearer <developer-key>" \
-      -H "anthropic-version: 2023-06-01" \
-      -H "content-type: application/json" \
-      -d '{"model": "claude-sonnet-4-6", "max_tokens": 1, "messages": [{"role": "user", "content": "."}]}'
-    ```
-  </Tab>
+**Bash or Zsh**
 
-  <Tab title="PowerShell">
-    ```powershell theme={null}
-    Invoke-RestMethod -Method Post -Uri "https://llm-gateway.example.com/v1/messages" `
-      -Headers @{ "Authorization" = "Bearer <developer-key>"; "anthropic-version" = "2023-06-01" } `
-      -ContentType "application/json" `
-      -Body '{"model": "claude-sonnet-4-6", "max_tokens": 1, "messages": [{"role": "user", "content": "."}]}'
-    ```
-  </Tab>
-</Tabs>
+```bash theme={null}
+curl -X POST "https://llm-gateway.example.com/v1/messages" \
+  -H "Authorization: Bearer <developer-key>" \
+  -H "anthropic-version: 2023-06-01" \
+  -H "content-type: application/json" \
+  -d '{"model": "claude-sonnet-4-6", "max_tokens": 1, "messages": [{"role": "user", "content": "."}]}'
+```
+
+**PowerShell**
+
+```powershell theme={null}
+Invoke-RestMethod -Method Post -Uri "https://llm-gateway.example.com/v1/messages" `
+  -Headers @{ "Authorization" = "Bearer <developer-key>"; "anthropic-version" = "2023-06-01" } `
+  -ContentType "application/json" `
+  -Body '{"model": "claude-sonnet-4-6", "max_tokens": 1, "messages": [{"role": "user", "content": "."}]}'
+```
 
 **Checkpoint**: a `200` with a `content` field means the developer key reaches the gateway and the gateway forwards it. A `401` here, when [the previous step](#confirm-the-gateway-routes-your-models) succeeded, means the developer key is wrong or hasn't taken effect at the gateway yet.
 
@@ -126,21 +122,19 @@ Issuing one key per developer rather than a shared key is what makes per-develop
 
 Run Claude Code through the gateway yourself before distributing anything, using the same configuration the rollout will deliver fleet-wide. Type these directly in a terminal, not in a `.env` or settings file; they last only for this terminal session, so closing it returns your machine to its normal configuration. Use `ANTHROPIC_API_KEY` instead of `ANTHROPIC_AUTH_TOKEN` if your gateway reads the `x-api-key` header:
 
-<Tabs>
-  <Tab title="Bash or Zsh">
-    ```bash theme={null}
-    export ANTHROPIC_BASE_URL=https://llm-gateway.example.com
-    export ANTHROPIC_AUTH_TOKEN="<developer-key>"
-    ```
-  </Tab>
+**Bash or Zsh**
 
-  <Tab title="PowerShell">
-    ```powershell theme={null}
-    $env:ANTHROPIC_BASE_URL = "https://llm-gateway.example.com"
-    $env:ANTHROPIC_AUTH_TOKEN = "<developer-key>"
-    ```
-  </Tab>
-</Tabs>
+```bash theme={null}
+export ANTHROPIC_BASE_URL=https://llm-gateway.example.com
+export ANTHROPIC_AUTH_TOKEN="<developer-key>"
+```
+
+**PowerShell**
+
+```powershell theme={null}
+$env:ANTHROPIC_BASE_URL = "https://llm-gateway.example.com"
+$env:ANTHROPIC_AUTH_TOKEN = "<developer-key>"
+```
 
 Then send a one-shot prompt through the gateway:
 
@@ -230,28 +224,26 @@ The [connect page](/docs/en/llm-gateway-connect#configure-claude-code-yourself) 
 
 Confirm everything works from a developer machine, not the gateway host, so the test covers the network path developers use. Send a streaming request, which checks the endpoint, streaming pass-through, and model routing at once:
 
-<Tabs>
-  <Tab title="Bash or Zsh">
-    ```bash theme={null}
-    curl -N -X POST "https://llm-gateway.example.com/v1/messages" \
-      -H "Authorization: Bearer <developer-key>" \
-      -H "anthropic-version: 2023-06-01" \
-      -H "content-type: application/json" \
-      -d '{"model": "claude-sonnet-4-6", "max_tokens": 16, "stream": true, "messages": [{"role": "user", "content": "count to 3"}]}'
-    ```
-  </Tab>
+**Bash or Zsh**
 
-  <Tab title="PowerShell">
-    ```powershell theme={null}
-    $body = '{"model": "claude-sonnet-4-6", "max_tokens": 16, "stream": true, "messages": [{"role": "user", "content": "count to 3"}]}'
-    $body | curl.exe -N -X POST "https://llm-gateway.example.com/v1/messages" `
-      -H "Authorization: Bearer <developer-key>" `
-      -H "anthropic-version: 2023-06-01" `
-      -H "content-type: application/json" `
-      --data-binary '@-'
-    ```
-  </Tab>
-</Tabs>
+```bash theme={null}
+curl -N -X POST "https://llm-gateway.example.com/v1/messages" \
+  -H "Authorization: Bearer <developer-key>" \
+  -H "anthropic-version: 2023-06-01" \
+  -H "content-type: application/json" \
+  -d '{"model": "claude-sonnet-4-6", "max_tokens": 16, "stream": true, "messages": [{"role": "user", "content": "count to 3"}]}'
+```
+
+**PowerShell**
+
+```powershell theme={null}
+$body = '{"model": "claude-sonnet-4-6", "max_tokens": 16, "stream": true, "messages": [{"role": "user", "content": "count to 3"}]}'
+$body | curl.exe -N -X POST "https://llm-gateway.example.com/v1/messages" `
+  -H "Authorization: Bearer <developer-key>" `
+  -H "anthropic-version: 2023-06-01" `
+  -H "content-type: application/json" `
+  --data-binary '@-'
+```
 
 You should see `data:` lines arrive incrementally. The whole response arriving at once after a pause means the gateway is buffering, which stalls Claude Code; a `404` means the model name isn't routed. Repeat per model name.
 

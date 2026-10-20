@@ -13,9 +13,9 @@ You can change what [Code Review](/docs/en/code-review) flags on your repository
 
 Add `REVIEW.md` at your repository root and merge it. Then [protect your default branch](#which-branch-review-md-is-read-from).
 
-<Note>
-  To change how thorough reviews are or when they run, ask an Owner to change the [review level](/docs/en/code-review-setup#set-the-default-review-level) or the [**Review runs** setting](/docs/en/code-review-setup#set-when-reviews-run).
-</Note>
+> [!NOTE]
+>
+> To change how thorough reviews are or when they run, ask an Owner to change the [review level](/docs/en/code-review-setup#set-the-default-review-level) or the [**Review runs** setting](/docs/en/code-review-setup#set-when-reviews-run).
 
 ## Use CLAUDE.md for project-wide rules
 
@@ -42,9 +42,9 @@ your-repo/
 
 Before you rely on a subdirectory file, protect your default branch and check [what a review reads for your branch setup](#what-a-review-reads-for-each-branch-setup).
 
-<Note>
-  The Code Review service and the local [`/code-review` command](/docs/en/code-review-local) are two separate tools, and they read different files. The service reads both `CLAUDE.md` and `REVIEW.md`. The `/code-review` command, which you run inside a Claude Code session on your own machine, reads your `CLAUDE.md` files and not `REVIEW.md`. Put guidance you want applied in both places in `CLAUDE.md`, and keep `REVIEW.md` for rules specific to pull request review.
-</Note>
+> [!NOTE]
+>
+> The Code Review service and the local [`/code-review` command](/docs/en/code-review-local) are two separate tools, and they read different files. The service reads both `CLAUDE.md` and `REVIEW.md`. The `/code-review` command, which you run inside a Claude Code session on your own machine, reads your `CLAUDE.md` files and not `REVIEW.md`. Put guidance you want applied in both places in `CLAUDE.md`, and keep `REVIEW.md` for rules specific to pull request review.
 
 ### Example REVIEW\.md
 

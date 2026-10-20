@@ -320,9 +320,7 @@ Each method resolves after your handler has finished, so you can check the resul
 
 A drawing test checks the tree your hook returns and whether it's valid for that app. It doesn't check how the app paints it, so look at a new layout in a real session as well.
 
-<h3 id="test-a-drawing-after-clear">
-  Test a drawing after `/clear`
-</h3>
+### Test a drawing after `/clear`
 
 Each test starts with every `$.state` value at its default, which is how `/clear` leaves them. To test what your mod does next, skip `session.start`, fire `classic.SessionStart` with `source: 'clear'`, and check what your mod draws.
 
@@ -347,9 +345,7 @@ test('the saved count comes back after /clear', async ($, on) => {
 
 The test passes when your `classic.SessionStart` hook has copied the stored `7` into `$.state` before the pane draws. Without that hook in your module, the pane draws `Count: 0`, `find` returns `undefined`, and the test fails at `toBeDefined`.
 
-<h2 id="test-a-mod-that-judges-other-mods">
-  Test a policy mod
-</h2>
+## Test a policy mod
 
 A mod your organization lists in [`prependPlugins`](/docs/en/plugins/mods/admin) can refuse another mod before it loads. To test one, set your mod's tier and give the test a second mod for yours to allow or refuse:
 

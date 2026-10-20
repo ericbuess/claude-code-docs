@@ -6,9 +6,9 @@
 
 > Verify the CLAUDE_CODE_SESSION_ACCESS_TOKEN JWT so services on your network can trust requests from sessions in your self-hosted environment.
 
-<Note>
-  Self-hosted environments are in public beta on Team and Enterprise plans; an [Owner](/docs/en/cloud-environments#organization-shared-environments) enables them by turning on **Allow self-hosted environments** on the [**Cloud environments** admin page](https://claude.ai/admin-settings/cloud-environments). This page covers session identity verification; see the [quickstart](/docs/en/self-hosted-environments-quickstart) for setup and [Deploy to production](/docs/en/self-hosted-environments-deploy) for the fleet recipes.
-</Note>
+> [!NOTE]
+>
+> Self-hosted environments are in public beta on Team and Enterprise plans; an [Owner](/docs/en/cloud-environments#organization-shared-environments) enables them by turning on **Allow self-hosted environments** on the [**Cloud environments** admin page](https://claude.ai/admin-settings/cloud-environments). This page covers session identity verification; see the [quickstart](/docs/en/self-hosted-environments-quickstart) for setup and [Deploy to production](/docs/en/self-hosted-environments-deploy) for the fleet recipes.
 
 A [self-hosted environment](/docs/en/self-hosted-environments) lets Claude Code [cloud sessions](/docs/en/claude-code-on-the-web) run on infrastructure you operate instead of on Anthropic's. Because the session runs inside your network, Claude can call your internal services directly. Those services need a way to confirm that a request came from a Claude Code session in your environment, and to identify the user or service identity that created that session.
 
@@ -58,118 +58,114 @@ The response is a standard [JSON Web Key Set](https://www.rfc-editor.org/rfc/rfc
 
 Verify each incoming token against these checks:
 
-<Steps>
-  <Step title="Check the prefix">
-    Reject the value if it doesn't start with `sk-ant-cc-`, then remove that prefix. The remainder is a standard compact JWT.
-  </Step>
+**1. Check the prefix**
 
-  <Step title="Verify the signature">
-    Fetch the JWKS, select the key whose `kid` matches the token header, and verify the `ES256` signature. Reject tokens whose `alg` header is not `ES256`. If a token arrives with a `kid` that isn't in your cached key set, refetch the JWKS once before rejecting it: after a rotation, new tokens are signed with a key your cached set doesn't have yet.
-  </Step>
+Reject the value if it doesn't start with `sk-ant-cc-`, then remove that prefix. The remainder is a standard compact JWT.
 
-  <Step title="Verify the issuer">
-    Reject the token if `iss` is not exactly `ccr`.
-  </Step>
+**2. Verify the signature**
 
-  <Step title="Verify the audience against your environment">
-    The `aud` claim is an array. Reject the token unless it contains your environment ID, which has the form `ccpool_...`. The environment ID is shown in your environment's detail dialog on the [**Cloud environments** admin page](https://claude.ai/admin-settings/cloud-environments), and appears as the `ccr:pool_id` claim in any of the environment's session tokens. This check is what scopes the token to your environment and rejects tokens issued to other organizations.
-  </Step>
+Fetch the JWKS, select the key whose `kid` matches the token header, and verify the `ES256` signature. Reject tokens whose `alg` header is not `ES256`. If a token arrives with a `kid` that isn't in your cached key set, refetch the JWKS once before rejecting it: after a rotation, new tokens are signed with a key your cached set doesn't have yet.
 
-  <Step title="Verify the role">
-    Reject the token if `ccr:role` is not exactly `session_worker`. Other tokens issued for self-hosted environments, such as environment secrets, runner tokens, and work orders, are signed by the same key set but carry different roles.
-  </Step>
+**3. Verify the issuer**
 
-  <Step title="Verify expiry">
-    Reject the token if `exp` is in the past. Anthropic issues session tokens with a four-hour lifetime by default and a maximum of eight hours. The runner refreshes the token before expiry and pushes the new value to the session, so subprocesses that Claude starts after a refresh inherit it. One session can therefore present several distinct valid tokens to your service over its lifetime.
-  </Step>
+Reject the token if `iss` is not exactly `ccr`.
 
-  <Step title="Read the identity">
-    The creating user's identity is in the `act` claim: `act.sub` is their Anthropic user ID in the prefixed form `user:<id>`, and `act.email`, when the creating surface recorded one, is their email address. Sessions your organization's service identity creates, including Claude Tag channel sessions, carry an `agent:` subject instead, so treat a session as user-created only when `act.sub` carries the `user:` prefix, rather than testing whether identity claims are absent. See the [claims reference](#claims-reference) for the full structure and the flat duplicate claims.
-  </Step>
-</Steps>
+**4. Verify the audience against your environment**
+
+The `aud` claim is an array. Reject the token unless it contains your environment ID, which has the form `ccpool_...`. The environment ID is shown in your environment's detail dialog on the [**Cloud environments** admin page](https://claude.ai/admin-settings/cloud-environments), and appears as the `ccr:pool_id` claim in any of the environment's session tokens. This check is what scopes the token to your environment and rejects tokens issued to other organizations.
+
+**5. Verify the role**
+
+Reject the token if `ccr:role` is not exactly `session_worker`. Other tokens issued for self-hosted environments, such as environment secrets, runner tokens, and work orders, are signed by the same key set but carry different roles.
+
+**6. Verify expiry**
+
+Reject the token if `exp` is in the past. Anthropic issues session tokens with a four-hour lifetime by default and a maximum of eight hours. The runner refreshes the token before expiry and pushes the new value to the session, so subprocesses that Claude starts after a refresh inherit it. One session can therefore present several distinct valid tokens to your service over its lifetime.
+
+**7. Read the identity**
+
+The creating user's identity is in the `act` claim: `act.sub` is their Anthropic user ID in the prefixed form `user:<id>`, and `act.email`, when the creating surface recorded one, is their email address. Sessions your organization's service identity creates, including Claude Tag channel sessions, carry an `agent:` subject instead, so treat a session as user-created only when `act.sub` carries the `user:` prefix, rather than testing whether identity claims are absent. See the [claims reference](#claims-reference) for the full structure and the flat duplicate claims.
 
 The checks map directly onto standard JWT libraries. The examples below implement the full sequence in Node.js with [`jose`](https://www.npmjs.com/package/jose), which handles JWKS fetching, caching, and `kid` selection, and in Python with [`PyJWT`](https://pyjwt.readthedocs.io/) and its built-in JWKS client.
 
-<Tabs>
-  <Tab title="Node.js (jose)">
-    ```typescript theme={null}
-    import { createRemoteJWKSet, jwtVerify } from "jose";
+**Node.js (jose)**
 
-    const JWKS = createRemoteJWKSet(
-      new URL("https://api.anthropic.com/v1/code/.well-known/jwks.json")
-    );
+```typescript theme={null}
+import { createRemoteJWKSet, jwtVerify } from "jose";
 
-    const PREFIX = "sk-ant-cc-";
-    const EXPECTED_POOL_ID = "ccpool_...";
+const JWKS = createRemoteJWKSet(
+  new URL("https://api.anthropic.com/v1/code/.well-known/jwks.json")
+);
 
-    export async function verifySessionToken(raw: string) {
-      if (!raw.startsWith(PREFIX)) {
-        throw new Error("not a self-hosted runner session token");
-      }
-      const jwt = raw.slice(PREFIX.length);
+const PREFIX = "sk-ant-cc-";
+const EXPECTED_POOL_ID = "ccpool_...";
 
-      const { payload } = await jwtVerify(jwt, JWKS, {
-        issuer: "ccr",
-        audience: EXPECTED_POOL_ID,
-        algorithms: ["ES256"],
-      });
+export async function verifySessionToken(raw: string) {
+  if (!raw.startsWith(PREFIX)) {
+    throw new Error("not a self-hosted runner session token");
+  }
+  const jwt = raw.slice(PREFIX.length);
 
-      if (payload["ccr:role"] !== "session_worker") {
-        throw new Error("token is not a session_worker token");
-      }
+  const { payload } = await jwtVerify(jwt, JWKS, {
+    issuer: "ccr",
+    audience: EXPECTED_POOL_ID,
+    algorithms: ["ES256"],
+  });
 
-      const act = payload.act as { email?: string; sub?: string };
-      return {
-        sessionId: payload["ccr:session_id"] as string,
-        poolId: payload["ccr:pool_id"] as string,
-        orgId: payload["ccr:org_id"] as string,
-        creatorEmail: act?.email,
-        creatorSub: act?.sub,
-      };
+  if (payload["ccr:role"] !== "session_worker") {
+    throw new Error("token is not a session_worker token");
+  }
+
+  const act = payload.act as { email?: string; sub?: string };
+  return {
+    sessionId: payload["ccr:session_id"] as string,
+    poolId: payload["ccr:pool_id"] as string,
+    orgId: payload["ccr:org_id"] as string,
+    creatorEmail: act?.email,
+    creatorSub: act?.sub,
+  };
+}
+```
+
+**Python (PyJWT)**
+
+```python theme={null}
+import jwt
+from jwt import PyJWKClient
+
+JWKS_URL = "https://api.anthropic.com/v1/code/.well-known/jwks.json"
+PREFIX = "sk-ant-cc-"
+EXPECTED_POOL_ID = "ccpool_..."
+
+jwks = PyJWKClient(JWKS_URL)
+
+
+def verify_session_token(raw: str) -> dict:
+    if not raw.startswith(PREFIX):
+        raise ValueError("not a self-hosted runner session token")
+    token = raw.removeprefix(PREFIX)
+
+    signing_key = jwks.get_signing_key_from_jwt(token)
+    payload = jwt.decode(
+        token,
+        signing_key.key,
+        algorithms=["ES256"],
+        issuer="ccr",
+        audience=EXPECTED_POOL_ID,
+    )
+
+    if payload.get("ccr:role") != "session_worker":
+        raise ValueError("token is not a session_worker token")
+
+    act = payload.get("act") or {}
+    return {
+        "session_id": payload["ccr:session_id"],
+        "pool_id": payload["ccr:pool_id"],
+        "org_id": payload["ccr:org_id"],
+        "creator_email": act.get("email"),
+        "creator_sub": act.get("sub"),
     }
-    ```
-  </Tab>
-
-  <Tab title="Python (PyJWT)">
-    ```python theme={null}
-    import jwt
-    from jwt import PyJWKClient
-
-    JWKS_URL = "https://api.anthropic.com/v1/code/.well-known/jwks.json"
-    PREFIX = "sk-ant-cc-"
-    EXPECTED_POOL_ID = "ccpool_..."
-
-    jwks = PyJWKClient(JWKS_URL)
-
-
-    def verify_session_token(raw: str) -> dict:
-        if not raw.startswith(PREFIX):
-            raise ValueError("not a self-hosted runner session token")
-        token = raw.removeprefix(PREFIX)
-
-        signing_key = jwks.get_signing_key_from_jwt(token)
-        payload = jwt.decode(
-            token,
-            signing_key.key,
-            algorithms=["ES256"],
-            issuer="ccr",
-            audience=EXPECTED_POOL_ID,
-        )
-
-        if payload.get("ccr:role") != "session_worker":
-            raise ValueError("token is not a session_worker token")
-
-        act = payload.get("act") or {}
-        return {
-            "session_id": payload["ccr:session_id"],
-            "pool_id": payload["ccr:pool_id"],
-            "org_id": payload["ccr:org_id"],
-            "creator_email": act.get("email"),
-            "creator_sub": act.get("sub"),
-        }
-    ```
-  </Tab>
-</Tabs>
+```
 
 ### Verify the token inside the session
 

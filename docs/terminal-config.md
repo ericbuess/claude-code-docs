@@ -48,25 +48,23 @@ To bind newline to a different key, or to swap behavior so Enter inserts a newli
 
 Some Claude Code shortcuts use the Option key, such as Option+Enter for a newline or Option+P to switch models. On macOS, most terminals do not send Option as a modifier by default, so these shortcuts do nothing until you enable it. The terminal setting for this is usually labeled "Use Option as Meta Key"; Meta is the historical Unix name for the key now labeled Option or Alt.
 
-<Tabs>
-  <Tab title="Apple Terminal">
-    Open Settings → Profiles → Keyboard and check "Use Option as Meta Key".
+**Apple Terminal**
 
-    If you accepted Claude Code's first-run terminal setup prompt, this is already done. That prompt runs `/terminal-setup` for you, which enables Option as Meta and turns off the audible bell in your Apple Terminal profile.
+Open Settings → Profiles → Keyboard and check "Use Option as Meta Key".
 
-    In [screen reader mode](/docs/en/accessibility), `/terminal-setup` leaves the bell setting unchanged so the terminal bell stays audible. If an earlier run turned the bell off, turn it back on under Settings → Profiles → Advanced → "Audible bell".
-  </Tab>
+If you accepted Claude Code's first-run terminal setup prompt, this is already done. That prompt runs `/terminal-setup` for you, which enables Option as Meta and turns off the audible bell in your Apple Terminal profile.
 
-  <Tab title="iTerm2">
-    Open Settings → Profiles → Keys → General and set Left Option key and Right Option key to "Esc+".
+In [screen reader mode](/docs/en/accessibility), `/terminal-setup` leaves the bell setting unchanged so the terminal bell stays audible. If an earlier run turned the bell off, turn it back on under Settings → Profiles → Advanced → "Audible bell".
 
-    Running `/terminal-setup` in iTerm2 enables "Applications in terminal may access clipboard" under Settings → General → Selection so the `/copy` command can write to your system clipboard. The command detects iTerm2 even when run from inside tmux. Restart iTerm2 for the change to take effect.
-  </Tab>
+**iTerm2**
 
-  <Tab title="VS Code">
-    Add `"terminal.integrated.macOptionIsMeta": true` to your VS Code settings.
-  </Tab>
-</Tabs>
+Open Settings → Profiles → Keys → General and set Left Option key and Right Option key to "Esc+".
+
+Running `/terminal-setup` in iTerm2 enables "Applications in terminal may access clipboard" under Settings → General → Selection so the `/copy` command can write to your system clipboard. The command detects iTerm2 even when run from inside tmux. Restart iTerm2 for the change to take effect.
+
+**VS Code**
+
+Add `"terminal.integrated.macOptionIsMeta": true` to your VS Code settings.
 
 For Ghostty, Kitty, and other terminals, look for an Option-as-Alt or Option-as-Meta setting in the terminal's configuration file.
 
@@ -84,15 +82,13 @@ By default Claude Code sends a desktop notification only in Ghostty, Kitty, and 
 
 The desktop notification reaches your local machine over SSH, so a remote session can still alert you. Ghostty and Kitty forward it to your OS notification center without further setup. iTerm2 requires you to enable forwarding:
 
-<Steps>
-  <Step title="Open iTerm2 notification settings">
-    Go to Settings → Profiles → Terminal.
-  </Step>
+**1. Open iTerm2 notification settings**
 
-  <Step title="Enable alerts">
-    Check "Notification Center Alerts", then click "Filter Alerts" and enable "Send escape sequence-generated alerts".
-  </Step>
-</Steps>
+Go to Settings → Profiles → Terminal.
+
+**2. Enable alerts**
+
+Check "Notification Center Alerts", then click "Filter Alerts" and enable "Send escape sequence-generated alerts".
 
 If notifications still do not appear, confirm that your terminal application has notification permission in your OS settings, and if you are running inside tmux, [enable passthrough](#configure-tmux).
 
@@ -181,115 +177,115 @@ Claude Code watches `~/.claude/themes/` and reloads when a file is added or chan
 
 The reference below covers the tokens you can set in `overrides`. The interactive editor in `/theme` shows the same tokens with a live preview, plus a few single-purpose accents such as onboarding screen colors that are omitted here.
 
-<Accordion title="Color token reference">
-  The following example combines tokens from several of the groups below: the brand accent, the plan mode border, the diff backgrounds, and the message background.
-
-  ```json ~/.claude/themes/midnight.json theme={null}
-  {
-    "name": "Midnight",
-    "base": "dark",
-    "overrides": {
-      "claude": "#a78bfa",
-      "planMode": "#38bdf8",
-      "diffAdded": "#14532d",
-      "diffRemoved": "#7f1d1d",
-      "userMessageBackground": "#1e1b4b"
-    }
-  }
-  ```
-
-  #### Text and accent colors
-
-  Control the primary brand accent and the foreground text shades used throughout the interface.
-
-  | Token | Controls |
-  | :- | :- |
-  | `claude` | Primary brand accent, used for the spinner and assistant label |
-  | `text` | Default foreground text |
-  | `inverseText` | Text drawn on top of a colored background, such as status badges |
-  | `inactive` | Secondary text such as hints, timestamps, and disabled items |
-  | `subtle` | Faint borders and de-emphasized secondary text |
-  | `suggestion` | Autocomplete suggestions and selection highlight in pickers |
-  | `permission` | Dialog borders, including permission prompts and pickers |
-  | `remember` | Memory and `CLAUDE.md` indicators |
-
-  #### Status colors
-
-  Signal success, failure, and warning states across messages and indicators.
-
-  | Token | Controls |
-  | :- | :- |
-  | `success` | Success messages and passing checks |
-  | `error` | Error messages and failures |
-  | `warning` | Warnings, caution messages, and the auto mode indicator |
-  | `merged` | Merged pull request status |
-
-  #### Input box and mode indicators
-
-  Set the input box border color and the accent shown while a permission mode or indicator is active.
-
-  | Token | Controls |
-  | :- | :- |
-  | `promptBorder` | Input box border |
-  | `planMode` | Plan mode accent, plan messages, and plan-mode dialogs |
-  | `autoAccept` | Accept-edits mode accent |
-  | `bashBorder` | Input box border when entering a `!` shell command |
-  | `ide` | IDE connection indicator |
-  | `fastMode` | Fast mode indicator |
-  | `effortUltra` | The `ultracode` tag on the input box border while [ultracode](/docs/en/model-config#adjust-effort-level) is on. Your override of this color takes effect on Claude Code v2.1.239 or later |
-
-  #### Diff rendering
-
-  Color added and removed code in file edits and reviews.
-
-  | Token | Controls |
-  | :- | :- |
-  | `diffAdded` | Background of added lines |
-  | `diffRemoved` | Background of removed lines |
-  | `diffAddedDimmed` | Background of added lines in the dimmed diff shown after you reject an edit |
-  | `diffRemovedDimmed` | Background of removed lines in the dimmed diff shown after you reject an edit |
-  | `diffAddedWord` | Word-level highlight within an added line |
-  | `diffRemovedWord` | Word-level highlight within a removed line |
-
-  #### Fullscreen mode
-
-  Claude Code uses `userMessageBackgroundHover`, `selectionBg`, and `composerSidebarBackground` only in [fullscreen rendering mode](/docs/en/fullscreen). It paints `userMessageBackground`, `bashMessageBackgroundColor`, and `memoryBackgroundColor` in both the default and fullscreen renderers.
-
-  | Token | Controls |
-  | :- | :- |
-  | `userMessageBackground` | Background behind your messages in the transcript |
-  | `userMessageBackgroundHover` | Background behind a message while hovered or expanded |
-  | `bashMessageBackgroundColor` | Background behind `!` shell command entries in the transcript |
-  | `memoryBackgroundColor` | Background behind `#` memory entries in the transcript |
-  | `selectionBg` | Background of text selected with the mouse |
-  | `composerSidebarBackground` | Background of the panel beside the conversation, such as the [diff panel](/docs/en/fullscreen#watch-your-changes-in-the-diff-panel) or a [mod's pane](/docs/en/plugins/mods/interface) |
-
-  #### Usage meter and speaker labels
-
-  Adjust the bar shown in the `/usage` view and the labels that distinguish your messages from Claude's.
-
-  | Token | Controls |
-  | :- | :- |
-  | `rate_limit_fill` | Filled portion of the usage meter |
-  | `rate_limit_empty` | Unfilled portion of the usage meter |
-  | `briefLabelYou` | Color of the `You` label on your messages |
-  | `briefLabelClaude` | Color of the `Claude` label on assistant messages |
-
-  #### Shimmer variants and subagent colors
-
-  Several tokens have a paired shimmer variant that supplies the lighter color used in the spinner's animated gradient. Override the shimmer alongside its base token if the animation looks mismatched.
-
-  * `claude` and `claudeShimmer`
-  * `warning` and `warningShimmer`
-  * `permission` and `permissionShimmer`
-  * `promptBorder` and `promptBorderShimmer`
-  * `inactive` and `inactiveShimmer`
-  * `fastMode` and `fastModeShimmer`
-
-  Each [subagent](/docs/en/sub-agents) and parallel task is shown in one of eight named colors so you can tell them apart in the transcript. The token names follow the pattern `<color>_FOR_SUBAGENTS_ONLY`, where `<color>` is `red`, `blue`, `green`, `yellow`, `purple`, `orange`, `pink`, or `cyan`. Override these to change what each named color looks like. For example, a subagent with `color: blue` in its definition is drawn using the `blue_FOR_SUBAGENTS_ONLY` value.
-
-  Claude Code renders the [`ultrathink`](/docs/en/model-config#use-ultrathink-for-one-off-deep-reasoning) keyword in the prompt input with a seven-color rainbow gradient. The token names follow the pattern `rainbow_<color>` and `rainbow_<color>_shimmer`, where `<color>` is `red`, `orange`, `yellow`, `green`, `blue`, `indigo`, or `violet`.
-</Accordion>
+> **Color token reference**
+>
+> The following example combines tokens from several of the groups below: the brand accent, the plan mode border, the diff backgrounds, and the message background.
+>
+> ```json ~/.claude/themes/midnight.json theme={null}
+> {
+>   "name": "Midnight",
+>   "base": "dark",
+>   "overrides": {
+>     "claude": "#a78bfa",
+>     "planMode": "#38bdf8",
+>     "diffAdded": "#14532d",
+>     "diffRemoved": "#7f1d1d",
+>     "userMessageBackground": "#1e1b4b"
+>   }
+> }
+> ```
+>
+> #### Text and accent colors
+>
+> Control the primary brand accent and the foreground text shades used throughout the interface.
+>
+> | Token | Controls |
+> | :- | :- |
+> | `claude` | Primary brand accent, used for the spinner and assistant label |
+> | `text` | Default foreground text |
+> | `inverseText` | Text drawn on top of a colored background, such as status badges |
+> | `inactive` | Secondary text such as hints, timestamps, and disabled items |
+> | `subtle` | Faint borders and de-emphasized secondary text |
+> | `suggestion` | Autocomplete suggestions and selection highlight in pickers |
+> | `permission` | Dialog borders, including permission prompts and pickers |
+> | `remember` | Memory and `CLAUDE.md` indicators |
+>
+> #### Status colors
+>
+> Signal success, failure, and warning states across messages and indicators.
+>
+> | Token | Controls |
+> | :- | :- |
+> | `success` | Success messages and passing checks |
+> | `error` | Error messages and failures |
+> | `warning` | Warnings, caution messages, and the auto mode indicator |
+> | `merged` | Merged pull request status |
+>
+> #### Input box and mode indicators
+>
+> Set the input box border color and the accent shown while a permission mode or indicator is active.
+>
+> | Token | Controls |
+> | :- | :- |
+> | `promptBorder` | Input box border |
+> | `planMode` | Plan mode accent, plan messages, and plan-mode dialogs |
+> | `autoAccept` | Accept-edits mode accent |
+> | `bashBorder` | Input box border when entering a `!` shell command |
+> | `ide` | IDE connection indicator |
+> | `fastMode` | Fast mode indicator |
+> | `effortUltra` | The `ultracode` tag on the input box border while [ultracode](/docs/en/model-config#adjust-effort-level) is on. Your override of this color takes effect on Claude Code v2.1.239 or later |
+>
+> #### Diff rendering
+>
+> Color added and removed code in file edits and reviews.
+>
+> | Token | Controls |
+> | :- | :- |
+> | `diffAdded` | Background of added lines |
+> | `diffRemoved` | Background of removed lines |
+> | `diffAddedDimmed` | Background of added lines in the dimmed diff shown after you reject an edit |
+> | `diffRemovedDimmed` | Background of removed lines in the dimmed diff shown after you reject an edit |
+> | `diffAddedWord` | Word-level highlight within an added line |
+> | `diffRemovedWord` | Word-level highlight within a removed line |
+>
+> #### Fullscreen mode
+>
+> Claude Code uses `userMessageBackgroundHover`, `selectionBg`, and `composerSidebarBackground` only in [fullscreen rendering mode](/docs/en/fullscreen). It paints `userMessageBackground`, `bashMessageBackgroundColor`, and `memoryBackgroundColor` in both the default and fullscreen renderers.
+>
+> | Token | Controls |
+> | :- | :- |
+> | `userMessageBackground` | Background behind your messages in the transcript |
+> | `userMessageBackgroundHover` | Background behind a message while hovered or expanded |
+> | `bashMessageBackgroundColor` | Background behind `!` shell command entries in the transcript |
+> | `memoryBackgroundColor` | Background behind `#` memory entries in the transcript |
+> | `selectionBg` | Background of text selected with the mouse |
+> | `composerSidebarBackground` | Background of the panel beside the conversation, such as the [diff panel](/docs/en/fullscreen#watch-your-changes-in-the-diff-panel) or a [mod's pane](/docs/en/plugins/mods/interface) |
+>
+> #### Usage meter and speaker labels
+>
+> Adjust the bar shown in the `/usage` view and the labels that distinguish your messages from Claude's.
+>
+> | Token | Controls |
+> | :- | :- |
+> | `rate_limit_fill` | Filled portion of the usage meter |
+> | `rate_limit_empty` | Unfilled portion of the usage meter |
+> | `briefLabelYou` | Color of the `You` label on your messages |
+> | `briefLabelClaude` | Color of the `Claude` label on assistant messages |
+>
+> #### Shimmer variants and subagent colors
+>
+> Several tokens have a paired shimmer variant that supplies the lighter color used in the spinner's animated gradient. Override the shimmer alongside its base token if the animation looks mismatched.
+>
+> * `claude` and `claudeShimmer`
+> * `warning` and `warningShimmer`
+> * `permission` and `permissionShimmer`
+> * `promptBorder` and `promptBorderShimmer`
+> * `inactive` and `inactiveShimmer`
+> * `fastMode` and `fastModeShimmer`
+>
+> Each [subagent](/docs/en/sub-agents) and parallel task is shown in one of eight named colors so you can tell them apart in the transcript. The token names follow the pattern `<color>_FOR_SUBAGENTS_ONLY`, where `<color>` is `red`, `blue`, `green`, `yellow`, `purple`, `orange`, `pink`, or `cyan`. Override these to change what each named color looks like. For example, a subagent with `color: blue` in its definition is drawn using the `blue_FOR_SUBAGENTS_ONLY` value.
+>
+> Claude Code renders the [`ultrathink`](/docs/en/model-config#use-ultrathink-for-one-off-deep-reasoning) keyword in the prompt input with a seven-color rainbow gradient. The token names follow the pattern `rainbow_<color>` and `rainbow_<color>_shimmer`, where `<color>` is `red`, `orange`, `yellow`, `green`, `blue`, `indigo`, or `violet`.
 
 ## Switch to fullscreen rendering
 
@@ -301,23 +297,21 @@ If flicker is the only problem and your terminal supports synchronized output bu
 
 Run `/tui fullscreen` to switch and save the preference. Your conversation relaunches intact and future sessions start in fullscreen unless a [fullscreen start fails](/docs/en/fullscreen#fullscreen-renderer-didnt-finish-starting). You can also set the `CLAUDE_CODE_NO_FLICKER` environment variable before starting Claude Code:
 
-<CodeGroup>
-  ```bash Bash and Zsh theme={null}
-  CLAUDE_CODE_NO_FLICKER=1 claude
-  ```
+```bash Bash and Zsh theme={null}
+CLAUDE_CODE_NO_FLICKER=1 claude
+```
 
-  ```powershell PowerShell theme={null}
-  $env:CLAUDE_CODE_NO_FLICKER = "1"; claude
-  ```
+```powershell PowerShell theme={null}
+$env:CLAUDE_CODE_NO_FLICKER = "1"; claude
+```
 
-  ```json ~/.claude/settings.json theme={null}
-  {
-    "env": {
-      "CLAUDE_CODE_NO_FLICKER": "1"
-    }
+```json ~/.claude/settings.json theme={null}
+{
+  "env": {
+    "CLAUDE_CODE_NO_FLICKER": "1"
   }
-  ```
-</CodeGroup>
+}
+```
 
 ## Cap response width in wide terminals
 

@@ -45,9 +45,9 @@ Outside [fullscreen rendering](/docs/en/fullscreen), running `/compact` frees me
 
 If memory usage stays high after these steps, run `/heapdump` to write two files to `~/Desktop`: a JavaScript heap snapshot named `<session-id>.heapsnapshot` and a memory breakdown named `<session-id>-diagnostics.json`. Claude Code [hides the command from the command menu](/docs/en/commands#how-the-command-menu-matches-what-you-type); type it in full. On Linux without a Desktop folder, the files are written to your home directory.
 
-<Warning>
-  The `.heapsnapshot` file contains every string in the process, including your full conversation and credentials. Don't attach it to a public issue or share it.
-</Warning>
+> [!WARNING]
+>
+> The `.heapsnapshot` file contains every string in the process, including your full conversation and credentials. Don't attach it to a public issue or share it.
 
 The command also prints a summary in the conversation, showing the process's total memory, how much of it is in the JS heap, and how much sits outside the heap. The summary also lists any leak indicators, such as a high memory growth rate or an unusually high number of open handles. The summary says whether most memory is in the JS heap, which the snapshot captures, or in native memory, which it doesn't.
 
@@ -91,6 +91,18 @@ Restarting doesn't lose your conversation. Run `claude --resume` in the same dir
 
 If characters render as boxes, smears, or the wrong glyphs when running Claude Code in the VS Code, Cursor, or Devin Desktop integrated terminal, the terminal's GPU renderer is likely the cause. Run `/terminal-setup` inside Claude Code to set `terminal.integrated.gpuAcceleration` to `"off"`, or set it manually in your editor settings and reload the window. See [Terminal configuration](/docs/en/terminal-config) for the other settings `/terminal-setup` writes.
 
+### Stray `>0q` at startup or `>4m` after exit
+
+These characters, printed by terminals built on a VTE library older than 0.53, are the ends of two Claude Code control sequences. To stop the text, [update Claude Code](/docs/en/setup#update-claude-code) to v2.1.301 or later, which skips both sequences when it identifies such a terminal.
+
+If the text remains, print the VTE version from the terminal's shell:
+
+```bash theme={null}
+echo $VTE_VERSION
+```
+
+On a VTE-based terminal, a result below `5300` means a library older than 0.53: update or replace the terminal to get VTE 0.53 or later. Otherwise, see [Get more help](#get-more-help).
+
 ### Mouse wheel scrolls one line at a time in fullscreen rendering
 
 In [fullscreen rendering](/docs/en/fullscreen), Claude Code scrolls the conversation itself rather than leaving it to your terminal. If each wheel notch moves fewer lines than you want, run `/scroll-speed` to raise the number of lines per notch and save it, or set the `CLAUDE_CODE_SCROLL_SPEED` environment variable, except in the JetBrains IDE terminal, where Claude Code applies its own scroll handling and neither takes effect. See [Mouse wheel scrolling](/docs/en/fullscreen#mouse-wheel-scrolling) for the values each accepts.
@@ -120,39 +132,37 @@ To get the text without OSC 52:
 
 If the Search tool, `@file` mentions, custom agents, or custom skills aren't finding files, the bundled `ripgrep` binary may not run on your system. Install your platform's `ripgrep` package and tell Claude Code to use it instead:
 
-<Tabs>
-  <Tab title="macOS">
-    ```bash theme={null}
-    brew install ripgrep
-    ```
-  </Tab>
+**macOS**
 
-  <Tab title="Ubuntu/Debian">
-    ```bash theme={null}
-    sudo apt install ripgrep
-    ```
-  </Tab>
+```bash theme={null}
+brew install ripgrep
+```
 
-  <Tab title="Alpine">
-    ```bash theme={null}
-    apk add ripgrep
-    ```
+**Ubuntu/Debian**
 
-    `ripgrep` is in Alpine's community repository. If `apk` reports that the package is missing, see [Alpine Linux setup](/docs/en/setup#alpine-linux-and-musl-based-distributions).
-  </Tab>
+```bash theme={null}
+sudo apt install ripgrep
+```
 
-  <Tab title="Arch">
-    ```bash theme={null}
-    pacman -S ripgrep
-    ```
-  </Tab>
+**Alpine**
 
-  <Tab title="Windows">
-    ```powershell theme={null}
-    winget install BurntSushi.ripgrep.MSVC
-    ```
-  </Tab>
-</Tabs>
+```bash theme={null}
+apk add ripgrep
+```
+
+`ripgrep` is in Alpine's community repository. If `apk` reports that the package is missing, see [Alpine Linux setup](/docs/en/setup#alpine-linux-and-musl-based-distributions).
+
+**Arch**
+
+```bash theme={null}
+pacman -S ripgrep
+```
+
+**Windows**
+
+```powershell theme={null}
+winget install BurntSushi.ripgrep.MSVC
+```
 
 Then set `USE_BUILTIN_RIPGREP` to `0`, either in your shell [environment](/docs/en/env-vars) or in the `env` block of your [`settings.json`](/docs/en/settings-reference#all-settings):
 
@@ -170,9 +180,9 @@ To confirm the switch took effect, run `claude doctor` in your terminal and chec
 
 Disk read performance penalties when [working across file systems on WSL](https://learn.microsoft.com/en-us/windows/wsl/filesystems) may result in fewer-than-expected matches when using Claude Code on WSL. Search still functions, but returns fewer results than on a native filesystem.
 
-<Note>
-  `claude doctor` shows Search as OK in this case.
-</Note>
+> [!NOTE]
+>
+> `claude doctor` shows Search as OK in this case.
 
 **Solutions:**
 

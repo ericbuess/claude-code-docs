@@ -6,15 +6,15 @@
 
 > Learn about integrating Claude Code into your development workflow with GitLab CI/CD
 
-<Info>
-  Claude Code for GitLab CI/CD is currently in beta. Features and functionality may evolve as we refine the experience.
+> [!NOTE]
+>
+> Claude Code for GitLab CI/CD is currently in beta. Features and functionality may evolve as we refine the experience.
+>
+> This integration is maintained by GitLab. For support, see the following [GitLab issue](https://gitlab.com/gitlab-org/gitlab/-/issues/573776).
 
-  This integration is maintained by GitLab. For support, see the following [GitLab issue](https://gitlab.com/gitlab-org/gitlab/-/issues/573776).
-</Info>
-
-<Note>
-  This integration is built on top of the [Claude Code CLI and Agent SDK](/docs/en/agent-sdk/overview), enabling programmatic use of Claude in your CI/CD jobs and custom automation workflows.
-</Note>
+> [!NOTE]
+>
+> This integration is built on top of the [Claude Code CLI and Agent SDK](/docs/en/agent-sdk/overview), enabling programmatic use of Claude in your CI/CD jobs and custom automation workflows.
 
 ## Why use Claude Code with GitLab?
 
@@ -99,9 +99,9 @@ claude:
 
 After adding the job and your `ANTHROPIC_API_KEY` variable, test by running the job manually from **CI/CD** → **Pipelines**, or trigger it from an MR to let Claude propose updates in a branch and open an MR if needed.
 
-<Note>
-  To run on Amazon Bedrock or Google Cloud's Agent Platform instead of the Claude API, see the [Using with Amazon Bedrock and Google Cloud](#using-with-amazon-bedrock-and-google-cloud) section below for authentication and environment setup.
-</Note>
+> [!NOTE]
+>
+> To run on Amazon Bedrock or Google Cloud's Agent Platform instead of the Claude API, see the [Using with Amazon Bedrock and Google Cloud](#using-with-amazon-bedrock-and-google-cloud) section below for authentication and environment setup.
 
 ### Manual setup (recommended for production)
 
@@ -158,61 +158,59 @@ Claude locates the bug, implements a fix, and updates the branch or opens a new 
 
 For enterprise environments, you can run Claude Code entirely on your cloud infrastructure with the same developer experience.
 
-<Tabs>
-  <Tab title="Amazon Bedrock">
-    ### Prerequisites
+**Amazon Bedrock**
 
-    Before setting up Claude Code with Amazon Bedrock, you need:
+### Prerequisites
 
-    1. An AWS account with Amazon Bedrock access to the desired Claude models
-    2. GitLab configured as an OIDC identity provider in AWS IAM
-    3. An IAM role with Amazon Bedrock permissions and a trust policy restricted to your GitLab project/refs
-    4. GitLab CI/CD variables for role assumption:
-       * `AWS_ROLE_TO_ASSUME` (role ARN)
-       * `AWS_REGION` (Amazon Bedrock region)
+Before setting up Claude Code with Amazon Bedrock, you need:
 
-    ### Setup instructions
+1. An AWS account with Amazon Bedrock access to the desired Claude models
+2. GitLab configured as an OIDC identity provider in AWS IAM
+3. An IAM role with Amazon Bedrock permissions and a trust policy restricted to your GitLab project/refs
+4. GitLab CI/CD variables for role assumption:
+   * `AWS_ROLE_TO_ASSUME` (role ARN)
+   * `AWS_REGION` (Amazon Bedrock region)
 
-    Configure AWS to allow GitLab CI jobs to assume an IAM role via OIDC (no static keys).
+### Setup instructions
 
-    **Required setup:**
+Configure AWS to allow GitLab CI jobs to assume an IAM role via OIDC (no static keys).
 
-    1. Enable Amazon Bedrock and request access to your target Claude models
-    2. Create an IAM OIDC provider for GitLab if not already present
-    3. Create an IAM role trusted by the GitLab OIDC provider, restricted to your project and protected refs
-    4. Attach least-privilege permissions for Amazon Bedrock invoke APIs
+**Required setup:**
 
-    Use the [Amazon Bedrock job example](#configuration-examples) to exchange the job's OIDC token for temporary AWS credentials at runtime.
-  </Tab>
+1. Enable Amazon Bedrock and request access to your target Claude models
+2. Create an IAM OIDC provider for GitLab if not already present
+3. Create an IAM role trusted by the GitLab OIDC provider, restricted to your project and protected refs
+4. Attach least-privilege permissions for Amazon Bedrock invoke APIs
 
-  <Tab title="Google Cloud's Agent Platform">
-    ### Prerequisites
+Use the [Amazon Bedrock job example](#configuration-examples) to exchange the job's OIDC token for temporary AWS credentials at runtime.
 
-    Before setting up Claude Code with Google Cloud's Agent Platform, you need:
+**Google Cloud's Agent Platform**
 
-    1. A Google Cloud project with:
-       * Google Cloud's Agent Platform API enabled
-       * Workload Identity Federation configured to trust GitLab OIDC
-    2. A dedicated service account with only the required Google Cloud's Agent Platform roles
-    3. GitLab CI/CD variables:
-       * `GCP_WORKLOAD_IDENTITY_PROVIDER` (provider resource name without the `//iam.googleapis.com/` prefix, such as `projects/123456789/locations/global/workloadIdentityPools/my-pool/providers/my-provider`)
-       * `GCP_SERVICE_ACCOUNT` (service account email)
-       * `GCP_PROJECT_ID` (Google Cloud project ID)
+### Prerequisites
 
-    ### Setup instructions
+Before setting up Claude Code with Google Cloud's Agent Platform, you need:
 
-    Configure Google Cloud to allow GitLab CI jobs to impersonate a service account via Workload Identity Federation.
+1. A Google Cloud project with:
+   * Google Cloud's Agent Platform API enabled
+   * Workload Identity Federation configured to trust GitLab OIDC
+2. A dedicated service account with only the required Google Cloud's Agent Platform roles
+3. GitLab CI/CD variables:
+   * `GCP_WORKLOAD_IDENTITY_PROVIDER` (provider resource name without the `//iam.googleapis.com/` prefix, such as `projects/123456789/locations/global/workloadIdentityPools/my-pool/providers/my-provider`)
+   * `GCP_SERVICE_ACCOUNT` (service account email)
+   * `GCP_PROJECT_ID` (Google Cloud project ID)
 
-    **Required setup:**
+### Setup instructions
 
-    1. Enable IAM Credentials API, STS API, and Google Cloud's Agent Platform API
-    2. Create a Workload Identity Pool and provider for GitLab OIDC
-    3. Create a dedicated service account with Google Cloud's Agent Platform roles
-    4. Grant the WIF principal permission to impersonate the service account
+Configure Google Cloud to allow GitLab CI jobs to impersonate a service account via Workload Identity Federation.
 
-    Use the [Agent Platform job example](#configuration-examples) to authenticate without storing keys.
-  </Tab>
-</Tabs>
+**Required setup:**
+
+1. Enable IAM Credentials API, STS API, and Google Cloud's Agent Platform API
+2. Create a Workload Identity Pool and provider for GitLab OIDC
+3. Create a dedicated service account with Google Cloud's Agent Platform roles
+4. Grant the WIF principal permission to impersonate the service account
+
+Use the [Agent Platform job example](#configuration-examples) to authenticate without storing keys.
 
 ## Configuration examples
 
@@ -275,9 +273,9 @@ claude-bedrock:
     CLAUDE_CODE_USE_BEDROCK: "1"
 ```
 
-<Note>
-  Model IDs for Amazon Bedrock include region-specific prefixes (for example, `us.anthropic.claude-sonnet-4-6`). Pass the desired model via your job configuration or prompt if your workflow supports it.
-</Note>
+> [!NOTE]
+>
+> Model IDs for Amazon Bedrock include region-specific prefixes (for example, `us.anthropic.claude-sonnet-4-6`). Pass the desired model via your job configuration or prompt if your workflow supports it.
 
 ### Agent Platform job example (Workload Identity Federation)
 
@@ -349,9 +347,9 @@ claude-vertex:
     ANTHROPIC_VERTEX_PROJECT_ID: "$GCP_PROJECT_ID"
 ```
 
-<Note>
-  With Workload Identity Federation, you do not need to store service account keys. Use repository-specific trust conditions and least-privilege service accounts.
-</Note>
+> [!NOTE]
+>
+> With Workload Identity Federation, you do not need to store service account keys. Use repository-specific trust conditions and least-privilege service accounts.
 
 ## Best practices
 
@@ -423,9 +421,9 @@ Control Claude Code runs in your jobs with these CLI flags, GitLab keywords, and
 * `ANTHROPIC_API_KEY`: required for the Claude API (not used for Amazon Bedrock or Google Cloud's Agent Platform)
 * Provider-specific environment: `AWS_REGION`, project/region vars for Google Cloud's Agent Platform
 
-<Note>
-  Exact flags and parameters may vary by version of `@anthropic-ai/claude-code`. Run `claude --help` in your job to see supported options.
-</Note>
+> [!NOTE]
+>
+> Exact flags and parameters may vary by version of `@anthropic-ai/claude-code`. Run `claude --help` in your job to see supported options.
 
 ### Customizing Claude's behavior
 

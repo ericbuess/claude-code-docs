@@ -6,77 +6,10 @@
 
 > Learn about configuring Claude Code through Microsoft Foundry, including setup, configuration, and troubleshooting.
 
-export const ContactSalesCard = ({surface}) => {
-  const utm = content => `utm_source=claude_code&utm_medium=docs&utm_content=${surface}_${content}`;
-  const iconArrowRight = (size = 13) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <line x1="5" y1="12" x2="19" y2="12" />
-      <polyline points="12 5 19 12 12 19" />
-    </svg>;
-  const STYLES = `
-.cc-cs {
-  --cs-slate: #141413;
-  --cs-clay: #d97757;
-  --cs-clay-deep: #c6613f;
-  --cs-gray-000: #ffffff;
-  --cs-gray-700: #3d3d3a;
-  --cs-border-default: rgba(31, 30, 29, 0.15);
-  font-family: inherit;
-}
-.dark .cc-cs {
-  --cs-slate: #f0eee6;
-  --cs-gray-000: #262624;
-  --cs-gray-700: #bfbdb4;
-  --cs-border-default: rgba(240, 238, 230, 0.14);
-}
-.cc-cs-card {
-  display: flex; align-items: center; justify-content: space-between;
-  gap: 16px; padding: 14px 16px; margin: 0;
-  background: var(--cs-gray-000); border: 0.5px solid var(--cs-border-default);
-  border-radius: 8px; flex-wrap: wrap;
-}
-.cc-cs-text { font-size: 13px; color: var(--cs-gray-700); line-height: 1.5; flex: 1; min-width: 240px; }
-.cc-cs-text strong { font-weight: 550; color: var(--cs-slate); }
-.cc-cs-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
-.cc-cs-btn-clay {
-  display: inline-flex; align-items: center; gap: 8px;
-  background: var(--cs-clay-deep); color: #fff; border: none;
-  border-radius: 8px; padding: 8px 14px;
-  font-size: 13px; font-weight: 500;
-  transition: background-color 0.15s; white-space: nowrap;
-}
-.cc-cs-btn-clay:hover { background: var(--cs-clay); }
-.cc-cs-btn-ghost {
-  display: inline-flex; align-items: center; gap: 8px;
-  background: transparent; color: var(--cs-gray-700);
-  border: 0.5px solid var(--cs-border-default);
-  border-radius: 8px; padding: 8px 14px;
-  font-size: 13px; font-weight: 500;
-}
-.cc-cs-btn-ghost:hover { background: rgba(0, 0, 0, 0.04); }
-.dark .cc-cs-btn-ghost:hover { background: rgba(255, 255, 255, 0.04); }
-@media (max-width: 720px) {
-  .cc-cs-actions { width: 100%; }
-}
-`;
-  return <div className="cc-cs not-prose">
-      <style>{STYLES}</style>
-      <div className="cc-cs-card">
-        <div className="cc-cs-text">
-          <strong>Deploying Claude Code across your organization?</strong> Talk to sales about enterprise plans, SSO, and centralized billing.
-        </div>
-        <div className="cc-cs-actions">
-          <a href={`https://claude.com/pricing?${utm('view_plans')}#plans-business`} className="cc-cs-btn-ghost">
-            View plans
-          </a>
-          <a href={`https://claude.com/contact-sales?${utm('contact_sales')}`} className="cc-cs-btn-clay">
-            Contact sales {iconArrowRight()}
-          </a>
-        </div>
-      </div>
-    </div>;
-};
+**Deploying Claude Code across your organization?** Talk to sales about enterprise plans, SSO, and centralized billing.
 
-<ContactSalesCard surface="foundry" />
+View plans
+Contact sales
 
 ## Prerequisites
 
@@ -86,9 +19,9 @@ Before configuring Claude Code with Microsoft Foundry, ensure you have:
 * RBAC permissions to create Microsoft Foundry resources and deployments
 * Azure CLI installed and configured (optional - only needed if you don't have another mechanism for getting credentials)
 
-<Note>
-  If you are deploying Claude Code to multiple users, [pin your model versions](#4-pin-model-versions) before rolling out.
-</Note>
+> [!NOTE]
+>
+> If you are deploying Claude Code to multiple users, [pin your model versions](#4-pin-model-versions) before rolling out.
 
 ## Setup
 
@@ -114,9 +47,9 @@ Claude Code supports three authentication methods for Microsoft Foundry. Choose 
 * [Microsoft Entra ID](#use-microsoft-entra-id): Claude Code gets tokens through the Azure SDK default credential chain, for example from an `az login` session, so there's no API key to store
 * [Bearer token](#use-a-bearer-token): another process obtains a Microsoft Entra ID access token and you pass it in `ANTHROPIC_FOUNDRY_AUTH_TOKEN`
 
-<Note>
-  When using Microsoft Foundry, the `/logout` command is unavailable since authentication is handled through Azure credentials.
-</Note>
+> [!NOTE]
+>
+> When using Microsoft Foundry, the `/logout` command is unavailable since authentication is handled through Azure credentials.
 
 #### Use an API key
 
@@ -174,9 +107,9 @@ Set `ANTHROPIC_FOUNDRY_RESOURCE` to the resource name alone, such as `my-resourc
 
 ### 4. Pin model versions
 
-<Warning>
-  Pin specific model versions for every deployment. Without pinning, model aliases such as `sonnet` and `opus` resolve to Claude Code's built-in default for Microsoft Foundry, which can lag the newest release and may not yet be available in your account. Microsoft Foundry has no startup model check, so requests fail when the default is unavailable. When you create Azure deployments, select a specific model version rather than "auto-update to latest."
-</Warning>
+> [!WARNING]
+>
+> Pin specific model versions for every deployment. Without pinning, model aliases such as `sonnet` and `opus` resolve to Claude Code's built-in default for Microsoft Foundry, which can lag the newest release and may not yet be available in your account. Microsoft Foundry has no startup model check, so requests fail when the default is unavailable. When you create Azure deployments, select a specific model version rather than "auto-update to latest."
 
 Set the model variables to match the deployment names you created in step 1.
 

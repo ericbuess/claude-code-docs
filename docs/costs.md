@@ -16,9 +16,9 @@ This page covers Claude Code usage only: how to [track your costs](#track-your-c
 
 ### Using the `/usage` command
 
-<Note>
-  The Session block in `/usage` shows API token usage and is intended for API users. Claude Max and Pro subscribers have usage included in their subscription, so the session cost figure isn't relevant for billing purposes. Subscribers see plan usage bars, activity stats, and a usage breakdown on the same screen.
-</Note>
+> [!NOTE]
+>
+> The Session block in `/usage` shows API token usage and is intended for API users. Claude Max and Pro subscribers have usage included in their subscription, so the session cost figure isn't relevant for billing purposes. Subscribers see plan usage bars, activity stats, and a usage breakdown on the same screen.
 
 The Session block at the top of `/usage` shows detailed token usage statistics for your current session. Claude Code computes the dollar figure locally from token counts at list price, unless a [`modelPricing`](/docs/en/settings-reference#modelpricing) table is in effect. An administrator sets one in your organization's managed settings so the figure uses your contracted rates, and while a table is in effect the `Total cost` line carries the note `at your organization's configured rates`. The figure is an estimate, so for authoritative billing see the Usage page in the [Claude Console](https://platform.claude.com/usage).
 
@@ -80,6 +80,8 @@ When you have a spend limit, the row appears as soon as usage credits are on and
 
 When the request for your plan limits fails, most often because the usage endpoint is rate limited, `/usage` shows the last usage bars it loaded on this machine within the past 60 minutes, along with a `Showing last-known usage` note stating how long ago that data was fetched. Press `r` to retry; a successful retry replaces the last-known bars with fresh data. Without a snapshot from the past 60 minutes, `/usage` reports that the usage endpoint is rate limited and offers the same retry shortcut. Before v2.1.208, a rate-limited request in a session that hadn't loaded usage yet always showed the error with no bars.
 
+A message such as `rate limited until 3:14am` in `/usage` means Claude Code can't fetch your plan limits again until then, not that your work with Claude is limited. If you press `r` earlier, expect the same message. Press `r` after that time for fresh data.
+
 ### Read the token count beside the spinner
 
 While Claude works in the main conversation, the line beside the spinner can end with an elapsed time and a token count, as in `Deciphering… (10m 27s · ↓ 5.5k tokens)`. It is a live, approximate count of the output the current turn has produced so far. The arrow beside the count points down while output arrives or tools run.
@@ -135,19 +137,17 @@ The table maps each setup to where you see spend, where you cap it, and how you 
 
 By default, Claude Code computes every cost figure it shows developers at list price, so if your organization pays contracted rates, the figures in `/usage`, the status line, and OpenTelemetry don't match your bill. To make them match, set the [`modelPricing`](/docs/en/settings-reference#modelpricing) managed setting to your rates. The setting changes what Claude Code reports, not what Anthropic charges. Requires Claude Code v2.1.242 or later.
 
-<Steps>
-  <Step title="Take the rates from your contract">
-    Enter the per-million-token rates from your contract. Claude Code doesn't fetch them from the Claude Console, so update the setting when the contract changes.
-  </Step>
+**1. Take the rates from your contract**
 
-  <Step title="Write the setting">
-    Set `multiplier` below 1 for a flat discount or above 1 for a markup, list each model's four per-token rates under `overrides`, or do both. A markup requires Claude Code v2.1.271 or later. The [`modelPricing` entry](/docs/en/settings-reference#modelpricing) has the shape and a paste-ready example.
-  </Step>
+Enter the per-million-token rates from your contract. Claude Code doesn't fetch them from the Claude Console, so update the setting when the contract changes.
 
-  <Step title="Deploy it through managed settings">
-    Deliver it as [managed settings](/docs/en/managed-settings): server-managed settings, an MDM policy, `managed-settings.json`, or a [policy helper](/docs/en/managed-settings#compute-the-policy-with-a-helper-program). Claude Code ignores the key in user, project, and local settings and in `--settings`.
-  </Step>
-</Steps>
+**2. Write the setting**
+
+Set `multiplier` below 1 for a flat discount or above 1 for a markup, list each model's four per-token rates under `overrides`, or do both. A markup requires Claude Code v2.1.271 or later. The [`modelPricing` entry](/docs/en/settings-reference#modelpricing) has the shape and a paste-ready example.
+
+**3. Deploy it through managed settings**
+
+Deliver it as [managed settings](/docs/en/managed-settings): server-managed settings, an MDM policy, `managed-settings.json`, or a [policy helper](/docs/en/managed-settings#compute-the-policy-with-a-helper-program). Claude Code ignores the key in user, project, and local settings and in `--settings`.
 
 To confirm the rates are in effect, run `/usage` in a session that has [received the managed settings](/docs/en/managed-settings#read-the-source-in-%2Fstatus): the Session block's `Total cost` line carries the note `at your organization's configured rates`. The figures are still estimates, not an invoice. The per-million-token prices in the `/model` picker stay at list price.
 
@@ -166,11 +166,11 @@ The [Claude Enterprise consumption guide](https://support.claude.com/en/articles
 
 API organizations manage Claude Code spend through [workspaces](https://platform.claude.com/docs/en/build-with-claude/workspaces). You can [set workspace spend limits](https://platform.claude.com/docs/en/build-with-claude/workspaces#workspace-limits) on total Claude Code spend and [view cost and usage reporting](https://platform.claude.com/docs/en/build-with-claude/workspaces#usage-and-cost-tracking) in the Console.
 
-<Note>
-  When you first authenticate Claude Code with your Claude Console account, a workspace called "Claude Code" is automatically created for you. This workspace provides centralized cost tracking and management for all Claude Code usage in your organization. You cannot create API keys for this workspace; it is exclusively for Claude Code authentication and usage.
-
-  For organizations with custom rate limits, Claude Code traffic in this workspace counts toward your organization's overall API rate limits. You can set a [workspace rate limit](https://platform.claude.com/docs/en/api/rate-limits#setting-lower-limits-for-workspaces) on this workspace's Limits page in the Claude Console to cap Claude Code's share and protect other production workloads.
-</Note>
+> [!NOTE]
+>
+> When you first authenticate Claude Code with your Claude Console account, a workspace called "Claude Code" is automatically created for you. This workspace provides centralized cost tracking and management for all Claude Code usage in your organization. You cannot create API keys for this workspace; it is exclusively for Claude Code authentication and usage.
+>
+> For organizations with custom rate limits, Claude Code traffic in this workspace counts toward your organization's overall API rate limits. You can set a [workspace rate limit](https://platform.claude.com/docs/en/api/rate-limits#setting-lower-limits-for-workspaces) on this workspace's Limits page in the Claude Console to cap Claude Code's share and protect other production workloads.
 
 For per-user reporting, the [Console dashboard](https://platform.claude.com/claude-code) shows spend and accepted lines per member, and the [Claude Code Analytics API](https://platform.claude.com/docs/en/build-with-claude/claude-code-analytics-api) returns the same daily per-user metrics programmatically with an [Admin API key](https://platform.claude.com/settings/admin-keys). See [analytics for API customers](/docs/en/analytics#access-analytics-for-api-customers).
 
@@ -191,9 +191,9 @@ For example, if you have 200 users, you might request 20k TPM for each user, or 
 
 The TPM per user decreases as team size grows because fewer users tend to use Claude Code concurrently in larger organizations. These rate limits apply at the organization level, not per individual user, which means individual users can temporarily consume more than their calculated share when others aren't actively using the service.
 
-<Note>
-  If you anticipate scenarios with unusually high concurrent usage (such as live training sessions with large groups), you may need higher TPM allocations per user.
-</Note>
+> [!NOTE]
+>
+> If you anticipate scenarios with unusually high concurrent usage (such as live training sessions with large groups), you may need higher TPM allocations per user.
 
 ### Cloud providers
 
@@ -273,48 +273,46 @@ A [skill](/docs/en/skills) can give Claude domain knowledge so it doesn't have t
 
 For example, this PreToolUse hook filters test output to show only failures:
 
-<Tabs>
-  <Tab title="settings.json">
-    Add this to your [settings.json](/docs/en/settings#where-settings-live) to run the hook before every Bash command:
+**settings.json**
 
-    ```json theme={null}
-    {
-      "hooks": {
-        "PreToolUse": [
+Add this to your [settings.json](/docs/en/settings#where-settings-live) to run the hook before every Bash command:
+
+```json theme={null}
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
           {
-            "matcher": "Bash",
-            "hooks": [
-              {
-                "type": "command",
-                "command": "~/.claude/hooks/filter-test-output.sh"
-              }
-            ]
+            "type": "command",
+            "command": "~/.claude/hooks/filter-test-output.sh"
           }
         ]
       }
-    }
-    ```
-  </Tab>
+    ]
+  }
+}
+```
 
-  <Tab title="filter-test-output.sh">
-    The hook calls this script. Create the folder with `mkdir -p ~/.claude/hooks`, save the script below as `~/.claude/hooks/filter-test-output.sh`, and make it executable with `chmod +x ~/.claude/hooks/filter-test-output.sh`. It checks if the command is a test runner and modifies it to show only failures:
+**filter-test-output.sh**
 
-    ```bash theme={null}
-    #!/bin/bash
-    input=$(cat)
-    cmd=$(echo "$input" | jq -r '.tool_input.command')
+The hook calls this script. Create the folder with `mkdir -p ~/.claude/hooks`, save the script below as `~/.claude/hooks/filter-test-output.sh`, and make it executable with `chmod +x ~/.claude/hooks/filter-test-output.sh`. It checks if the command is a test runner and modifies it to show only failures:
 
-    # If running tests, filter to show only failures
-    if [[ "$cmd" =~ ^(npm test|pytest|go test) ]]; then
-      filtered_cmd="$cmd 2>&1 | grep -A 5 -E '(FAIL|ERROR|error:)' | head -100"
-      echo "$input" | jq --arg filtered "$filtered_cmd" \
-        '{hookSpecificOutput: {hookEventName: "PreToolUse", permissionDecision: "allow", updatedInput: (.tool_input + {command: $filtered})}}'
-    else
-      echo "{}"
-    fi
-    ```
-  </Tab>
-</Tabs>
+```bash theme={null}
+#!/bin/bash
+input=$(cat)
+cmd=$(echo "$input" | jq -r '.tool_input.command')
+
+# If running tests, filter to show only failures
+if [[ "$cmd" =~ ^(npm test|pytest|go test) ]]; then
+  filtered_cmd="$cmd 2>&1 | grep -A 5 -E '(FAIL|ERROR|error:)' | head -100"
+  echo "$input" | jq --arg filtered "$filtered_cmd" \
+    '{hookSpecificOutput: {hookEventName: "PreToolUse", permissionDecision: "allow", updatedInput: (.tool_input + {command: $filtered})}}'
+else
+  echo "{}"
+fi
+```
 
 To verify the setup, run `/hooks` and check that the hook appears under PreToolUse. You can also start Claude Code with `claude --debug-file ./claude-debug.txt` and ask Claude to run `npm test`. When the hook rewrites the command, that log file contains a `modified tool input keys` line listing `command` and the other Bash input fields.
 

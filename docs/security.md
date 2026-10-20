@@ -66,9 +66,9 @@ For full details, please review our [Commercial Terms of Service](https://www.an
 * **Fail-closed matching**: In Manual mode, unmatched commands require approval by default
 * **Secure credential storage**: API keys and tokens are stored in the macOS Keychain when available. On Linux they're stored in a file with mode `0600`, and on Windows in a file that inherits the access controls of your user profile directory. See [Credential Management](/docs/en/authentication#credential-management)
 
-<Warning>
-  **Windows WebDAV security risk**: When running Claude Code on Windows, we recommend against enabling WebDAV or allowing Claude Code to access paths such as `\\*` that may contain WebDAV subdirectories. [WebDAV has been deprecated by Microsoft](https://learn.microsoft.com/en-us/windows/whats-new/deprecated-features#:~:text=The%20Webclient%20\(WebDAV\)%20service%20is%20deprecated) due to security risks. Enabling WebDAV may allow Claude Code to trigger network requests to remote hosts, bypassing the permission system.
-</Warning>
+> [!WARNING]
+>
+> **Windows WebDAV security risk**: When running Claude Code on Windows, we recommend against enabling WebDAV or allowing Claude Code to access paths such as `\\*` that may contain WebDAV subdirectories. [WebDAV has been deprecated by Microsoft](https://learn.microsoft.com/en-us/windows/whats-new/deprecated-features#:~:text=The%20Webclient%20\(WebDAV\)%20service%20is%20deprecated) due to security risks. Enabling WebDAV may allow Claude Code to trigger network requests to remote hosts, bypassing the permission system.
 
 **Best practices for working with untrusted content**:
 
@@ -78,11 +78,11 @@ For full details, please review our [Commercial Terms of Service](https://www.an
 4. Use virtual machines (VMs) to run scripts and make tool calls, especially when interacting with external web services
 5. Report suspicious behavior with `/feedback`
 
-<Warning>
-  While these protections significantly reduce risk, no system is completely
-  immune to all attacks. Always maintain good security practices when working
-  with any AI tool.
-</Warning>
+> [!WARNING]
+>
+> While these protections significantly reduce risk, no system is completely
+> immune to all attacks. Always maintain good security practices when working
+> with any AI tool.
 
 ## MCP security
 

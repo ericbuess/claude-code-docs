@@ -10,9 +10,9 @@ Code Review is a managed service that an Owner in your Claude organization turns
 
 An Owner controls [when reviews run](/docs/en/code-review-setup#set-when-reviews-run) and [how thorough they are](/docs/en/code-review-setup#set-the-default-review-level) for each repository.
 
-<Note>
-  If your plan doesn't include Code Review, you can still have Claude review your branch from a Claude Code session: see [Review locally with `/code-review`](/docs/en/code-review-local).
-</Note>
+> [!NOTE]
+>
+> If your plan doesn't include Code Review, you can still have Claude review your branch from a Claude Code session: see [Review locally with `/code-review`](/docs/en/code-review-local).
 
 ## Severity levels
 
@@ -57,33 +57,31 @@ The check run concludes as neutral, or as skipped when an automatic review didn'
 
 To gate a merge or post a summary from your own CI, parse the last line of the Details text with `gh` and jq. That line is a machine-readable comment.
 
-<Steps>
-  <Step title="Find the check run ID">
-    From your shell, list the commit's check runs and take the `id` of the `Claude Code Review` run. Replace `OWNER` and `REPO` with your repository owner and name, and `<commit-sha>` with the pull request's head commit:
+**1. Find the check run ID**
 
-    ```bash theme={null}
-    gh api repos/OWNER/REPO/commits/<commit-sha>/check-runs --jq '.check_runs[] | {id, name}'
-    ```
-  </Step>
+From your shell, list the commit's check runs and take the `id` of the `Claude Code Review` run. Replace `OWNER` and `REPO` with your repository owner and name, and `<commit-sha>` with the pull request's head commit:
 
-  <Step title="Read the severity counts">
-    Read the counts from that check run, replacing `CHECK_RUN_ID` with the ID:
+```bash theme={null}
+gh api repos/OWNER/REPO/commits/<commit-sha>/check-runs --jq '.check_runs[] | {id, name}'
+```
 
-    ```bash theme={null}
-    gh api repos/OWNER/REPO/check-runs/CHECK_RUN_ID \
-      --jq '.output.text | split("bughunter-severity: ")[1] | split(" -->")[0] | fromjson'
-    ```
+**2. Read the severity counts**
 
-    This prints a JSON object with a count per severity and its keys in alphabetical order, for example `{"nit": 1, "normal": 2, "pre_existing": 0}`. The counts include findings from earlier reviews of the pull request whose threads are still open.
-  </Step>
+Read the counts from that check run, replacing `CHECK_RUN_ID` with the ID:
 
-  <Step title="Act on the result">
-    Have your script handle these cases:
+```bash theme={null}
+gh api repos/OWNER/REPO/check-runs/CHECK_RUN_ID \
+  --jq '.output.text | split("bughunter-severity: ")[1] | split(" -->")[0] | fromjson'
+```
 
-    * **`normal` is above zero**: fail the job if you want to gate the merge. The `normal` key holds the count of Important findings, so Claude found at least one bug worth fixing before merge.
-    * **The line is missing**: treat it as no verdict rather than as zero findings. A check run for a review that failed, timed out, was canceled, or was superseded by a newer one has no such line, and some completed reviews have none either.
-  </Step>
-</Steps>
+This prints a JSON object with a count per severity and its keys in alphabetical order, for example `{"nit": 1, "normal": 2, "pre_existing": 0}`. The counts include findings from earlier reviews of the pull request whose threads are still open.
+
+**3. Act on the result**
+
+Have your script handle these cases:
+
+* **`normal` is above zero**: fail the job if you want to gate the merge. The `normal` key holds the count of Important findings, so Claude found at least one bug worth fixing before merge.
+* **The line is missing**: treat it as no verdict rather than as zero findings. A check run for a review that failed, timed out, was canceled, or was superseded by a newer one has no such line, and some completed reviews have none either.
 
 ## Request a review
 
@@ -101,24 +99,27 @@ Post one of these commands as a comment on the pull request:
 
 | Command | What it does | When to use it |
 | :- | :- | :- |
-| `@claude review` | Starts a single review without subscribing the PR to future pushes | You want one review now, such as on a pull request in a repository set to Manual, or another review right away in the other modes |
-| `@claude review always` | Starts a review and subscribes the PR to push-triggered reviews going forward | You want every subsequent push to start a fresh review, such as on a high-priority PR in a repository set to Manual |
+| `@claude review` | Starts a single review without subscribing the PR to future pushes | You want one review now, such as on a pull request in a repository set to **Manual**, or another review right away in the other modes |
+| `@claude review always` | Starts a review and subscribes the PR to push-triggered reviews going forward | You want every subsequent push to start a fresh review, such as on a high-priority PR in a repository set to **Manual** |
 | `@claude review once` | Same as `@claude review`: starts a single review without subscribing | The same cases as `@claude review` |
+| `@claude review stop` | Ends the PR's subscription to push-triggered reviews, without starting a review or canceling one that's already running. Claude replies with a comment instead of a check run. | You subscribed a PR with `@claude review always` in a repository set to **Manual** or **Once after PR creation**, and no longer want each push to start a review |
 
-For any of these commands to start a review, all of these conditions have to hold:
+In a repository set to **After every push**, you can't stop reviews with a comment, because pushes there start reviews with or without a subscription. To pause reviews on one pull request there, convert it to a draft.
+
+For any comment command to take effect, all of these conditions have to hold:
 
 * Post it as a new top-level pull request comment, not an inline comment on a diff line and not the body of a review. Editing an earlier comment doesn't count.
-* Put the command at the start of the comment, with `always` on the same line as the rest of the command. Capitalization doesn't matter.
+* Put the whole command on one line at the start of the comment. Other text can follow it. If `always` or `stop` is misspelled or on a later line, Claude reads the comment as a plain `@claude review` and starts a single review. Capitalization doesn't matter.
 * You need write, maintain, or admin permission on the repository. Claude checks this with GitHub for each person who comments, and comments from bots don't start reviews.
 * The pull request must be open.
 
-When the command is accepted, a **Claude Code Review** check run appears on the pull request with the title **Code review queued...**. The title changes to **Code review in progress...** when the review starts. Claude may also react to your comment with 👀, but that reaction can appear when no review starts, so look for the check run instead.
+When a command that starts a review is accepted, a **Claude Code Review** check run appears on the pull request with the title **Code review queued...**. The title changes to **Code review in progress...** when the review starts. Claude may also react to your comment with 👀, but that reaction can appear when no review starts, so look for the check run instead.
 
 If a review is already running on the pull request's latest commit, a new request doesn't start a second one.
 
-<Note>
-  Before a July 2026 update, `@claude review` subscribed the PR to push-triggered reviews. If you relied on that behavior, comment `@claude review always` instead.
-</Note>
+> [!NOTE]
+>
+> Before a July 2026 update, `@claude review` subscribed the PR to push-triggered reviews. If you relied on that behavior, comment `@claude review always` instead.
 
 ### What a later review covers
 

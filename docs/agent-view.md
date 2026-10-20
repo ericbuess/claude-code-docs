@@ -8,9 +8,7 @@
 
 Agent view, opened with `claude agents`, is one screen for all your background sessions: what's running, what needs your input, and what's done. Dispatch new sessions, watch their state at a glance instead of scrolling through transcripts, and step in only when one needs you. Each background session is a full Claude Code conversation that keeps running without a terminal attached, so you can open it, reply, and leave whenever you want.
 
-<img src="https://mintcdn.com/claude-code/HDAmBwgbrZVk0pOt/images/agent-view-light.png?fit=max&auto=format&n=HDAmBwgbrZVk0pOt&q=85&s=d6905012bee31f3e6b3920b09c05dd02" className="dark:hidden" alt="Agent view in a terminal. A line at the top counts the sessions awaiting input, working, and completed. Four sessions are grouped under Needs input, Working, and Completed. Each row shows the session's name, its latest status or question, and a time. At the bottom are an input for describing a new task and a row of keyboard hints." width="1872" height="680" data-path="images/agent-view-light.png" />
-
-<img src="https://mintcdn.com/claude-code/HDAmBwgbrZVk0pOt/images/agent-view-dark.png?fit=max&auto=format&n=HDAmBwgbrZVk0pOt&q=85&s=fc3c195bfc57e313ced1f1beb36cee93" className="hidden dark:block" alt="Agent view in a terminal. A line at the top counts the sessions awaiting input, working, and completed. Four sessions are grouped under Needs input, Working, and Completed. Each row shows the session's name, its latest status or question, and a time. At the bottom are an input for describing a new task and a row of keyboard hints." width="1872" height="680" data-path="images/agent-view-dark.png" />
+![Agent view in a terminal. A line at the top counts the sessions awaiting input, working, and completed. Four sessions are grouped under Needs input, Working, and Completed. Each row shows the session's name, its latest status or question, and a time. At the bottom are an input for describing a new task and a row of keyboard hints.](https://mintcdn.com/claude-code/HDAmBwgbrZVk0pOt/images/agent-view-light.png?fit=max\&auto=format\&n=HDAmBwgbrZVk0pOt\&q=85\&s=d6905012bee31f3e6b3920b09c05dd02)
 
 Use agent view when you have several independent tasks Claude can work on without you watching every step. Dispatch a bug fix, a pull request review, and a flaky-test investigation as three rows, keep working in another window, and check back when a row shows it needs you or has a result.
 
@@ -18,75 +16,77 @@ When you want to work more directly in any agent's session, attach to the row to
 
 To compare agent view with subagents, agent teams, and worktrees, see [Run agents in parallel](/docs/en/agents). Agent view runs sessions on your machine and you dispatch each one; to have Claude start and track parallel sessions in the cloud from one conversation instead, see [Projects](/docs/en/claude-projects).
 
-<Note>
-  Agent view is in research preview. The interface and keyboard shortcuts may change as the feature evolves.
-</Note>
+> [!NOTE]
+>
+> Agent view is in research preview. The interface and keyboard shortcuts may change as the feature evolves.
 
 ## Quick start
 
 This walkthrough covers the core agent view loop: dispatch a task, watch its row update as Claude works, peek to check on it and reply, and attach for the full conversation. The session you dispatch keeps running after you close agent view, so you can leave and come back to it.
 
-<Steps>
-  <Step title="Open agent view">
-    From your shell, run:
+**1. Open agent view**
 
-    ```bash theme={null}
-    claude agents
-    ```
+From your shell, run:
 
-    If you haven't yet accepted the [workspace trust dialog](/docs/en/permissions#project-allow-rules-and-workspace-trust) for the directory, Claude Code shows it before agent view opens, the same dialog `claude` shows. Accept to save trust for the workspace and continue. If you decline, Claude Code exits without opening agent view.
+```bash theme={null}
+claude agents
+```
 
-    Agent view opens with an input at the bottom and a table that fills in as sessions start. Press `Esc` to return to your shell; if you opened agent view by backgrounding a session with `←`, `Esc` returns to that conversation instead. Your sessions keep running while you're away and reappear the next time you open agent view.
-  </Step>
+If you haven't yet accepted the [workspace trust dialog](/docs/en/permissions#project-allow-rules-and-workspace-trust) for the directory, Claude Code shows it before agent view opens, the same dialog `claude` shows. Accept to save trust for the workspace and continue. If you decline, Claude Code exits without opening agent view.
 
-  <Step title="Dispatch a session">
-    Type a prompt describing a task and press `Enter`. A new background session starts on that task and appears as a row showing whether it's working, waiting on you, or done. The new session uses the model shown in the agent view header. [Which permission mode it starts in](#permission-mode-model-and-effort) depends on how you opened agent view.
+Agent view opens with an input at the bottom and a table that fills in as sessions start. Press `Esc` to return to your shell; if you opened agent view by backgrounding a session with `←`, `Esc` returns to that conversation instead. Your sessions keep running while you're away and reappear the next time you open agent view.
 
-    Every prompt you enter here starts its own new session. Typing another prompt and pressing `Enter` launches a second session alongside the first rather than sending a follow-up to it. You can run several in parallel this way.
+**2. Dispatch a session**
 
-    Each session uses your subscription quota independently, so see [Limitations](#limitations) before dispatching many at once.
-  </Step>
+Type a prompt describing a task and press `Enter`. A new background session starts on that task and appears as a row showing whether it's working, waiting on you, or done. The new session uses the model shown in the agent view header. [Which permission mode it starts in](#permission-mode-model-and-effort) depends on how you opened agent view.
 
-  <Step title="Peek and reply">
-    Select a row with the arrow keys and press `Space` to open the peek panel. It shows the session's most recent output, or the question it's waiting on, rather than the full transcript. Type a reply and press `Enter` to send it without leaving agent view.
-  </Step>
+Every prompt you enter here starts its own new session. Typing another prompt and pressing `Enter` launches a second session alongside the first rather than sending a follow-up to it. You can run several in parallel this way.
 
-  <Step title="Attach and detach">
-    Press `Enter` or `→` on a row to attach when you want the full conversation. The session takes over the terminal as a full interactive Claude Code session. Press `←` on an empty prompt to detach and return to the table.
-  </Step>
+Each session uses your subscription quota independently, so see [Limitations](#limitations) before dispatching many at once.
 
-  <Step title="Bring an existing session in">
-    This step needs a running session. If you followed the earlier steps you don't have one open in this terminal, so open a regular `claude` session in another terminal and send it a message first.
+**3. Peek and reply**
 
-    To move a session you already have open into agent view, run `/bg` inside it, or press `←` on an empty prompt to background it and open agent view in one step. In a fresh session with no messages yet, `/bg` asks you to send a message first, while `←` works right away. The session keeps running and appears as a row alongside the ones you dispatched.
-  </Step>
-</Steps>
+Select a row with the arrow keys and press `Space` to open the peek panel. It shows the session's most recent output, or the question it's waiting on, rather than the full transcript. Type a reply and press `Enter` to send it without leaving agent view.
 
-Inside a regular `claude` session, the prompt footer's `←` hint counts the background agents that are waiting on you, such as `← 2 agents`, and returns to `← for agents` when none need input. Counts above 99 show as `99+`. The count refreshes about every ten seconds while the terminal is focused and immediately when focus returns. It briefly changes color when it moves and when an agent completes, and when a background session finishes while none need your input it briefly shows the number completed, such as `← 2 done`. Both flashes are off when the [`prefersReducedMotion` setting](/docs/en/settings-reference#prefersreducedmotion) is on, and the hint is hidden in [screen reader mode](/docs/en/accessibility).
+**4. Attach and detach**
+
+Press `Enter` or `→` on a row to attach when you want the full conversation. The session takes over the terminal as a full interactive Claude Code session. Press `←` on an empty prompt to detach and return to the table.
+
+**5. Bring an existing session in**
+
+This step needs a running session. If you followed the earlier steps you don't have one open in this terminal, so open a regular `claude` session in another terminal and send it a message first.
+
+To move a session you already have open into agent view, run `/bg` inside it, or press `←` on an empty prompt to background it and open agent view in one step. In a fresh session with no messages yet, `/bg` asks you to send a message first, while `←` works right away. The session keeps running and appears as a row alongside the ones you dispatched.
+
+In a regular `claude` session, pressing `←` on an empty prompt opens agent view, and a `←` hint in the footer reports on your background sessions:
+
+* **Hint**: the footer shows `← for agents` for ten seconds after the session opens. Pressing `←` still works after the hint disappears
+* **Waiting count**: while background sessions wait on your input, the same spot counts them, such as `← 2 agents`, or `← 99+ agents` when more than 99 wait. The count refreshes about every ten seconds while the terminal is focused and immediately when focus returns
+* **Finished count**: when background sessions finish successfully while none wait on your input, the footer briefly shows how many finished, such as `← 2 done` for two
+
+The waiting count briefly changes color when it goes up or down and when a background session finishes successfully. If you turn on [`prefersReducedMotion`](/docs/en/settings-reference#prefersreducedmotion), you see neither the color change nor the `done` count. In [screen reader mode](/docs/en/accessibility), the `←` hint and its counts are hidden.
 
 ### Open agent view by default
 
 To have `claude` with no arguments open agent view instead of a new conversation, turn on a `/config` setting.
 
-<Steps>
-  <Step title="Turn on the setting">
-    In a regular `claude` session, run `/config` and turn on **Open agents view by default**. To skip the menu, set the [`defaultToAgentsView`](/docs/en/settings-reference#defaulttoagentsview) key directly:
+**1. Turn on the setting**
 
-    ```text theme={null}
-    /config defaultToAgentsView=true
-    ```
-  </Step>
+In a regular `claude` session, run `/config` and turn on **Open agents view by default**. To skip the menu, set the [`defaultToAgentsView`](/docs/en/settings-reference#defaulttoagentsview) key directly:
 
-  <Step title="Start Claude Code">
-    Exit the session, then run `claude` with no arguments:
+```text theme={null}
+/config defaultToAgentsView=true
+```
 
-    ```bash theme={null}
-    claude
-    ```
+**2. Start Claude Code**
 
-    Agent view opens in place of a new conversation.
-  </Step>
-</Steps>
+Exit the session, then run `claude` with no arguments:
+
+```bash theme={null}
+claude
+```
+
+Agent view opens in place of a new conversation.
 
 To start a regular session while the setting is on, pass a prompt: `claude "fix the login test"`. To turn the setting off, run `/config defaultToAgentsView=false` in a regular session or in one you attach to from agent view.
 
@@ -370,8 +370,6 @@ The shortcuts that have an action in the [`Agents` context](/docs/en/keybindings
 
 You can dispatch new background sessions from agent view, send or copy an existing interactive session to the background, or start one directly from the shell.
 
-<span id="from-agent-view" />
-
 ### Dispatch an agent from agent view
 
 Type a prompt in the input at the bottom of agent view and press `Enter` to start a new background session. The session is named automatically from the prompt; rename it later with `Ctrl+R`.
@@ -422,8 +420,6 @@ A new session runs in the directory you opened agent view from. To target a diff
 * From the shell, `cd` into the directory and run `claude --bg "<prompt>"`.
 
 When agent view is grouped by directory, dispatching sends the prompt to the selected row's directory, so you can select a group and dispatch into it without retyping the path.
-
-<span id="from-inside-a-session" />
 
 ### Send or copy a session to the background
 
@@ -481,8 +477,6 @@ Configuration flags from the original launch carry through to the backgrounded s
 * `--allow-dangerously-skip-permissions`
 
 Directories you added during the session with [`/add-dir`](/docs/en/permissions#additional-directories-grant-file-access-not-configuration) also carry through. Carrying `--allow-dangerously-skip-permissions` keeps `bypassPermissions` reachable in the backgrounded session, but it doesn't grant anything new: the mode still needs your [acceptance of the bypass disclaimer](/docs/en/permission-modes#skip-all-checks-with-bypasspermissions-mode) on record.
-
-<span id="from-your-shell" />
 
 ### Dispatch an agent from your shell
 
@@ -672,6 +666,7 @@ If you export a gateway `ANTHROPIC_BASE_URL` only in your shell instead, it reac
 * You background your own session with `←` or `/background`
 * You dispatch a session into the directory you're in
 * You wake a stopped session in the directory you're in by attaching or replying to it
+* You restart a session in the directory you're in with [`claude respawn`](#manage-sessions-from-the-shell)
 
 Claude Code forwards a gateway in front of a cloud provider. If the shell you dispatch from selects the provider and exports its gateway endpoint with its auth-bypass flag, Claude Code forwards the endpoint-and-flag pair to the session under the conditions that apply to `ANTHROPIC_BASE_URL`, together with `ANTHROPIC_CUSTOM_HEADERS`. For example, export `CLAUDE_CODE_USE_VERTEX=1` with `ANTHROPIC_VERTEX_BASE_URL` and `CLAUDE_CODE_SKIP_VERTEX_AUTH=1`, and Claude Code forwards that endpoint and flag.
 
@@ -873,9 +868,7 @@ If you press `←` to background the current session and Claude Code shows a `Ba
 
 Run `/tasks` to see everything that's running, then confirm to background anyway or choose `Stay` to let the work finish first. See [What carries over when you background](#what-carries-over-when-you-background) for which kinds of work carry over and which Claude Code stops.
 
-<h3 id="carried-into-this-session-and-not-resumed">
-  The conversation says a background agent `was carried into this session and not resumed`
-</h3>
+### The conversation says a background agent `was carried into this session and not resumed`
 
 This notice names a background [subagent](/docs/en/sub-agents) that isn't running in this session.
 
@@ -885,9 +878,7 @@ Claude sees the notice and replies on its own, so you don't need to prompt it. I
 
 The dispatch input expects a task description, not a conversational opener. A prompt shorter than four characters is rejected with a `Too short` hint so a stray keystroke doesn't start a session. Describe what you want the session to do, such as `investigate the flaky checkout test`.
 
-<h3 id="sessions-show-as-failed-after-shutdown">
-  Sessions show as failed or stopped after shutdown
-</h3>
+### Sessions show as failed or stopped after shutdown
 
 Shutting down or restarting your machine stops running background sessions. A session that was waiting on your input stays under `Needs input` when you come back. For any other running session, what agent view shows depends on how long ago it last made progress:
 
@@ -959,6 +950,16 @@ claude daemon stop --any --keep-workers
 Within [about a minute](#the-supervisor-process), run `claude agents` or `claude --bg` in your shell to start a fresh supervisor that reads your stored credentials. If you authenticate with an environment variable such as `ANTHROPIC_API_KEY` rather than `/login`, run that next command from a shell where the variable is set.
 
 See the [error reference](/docs/en/errors#could-not-resolve-authentication-method) for the full list of causes and fixes.
+
+### A background session shows `No LLM gateway`
+
+If a background session shows [`No LLM gateway`](/docs/en/errors#no-llm-gateway-opened-from-another-folder), it didn't get your gateway `ANTHROPIC_BASE_URL`, so its requests fail. Claude Code withheld it because you dispatched, woke, or restarted the session from a directory other than the folder the message names.
+
+You see the message, for example, after you dispatch into a repository with [`@<repo>`](#dispatch-to-a-specific-directory) or wake a stopped session by running `claude attach` from another directory. To give the session your gateway, pick the fix that matches where your gateway is set:
+
+* **You exported the gateway in your terminal**: in a terminal where you've exported the gateway variables, `cd` to the folder the message names and run the message's [`claude respawn <id>`](#manage-sessions-from-the-shell) command.
+  * The gateway reaches the session only when the [supervisor](#the-supervisor-process) was itself started from a shell that exported the same gateway. If the supervisor wasn't, restart it from the terminal where you ran the respawn command, as [Dispatch fails with `Could not resolve authentication method`](#dispatch-fails-with-could-not-resolve-authentication-method) describes, then run that command again.
+* **You used agent view in a project whose settings set the gateway**: put `ANTHROPIC_BASE_URL` and its credential in [a settings file's `env` block](/docs/en/llm-gateway-connect#set-in-a-settings-file). Use `~/.claude/settings.json`, or `.claude/settings.local.json` in the session's own project, both of which a respawned session reads. Then run [`claude respawn <id>`](#manage-sessions-from-the-shell) in your shell from any directory to restart this session on the gateway.
 
 ### Background sessions can't read Desktop, Documents, or Downloads on macOS
 
@@ -1050,12 +1051,12 @@ Agent view has evolved quickly during research preview. If you are on an older C
 | v2.1.239 | With [vim editor mode](/docs/en/interactive-mode#vim-editor-mode) on, pressing `Esc` in agent view's input switches from INSERT to NORMAL mode and keeps your text, matching the main prompt; in NORMAL mode with text still in the input, pressing `Esc` clears it, and pressing `Esc` on an empty input exits, as the [`Esc` shortcut](#keyboard-shortcuts) describes. Before this release, `Esc` cleared the input. |
 | v2.1.233 | For a session linked to a GitLab merge request, Claude Code writes the row's label in GitLab's `!1234` reference syntax. You can also paste the merge request's URL into the [dispatch input](#filter-sessions) to select that session. Before this release, the label rendered as `#1234`, and a pasted merge request URL matched a session only when its first prompt contained the URL. |
 | v2.1.227 | [Deleting a session](#what-deleting-a-session-removes) keeps the session and its worktree while another live Claude Code session is running inside that worktree directory. Agent view shows `not deleted` on the row and the reason in the footer, and `claude rm` prints `kept <id>` with the reason, which names the other session's process ID. Before this release, deleting the session removed the worktree while the other session was still working in it. |
-| v2.1.225 | `claude agents` in a directory you haven't trusted shows the same [workspace trust dialog](/docs/en/permissions#project-allow-rules-and-workspace-trust) that `claude` shows on startup, before agent view opens. Accepting saves trust for that workspace; declining exits without opening agent view. Before this release, `claude agents` opened without asking, so sessions you dispatched from it ran in a directory you'd never been asked to trust.<br /><br />With the list grouped by directory, hovering the mouse over a row highlights it without changing the [dispatch target](#dispatch-to-a-specific-directory); selecting a row with the arrow keys or a click still changes the target. Before this release, moving the mouse over a session in another project silently changed the directory the next dispatched session started in. |
-| v2.1.221 | `/status` shows a `Session kind` row: `background job · attached` or `background job · unattended` in a background session, depending on whether a terminal is attached, and `interactive` in any other session. Before this release, `/status` didn't report the session kind.<br /><br />`/fork`: Claude Code instructs [the copy](#from-inside-a-session) to isolate its work from the original session's: the copy creates a worktree of its own before making code changes, stays out of the original session's worktree, and bases a new branch on the original's branch when its task builds on that work. See the linked section for the exact conditions. Before this release, the copy received no isolation instruction and could end up editing the worktree or checkout the original session was still working in.<br /><br />With [vim editor mode](/docs/en/interactive-mode#vim-editor-mode) on, pressing `←` right after undoing the prompt back to empty with `u` asks for the same confirmation as deleting the text or moving through prompt history, and switches only on the second press; before this release the press switched immediately. |
+| v2.1.225 | `claude agents` in a directory you haven't trusted shows the same [workspace trust dialog](/docs/en/permissions#project-allow-rules-and-workspace-trust) that `claude` shows on startup, before agent view opens. Accepting saves trust for that workspace; declining exits without opening agent view. Before this release, `claude agents` opened without asking, so sessions you dispatched from it ran in a directory you'd never been asked to trust. With the list grouped by directory, hovering the mouse over a row highlights it without changing the [dispatch target](#dispatch-to-a-specific-directory); selecting a row with the arrow keys or a click still changes the target. Before this release, moving the mouse over a session in another project silently changed the directory the next dispatched session started in. |
+| v2.1.221 | `/status` shows a `Session kind` row: `background job · attached` or `background job · unattended` in a background session, depending on whether a terminal is attached, and `interactive` in any other session. Before this release, `/status` didn't report the session kind. `/fork`: Claude Code instructs [the copy](#from-inside-a-session) to isolate its work from the original session's: the copy creates a worktree of its own before making code changes, stays out of the original session's worktree, and bases a new branch on the original's branch when its task builds on that work. See the linked section for the exact conditions. Before this release, the copy received no isolation instruction and could end up editing the worktree or checkout the original session was still working in. With [vim editor mode](/docs/en/interactive-mode#vim-editor-mode) on, pressing `←` right after undoing the prompt back to empty with `u` asks for the same confirmation as deleting the text or moving through prompt history, and switches only on the second press; before this release the press switched immediately. |
 | v2.1.219 | With [vim editor mode](/docs/en/interactive-mode#vim-editor-mode) on, pressing `←` on an empty prompt opens agent view from NORMAL mode as well as INSERT, and the footer's `←` hint shows in NORMAL mode; before this release the gesture and hint were INSERT-only, and in NORMAL mode `←` on an empty prompt did nothing. Typing into the input while Claude Code waits to background the session cancels the switch with `Backgrounding cancelled — you have unsent text in the input. Send it or clear it, then press ← again.` so a typed draft isn't lost. |
 | v2.1.218 | Pressing `←` within two seconds of a deletion that emptied the prompt, or of moving through prompt history, shows `Press ← again to open agents`, or `Press ← again to go back to agents` in an attached session, and switches only on a second press at least a second later; before this release the press switched immediately. A `←` that arrives inside pasted or scripted input no longer triggers the switch. Backgrounding a foreground session with `←` shows `Your conversation moved to the background` above the list, and `Esc` at the root of agent view returns to that conversation instead of exiting to the shell, with double `Ctrl+C` remaining the exit; if the conversation can't be reopened, Claude Code exits and prints a `claude --resume` command for it. On Windows, a `←` pressed within about half a second of attaching shows `Ambiguous ←, press again to detach` and detaches on the second press. |
 | v2.1.217 | The pull request badge on a session's row renders as a hyperlink even when Claude Code can't detect terminal hyperlink support, for example over SSH or tmux; set [`FORCE_HYPERLINK=0`](/docs/en/env-vars) to render it as plain text. Before this release, the badge rendered as plain text when support wasn't detected. |
-| v2.1.216 | `/fork`: the [confirmation](#from-inside-a-session) is one line, showing the copy's state, the name of its agent-view row, and its session ID for `claude attach`, ending with `runs in the origin tree` or `edits this checkout` only when the copy runs in the main working tree or edits the checkout you have open. Clicking the name backgrounds this session and opens agent view in the copy's session. The confirmation no longer restates the copy's inherited permission mode; earlier versions printed a multi-line confirmation with no clickable name.<br /><br />Needs input: `/install-github-app` and the `/mcp` settings list, run while nobody is attached, show the session under `Needs input` with a row naming the command, and attaching and re-running the command continues; from v2.1.208 through v2.1.215 they were refused outright in that state.<br /><br />`--agent` restore: resuming or restarting a [backgrounded `--agent` session](#from-your-shell) restores the agent's system prompt and tool restrictions, searching the session's own directory for the agent first, when its workspace is trusted; a session whose agent no longer exists continues with the default tools and system prompt and opens with a visible warning, instead of silently reverting to the default agent.<br /><br />`Ctrl+X`: pressing it twice deletes a session even when the stop attempt fails, instead of a failed stop cancelling the pending delete, and a deleted session whose worker process had died no longer reappears on the next refresh.<br /><br />Worktree deletion: a session whose worktree directory belongs to no git repository can be deleted; before this release every attempt to delete such a session was refused. A directory that's already gone clears immediately. The agent view double-press removes a directory that still has files, running your `WorktreeRemove` hook for a hook-created directory, unless another session's records also name it. `claude rm` keeps such a directory whenever files remain. |
+| v2.1.216 | `/fork`: the [confirmation](#from-inside-a-session) is one line, showing the copy's state, the name of its agent-view row, and its session ID for `claude attach`, ending with `runs in the origin tree` or `edits this checkout` only when the copy runs in the main working tree or edits the checkout you have open. Clicking the name backgrounds this session and opens agent view in the copy's session. The confirmation no longer restates the copy's inherited permission mode; earlier versions printed a multi-line confirmation with no clickable name. Needs input: `/install-github-app` and the `/mcp` settings list, run while nobody is attached, show the session under `Needs input` with a row naming the command, and attaching and re-running the command continues; from v2.1.208 through v2.1.215 they were refused outright in that state. `--agent` restore: resuming or restarting a [backgrounded `--agent` session](#from-your-shell) restores the agent's system prompt and tool restrictions, searching the session's own directory for the agent first, when its workspace is trusted; a session whose agent no longer exists continues with the default tools and system prompt and opens with a visible warning, instead of silently reverting to the default agent. `Ctrl+X`: pressing it twice deletes a session even when the stop attempt fails, instead of a failed stop cancelling the pending delete, and a deleted session whose worker process had died no longer reappears on the next refresh. Worktree deletion: a session whose worktree directory belongs to no git repository can be deleted; before this release every attempt to delete such a session was refused. A directory that's already gone clears immediately. The agent view double-press removes a directory that still has files, running your `WorktreeRemove` hook for a hook-created directory, unless another session's records also name it. `claude rm` keeps such a directory whenever files remain. |
 | v2.1.214 | A session backgrounded with `←` or `/background` and left idle with nothing running has its process stopped like any other idle session, instead of keeping its process and the background service running indefinitely. A completed session can be removed with `claude rm` or from agent view after the background service has gone idle, and a session that entered a worktree after being dispatched from a directory that isn't a git repository, such as a multi-repo workspace folder, can be deleted from agent view when the worktree itself belongs to a git repository, because the cleanup is resolved from the worktree instead of the directory the session was dispatched from; both removals were refused on every attempt before. Reopening a stopped session restores its saved conversation even when a folder in the transcript store can't be read. |
 | v2.1.213 | `/install-github-app`, the [`/mcp`](/docs/en/mcp) settings list, and MCP authentication actions work in a background session while a terminal is attached, and are refused only when nobody is attached, with a message telling you to attach and run the command again; from v2.1.208 through v2.1.212 they were refused even with a terminal attached. |
 | v2.1.212 | [`/fork` in an interactive session](#from-inside-a-session) copies the conversation into a new background session that appears as its own row, named after the session it came from or, for a prompted fork of an unnamed session, after the fork prompt, while the original keeps running; the earlier forked-subagent behavior of `/fork` moved to `/subtask`. With [agent view turned off](#turn-off-agent-view), `/fork` keeps the forked-subagent behavior. A focused row that is waiting for its first prompt shows `space to send it a prompt`. `Ctrl+J` inserts a newline in the dispatch input on terminals with extended key reporting, where the keypress was previously ignored, and the `?` overlay lists the shortcut. The `←` footer hint in an interactive session briefly shows `N done` when a background session finishes while none need your input. Typing a bare `/resume` in agent view opens a picker of past sessions of the repository you opened agent view from, including sessions deleted from the list, and picking one resumes it as a background session; before this release `/resume` wasn't available in agent view and deleted sessions were reachable only with `claude --resume` or `/resume` from an interactive session. Targeted, scoped, and restricted forms keep the `attach to a session to run it` hint that earlier versions showed for every form. Sessions waiting on a sandbox network-host prompt, an MCP input request, or a managed-settings prompt show as `Needs input` instead of `Working`, in agent view and in `claude agents --json`, and a question from Claude reports `waitingFor: input needed` instead of `permission prompt`. Attaching to a session whose process has stopped shows its transcript formatted the way the live session renders it, instead of as raw text. A stopped session whose transcript is in an unexpected place resumes from it via a last-resort scan of your saved transcripts, and opening a row that has no saved transcript shows `Press enter again to restart this session fresh`, restarting it fresh on the second press; v2.1.211 showed the refusal with no way to restart from agent view. |

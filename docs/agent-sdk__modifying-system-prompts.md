@@ -50,55 +50,53 @@ The SDK reads CLAUDE.md when the matching setting source is enabled: `'project'`
 
 To load CLAUDE.md, set `settingSources` to include the level where you keep your CLAUDE.md. The example below loads a project-level CLAUDE.md alongside the `claude_code` preset, so Claude has both the coding-agent prompt and your project's conventions:
 
-<CodeGroup>
-  ```typescript TypeScript theme={null}
-  import { query } from "@anthropic-ai/claude-agent-sdk";
+```typescript TypeScript theme={null}
+import { query } from "@anthropic-ai/claude-agent-sdk";
 
-  const messages = [];
+const messages = [];
 
-  for await (const message of query({
-    prompt: "Add a new React component for user profiles",
-    options: {
-      systemPrompt: {
-        type: "preset",
-        preset: "claude_code" // Use Claude Code's system prompt
-      },
-      settingSources: ["project"] // Loads CLAUDE.md from project
-    }
-  })) {
-    messages.push(message);
+for await (const message of query({
+  prompt: "Add a new React component for user profiles",
+  options: {
+    systemPrompt: {
+      type: "preset",
+      preset: "claude_code" // Use Claude Code's system prompt
+    },
+    settingSources: ["project"] // Loads CLAUDE.md from project
   }
+})) {
+  messages.push(message);
+}
 
-  // Now Claude has access to your project guidelines from CLAUDE.md
-  ```
+// Now Claude has access to your project guidelines from CLAUDE.md
+```
 
-  ```python Python theme={null}
-  import asyncio
+```python Python theme={null}
+import asyncio
 
-  from claude_agent_sdk import query, ClaudeAgentOptions
+from claude_agent_sdk import query, ClaudeAgentOptions
 
-  messages = []
-
-
-  async def main():
-      async for message in query(
-          prompt="Add a new React component for user profiles",
-          options=ClaudeAgentOptions(
-              system_prompt={
-                  "type": "preset",
-                  "preset": "claude_code",  # Use Claude Code's system prompt
-              },
-              setting_sources=["project"],  # Loads CLAUDE.md from project
-          ),
-      ):
-          messages.append(message)
+messages = []
 
 
-  asyncio.run(main())
+async def main():
+    async for message in query(
+        prompt="Add a new React component for user profiles",
+        options=ClaudeAgentOptions(
+            system_prompt={
+                "type": "preset",
+                "preset": "claude_code",  # Use Claude Code's system prompt
+            },
+            setting_sources=["project"],  # Loads CLAUDE.md from project
+        ),
+    ):
+        messages.append(message)
 
-  # Now Claude has access to your project guidelines from CLAUDE.md
-  ```
-</CodeGroup>
+
+asyncio.run(main())
+
+# Now Claude has access to your project guidelines from CLAUDE.md
+```
 
 When you run either example, the SDK streams messages as Claude works: a system init message, assistant messages, user messages carrying tool results, and a final result message with the session outcome.
 
@@ -152,56 +150,54 @@ In the Python SDK, set `outputStyle` through the `settings` option, which takes 
 
 You can use the Claude Code preset with an `append` property to add your custom instructions while preserving all built-in functionality.
 
-<CodeGroup>
-  ```typescript TypeScript theme={null}
-  import { query } from "@anthropic-ai/claude-agent-sdk";
+```typescript TypeScript theme={null}
+import { query } from "@anthropic-ai/claude-agent-sdk";
 
-  const messages = [];
+const messages = [];
 
-  for await (const message of query({
-    prompt: "Help me write a Python function to calculate fibonacci numbers",
-    options: {
-      systemPrompt: {
-        type: "preset",
-        preset: "claude_code",
-        append: "Always include detailed docstrings and type hints in Python code."
-      }
-    }
-  })) {
-    messages.push(message);
-    if (message.type === "assistant") {
-      console.log(message.message.content);
+for await (const message of query({
+  prompt: "Help me write a Python function to calculate fibonacci numbers",
+  options: {
+    systemPrompt: {
+      type: "preset",
+      preset: "claude_code",
+      append: "Always include detailed docstrings and type hints in Python code."
     }
   }
-  ```
+})) {
+  messages.push(message);
+  if (message.type === "assistant") {
+    console.log(message.message.content);
+  }
+}
+```
 
-  ```python Python theme={null}
-  import asyncio
+```python Python theme={null}
+import asyncio
 
-  from claude_agent_sdk import query, ClaudeAgentOptions, AssistantMessage
+from claude_agent_sdk import query, ClaudeAgentOptions, AssistantMessage
 
-  messages = []
-
-
-  async def main():
-      async for message in query(
-          prompt="Help me write a Python function to calculate fibonacci numbers",
-          options=ClaudeAgentOptions(
-              system_prompt={
-                  "type": "preset",
-                  "preset": "claude_code",
-                  "append": "Always include detailed docstrings and type hints in Python code.",
-              }
-          ),
-      ):
-          messages.append(message)
-          if isinstance(message, AssistantMessage):
-              print(message.content)
+messages = []
 
 
-  asyncio.run(main())
-  ```
-</CodeGroup>
+async def main():
+    async for message in query(
+        prompt="Help me write a Python function to calculate fibonacci numbers",
+        options=ClaudeAgentOptions(
+            system_prompt={
+                "type": "preset",
+                "preset": "claude_code",
+                "append": "Always include detailed docstrings and type hints in Python code.",
+            }
+        ),
+    ):
+        messages.append(message)
+        if isinstance(message, AssistantMessage):
+            print(message.content)
+
+
+asyncio.run(main())
+```
 
 #### Improve prompt caching across users and machines
 
@@ -211,55 +207,53 @@ CLAUDE.md content and environment details such as the working directory, platfor
 
 To make the system prompt identical across sessions, set `excludeDynamicSections: true` in TypeScript or `"exclude_dynamic_sections": True` in Python. The per-user context moves into the first user message, leaving only the static preset and your `append` text in the system prompt so identical configurations share a cache entry across users and machines.
 
-<Note>
-  `excludeDynamicSections` requires `@anthropic-ai/claude-agent-sdk` v0.2.98 or later, or `claude-agent-sdk` v0.1.58 or later for Python. Set it on the preset object form only. The SDK ignores it when you pass a custom prompt instead of the preset; to keep a custom prompt's instructions cached in the TypeScript SDK, see [Cache the static part of a custom prompt](#cache-the-static-part-of-a-custom-prompt).
-</Note>
+> [!NOTE]
+>
+> `excludeDynamicSections` requires `@anthropic-ai/claude-agent-sdk` v0.2.98 or later, or `claude-agent-sdk` v0.1.58 or later for Python. Set it on the preset object form only. The SDK ignores it when you pass a custom prompt instead of the preset; to keep a custom prompt's instructions cached in the TypeScript SDK, see [Cache the static part of a custom prompt](#cache-the-static-part-of-a-custom-prompt).
 
 The following example pairs a shared `append` block with `excludeDynamicSections` so a fleet of agents can reuse the same cached system prompt:
 
-<CodeGroup>
-  ```typescript TypeScript theme={null}
-  import { query } from "@anthropic-ai/claude-agent-sdk";
+```typescript TypeScript theme={null}
+import { query } from "@anthropic-ai/claude-agent-sdk";
 
-  for await (const message of query({
-    prompt: "Triage the open issues in this repo",
-    options: {
-      systemPrompt: {
-        type: "preset",
-        preset: "claude_code",
-        append: "You operate Acme's internal triage workflow. Label issues by component and severity.",
-        excludeDynamicSections: true
-      }
+for await (const message of query({
+  prompt: "Triage the open issues in this repo",
+  options: {
+    systemPrompt: {
+      type: "preset",
+      preset: "claude_code",
+      append: "You operate Acme's internal triage workflow. Label issues by component and severity.",
+      excludeDynamicSections: true
     }
-  })) {
-    // ...
   }
-  ```
+})) {
+  // ...
+}
+```
 
-  ```python Python theme={null}
-  import asyncio
+```python Python theme={null}
+import asyncio
 
-  from claude_agent_sdk import query, ClaudeAgentOptions
-
-
-  async def main():
-      async for message in query(
-          prompt="Triage the open issues in this repo",
-          options=ClaudeAgentOptions(
-              system_prompt={
-                  "type": "preset",
-                  "preset": "claude_code",
-                  "append": "You operate Acme's internal triage workflow. Label issues by component and severity.",
-                  "exclude_dynamic_sections": True,
-              },
-          ),
-      ):
-          ...
+from claude_agent_sdk import query, ClaudeAgentOptions
 
 
-  asyncio.run(main())
-  ```
-</CodeGroup>
+async def main():
+    async for message in query(
+        prompt="Triage the open issues in this repo",
+        options=ClaudeAgentOptions(
+            system_prompt={
+                "type": "preset",
+                "preset": "claude_code",
+                "append": "You operate Acme's internal triage workflow. Label issues by component and severity.",
+                "exclude_dynamic_sections": True,
+            },
+        ),
+    ):
+        ...
+
+
+asyncio.run(main())
+```
 
 **Tradeoffs:** the text that moves out of the system prompt still reaches Claude, but in a user message. That text is at least the auto memory directory's location, and often the whole auto memory section. Instructions in a user message carry marginally less weight than the same text in the system prompt, so Claude may follow its auto memory guidance less consistently. Enable this option when cross-session cache reuse matters more than that.
 
@@ -269,62 +263,60 @@ For the equivalent flag in non-interactive CLI mode, see [`--exclude-dynamic-sys
 
 You can provide a custom string as `systemPrompt` to replace the default entirely with your own instructions.
 
-<CodeGroup>
-  ```typescript TypeScript theme={null}
-  import { query } from "@anthropic-ai/claude-agent-sdk";
+```typescript TypeScript theme={null}
+import { query } from "@anthropic-ai/claude-agent-sdk";
 
-  const customPrompt = `You are a Python coding specialist.
-  Follow these guidelines:
-  - Write clean, well-documented code
-  - Use type hints for all functions
-  - Include comprehensive docstrings
-  - Prefer functional programming patterns when appropriate
-  - Always explain your code choices`;
+const customPrompt = `You are a Python coding specialist.
+Follow these guidelines:
+- Write clean, well-documented code
+- Use type hints for all functions
+- Include comprehensive docstrings
+- Prefer functional programming patterns when appropriate
+- Always explain your code choices`;
 
-  const messages = [];
+const messages = [];
 
-  for await (const message of query({
-    prompt: "Create a data processing pipeline",
-    options: {
-      systemPrompt: customPrompt
-    }
-  })) {
-    messages.push(message);
-    if (message.type === "assistant") {
-      console.log(message.message.content);
-    }
+for await (const message of query({
+  prompt: "Create a data processing pipeline",
+  options: {
+    systemPrompt: customPrompt
   }
-  ```
+})) {
+  messages.push(message);
+  if (message.type === "assistant") {
+    console.log(message.message.content);
+  }
+}
+```
 
-  ```python Python theme={null}
-  import asyncio
+```python Python theme={null}
+import asyncio
 
-  from claude_agent_sdk import query, ClaudeAgentOptions, AssistantMessage
+from claude_agent_sdk import query, ClaudeAgentOptions, AssistantMessage
 
-  custom_prompt = """You are a Python coding specialist.
-  Follow these guidelines:
-  - Write clean, well-documented code
-  - Use type hints for all functions
-  - Include comprehensive docstrings
-  - Prefer functional programming patterns when appropriate
-  - Always explain your code choices"""
+custom_prompt = """You are a Python coding specialist.
+Follow these guidelines:
+- Write clean, well-documented code
+- Use type hints for all functions
+- Include comprehensive docstrings
+- Prefer functional programming patterns when appropriate
+- Always explain your code choices"""
 
-  messages = []
-
-
-  async def main():
-      async for message in query(
-          prompt="Create a data processing pipeline",
-          options=ClaudeAgentOptions(system_prompt=custom_prompt),
-      ):
-          messages.append(message)
-          if isinstance(message, AssistantMessage):
-              print(message.content)
+messages = []
 
 
-  asyncio.run(main())
-  ```
-</CodeGroup>
+async def main():
+    async for message in query(
+        prompt="Create a data processing pipeline",
+        options=ClaudeAgentOptions(system_prompt=custom_prompt),
+    ):
+        messages.append(message)
+        if isinstance(message, AssistantMessage):
+            print(message.content)
+
+
+asyncio.run(main())
+```
 
 In Python, load a large custom prompt from a file with `system_prompt={"type": "file", "path": "..."}` instead of passing it as a string. The Python SDK passes a string prompt as one command-line argument to the CLI subprocess, so a prompt that exceeds the OS argument-length limit fails at process spawn before any API request is sent. On Linux the error is `Argument list too long`. See [`SystemPromptFile`](/docs/en/agent-sdk/python#systempromptfile) for the platform thresholds and the Windows behavior.
 
@@ -332,9 +324,9 @@ In Python, load a large custom prompt from a file with `system_prompt={"type": "
 
 In the TypeScript SDK, you can pass a custom prompt as an array of strings instead of one string, with the `SYSTEM_PROMPT_DYNAMIC_BOUNDARY` marker between the static part and the rest. Use this when your prompt combines instructions that are the same on every request with context that changes per request, such as the customer or ticket the agent is handling. When you pass both parts as one string, a change to the per-request part changes the whole system prompt, so the static instructions miss the cache too. The array form isn't available in the Python SDK; [`ClaudeAgentOptions`](/docs/en/agent-sdk/python#claudeagentoptions) lists the forms `system_prompt` accepts.
 
-<Note>
-  Claude Code splits the prompt only when it calls the Claude API directly or runs on [Claude Platform on AWS](/docs/en/claude-platform-on-aws). In every other configuration, such as Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry, or an [LLM gateway](/docs/en/llm-gateway-connect), it sends the whole prompt as one block, the same as passing one string. The same happens whenever you set [`CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS=1`](/docs/en/llm-gateway-protocol#disable-pre-release-capabilities).
-</Note>
+> [!NOTE]
+>
+> Claude Code splits the prompt only when it calls the Claude API directly or runs on [Claude Platform on AWS](/docs/en/claude-platform-on-aws). In every other configuration, such as Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry, or an [LLM gateway](/docs/en/llm-gateway-connect), it sends the whole prompt as one block, the same as passing one string. The same happens whenever you set [`CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS=1`](/docs/en/llm-gateway-protocol#disable-pre-release-capabilities).
 
 To split the prompt, import `SYSTEM_PROMPT_DYNAMIC_BOUNDARY` from `@anthropic-ai/claude-agent-sdk` and pass it as its own array element between the two parts. The SDK sends the strings before the marker as one text block and the strings after it as a second block, each with its own cache breakpoint. In the example below, a support agent loads its triage instructions from a file and receives details about one ticket on each request, so the instructions stay cached while the ticket details change:
 
@@ -437,53 +429,51 @@ If you set `CLAUDE_CODE_DISABLE_ATTACHMENTS`, Claude Code also sends `@` file me
 
 The following example is for an agent that carries its own commit rules in `append`. It sets both `attribution` keys to empty strings to remove the trailer and footer, and turns off `includeGitInstructions` so Claude Code's own commit workflow instructions don't compete with yours:
 
-<CodeGroup>
-  ```typescript TypeScript theme={null}
-  import { query } from "@anthropic-ai/claude-agent-sdk";
+```typescript TypeScript theme={null}
+import { query } from "@anthropic-ai/claude-agent-sdk";
 
-  for await (const message of query({
-    prompt: "Commit the staged changes for ticket PROJ-142",
-    options: {
-      systemPrompt: {
-        type: "preset",
-        preset: "claude_code",
-        append: "Write commit messages as: <ticket id>: <summary>. Add no trailers."
-      },
-      settings: {
-        includeGitInstructions: false,
-        attribution: { commit: "", pr: "" }
-      },
-      allowedTools: ["Bash(git *)"]
-    }
-  })) {
-    if (message.type === "result") console.log(message.subtype);
+for await (const message of query({
+  prompt: "Commit the staged changes for ticket PROJ-142",
+  options: {
+    systemPrompt: {
+      type: "preset",
+      preset: "claude_code",
+      append: "Write commit messages as: <ticket id>: <summary>. Add no trailers."
+    },
+    settings: {
+      includeGitInstructions: false,
+      attribution: { commit: "", pr: "" }
+    },
+    allowedTools: ["Bash(git *)"]
   }
-  ```
+})) {
+  if (message.type === "result") console.log(message.subtype);
+}
+```
 
-  ```python Python theme={null}
-  import asyncio
-  from claude_agent_sdk import query, ClaudeAgentOptions
-
-
-  async def main():
-      async for message in query(
-          prompt="Commit the staged changes for ticket PROJ-142",
-          options=ClaudeAgentOptions(
-              system_prompt={
-                  "type": "preset",
-                  "preset": "claude_code",
-                  "append": "Write commit messages as: <ticket id>: <summary>. Add no trailers.",
-              },
-              settings='{"includeGitInstructions": false, "attribution": {"commit": "", "pr": ""}}',
-              allowed_tools=["Bash(git *)"],
-          ),
-      ):
-          print(message)
+```python Python theme={null}
+import asyncio
+from claude_agent_sdk import query, ClaudeAgentOptions
 
 
-  asyncio.run(main())
-  ```
-</CodeGroup>
+async def main():
+    async for message in query(
+        prompt="Commit the staged changes for ticket PROJ-142",
+        options=ClaudeAgentOptions(
+            system_prompt={
+                "type": "preset",
+                "preset": "claude_code",
+                "append": "Write commit messages as: <ticket id>: <summary>. Add no trailers.",
+            },
+            settings='{"includeGitInstructions": false, "attribution": {"commit": "", "pr": ""}}',
+            allowed_tools=["Bash(git *)"],
+        ),
+    ):
+        print(message)
+
+
+asyncio.run(main())
+```
 
 To confirm the change, run the example in a repository with staged changes and check the new commit with `git log -1`. The message ends without a `Co-Authored-By` trailer.
 
@@ -521,65 +511,63 @@ The approaches compose. A persistent output style or CLAUDE.md sets the long-liv
 
 The example below assumes a Code Reviewer output style is already active. The `append` block layers session-specific focus areas on top of the persona, so a single review session can prioritize OAuth and token storage without changing the saved output style:
 
-<CodeGroup>
-  ```typescript TypeScript theme={null}
-  import { query } from "@anthropic-ai/claude-agent-sdk";
+```typescript TypeScript theme={null}
+import { query } from "@anthropic-ai/claude-agent-sdk";
 
-  // Assuming "Code Reviewer" output style is active (via /config or settings)
-  // Add session-specific focus areas
-  const messages = [];
+// Assuming "Code Reviewer" output style is active (via /config or settings)
+// Add session-specific focus areas
+const messages = [];
 
-  for await (const message of query({
-    prompt: "Review this authentication module",
-    options: {
-      systemPrompt: {
-        type: "preset",
-        preset: "claude_code",
-        append: `
-          For this review, prioritize:
-          - OAuth 2.0 compliance
-          - Token storage security
-          - Session management
-        `
-      }
+for await (const message of query({
+  prompt: "Review this authentication module",
+  options: {
+    systemPrompt: {
+      type: "preset",
+      preset: "claude_code",
+      append: `
+        For this review, prioritize:
+        - OAuth 2.0 compliance
+        - Token storage security
+        - Session management
+      `
     }
-  })) {
-    messages.push(message);
   }
-  ```
+})) {
+  messages.push(message);
+}
+```
 
-  ```python Python theme={null}
-  import asyncio
+```python Python theme={null}
+import asyncio
 
-  from claude_agent_sdk import query, ClaudeAgentOptions
+from claude_agent_sdk import query, ClaudeAgentOptions
 
-  # Assuming "Code Reviewer" output style is active (via /config or settings)
-  # Add session-specific focus areas
-  messages = []
-
-
-  async def main():
-      async for message in query(
-          prompt="Review this authentication module",
-          options=ClaudeAgentOptions(
-              system_prompt={
-                  "type": "preset",
-                  "preset": "claude_code",
-                  "append": """
-                  For this review, prioritize:
-                  - OAuth 2.0 compliance
-                  - Token storage security
-                  - Session management
-                  """,
-              }
-          ),
-      ):
-          messages.append(message)
+# Assuming "Code Reviewer" output style is active (via /config or settings)
+# Add session-specific focus areas
+messages = []
 
 
-  asyncio.run(main())
-  ```
-</CodeGroup>
+async def main():
+    async for message in query(
+        prompt="Review this authentication module",
+        options=ClaudeAgentOptions(
+            system_prompt={
+                "type": "preset",
+                "preset": "claude_code",
+                "append": """
+                For this review, prioritize:
+                - OAuth 2.0 compliance
+                - Token storage security
+                - Session management
+                """,
+            }
+        ),
+    ):
+        messages.append(message)
+
+
+asyncio.run(main())
+```
 
 ## See also
 

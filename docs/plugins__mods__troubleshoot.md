@@ -181,9 +181,7 @@ Look them up in [Messages from the built-in guard](#messages-from-the-built-in-g
 
 ## A toast appears after a turn is stopped
 
-<h3 id="stopped-type-a-message-to-continue">
-  `Stopped: type a message to continue; a mod cannot resume work after Stop`
-</h3>
+### `Stopped: type a message to continue; a mod cannot resume work after Stop`
 
 This toast means that after you stopped the turn, for example with Esc, a mod tried to start work on its own and Claude Code didn't let it. Nothing needs fixing. After your next message, mods can start work again and [some of that work comes back](/docs/en/plugins/mods/api#work-your-mod-started-before-the-interruption) on its own. If what you expected from the mod doesn't come back, ask for it again or run the mod's command again.
 
@@ -193,9 +191,7 @@ If you wrote the mod, see [Calls and background work after the user interrupts a
 
 The mod loaded, and its pane, band, toast, or controls don't behave as you expect.
 
-<h3 id="another-mods-band-shows-and-yours-doesnt">
-  Another mod's band shows and yours doesn't
-</h3>
+### Another mod's band shows and yours doesn't
 
 There is one band above the prompt, and every mod shares it. A mod that runs [before yours](/docs/en/plugins/mods/events#the-order-mods-run-in) replaces your band when it returns a tree without the result of `next(e)` in it. To show both bands, change that mod's hook, or ask its author to:
 

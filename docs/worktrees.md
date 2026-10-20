@@ -8,12 +8,12 @@
 
 A [git worktree](https://git-scm.com/docs/git-worktree) is a separate working directory with its own files and branch, sharing the same repository history and remote as your main checkout. Running each Claude Code session in its own worktree gives it a separate copy of the files to edit, so one session can build a feature while a second fixes a bug.
 
-<Note>
-  If you use another version control system or the desktop app, follow the instructions for your setup:
-
-  * **Other version control systems**: worktrees require a git repository; [configure hooks to replace the git logic](#non-git-version-control)
-  * **Desktop app**: see [Run a session in its own worktree](/docs/en/desktop#run-a-session-in-its-own-worktree)
-</Note>
+> [!NOTE]
+>
+> If you use another version control system or the desktop app, follow the instructions for your setup:
+>
+> * **Other version control systems**: worktrees require a git repository; [configure hooks to replace the git logic](#non-git-version-control)
+> * **Desktop app**: see [Run a session in its own worktree](/docs/en/desktop#run-a-session-in-its-own-worktree)
 
 Worktrees are one of several ways to run Claude in parallel. They isolate file edits. [Subagents](/docs/en/sub-agents) split work up inside one session, and [cross-session messaging](/docs/en/cross-session-messaging) lets Claude pass findings between the sessions in your worktrees. See [Run agents in parallel](/docs/en/agents) to compare the approaches, or skip ahead to [Isolate subagents with worktrees](#isolate-subagents-with-worktrees) to use worktrees and subagents together.
 
@@ -31,9 +31,9 @@ Run the command again with a different name in another terminal to start a secon
 
 Interactive runs require [workspace trust](/docs/en/security): if you haven't run Claude in the directory before, run `claude` once there to accept the trust dialog, or `--worktree` exits with an error prompting you to. Non-interactive runs with `-p` skip the trust check, so `claude -p --worktree` proceeds without it.
 
-<Tip>
-  Add `.claude/worktrees/` to your `.gitignore` so worktree contents don't appear as untracked files in your main checkout.
-</Tip>
+> [!TIP]
+>
+> Add `.claude/worktrees/` to your `.gitignore` so worktree contents don't appear as untracked files in your main checkout.
 
 ### Set up the worktree environment
 
@@ -45,12 +45,12 @@ You can also ask Claude to "work in a worktree" during a session, and it creates
 
 When Claude enters a path outside the repository's `.claude/worktrees/` directory, Claude Code asks for your approval first, because the move takes the session's working directory, write access, and project configuration such as `CLAUDE.md` and settings to that location. An `EnterWorktree` [permission rule](/docs/en/permissions) or choosing "don't ask again" doesn't suppress this prompt; only `bypassPermissions` mode skips it. Before v2.1.206, Claude could enter any existing worktree path without asking.
 
-<Note>
-  **Hook paths don't follow the worktree.** After Claude enters a worktree, Claude Code keeps `${CLAUDE_PROJECT_DIR}` in your [hooks](/docs/en/hooks#reference-scripts-by-path) where it was and passes the worktree path to them a different way:
-
-  * **`${CLAUDE_PROJECT_DIR}` stays put**: it still points at the project root where the session started, so a hook command such as `${CLAUDE_PROJECT_DIR}/.claude/hooks/check-style.sh` still runs the script in the main checkout.
-  * **`cwd` follows Claude**: the `cwd` field in the hook's [input JSON](/docs/en/hooks#common-input-fields) is the worktree root, and it moves again when Claude runs `cd`. Read it when a hook needs the worktree path.
-</Note>
+> [!NOTE]
+>
+> **Hook paths don't follow the worktree.** After Claude enters a worktree, Claude Code keeps `${CLAUDE_PROJECT_DIR}` in your [hooks](/docs/en/hooks#reference-scripts-by-path) where it was and passes the worktree path to them a different way:
+>
+> * **`${CLAUDE_PROJECT_DIR}` stays put**: it still points at the project root where the session started, so a hook command such as `${CLAUDE_PROJECT_DIR}/.claude/hooks/check-style.sh` still runs the script in the main checkout.
+> * **`cwd` follows Claude**: the `cwd` field in the hook's [input JSON](/docs/en/hooks#common-input-fields) is the worktree root, and it moves again when Claude runs `cd`. Read it when a hook needs the worktree path.
 
 ## Clean up worktrees
 
@@ -76,9 +76,9 @@ Where you launch from, and how you resume, change what Claude Code re-enters:
 * **`--fork-session`**: the forked session starts in the directory you launched Claude from, and Claude Code leaves the original session's worktree untouched.
 * **Deleted worktree**: if the worktree directory no longer exists, Claude Code resumes the session in the directory you launched Claude from. It tells you the worktree is gone and clears the session's worktree binding.
 
-<Note>
-  Before v2.1.212, a non-interactive resume stayed in the starting directory and `ExitWorktree` reported that there was no active worktree session to exit.
-</Note>
+> [!NOTE]
+>
+> Before v2.1.212, a non-interactive resume stayed in the starting directory and `ExitWorktree` reported that there was no active worktree session to exit.
 
 When Claude enters or exits a worktree that Claude Code created with git, the transcript follows: Claude Code records the session under the session's new working directory, the same way [`/cd`](/docs/en/commands) does, so `/desktop` and `--resume` find it there. Exiting moves it back the same way. A worktree created by a [`WorktreeCreate` hook](#non-git-version-control) keeps its transcript at the launch directory. Requires Claude Code v2.1.198 or later.
 
@@ -321,9 +321,7 @@ When Claude Code can't enter the worktree directory at startup, it prints an err
 
 Claude Code refuses to create a worktree when `.claude`, `.claude/worktrees`, or the worktree directory itself is a symlink, and the error names the symlinked path. Remove the symlink and retry. Before v2.1.212, if the repository already contained a committed symlink at one of those paths, worktree creation followed it and could create files outside the repository.
 
-<h3 id="git-lfs-content-is-missing-from-a-worktree-claude-code-created">
-  Git LFS files are pointer files in a worktree Claude Code created
-</h3>
+### Git LFS files are pointer files in a worktree Claude Code created
 
 If you set up [Git LFS](https://git-lfs.com) with `git lfs install --local`, a worktree that Claude Code creates contains LFS pointer files instead of the real files. The `--local` flag writes the LFS filter into the repository's own `.git/config` rather than your global git config. A plain `git lfs install` writes to your global config and isn't affected. The same applies to any other [filter driver](https://git-scm.com/docs/gitattributes) defined in the repository's own config.
 
@@ -352,6 +350,8 @@ Claude Code leaves the refused directory in place, since it may hold work. Match
 * **Says `it cannot be resumed or re-entered`**: nothing in this session vouches for the worktree from where you launched. Recreate it; the directory and its work remain on disk for manual recovery, and when the worktree has a parent checkout, resuming from there also works.
 * **Says `it contains the protected checkout`**: the refused directory is a parent of your main checkout, such as your home directory. Don't delete it. Change the worktree path, such as the path your `WorktreeCreate` hook returns or the `EnterWorktree` target, so the worktree doesn't contain the checkout.
 * **Says `the protected checkout <path> has a .git entry that could not be examined` or `has git metadata that could not be resolved`**: the problem is the main checkout's git metadata, not the worktree's. Don't delete the worktree, and ignore the message's trailing advice to recreate it, which doesn't apply to these two endings. Repair the main checkout, for example a permissions problem or a git `dubious ownership` refusal on its `.git`, and retry.
+
+  Before v2.1.302, with git 2.56 or later, the `could not be resolved` ending also appeared when the `<path>` after `the protected checkout` held a stray `.git` file. Stray here means the path on that file's `gitdir:` line doesn't lead to a valid git repository. To recover, [update Claude Code](/docs/en/setup#update-claude-code) and retry. When that `gitdir:` path no longer exists, you can also delete the `.git` file and retry.
 * **Says `its recorded path has a network spelling`**: Claude Code never resumes into a worktree at a network path. Recreate the worktree at a local path.
 * **Any other ending**: the message names the problem and its fix, such as removing a `core.worktree` redirect or recreating the worktree; follow it. Before deleting a directory whose message says its git identity could not be verified, address the named cause first, for example a symbolic link in the worktree's path or git itself failing to run, since the directory may be healthy. When you do recreate, salvage any changes you need from the old directory first; it stays on disk.
 

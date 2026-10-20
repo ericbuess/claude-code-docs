@@ -65,9 +65,9 @@ on('tool.call', { tool: 'mcp__my-mod__ticket' }, async ($, e) => {
 
 When you ask about a ticket, Claude can call `mcp__my-mod__ticket` with its id. The second hook fetches the ticket and returns the response body, which Claude reads as the tool's result. When the server answers with an error status, Claude reads `Lookup failed with status` and the number.
 
-<Tip>
-  When [MCP tool search](/docs/en/mcp#scale-with-mcp-tool-search) defers a registered tool, Claude sees its name but not its description until it searches for it. If Claude should consider the tool on every turn, add [`isDeferred: false`](/docs/en/plugins/mods/reference#tools) to the registration to [load the full tool upfront](/docs/en/mcp#exempt-a-server-from-deferral). The field requires Claude Code v2.1.293 or later, and earlier versions ignore it.
-</Tip>
+> [!TIP]
+>
+> When [MCP tool search](/docs/en/mcp#scale-with-mcp-tool-search) defers a registered tool, Claude sees its name but not its description until it searches for it. If Claude should consider the tool on every turn, add [`isDeferred: false`](/docs/en/plugins/mods/reference#tools) to the registration to [load the full tool upfront](/docs/en/mcp#exempt-a-server-from-deferral). The field requires Claude Code v2.1.293 or later, and earlier versions ignore it.
 
 ## Call a model
 
@@ -122,9 +122,9 @@ A Claude API failure doesn't reject the call, so check `r.isAnswered`, and read 
 
 To set a breakpoint, pass `prompt` as an array of `{ text }` blocks instead of a string, and add `cache: true` to the last block of the static content. Claude Code sends that block with the API's `cache_control` field. `system` takes the same array form. To decide between them, see [Choose between `prompt` and `system`](#choose-between-prompt-and-system).
 
-<Note>
-  Arrays of blocks require Claude Code v2.1.292 or later. Earlier versions reject an array in `prompt` with an error that ends with `takes { model, prompt } (host check)`, and they leave an array in `system` out of the request.
-</Note>
+> [!NOTE]
+>
+> Arrays of blocks require Claude Code v2.1.292 or later. Earlier versions reject an array in `prompt` with an error that ends with `takes { model, prompt } (host check)`, and they leave an array in `system` out of the request.
 
 This version of the [`/triage` hook](#send-one-prompt) sends a long set of labeling rules before the text to label, with a breakpoint after the rules. `RULES` is a string of your own:
 
@@ -237,7 +237,7 @@ When a call's result or error contains one of these strings, keep its arguments 
 * **`the session was stopped and nobody has sent input since`**: the call was refused
 * **`was removed from the queue before it ran`**: the prompt or command left the queue without running and was dropped, for example when the user stopped the turn
 
-In this example, call `submitPrompt` from your background job in place of [`$.prompt.submit`](#start-a-turn-from-a-background-job). When the result or the error carries one of those strings, `submitPrompt` keeps the text in `pendingText` for the `turn.complete` hook to submit again:
+In this example, call `submitPrompt` from your background job in place of [`$.prompt.submit`](#start-a-turn-from-a-background-job). Put the `pendingText` variable and the `submitPrompt` function above [`register`](/docs/en/plugins/mods/reference#files), and the `turn.complete` hook inside it, because [validation](/docs/en/plugins/mods/create#check-what-claude-code-reads-from-your-mod) refuses `$` passed to a function declared inside `register`. When the result or the error carries one of those strings, `submitPrompt` keeps the text in `pendingText` for the `turn.complete` hook to submit again:
 
 ```javascript theme={null}
 // The text of the last refused or dropped prompt, or null

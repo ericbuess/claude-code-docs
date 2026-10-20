@@ -6,9 +6,9 @@
 
 > Dynamic workflows orchestrate many subagents from a script Claude writes and you can rerun. Use them for codebase audits, large migrations, and cross-checked research.
 
-<Note>
-  Dynamic workflows are available on all paid plans, with Anthropic API access, and on Amazon Bedrock, Google Cloud's Agent Platform, and Microsoft Foundry. On Pro, turn them on from the Dynamic workflows row in `/config`.
-</Note>
+> [!NOTE]
+>
+> Dynamic workflows are available on all paid plans, with Anthropic API access, and on Amazon Bedrock, Google Cloud's Agent Platform, and Microsoft Foundry. On Pro, turn them on from the Dynamic workflows row in `/config`.
 
 A dynamic workflow is a JavaScript script that orchestrates many [subagents](/docs/en/sub-agents) at once. Claude writes the script for the task you describe, and a runtime executes it in the background while your session stays responsive.
 
@@ -35,37 +35,35 @@ Moving the plan into code also lets a workflow apply a repeatable quality patter
 
 The quickest way to see a workflow in action is to run `/deep-research`, the [built-in workflow](#bundled-workflows) Claude Code includes for investigating a question across many sources. You'll see agents work through a set of phases in the background while your session stays free, and get one report at the end instead of a turn-by-turn transcript.
 
-<Steps>
-  <Step title="Run the workflow">
-    Run `/deep-research` with a question you want investigated. It fans out web searches across several angles, fetches and cross-checks the sources it finds, and synthesizes a cited report.
+**1. Run the workflow**
 
-    ```text wrap theme={null}
-    /deep-research What changed in the Node.js permission model between v20 and v22?
-    ```
-  </Step>
+Run `/deep-research` with a question you want investigated. It fans out web searches across several angles, fetches and cross-checks the sources it finds, and synthesizes a cited report.
 
-  <Step title="Allow workflows">
-    Claude Code asks whether to allow the workflow. Select **Yes** to continue. The exact prompt depends on your permission mode. See [Approve the plan before it runs](#approve-the-plan-before-it-runs) for the per-mode options.
-  </Step>
+```text wrap theme={null}
+/deep-research What changed in the Node.js permission model between v20 and v22?
+```
 
-  <Step title="Watch progress">
-    The run starts in the background. Run `/workflows` to open its progress view:
+**2. Allow workflows**
 
-    ```text wrap theme={null}
-    /workflows
-    ```
+Claude Code asks whether to allow the workflow. Select **Yes** to continue. The exact prompt depends on your permission mode. See [Approve the plan before it runs](#approve-the-plan-before-it-runs) for the per-mode options.
 
-    If `/workflows` shows a list of runs instead, select the run you just started and press Enter. The view shows each phase with its agent count. Drill into any phase to see its agents and what each one found. See [Watch the run](#watch-the-run) for the full set of controls.
+**3. Watch progress**
 
-    You can also watch from the task panel below the input box: a one-line progress summary appears there while the run is going. Press the down arrow to focus it, then Enter to expand.
-  </Step>
+The run starts in the background. Run `/workflows` to open its progress view:
 
-  <Step title="Read the report">
-    When the run finishes, the report appears in your session. It cites the sources each claim came from, with claims that didn't survive cross-checking already filtered out.
+```text wrap theme={null}
+/workflows
+```
 
-    When the verifier agents can't check a claim, such as after a rate limit or API error, the report lists that claim as unverified instead of counting it as refuted.
-  </Step>
-</Steps>
+If `/workflows` shows a list of runs instead, select the run you just started and press Enter. The view shows each phase with its agent count. Drill into any phase to see its agents and what each one found. See [Watch the run](#watch-the-run) for the full set of controls.
+
+You can also watch from the task panel below the input box: a one-line progress summary appears there while the run is going. Press the down arrow to focus it, then Enter to expand.
+
+**4. Read the report**
+
+When the run finishes, the report appears in your session. It cites the sources each claim came from, with claims that didn't survive cross-checking already filtered out.
+
+When the verifier agents can't check a claim, such as after a rate limit or API error, the report lists that claim as unverified instead of counting it as refuted.
 
 To run a workflow for your own task, [have Claude write one](#have-claude-write-a-workflow), and once a run does what you wanted you can [save it](#save-the-workflow-for-reuse) as a command of your own.
 

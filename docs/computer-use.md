@@ -6,9 +6,9 @@
 
 > Enable computer use in the Claude Code CLI so Claude can open apps, click, type, and see your screen on macOS. Test native apps, debug visual issues, and automate GUI-only tools without leaving your terminal.
 
-<Note>
-  Computer use is a research preview on macOS that requires a Pro or Max plan. It is not available on Team or Enterprise plans. It requires an interactive session, so it is not available in non-interactive mode with the `-p` flag.
-</Note>
+> [!NOTE]
+>
+> Computer use is a research preview on macOS that requires a Pro or Max plan. It is not available on Team or Enterprise plans. It requires an interactive session, so it is not available in non-interactive mode with the `-p` flag.
 
 Computer use lets Claude open apps, control your screen, and work on your machine the way you would. From the CLI, Claude can compile a Swift app, launch it, click through every button, and screenshot the result, all in the same conversation where it wrote the code.
 
@@ -38,30 +38,28 @@ Screen control is reserved for things nothing else can reach: native apps, simul
 
 Computer use is available as a built-in MCP server called `computer-use`. It's off by default until you enable it.
 
-<Steps>
-  <Step title="Open the MCP menu">
-    In an interactive Claude Code session, run:
+**1. Open the MCP menu**
 
-    ```text theme={null}
-    /mcp
-    ```
+In an interactive Claude Code session, run:
 
-    Find `computer-use` in the server list. It shows as disabled.
-  </Step>
+```text theme={null}
+/mcp
+```
 
-  <Step title="Enable the server">
-    Select `computer-use` and choose **Enable**. The setting persists per project, so you only do this once for each project where you want computer use.
-  </Step>
+Find `computer-use` in the server list. It shows as disabled.
 
-  <Step title="Grant macOS permissions">
-    The first time Claude tries to use your computer, you'll see a prompt to grant two macOS permissions:
+**2. Enable the server**
 
-    * **Accessibility**: lets Claude click, type, and scroll
-    * **Screen Recording**: lets Claude see what's on your screen
+Select `computer-use` and choose **Enable**. The setting persists per project, so you only do this once for each project where you want computer use.
 
-    The prompt includes links to open the relevant System Settings pane. Grant both, then select **Try again** in the prompt. macOS may require you to restart Claude Code after granting Screen Recording.
-  </Step>
-</Steps>
+**3. Grant macOS permissions**
+
+The first time Claude tries to use your computer, you'll see a prompt to grant two macOS permissions:
+
+* **Accessibility**: lets Claude click, type, and scroll
+* **Screen Recording**: lets Claude see what's on your screen
+
+The prompt includes links to open the relevant System Settings pane. Grant both, then select **Try again** in the prompt. macOS may require you to restart Claude Code after granting Screen Recording.
 
 After setup, ask Claude to do something that needs the GUI:
 
@@ -122,9 +120,9 @@ A second notification appears when Claude is done.
 
 ## Safety and the trust boundary
 
-<Warning>
-  Unlike the [sandboxed Bash tool](/docs/en/sandboxing), computer use runs on your actual desktop with access to the apps you approve. Claude checks each action and flags potential prompt injection from on-screen content, but the trust boundary is different. See the [computer use safety guide](https://support.claude.com/en/articles/14128542) for best practices.
-</Warning>
+> [!WARNING]
+>
+> Unlike the [sandboxed Bash tool](/docs/en/sandboxing), computer use runs on your actual desktop with access to the apps you approve. Claude checks each action and flags potential prompt injection from on-screen content, but the trust boundary is different. See the [computer use safety guide](https://support.claude.com/en/articles/14128542) for best practices.
 
 The built-in guardrails reduce risk without requiring configuration:
 

@@ -97,47 +97,45 @@ If your identity provider authenticates OAuth clients with a certificate instead
 
 With this configuration the gateway sends no secret. It authenticates to the IdP's token endpoint with a short-lived JWT signed with the certificate's private key when a developer signs in and each time the gateway refreshes their session. The JWT is signed with RS256 and identifies the certificate by `x5t` and `x5t#S256` thumbprint headers rather than a `kid`. Your IdP must be able to find the registered certificate by thumbprint.
 
-<Steps>
-  <Step title="Create the key and certificate">
-    Create an unencrypted RSA private key of at least 2048 bits, in PKCS#8 or PKCS#1 PEM form, and a certificate for it. The gateway refuses to start with any key that doesn't meet these conditions. This `openssl` command creates such a key with a self-signed certificate that is valid for one year:
+**1. Create the key and certificate**
 
-    ```bash theme={null}
-    openssl req -x509 -newkey rsa:2048 -nodes -keyout idp-client.key -out idp-client.crt -days 365 -subj "/CN=claude-gateway"
-    ```
+Create an unencrypted RSA private key of at least 2048 bits, in PKCS#8 or PKCS#1 PEM form, and a certificate for it. The gateway refuses to start with any key that doesn't meet these conditions. This `openssl` command creates such a key with a self-signed certificate that is valid for one year:
 
-    It writes `idp-client.key` and `idp-client.crt` to the current directory. Copy or mount both files where the gateway can read them. The example in step 3 uses `/etc/gateway/`.
-  </Step>
+```bash theme={null}
+openssl req -x509 -newkey rsa:2048 -nodes -keyout idp-client.key -out idp-client.crt -days 365 -subj "/CN=claude-gateway"
+```
 
-  <Step title="Upload the certificate to the IdP">
-    Upload the certificate, not the private key, to the gateway's app registration at the IdP.
-  </Step>
+It writes `idp-client.key` and `idp-client.crt` to the current directory. Copy or mount both files where the gateway can read them. The example in step 3 uses `/etc/gateway/`.
 
-  <Step title="Add the key and certificate to gateway.yaml">
-    Give the gateway the private key and the certificate in a `client_assertion` block. Leave `client_secret` out, because the gateway refuses to start when one is set together with `private_key_jwt`. This `oidc` block authenticates the gateway to a Microsoft Entra tenant with a certificate:
+**2. Upload the certificate to the IdP**
 
-    ```yaml theme={null}
-    oidc:
-      issuer: https://login.microsoftonline.com/<tenant-id>/v2.0
-      client_id: <application-id>
-      token_endpoint_auth_method: private_key_jwt
-      client_assertion:
-        private_key_pem: ${file:/etc/gateway/idp-client.key}
-        certificate_pem: ${file:/etc/gateway/idp-client.crt}
-    ```
+Upload the certificate, not the private key, to the gateway's app registration at the IdP.
 
-    Both values are the PEM contents, not file paths, so load mounted files with `${file:/path}` as the example does. The gateway refuses to start unless `certificate_pem` is a single PEM certificate, without the rest of its chain, whose public key matches `private_key_pem`.
-  </Step>
+**3. Add the key and certificate to gateway.yaml**
 
-  <Step title="Restart the gateway and check the boot log">
-    Restart the gateway and find this line in the boot log:
+Give the gateway the private key and the certificate in a `client_assertion` block. Leave `client_secret` out, because the gateway refuses to start when one is set together with `private_key_jwt`. This `oidc` block authenticates the gateway to a Microsoft Entra tenant with a certificate:
 
-    ```text theme={null}
-    [gateway] 2026-10-01T23:07:40.512Z info oidc: client authentication private_key_jwt; certificate CN=claude-gateway, SHA-1 thumbprint DE92821854EE8BAA1D98C758FAA04AABE80B9F57, expires Oct  1 23:07:31 2027 GMT
-    ```
+```yaml theme={null}
+oidc:
+  issuer: https://login.microsoftonline.com/<tenant-id>/v2.0
+  client_id: <application-id>
+  token_endpoint_auth_method: private_key_jwt
+  client_assertion:
+    private_key_pem: ${file:/etc/gateway/idp-client.key}
+    certificate_pem: ${file:/etc/gateway/idp-client.crt}
+```
 
-    Compare the SHA-1 thumbprint with the one the IdP shows for the certificate you uploaded. If the certificate has expired or isn't valid yet, the gateway still starts but logs a warning that sign-ins and refreshes will fail until you replace it. To confirm that the IdP accepts the certificate, have one developer sign in through the gateway.
-  </Step>
-</Steps>
+Both values are the PEM contents, not file paths, so load mounted files with `${file:/path}` as the example does. The gateway refuses to start unless `certificate_pem` is a single PEM certificate, without the rest of its chain, whose public key matches `private_key_pem`.
+
+**4. Restart the gateway and check the boot log**
+
+Restart the gateway and find this line in the boot log:
+
+```text theme={null}
+[gateway] 2026-10-01T23:07:40.512Z info oidc: client authentication private_key_jwt; certificate CN=claude-gateway, SHA-1 thumbprint DE92821854EE8BAA1D98C758FAA04AABE80B9F57, expires Oct  1 23:07:31 2027 GMT
+```
+
+Compare the SHA-1 thumbprint with the one the IdP shows for the certificate you uploaded. If the certificate has expired or isn't valid yet, the gateway still starts but logs a warning that sign-ins and refreshes will fail until you replace it. To confirm that the IdP accepts the certificate, have one developer sign in through the gateway.
 
 #### Rotate the client certificate
 
@@ -186,9 +184,9 @@ When one of those conditions isn't met, the gateway logs a warning at boot namin
 
 Once proxy-only egress is active, allow every destination in the proxy, including an internal collector and any host configured by IP address. You can still keep an internal IdP direct with [`oidc.use_proxy: false`](#idp-requests-through-a-forward-proxy).
 
-<Warning>
-  Turn this on only when the proxy's allowlist is at least as strict as the gateway's own check. The proxy must refuse cloud metadata endpoints such as `169.254.169.254` and `metadata.google.internal`, link-local addresses, and the proxy host's own loopback, and it must refuse them by the address a name resolves to, not only by name, because the gateway no longer catches a hostname that resolves to one of them. A proxy that connects anywhere it's asked removes the gateway's [SSRF guard](/docs/en/claude-apps-gateway-deploy#threat-model-summary) for these requests.
-</Warning>
+> [!WARNING]
+>
+> Turn this on only when the proxy's allowlist is at least as strict as the gateway's own check. The proxy must refuse cloud metadata endpoints such as `169.254.169.254` and `metadata.google.internal`, link-local addresses, and the proxy host's own loopback, and it must refuse them by the address a name resolves to, not only by name, because the gateway no longer catches a hostname that resolves to one of them. A proxy that connects anywhere it's asked removes the gateway's [SSRF guard](/docs/en/claude-apps-gateway-deploy#threat-model-summary) for these requests.
 
 ### `session`
 
@@ -279,8 +277,6 @@ upstreams:
       # service_account_id: svac_...   # optional expected-target check
 ```
 
-<a id="per-user-identity-headers-for-a-proxy-you-run" />
-
 ##### Per-user identity headers for a proxy you run
 
 You can point a `provider: anthropic` upstream's `base_url` at a proxy you run instead of at the Anthropic API. To tell that proxy which developer sent each request, set `forward_user_identity: true` on that upstream. The proxy can then attribute spend per developer. Requires a gateway running Claude Code v2.1.233 or later.
@@ -312,9 +308,9 @@ When your proxy answers `429` to a request that carried the developer's email, t
 
 Set `forward_user_identity` only on an upstream whose `base_url` is a proxy you operate. The gateway sends developer emails to whatever server that `base_url` names. If the `base_url` is the Anthropic API, which is the default, the gateway refuses to start.
 
-<Note>
-  If you set `forward_user_identity` on an Amazon Bedrock upstream, the gateway exits at startup with `Unrecognized key(s) in object: 'forward_user_identity'`. If your proxy sits in front of Bedrock, list it as a `provider: anthropic` upstream instead. The gateway sends that upstream the Anthropic Messages format, so your proxy has to [translate requests for Bedrock](/docs/en/llm-gateway-protocol#format-mismatch-with-the-upstream). To name each developer to AWS instead, see [Per-developer AWS cost attribution](#per-developer-aws-cost-attribution).
-</Note>
+> [!NOTE]
+>
+> If you set `forward_user_identity` on an Amazon Bedrock upstream, the gateway exits at startup with `Unrecognized key(s) in object: 'forward_user_identity'`. If your proxy sits in front of Bedrock, list it as a `provider: anthropic` upstream instead. The gateway sends that upstream the Anthropic Messages format, so your proxy has to [translate requests for Bedrock](/docs/en/llm-gateway-protocol#format-mismatch-with-the-upstream). To name each developer to AWS instead, see [Per-developer AWS cost attribution](#per-developer-aws-cost-attribution).
 
 #### Amazon Bedrock
 
@@ -350,8 +346,6 @@ Explicit credentials must be complete: the gateway fails at boot when `aws_acces
 | Anywhere else | Pass credentials via the `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, and `AWS_SESSION_TOKEN` env vars, or set them explicitly in `auth:` with `${VAR}` expansion |
 | Region | `region:` is the API endpoint region. Cross-region inference profiles route across the geo (US, EU, APAC) regardless of which one you pick. For non-US regions or provisioned-throughput ARNs, add a [`models:`](#models) block with the right per-upstream IDs. |
 
-<a id="apply-an-amazon-bedrock-guardrail" />
-
 ##### Apply an Amazon Bedrock guardrail
 
 To apply an Amazon Bedrock guardrail to every inference request the gateway sends through a Bedrock upstream, add a `guardrail` block to that upstream. Requires Claude Code v2.1.281 or later on the gateway server.
@@ -367,9 +361,9 @@ upstreams:
                                        # keep the quotes: a bare 1 fails at boot
 ```
 
-<Warning>
-  The gateway doesn't support guardrail input tags. It adds no guard content tags to prompts, so a guardrail filter that Amazon Bedrock applies only to tagged input doesn't run on traffic through the gateway. For which filters depend on input tags, see [input tags](https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails-tagging.html) in the Amazon Bedrock documentation.
-</Warning>
+> [!WARNING]
+>
+> The gateway doesn't support guardrail input tags. It adds no guard content tags to prompts, so a guardrail filter that Amazon Bedrock applies only to tagged input doesn't run on traffic through the gateway. For which filters depend on input tags, see [input tags](https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails-tagging.html) in the Amazon Bedrock documentation.
 
 Also grant `bedrock:ApplyGuardrail` on the guardrail to the principal that signs this upstream's requests: the gateway's AWS principal, or with [`assume_role`](#bedrock-in-another-aws-account) the role named in `role_arn`.
 
@@ -378,8 +372,6 @@ Set `guardrail` on every `bedrock` upstream or on none. The gateway refuses to s
 The guardrail covers Bedrock upstreams only. If you list another provider in `upstreams`, the gateway sends requests to that provider without the guardrail, or refuses to start if that provider is [`mantle`](#amazon-bedrock-mantle-endpoint).
 
 When a `/v1/messages` request whose body carries an `amazon-bedrock-*` field, such as `amazon-bedrock-guardrailConfig`, reaches a Bedrock upstream that has `guardrail` set, the gateway answers 400 instead of forwarding it.
-
-<a id="bedrock-in-another-aws-account" />
 
 ##### Bedrock in another AWS account
 
@@ -433,8 +425,6 @@ models:
     upstream_model:
       bedrock-isolated: us.anthropic.claude-opus-4-8   # the only upstream that serves it
 ```
-
-<a id="per-developer-aws-cost-attribution" />
 
 ##### Per-developer AWS cost attribution
 
@@ -856,18 +846,18 @@ The gateway validates the `model` value itself before it relays a request, so a 
 
 An authenticated user who matches no policy gets the gateway's defaults, which means every model in the catalog and no managed settings. Add a `match: {}` catch-all last if you want a guaranteed default policy.
 
-<Note>
-  The gateway keeps no user directory of its own. It authorizes each request from the user's IdP token, reading group membership from the token's `groups` claim and evaluating policies against it. There is no roster to enumerate and no accounts to pre-create, and therefore no SCIM endpoint, because there is nothing for SCIM to sync into.
-
-  Run user and group lifecycle management at the source of truth, which is your IdP's native SCIM provisioning or a dedicated identity-governance platform. Membership and deprovisioning governed there flow into the gateway automatically through the token. If you want SCIM provisioning of Claude accounts themselves, that is a [Claude for Enterprise](/docs/en/admin-setup) capability.
-
-  Two propagation clocks apply:
-
-  * **Policy contents**: editing a policy and redeploying reaches connected Claude Code clients on their next managed-settings poll, within an hour, apart from the [changes that apply only at the next launch](/docs/en/server-managed-settings#fetch-and-caching-behavior)
-  * **Group membership**: changing a user's group membership changes which policy matches them. This takes effect on the next session re-mint, meaning the next silent refresh, bounded by `session.ttl_hours`.
-
-  Claude Desktop follows [its own schedule](#when-a-policy-change-reaches-claude-desktop).
-</Note>
+> [!NOTE]
+>
+> The gateway keeps no user directory of its own. It authorizes each request from the user's IdP token, reading group membership from the token's `groups` claim and evaluating policies against it. There is no roster to enumerate and no accounts to pre-create, and therefore no SCIM endpoint, because there is nothing for SCIM to sync into.
+>
+> Run user and group lifecycle management at the source of truth, which is your IdP's native SCIM provisioning or a dedicated identity-governance platform. Membership and deprovisioning governed there flow into the gateway automatically through the token. If you want SCIM provisioning of Claude accounts themselves, that is a [Claude for Enterprise](/docs/en/admin-setup) capability.
+>
+> Two propagation clocks apply:
+>
+> * **Policy contents**: editing a policy and redeploying reaches connected Claude Code clients on their next managed-settings poll, within an hour, apart from the [changes that apply only at the next launch](/docs/en/server-managed-settings#fetch-and-caching-behavior)
+> * **Group membership**: changing a user's group membership changes which policy matches them. This takes effect on the next session re-mint, meaning the next silent refresh, bounded by `session.ttl_hours`.
+>
+> Claude Desktop follows [its own schedule](#when-a-policy-change-reaches-claude-desktop).
 
 #### Start sessions on a model the policy allows
 
@@ -908,12 +898,12 @@ Before v2.1.232, the gateway started with these values. Each value had this effe
 
 #### Choose `cli` or `code`
 
-<Warning>
-  When a policy uses the `code` key, each of these stops the gateway from starting:
-
-  * **Gateway version**: `code` requires Claude Code v2.1.296 or later on the gateway server. An earlier gateway refuses to start when it finds the key. Upgrade every replica before you add the key, and change `code` back to `cli` before you roll back to an earlier version.
-  * **Mixed keys**: a file that has both `code` and `cli`, or its earlier spelling `settings`, stops the gateway at boot. Put every block under one key, in one edit.
-</Warning>
+> [!WARNING]
+>
+> When a policy uses the `code` key, each of these stops the gateway from starting:
+>
+> * **Gateway version**: `code` requires Claude Code v2.1.296 or later on the gateway server. An earlier gateway refuses to start when it finds the key. Upgrade every replica before you add the key, and change `code` back to `cli` before you roll back to an earlier version.
+> * **Mixed keys**: a file that has both `code` and `cli`, or its earlier spelling `settings`, stops the gateway at boot. Put every block under one key, in one edit.
 
 A policy's Claude Code settings, such as a rule that denies reading `.env` files, go in a block under the `cli` or `code` key. `code` is the recommended key, and `cli` is the legacy key. Both keys take the same contents. The key decides where the settings are enforced:
 
@@ -1045,9 +1035,9 @@ The gateway rejects the `.mcp.json` spelling `mcpServers` in a `cli` block, and 
 
 If your organization also deploys [Claude Desktop](/docs/en/desktop), the same gateway serves both clients. Point `bootstrapUrl`, in Claude Desktop's [managed configuration](https://claude.com/docs/third-party/claude-desktop/configuration), at `<listen.public_url>/user/bootstrap`. Claude Desktop derives the OAuth issuer from that URL, runs the same device-code sign-in against this gateway, and fetches its configuration from the response.
 
-<Note>
-  Requires Claude Code v2.1.203 or later on the gateway server, and an explicit opt-in: `/user/bootstrap` returns 404 unless the policy matching the user carries a `desktop` key. An empty `desktop: {}` opts a policy in, and a `desktop` key on the `match: {}` base layer opts in every policy that inherits it. The audit log records each request as `desktop_bootstrap.serve` or `desktop_bootstrap.denied`.
-</Note>
+> [!NOTE]
+>
+> Requires Claude Code v2.1.203 or later on the gateway server, and an explicit opt-in: `/user/bootstrap` returns 404 unless the policy matching the user carries a `desktop` key. An empty `desktop: {}` opts a policy in, and a `desktop` key on the `match: {}` base layer opts in every policy that inherits it. The audit log records each request as `desktop_bootstrap.serve` or `desktop_bootstrap.denied`.
 
 If you don't deploy Claude Desktop, leave `desktop` out of your policies entirely; the gateway then returns 404 from `/user/bootstrap` for every user.
 
@@ -1065,8 +1055,6 @@ The gateway derives much of the bootstrap response from the matched policy's `cl
 To set `disabledBuiltinTools`, `coworkEgressAllowedHosts`, or Claude Desktop's own `managedMcpServers` setting in a policy's `desktop` block, you need Claude Code v2.1.232 or later on the gateway server. Claude Desktop's `managedMcpServers` takes an array value rather than an object.
 
 The gateway omits keys with no Claude Desktop equivalent, such as `hooks` and scoped permission rules like `Bash(npm *)`, from the bootstrap response.
-
-<a id="apply-code-settings-in-the-code-tab" />
 
 ##### Apply `code` settings in the Code tab
 
@@ -1230,14 +1218,14 @@ telemetry:
         DD-API-KEY: ${DD_API_KEY}
 ```
 
-<Warning>
-  Each destination opts into `metrics`, `logs`, and `traces` independently, and the default is metrics only. The signals differ in sensitivity:
-
-  * **Metrics**: aggregate counters such as token counts, request counts, and latency
-  * **Logs and traces**: can carry full Bash commands, tool inputs, and file paths, covering anything Claude Code does on a developer's machine
-
-  Enable logs and traces only on destinations with the access controls and retention policy that data warrants.
-</Warning>
+> [!WARNING]
+>
+> Each destination opts into `metrics`, `logs`, and `traces` independently, and the default is metrics only. The signals differ in sensitivity:
+>
+> * **Metrics**: aggregate counters such as token counts, request counts, and latency
+> * **Logs and traces**: can carry full Bash commands, tool inputs, and file paths, covering anything Claude Code does on a developer's machine
+>
+> Enable logs and traces only on destinations with the access controls and retention policy that data warrants.
 
 Each `forward_to` URL must use `https://`, with one exception for a collector on the gateway's own loopback interface:
 
@@ -1423,9 +1411,9 @@ While the mode is on, a request can carry an `x-load-test-user` header holding a
 
 Give the load-test deployment its own empty database, because the gateway refuses to start with the mode on against a database in which any developer has already spent anything.
 
-<Warning>
-  Never turn this on for a gateway that developers use. Every request gets the canned reply and no model is called. The gateway logs a `load_test_mode is on` warning at boot and marks each `inference` [audit event](/docs/en/claude-apps-gateway-deploy#logs) with `load_test: true` while the mode is on.
-</Warning>
+> [!WARNING]
+>
+> Never turn this on for a gateway that developers use. Every request gets the canned reply and no model is called. The gateway logs a `load_test_mode is on` warning at boot and marks each `inference` [audit event](/docs/en/claude-apps-gateway-deploy#logs) with `load_test: true` while the mode is on.
 
 ## Complete example
 

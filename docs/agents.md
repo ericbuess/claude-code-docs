@@ -30,9 +30,9 @@ A few other features run Claude without you driving each step, but they solve a 
 * A [forked subagent](/docs/en/sub-agents#fork-the-current-conversation) is a subagent that inherits your full conversation context instead of starting fresh. It's a way to spawn a subagent, not a separate surface. Start one with `/subtask`. Claude also spawns one itself where [fork mode](/docs/en/sub-agents#turn-fork-mode-on-or-off) is on. To copy the whole session into a new [background session](/docs/en/agent-view#from-inside-a-session) that runs alongside it, use `/fork`. With [agent view turned off](/docs/en/agent-view#turn-off-agent-view), the forked-subagent command is `/fork` instead and `/subtask` isn't available.
 * A [cloud scheduled task](/docs/en/routines) runs a session on a schedule in the cloud, not in parallel on your machine.
 
-<Note>
-  Running several sessions or subagents at once multiplies token usage. See [Costs](/docs/en/costs) for usage and rate-limit details.
-</Note>
+> [!NOTE]
+>
+> Running several sessions or subagents at once multiplies token usage. See [Costs](/docs/en/costs) for usage and rate-limit details.
 
 ## Choose an approach
 

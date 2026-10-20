@@ -10,9 +10,9 @@ Isolating Claude Code limits what a session can read, write, and reach on the ne
 
 Claude Code can run in several kinds of isolated environments, ranging from a lightweight per-command sandbox to a fully separate virtual machine. This page compares them by what they isolate and what they require, helps you choose one for your threat model, and shows how to enforce that choice across an organization.
 
-<Info>
-  For the broader security model, see [Security](/docs/en/security). For Agent SDK deployments, see [Secure deployment](/docs/en/agent-sdk/secure-deployment).
-</Info>
+> [!NOTE]
+>
+> For the broader security model, see [Security](/docs/en/security). For Agent SDK deployments, see [Secure deployment](/docs/en/agent-sdk/secure-deployment).
 
 ## Compare sandboxing approaches
 
@@ -29,11 +29,11 @@ The first two approaches in the table below run on the host operating system wit
 
 The [sandboxed Bash tool](/docs/en/sandboxing) is built into Claude Code and restricts Bash commands. Built-in file tools, MCP servers, and hooks still run directly on your host. Every other approach in the table puts the whole Claude Code process inside the isolation boundary, so file tools, MCP servers, and hooks are restricted too.
 
-<Warning>
-  Sandbox isolation reduces the impact of a breach, but it does not eliminate risk. Any approach that allows network egress can still leak data the agent can read, and any approach that mounts your project directory writable can still modify that code. Review the [security limitations](/docs/en/sandboxing#security-limitations) before relying on a sandbox as a hard control.
-
-  Isolation also does not change what is sent to the model. Your prompts and the files Claude reads are transmitted to the Anthropic API or your configured provider with or without a sandbox. See [Data usage](/docs/en/data-usage) for what Claude Code sends and how to reduce it.
-</Warning>
+> [!WARNING]
+>
+> Sandbox isolation reduces the impact of a breach, but it does not eliminate risk. Any approach that allows network egress can still leak data the agent can read, and any approach that mounts your project directory writable can still modify that code. Review the [security limitations](/docs/en/sandboxing#security-limitations) before relying on a sandbox as a hard control.
+>
+> Isolation also does not change what is sent to the model. Your prompts and the files Claude reads are transmitted to the Anthropic API or your configured provider with or without a sandbox. See [Data usage](/docs/en/data-usage) for what Claude Code sends and how to reduce it.
 
 ## Choose an approach
 
@@ -64,9 +64,9 @@ The [sandboxed Bash tool](#sandboxed-bash-tool) on its own constrains only shell
 
 ## Sandboxed Bash tool
 
-<Note>
-  This option does not support native Windows. On Windows hosts, use WSL2 or one of the container or VM approaches below.
-</Note>
+> [!NOTE]
+>
+> This option does not support native Windows. On Windows hosts, use WSL2 or one of the container or VM approaches below.
 
 The sandboxed Bash tool is built into Claude Code. It uses operating system primitives to restrict the filesystem and network access of Bash, PowerShell, and Monitor tool commands Claude runs.
 

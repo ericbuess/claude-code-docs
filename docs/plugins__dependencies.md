@@ -10,19 +10,19 @@ A plugin dependency is another plugin that your plugin relies on, such as one wh
 
 This page is for plugin authors who declare dependencies in `plugin.json` and for marketplace maintainers who tag releases.
 
-<Note>
-  These cases are covered on other pages:
-
-  * **Installing a plugin that has dependencies**: see [Manage installed plugins](/docs/en/plugins/install#manage-installed-plugins)
-  * **Reading a dependency error**: see [Dependency errors](/docs/en/plugins/troubleshooting#dependency-errors)
-  * **Declaring the npm and Bun packages that your plugin's own code needs**: see [Node.js package dependencies](/docs/en/plugins/loading#node-js-package-dependencies)
-</Note>
+> [!NOTE]
+>
+> These cases are covered on other pages:
+>
+> * **Installing a plugin that has dependencies**: see [Manage installed plugins](/docs/en/plugins/install#manage-installed-plugins)
+> * **Reading a dependency error**: see [Dependency errors](/docs/en/plugins/troubleshooting#dependency-errors)
+> * **Declaring the npm and Bun packages that your plugin's own code needs**: see [Node.js package dependencies](/docs/en/plugins/loading#node-js-package-dependencies)
 
 To add a constraint, start at [Declare a dependency with a version constraint](#declare-a-dependency-with-a-version-constraint). If you maintain a plugin that others depend on, [tag your releases](#tag-plugin-releases-for-version-resolution) so their constraints can resolve.
 
 ## Declare dependencies
 
-<span id="decide-whether-to-constrain-dependency-versions" />Without a version constraint, a dependency moves to each new release its marketplace publishes the next time users update. If that release renames an MCP tool your plugin calls, your plugin breaks for everyone who updates.
+Without a version constraint, a dependency moves to each new release its marketplace publishes the next time users update. If that release renames an MCP tool your plugin calls, your plugin breaks for everyone who updates.
 
 With a constraint such as `~2.1.0` on a dependency from a git-backed source, users who have your plugin installed keep receiving `2.1.x` patches of the dependency and never move to `2.2`. To upgrade on your own schedule, test against a newer release and then publish a new version of your plugin with a wider constraint.
 
@@ -131,9 +131,7 @@ Until you install the dependency from its marketplace, your plugin stops loading
 
 When both plugins are in one parent folder, you can pass that folder to `--plugin-dir` once. If the folder isn't itself a plugin, Claude Code loads each child folder that has a `.claude-plugin/plugin.json`. Requires Claude Code v2.1.265 or later.
 
-<h2 id="tag-plugin-releases-for-version-resolution">
-  Release a plugin that others depend on
-</h2>
+## Release a plugin that others depend on
 
 If you maintain a plugin that other plugins depend on with a version constraint, tag its releases so those constraints can resolve. A constraint resolves against git tags on the repository that hosts the plugin. Tag the repository that the plugin's [plugin source](/docs/en/plugins/marketplace-reference#plugin-sources) in `marketplace.json` points at:
 

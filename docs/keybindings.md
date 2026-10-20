@@ -12,7 +12,9 @@ Claude Code supports customizable keyboard shortcuts. Run `/keybindings` to crea
 
 The keybindings configuration file is an object with a `bindings` array. Each block specifies a context and a map of keystrokes to actions.
 
-<Note>Changes to the keybindings file are automatically detected and applied without restarting Claude Code.</Note>
+> [!NOTE]
+>
+> Changes to the keybindings file are automatically detected and applied without restarting Claude Code.
 
 | Field | Description |
 | :- | :- |
@@ -692,6 +694,7 @@ Claude Code validates your keybindings and writes a warning to the debug log for
 
 * Parse errors (invalid JSON or structure)
 * Misspelled modifiers, such as `ctl+k`. Claude Code drops the part it doesn't recognize and applies the binding to the keystroke that remains, `k` in this example.
+* A space next to `+` in a key string, such as `ctrl+ k`. Claude Code reads the string as a [chord](#chords) of `ctrl+` followed by `k`. No keypress matches `ctrl+` on its own, so the binding never fires. Remove the space.
 * Invalid context names
 * Invalid action values, such as an action that isn't a string or `null`
 * Unknown action names, such as a typo of a registered action. Claude Code skips the binding and keeps any default binding for that key in effect.

@@ -66,9 +66,9 @@ Bare mode also limits what happens while the session runs:
 
 Before v2.1.286, these limits held only partly: an interactive `--bare` session connected the MCP servers that a normal session would, every `--bare` session sent system reminders, and background tasks stayed available.
 
-<Note>
-  `--bare` is the recommended mode for scripted and SDK calls, and will become the default for `-p` in a future release.
-</Note>
+> [!NOTE]
+>
+> `--bare` is the recommended mode for scripted and SDK calls, and will become the default for `-p` in a future release.
 
 ### Background tasks at exit
 
@@ -120,9 +120,9 @@ cat build-error.txt | claude -p 'concisely explain the root cause of this build 
 
 With `--output-format json`, the response payload includes `total_cost_usd` and a per-model cost breakdown, so scripted callers can track spend without consulting the [usage dashboard](/docs/en/costs). When you continue an earlier conversation with `--continue` or `--resume`, the run reports the conversation's whole total, [earlier runs' spend included](/docs/en/agent-sdk/cost-tracking#accumulate-costs-across-multiple-calls). Both figures are [client-side estimates](/docs/en/agent-sdk/cost-tracking) and can differ from your actual bill.
 
-<Note>
-  Piped stdin is capped at 10MB. If you exceed the cap, Claude Code exits with a clear error and a non-zero status. To work with larger inputs, write the content to a file and reference the file path in your prompt instead of piping it.
-</Note>
+> [!NOTE]
+>
+> Piped stdin is capped at 10MB. If you exceed the cap, Claude Code exits with a clear error and a non-zero status. To work with larger inputs, write the content to a file and reference the file path in your prompt instead of piping it.
 
 If Claude Code can't read stdin, for example because the process that started it disconnected its end, Claude Code prints a warning to stderr and continues with the prompt from the command line.
 
@@ -168,20 +168,22 @@ claude -p "Extract the main function names from auth.py" \
 
 If the value isn't a valid JSON Schema, `claude` exits with `Error: --json-schema is not a valid JSON Schema` followed by the validator's diagnostic. Claude Code accepts schemas that use the `format` keyword, such as `"format": "email"`, but treats `format` as an annotation and doesn't enforce it.
 
-<Tip>
-  Use a tool like [jq](https://jqlang.org/) to parse the response and extract specific fields:
+If a run ends without valid structured output, for example because Claude declined the request, the response has no `structured_output` field. Before your script uses `structured_output`, check that the field is present.
 
-  ```bash theme={null}
-  # Extract the text result
-  claude -p "Summarize this project" --output-format json | jq -r '.result'
-
-  # Extract structured output
-  claude -p "Extract function names from auth.py" \
-    --output-format json \
-    --json-schema '{"type":"object","properties":{"functions":{"type":"array","items":{"type":"string"}}},"required":["functions"]}' \
-    | jq '.structured_output'
-  ```
-</Tip>
+> [!TIP]
+>
+> Use a tool like [jq](https://jqlang.org/) to parse the response and extract specific fields:
+>
+> ```bash theme={null}
+> # Extract the text result
+> claude -p "Summarize this project" --output-format json | jq -r '.result'
+>
+> # Extract structured output
+> claude -p "Extract function names from auth.py" \
+>   --output-format json \
+>   --json-schema '{"type":"object","properties":{"functions":{"type":"array","items":{"type":"string"}}},"required":["functions"]}' \
+>   | jq '.structured_output'
+> ```
 
 ### Stream responses
 
@@ -335,9 +337,9 @@ With `--permission-prompts none`, Claude Code removes the tools that need an ans
 
 With `--output-format stream-json`, denials appear as `permission_denied` system messages, and the final result message lists them in `permission_denials`.
 
-<Note>
-  The `--permission-prompts` flag requires Claude Code v2.1.259 or later. Earlier versions reject it with an unknown-option error.
-</Note>
+> [!NOTE]
+>
+> The `--permission-prompts` flag requires Claude Code v2.1.259 or later. Earlier versions reject it with an unknown-option error.
 
 ### Create a commit
 
@@ -350,15 +352,15 @@ claude -p "Look at my staged changes and create an appropriate commit" \
 
 The `--allowedTools` flag uses [permission rule syntax](/docs/en/settings-reference#permission-rule-syntax). The trailing ` *` enables prefix matching, so `Bash(git diff *)` allows any command starting with `git diff`. The space before `*` is important: without it, `Bash(git diff*)` would also match `git diff-index`.
 
-<Note>
-  Command support differs in `-p` mode:
-
-  * User-invoked [skills](/docs/en/skills) and custom commands work. Include `/skill-name` in the prompt string and Claude Code expands it before running.
-  * Built-in commands that only run in the terminal interface, such as `/login`, aren't available.
-  * `/model`, `/effort`, `/fast`, `/color`, and `/rename` accept the value as an argument, for example `/model sonnet`, and `/mcp` with no argument prints a text summary of server status. These forms follow each command's [availability notes](/docs/en/commands#all-commands).
-  * To change a setting, pass `key=value` to `/config`, for example `/config thinking=false`.
-  * `/output-style <style>` switches [output styles](/docs/en/output-styles) and `/output-style` alone lists them. Requires Claude Code v2.1.269 or later.
-</Note>
+> [!NOTE]
+>
+> Command support differs in `-p` mode:
+>
+> * User-invoked [skills](/docs/en/skills) and custom commands work. Include `/skill-name` in the prompt string and Claude Code expands it before running.
+> * Built-in commands that only run in the terminal interface, such as `/login`, aren't available.
+> * `/model`, `/effort`, `/fast`, `/color`, and `/rename` accept the value as an argument, for example `/model sonnet`, and `/mcp` with no argument prints a text summary of server status. These forms follow each command's [availability notes](/docs/en/commands#all-commands).
+> * To change a setting, pass `key=value` to `/config`, for example `/config thinking=false`.
+> * `/output-style <style>` switches [output styles](/docs/en/output-styles) and `/output-style` alone lists them. Requires Claude Code v2.1.269 or later.
 
 ### Customize the system prompt
 

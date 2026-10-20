@@ -59,31 +59,29 @@ To remove the plugin, uninstall it from the `/plugin` menu, or run `claude plugi
 
 The plugin adds one command, `/claude-security`, which opens a menu of its three jobs: scanning the codebase, scanning a set of changes, and suggesting patches. The happy path runs a full scan, then turns its findings into patches:
 
-<Steps>
-  <Step title="Open the Claude Security menu">
-    Run `/claude-security` and pick **Scan codebase**.
-  </Step>
+**1. Open the Claude Security menu**
 
-  <Step title="Choose what to scan">
-    The plugin reads your repository first, then offers the whole repository or a focused area, with each option's file count and relative cost stated. Pick the whole repository, or answer "I don't know" and the plugin picks a sensible default for your repository's size.
-  </Step>
+Run `/claude-security` and pick **Scan codebase**.
 
-  <Step title="Confirm the run">
-    A scan may take a while, may use a significant number of tokens, and needs Claude Code left open while it completes. Nothing runs until you confirm.
-  </Step>
+**2. Choose what to scan**
 
-  <Step title="Read the report">
-    While the scan runs, it reports each stage as it starts, with the detail available under [`/workflows`](/docs/en/workflows). Results are written to a timestamped directory in your repository, described in [Read the scan results](#read-the-scan-results).
-  </Step>
+The plugin reads your repository first, then offers the whole repository or a focused area, with each option's file count and relative cost stated. Pick the whole repository, or answer "I don't know" and the plugin picks a sensible default for your repository's size.
 
-  <Step title="Turn findings into patches">
-    Run `/claude-security` again and pick **Suggest patches**, then choose which findings to address. Reviewed patches are written to the report's `patches/` folder; [Fix findings](#fix-findings) covers how each patch is built and reviewed.
-  </Step>
+**3. Confirm the run**
 
-  <Step title="Apply the patches you accept">
-    Apply each patch from your shell with `git apply`, in its own pull request. Patches are never applied automatically.
-  </Step>
-</Steps>
+A scan may take a while, may use a significant number of tokens, and needs Claude Code left open while it completes. Nothing runs until you confirm.
+
+**4. Read the report**
+
+While the scan runs, it reports each stage as it starts, with the detail available under [`/workflows`](/docs/en/workflows). Results are written to a timestamped directory in your repository, described in [Read the scan results](#read-the-scan-results).
+
+**5. Turn findings into patches**
+
+Run `/claude-security` again and pick **Suggest patches**, then choose which findings to address. Reviewed patches are written to the report's `patches/` folder; [Fix findings](#fix-findings) covers how each patch is built and reviewed.
+
+**6. Apply the patches you accept**
+
+Apply each patch from your shell with `git apply`, in its own pull request. Patches are never applied automatically.
 
 You don't have to start from the menu: ask for a job directly, as arguments to the command, such as `/claude-security scan my branch`, or in plain language, such as "scan commit abc1234". The plugin works best in [auto mode](/docs/en/permission-modes), which lets the scan's agents proceed without a permission prompt at each step.
 
