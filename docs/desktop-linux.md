@@ -21,13 +21,13 @@ Other Debian-based distributions that meet these requirements may work but aren'
 
 ### Cowork requirements
 
-Cowork is the desktop tab for [Dispatch and longer agentic work](https://claude.com/docs/cowork/overview). On Linux, Cowork runs those tasks in a virtual machine that the desktop app hosts with QEMU and KVM. To use Cowork, your machine needs:
+Cowork is the part of the desktop app for [Dispatch and longer agentic work](https://claude.com/docs/cowork/overview). On Linux, Cowork runs those tasks in a virtual machine that the desktop app hosts with QEMU and KVM. To use Cowork, your machine needs:
 
-* **Hardware virtualization**: turned on in your firmware settings. Without it, the Cowork tab reports "Cowork requires hardware virtualization (KVM)".
-* **QEMU and UEFI firmware**: `qemu-system-x86`, `ovmf`, and `virtiofsd` on x86\_64, or `qemu-system-arm`, `qemu-efi-aarch64`, and `virtiofsd` on arm64. `apt install claude-desktop` installs them by default as recommended packages. If you installed with `--no-install-recommends`, or your system is a minimal image that skips recommended packages, the Cowork tab reports "Cowork requires QEMU" and shows the `apt install` command to run. Ubuntu 22.04 has no `virtiofsd` package; the app uses a bundled copy there.
+* **Hardware virtualization**: turned on in your firmware settings. Without it, Cowork reports "Cowork requires hardware virtualization (KVM)".
+* **QEMU and UEFI firmware**: `qemu-system-x86`, `ovmf`, and `virtiofsd` on x86\_64, or `qemu-system-arm`, `qemu-efi-aarch64`, and `virtiofsd` on arm64. `apt install claude-desktop` installs them by default as recommended packages. If you installed with `--no-install-recommends`, or your system is a minimal image that skips recommended packages, Cowork reports "Cowork requires QEMU" and shows the `apt install` command to run. Ubuntu 22.04 has no `virtiofsd` package; the app uses a bundled copy there.
 * **Access to `/dev/kvm`**: add your user to the `kvm` group with `sudo usermod -aG kvm $USER`, then log out and back in. Some desktop environments grant the logged-in user access to `/dev/kvm` without the group, but Cowork also needs `/dev/vhost-vsock`, which only `kvm` group members can open. Join the group even if `/dev/kvm` already works for you.
 
-The app checks these requirements once at launch: restart it after installing packages, and log out and back in after joining the group. If `/dev/vhost-vsock` is missing and your running kernel has no module directory under `/lib/modules`, the Cowork tab reports that the kernel doesn't include the virtualization support Cowork needs and that it can't be added manually. This combination is common on ChromeOS and in container-based Linux environments.
+The app checks these requirements once at launch: restart it after installing packages, and log out and back in after joining the group. If `/dev/vhost-vsock` is missing and your running kernel has no module directory under `/lib/modules`, Cowork reports that the kernel doesn't include the virtualization support Cowork needs and that it can't be added manually. This combination is common on ChromeOS and in container-based Linux environments.
 
 ## Install
 
@@ -153,7 +153,7 @@ After the fix, restart the app and sign in. Then quit and launch it again to con
 
 ### Cowork isn't available
 
-If the Cowork tab shows one of these messages, fix the requirement it names, then restart the app:
+If Cowork shows one of these messages, fix the requirement it names, then restart the app:
 
 * **Cowork requires QEMU**: install the [QEMU and UEFI firmware packages](#cowork-requirements) the message lists.
 * **Cowork requires hardware virtualization (KVM)**: turn on [hardware virtualization](#cowork-requirements) in your firmware settings.

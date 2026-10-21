@@ -279,7 +279,7 @@ For organizations deploying Claude Code across teams, you can centralize instruc
 
 #### Deploy organization-wide CLAUDE.md
 
-Organizations can deploy a centrally managed CLAUDE.md that applies to all users on a machine. This file cannot be excluded by individual settings.
+Organizations can deploy a centrally managed CLAUDE.md that applies to all users on a machine. Developers can [exclude other CLAUDE.md files](#exclude-specific-claude-md-files) with the `claudeMdExcludes` setting, but not this one. If a developer starts a session with CLAUDE.md loading turned off altogether, that session doesn't load the managed content either. Use the file for guidance, and enforce rules with [managed settings](/docs/en/managed-settings) such as `permissions.deny`.
 
 **1. Create the file at the managed policy location**
 
@@ -293,7 +293,7 @@ Use MDM, Group Policy, Ansible, or similar tools to distribute the file across d
 
 The `claudeMd` key lets you put managed CLAUDE.md content directly inside `managed-settings.json` instead of deploying a separate file.
 
-**Scope**: every Claude Code session on the machine, in every repository. For repository-specific guidance, commit a project CLAUDE.md instead.
+**Scope**: all users on the machine, in any repository. For repository-specific guidance, commit a project CLAUDE.md instead.
 
 **Precedence**: same as a managed CLAUDE.md file. Loads before user and project CLAUDE.md.
 
@@ -323,7 +323,7 @@ Settings rules are enforced by the client regardless of what Claude decides to d
 
 #### Exclude specific CLAUDE.md files
 
-In large monorepos, ancestor CLAUDE.md files may contain instructions that aren't relevant to your work. The `claudeMdExcludes` setting lets you skip specific files by path or glob pattern.
+In large monorepos, ancestor CLAUDE.md files may contain instructions that aren't relevant to your work. The `claudeMdExcludes` setting lets you skip specific files by path or glob pattern. You can't exclude a [managed CLAUDE.md file](#deploy-organization-wide-claude-md) with `claudeMdExcludes`.
 
 This example excludes a top-level CLAUDE.md and a rules directory from a parent folder. Add it to `.claude/settings.local.json` so the exclusion stays local to your machine:
 
@@ -339,8 +339,6 @@ This example excludes a top-level CLAUDE.md and a rules directory from a parent 
 Patterns are matched against absolute file paths using glob syntax. You can configure `claudeMdExcludes` at any [settings layer](/docs/en/settings#where-settings-live): user, project, local, or managed policy. Arrays merge across layers.
 
 To exclude a rules file you reach through a [symlink](#share-rules-across-projects-with-symlinks), whether the file or its directory is the link, write the pattern against either path: the file's path under `.claude/rules/` or its link target. A pattern that matches either path excludes the file. Before v2.1.239, only a pattern that matched the link target excluded the file.
-
-Managed policy CLAUDE.md files cannot be excluded. This ensures organization-wide instructions always apply regardless of individual settings.
 
 ## AGENTS.md
 

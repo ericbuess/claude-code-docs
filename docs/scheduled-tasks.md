@@ -124,11 +124,14 @@ Edits to `loop.md` take effect on the next iteration, so you can refine the inst
 
 ### Stop a loop
 
-To stop a [self-paced `/loop`](#let-claude-choose-the-interval) while it is waiting for the next iteration, press `Esc`. This clears the pending wakeup so the loop does not fire again. Tasks you scheduled by [asking Claude directly](#manage-scheduled-tasks) are not affected by `Esc` and stay in place until you delete them.
+* **[Self-paced loop](#let-claude-choose-the-interval)**: while the loop is waiting for its next iteration, press `Esc` to stop it. You can also stop it with `Ctrl+C` while Claude is idle, except in a [background session you've attached to](#detach-without-stopping-a-loop). A `Pending wakeup cancelled` notice confirms that the loop won't fire again.
+* **[Fixed-interval loop](#run-on-a-fixed-interval)**: to stop a loop such as `/loop 5m`, ask Claude to cancel it, for example `cancel the deploy check loop`. `Esc` and `Ctrl+C` don't stop it, or any task you [scheduled by asking Claude directly](#manage-scheduled-tasks). A loop you don't cancel ends when [seven days elapse](#seven-day-expiry).
 
 In [self-paced mode](#let-claude-choose-the-interval), Claude can also end the loop on its own once the task is complete. Claude calls the [`ScheduleWakeup` tool](/docs/en/tools-reference) with `stop: true`, which cancels the pending wakeup immediately. If an iteration ends without either rescheduling or stopping, Claude Code schedules one fallback wakeup about 20 minutes later and ends the loop when that iteration doesn't reschedule either.
 
-Loops on a fixed interval keep running until you [cancel them like any other scheduled task](#manage-scheduled-tasks) or [seven days elapse](#seven-day-expiry).
+#### Detach without stopping a loop
+
+When you're [attached to a background session](/docs/en/agent-view#attach-to-a-session) and Claude is idle, press `Ctrl+C` twice on an empty prompt to detach. A self-paced loop waiting there for its next iteration keeps running, and that iteration starts on schedule. To stop the loop instead, press `Esc` before you detach. Detaching with `Ctrl+C` without stopping the loop requires Claude Code v2.1.295 or later.
 
 ## Set a one-time reminder
 
@@ -232,7 +235,10 @@ Session-scoped scheduling has inherent constraints:
 
 * Tasks only fire while Claude Code is running and idle. Closing the terminal or letting the session exit stops them firing. [Backgrounding the session](/docs/en/agent-view#from-inside-a-session) carries `/loop` tasks over to a background session, which keeps running without a terminal.
 * No catch-up for missed fires. If a task's scheduled time passes while Claude is busy on a long-running request, it fires once when Claude becomes idle, not once per missed interval.
-* When you resume a session with `claude --resume` or `claude --continue`, Claude Code restores the tasks scheduled with `CronCreate`, except recurring tasks that have [expired](#seven-day-expiry) and one-shot tasks whose scheduled time has passed. A [self-paced `/loop`](#let-claude-choose-the-interval) isn't restored, so run `/loop` again to restart it. Background Bash and monitor tasks are never restored on resume.
+* In a [background session](/docs/en/agent-view#from-inside-a-session), a [self-paced loop](#let-claude-choose-the-interval) stops if its next wakeup comes due while the session's process isn't running, such as after a crash. When the process starts again, the transcript shows a [notice that the wakeup won't fire](/docs/en/errors#restarted-after-its-next-loop-wakeup-was-due). To continue the loop, [reply to the session](/docs/en/agent-view#peek-and-reply) and ask Claude to keep it running.
+* When you resume a session with `claude --resume` or `claude --continue`, Claude Code restores the tasks scheduled with `CronCreate`, except recurring tasks that have [expired](#seven-day-expiry) and one-shot tasks whose scheduled time has passed. A [self-paced `/loop`](#let-claude-choose-the-interval) isn't restored, so run `/loop` again to restart it.
+* A restored recurring task doesn't fire for the runs it missed while the session wasn't running. Its next run is the first one due after you resume, and [jitter](#jitter) applies to that run.
+* When you resume with `claude --resume` or `claude --continue`, Claude Code doesn't restart the background Bash commands and monitors that were running when the session ended. If you still need one, ask Claude to start it again.
 * With [feature-flag fetching off](/docs/en/env-vars#features-that-need-feature-flag-fetching), Claude Code stores a task you asked to keep across sessions in the project's `.claude/scheduled_tasks.json` file. When the `.claude` directory or that file is a symlink, Claude Code returns an error instead of scheduling the task. A saved task runs only in the project folder where you created it. If you copy the file into another folder, such as a new worktree, sessions there list the copied tasks but don't run them, so create the task again in that folder.
 
 For cron-driven automation that needs to run unattended:

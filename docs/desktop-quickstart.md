@@ -6,7 +6,9 @@
 
 > Install the Claude desktop app, open the Code tab, and start your first Claude Code session on a project folder on your computer.
 
-The desktop app gives you Claude Code with a graphical interface, so you can ask Claude to work on the code in a folder on your computer and review its changes without using a terminal. This page walks through installing the app and starting your first session in the **Code** tab. Claude Code requires a [Pro, Max, Team, or Enterprise subscription](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=desktop_quickstart_pricing).
+The desktop app gives you Claude Code with a graphical interface. You can ask Claude to work on the code in a folder on your computer and review its changes without using a terminal.
+
+Claude Code is in the **Code** tab at the top of the app's sidebar. This page walks through installing the app and starting your first session there. Claude Code requires a [Pro, Max, Team, or Enterprise subscription](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=desktop_quickstart_pricing).
 
 > **[Download for macOS](https://claude.ai/api/desktop/darwin/universal/dmg/latest/redirect?utm_source=claude_code\&utm_medium=docs)**
 >
@@ -28,14 +30,8 @@ For Windows ARM64, download the [ARM64 installer](https://claude.ai/api/desktop/
 >
 > * **Already set up**: see [Use Claude Code Desktop](/docs/en/desktop) for everything the Code tab can do
 > * **Want `claude` in your terminal**: [install the CLI](/docs/en/quickstart) separately
-
-The desktop app has three tabs:
-
-* **Chat**: General conversation with no file access, similar to claude.ai.
-* **Cowork**: An autonomous background agent that works on tasks independently while you do other work.
-* **Code**: An interactive coding assistant with direct access to your local files. Depending on the permission mode, you approve each change as Claude proposes it or review the changes after Claude makes them.
-
-Chat and Cowork are covered in the [Claude Help Center](https://support.claude.com/); installing and deploying the desktop app is covered in the [Claude Desktop support articles](https://support.claude.com/en/collections/16163169-claude-desktop). This page focuses on the **Code** tab.
+> * **Using chat or Cowork**: see the [Claude Help Center](https://support.claude.com/)
+> * **Need more on installing or deploying the desktop app**: see the [Claude Desktop support articles](https://support.claude.com/en/collections/16163169-claude-desktop)
 
 ## Install
 
@@ -45,7 +41,11 @@ On macOS and Windows, download the installer from the links above and run it. On
 
 **2. Open the Code tab**
 
-Click the **Code** tab at the top center. If clicking Code prompts you to upgrade, you need to [subscribe to a paid plan](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=desktop_quickstart_upgrade) first. If it prompts you to sign in online, complete the sign-in and restart the app. If you see a 403 error, see [authentication troubleshooting](/docs/en/desktop#403-or-authentication-errors-in-the-code-tab).
+Click the **Code** tab at the top of the sidebar. If the tabs show only icons, hover over one to see its name. If a prompt or an error appears after you click **Code**, follow the matching fix:
+
+* **Prompt to upgrade**: you need to [subscribe to a paid plan](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=desktop_quickstart_upgrade) first
+* **Prompt to sign in online**: complete the sign-in and restart the app
+* **403 error**: see [authentication troubleshooting](/docs/en/desktop#403-or-authentication-errors-in-the-code-tab)
 
 The desktop app includes Claude Code, so you don't need to install Node.js or the CLI to use the Code tab.
 
@@ -87,13 +87,13 @@ A [session](/docs/en/desktop#work-in-parallel-with-sessions) is a conversation w
 
 Check your [permission mode](/docs/en/desktop#choose-a-permission-mode) in the row under the prompt box to see whether Claude waits for your approval:
 
-* **Auto or Accept edits**: Claude applies its file changes, and an indicator such as `+12 -1` appears so you can review them in the diff view
+* **Auto or Accept edits**: Claude applies its file changes, and an indicator such as `+12 -1` appears so you can review them in the [diff view](/docs/en/desktop#review-changes-with-diff-view)
 * **Manual**: Claude proposes each change and waits for your approval before applying it
 
 In Manual mode, you'll see:
 
-1. A [diff view](/docs/en/desktop#review-changes-with-diff-view) showing exactly what will change in each file
-2. Accept/Reject buttons to approve or decline each change
+1. A diff showing exactly what will change
+2. Buttons to approve or decline each change
 3. Real-time updates as Claude works through your request
 
 ## Now what?

@@ -8,7 +8,7 @@
 
 > [!NOTE]
 >
-> Cloud sessions are available on Pro, Max, and Team plans, and for Enterprise users with premium seats or Chat + Claude Code seats.
+> Cloud sessions are available on Pro, Max, and Team plans, and for Enterprise users with premium seats or Chat + Claude Code seats. If your Enterprise organization manages your access with [custom roles](https://support.claude.com/en/articles/13930452), you also need a role that includes the cloud sessions permission. Ask an Owner to check your roles and add it at [**Organization settings > Roles**](https://claude.ai/admin-settings/roles) if it's missing.
 
 A cloud session is a Claude Code session that runs on cloud infrastructure instead of on your machine. By default it runs on infrastructure Anthropic manages, or on your organization's [self-hosted environment](/docs/en/self-hosted-environments) when routed there. The session keeps running after you close your laptop, and you can check on it or steer it from any device. It counts toward your plan's usage limits alongside the rest of your Claude and Claude Code usage, and there's no separate charge for the cloud VM.
 
@@ -428,7 +428,10 @@ Cloud sessions stop after a period of inactivity and the session's VM is reclaim
 Reopen the session from [claude.ai/code](https://claude.ai/code) to provision a fresh VM:
 
 * **Restored**: your conversation history
-* **Not restored**: background work that was still running when the VM was reclaimed, such as subagents and shell commands, and the pending wakeup of a [self-paced `/loop`](/docs/en/scheduled-tasks#let-claude-choose-the-interval). To restart the loop, run `/loop` again.
+* **Not restored**: background work that was still running or pending when the VM was reclaimed, including:
+  * **Shell commands**: Claude Code tells Claude which commands stopped. Ask Claude to rerun the ones you still need.
+  * **Subagents**: Claude Code tells Claude which subagents stopped, and which of those can be [resumed](/docs/en/sub-agents#resume-subagents) instead of started over. Ask Claude to continue their work.
+  * **Session-scoped scheduled tasks**: tasks you [scheduled in the session](/docs/en/scheduled-tasks) and a `/loop` waiting for its next iteration don't carry over to the reopened session. Ask Claude to schedule the tasks again, or run `/loop` again to restart the loop.
 
 ## Limitations
 

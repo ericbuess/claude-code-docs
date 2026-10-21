@@ -276,9 +276,9 @@ If a tool is running when you press `←`, Claude Code waits for it to finish be
 
 After about ten seconds, Claude Code backgrounds the session without waiting any longer, except in cases such as these:
 
-* **Foreground subagents are still running**: Claude Code keeps waiting so the work of the [foreground subagents](/docs/en/sub-agents#run-subagents-in-foreground-or-background) Claude started carries over, and shows `Still backgrounding after the current tool`. Press `←` again to background without waiting, which restarts those subagents from the beginning.
+* **Foreground subagents are still running**: Claude Code keeps waiting so the work of the [foreground subagents](/docs/en/sub-agents#run-subagents-in-foreground-or-background) that Claude started carries over, and shows `Still backgrounding after the current tool`. Press `←` again to background without waiting, which restarts those subagents from the beginning.
 * **A permission prompt or question is waiting for your answer**: while a permission prompt or a question Claude asked waits, Claude Code keeps waiting and shows `Still backgrounding after the current tool — a question is waiting for your answer.` If your answer lets the turn continue, such as **Yes** on a permission prompt, Claude Code backgrounds the session when the current tool finishes.
-* **You type into the prompt input**: Claude Code cancels the switch, because unsent text stays in your terminal's input box and wouldn't move to the background session. It shows `Backgrounding cancelled — you have unsent text in the input. Send it or clear it, then press ← again.`
+* **You type into the prompt input**: Claude Code cancels the switch, because unsent text stays in your terminal's input box and wouldn't move to the background session. It shows `Backgrounding cancelled — you have unsent text in the input. Send it or clear it, then press ← again.` Claude keeps working in the foreground.
 * **You stop the turn**: Claude Code cancels the switch and shows `Backgrounding cancelled — the turn was stopped.` For example, the turn stops when you [interrupt Claude with `Esc`](/docs/en/interactive-mode#general-controls) or select **No** [without a comment](/docs/en/permissions#add-a-comment-when-you-answer-a-permission-prompt) on a permission prompt from the main conversation, or press `Esc` on a question Claude asks there. Press `←` again to background the session.
 * **A queued message can't move**: messages you [queued while Claude was working](/docs/en/interactive-mode#queue-messages-while-claude-works) move to the background session with the conversation. When one of them can't, the session stays in the foreground and Claude Code shows a notice such as `Cannot open agents — 1 queued message can't move to the background. Press ← again once Claude has read it.`
 
@@ -287,6 +287,15 @@ When Claude Code backgrounds the session, either after about ten seconds or afte
 Pressing `←` creates the session's row even when the conversation has no messages yet, so `→` still returns to it.
 
 You can turn this shortcut off for foreground sessions with the [`leftArrowOpensAgents`](/docs/en/settings-reference#leftarrowopensagents) setting in `/config`.
+
+##### Prompts sent as the session moves to the background
+
+If you enter a prompt or `!` shell command at the moment the session moves to the background, it is stopped or left unsent:
+
+* **Sent as the conversation closes**: the response or command stops when the conversation closes and agent view opens
+* **Still waiting on [hooks](/docs/en/hooks) at that moment**: the prompt isn't sent, and nothing on screen says so. This includes a prompt you typed while [`SessionStart` hooks](/docs/en/hooks#sessionstart) were still running
+
+In both cases the text you typed is kept in [prompt history](/docs/en/interactive-mode#command-history). To send it again, open the backgrounded session and press `↑` at its prompt to bring the text back.
 
 ### Organize the list
 
@@ -362,7 +371,7 @@ Press `?` in agent view to see shortcuts in context. The table below summarizes 
 | `Ctrl+X` | Stop the session; press again within two seconds to delete it |
 | `Shift+↑` / `Shift+↓` | Reorder the selected session |
 | `Esc` | Close the peek panel, clear the input, or exit. When you opened agent view by backgrounding your session with `←`, the final `Esc` returns to that conversation instead of exiting. With [vim editor mode](/docs/en/interactive-mode#vim-editor-mode) on, pressing `Esc` in the input switches from INSERT to NORMAL mode and keeps your text, as in the main prompt |
-| `Ctrl+C` | Clear the input; press twice to exit |
+| `Ctrl+C` | Clear the input; press twice to exit. While text on screen is selected, the press clears the selection instead, copying it first unless [selecting already copied it](/docs/en/settings-reference#copyonselect) |
 | `?` | Show shortcuts |
 
 The shortcuts that have an action in the [`Agents` context](/docs/en/keybindings#agents-actions) follow your [`keybindings.json`](/docs/en/keybindings). So does `Ctrl+G`, through the `Chat` context's `chat:externalEditor` binding.
@@ -527,6 +536,18 @@ backgrounded · 7c5dcf5d · flaky-test-fix
   claude stop 7c5dcf5d      stop this session
 ```
 
+#### Prompts that contain `--bg`
+
+A prompt that mentions `--bg` or `--background` is delivered as typed, and so is a reply of `--bg` that you send to a background session. For example, this command starts one background session, and the second `--bg` is part of its prompt:
+
+```bash theme={null}
+claude --bg "find out why --bg sessions are slow to start on this machine"
+```
+
+Claude Code reads a whole argument as the flag only where a flag can stand: before any bare `--` separator and not where another flag expects its value. Put the flag first, as in `claude --bg "<prompt>"`.
+
+Where the position is ambiguous, such as after a run of combined short flags, Claude Code starts nothing. It exits with [`Couldn't tell whether --bg is a flag or text here`](/docs/en/errors#couldnt-tell-whether-bg-is-a-flag-or-text) instead.
+
 #### Run a shell command
 
 To run a shell command as a background job instead of a Claude session, pass `--exec`. The following example runs `pytest -x` as a background job:
@@ -634,8 +655,8 @@ In agent view, type `/model`, `/effort`, or `/fast` in the [dispatch input](#dis
 Give the value after the command, or type the command alone to choose one from a list:
 
 * **Model**: `/model <name>`, for example `/model opus`
-* **[Effort level](/docs/en/model-config#adjust-effort-level)**: `/effort` with `low`, `medium`, `high`, `xhigh`, or `max`, for example `/effort high`
-* **Fast mode**: `/fast on` or `/fast off`. The session starts in fast mode only if fast mode is [available to you](/docs/en/fast-mode#requirements) and its model supports fast mode. On a model that doesn't, the session starts with fast mode off, so first use `/model` to pick one of the [models that support fast mode](/docs/en/fast-mode).
+* **[Effort level](/docs/en/model-config#adjust-effort-level)**: `/effort` with `low`, `medium`, `high`, `xhigh`, or `max`, for example `/effort high`. To start sessions in [ultracode](/docs/en/workflows#let-claude-decide-with-ultracode), open agent view from your shell with [`claude agents --effort ultracode`](#dispatch-defaults) instead; the dispatch input doesn't accept `/effort ultracode`
+* **Fast mode**: `/fast on` or `/fast off`. The session starts in fast mode only if fast mode is [available to you](/docs/en/fast-mode#requirements) and its model supports fast mode. On a model that doesn't, the session starts with fast mode off, so first use `/model` to pick one of the [models that support fast mode](/docs/en/fast-mode). The hint under the input, not the header, confirms whether new sessions get fast mode.
 
 To undo a choice, give `default` as the value, for example `/effort default`.
 
@@ -1027,6 +1048,11 @@ Agent view has evolved quickly during research preview. If you are on an older C
 | Version | Change |
 | - | - |
 | v2.1.299 | [`/effort` and `/fast` in the dispatch input](#set-the-model-effort-and-fast-mode) set the effort level and fast mode for the sessions you dispatch next. `/model`, `/effort`, or `/fast` typed with no value opens a picker. |
+| v2.1.299 | Claude Code [reads `--bg` and `--background` as the flag](#from-your-shell) only before any bare `--` separator and outside another flag's value, and refuses an ambiguous position instead of guessing. Before this release, a prompt or reply of `--bg` or `--background` to a background session could be taken for the flag. That could start new background sessions over and over instead of delivering the text. |
+| v2.1.296 | A prompt or `!` shell command that you enter [as the session moves to the background](#switch-sessions-without-leaving-the-terminal) is stopped or left unsent, and its text is kept in prompt history. Before this release, the response or command kept running where you could no longer see it, and a prompt sent right after `←` could run a second time unseen. A prompt typed while `SessionStart` hooks were still running was lost: not sent, and not in prompt history. |
+| v2.1.295 | `Ctrl+C` at the idle prompt of an [attached background session](#attach-to-a-session) leaves the pending wakeup of a [self-paced `/loop`](/docs/en/scheduled-tasks#let-claude-choose-the-interval) alone, so pressing it twice detaches and the loop keeps running. `Esc` at that prompt [stops the self-paced loop](/docs/en/scheduled-tasks#stop-a-loop) and shows a `Pending wakeup cancelled` notice. Before this release, the first `Ctrl+C` could end a self-paced loop without saying so, and `Esc` didn't stop one that had moved to the background with the session. |
+| v2.1.295 | On macOS and Linux, when `claude agents` exits while no [supervisor](#keep-sessions-running-after-the-supervisor-stops) is running, it doesn't start a new one on its own. Running sessions then stop about a minute later unless you run `claude agents` again, and agent view can print a notice saying so as it exits. Before this release, the exiting `claude agents` started a new supervisor. |
+| v2.1.295 | On macOS with the native installer, background sessions that restart together after an update run under the same Claude Code entry that holds the [protected-folder access](#background-sessions-can’t-read-desktop-documents-or-downloads-on-macos) you granted. Before this release, those sessions could run under the binary's own path instead. macOS lists that path as a separate entry, so the folder-access prompts could come back after an update. |
 | v2.1.290 | [`claude attach` and `claude logs`](#manage-sessions-from-the-shell) can take part of a session's name in place of the ID. |
 | v2.1.290 | `/model`, `/effort`, `/rename`, and `/usage` sent as a [peek reply](#peek-and-reply) to a working session run right away. |
 | v2.1.290 | A [peek reply](#peek-and-reply) that can't be delivered is no longer saved for the next restart when it starts with `/`, or when it answers a question with predefined choices while the session's process is running. |
