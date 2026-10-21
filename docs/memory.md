@@ -208,6 +208,13 @@ paths:
 
 Rules without a `paths` field are loaded unconditionally and apply to all files. A path-scoped rule loads when Claude uses the Read, Write, or Edit tool on a matching file. It also loads when Claude views a matching file with a Bash command that [counts as a read](/docs/en/tools-reference#edit-tool-behavior), such as `cat` or `head` on a single file. Matching also works when Claude reaches a file through a symlinked path to the project directory, for example in a symlinked checkout.
 
+Each pattern is relative to the rule's base directory:
+
+* **Project rules**: the directory that contains the rule's `.claude` folder
+* **[User-level rules](#user-level-rules)**: the session's [primary working directory](/docs/en/permissions#working-directories)
+
+To have path-scoped rules load for files in a sibling git worktree, start Claude Code in that worktree or [move the session there with `/cd`](/docs/en/permissions#move-the-session-to-another-directory).
+
 Use glob patterns in the `paths` field to match files by extension, directory, or any combination:
 
 | Pattern | Matches |

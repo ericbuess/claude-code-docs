@@ -689,6 +689,27 @@ When vim mode is enabled via `/config` → Editor mode, keybindings and vim mode
 
 In the `Other` row of a question Claude asks, Escape doesn't cancel the question right away in vim mode. Except in [screen reader mode](/docs/en/accessibility), the row starts in INSERT mode each time you focus it. When you press Escape in the `Other` row, the row switches to NORMAL mode or drops a half-typed vim command, and the question stays open. Press Escape again in NORMAL mode to cancel the question.
 
+### Cancel a question with one key press
+
+To cancel a question with one key press in vim mode, bind another key to `select:cancel` in the `Select` context. You can cancel this way from the `Other` row of a question where you select one option. In [screen reader mode](/docs/en/accessibility) or in a question where you can select several options, the bound key doesn't cancel, so cancel with Escape instead.
+
+Pick a key that you press with Ctrl or Alt. A bare letter or digit [goes to the `Other` row](#text-fields) instead and doesn't reach your bindings. For example, to bind `Ctrl+Q`, add this to `~/.claude/keybindings.json`:
+
+```json theme={null}
+{
+  "bindings": [
+    {
+      "context": "Select",
+      "bindings": {
+        "ctrl+q": "select:cancel"
+      }
+    }
+  ]
+}
+```
+
+After you save the file, press `Ctrl+Q` in the `Other` row of a question where you select one option. The question closes whether the row is in INSERT or NORMAL mode.
+
 ## Validation
 
 Claude Code validates your keybindings and writes a warning to the debug log for:

@@ -118,7 +118,7 @@ Switch to the **Connectors** tab of **Advanced settings**. All of your connected
 
 Click **Create**. The dialog closes and the new task's detail page opens. The task runs the next time one of its triggers matches. To start a run immediately, click **Run now** on the detail page.
 
-Each run creates a new session alongside your other sessions, where you can see what Claude did, review changes, and create a pull request.
+To see what a run did, click it in the **History** list on the detail page. The run [opens as a full session](#view-and-interact-with-runs), a new one for each run, where you can see what Claude did, review changes, and create a pull request.
 
 #### Dialog with Repositories and Environment in the main view
 
@@ -149,9 +149,9 @@ When a task has two or more triggers, each one has a trash icon in that dialog. 
 
 A schedule trigger runs the task on a recurring cadence, or once at a specific future time. In the task's creation or edit dialog on the web, pick a preset frequency such as hourly, daily, or weekly:
 
-* **Time zone**: times are entered in your local zone and converted automatically, so the task runs at that wall-clock time regardless of where the cloud infrastructure is located.
 * **Runs on the hour**: if you schedule a run exactly on the hour, such as 9:00, it can start several minutes late. To start close to the scheduled time, pick a few minutes past the hour, for example 9:07.
-* **Custom intervals**: for a custom interval such as every two hours, pick the closest preset in the dialog, then run `/schedule update` in the CLI to set a specific cron expression. The minimum interval is one hour; expressions that run more frequently are rejected.
+* **Custom intervals**: for a cadence the presets lack, create the task and select **Custom** in its [edit dialog](#edit-and-control-scheduled-tasks). Then enter a cron expression, such as `0 */2 * * *` for every two hours. To set one from the CLI, run [`/schedule update`](#manage-scheduled-tasks-from-the-cli). Expressions that run more often than once per hour are rejected.
+* **Time zone**: when you pick a preset frequency, enter the time in your local time zone.
 
 #### Schedule a one-off run
 
@@ -161,7 +161,7 @@ A one-off schedule runs the task a single time at a specific timestamp. For exam
 * Open a cleanup PR after a rollout finishes
 * Start follow-up work after an upstream change ships
 
-After the task runs, it turns itself off and the web UI marks it as **Completed**. To run it again, open the task's edit dialog on the web, which offers **One-time** for a one-off task, and set a new time.
+After the task runs, it turns itself off and the web UI marks it as **Completed**. To run it again, open the task's [edit dialog](#edit-and-control-scheduled-tasks) on the web and select **One-time** or **Once**, whichever label your dialog shows. Then set a new date and time in your local time zone and save.
 
 Create a one-off run from the CLI by describing the time in natural language. Claude resolves the phrase against the current time and confirms the absolute timestamp before saving.
 
@@ -172,8 +172,6 @@ Create a one-off run from the CLI by describing the time in natural language. Cl
 ```text theme={null}
 /schedule in 2 weeks, open a cleanup PR that removes the feature flag
 ```
-
-The same local-to-UTC conversion as recurring schedules applies to one-off timestamps.
 
 One-off runs count against the same hourly limit as other scheduled runs. See [Usage and limits](#usage-and-limits) for details.
 

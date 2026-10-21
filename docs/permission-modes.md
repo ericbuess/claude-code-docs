@@ -703,6 +703,10 @@ Bypass permissions was requested at launch and ignored · if that was you, ~/.cl
 
 Add `"skipDangerousModePermissionPrompt": true` to `~/.claude/settings.json`, then start a new background session.
 
+### `claude agents` shows the bypass permissions warning that interactive sessions skip
+
+If [`claude agents`](/docs/en/agent-view#dispatch-defaults) shows the [bypass permissions warning](#bypass-permissions-acceptance) although your interactive sessions skip it, check whether `skipDangerousModePermissionPrompt` is set in `.claude/settings.local.json` or a `--settings` file. Interactive sessions count the key there as your acceptance of the warning, and `claude agents` doesn't. Whether or not you find it there, accept the warning to add the key to `~/.claude/settings.json`, where `claude agents` looks for it.
+
 ## Protected paths
 
 Writes to a small set of paths are never auto-approved, except in `bypassPermissions` mode and in interactive terminal sessions in plan mode with [bypass permissions](#skip-all-checks-with-bypasspermissions-mode) available. This prevents accidental corruption of repository state and Claude's own configuration.

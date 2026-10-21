@@ -379,6 +379,11 @@ This fetches data from connected MCP servers using the format @server:resource. 
 
 To stop `@` references from including file contents and directory listings in your message, set [`CLAUDE_CODE_DISABLE_FILE_MENTIONS=1`](/docs/en/env-vars#variables) in your shell or user settings. Claude then receives the paths you referenced with a note to read them using its file tools. The variable requires Claude Code v2.1.299 or later, and Claude Code ignores it in project and local settings.
 
+Your [`PreToolUse` hooks](/docs/en/hooks#pretooluse) don't run when Claude Code includes a file you reference with `@`, because it makes no tool call. If you rely on those hooks to control what Claude reads, block specific paths or stop `@` references from including files:
+
+* **Block specific paths**: add a [`Read` deny rule](/docs/en/permissions#read-and-edit) for them. Claude Code doesn't include a file that the rule matches.
+* **Stop `@` references from including files**: set `CLAUDE_CODE_DISABLE_FILE_MENTIONS=1`, which stops `@` file and directory references in your messages from including content, even for paths your hooks don't check. Your matching hooks then run before Claude opens a referenced path with a tool such as `Read`.
+
 ***
 
 ### Run Claude on a schedule

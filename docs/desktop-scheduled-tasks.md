@@ -28,8 +28,8 @@ Claude Code offers three ways to schedule recurring or one-off work:
 | Access to local files | No (fresh clone) | Yes | Yes |
 | MCP servers | Connectors configured per task | [Config files](/docs/en/mcp) and connectors | Inherits from session |
 | Permission prompts | No (runs autonomously) | Configurable per task | Inherits from session |
-| Customizable schedule | Via `/schedule` in the CLI | Yes | Yes |
-| Minimum interval | 1 hour | 1 minute | 1 minute |
+| Customizable schedule | Yes | Yes | Yes |
+| Minimum interval | 1 hour | 1 minute when Claude sets it, [1 hour in the forms](/docs/en/desktop-scheduled-tasks#schedule-options) | 1 minute |
 
 > [!TIP]
 >
@@ -61,7 +61,7 @@ In the box below the name, enter what Claude should do when the task runs.
 
 **5. Turn on Only on this computer**
 
-Skip past the **Trigger** card for now and expand **Advanced settings** below it. On the **General** tab, turn on **Only on this computer**. With it on, the task runs on your machine in a local folder, and the **Trigger** card offers the presets listed in [Schedule options](#schedule-options).
+Skip past the **Trigger** card for now and expand **Advanced settings** below it. On the **General** tab, turn on **Only on this computer**. With it on, the task runs on your machine in a local folder.
 
 If the switch is unavailable, clear the repository or the GitHub event or API trigger, because those make the task a [cloud scheduled task](/docs/en/routines).
 
@@ -81,7 +81,7 @@ In the instructions box's toolbar, select a [permission mode](#permissions-for-s
 
 Click **Create**. If you haven't trusted the folder yet, Desktop asks you to trust it at this point. The task's detail page opens.
 
-On the detail page, click the pencil icon to open the [**Edit** form](#manage-scheduled-tasks). There you can change the **Description** that Desktop filled in from your instructions, select **Worktree**, or switch the schedule to **Manual**.
+On the detail page, click the pencil icon to open the [**Edit** form](#manage-scheduled-tasks). There you can change the **Description** that Desktop filled in from your instructions, select **Worktree**, or switch the schedule to **Manual** or **Custom**.
 
 You can also create a task by describing what you want in any session. For example, "set up a daily code review that runs every morning at 9am" creates a recurring task. A request like "remind me at 3pm tomorrow to check the deploy" creates a one-time task that disables itself after it fires.
 
@@ -95,21 +95,22 @@ Then fill in the local form's fields:
 * **Description**: enter a description. **Create** stays unavailable until you do.
 * **The instructions box**: enter what Claude should do when the task runs. Select the permission mode and model from the menus in the box.
 * **Working folder**: select the folder the task runs in. **Create** stays unavailable until you select one.
-* **Trigger**: select a schedule. **Custom** takes a cron expression. For the other presets, see [Schedule options](#schedule-options).
+* **Trigger**: select a schedule. For the presets, see [Schedule options](#schedule-options).
 
 Click **Create**. The task's detail page opens.
 
 ## Schedule options
 
-When you turn on **Only on this computer** under **Advanced settings**, the **Trigger** card offers Hourly, Daily, Weekdays, and Weekly. The task's [**Edit** form](#manage-scheduled-tasks) also offers **Manual**.
+When you turn on **Only on this computer** under **Advanced settings**, the **Trigger** card offers Hourly, Daily, Weekdays, and Weekly. To get **Manual** or **Custom** for such a task, open its [**Edit** form](#manage-scheduled-tasks) after you create it. That form and the [dialog with **Only on this computer** at the top](#dialog-with-only-on-this-computer-at-the-top) offer these six options:
 
 * **Hourly**: runs every hour
 * **Daily**: runs every day at the local time you pick
 * **Weekdays**: same as Daily but skips Saturday and Sunday
 * **Weekly**: shows a time picker and a day picker
 * **Manual**: no schedule, only runs when you click **Run now**. Useful for saving a prompt you trigger on demand
+* **Custom**: runs on a cron expression that you enter and that is evaluated in your local time, such as `0 9 * * *` for 9:00 AM each day. Write days of the week and months as numbers, since their names aren't accepted. Sunday is `0`, not `7`. The form rejects an expression that runs more often than once per hour.
 
-For intervals the picker doesn't offer, such as every 15 minutes, the first of each month, or a single run at a specific future time, ask Claude in any Desktop session to set the schedule. Use plain language; for example, "schedule a task to run all the tests every 6 hours."
+You can also ask Claude in any Desktop session to set the schedule. Claude isn't held to the once-per-hour limit and can set a single run at a future time. For example, ask "run the test suite every 30 minutes" or "next Monday at 9am, summarize the pull requests merged since Friday."
 
 ## How scheduled tasks run
 
@@ -121,7 +122,16 @@ Tasks only run while the desktop app is running and your computer is awake. If y
 >
 > For tasks that need to run even when your computer is off, or that should trigger on an API call or GitHub event, create a [cloud scheduled task](/docs/en/routines) instead.
 
-When a local task fires, a new session appears under a **Scheduled** section in the sidebar. Open it to see what Claude did, review changes, or respond to permission prompts. Claude can edit files, run commands, create commits, and open pull requests, the same as in a session you start yourself.
+### Find a run's session
+
+To open the session a run started, go to the task's [detail page](#manage-scheduled-tasks) and click that run's row in the **History** list.
+
+The sidebar's session list can show a **Scheduled** group as well, with one row per task. To open the session of a task's latest run, click the task's row in that group. To show the group, [check which layout you have](/docs/en/desktop#check-which-layout-you-have):
+
+* **Current layout**: open the [**Group and sort** menu](/docs/en/desktop#organize-and-find-sessions), select **Show**, then select **Scheduled**. The group starts collapsed, so click its heading to expand it. **Show** lists **Scheduled** when at least one of your tasks is **Active**, the **Status** a task's detail page shows. If it isn't listed, use the **History** list, which works whether or not the group shows.
+* **Earlier layout**: the group is in the session list with nothing to turn on
+
+In a run's session, whichever way you reached it, you can see what Claude did, review changes, and respond to permission prompts. Claude can edit files, run commands, create commits, and open pull requests, the same as in a session you start yourself.
 
 ## Missed runs
 
@@ -131,7 +141,7 @@ Keep this in mind when writing prompts. A task scheduled for 9am might run at 11
 
 ## Permissions for scheduled tasks
 
-Each task has its own permission mode, which you set when creating or editing the task. Allow rules from `~/.claude/settings.json` also apply to scheduled task sessions. If a task runs in [Manual mode](/docs/en/desktop#choose-a-permission-mode) and needs to run a tool it doesn't have permission for, the run stalls until you approve it. The session stays open in the sidebar so you can answer later.
+Each task has its own permission mode, which you set when creating or editing the task. Allow rules from `~/.claude/settings.json` also apply to scheduled task sessions. If a task runs in [Manual mode](/docs/en/desktop#choose-a-permission-mode) and needs to run a tool it doesn't have permission for, the run stalls until you approve it. To approve it, [find the run's session](#find-a-runs-session) and answer the permission prompt there.
 
 To avoid stalls, click **Run now** after creating a task, watch for permission prompts, and select "always allow" for each one. Future runs of that task auto-approve the same tools without prompting. You can review and revoke these approvals from the task's detail page.
 
@@ -146,7 +156,7 @@ In the **Code** tab, click **Scheduled** in the sidebar, then click a task in th
 * **Edit**: change the instructions, schedule, folder, or other settings
 * **Review history**: see every past run, including skipped runs. Hover a skipped entry to see why: your computer was asleep, the previous run was still in progress, or other scheduled tasks were already running. Click **Show more** to load older entries.
 * **Review allowed permissions**: see and revoke saved tool approvals for this task from the **Always allowed** panel
-* **Delete**: remove the task and archive all sessions it created. An **Also delete files on disk** checkbox appears in the confirmation dialog; check it to also remove the task's `SKILL.md` file and associated data from `~/.claude/scheduled-tasks/`.
+* **Delete**: remove the task. The sessions the task created are [archived](/docs/en/desktop#organize-and-find-sessions), not deleted. The folder holding the task's `SKILL.md` file stays on disk at `~/.claude/scheduled-tasks/<task-name>/`, or at `scheduled-tasks/<task-name>/` under [`CLAUDE_CONFIG_DIR`](/docs/en/env-vars) if you set that variable. To remove that folder, delete it yourself.
 
 You can also list, create, edit, and pause tasks by asking Claude in any Desktop session. For example, "pause my dependency-audit task" or "show me my scheduled tasks." To delete a task, use the **Delete** button on its detail page.
 

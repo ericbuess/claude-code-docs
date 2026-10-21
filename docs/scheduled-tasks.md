@@ -30,8 +30,8 @@ Claude Code offers three ways to schedule recurring or one-off work:
 | Access to local files | No (fresh clone) | Yes | Yes |
 | MCP servers | Connectors configured per task | [Config files](/docs/en/mcp) and connectors | Inherits from session |
 | Permission prompts | No (runs autonomously) | Configurable per task | Inherits from session |
-| Customizable schedule | Via `/schedule` in the CLI | Yes | Yes |
-| Minimum interval | 1 hour | 1 minute | 1 minute |
+| Customizable schedule | Yes | Yes | Yes |
+| Minimum interval | 1 hour | 1 minute when Claude sets it, [1 hour in the forms](/docs/en/desktop-scheduled-tasks#schedule-options) | 1 minute |
 
 > [!TIP]
 >
