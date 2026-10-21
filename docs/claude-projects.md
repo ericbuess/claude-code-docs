@@ -52,7 +52,7 @@ A project is one coordinating conversation with Claude plus the threads it start
 * **Threads**: the workers. Each is a separate session with its own context window that does one piece of work and reports back to the conversation when it finishes. A cloud thread works on its own branch and opens a pull request when the work calls for one.
 * **What every cloud thread starts with**:
   * The project's repositories and files, plus its [instructions and memory](#give-a-project-standing-context)
-  * The `CLAUDE.md` and skills in [each of the project's repositories](#what-threads-pick-up-from-your-repositories), and in a project with one repository, that repository's permission rules and hooks too
+  * The `CLAUDE.md` in [each of the project's repositories](#what-threads-pick-up-from-your-repositories), but not the repositories' skills, `.claude/settings.json`, or `.mcp.json`
   * The [connectors](#get-skills-plugins-connectors-and-tools-into-threads) on your claude.ai account
   * A [cloud environment](#choose-an-environment-for-threads) that sets its network access, environment variables, network secrets, and installed tools
 * **The Overview pane**: where you [see all the threads at once](#see-what-needs-you-in-overview) and which of them need you. Its other tabs are **Library** for the files you added and the files threads produced, **Pull requests** for the ones threads opened, and **Scheduled tasks** for scheduled work in the project.
@@ -239,13 +239,7 @@ Claude saves preferences like these to [project memory](#give-a-project-standing
 
 Threads run in [auto mode](/docs/en/permission-modes#eliminate-prompts-with-auto-mode) when the thread's model supports it, so most tool calls run without asking you. When a thread needs your approval, the prompt is inside that thread and the thread waits until you answer it there. Telling Claude in the project conversation to go ahead doesn't reach it.
 
-Each approval covers that prompt, or the rest of that thread if you choose the broader option.
-
-To let every thread run certain commands without asking, or to block some, add [permission rules](/docs/en/permissions) to the repository's `.claude/settings.json`. Check that cloud threads in your project apply them:
-
-* **One repository**: cloud threads apply the rules. See [What threads pick up from your repositories](#what-threads-pick-up-from-your-repositories).
-* **Several repositories, Anthropic-hosted environment**: no repository's permission rules reach a cloud thread, so you rely on auto mode and on the approvals you give inside each thread.
-* **Several repositories, self-hosted environment**: see [which repository's settings apply](/docs/en/self-hosted-environments-configuration#repository-settings-in-sessions-with-several-repositories).
+Each approval covers that prompt, or the rest of that thread if you choose the broader option. Cloud threads don't read [permission rules](/docs/en/permissions) from a repository's `.claude/settings.json`, so you rely on auto mode and on the approvals you give inside each thread.
 
 ### Run a thread on your own computer
 
@@ -313,10 +307,10 @@ Rules about one repository, such as its build commands, belong in that repositor
 
 ### Decide which repositories to add
 
-The repositories you add to a project come with everything in them, their code, `CLAUDE.md`, and skills, in every cloud thread. Repositories you don't add are still within reach: a cloud thread can add one to itself when its task needs it. Most projects use both:
+The repositories you add to a project come with their code and `CLAUDE.md` in every cloud thread, but [not their skills, `.claude/settings.json`, or `.mcp.json`](#what-threads-pick-up-from-your-repositories). Repositories you don't add are still within reach: a cloud thread can add one to itself when its task needs it. Most projects use both:
 
-* **Add it to the project**, in the **New project** dialog, in **Project settings > Environment**, or by asking Claude in the conversation to add it to the project. Every cloud thread from then on clones it and starts with its `CLAUDE.md` and skills loaded, whether or not the task touches it. Going from one repository to several also changes what threads take from each repository's `.claude/settings.json`; see [What threads pick up from your repositories](#what-threads-pick-up-from-your-repositories).
-* **Leave it off and let threads add it when needed.** A cloud thread whose task needs a repository the project doesn't have can add it to itself, and a note in the thread says it was added to this thread only. The clone happens partway through the task, so that repository's `CLAUDE.md` and skills weren't there when the thread started. The next thread starts without it. A repository added this way needs the same [prerequisites](#check-the-prerequisites) as a project repository: the Claude GitHub App installed on it and push access from your GitHub account.
+* **Add it to the project**, in the **New project** dialog, in **Project settings > Environment**, or by asking Claude in the conversation to add it to the project. Every cloud thread from then on clones it and starts with its `CLAUDE.md` loaded, whether or not the task touches it.
+* **Leave it off and let threads add it when needed.** A cloud thread whose task needs a repository the project doesn't have can add it to itself, and a note in the thread says it was added to this thread only. The clone happens partway through the task, so that repository's `CLAUDE.md` wasn't there when the thread started. The next thread starts without it. A repository added this way needs the same [prerequisites](#check-the-prerequisites) as a project repository: the Claude GitHub App installed on it and push access from your GitHub account.
 
 A project doesn't need a repository at all. Its cloud threads can still research, write documents, and write and run code in their own sandbox, and they deliver files to the **Library** tab. Any of its cloud threads can still add a repository to itself when a task calls for one.
 
@@ -335,16 +329,18 @@ Add the files and folders you want threads to read in the **New project** dialog
 
 ### What threads pick up from your repositories
 
-Each cloud thread clones every repository in the project and loads `CLAUDE.md` and skills from all of them. Permission rules, hooks, and `env` come only from the `.claude/settings.json` in the directory the thread starts in.
+Cloud threads load each repository's `CLAUDE.md` instructions but not its skills, `.mcp.json` servers, or `.claude/settings.json`, whether the project has one repository or several.
 
-| In each repository | One repository | Several repositories |
-| :- | :- | :- |
-| `CLAUDE.md` | Loaded when the thread starts | Loaded from every repository when the thread starts |
-| Skills, agents, and commands under `.claude/` | Loaded | Loaded from every repository |
-| Plugins enabled in `.claude/settings.json` | Not loaded. Add the plugin in **Project settings > Plugins** instead | Not loaded. Add the plugin in **Project settings > Plugins** instead |
-| Permission rules, hooks, and `env` defined in `.claude/settings.json` | Apply to the thread, except the `env` keys that [no cloud session honors](/docs/en/cloud-environments#what-carries-over-from-your-setup) | Don't apply in an Anthropic-hosted environment. For a self-hosted environment, see [which repository's settings apply](/docs/en/self-hosted-environments-configuration#repository-settings-in-sessions-with-several-repositories) |
-
-In a project with several repositories, put standing rules in project instructions and give threads environment variables through the [cloud environment](#choose-an-environment-for-threads).
+| In each repository | In a cloud thread |
+| :- | :- |
+| `CLAUDE.md`, `.claude/CLAUDE.md`, and `.claude/rules/` at the repository root | Loaded from every repository when the thread starts. `CLAUDE.md` files in subdirectories and [path-specific rules](/docs/en/memory#path-specific-rules) aren't loaded |
+| Skills under `.claude/skills/` | Not loaded. Enable the skill for your claude.ai account instead, as [Get skills, plugins, connectors, and tools into threads](#get-skills-plugins-connectors-and-tools-into-threads) describes |
+| Agents and commands under `.claude/` | Not loaded. To use them, [run the thread on your own computer](#run-a-thread-on-your-own-computer) |
+| MCP servers in `.mcp.json` | Not loaded. Use the connectors on your claude.ai account instead, as [Get skills, plugins, connectors, and tools into threads](#get-skills-plugins-connectors-and-tools-into-threads) describes |
+| Plugins enabled in `.claude/settings.json` | Not loaded. Add the plugin in **Project settings > Plugins** instead |
+| Permission rules in `.claude/settings.json` | Not applied. Approve tool calls inside the thread, as [Unblock a thread waiting on approval](#unblock-a-thread-waiting-on-approval) describes, or [run the thread on your own computer](#run-a-thread-on-your-own-computer) |
+| Hooks in `.claude/settings.json` | Not run. To use your hooks, [run the thread on your own computer](#run-a-thread-on-your-own-computer) |
+| `env` in `.claude/settings.json` | Not applied. Set environment variables in the [cloud environment](#choose-an-environment-for-threads) |
 
 ### Choose an environment for threads
 
@@ -356,9 +352,9 @@ If cloud threads need to reach an internal API or a private package registry, or
 
 Cloud threads don't have the skills, MCP servers, plugins, and tools installed only on your machine. A thread that Claude runs on your machine through [Remote Control](/docs/en/remote-control) uses what's installed there. To make each of these available to cloud threads:
 
-* Skills, subagents, and commands: commit them to a repository you added to the project, for example a skill at `.claude/skills/<skill-name>/SKILL.md`. Each cloud thread clones every repository in the project and loads `.claude/skills/`, `.claude/agents/`, and `.claude/commands/` from each of them, so a skill committed to one repository is available in every cloud thread. Cloud threads also load the [skills you enable for your claude.ai account](/docs/en/skills#skills-in-cowork-and-cloud-sessions).
+* Skills: enable them for your claude.ai account, and cloud threads load the [skills you enable there](/docs/en/skills#skills-in-cowork-and-cloud-sessions), apart from [some threads in a self-hosted environment](/docs/en/self-hosted-environments-configuration#how-each-session’s-config-is-assembled). Skills committed to a repository's `.claude/skills/` don't load in cloud threads.
 * Plugins: add them in **Project settings > Plugins**; they load into each new cloud thread. Plugins that a repository declares in its `.claude/settings.json` [don't load in cloud threads](/docs/en/cloud-environments#what-carries-over-from-your-setup).
-* MCP servers: cloud threads get their MCP tools from the connectors on your claude.ai account, which are MCP servers you connect once at [claude.ai/customize/connectors](https://claude.ai/customize/connectors). Every cloud thread can use all of them with no per-project setup. The project conversation itself has no connectors, so send work that needs one as a task for a cloud thread. In a project with one repository, cloud threads also load MCP servers from that repository's [`.mcp.json`](/docs/en/cloud-environments#what-carries-over-from-your-setup). [How connectors reach Claude Code](/docs/en/mcp#how-connectors-reach-claude-code) lists the rules for cloud sessions and the settings that turn connectors off.
+* MCP servers: cloud threads get their MCP tools from the connectors on your claude.ai account, which are MCP servers you connect once at [claude.ai/customize/connectors](https://claude.ai/customize/connectors). Every cloud thread can use all of them with no per-project setup. The project conversation itself has no connectors, so send work that needs one as a task for a cloud thread. [How connectors reach Claude Code](/docs/en/mcp#how-connectors-reach-claude-code) lists the rules for cloud sessions and the settings that turn connectors off.
 * Command-line tools and packages: install them in the environment's [setup script](/docs/en/cloud-environments#setup-scripts).
 
 To see which connectors a running cloud thread has at claude.ai/code, open the thread and select **Connectors** from the **+** menu beside its message box. Turning a connector off there removes it from that thread and saves that as your account default, so new threads and claude.ai chats start without it until you turn it back on. A cloud thread picks up a connector you add or reconnect after the next message you send it.

@@ -156,8 +156,8 @@ Where you save a skill decides which sessions load it. Save it under your home d
 | :- | :- | :- |
 | Enterprise | `.claude/skills/<skill-name>/SKILL.md` in the [managed settings directory](/docs/en/managed-settings#delivery-mechanisms) | All users on machines where your organization deploys it |
 | Personal | `~/.claude/skills/<skill-name>/SKILL.md` | All your projects on this machine, but not [Cowork or cloud sessions](#skills-in-cowork-and-cloud-sessions) |
-| Project | `.claude/skills/<skill-name>/SKILL.md` | Sessions in this repository. Commit it so your team gets it too |
-| Nested | `<subdir>/.claude/skills/<skill-name>/SKILL.md` | Sessions started in or below `<subdir>`. A session started above it loads the skill once Claude works on files there. See [monorepos and subdirectories](#discovery-from-parent-and-nested-directories) |
+| Project | `.claude/skills/<skill-name>/SKILL.md` | Sessions in this repository, but not [cloud threads in a project](/docs/en/claude-projects#what-threads-pick-up-from-your-repositories). Commit it so your team gets it too |
+| Nested | `<subdir>/.claude/skills/<skill-name>/SKILL.md` | Sessions started in or below `<subdir>`, but not cloud threads in a project. Outside those threads, a session started above it loads the skill once Claude works on files there. See [monorepos and subdirectories](#discovery-from-parent-and-nested-directories) |
 | Additional directory | `.claude/skills/<skill-name>/SKILL.md` in a directory you pass with `--add-dir` | That session. See [directories outside the project](#skills-from-additional-directories) |
 | Plugin | `<plugin>/skills/<skill-name>/SKILL.md` | Wherever the [plugin](/docs/en/plugins/overview) is enabled, as `/plugin-name:skill-name` |
 | claude.ai account | Skills enabled for your claude.ai account | Cowork sessions, cloud sessions, and terminal sessions where you sign in with that account. See [Skills synced from claude.ai](#how-synced-skills-behave) |
@@ -208,12 +208,12 @@ When two skills share a directory or file name, where each one came from decides
 
 ### Use skills in Cowork and cloud sessions
 
-[Cowork](https://claude.com/product/cowork) sessions and [cloud sessions](/docs/en/cloud-environments#what-carries-over-from-your-setup), including [cloud scheduled tasks](/docs/en/routines), don't read `~/.claude/skills/` on your machine. Both interactive and scheduled Cowork sessions load the skills enabled for your claude.ai account, synced at session start. Manage them from **Customize** in the Desktop app sidebar or from the skills settings on claude.ai. Cloud sessions additionally load project skills committed to the cloned repository's `.claude/skills/`.
+[Cowork](https://claude.com/product/cowork) sessions and [cloud sessions](/docs/en/cloud-environments#what-carries-over-from-your-setup), including [cloud scheduled tasks](/docs/en/routines), don't read `~/.claude/skills/` on your machine. Both interactive and scheduled Cowork sessions load the skills enabled for your claude.ai account, synced at session start. Manage them from **Customize** in the Desktop app sidebar or from the skills settings on claude.ai.
 
 If a skill exists only in `~/.claude/skills/` on your machine, Claude Code reports that the skill was not found when a [cloud scheduled task](/docs/en/routines) invokes it. This happens because each run starts as a fresh cloud session. To make a personal skill available in these sessions:
 
-* For Cowork and cloud sessions, enable the skill for your claude.ai account. [Some sessions in a self-hosted environment](/docs/en/self-hosted-environments-configuration#how-each-session’s-config-is-assembled) don't load your account's skills.
-* For cloud sessions, you can instead commit the skill to the repository's `.claude/skills/`. Plugins declared in the repository's `.claude/settings.json` and plugins enabled only in your user settings [don't load in cloud sessions](/docs/en/cloud-environments#what-carries-over-from-your-setup).
+* For Cowork sessions, cloud sessions, and cloud threads in a [project](/docs/en/claude-projects#what-threads-pick-up-from-your-repositories), enable the skill for your claude.ai account. In a project's cloud thread, skills committed to a repository's `.claude/skills/` aren't available. [Some sessions in a self-hosted environment](/docs/en/self-hosted-environments-configuration#how-each-session’s-config-is-assembled) don't load your account's skills.
+* For cloud sessions other than project threads, you can instead commit the skill to the repository's `.claude/skills/`. Plugins declared in the repository's `.claude/settings.json` and plugins enabled only in your user settings [don't load in cloud sessions](/docs/en/cloud-environments#what-carries-over-from-your-setup).
 
 [Desktop scheduled tasks](/docs/en/desktop-scheduled-tasks) run locally on your machine, so they do load `~/.claude/skills/`.
 

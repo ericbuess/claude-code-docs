@@ -48,7 +48,7 @@ Each example pairs a trigger type with the kind of work scheduled tasks are suit
 
 Create a scheduled task from the web at [claude.ai/code/routines](https://claude.ai/code/routines), from the Desktop app, or from the CLI. All three surfaces write to the same cloud account, so a scheduled task you create in one shows up in the others immediately. In the Desktop app's **Code** tab, click **Scheduled** in the sidebar or in the sidebar's **More** menu, then **New task**, and continue with [Create from the web](#create-from-the-web).
 
-Scheduled tasks run autonomously as full Claude Code cloud sessions. You don't choose a permission mode. The session runs shell commands, uses [skills](/docs/en/skills) committed to the cloned repository, and calls any connectors you include, all without stopping for approval apart from some [artifact actions](#when-a-run-publishes-an-artifact-without-asking).
+Scheduled tasks run autonomously as full Claude Code cloud sessions. You don't choose a permission mode. The session runs shell commands, uses [skills](/docs/en/skills), and calls any connectors you include, all without stopping for approval apart from some [artifact actions](#when-a-run-publishes-an-artifact-without-asking). Outside a [project](/docs/en/claude-projects#what-threads-pick-up-from-your-repositories), those skills include the ones committed to the cloned repository.
 
 What a scheduled task can reach is determined by:
 
@@ -356,7 +356,7 @@ Scheduled tasks can use your connected MCP connectors to read from and write to 
 Connectors are the [claude.ai integrations](/docs/en/mcp#use-mcp-servers-from-claude-ai) on your account. MCP servers you added locally in the CLI with `claude mcp add` are stored on your machine rather than your claude.ai account, so they do not appear in the connectors list. To use one of those servers in a scheduled task:
 
 * **As a connector**: add it as a connector at [claude.ai/customize/connectors](https://claude.ai/customize/connectors)
-* **In the repository**: for a scheduled task with one repository, you can instead declare the server in a committed [`.mcp.json`](/docs/en/mcp#project-scope) so it is part of the cloned repository
+* **In the repository**: for a scheduled task with one repository outside a [project](/docs/en/claude-projects#what-threads-pick-up-from-your-repositories), you can instead declare the server in a committed [`.mcp.json`](/docs/en/mcp#project-scope). A scheduled task in a project doesn't load `.mcp.json`, so add the server as a connector
 
 When you create a scheduled task, all of your currently connected connectors are included by default. Remove any that aren't needed to limit which tools Claude has access to during the run. You can also add connectors directly from the task's creation or edit dialog.
 
