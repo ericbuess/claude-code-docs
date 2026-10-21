@@ -109,7 +109,7 @@ The cost applies once per conversation. After the first fast mode turn, Claude C
 Tool definitions sit in the system prompt layer, so the cache invalidates when the set of tool definitions in the request changes between turns. Toggling the [advisor tool](/docs/en/advisor) is an exception: its definition sits after the cache breakpoint, so enabling or disabling `/advisor` keeps the cached prefix intact. Whether an [MCP server](/docs/en/mcp) change does this depends on whether [tool search](/docs/en/mcp#scale-with-mcp-tool-search) defers the session's MCP tools, the default on supported models:
 
 * **Tools deferred**: Claude Code keeps the tool list from the conversation's first request for the whole conversation, so a server connecting or disconnecting mid-session doesn't disturb anything already cached. A server that finishes connecting after the first request supplies its tools as deferred definitions that Claude loads on demand.
-* **Tools loaded upfront**: adding a definition invalidates the cache, and so does removing one on purpose. This applies when tool search is [below its `auto` threshold, disabled, or unavailable](/docs/en/mcp#configure-tool-search), such as on:
+* **Tools loaded upfront**: adding a definition invalidates the cache, and so does removing one on purpose. This applies when tool search is [off or unavailable](/docs/en/mcp#configure-tool-search), such as on:
   * Google Cloud's Agent Platform models earlier than Opus 4.5, Sonnet 4.5, and Haiku 4.5
   * A Microsoft Foundry [deployment hosted on Azure](https://platform.claude.com/docs/en/build-with-claude/claude-in-microsoft-foundry#hosting-options) once Claude Code detects that the deployment rejects tool search
 

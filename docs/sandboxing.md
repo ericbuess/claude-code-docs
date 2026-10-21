@@ -978,9 +978,19 @@ This line means `/sandbox` couldn't save the choice you made in its panel to you
 ✗ Sandbox settings not changed: /home/you/project/.claude/settings.local.json couldn't be updated (EACCES). Start Claude Code in a project folder you can write to.
 ```
 
-If the reason in parentheses is `EACCES`, `EPERM`, or `EROFS`, start Claude Code in a project folder you can write to, then run `/sandbox` again in that session.
+If the reason in parentheses is `EACCES`, `EPERM`, or `EROFS`, start Claude Code in a project folder you can write to, then run `/sandbox` again in that session. If the reason begins with `Invalid JSON syntax in settings file`, correct the JSON in your project's `.claude/settings.local.json`, then run `/sandbox` again.
 
-If the reason begins with `Invalid JSON syntax in settings file`, correct the JSON in your project's `.claude/settings.local.json`, then run `/sandbox` again.
+If no writable project folder is available to you, turn the sandbox on from your user settings instead. Add this to `~/.claude/settings.json`:
+
+```json theme={null}
+{
+  "sandbox": {
+    "enabled": true
+  }
+}
+```
+
+This turns on [auto-allow mode](#sandbox-modes). For regular permissions mode, also set [`sandbox.autoAllowBashIfSandboxed`](/docs/en/settings-reference#sandbox-autoallowbashifsandboxed) to `false`. The change takes effect in your running session at the next shell command Claude runs, and the **Mode** tab of `/sandbox` then marks the mode in effect.
 
 ## Limitations
 

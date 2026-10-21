@@ -579,7 +579,7 @@ The following sections cover the order Claude Code evaluates an action in, how t
 >
 > A [mod](/docs/en/plugins/mods/overview) you install that handles `tool.check` can also approve an action. For the cases where its approval doesn't get past your rules and hooks, see [Extend permissions with hooks](/docs/en/permissions#precedence-among-rules-hooks-and-mods).
 >
-> In the VS Code extension, how [Claude in Chrome](/docs/en/chrome) browser actions get approved depends on how the session connected to the browser: see [Permission prompts in VS Code sessions](/docs/en/chrome#permission-prompts-in-vs-code-sessions).
+> For how [Claude in Chrome](/docs/en/chrome) browser actions get approved in the VS Code extension, see [Permission prompts in VS Code sessions](/docs/en/chrome#permission-prompts-in-vs-code-sessions).
 >
 > On entering auto mode, broad allow rules that grant arbitrary code execution are dropped:
 >

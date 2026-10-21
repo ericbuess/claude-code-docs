@@ -1507,7 +1507,7 @@ Control tool search behavior with the `ENABLE_TOOL_SEARCH` environment variable:
 | :- | :- |
 | (unset) | All MCP tools deferred and loaded on demand. Loaded upfront on models earlier than Opus 4 and Sonnet 4, on the [earlier Agent Platform models](#configure-tool-search), and on Microsoft Foundry deployments hosted on Azure |
 | `true` | MCP tools deferred, with the same fallbacks as (unset) |
-| `auto` | Threshold mode: Claude Code loads the tools it would otherwise defer upfront while their definitions total less than 10% of the context window, and defers all of them once the definitions reach 10% |
+| `auto` | Threshold mode. Tools that would otherwise be deferred load upfront while their definitions total under 10% of the context window. At 10% or more, tool search turns on, and those tools can [stay deferred](#tools-that-stay-deferred-below-the-threshold) even if the total falls under 10% |
 | `auto:N` | Threshold mode with a custom percentage, where `N` is 0-100. For example, `auto:5` for 5% |
 | `false` | All MCP tools loaded upfront, no deferral |
 
@@ -1545,6 +1545,10 @@ If you deny `ToolSearch` or leave it out of [`--tools`](/docs/en/cli-reference#c
 When `ANTHROPIC_BASE_URL` points to a gateway, tool search is on by default, so requests include `defer_loading` tool fields and `tool_reference` blocks for the gateway to forward. While tool search is on, MCP tools are [deferred](#scale-with-mcp-tool-search). To load every tool upfront instead, set `ENABLE_TOOL_SEARCH=false` in your shell or your [settings `env`](/docs/en/settings-reference#env). Before v2.1.304, tool search was off behind a gateway unless `ENABLE_TOOL_SEARCH` was `true`, `auto`, or `auto:N`.
 
 On v2.1.305 or later, Claude Code can [retry a request without tool search](/docs/en/llm-gateway-protocol#retry-without-tool-search) after a `400` or `422` whose cause it doesn't recognize. When the retry works, nothing shows on screen and you don't need to do anything: MCP tools load upfront instead. Claude Code tries tool search again later, at the cost of another rejected request. To skip those requests, set `ENABLE_TOOL_SEARCH=false`.
+
+#### Tools that stay deferred below the `ENABLE_TOOL_SEARCH=auto` threshold
+
+If [`/context`](/docs/en/commands#all-commands) labels tools `(deferred)` or `(loaded on-demand)` though their definitions total under the `auto` threshold, tool search was already on in this conversation and stayed on. The total can drop later, for example while MCP servers reconnect after you resume a session. You don't need to do anything: Claude loads each of those tools when a task needs it.
 
 ### Exempt a server from deferral
 

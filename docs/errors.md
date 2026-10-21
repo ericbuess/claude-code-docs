@@ -319,6 +319,7 @@ Match the message you see to a section below.
 | `Failed to write to <name>'s inbox — nothing was sent` | [Tool errors](#failed-to-write-to-a-teammate-inbox) |
 | `Failed to write the plan approval request to the lead's inbox — plan not submitted` | [Tool errors](#failed-to-write-to-a-teammate-inbox) |
 | `Its agent definition was not restored: the folder its definition file came from is not trusted` | [Tool errors](#teammate-agent-definition-not-restored) |
+| `Only a teammate can approve a shutdown request` | [Tool errors](#only-a-teammate-can-approve-a-shutdown-request) |
 | `Message too large for cross-session delivery` | [Tool errors](#message-too-large-for-cross-session-delivery) |
 | `Too many messages to this session just now` | [Tool errors](#too-many-messages-to-this-session-just-now) |
 | `Cross-session message was dropped at the recipient session's inbox` | [Tool errors](#cross-session-message-dropped-at-the-inbox) |
@@ -414,6 +415,9 @@ Match the message you see to a section below.
 | `allows any option at its * · use an exact value` | [Configuration warnings](#has-a-wildcard-before-the-rest-of-the-command) |
 | `Denying Bash also turns off the PowerShell tool, so Claude has neither` | [Configuration warnings](#denying-bash-also-turns-off-the-powershell-tool) |
 | `CLAUDE_CODE_DISABLE_1M_CONTEXT is set, but the 200K limit isn't enforced` | [Configuration warnings](#the-200k-limit-isnt-enforced) |
+| `CLAUDE_CODE_AUTO_COMPACT_WINDOW="<value>" reads as <N> tokens, so Claude Code treats it as the 100k minimum` | [Values and warnings for `CLAUDE_CODE_AUTO_COMPACT_WINDOW`](/docs/en/model-config#claude_code_auto_compact_window-values) |
+| `CLAUDE_CODE_AUTO_COMPACT_WINDOW="<value>" is too large, so Claude Code treats it as the 1M maximum` | [Values and warnings for `CLAUDE_CODE_AUTO_COMPACT_WINDOW`](/docs/en/model-config#claude_code_auto_compact_window-values) |
+| `CLAUDE_CODE_AUTO_COMPACT_WINDOW="<value>" isn't a usable size, so Claude Code ignores it` | [Values and warnings for `CLAUDE_CODE_AUTO_COMPACT_WINDOW`](/docs/en/model-config#claude_code_auto_compact_window-values) |
 | `Model "<model>" isn't recognized · context assumed to be 200k tokens` | [Correct the window for a gateway or custom model ID](/docs/en/model-config#correct-the-window-for-a-gateway-or-custom-model-id) |
 | `Claude Code doesn't recognize the model "<model>", so it assumes a context window of 200k tokens` | [Correct the window for a gateway or custom model ID](/docs/en/model-config#correct-the-window-for-a-gateway-or-custom-model-id) |
 | `[claude-code:unrecognized_model]` | [Configuration warnings](#unrecognized-model-id-on-a-request) |
@@ -507,6 +511,7 @@ When a proxy, load balancer, or gateway answers with an HTML error page, the mes
 
 * Check [status.claude.com](https://status.claude.com), or the provider status page named in the message, for active incidents
 * Wait a minute, then send your message again. Your original message is still in the conversation, so for a long prompt you can type `try again` instead of pasting the whole thing.
+* If [`ANTHROPIC_BASE_URL`](/docs/en/env-vars) points at an [LLM gateway](/docs/en/llm-gateway) and every request fails this way, check whether your gateway is rejecting the tool search fields Claude Code sends by default. To check, set `ENABLE_TOOL_SEARCH=false` as [Tool search through an LLM gateway](/docs/en/mcp#tool-search-through-a-gateway) describes, then try again. Before v2.1.304, tool search was off behind a gateway unless you turned it on with `ENABLE_TOOL_SEARCH`.
 * If the error persists with no posted incident, run `/feedback` so Anthropic can investigate with your request details. See [Report an error](#report-an-error) if `/feedback` is unavailable in your environment.
 
 ### API Error: Repeated 529 Overloaded errors
@@ -1287,6 +1292,7 @@ Please run /login · API Error: 401 Invalid authentication credentials
 * If `/status` shows only your login, run `/login` once. If the credential was revoked, a fresh login replaces it.
 * If the same message returns for the same login account, the account or organization is no longer active. Check the account and organization that `/status` reports, and ask your organization admin to restore access.
 * If [`ANTHROPIC_BASE_URL`](/docs/en/env-vars) points at an [LLM gateway](/docs/en/llm-gateway), the text after `401` is your gateway's message rather than Anthropic's, and `/login` doesn't change it. Fix the credential your gateway expects instead.
+* If every request fails with a `401` once your gateway has the credential it expects, check whether the gateway is rejecting the tool search fields Claude Code sends by default. To check, set `ENABLE_TOOL_SEARCH=false` as [Tool search through an LLM gateway](/docs/en/mcp#tool-search-through-a-gateway) describes, then try again. Before v2.1.304, tool search was off behind a gateway unless you turned it on with `ENABLE_TOOL_SEARCH`.
 
 ### Login expired
 
@@ -1852,8 +1858,9 @@ Common causes include no internet access, a VPN that blocks `api.anthropic.com`,
 * Confirm you can reach the API host from the same shell by running `curl -I https://api.anthropic.com`. On Windows PowerShell use `curl.exe -I https://api.anthropic.com` so the built-in `Invoke-WebRequest` alias is not used.
 * If you are behind a corporate proxy, set `HTTPS_PROXY` before launching Claude Code and see [Network configuration](/docs/en/network-config)
 * If you route through an LLM gateway or relay, set [`ANTHROPIC_BASE_URL`](/docs/en/env-vars) to its address. See [Connect Claude Code to an LLM gateway](/docs/en/llm-gateway-connect) for setup.
+* If `ANTHROPIC_BASE_URL` already points at your gateway and every request ends in `Connection dropped`, check whether your gateway is rejecting the tool search fields Claude Code sends by default. To check, set `ENABLE_TOOL_SEARCH=false` as [Tool search through an LLM gateway](/docs/en/mcp#tool-search-through-a-gateway) describes, then try again. Before v2.1.304, tool search was off behind a gateway unless you turned it on with `ENABLE_TOOL_SEARCH`.
 * Ensure your firewall allows the hosts listed in [Network access requirements](/docs/en/network-config#network-access-requirements)
-* Intermittent failures are [retried automatically](#automatic-retries); persistent failures point to a local network issue
+* Intermittent failures are [retried automatically](#automatic-retries)
 
 If `curl` succeeds but Claude Code still fails, the cause is usually something between the runtime and the network rather than the network itself:
 
@@ -2206,6 +2213,7 @@ Before v2.1.162, Claude Code attempted the compaction anyway and surfaced the ba
 * Trim large `CLAUDE.md` memory files, or move instructions into [path-scoped rules](/docs/en/memory#path-specific-rules) that load only when relevant
 * Auto-compact is on by default and normally prevents this error. If you turned it off in `/config` or with [`DISABLE_AUTO_COMPACT`](/docs/en/env-vars), turn it back on. If you keep it off, run `/compact` yourself before the window fills.
 * If the error appears near 200K tokens on a model that accepts more, one cause is a model ID that Claude Code doesn't recognize. Claude Code assumes a 200K window for such an ID, so to keep working past that point, [give it the model's real context window](/docs/en/model-config#correct-the-window-for-a-gateway-or-custom-model-id).
+* If the error appeared right after you stopped Claude while it was compacting the conversation, your conversation is unchanged and still large enough to need compacting. Run `/compact` and send your message again. To keep the error from recurring, [update Claude Code](/docs/en/setup#update-claude-code) to v2.1.304 or later. Before v2.1.304, stopping at that moment could end the turn with this error.
 
 See [Explore the context window](/docs/en/context-window) for an interactive view of how context fills up.
 
@@ -2430,6 +2438,7 @@ There's an issue with the selected model (claude-...). It may not exist or you m
 * Use an alias such as `sonnet` or `opus` instead of a full versioned ID. Aliases resolve to a maintained default so they don't go stale. See [Model configuration](/docs/en/model-config).
 * If the wrong model keeps coming back in the CLI, a stale ID is set somewhere. Check the places you can set a model in [priority order](/docs/en/model-config#setting-your-model) and remove the stale value.
 * Claude Code reports an expired claude.ai login as [Login expired](#login-expired), not as this error. Before v2.1.206, an expired login that could no longer be refreshed failed every model with this error; run `/login` if you see that on an older version.
+* If [`ANTHROPIC_BASE_URL`](/docs/en/env-vars) points at an [LLM gateway](/docs/en/llm-gateway) and every model fails this way, check whether your gateway is rejecting the tool search fields Claude Code sends by default. To check, set `ENABLE_TOOL_SEARCH=false` as [Tool search through an LLM gateway](/docs/en/mcp#tool-search-through-a-gateway) describes, then try again. Before v2.1.304, tool search was off behind a gateway unless you turned it on with `ENABLE_TOOL_SEARCH`.
 * For Google Cloud's Agent Platform deployments, see [Google Cloud's Agent Platform troubleshooting](/docs/en/google-vertex-ai#troubleshooting).
 
 ### Model is not a recognized model id
@@ -4428,6 +4437,20 @@ The check applies to a definition in the `.claude/agents/` directory of the proj
 
 * Run `claude` in the folder the [debug log](/docs/en/debug-your-config) names and accept the trust dialog. The definition is re-applied the next time Claude Code brings the teammate back; you don't need to restart the lead session
 * Or set the `hasTrustDialogAccepted` entry to `true` in `~/.claude.json`, using the exact `projects["<path>"]` key the debug log prints
+
+### Only a teammate can approve a shutdown request
+
+Claude Code refused an [agent team](/docs/en/agent-teams) shutdown approval because the session that sent it isn't running as a teammate. Nothing was sent and nothing shut down. The refusal appears in the sending session's tool result:
+
+```text wrap theme={null}
+Only a teammate can approve a shutdown request, and this session is not running as one. Nothing was sent. To shut down a teammate, send that teammate a shutdown_request message. The teammate is the one that approves it.
+```
+
+**What to do:**
+
+* If the refusal appeared in your lead session, first check whether the teammate has since shut down. The refusal goes back to Claude with the instruction to send a `shutdown_request` instead, and the turn continues. In an interactive lead session, `<name> has shut down.` appears when the teammate approves a shutdown request.
+* If the teammate is still running, ask the lead at its prompt to shut the teammate down, for example `Ask the researcher teammate to shut down`. See [Shut down teammates](/docs/en/agent-teams#shut-down-teammates).
+* If a former teammate you resumed yourself with `claude --resume` got this refusal, nothing was sent. To end that session, run `/exit` at its prompt.
 
 ### Message too large for cross-session delivery
 
