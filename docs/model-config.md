@@ -441,7 +441,11 @@ The organization default reaches only sessions authenticated with the Anthropic 
 
 Your organization can cap the [effort level](#adjust-effort-level) in two ways. On a Claude Enterprise plan, organization admins set per-role effort limits, described below. On any plan and any provider, including Amazon Bedrock, Google Cloud's Agent Platform, and Microsoft Foundry, the [`maxEffortLevel`](/docs/en/settings-reference#maxeffortlevel) managed setting caps effort on the client instead. When both apply to a model, the lower cap applies.
 
-Organization admins on Claude Enterprise plans can set a maximum [effort level](#adjust-effort-level) per model for each custom role, alongside role-level [organization model restrictions](#organization-model-restrictions). Levels above the cap aren't offered in the `/effort` picker, and naming a higher level with `--effort` or `/effort` runs at the cap instead. In interactive sessions and plain-text `--print` runs, a warning names the requested and applied levels; with `json` or `stream-json` output or in background agents, the clamp applies silently. Caps are per model, so switching models can change which levels are available. When several of your roles grant the same model, the least restrictive cap applies. Requires Claude Code v2.1.195 or later.
+Organization admins on Claude Enterprise plans can set a maximum [effort level](#adjust-effort-level) per model for each custom role, alongside role-level [organization model restrictions](#organization-model-restrictions). Requires Claude Code v2.1.195 or later.
+
+* Levels above the cap aren't offered in the `/effort` picker, and naming a higher level with `--effort` or `/effort` runs at the cap instead. If you start a plain-text `--print` run with `--effort` above the cap, a warning on stderr names the requested and applied levels. In interactive sessions, with `json` or `stream-json` output, or in background agents, that warning goes to the [debug log](/docs/en/errors#configuration-warnings) instead.
+* Caps are per model, so switching models can change which levels are available.
+* When several of your roles grant the same model, the least restrictive cap applies.
 
 Effort limits are delivered together with [organization model restrictions](#organization-model-restrictions) and reach the same sessions.
 
@@ -843,7 +847,7 @@ An unrecognized provider or custom spelling, the same spelling with `[1m]`, and 
 * If Claude Code can't resolve a provider or custom spelling to a model it recognizes and the ID doesn't contain `[1m]`, the variable applies directly and proactive compaction continues at the declared window.
 * If Claude Code can't resolve a provider or custom spelling to a model it recognizes and the ID contains `[1m]`, in any casing, Claude Code assumes a 1M window for it and the variable doesn't apply on its own. To correct the window while keeping proactive compaction, also set [`CLAUDE_CODE_DISABLE_1M_CONTEXT=1`](/docs/en/env-vars). With that variable set, Claude Code sizes the ID like the same spelling without `[1m]`, so `CLAUDE_CODE_MAX_CONTEXT_TOKENS` applies when it would apply to that untagged spelling.
 
-  With a declared window above 200K, Claude Code then shows a [startup warning](/docs/en/errors#the-200k-limit-isnt-enforced) that the 200K limit isn't enforced. The warning is expected in this configuration.
+  With a declared window above 200K, the warning that [the 200K limit isn't enforced](/docs/en/errors#the-200k-limit-isnt-enforced) is expected in this configuration.
 * If the ID resolves to a model Claude Code recognizes, or the ID is a bare `claude-` name with no suffix for Claude Code to strip, in any casing, the variable takes effect only when you also set [`DISABLE_COMPACT`](/docs/en/env-vars), which disables all compaction.
 
   For example, an ID that contains a Claude model name that Claude Code knows, such as `anthropic/claude-opus-4-8`, `us.anthropic.claude-…-v1:0`, or the dated `claude-sonnet-4-5@20250929`, resolves to that model. This includes IDs that also contain `[1m]`: Claude Code resolves `claude-opus-4-8[1m]` to Opus 4.8 even with `CLAUDE_CODE_DISABLE_1M_CONTEXT` set.

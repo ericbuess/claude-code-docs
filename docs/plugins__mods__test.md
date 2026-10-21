@@ -187,6 +187,7 @@ This table lists the ones mods use most. The first column is the call your mod m
 | `prompt.fill` | `() => ({ isFilled: true })` |
 | `$.prompt.read` | `() => ({ value: { text: '...', cursor: 0 } })` |
 | `$.ui.copy` | `() => ({ value: { isCopied: true } })` |
+| `$.ui.notify` | `() => ({ value: { isSent: true, channel: 'terminal_bell' } })`. The text is `e.text` and the title is `e.title`. |
 | `$.session.messages` | `() => ({ value: [{ role: 'assistant', text: '...', toolUses: [] }] })` |
 | `$.session.id`, `$.agent.list` | `() => ({ value: 'abc123' })`, `() => ({ value: [] })` |
 | `session.send` | `() => ({ isDelivered: true })`. `e.to` arrives as a string even when your mod passed `{ sessionId }`. |

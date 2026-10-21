@@ -302,7 +302,7 @@ The `/mcp` panel shows the tool count next to each connected server and flags se
 If your request needs tools from a server that is still connecting in the background, Claude waits for that server before continuing. How the wait happens depends on your configuration:
 
 * **With [tool search](#scale-with-mcp-tool-search), the default**: the wait happens inside the `ToolSearch` call.
-* **Without tool search**: Claude uses the `WaitForMcpServers` tool instead. Configurations without tool search include a custom `ANTHROPIC_BASE_URL`, `ENABLE_TOOL_SEARCH=false`, and a model earlier than Claude Opus 4.5, Claude Sonnet 4.5, and Claude Haiku 4.5 on Google Cloud's Agent Platform.
+* **Without tool search**: Claude uses the `WaitForMcpServers` tool instead. Configurations without tool search include `ENABLE_TOOL_SEARCH=false` and a model earlier than Claude Opus 4.5, Claude Sonnet 4.5, and Claude Haiku 4.5 on Google Cloud's Agent Platform. For an `ANTHROPIC_BASE_URL` gateway, see [Tool search through an LLM gateway](#tool-search-through-a-gateway).
 * **On a Microsoft Foundry [deployment hosted on Azure](https://platform.claude.com/docs/en/build-with-claude/claude-in-microsoft-foundry#hosting-options)**: Claude starts on the tool-search path rather than with `WaitForMcpServers`, since Claude Code discovers the deployment's server-side rejection only from the API. After Claude Code switches that deployment to [upfront loading](#scale-with-mcp-tool-search), tools from a server that finishes connecting become available on Claude's next request.
 
 With tool search enabled, when a server finishes connecting while Claude is working, Claude Code lists the server's tool names to Claude on its next request in the same turn. Claude can then search for and call those tools without waiting for your next message.
@@ -1488,7 +1488,7 @@ The following `tools/list` entry asks for one tool to load upfront:
 
 ### Configure tool search
 
-Tool search is enabled by default: MCP tools are deferred and discovered on demand. Claude Code disables it when `ANTHROPIC_BASE_URL` points to a non-first-party host, since most proxies don't forward `tool_reference` blocks. Set `ENABLE_TOOL_SEARCH` explicitly to override that fallback.
+Tool search is enabled by default: MCP tools are deferred and discovered on demand.
 
 Setting [`CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS`](/docs/en/env-vars) keeps tool search off. You can't override it by setting `ENABLE_TOOL_SEARCH` yourself. On Claude Code v2.1.227 or later, your organization can keep tool search on under this variable through [managed settings](/docs/en/managed-settings). In a session that [gets the HIPAA configuration](/docs/en/hipaa-setup#check-how-developers-sign-in-and-connect), tool search is off, and neither `ENABLE_TOOL_SEARCH` nor managed settings turns it back on. [Disable pre-release capabilities](/docs/en/llm-gateway-protocol#disable-pre-release-capabilities) covers where the override applies and what the variable strips.
 
@@ -1505,8 +1505,8 @@ Control tool search behavior with the `ENABLE_TOOL_SEARCH` environment variable:
 
 | Value | Behavior |
 | :- | :- |
-| (unset) | All MCP tools deferred and loaded on demand. Falls back to loading upfront on models earlier than Opus 4 and Sonnet 4, on Google Cloud's Agent Platform models earlier than Opus 4.5, Sonnet 4.5, and Haiku 4.5, when `ANTHROPIC_BASE_URL` is a non-first-party host, or on a Microsoft Foundry deployment hosted on Azure |
-| `true` | MCP tools stay deferred when `ANTHROPIC_BASE_URL` is a non-first-party host. The other (unset) fallbacks still apply. Claude Code sends the beta header through proxies, and requests fail on proxies that don't support `tool_reference` blocks |
+| (unset) | All MCP tools deferred and loaded on demand. Loaded upfront on models earlier than Opus 4 and Sonnet 4, on the [earlier Agent Platform models](#configure-tool-search), and on Microsoft Foundry deployments hosted on Azure |
+| `true` | MCP tools deferred, with the same fallbacks as (unset) |
 | `auto` | Threshold mode: Claude Code loads the tools it would otherwise defer upfront while their definitions total less than 10% of the context window, and defers all of them once the definitions reach 10% |
 | `auto:N` | Threshold mode with a custom percentage, where `N` is 0-100. For example, `auto:5` for 5% |
 | `false` | All MCP tools loaded upfront, no deferral |
@@ -1530,6 +1530,21 @@ You can also disable the `ToolSearch` tool specifically:
   }
 }
 ```
+
+If you deny `ToolSearch` or leave it out of [`--tools`](/docs/en/cli-reference#cli-flags), MCP tools load upfront instead, but a request can still carry a placeholder `defer_loading` entry. If a gateway rejects that entry, see [Tool search through an LLM gateway](#tool-search-through-a-gateway).
+
+#### Tool search through an LLM gateway
+
+> [!NOTE]
+>
+> These cases are covered elsewhere:
+>
+> * **You've set `CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS`**: see [how it affects tool search](#configure-tool-search)
+> * **A request failed with an error that names `defer_loading` or `tool_reference`**: see [Extra inputs are not permitted](/docs/en/errors#extra-inputs-are-not-permitted)
+
+When `ANTHROPIC_BASE_URL` points to a gateway, tool search is on by default, so requests include `defer_loading` tool fields and `tool_reference` blocks for the gateway to forward. While tool search is on, MCP tools are [deferred](#scale-with-mcp-tool-search). To load every tool upfront instead, set `ENABLE_TOOL_SEARCH=false` in your shell or your [settings `env`](/docs/en/settings-reference#env). Before v2.1.304, tool search was off behind a gateway unless `ENABLE_TOOL_SEARCH` was `true`, `auto`, or `auto:N`.
+
+On v2.1.305 or later, Claude Code can [retry a request without tool search](/docs/en/llm-gateway-protocol#retry-without-tool-search) after a `400` or `422` whose cause it doesn't recognize. When the retry works, nothing shows on screen and you don't need to do anything: MCP tools load upfront instead. Claude Code tries tool search again later, at the cost of another rejected request. To skip those requests, set `ENABLE_TOOL_SEARCH=false`.
 
 ### Exempt a server from deferral
 

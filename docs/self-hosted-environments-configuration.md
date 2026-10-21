@@ -281,7 +281,7 @@ The orchestrator runs `${hooks-dir}/spawn-runner` once per spawn request. The ho
 | `CLAUDE_RUNNER_ATTEMPT` | A per-session counter to use for logging. It isn't a retry count or a request count. `0` for pre-warming requests, though a request for a session can carry `0` too. |
 | `CLAUDE_RUNNER_ORDER_SERVER_TIME` | Server time from the poll response's HTTP `Date` header. When the hook verifies the work-order JWT's `exp`, compare against this value instead of the local clock to tolerate skew. Empty when the gateway omitted the header. |
 | `CLAUDE_RUNNER_POOL_ID` | The ID of the environment the new runner should join, in `ccpool_...` form |
-| `CLAUDE_RUNNER_ACCOUNT_ID` | Tagged ID of the account that enqueued the session, for per-account routing, quota, or chargeback. Empty when unavailable, and always empty for Claude Tag channel sessions, which no account enqueues. |
+| `CLAUDE_RUNNER_ACCOUNT_ID` | Tagged ID of the account that enqueued the session. Use it for per-account routing, quota, or chargeback, not as a dedup key. Empty when unavailable, and always empty for Claude Tag channel sessions, which no account enqueues. |
 | `CLAUDE_RUNNER_ACCOUNT_EMAIL` | Email of the account that enqueued the session. Empty when unavailable. Treat the email as personally identifiable information and don't log it. |
 | `CLAUDE_RUNNER_PRIMARY_REPO_URL` | URL of the session's first git source, for routing to a runner with that repository pre-warmed. Empty when the session has no git sources. |
 | `CLAUDE_RUNNER_PRIMARY_REPO_REVISION` | Revision of the session's first git source: branch, SHA, tag, or full reference name. Empty when unspecified. |
@@ -370,7 +370,21 @@ These lines change how the rest of the hook behaves, so check it for each of the
   ```bash theme={null}
   trap 'rc=$?; your-cleanup-command || true; [ "$rc" -eq 0 ] || [ -n "${PERMANENT:-}" ] || exit 1' EXIT
   ```
-* **Commands that are allowed to fail**: if the hook didn't use `set -e` before, it now stops at the first command that returns non-zero, such as a lookup that finds nothing or a duplicate submit that your platform rejects. If the hook acts on the result, make that command the condition of an `if`. If it ignores the result, follow the command with `|| true`.
+* **Commands that are allowed to fail**: if the hook didn't use `set -e` before, it now stops at the first command that returns non-zero, such as a lookup that finds nothing. If the hook acts on the result, make that command the condition of an `if`. If it ignores the result, follow the command with `|| true`.
+* **The command that submits the workload**: don't follow it with `|| true`. With `|| true`, the hook exits 0 even when your platform refuses the submit, for example over quota, and the session waits for a runner that was never started.
+
+  Name the workload after `CLAUDE_RUNNER_ORDER_ID`, as [the hook's first rule](#the-spawn-runner-hook) says. An already-exists answer is then a redelivery of the same request, so treat that answer alone as success. For anything else, print the answer to stderr and exit 1, or call `permanent` if no retry can fix it. This example does that for `kubectl create`, with a `job.yaml` that holds only the workload:
+
+  ```bash theme={null}
+  if ! out=$(kubectl create -f job.yaml 2>&1); then
+    case "$out" in
+      *AlreadyExists*) ;;
+      *) printf '%s\n' "${out:-kubectl create failed}" >&2; exit 1 ;;
+    esac
+  fi
+  ```
+
+  The orchestrator's log then shows that message. If the hook creates other objects, name each after the order ID, give it its own command, and treat its already-exists answer as success in the same way. For an object that holds a secret, print a fixed message in place of the command's output.
 
 To confirm the trap works, add a line directly below the `trap` line that calls a command that doesn't exist, such as `no-such-command`. Run the hook file from your shell and check that `echo $?` prints `1`, then remove the line.
 

@@ -827,7 +827,7 @@ managed:
 A `match: {}` catch-all, conventionally listed last, is treated as a base layer. Every other policy inherits any key it doesn't set from the catch-all, so per-role entries only need to list what differs from the org default. The merge rules depend on the key type:
 
 * **Allow-lists**: `availableModels` and `permissions.allow`. A specific policy's list fully replaces the base's.
-* **Deny-lists and hook arrays**: `permissions.deny`, `permissions.ask`, `disabledMcpjsonServers`, `deniedMcpServers`, `blockedMarketplaces`, and every `hooks` event-type array. These take the union of base and policy, so an org-wide deny or audit hook can't be accidentally dropped by a per-role override.
+* **Deny-lists and hook arrays**: `permissions.deny`, `permissions.ask`, `disabledMcpjsonServers`, `deniedMcpServers`, `blockedMarketplaces`, `deniedModels`, and every `hooks` event-type array. These take the union of base and policy, so an org-wide deny or audit hook can't be accidentally dropped by a per-role override.
 * **Record-typed keys**: `env`, `modelOverrides`, and `skillOverrides`. These shallow-merge, so a per-role `env` block overrides keys it sets and inherits the rest from the base.
 
 `availableModels` is also enforced server-side at `/v1/messages`, so a denied model returns `400` regardless of what the client sends. An empty list denies every model. The check also covers the model a session starts on before the developer picks one, so [start sessions on a model the policy allows](#start-sessions-on-a-model-the-policy-allows).
@@ -973,6 +973,7 @@ managed:
 | Key | Enforced by | Effect |
 | - | - | - |
 | `availableModels` | Gateway + CLI | Model allowlist. Also checked at `/v1/messages`, so a patched client can't bypass it. |
+| [`deniedModels`](/docs/en/settings-reference#deniedmodels), [`availableModelsMatch`](/docs/en/settings-reference#availablemodelsmatch) | Gateway + CLI | [Block specific models or versions](/docs/en/model-config#block-specific-models-or-versions) that `availableModels` would otherwise permit. A blocked model is rejected with a `400` at `/v1/messages` and is left out of `/v1/models`. The gateway's own check requires Claude Code v2.1.299 or later on the gateway server. The CLI's check requires v2.1.283 or later on clients, and earlier clients ignore both keys. |
 | `permissions.allow` / `.deny` | CLI | Tool and command rules. See [Permissions](/docs/en/permissions). |
 | `permissions.disableBypassPermissionsMode` | CLI | Set to `disable` to block [`bypassPermissions`](/docs/en/permission-modes#skip-all-checks-with-bypasspermissions-mode), the mode that skips permission prompts, and the `--dangerously-skip-permissions` flag |
 | `allowManagedPermissionRulesOnly` | CLI | When `true`, managed settings become the only settings source of permission rules. The [`allowManagedPermissionRulesOnly`](/docs/en/settings-reference#allowmanagedpermissionrulesonly) entry lists every source Claude Code then ignores. |
@@ -1045,7 +1046,7 @@ If you don't deploy Claude Desktop, leave `desktop` out of your policies entirel
 
 The gateway derives much of the bootstrap response from the matched policy's `cli` or `code` block and from top-level gateway config:
 
-* The model list, from `availableModels`. [Extended context in Claude Desktop](#extended-context-in-claude-desktop) covers each model's 1M context option
+* The model list, from `availableModels`. The list leaves out models that the policy blocks with [`deniedModels` or `availableModelsMatch: exact`](#what-goes-in-cli). This filter requires Claude Code v2.1.299 or later on the gateway server. [Extended context in Claude Desktop](#extended-context-in-claude-desktop) covers each model's 1M context option
 * Disabled tools, from bare tool-name `permissions.deny` entries. If you set `disabledBuiltinTools` in the policy's `desktop` block, the gateway serves the union of your value and the derived list, so you can disable more tools this way but can't re-enable one you disabled through `permissions.deny`
 * The egress allowlist, from `sandbox.network.allowedDomains`. If you set `coworkEgressAllowedHosts` in the policy's `desktop` block, the gateway uses that value instead of the derived list. If the allowlist the gateway serves includes `*` and the gateway doesn't also serve Claude Desktop's [`allowedWorkspaceFolders`](https://claude.com/docs/third-party/claude-desktop/code#applied-as-managed-policy), Claude Desktop doesn't turn on the [Bash sandbox](/docs/en/sandboxing) in the Code tab
 * An OTLP endpoint that points at the gateway itself, and the signed-in user's identity attributes. The gateway relays the exports it receives at that endpoint to your `forward_to` destinations. It includes the endpoint and the attributes when you set both [`telemetry.forward_to`](#telemetry) and `listen.public_url`.

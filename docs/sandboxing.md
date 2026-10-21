@@ -546,6 +546,10 @@ There is no way to exempt one of these paths: an `allowWrite` entry or an `Edit`
 
 If `git merge` or `git checkout` fails with `unable to unlink old` on one of these paths, see [A git command fails with `unable to unlink old`](#a-git-command-fails-with-unable-to-unlink-old).
 
+#### Denied paths that pass through a symlink
+
+On macOS, when a denied path passes through a symlink, such as a `~/.claude` that is a link into a dotfiles repository, the sandbox also denies the path's real location. This covers the sandbox's own denials and your literal `denyWrite` and `denyRead` entries.
+
 ### Network isolation
 
 A sandboxed command has no direct route to the network:

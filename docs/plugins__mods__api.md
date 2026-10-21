@@ -211,6 +211,42 @@ A background job can show the user something without starting a turn. Each of th
 | `$.ui.status(text)` | One line under the prompt that stays until you change it. It starts with `⚠` and the mod's name, as in `⚠ my-mod: checks: 3 passing`. |
 | `$.ui.toast(text)` | A toast notification with the mod's name that disappears after a few seconds. It's a box at the top right in [fullscreen rendering](/docs/en/fullscreen), and one line at the right under the prompt in the classic renderer. |
 | `$.ui.log(text)` | A dim line in the transcript that Claude doesn't read. It starts with `●` and the mod's name, as in `● my-mod: build finished`. |
+| `$.ui.notify(text)` | A notification from their terminal, outside Claude Code, sent the way their [`preferredNotifChannel`](/docs/en/settings-reference#preferrednotifchannel) setting says. The mod's name is its title unless you pass a non-empty `{ title }`, which is shown as you give it. |
+
+`$.ui.notify` is the only one of these that answers. It resolves to `{ isSent: true, channel }` when the user's channel wrote the notification to their terminal. `channel` is the setting's value that sent it, such as `kitty` or `terminal_bell`. The `terminal_bell` channel rings the bell and shows neither your text nor the title.
+
+Otherwise the call resolves to `{ isSent: false, reason }`:
+
+| `reason` | Meaning |
+| :- | :- |
+| `disabled` | The user set `preferredNotifChannel` to `notifications_disabled` |
+| `no-channel` | The setting is `auto` and their terminal has no notification Claude Code can send |
+| `no-surface` | The session has no terminal, as in a `-p` run, the Agent SDK, the desktop app, the VS Code extension, or a cloud session. Also the answer to a call made before the session starts, while your mod is loading, and to a call made while Claude Code is exiting |
+| `refused` | Another mod's hook on `ui.notify` answered in Claude Code's place without sending |
+
+The call rejects instead of resolving when `text` isn't a string, when another mod's hook on `ui.notify` returns `{ deny }`, or when writing to the terminal fails.
+
+Your mod can't choose the channel, and Claude Code doesn't limit how often a mod notifies. The user's setting is the only switch.
+
+When the call reaches a running session, the user's [`Notification` hooks](/docs/en/hooks#notification) run with the type `plugin_notification`. They run even when the answer is `disabled`, and in a session with no terminal, where the answer is `no-surface`. No hook runs for a call made before the session starts or while Claude Code is exiting. The hook your mod called `$.ui.notify` from is left out of that run, so a `classic.Notification` hook that notifies isn't called again for its own notification.
+
+A terminal doesn't report whether it showed the notification, so `isSent: true` means it was sent, not that the user saw it.
+
+This example notifies when the main conversation's turn ends without an interruption, and falls back to a toast when no notification with text went out. It doesn't wait for the notification before passing the event on, because the user's `Notification` hooks run first and can take a while:
+
+```javascript theme={null}
+on('turn.complete', ($, e, next) => {
+  const isMainTurn = e.agentId === undefined && !e.isAborted
+  const fallBack = () => $.ui.toast('Turn finished')
+  if (isMainTurn) {
+    $.ui.notify('Turn finished').then(sent => {
+      const hasText = sent.isSent && sent.channel !== 'terminal_bell'
+      if (!hasText) fallBack()
+    }, fallBack)
+  }
+  return next(e)
+})
+```
 
 In the [VS Code extension](/docs/en/plugins/mods/interface#draw-in-the-vs-code-extension), status lines and toasts show above the prompt box instead, and log lines in the conversation.
 

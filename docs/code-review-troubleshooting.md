@@ -66,10 +66,14 @@ If the check run title says issues were found but you don't see inline review co
 
 ## The check run mentions REVIEW\.md
 
-Two of the messages a check run can carry about `REVIEW.md` concern branch protection:
+These are three of the messages a check run can carry about `REVIEW.md`:
 
 * **"This review applied the repository's review instructions (REVIEW\.md) from its default branch, which is not protected against direct pushes."**: the review read the root file only. See [Which branch REVIEW.md is read from](/docs/en/code-review-customize#which-branch-review-md-is-read-from) for what protecting the branch changes.
 * **"were not applied to this review: branch protection could not be confirmed"**: the review read no `REVIEW.md`.
+* **"they link to a file this pull request modifies, or carry more links than the review checks"**: the review skipped the root `REVIEW.md`, or the number of subdirectory `REVIEW.md` files the message gives. Check the skipped file for each cause. For the root `REVIEW.md`, check the [files it includes](/docs/en/code-review-customize#include-other-files-in-review-md) too:
+  * **Too many links**: it carries more than 64 Markdown links. Cut links to [64 or fewer](/docs/en/code-review-customize#include-other-files-in-review-md).
+  * **A link the review can't parse**: it has a malformed Markdown link. Fix or remove the link.
+  * **A link to a changed file**: it links to a file or folder this pull request changes, and the review couldn't leave out only the lines with that link. Write the rule in `REVIEW.md` itself.
 
 ## Setup problems
 

@@ -228,7 +228,7 @@ A `-p` session can't show the approval dialog. When the [inbound default](#contr
 * **Before the deadline**: if a mode or settings change allows the message, Claude Code delivers it.
 * **Past the deadline**: Claude Code drops the message and reports it as expired to a sender it can reach.
 
-Set `dialogExpiry` to `"never"` to keep default-held messages until the session ends. A message held by an explicit `hold` setting doesn't expire; Claude Code delivers it only when an `accept` later applies.
+Set `dialogExpiry` to `"never"` to keep default-held messages until the session ends. A message held by an explicit `hold` setting doesn't expire; Claude Code delivers it when an `accept` later applies.
 
 To let a `-p` worker take messages unattended, start it with `crossSessionInbound` set to `accept` in its `--settings` value. An `accept` in your user settings also works but applies to every session you run.
 

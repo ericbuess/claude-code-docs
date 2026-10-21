@@ -725,7 +725,7 @@ For what each lifetime costs, see [Cache lifetime](/docs/en/prompt-caching#cache
 
 ### `showThinkingSummaries`
 
-See summaries of Claude's [extended thinking](/docs/en/model-config#extended-thinking) in interactive sessions. Set it if you want the full summaries when you expand thinking with `Ctrl+O`. When unset or `false`, the Anthropic API redacts thinking blocks and Claude Code shows a collapsed stub; third-party providers don't redact.
+See summaries of Claude's [extended thinking](/docs/en/model-config#extended-thinking) in interactive sessions. Set it if you want the full summaries when you expand thinking with `Ctrl+O`. When unset or `false`, the Anthropic API redacts thinking blocks and Claude Code shows a collapsed stub.
 
 * **Scope**: [`Any file`](#scopes)
 * **Type**: Boolean
@@ -1369,6 +1369,8 @@ Claude Code also removes a trailing `/**`, so `~/build/**` and `~/build` cover t
 
 * **`allowWrite` and `denyWrite`**: on macOS, wildcards work. On Linux and WSL2, the sandbox mounts concrete paths, so Claude Code skips an entry that contains `*`, `?`, or `[` once the trailing `/**` is removed, and that entry has no effect. Claude Code adds the paths from your `Edit` permission rules to these lists, so the same limit applies to them, and the **Config** tab of `/sandbox` warns about `Edit` and `Read` permission rules that contain wildcards.
 * **`denyRead` and `allowRead`**: wildcards work on every platform. On Linux and WSL2, Claude Code expands a read entry to the concrete paths it matches, which it doesn't do for the write lists.
+
+Braces match as ordinary characters in a name, so `~/data/{keys,tokens}` covers a directory literally named `{keys,tokens}`, not two alternatives. To cover `~/data/keys` and `~/data/tokens`, add each as its own entry.
 
 ### `sandbox.filesystem.allowWrite`
 
@@ -4853,7 +4855,7 @@ See [Mobile push notifications](/docs/en/remote-control#mobile-push-notification
 
 ### `preferredNotifChannel`
 
-Choose how Claude Code notifies you when a task completes or a permission prompt is waiting. Appears in `/config` as **Local notifications**.
+Choose how Claude Code notifies you when a task completes or a permission prompt is waiting. A [mod's notifications](/docs/en/plugins/mods/api#show-something-without-starting-a-turn) use the same setting. Appears in `/config` as **Local notifications**.
 
 * **Scope**: [`Any file`](#scopes). Claude Code also reads a value left in `~/.claude.json` by older versions.
 * **Type**: string, one of:
