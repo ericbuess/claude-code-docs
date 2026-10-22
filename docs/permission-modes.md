@@ -36,7 +36,7 @@ Claude Code doesn't auto-approve the following in any mode, including `bypassPer
 * Tools matched by an explicit [ask rule](/docs/en/permissions#manage-permissions)
 * Connector tools your organization [set to `ask`](/docs/en/mcp#organization-controls-on-connector-tools), in sessions where that setting reaches Claude Code
 * Tools that require user interaction: the built-in `AskUserQuestion` tool and MCP tools marked [`requiresUserInteraction`](/docs/en/mcp#require-approval-for-a-specific-tool)
-* `rm` and `rmdir` removals targeting a [critical path](#critical-paths), which no allow rule or `PreToolUse` hook `"allow"` approves
+* Recognized `rm` and `rmdir` [critical-path removals](#critical-paths), which no allow rule or `PreToolUse` hook `"allow"` approves
 * The [cross-session messaging safeguards](#skip-all-checks-with-bypasspermissions-mode)
 * Reads outside the working directories while [`permissions.blockReadsOutsideWorkingDirectories`](/docs/en/settings-reference#permissions-blockreadsoutsideworkingdirectories) is on: recognized file-reading Bash commands prompt even in auto mode and `bypassPermissions` mode, and so does any [unsandboxed retry](/docs/en/sandboxing#the-unsandboxed-retry-escape-hatch) that needs approval to run outside the sandbox. Requires Claude Code v2.1.257 or later.
 
@@ -267,7 +267,14 @@ claude remote-control --permission-mode acceptEdits
 
 In addition to file edits, `acceptEdits` mode auto-approves common filesystem Bash commands: `mkdir`, `touch`, `rm`, `rmdir`, `mv`, `cp`, and `sed`. These commands are also auto-approved when prefixed with safe environment variables such as `LANG=C` or `NO_COLOR=1`, or process wrappers such as `timeout`, `nice`, or `nohup`. Like file edits, auto-approval applies only to paths inside your working directory or `additionalDirectories`.
 
-Each path also goes through the [symlink check](/docs/en/permissions#symlinks), so a write that resolves outside that scope isn't auto-approved either. Paths outside that scope, writes to [protected paths](#protected-paths), `rm` and `rmdir` removals targeting a [critical path](#critical-paths), and all other Bash commands except the [built-in read-only set](/docs/en/permissions#read-only-commands) still prompt.
+These still prompt:
+
+* Paths outside that scope
+* Writes to [protected paths](#protected-paths)
+* Recognized `rm` and `rmdir` [critical-path removals](#critical-paths)
+* All other Bash commands except the [built-in read-only set](/docs/en/permissions#read-only-commands)
+
+Each path also goes through the [symlink check](/docs/en/permissions#symlinks), so a write that resolves outside that scope isn't auto-approved either.
 
 When the [PowerShell tool](/docs/en/tools-reference#powershell-tool) is enabled, `acceptEdits` mode also auto-approves `Set-Content`, `Add-Content`, `Clear-Content`, and `Remove-Item` on in-scope paths, along with their common aliases. The same scope and protected-path rules apply, and `Remove-Item` gets [its own check](#remove-item-in-powershell). A positional argument that contains a quote character, such as the apostrophe in `Set-Content .\notes.txt "It's done"`, still prompts even on in-scope paths, because Claude Code can't statically validate an argument whose quoted and unquoted readings differ. Pass the content through a named parameter such as `-Value` to avoid the prompt.
 
@@ -323,7 +330,7 @@ With Claude Code v2.1.283 or later, auto mode is the [built-in starting permissi
 
 The classifier also reviews each message Claude sends to another agent with [`SendMessage`](/docs/en/tools-reference), whether plain text or a structured [agent team](/docs/en/agent-teams) message, before Claude Code delivers it, both in auto mode and in [plan mode while the classifier reviews commands](#analyze-before-you-edit-with-plan-mode); the send review requires Claude Code v2.1.222 or later.
 
-By default, the classifier doesn't review `rm` and `rmdir` removals targeting a critical path, such as `rm -rf /` or `rm -rf ~`. [Critical paths](#critical-paths) covers what happens to them in each permission mode.
+By default, the classifier doesn't review recognized `rm` and `rmdir` critical-path removals, such as `rm -rf /` or `rm -rf ~`. [Critical paths](#critical-paths) covers what happens to them in each permission mode.
 
 Auto mode also nudges Claude to keep working without stopping for clarifying questions, though Claude still asks when your prompt or a skill explicitly relies on it. For stronger autonomous behavior in a mode that still prompts you, set the [Proactive output style](/docs/en/output-styles) instead.
 
@@ -563,7 +570,7 @@ The following sections cover the order Claude Code evaluates an action in, how t
 >
 > 1. Actions matching your [allow, ask, or deny rules](/docs/en/permissions#manage-permissions) resolve immediately, with these exceptions:
 >    * Writes to [protected paths](#protected-paths) route to the classifier even when an allow rule matches. When the protected path is the file that a symlinked settings file points to, the write can prompt you instead, as the [protected paths](#protected-paths) list describes
->    * No allow rule approves `rm` and `rmdir` removals targeting a [critical path](#critical-paths)
+>    * No allow rule approves recognized `rm` and `rmdir` [critical-path removals](#critical-paths)
 >    * MCP tools marked [`requiresUserInteraction`](/docs/en/mcp#require-approval-for-a-specific-tool) prompt you directly even when an allow rule matches, and so do connector tools [your organization set to `ask`](/docs/en/mcp#organization-controls-on-connector-tools) in sessions where that setting reaches Claude Code
 >    * A shell command that carries [per-command allowed domains](/docs/en/sandboxing#per-command-allowed-domains-in-auto-mode) also routes to the classifier even when an allow rule matches, because a rule approves the command, not its hosts
 >    * Ask rules that match on a command's content, such as `Bash(git push *)`, fall back to a permission prompt
@@ -623,7 +630,10 @@ Claude still runs actions that need no approval in Manual mode, such as file rea
 
 Claude Code denies calls matching your explicit [`ask` rules](/docs/en/permissions#manage-permissions) rather than prompting. It also denies the built-in `AskUserQuestion` tool even if your allow rules match it, and does the same to connector tools [your organization set to `ask`](/docs/en/mcp#organization-controls-on-connector-tools) in sessions where that setting reaches Claude Code. It denies MCP tools marked [`_meta["anthropic/requiresUserInteraction"]`](/docs/en/mcp#require-approval-for-a-specific-tool) the same way, because their approval card needs an answer this mode never collects.
 
-`rm` and `rmdir` removals targeting a [critical path](#critical-paths), such as `rm -rf /` and `rm -rf ~`, are denied even when an allow rule matches them or a `PreToolUse` hook allows them. A read from a [network path](/docs/en/permissions#network-paths) is denied the same way.
+An allow rule or `PreToolUse` hook can't approve these:
+
+* Recognized `rm` and `rmdir` [critical-path removals](#critical-paths), such as `rm -rf /` and `rm -rf ~`
+* Reads from a [network path](/docs/en/permissions#network-paths)
 
 [Cloud sessions](/docs/en/claude-code-on-the-web) ignore `defaultMode: "dontAsk"`; see [bypassPermissions](#skip-all-checks-with-bypasspermissions-mode) for details.
 
@@ -644,7 +654,7 @@ Two [cross-session messaging](/docs/en/cross-session-messaging) safeguards still
 * The [`isolatePeerMachines`](/docs/en/settings-reference#isolatepeermachines) approval prompt for messages to your sessions beyond this machine still appears.
 * When no [`crossSessionInbound`](/docs/en/cross-session-messaging#control-inbound-messages) value applies, Claude Code holds an inbound message from another of your sessions for your approval, and delivers without asking only when the sending session identifies itself as also bypassing permission prompts. If you leave the permission mode while messages are held, Claude Code re-applies the inbound rules and delivers any held message they now accept.
 
-In interactive terminal sessions with bypass permissions available, Claude Code also doesn't enforce [plan mode's](#analyze-before-you-edit-with-plan-mode) blocks. Claude is still instructed to plan without editing, but a file edit or shell command it attempts during planning runs without prompting. Explicit [ask rules](/docs/en/permissions#manage-permissions) and `rm` and `rmdir` removals targeting a [critical path](#critical-paths) still prompt.
+In interactive terminal sessions with bypass permissions available, Claude Code also doesn't enforce [plan mode's](#analyze-before-you-edit-with-plan-mode) blocks. Claude is still instructed to plan without editing, but a file edit or shell command it attempts during planning runs without prompting. Explicit [ask rules](/docs/en/permissions#manage-permissions) and recognized `rm` and `rmdir` [critical-path removals](#critical-paths) still prompt.
 
 Plan mode keeps its blocks wherever Claude Code runs without an interactive terminal, including [non-interactive runs](/docs/en/headless) with `-p`, [Agent SDK](/docs/en/agent-sdk/permissions#plan-mode-plan) sessions, and conversations in the [VS Code extension](/docs/en/vs-code)'s chat panel. There, `--allow-dangerously-skip-permissions` makes `bypassPermissions` selectable later.
 
@@ -763,11 +773,21 @@ Protected files:
 
 ## Critical paths
 
-Critical paths are the directories Claude Code protects from `rm` and `rmdir` commands, such as the filesystem root, your home directory, and your working directory.
+Critical paths are the directories Claude Code protects from `rm` and `rmdir` commands, such as the filesystem root, your home directory, and your working directory. Claude Code checks these commands before they run, and no [allow rule](/docs/en/permissions#manage-permissions) approves one whose target it recognizes as a critical path. The check can miss some commands, so it doesn't replace an operating-system control such as [sandboxing](/docs/en/sandboxing).
 
-Claude Code never lets a [`permissions.allow`](/docs/en/permissions#manage-permissions) rule or a [`PreToolUse` hook](/docs/en/permissions#extend-permissions-with-hooks) that returns `"allow"` approve an `rm` or `rmdir` command that targets a critical path, even in modes that skip other prompts. This circuit breaker guards against model error. A matching deny rule still blocks the command outright.
+A critical-path removal is an `rm` or `rmdir` command whose target Claude Code recognizes as a critical path. No [`PreToolUse` hook](/docs/en/permissions#extend-permissions-with-hooks) that returns `"allow"` approves one either. An allow rule or `PreToolUse` hook can't approve one even in the permission modes that skip other prompts.
 
-What happens instead [depends on your permission mode](#critical-path-removals-in-each-permission-mode). `Remove-Item` and the `cmd` removal built-ins have their own checks, covered in [Remove-Item in PowerShell](#remove-item-in-powershell).
+> [!WARNING]
+>
+> A command the check misses gets no special handling, so anything that approves Bash commands in your session can approve it with no prompt. That includes an allow rule, `bypassPermissions` mode, and the sandbox's [auto-allow mode](/docs/en/sandboxing#auto-allow-mode). The check applies to `rm` and `rmdir`, so other approved commands can delete critical paths too.
+
+These controls apply whether or not the check recognizes a command:
+
+* **Deny rules**: a [deny rule](/docs/en/permissions#manage-permissions) that matches the command blocks it, though a [mod](/docs/en/plugins/mods/overview) you installed can still approve [some of those calls](/docs/en/permissions#precedence-among-rules-hooks-and-mods)
+* **Sandboxing**: [sandboxing](/docs/en/sandboxing) has the operating system limit which paths Bash commands can write to. Sandboxed commands can still delete your working directory
+* **Strict sandbox mode**: by default a sandboxed command can be [retried outside the sandbox](/docs/en/sandboxing#the-unsandboxed-retry-escape-hatch), and an allow rule or `bypassPermissions` mode can approve that retry with no prompt. [Strict sandbox mode](/docs/en/sandboxing#turn-off-the-retry-with-strict-sandbox-mode) turns the retry off
+
+What happens to a removal that Claude Code recognizes [depends on your permission mode](#critical-path-removals-in-each-permission-mode). `Remove-Item` and the `cmd` removal built-ins have their own checks, covered in [Remove-Item in PowerShell](#remove-item-in-powershell).
 
 ### Which paths are critical
 

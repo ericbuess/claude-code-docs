@@ -185,7 +185,7 @@ The table lists each plugin policy key, what it enforces, and what it can't do.
 | `disableSideloadFlags` | Rejects `--plugin-dir`, `--plugin-url`, `--agents`, the Agent SDK `plugins` option, and non-SDK `--mcp-config` at startup, and rejects folders named in the [`CLAUDE_CODE_PLUGIN_DIRS`](/docs/en/env-vars#variables) variable the same way | Doesn't restrict `.mcp.json`, `claude mcp add`, or SDK-provided servers. Pair it with [`allowedMcpServers`](/docs/en/managed-mcp) |
 | `disableCommandPluginSources` | Blocks plugins with a `command` source from installing, updating, or loading. A `command` source is one whose plugin directory is produced by running a command on the machine. When unset, it takes the value of `allowManagedHooksOnly` | Doesn't affect other source types |
 | `allowManagedHooksOnly` | Restricts which hooks run. See [`allowManagedHooksOnly`](/docs/en/settings-reference#allowmanagedhooksonly) | Doesn't trust hooks from plugins users enable themselves |
-| `strictPluginOnlyCustomization` | Blocks skills, agents, hooks, and MCP servers that don't come from a plugin, managed settings, or Claude Code's built-ins. Set `true` to cover all four types, or an array of `skills`, `agents`, `hooks`, and `mcp` values such as `["skills", "hooks"]` to cover some | Doesn't restrict which plugins users install. Pair it with `strictKnownMarketplaces` |
+| `strictPluginOnlyCustomization` | Blocks skills, agents, hooks, and MCP servers that don't come from a plugin, managed settings, or Claude Code's built-ins. It also stops [skills-directory plugins](#keep-skills-directory-plugins-loading) loading. Set `true` to cover all four types, or an array of `skills`, `agents`, `hooks`, and `mcp` values such as `["skills", "hooks"]` to cover some | Doesn't restrict which plugins users install. Pair it with `strictKnownMarketplaces` |
 | `pluginSuggestionMarketplaces` | Marketplaces whose plugins may appear as install suggestions. See [Recommend plugins](#recommend-plugins) | Doesn't affect the built-in tips |
 | `pluginTrustMessage` | Appends your text to the trust warning that `/plugin` shows before a plugin installs | Doesn't change the warning's own text |
 | `allowedChannelPlugins` | Replaces the default list of plugins allowed to push channel messages. Requires `channelsEnabled: true` | See [Restrict which channel plugins can run](/docs/en/channels#restrict-which-channel-plugins-can-run) |
@@ -219,7 +219,7 @@ Set the allowlist to a list of these source objects. Most entries match exactly,
 * **`file` and `directory`**: `{ "source": "file", "path": "/opt/marketplace/marketplace.json" }` or `{ "source": "directory", "path": "/opt/marketplace/plugins" }`, with absolute paths.
 * **`hostPattern`**: `{ "source": "hostPattern", "hostPattern": "^github\\.example\\.com$" }`, matched against the host of `github`, `git`, and `url` sources. The pattern matches anywhere in the hostname, so anchor it with `^` and `$` as shown to match the whole host. A `github` source always counts as `github.com`. Use a `hostPattern` entry for a GitHub Enterprise Server or GitLab host where developers create their own marketplaces. The [GHES page](/docs/en/github-enterprise-server#allowlist-ghes-marketplaces-in-managed-settings) has the worked example.
 * **`pathPattern`**: `{ "source": "pathPattern", "pathPattern": "^/opt/approved/" }`, matched against the `path` of `file` and `directory` sources. The pattern matches anywhere in the path, so start it with `^` to pin a directory prefix. `".*"` allows every local path.
-* **`skills-dir`**: `{ "source": "skills-dir" }` keeps [skills-directory plugins](#keep-skills-directory-plugins-loading) loading while an allowlist is set, and matches no marketplace.
+* **`skills-dir`**: `{ "source": "skills-dir" }` matches no marketplace. For what it does, see [Keep skills-directory plugins loading](#keep-skills-directory-plugins-loading).
 
 #### How entries match
 
@@ -233,7 +233,7 @@ Owner-wildcard entries follow the exact rules for `ref` and match any `path` ins
 
 #### Keep skills-directory plugins loading
 
-Skills-directory plugins are the plugins users keep under `~/.claude/skills/` or a project's `.claude/skills/` in folders that carry a `.claude-plugin/plugin.json`. If you set any allowlist without a `{ "source": "skills-dir" }` entry, they stop loading. Plain [skills](/docs/en/skills), meaning a `SKILL.md` without that manifest, keep loading.
+Skills-directory plugins are the plugins users keep under `~/.claude/skills/` or a project's `.claude/skills/` in folders that carry a `.claude-plugin/plugin.json`. If you set any allowlist without a `{ "source": "skills-dir" }` entry, they stop loading. If you lock any customization type with [`strictPluginOnlyCustomization`](/docs/en/settings-reference#strictpluginonlycustomization), they stop loading whether or not the entry is present. The allowlist doesn't apply to plain [skills](/docs/en/skills), meaning a `SKILL.md` without that manifest.
 
 #### Marketplaces hosted on claude.ai
 
@@ -299,7 +299,7 @@ Most organizations allow the official marketplace and their own, and register bo
 
 On a machine with this policy, adding any source outside the list, for example `/plugin marketplace add https://example.com/other-marketplace.git`, fails with a message containing `is blocked by enterprise policy` followed by the allowed sources. `claude --plugin-dir ./x` exits with a message naming `disableSideloadFlags`.
 
-The `{ "source": "skills-dir" }` entry keeps [skills-directory plugins](#keep-skills-directory-plugins-loading) loading under this allowlist. Remove that entry and they stop loading.
+If you remove the `{ "source": "skills-dir" }` entry from this allowlist, [skills-directory plugins](#keep-skills-directory-plugins-loading) stop loading.
 
 Register both marketplaces with explicit `extraKnownMarketplaces` entries, as this policy does, rather than relying on the allowlist or on the official marketplace registering itself:
 

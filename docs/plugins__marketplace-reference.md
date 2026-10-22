@@ -360,7 +360,7 @@ The table lists every marketplace source type with its fields, the `claude plugi
 | `file` | `path` | A path to a `.json` file | Loads | Allows the same path | Blocks the same path |
 | `directory` | `path` | A path to a directory | Loads | Allows the same path | Blocks the same path |
 | `settings` | `name`, `plugins`, `owner` | Not produced | Loads | Allows an entry with the same `name` and identical `plugins` | Blocks the same `name` |
-| `skills-dir` | none | Not produced | Fails to load: `Unsupported marketplace source type` | Keeps [skills-directory plugins](/docs/en/plugins/org#keep-skills-directory-plugins-loading) loading while an allowlist is set. See [Source values valid only in policy lists](#source-values-valid-only-in-policy-lists) | Stops skills-directory plugins from loading |
+| `skills-dir` | none | Not produced | Fails to load: `Unsupported marketplace source type` | Allows [skills-directory plugins](/docs/en/plugins/org#keep-skills-directory-plugins-loading). See [Source values valid only in policy lists](#source-values-valid-only-in-policy-lists) | Stops skills-directory plugins from loading |
 | `hostPattern` | `hostPattern` | Not produced | Fails to load: `Unsupported marketplace source type` | Allows `github`, `git`, and `url` sources whose host matches | Blocks those sources |
 | `pathPattern` | `pathPattern` | Not produced | Fails to load: `Unsupported marketplace source type` | Allows `file` and `directory` sources whose `path` matches | Blocks those sources |
 
@@ -389,7 +389,7 @@ The table lists each marketplace source field that has a default, a constraint, 
 `hostPattern`, `pathPattern`, `skills-dir`, and the `owner/*` form of `repo` are valid only in the two policy lists, `strictKnownMarketplaces` and `blockedMarketplaces`:
 
 * **`hostPattern` and `pathPattern`**: regular expressions Claude Code tests against a source before it fetches from it.
-* **`skills-dir`**: not a source. If you set `strictKnownMarketplaces` at all, [skills-directory plugins](/docs/en/plugins/org#keep-skills-directory-plugins-loading) stop loading until you add `{"source": "skills-dir"}` to that list.
+* **`skills-dir`**: not a source. If you set `strictKnownMarketplaces` without a `{"source": "skills-dir"}` entry, [skills-directory plugins](/docs/en/plugins/org#keep-skills-directory-plugins-loading) stop loading. If you lock any customization type with [`strictPluginOnlyCustomization`](/docs/en/settings-reference#strictpluginonlycustomization), they stop loading whether or not the entry is present.
 * **`owner/*`**: as a `github` `repo` value, matches every repository under exactly that GitHub owner. Requires Claude Code v2.1.223 or later.
 
 For match order, exact-`ref` semantics, and recipes, see [Manage plugins for your organization](/docs/en/plugins/org).

@@ -363,7 +363,7 @@ The sandbox has two independent layers: [filesystem isolation](#filesystem-isola
 Because turning filesystem isolation off widens what sandboxed commands can do, Claude Code honors `filesystem.disabled` from these settings sources only:
 
 * User settings, managed settings, and the `--settings` CLI flag can set it. Project settings in `.claude/settings.json` and `.claude/settings.local.json` can't, so a checked-out project can't switch filesystem isolation off.
-* When managed settings configure `sandbox.filesystem` at all, or list any `sandbox.credentials.files` entry with `"mode": "deny"`, only managed settings can set the key. This keeps administrator-deployed filesystem restrictions in force; to relax such a deployment, set `"disabled": true` in managed settings.
+* When managed settings configure `sandbox.filesystem` at all, or list any `sandbox.credentials.files` entry with `"mode": "deny"`, only managed settings can set the key. This keeps developers from turning filesystem isolation off in such a deployment; to turn it off for everyone, set `"disabled": true` in managed settings.
 * When [`CLAUDE_CODE_SUBPROCESS_ENV_SCRUB`](/docs/en/env-vars) is set, Claude Code ignores `filesystem.disabled` from every source, including managed settings, and keeps filesystem isolation on.
 
 A [valid](/docs/en/settings-reference#invalid-credential-entries-in-managed-settings) `mask` entry doesn't lock the key, even when Claude Code [falls back to `deny`](#mask-credential-files) for it at startup. List a path that can't be masked, such as a credential directory, as an explicit `deny` entry in managed settings, which locks the key.
@@ -542,7 +542,13 @@ Inside the directories that sandboxed commands can write to, the sandbox still d
 
 If a symlink appears at a protected settings file's path during the session, the sandbox also denies writes to the file it points to, starting with the next command.
 
-There is no way to exempt one of these paths: an `allowWrite` entry or an `Edit` allow rule that covers the path doesn't lift the protection. The only way to turn the protection off is [`filesystem.disabled`](#disable-filesystem-isolation), which turns off filesystem isolation for every path. To see most of these paths resolved for your machine, run `/sandbox` and open the **Config** tab, which lists them under **Denied within allowed**, mixed in with your own `denyWrite` entries.
+If you add an `allowWrite` entry or an `Edit` allow rule that covers one of these paths, the protection still applies. To turn the protection off, set [`filesystem.disabled`](#disable-filesystem-isolation), which also turns off the rest of filesystem isolation.
+
+> [!WARNING]
+>
+> If you set [`allowNestedUserNamespaces`](/docs/en/settings-reference#sandbox-allownestedusernamespaces) to `true` on Linux or WSL2, don't rely on protected paths: code from a sandboxed command can end up running outside the sandbox.
+
+To see most of these paths resolved for your machine, run `/sandbox` and open the **Config** tab, which lists them under **Denied within allowed**, mixed in with your own `denyWrite` entries.
 
 If `git merge` or `git checkout` fails with `unable to unlink old` on one of these paths, see [A git command fails with `unable to unlink old`](#a-git-command-fails-with-unable-to-unlink-old).
 
@@ -725,12 +731,11 @@ Unless managed settings set them, a developer's user settings or `--settings` ca
 * [`network.allowAllUnixSockets`](/docs/en/settings-reference#sandbox-network-allowallunixsockets)
 * [`network.allowLocalBinding`](/docs/en/settings-reference#sandbox-network-allowlocalbinding)
 * [`allowAppleEvents`](/docs/en/settings-reference#sandbox-allowappleevents), which a repository can't turn on
+* [`allowNestedUserNamespaces`](/docs/en/settings-reference#sandbox-allownestedusernamespaces), which a repository can't turn on
 
-Set `allowManagedReadPathsOnly` to `true` in managed settings so that only `allowRead` entries from managed settings are honored. This prevents developers from widening read access beyond the organization-approved paths.
+Set `allowManagedReadPathsOnly` to `true` in managed settings so that only `allowRead` entries from managed settings are honored. This prevents developers from widening read access beyond the organization-approved paths. To lock network domains to the managed values the same way, set [`allowManagedDomainsOnly`](/docs/en/settings-reference#sandbox-network-allowmanageddomainsonly). With `allowManagedDomainsOnly` on, only managed settings can set a [proxy port](#custom-proxy-configuration).
 
-To lock network domains to the managed values the same way, set [`allowManagedDomainsOnly`](/docs/en/settings-reference#sandbox-network-allowmanageddomainsonly). With the lock on, only managed settings can set a [proxy port](#custom-proxy-configuration).
-
-When managed settings configure `sandbox.filesystem` or list any `sandbox.credentials.files` entry with `"mode": "deny"`, only managed settings can set [`filesystem.disabled`](#disable-filesystem-isolation), so developers can't switch off administrator-deployed filesystem restrictions. A [valid](/docs/en/settings-reference#invalid-credential-entries-in-managed-settings) `mask` entry doesn't lock the key. See [Which settings can disable it](#which-settings-can-disable-it).
+When managed settings configure `sandbox.filesystem` or list any `sandbox.credentials.files` entry with `"mode": "deny"`, only managed settings can set [`filesystem.disabled`](#disable-filesystem-isolation), so developers can't turn filesystem isolation off with that key. A [valid](/docs/en/settings-reference#invalid-credential-entries-in-managed-settings) `mask` entry doesn't lock the key. See [Which settings can disable it](#which-settings-can-disable-it).
 
 #### Repository settings under an admin-required sandbox
 
@@ -835,6 +840,28 @@ Enabling `allowAppleEvents` removes code-execution isolation, since sandboxed co
 ### `docker` commands fail
 
 `docker` is incompatible with the sandbox. Take the `docker` commands you need out of the sandbox with an `excludedCommands` pattern such as `docker compose *`. [Run commands outside the sandbox with `excludedCommands`](#run-commands-outside-the-sandbox-with-excludedcommands) explains what an excluded `docker` command can reach. A narrower pattern takes fewer commands out of the sandbox.
+
+### Chromium or rootless Podman fails inside the sandbox on Linux
+
+On Linux and WSL2, commands in the sandbox can't create user namespaces by default, so tools that rely on them fail:
+
+* Chromium exits with `No usable sandbox!`
+* `unshare -U true` prints `unshare: unshare failed: Operation not permitted`. With [`allowAllUnixSockets`](/docs/en/settings-reference#sandbox-network-allowallunixsockets) on, it can print `No space left on device` instead
+* Rootless Podman prints `cannot clone: Operation not permitted`, or stops earlier with `read-only file system` on one of its own folders
+
+In a session with [`CLAUDE_CODE_SUBPROCESS_ENV_SCRUB`](/docs/en/env-vars#variables) set to `1`, start Chromium or Electron with `--no-sandbox`, and run any other tool yourself outside Claude Code. In that session, [every command runs sandboxed](#turn-off-the-retry-with-strict-sandbox-mode), and the settings that the other fixes below name have no effect.
+
+Each fix works for the tools it names and gives up some isolation:
+
+* For Chromium or Electron, start the browser with `--no-sandbox`. The Claude Code sandbox stays as it is, but the browser runs web content without its own sandbox.
+* For rootless Podman, Buildah, or a script or test command that runs a browser or `unshare`, add a pattern to [`sandbox.excludedCommands`](#run-commands-outside-the-sandbox-with-excludedcommands), such as `podman *`. Commands that match run outside the sandbox with your full access, and Claude can edit a script in your working directory before running it. The pattern has to match the command Claude runs, so for a browser, match the test command rather than the browser.
+* To keep Chromium's or Electron's own sandbox, or to run a nested bubblewrap or `unshare`, set [`sandbox.allowNestedUserNamespaces`](/docs/en/settings-reference#sandbox-allownestedusernamespaces) to `true` in `~/.claude/settings.json`, not the project's `.claude/settings.json`. Requires Claude Code v2.1.305 or later. A command that begins with `unshare` stays sandboxed whatever `excludedCommands` pattern you list, because `unshare` can start any other program. This setting alone isn't enough for rootless Podman or Buildah, which the sandbox stops in other ways too.
+
+> [!WARNING]
+>
+> If you set `allowNestedUserNamespaces` to `true`, you turn off a security boundary: code from a sandboxed command can end up running outside the sandbox.
+>
+> Don't rely on any of the sandbox's restrictions, including [protected paths](#protected-paths) and [`credentials.files`](/docs/en/settings-reference#sandbox-credentials-files) entries, to stop a malicious command. In [auto-allow mode](#auto-allow-mode), that command can run without a permission prompt. If your organization has a security team, check with them before you turn this setting on.
 
 ### `pbcopy`, `xclip`, or `wl-copy` doesn't update the clipboard
 
@@ -1008,6 +1035,7 @@ Sandboxing reduces risk but is not a complete isolation boundary. Review the lim
 * **Filesystem permission escalation**: overly broad filesystem write permissions can enable privilege escalation attacks. Allowing writes to directories containing executables in `$PATH`, system configuration directories, or user shell configuration files such as `.bashrc` or `.zshrc` can lead to code execution in different security contexts when other users or system processes access these files.
 * **Linux sandbox strength**: the Linux implementation provides strong filesystem and network isolation but includes an `enableWeakerNestedSandbox` mode that enables it to work inside Docker environments without privileged namespaces. This option considerably weakens security and should only be used when additional isolation is otherwise enforced.
 * **Apple Events on macOS**: the macOS sandbox blocks Apple Events by default. The `allowAppleEvents` setting lifts this restriction so tools such as `open` and `osascript` work, but it removes code-execution isolation: sandboxed commands can launch other applications unsandboxed with no user prompt, and can send AppleScript commands to running applications, subject to the per-app macOS automation-consent prompt (TCC). It is only honored from user, managed, or CLI settings. Project settings cannot enable it.
+* **User namespaces on Linux and WSL2**: by default, sandboxed commands can't create user namespaces. If you set [`allowNestedUserNamespaces`](/docs/en/settings-reference#sandbox-allownestedusernamespaces) to `true`, you turn off a security boundary: code from a sandboxed command can end up running outside the sandbox. Before you turn this setting on, read the warning in [Chromium or rootless Podman fails inside the sandbox on Linux](#chromium-or-rootless-podman-fails-inside-the-sandbox-on-linux).
 
 ### Scope
 

@@ -206,7 +206,7 @@ The `store` block points the gateway at its PostgreSQL database, which holds dev
 | `postgres_url` | Yes | `postgres://` or `postgresql://` URL with one host, not a comma-separated list. The gateway runs its own schema migrations at boot and on upgrade, so the role needs rights to create and alter tables on the target schema. See [Upgrades](/docs/en/claude-apps-gateway-deploy#upgrades) and [Postgres](/docs/en/claude-apps-gateway-deploy#postgres). |
 | `username` | No | Overrides the user in `postgres_url` |
 | `password` | No | Database credential. Set it here rather than in `postgres_url` so the credential stays out of the URL. Accepts any characters and takes precedence over URL credentials. |
-| `max_connections` | No | Postgres connection-pool size per replica. Default `5`, which is conservative and friendly to shared databases. With [spend limits](#admin) enabled, the hot path does a few operations per inference request, so raise it for a dedicated database under load, and keep replicas × this below the database's `max_connections`. |
+| `max_connections` | No | Postgres connection-pool size per replica. Default `5`, which is conservative and friendly to shared databases. With [spend limits](#admin) enabled, the gateway makes a few database operations per inference request, so raise it for a dedicated database under load, within what [Size the connection pool](/docs/en/claude-apps-gateway-deploy#size-the-connection-pool) allows. |
 | `connect_timeout_seconds` | No | Seconds the gateway waits when it opens a Postgres connection. A whole number from `1` to `60`, default `5`. Raise it if connection attempts time out when a new gateway instance starts. Requires Claude Code v2.1.274 or later on the gateway server. Earlier versions refuse to start when the key is set. |
 | `readiness_grace_seconds` | No | How many seconds `/readyz` keeps reporting ready after Postgres stops answering. A whole number from `0` to `3600`, default `0`. See [Outage behavior](/docs/en/claude-apps-gateway-deploy#outage-behavior) for how to pick a value. Requires Claude Code v2.1.282 or later on the gateway server. Earlier versions refuse to start when the key is set. |
 
@@ -683,7 +683,7 @@ models:
 
 Failing over between cloud providers, or to the direct Anthropic API, changes which agreement, geography, and other terms govern the request.
 
-The CLI applies the same feature gating to gateways regardless of which upstream serves a given request, so failover doesn't send a body field an upstream would reject.
+The CLI applies the same feature gating to gateways regardless of which upstream serves a given request, so by default failover doesn't send a body field an upstream would reject. If you set the [one-hour cache TTL](#one-hour-prompt-cache) in a policy, it goes to every upstream in the list, so set it only if all of them accept it.
 
 ## Optional sections
 
@@ -1021,6 +1021,29 @@ managed:
 Claude Code applies this variable without showing the developer the approval dialog. The variable applies to every model, including model IDs that end in `[1m]`.
 
 To turn off 1M context instead, set [`CLAUDE_CODE_DISABLE_1M_CONTEXT: "1"`](/docs/en/model-config#extended-context) in the same `env` block. Claude Code then treats every model as having a 200K window. In interactive sessions, each developer approves this variable in the [approval dialog](#what-goes-in-cli) before it takes effect.
+
+#### One-hour prompt cache
+
+To request the one-hour [prompt cache TTL](/docs/en/prompt-caching#cache-lifetime) instead of the default five minutes, add these keys to a policy's existing [`code`, `cli`, or `settings` block](#choose-cli-or-code) and restart the gateway. The keys need Claude Code v2.1.242 or later on the gateway server and on clients.
+
+`promptCacheTtl` covers the main conversation. `subagentPromptCacheTtl` is optional and covers subagents, workflows, and background requests. This example adds both to a `match: {}` policy keyed `cli`:
+
+```yaml theme={null}
+managed:
+  policies:
+    - match: {}
+      cli:
+        promptCacheTtl: 1h
+        subagentPromptCacheTtl: 1h
+```
+
+> [!WARNING]
+>
+> Set the keys only if your upstreams offer the one-hour TTL for every model the gateway serves. If an upstream rejects the TTL, the request fails, and neither the gateway nor Claude Code retries it with the five-minute TTL. For Amazon Bedrock, check [supported models, regions, and limits](https://docs.aws.amazon.com/bedrock/latest/userguide/prompt-caching.html#prompt-caching-models).
+
+To confirm `promptCacheTtl`, sign in to the gateway as a user the policy matches and [check which TTL your cache writes used](/docs/en/prompt-caching#choose-the-ttl-yourself). Pass `--model` to repeat the check for each model the gateway serves.
+
+One-hour cache writes [cost more](/docs/en/prompt-caching#cache-lifetime) than five-minute writes. For [spend limits](/docs/en/claude-apps-gateway-spend-limits#how-requests-are-priced) to count that higher rate, you need v2.1.286 or later on the gateway server.
 
 #### MCP servers in a policy
 

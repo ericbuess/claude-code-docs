@@ -25,6 +25,7 @@ Match the message you see to a section below.
 | `Opus is experiencing high load` / `Fable is experiencing high load` | [Server errors](#api-error-repeated-529-overloaded-errors) |
 | `Request timed out` | [Server errors](#request-timed-out), or [Network](#unable-to-connect-to-api) if the message mentions your internet connection |
 | `API Error: No response from API` | [Server errors](#no-response-from-api) |
+| `API Error: Stream idle timeout - no chunks received` | [Streaming idle watchdogs](/docs/en/network-config#streaming-idle-watchdogs), or [Long thinking ends in proxy timeouts](/docs/en/claude-apps-gateway-deploy#long-thinking-ends-in-proxy-timeouts) behind a Claude apps gateway |
 | `Server error mid-response. The response above may be incomplete.` | [Server errors](#the-response-above-may-be-incomplete) |
 | `Connection lost mid-response` / `Your computer went to sleep mid-response` / `The response stopped arriving` | [Server errors](#the-response-above-may-be-incomplete) |
 | `Connection closed mid-response` / `Response stalled mid-stream` | [Server errors](#the-response-above-may-be-incomplete) |
@@ -33,6 +34,7 @@ Match the message you see to a section below.
 | `Connection lost before a response was produced` / `Your computer went to sleep before a response was produced` / `The response stalled before a response was produced` | [Automatic retries](#automatic-retries) |
 | `Connection closed while thinking` / `Response stalled while thinking` | [Automatic retries](#automatic-retries) |
 | `Connection lost while your computer was asleep` | [Automatic retries](#automatic-retries) |
+| `The model's tool call could not be parsed (retry also failed).` | [Automatic retries](#automatic-retries) |
 | `<model> is temporarily unavailable, so auto mode cannot determine the safety of...` | [Server errors](#auto-mode-cannot-determine-the-safety-of-an-action) |
 | `Auto mode could not evaluate this action and is blocking it for safety` | [Server errors](#auto-mode-cannot-determine-the-safety-of-an-action) |
 | `Not run · auto mode's check had no usable answer` | [Server errors](#auto-mode-cannot-determine-the-safety-of-an-action) |
@@ -394,6 +396,7 @@ Match the message you see to a section below.
 | `is a network path, which cannot be added as a working directory` | [Configuration warnings](#working-directory-is-a-network-path) |
 | `Remote managed settings failed to load (<cause>)` | [Configuration warnings](#remote-managed-settings-failed-to-load) |
 | `Managed settings were not approved; exiting without applying them.` | [Configuration warnings](#managed-settings-were-not-approved) |
+| `Your organization's managed settings need your approval, which couldn't be asked for here.` | [Configuration warnings](#managed-settings-need-your-approval) |
 | `Claude Code can't start: your organization's managed settings block the default model` / `Claude Code can't start: your organization allows only the models listed in "availableModels"` | [Configuration warnings](#managed-settings-block-the-default-model) |
 | `Your organization's managed settings allow Claude Code to use: <providers>` | [Configuration warnings](#managed-settings-dont-allow-this-api-provider) |
 | `Your organization's managed settings allow Claude Code to use no API provider at all` | [Configuration warnings](#managed-settings-dont-allow-this-api-provider) |
@@ -443,6 +446,7 @@ Claude Code retries these failures:
 * A request rejected because the input plus `max_tokens` exceeds the context limit. Re-sending it unchanged would fail the same way, so Claude Code retries with a reduced `max_tokens`, and stops retrying and compacts instead in two cases:
   * When no reduction can fit, for example when the conversation itself nearly fills the context window.
   * When a retry can't shrink `max_tokens` any further. Before v2.1.218, Claude Code could re-send a reduced request that still didn't fit, such as when the extended thinking budget exceeded the remaining context, until the retry budget ran out.
+* A response that says Claude is calling a tool but contains no tool call. Claude Code retries by asking Claude for the tool call, up to two times. If both retries fail the same way, you see `The model's tool call could not be parsed (retry also failed).` and the turn ends. To try again, send another message. Before v2.1.307, Claude Code retried once before ending the turn.
 * An expired or missing Google Cloud credential on [Google Cloud's Agent Platform](/docs/en/google-vertex-ai), or AWS credentials that fail to load on your machine. Claude Code discards its cached credentials and retries up to two times, then reports the error so you can re-authenticate right away, as described under [Could not load AWS or Google Cloud credentials](#could-not-load-aws-or-google-cloud-credentials). Before v2.1.228, Claude Code retried a failing Google Cloud credential through the full retry budget before showing the error.
 * A `401` or `403` from the Anthropic API, directly or through an [LLM gateway](/docs/en/llm-gateway), while an [`apiKeyHelper`](/docs/en/settings-reference#apikeyhelper) script supplies the credential. Claude Code re-runs the script and retries with its fresh output, within the full retry budget. When the script itself fails on the re-run, Claude Code shows [Your apiKeyHelper script is failing](#your-apikeyhelper-script-is-failing) instead.
 
@@ -2213,7 +2217,9 @@ Before v2.1.162, Claude Code attempted the compaction anyway and surfaced the ba
 * Trim large `CLAUDE.md` memory files, or move instructions into [path-scoped rules](/docs/en/memory#path-specific-rules) that load only when relevant
 * Auto-compact is on by default and normally prevents this error. If you turned it off in `/config` or with [`DISABLE_AUTO_COMPACT`](/docs/en/env-vars), turn it back on. If you keep it off, run `/compact` yourself before the window fills.
 * If the error appears near 200K tokens on a model that accepts more, one cause is a model ID that Claude Code doesn't recognize. Claude Code assumes a 200K window for such an ID, so to keep working past that point, [give it the model's real context window](/docs/en/model-config#correct-the-window-for-a-gateway-or-custom-model-id).
+  * If you use a custom [`ANTHROPIC_BASE_URL`](/docs/en/env-vars) and the error starts with `Prompt is too long · automatic compaction failed`, [set the model's context window](/docs/en/model-config#correct-the-window-for-a-gateway-or-custom-model-id) or [update](/docs/en/setup#update-claude-code) to v2.1.299 or later. Before v2.1.299, Claude Code ended the turn with that message near the assumed 200K window instead of sending the request.
 * If the error appeared right after you stopped Claude while it was compacting the conversation, your conversation is unchanged and still large enough to need compacting. Run `/compact` and send your message again. To keep the error from recurring, [update Claude Code](/docs/en/setup#update-claude-code) to v2.1.304 or later. Before v2.1.304, stopping at that moment could end the turn with this error.
+* On v2.1.305, with many MCP tools and a direct connection to the Anthropic API, this error can hide an unrelated 400 or 422 error from the API. [Update Claude Code](/docs/en/setup#update-claude-code) to v2.1.306 or later to see the original error.
 
 See [Explore the context window](/docs/en/context-window) for an interactive view of how context fills up.
 
@@ -3215,7 +3221,7 @@ Claude Code turns `claude import` on through a feature flag it fetches from Anth
 
 ### Could not read Claude Code config
 
-You ran [`claude import`](/docs/en/cli-reference#cli-commands) while Claude Code couldn't parse `~/.claude.json`, the file where it stores your login and per-project state. The subcommand reads that file to check availability but doesn't show the recovery dialog the interactive session shows, so it exits with code 1. Before v2.1.222, `claude import` with an unreadable config file started an interactive session, whose recovery dialog handled the file.
+You ran [`claude import`](/docs/en/cli-reference#cli-commands) while Claude Code couldn't parse `~/.claude.json`, the file where it stores your account details and per-project state. The subcommand reads that file to check availability but doesn't show the recovery dialog the interactive session shows, so it exits with code 1. Before v2.1.222, `claude import` with an unreadable config file started an interactive session, whose recovery dialog handled the file.
 
 ```text theme={null}
 Could not read Claude Code config — run `claude` with no arguments to recover it.
@@ -5426,7 +5432,7 @@ Mapped drive letters and `\\wsl$` paths don't count as network paths.
 
 **What to do:**
 
-* On Windows, map the share to a drive letter, for example with `net use Z: \\server\share`, and pass the drive at launch with `claude --add-dir Z:\`.
+* On Windows, map the share to a drive letter and pass the drive at launch. In PowerShell, for example, run `net use Z: \\server\share` and then `claude --add-dir Z:\`.
 * On macOS or Linux, mount the share at a local path and add that path instead.
 * If the path is in `permissions.additionalDirectories`, remove it from the settings file that lists it.
 
@@ -5463,6 +5469,18 @@ Managed settings were not approved; exiting without applying them.
 
 * Start Claude Code again and approve the dialog to continue under your organization's settings. A declined dialog isn't remembered, so it appears again at the next start.
 * If you're unsure about a setting the dialog lists, ask whoever maintains your organization's managed settings before approving
+
+### Managed settings need your approval
+
+Your organization's [server-managed settings](/docs/en/server-managed-settings) include settings that need your approval in the [security approval dialog](/docs/en/server-managed-settings#security-approval-dialogs). The `claude plugin` command you ran couldn't read from the keyboard, so it couldn't show that dialog. That happens when you pipe or redirect its input and, on macOS and Linux, it also can't open `/dev/tty`. The command stopped before making any changes:
+
+```text theme={null}
+Your organization's managed settings need your approval, which couldn't be asked for here. Run `claude` in a terminal and approve them, then run this command again.
+```
+
+**What to do:**
+
+* Run `claude` in a terminal and approve the settings when the dialog appears, then run the same `claude plugin` command again. Claude Code keeps the approval and the approved settings in your [configuration directory](/docs/en/server-managed-settings#approval-memory). If the command that stopped ran as another user or with `CLAUDE_CONFIG_DIR` set, run `claude` the same way so that both use the same directory.
 
 ### Managed settings block the default model
 

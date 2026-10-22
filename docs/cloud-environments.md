@@ -476,7 +476,7 @@ If you have SessionStart hooks in your user-level `~/.claude/settings.json`, don
 
 ### Install dependencies with a SessionStart hook
 
-To install dependencies only in cloud sessions outside a [project](/docs/en/claude-projects#what-threads-pick-up-from-your-repositories), pair a SessionStart hook with a script that checks where it's running.
+To install dependencies only in cloud sessions outside a [project](/docs/en/claude-projects#what-threads-pick-up-from-your-repositories)'s threads, pair a SessionStart hook with a script that checks where it's running.
 
 First, add a SessionStart hook to your repo's `.claude/settings.json`. This configuration tells Claude Code to run `scripts/install_pkgs.sh` from your repository whenever a session starts or resumes:
 

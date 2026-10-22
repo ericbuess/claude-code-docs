@@ -10,7 +10,10 @@ Claude Code supports multiple authentication methods depending on your setup. In
 
 ## Log in to Claude Code
 
-After [installing Claude Code](/docs/en/setup#install-claude-code), run `claude` in your terminal. On first launch, Claude Code opens a browser window for you to log in. If you've set the `ANTHROPIC_API_KEY` environment variable and you approve the key when Claude Code asks whether to use it, Claude Code skips the login prompt.
+After [installing Claude Code](/docs/en/setup#install-claude-code), run `claude` in your terminal. Claude Code opens a browser window for you to log in on first launch, except in cases such as these, where it can skip the login prompt:
+
+* **API key**: you've set the `ANTHROPIC_API_KEY` environment variable and you approve the key when Claude Code asks whether to use it
+* **Earlier sign-in**: you ran [`claude auth login`](/docs/en/cli-reference#cli-commands) in your shell before your first session, or you rebuilt a dev container that keeps your credentials in a [volume](/docs/en/devcontainer#persist-authentication-and-settings-across-rebuilds). If you see the login prompt anyway, [check what can cause it](#login-prompt-still-appears-after-an-earlier-sign-in).
 
 If the browser doesn't open automatically, press `c` to copy the login URL to your clipboard, then paste it into your browser.
 
@@ -31,6 +34,15 @@ Admins can direct which login method developers use and require claude.ai logins
 To log out and re-authenticate, type `/logout` at the Claude Code prompt. Logging out also resets your first-launch setup state, so the next time you run `claude` it walks you through login and setup again.
 
 If you're having trouble logging in, see [authentication troubleshooting](/docs/en/troubleshoot-install#login-and-authentication).
+
+### Login prompt still appears after an earlier sign-in
+
+If you signed in earlier and first-launch setup shows the login prompt instead of [skipping it](#log-in-to-claude-code), check for causes such as these:
+
+* **Expired sign-in**: your earlier sign-in expired and Claude Code can't refresh it. Log in again at the prompt.
+* **Login restricted to an organization**: an administrator set [`forceLoginOrgUUID`](/docs/en/settings-reference#forceloginorguuid) in managed settings to [require logins from specific organizations](#restrict-login-to-your-organization). The prompt appears whether or not your account belongs to one of them. Log in with an account in a required organization. If you don't have one, ask your administrator to add you.
+* **Required login method**: your sign-in isn't the kind that [`forceLoginMethod`](/docs/en/settings-reference#forceloginmethod) in a settings file requires. With `"claudeai"`, an API key from an earlier Claude Console login doesn't count as an existing sign-in. With `"console"`, a claude.ai account doesn't. Log in with the kind of account that setting names.
+* **Older version**: before v2.1.290, the prompt appeared during setup whether or not you were signed in. [Update Claude Code](/docs/en/setup#update-claude-code) to skip it.
 
 ### Log in with multiple accounts
 

@@ -1132,7 +1132,7 @@ Logged once per enabled plugin at session start. Use this event to inventory whi
 * `plugin.scope`: provenance category for the plugin: `"official"`, `"community"`, `"org"`, `"user-local"`, or `"default-bundle"`
 * `enabled_via`: how the plugin came to be enabled: `"default-enable"`, `"org-policy"`, `"admin-install"`, `"seed-mount"`, or `"user-install"`. The `"admin-install"` value means the plugin is set to required or auto-install for your organization in [**Organization settings > Plugins & skills**](https://claude.ai/admin-settings/skills?tab=inventory). Before v2.1.246, Claude Code reported these plugins as `"user-install"` or `"seed-mount"`
 * `plugin_id_hash`: deterministic hash of the plugin name and marketplace, sent only to your configured exporter. Lets you count the distinct third-party plugins loaded across your fleet without recording their names. For [plugins synced from claude.ai](/docs/en/plugins/loading#synced-plugins), Claude Code hashes the plugin name with the marketplace name that claude.ai reports for the plugin, or with `synced` otherwise. Before v2.1.246, Claude Code didn't use the marketplace name claude.ai reports in the hash
-* `has_hooks`: whether the plugin contributes hooks
+* `has_hooks`: whether the plugin contributes hooks, through [hook configuration](/docs/en/plugins/components#hooks) or as a [mod](/docs/en/plugins/mods/overview#how-a-mod-works)
 * `has_mcp`: whether the plugin contributes MCP servers
 * `host_owned_mcp`: `true` when the SDK host manages this plugin's MCP connections and Claude Code skipped reading the plugin's MCP server configuration, `false` otherwise
 * `skill_path_count`: number of skill directories the plugin declares

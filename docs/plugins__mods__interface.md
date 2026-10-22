@@ -595,7 +595,7 @@ on('ui.render', { component: 'Pane' }, async ($, e, next) => {
         key: 'new-note',
         label: 'Note',
         placeholder: 'Type a note and press Enter',
-        // Draw the field empty each time, which clears it after a submit
+        // The text the field starts with
         value: '',
         submitLabel: 'add',
         autoFocus: true,
@@ -639,9 +639,7 @@ To try the pane:
 * **Add a note**: type a line and press Enter. The line appears as a new row, and the field empties.
 * **Delete a note**: press Tab until the note's `x` button has the focus, then press Enter. The `x` is the button's label and not a hotkey, so typing the letter doesn't press it.
 
-Each change follows the same render cycle as `hello-tabs`: the callback changes `notes`, calls `redraw`, and saves the list to `$.store`.
-
-The field empties after each submit because of its `value` prop. `value` is the text the field holds when it's drawn, and the user's typing replaces it until your hook draws the field again. The example always draws the field with `''`.
+Each change follows the same render cycle as `hello-tabs`: the callback changes `notes`, calls `redraw`, and saves the list to `$.store`. If your hook draws the pane again while the user is typing a note, the field keeps their text as long as the hook passes the same `value` each time. To replace their text with your own, pass a different `value`.
 
 The example saves the notes and doesn't load them. To bring them back in the next session, read them in a `session.start` hook, the way `hello-tabs` reads `count`.
 
@@ -651,6 +649,7 @@ These props make up the field's line, `Note: Type a note and press Enter ⏎ add
 | :- | :- | :- |
 | `label` | `Note` | The text before the field. The terminal draws `: ` after it. |
 | `placeholder` | `Type a note and press Enter` | Dim text that shows while the field is empty |
+| `value` | `''` | The text the field starts with. It's empty here, so the placeholder shows. |
 | `submitLabel` | `add` | The word after `⏎` that says what Enter does |
 
 Submitting an `Input` doesn't start a turn unless your callback calls [`$.prompt.submit`](/docs/en/plugins/mods/api#start-a-turn-from-a-background-job).

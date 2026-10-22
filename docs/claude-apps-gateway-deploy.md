@@ -201,6 +201,15 @@ If you autoscale on CPU, a replica at the limit queues requests without triggeri
 >
 > Every open request holds memory in the gateway process while it streams and while it waits for a slot. If you keep the limit at 256, memory on an overloaded replica still grows, because waiting requests keep their request bodies. Size the container's memory for the number of requests open at peak, and watch memory when you change the limit. A replica that runs out of memory is killed and drops every stream it holds.
 
+### Keep `API_TIMEOUT_MS` above the gateway's time to first byte
+
+If you lower [`API_TIMEOUT_MS`](/docs/en/network-config#streaming-idle-watchdogs) to retry an unanswered request sooner, keep it above the time the gateway takes to send the first bytes of a streaming response. A request that waits longer times out, and so does each retry that waits as long, until the turn ends with `Request timed out`.
+
+* **`provider: anthropic`**: set `API_TIMEOUT_MS` above the longest time your upstream takes to send its first event.
+* **Every other upstream**: set it more than 20 seconds above the longest time your upstream takes to return response headers. The gateway sends its first [keepalive `ping`](#deployment) about 15 seconds after those headers, unless the upstream's first event comes sooner. A gateway older than v2.1.229 sends no pings, so use the `provider: anthropic` rule there.
+
+On top of that time, allow for any [wait for a free slot](#concurrent-upstream-requests) and for the wait on a down upstream before [failover](/docs/en/claude-apps-gateway-config#multiple-upstreams). Keep the value above the longest [non-streaming request](/docs/en/network-config#streaming-idle-watchdogs) too.
+
 ### Outage behavior
 
 If Postgres goes down, the gateway itself keeps serving signed-in developers and new sign-ins fail. Whether developers actually keep working depends on how your orchestrator handles readiness:
@@ -250,6 +259,21 @@ The gateway holds five data tables plus a `_migrations` table, all created by it
 A 30-second loop expires `kv` rows past their TTL, and an hourly sweep enforces the retention windows on the spend tables, so nothing grows without bound. Without [spend limits](/docs/en/claude-apps-gateway-spend-limits) configured, only `kv` is written. The gateway applies its own schema migrations at boot and on every upgrade, so its database role needs rights to create and alter tables. Point it at a database or schema dedicated to the gateway to keep that grant narrow.
 
 With spend limits in use, a lost database means lost spend tracking and caps, not only developer re-logins, so run regular backups. To erase one departed developer immediately rather than waiting on retention, run `DELETE FROM principal_emails WHERE principal = '<sub>'` directly; that removes the only table holding their email, name, and groups. `spend` and `admin_audit` rows reference the pseudonymous OIDC `sub` only.
+
+#### Size the connection pool
+
+Each replica opens up to [`store.max_connections`](/docs/en/claude-apps-gateway-config#store) Postgres connections, five by default. Keep replicas × `store.max_connections` at or below the connections the database has left for the gateway:
+
+* **Replicas**: count the most that run at once. Start from your autoscaling maximum, or your replica count if you don't autoscale, and add the extra replicas a rolling update starts before it stops old ones. On Amazon ECS with default settings, and on Cloud Run, that can be as many again.
+* **Connections left**: take the database's `max_connections`, then subtract what the database reserves and what other clients hold. PostgreSQL reserves `superuser_reserved_connections`, three by default. A managed service can reserve more, so check its documentation.
+
+For example, take an autoscaling maximum of six, rolling updates that start at most two extra replicas, and the default pool of five. That needs (6 + 2) × 5 = 40 connections. A database with a `max_connections` of 50 and two connections held by other clients has 50 − 3 − 2 = 45 left, so the total fits.
+
+If your total doesn't fit, change one of these:
+
+* **The database**: raise its `max_connections`
+* **The replicas**: run fewer, or have your orchestrator start fewer extra replicas in a rolling update
+* **The pool**: lower `store.max_connections`, but with [spend limits](/docs/en/claude-apps-gateway-spend-limits) on, keep it large enough for each replica's load. Otherwise spend checks can [time out](/docs/en/claude-apps-gateway-spend-limits#postgres-availability) waiting for a connection, and the gateway logs `spend check failed: spend precheck timed out`.
 
 ### Upgrades
 
@@ -372,13 +396,17 @@ The gateway's stderr includes the audit event stream, the audit log records deve
 | Boot exits: `requires the native binary` | Running under Node instead of the native binary | Install Claude Code with one of the [standalone install methods](/docs/en/setup) |
 | Boot exits with an OIDC discovery error after `config.load` | `oidc.issuer` unreachable, or TLS chain not trusted | Check the issuer is reachable from the pod and serves `/.well-known/openid-configuration`. Set `ca_cert_pem` for private PKI. If the pod reaches the IdP only through a forward proxy, set [`oidc.use_proxy: true`](/docs/en/claude-apps-gateway-config#idp-requests-through-a-forward-proxy); on versions before v2.1.227, give the pod a direct route to each of the IdP's endpoints instead. If the pod also can't resolve the IdP's hostname, or the proxy refuses `CONNECT` to an IP address, see [Proxy-only egress](/docs/en/claude-apps-gateway-config#proxy-only-egress), which requires v2.1.277 or later. |
 | Boot exits with a Postgres permission error | The database role lacks DDL rights on its schema | Grant the role `CREATE` on the gateway's schema so it can create and alter its tables at boot |
-| Log: `could not connect to Postgres at boot, attempt 1 of 3` | The database wasn't reachable yet when the gateway started, for example on a cold instance whose network is still coming up | If the gateway then finishes booting, no action is needed. When the database isn't reachable, the gateway tries the connection three times, two seconds apart, before it exits. If it exits with `could not connect to Postgres`, check `store.postgres_url`, including that it names one host, and the network path to the database. If the attempts time out rather than being refused, raise [`store.connect_timeout_seconds`](/docs/en/claude-apps-gateway-config#store) to give each one longer. |
+| Log: `remaining connection slots are reserved` or `sorry, too many clients already`, from PostgreSQL. It shows in running replicas' `postgres connection closed` warnings, or in a new replica's boot log. There, `remaining connection slots are reserved` can follow `attempt 1 of 3`, and the replica may still start. | The replicas ask for more connections than the database has left for the gateway, and PostgreSQL refuses the extra ones | Make the total fit, as [Size the connection pool](#size-the-connection-pool) describes: run fewer replicas, lower `store.max_connections`, or raise the database's `max_connections`. If the total fits except during a rolling update, you can instead have your orchestrator stop an old replica before it starts a new one, if it supports that. |
+| Log: `could not connect to Postgres at boot, attempt 1 of 3`, with a reason other than `remaining connection slots are reserved` | The database wasn't reachable yet when the gateway started, for example on a cold instance whose network is still coming up | If the gateway then finishes booting, no action is needed. When the database isn't reachable, the gateway tries the connection three times, two seconds apart, before it exits. If it exits with `could not connect to Postgres`, check `store.postgres_url`, including that it names one host, and the network path to the database. If the attempts time out rather than being refused, raise [`store.connect_timeout_seconds`](/docs/en/claude-apps-gateway-config#store) to give each one longer. |
+| Log: `Postgres <version> is below the supported floor` | The database runs a PostgreSQL version older than your gateway version supports. The gateway keeps running. | Upgrade the database. On PostgreSQL 11, 12, or 13, you can instead upgrade the gateway to meet the [PostgreSQL requirement](/docs/en/claude-apps-gateway#prerequisites). |
 | `/oauth/callback` shows "Sign-in could not be completed" | Email domain rejected, id\_token validation failed, or `email_verified` is explicitly `false`, which the gateway always rejects with no override | Check `allowed_email_domains` and that the IdP returns a verified `email` claim. For `email_verified: false`, fix the IdP-side verification. If your IdP emits email under a different claim name, set `oidc.email_claim`. |
 | Log: `token exchange failed request_id=<id>: id_token missing email claim` | The IdP isn't including `email` in the id\_token by default. This rejection fires only when `allowed_email_domains` is set; without it, a missing email mints a session with no email | Configure the IdP to emit `email` in the id\_token. Okta: add `email` to a custom authorization server's ID-token claims. Entra: add `email` as an optional claim on the app registration. PingFederate: enable an OpenID Connect Policy that emits `email`. If the IdP serves `email` from the userinfo endpoint but won't include it in the id\_token, such as the Okta org authorization server, set `oidc.userinfo_fallback: true`. |
 | Log: `refresh failed request_id=<id>: invalid_token (…) (at userinfo_no_id_token, …)`, and developers see `Cloud gateway session expired` every `session.ttl_hours` | The IdP accepted the refresh token but returned no id\_token with it, so the gateway asked the IdP's userinfo endpoint for the user's claims. The IdP rejected the refreshed access token there. The gateway answers `temporarily_unavailable`, so Claude Code keeps the refresh token but can't renew the session. Gateway versions before v2.1.260 log the same line without the `(at …)` detail. | Set [`oidc.scope_on_refresh: true`](/docs/en/claude-apps-gateway-config#oidc), available in gateway v2.1.260 or later, so the refresh request asks for `openid` again. Some IdPs, such as Okta, return an id\_token on refresh only when asked. On PingFederate, enable **Return ID Token On Refresh Grant** under **Applications > OAuth > OpenID Connect Policy Management** instead. The key doesn't change PingFederate's behavior. For other IdPs that still omit it, check whether the userinfo endpoint accepts access tokens issued by a refresh. As a stopgap, raise [`session.ttl_hours`](/docs/en/claude-apps-gateway-config#session). See [Identity provider setup](#identity-provider-setup) for the deprovisioning tradeoff. |
 | A developer signs in, then every request from that session fails with a `431` error | The session token in every request's `Authorization` header lists the developer's IdP groups, so for a developer in many groups the headers can total more than the gateway accepts | See [Request headers too large after sign-in](#request-headers-too-large-after-sign-in) for which limit applies and what to change |
 | Every Amazon Bedrock request returns 502; log shows `Could not load credentials from any providers` | On EC2, IMDSv2's default hop limit of 1 blocks the instance-metadata request from inside the container. Boot and `/readyz` pass anyway because the AWS SDK resolves instance credentials on the first request, not at client construction | Raise the hop limit with `aws ec2 modify-instance-metadata-options --instance-id <id> --http-put-response-hop-limit 2`, or set it in the launch template. The change applies to every container on the instance. Prefer ECS task roles where available, which read credentials from the ECS container-credentials endpoint and avoid the change entirely, or apply the change on a dedicated gateway instance to limit the exposure. |
 | At peak load, responses are slow to start or appear to hang, or fail with a 502 `all upstreams failed` while the upstream is healthy | A replica has more requests open than it sends upstream at once, so the extra requests wait inside the gateway. On a `provider: anthropic` upstream, a request that waits longer than `timeouts.upstream_ttfb_ms` gives up on that upstream, which produces the 502 when no later upstream serves it. The log shows a warning that contains `client requests are open`. | Add replicas, or raise the limit on each replica. See [Concurrent upstream requests](#concurrent-upstream-requests). |
+| On an upstream other than `provider: anthropic`, a turn with a long thinking pause fails. The proxy in front of the gateway logs one request that stays open for about 12.5 minutes, then a run of `504` errors | Claude Code ended a stream that had delivered its first response event and then carried only keepalive pings. It re-sent the request without streaming, and each reply takes longer than the proxy's timeout. | Raise `CLAUDE_STREAM_IDLE_TIMEOUT_MS` for your developers. See [Long thinking ends in proxy timeouts](#long-thinking-ends-in-proxy-timeouts). |
+| On `provider: anthropic`, a turn with a long thinking pause fails. The proxy logs one request open for about 20 minutes, then `502` or `504` errors | Claude Code ended a stream that had delivered its first response event and then carried only keepalive pings. It re-sent the request without streaming, and each reply takes longer than the gateway's wait on the upstream, `timeouts.upstream_ttfb_ms`, or the proxy's timeout. | Raise `CLAUDE_STREAM_IDLE_TIMEOUT_MS` for your developers. See [Long thinking on an Anthropic API upstream](#long-thinking-on-an-anthropic-api-upstream). |
 | IdP error: unknown or unsupported scope | The IdP rejects scopes it doesn't recognize | Set `oidc.scopes` to exactly the list your IdP accepts; it must include `openid`. The default is `openid profile email offline_access`. |
 | Sessions don't silently renew after setting `oidc.scopes` | `offline_access` was dropped from the override | Add `offline_access` back if your IdP supports it. Without a refresh token, developers re-run the browser login every `session.ttl_hours`. |
 | Browser shows "This request came from another site and was blocked" | Cross-site form POST, blocked as CSRF protection. Expected for embedded or proxied pages | Open the verification link directly |
@@ -412,6 +440,67 @@ When you trim the groups claim, keep the groups you named in these settings, whi
 * **[`admin.admin_groups`](/docs/en/claude-apps-gateway-config#admin)**: decides who can call the admin API with their gateway session
 * **`match.groups` in [`managed.policies`](/docs/en/claude-apps-gateway-config#managed)**: decides which policy applies to a developer
 * **`rbac_group` [spend caps](/docs/en/claude-apps-gateway-spend-limits)**: decide which group caps apply to a developer
+
+### Long thinking ends in proxy timeouts
+
+If your upstream is `provider: anthropic`, use [Long thinking on an Anthropic API upstream](#long-thinking-on-an-anthropic-api-upstream) instead: you raise `CLAUDE_STREAM_IDLE_TIMEOUT_MS` there too, but the times and errors differ.
+
+If turns fail after long thinking and your proxy logs one request open for about 12.5 minutes, then a run of `504` errors, raise [`CLAUDE_STREAM_IDLE_TIMEOUT_MS`](/docs/en/env-vars) in a gateway policy. For example, with a 240-second idle timeout on the proxy, the run is 10 requests, each cut at 240 seconds.
+
+* **The first request**: a stream that delivers its first response event, `message_start`, and then only pings while Claude thinks. With default settings, Claude Code ends that stream after about 12.5 minutes.
+* **The other 10**: the same request, sent [without streaming](/docs/en/errors#streaming-response-ended-before-any-complete-data-was-received) and then retried, 10 sends in all by default. They get no pings, so a slow reply hits the proxy's timeout.
+
+You don't need a longer proxy timeout for this fix. If you raise only the proxy's timeout, requests without streaming still fail once a reply takes longer than Claude Code's own wait, 300 seconds by default.
+
+#### Confirm the cause
+
+Have a developer reproduce the failure with `claude --debug-file ./claude-debug.txt`, then search that file for this line:
+
+```text theme={null}
+Error streaming, falling back to non-streaming mode: Stream idle timeout - no chunks received
+```
+
+If your developers already set [`CLAUDE_CODE_DISABLE_NONSTREAMING_FALLBACK`](/docs/en/env-vars) to `1`, you see no requests without streaming, and the turn ends with `API Error: Stream idle timeout - no chunks received`. The same fix applies.
+
+#### Pick a value
+
+Pick a `CLAUDE_STREAM_IDLE_TIMEOUT_MS` value whose second column covers your longest thinking pause, or start with `1800000` if you don't know it. A stream can stay on pings alone for about 7.5 minutes longer than the value:
+
+| `CLAUDE_STREAM_IDLE_TIMEOUT_MS` | A stream can stay on pings alone for |
+| - | - |
+| `300000`, the default | About 12.5 minutes |
+| `900000` | About 22.5 minutes |
+| `1800000` | About 37.5 minutes |
+
+If an upstream hangs while the gateway keeps sending pings, your developers also wait that long before Claude Code gives up on the stream. A connection that goes fully silent still ends after 5 to 6 minutes, because the [body idle timeout](/docs/en/network-config#streaming-idle-watchdogs) doesn't follow this variable.
+
+#### Deliver the value in a policy
+
+Add the `env` entry to each policy in `gateway.yaml` that already delivers Claude Code settings to the developers you want to cover. Put it under the `code`, `cli`, or `settings` key that policy already has. To try the value first, start with a policy that matches one group. See [`managed`](/docs/en/claude-apps-gateway-config#managed) for how policies match and inherit. This example adds the entry to a `match: {}` policy keyed `cli`:
+
+```yaml theme={null}
+managed:
+  policies:
+    - match: {}
+      cli:
+        env:
+          CLAUDE_STREAM_IDLE_TIMEOUT_MS: "1800000"
+```
+
+With the `cli` key, you cover terminal, IDE extension, and Agent SDK sessions. For Claude Desktop's Code tab, see [Choose `cli` or `code`](/docs/en/claude-apps-gateway-config#choose-cli-or-code).
+
+Restart the gateway so that it reads the edited file. Then have developers restart Claude Code to get `CLAUDE_STREAM_IDLE_TIMEOUT_MS`.
+
+### Long thinking on an Anthropic API upstream
+
+If `provider: anthropic` is the model's only upstream and your proxy logs one request open for about 20 minutes, then `502` or `504` errors, raise [`CLAUDE_STREAM_IDLE_TIMEOUT_MS`](/docs/en/env-vars) in a gateway policy.
+
+* **The long request**: a stream that delivers `message_start` and then only pings while Claude thinks. Claude Code ends it after about 20 minutes with default settings, and later once you raise the variable.
+* **The errors**: requests that Claude Code then sends [without streaming](/docs/en/errors#streaming-response-ended-before-any-complete-data-was-received). Each one fails with a `502` from the gateway, or with your proxy's `504` if the proxy's timeout is shorter than the gateway's wait. That wait is [`timeouts.upstream_ttfb_ms`](/docs/en/claude-apps-gateway-config#http-tuning), which you don't need to raise for this fix.
+
+To confirm the cause, see [Confirm the cause](#confirm-the-cause).
+
+Pick the value whose time covers your longest thinking pause: about 20 minutes at the default, 30 at `900000`, and 45 at `1800000`. Then follow [Deliver the value in a policy](#deliver-the-value-in-a-policy).
 
 ## Related
 

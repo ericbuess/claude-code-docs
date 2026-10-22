@@ -76,7 +76,7 @@ Click a filename to open that node in the explorer above.
 | [`agents/*.md`](#ce-agents) | Project and global | ✓ | Subagent definitions with their own prompt and tools | [Subagents](/docs/en/sub-agents) |
 | [`workflows/*.js`](#ce-workflows) | Project and global | ✓ | Dynamic workflow scripts written by Claude and saved from `/workflows`; each file becomes a `/<name>` command | [Dynamic workflows](/docs/en/workflows) |
 | [`agent-memory/<name>/`](#ce-agent-memory) | Project and global | ✓ | Persistent memory for subagents | [Persistent memory](/docs/en/sub-agents#enable-persistent-memory) |
-| [`~/.claude.json`](#ce-claude-json) | Global only | | App state, OAuth, UI toggles, personal MCP servers | [Global config](/docs/en/settings-reference#global-config-settings) |
+| [`~/.claude.json`](#ce-claude-json) | Global only | | App state, account details, UI toggles, personal MCP servers | [Global config](/docs/en/settings-reference#global-config-settings) |
 | [`projects/<project>/memory/`](#ce-global-projects) | Global only | | Auto memory: Claude's notes to itself across sessions | [Auto memory](/docs/en/memory#auto-memory) |
 | [`keybindings.json`](#ce-keybindings) | Global only | | Custom keyboard shortcuts | [Keybindings](/docs/en/keybindings) |
 | [`themes/*.json`](#ce-themes) | Global only | | Custom color themes | [Custom themes](/docs/en/terminal-config#create-a-custom-theme) |
@@ -283,7 +283,7 @@ You can also delete any of the application-data paths above yourself, apart from
 | `~/.claude/debug/`, `~/.claude/plans/`, `~/.claude/session-env/`, `~/.claude/shell-snapshots/`, `~/.claude/backups/` | Nothing user-facing |
 | `~/.claude/todos/`, `~/.claude/statsig/`, `~/.claude/logs/`, `~/.claude/image-cache/` | Nothing. Legacy directories not written by current versions. |
 
-Don't delete `~/.claude.json`, `~/.claude/settings.json`, or `~/.claude/plugins/`: those hold your auth, preferences, and installed plugins.
+Don't delete `~/.claude.json`, `~/.claude/settings.json`, or `~/.claude/plugins/`: those hold your account details, preferences, and installed plugins.
 
 ## Related resources
 

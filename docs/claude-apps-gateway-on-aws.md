@@ -561,6 +561,7 @@ This route uses only the [`models`](/docs/en/claude-apps-gateway-config#models) 
 
 ```yaml theme={null}
 models:
+  # Include the served model's id, such as claude-opus-4-8, in each id so the gateway's spend meter can price it.
   - id: platform-claude-opus-4-8
     upstream_model:
       bedrock: arn:aws:bedrock:us-east-1:123456789012:application-inference-profile/abc123
@@ -581,7 +582,45 @@ Tell developers in a pinned team to start Claude Code with `--model platform-cla
 
 The gateway enforces `availableModels` on every request, not only in the model picker, and AWS billing groups the spend by the tag you activated. Without the `match: {}` catch-all, a developer who matches no policy gets every model in the catalog and can bill either team's profile.
 
-The costs: the config grows with teams times models, and the role that signs this upstream's Bedrock requests must also be allowed to invoke the `application-inference-profile/*` ARNs. That role is the gateway's principal, or with `assume_role` the role it assumes. See [`pricing`](/docs/en/claude-apps-gateway-config#pricing) for how the gateway's own spend meter prices these ids.
+The costs:
+
+* The config grows with teams times models
+* The role that signs this upstream's Bedrock requests must also be allowed to invoke the `application-inference-profile/*` ARNs. That role is the gateway's principal, or with `assume_role` the role it assumes.
+
+See [How requests are priced](/docs/en/claude-apps-gateway-spend-limits#how-requests-are-priced) for how the gateway's own spend meter prices these ids.
+
+#### Let a developer choose which team to bill
+
+To let a developer who works for two teams choose which team each session bills, give that pair of teams an IdP group and a policy of its own.
+
+**1. Add a group for the pair**
+
+In your IdP, add the developer to a new group, such as `team-platform-and-data`. If they're already signed in, have them run `/login` again, or wait for the next [silent refresh](/docs/en/claude-apps-gateway-config#managed), so the gateway sees the new group.
+
+**2. List its policy first**
+
+Put the group's policy above the single-team policies and allow both teams' ids in it. Copy in any other settings the two team policies set.
+
+```yaml theme={null}
+managed:
+  policies:
+    - match: {groups: [team-platform-and-data]}
+      cli: {availableModels: [platform-claude-opus-4-8, data-claude-opus-4-8], enforceAvailableModels: true}
+    - match: {groups: [team-platform]}
+      cli: {availableModels: [platform-claude-opus-4-8], enforceAvailableModels: true}
+    - match: {groups: [team-data]}
+      cli: {availableModels: [data-claude-opus-4-8], enforceAvailableModels: true}
+    - match: {}
+      cli: {availableModels: [claude-opus-4-8, claude-sonnet-4-6], enforceAvailableModels: true}
+```
+
+**3. Start each session on a team's id**
+
+Have the developer pass the id of the team the work is for, such as `claude --model data-claude-opus-4-8`.
+
+The gateway applies the [first policy that matches](/docs/en/claude-apps-gateway-config#managed), so a developer in only the two team groups gets the `team-platform` policy. Their sessions on the data team's id fail with `is not in your role's availableModels allowlist`, naming Claude Code's default model and not the id they typed. If you list both team groups in one policy's `groups` instead, everyone in either team can bill either team's profile.
+
+In the gateway's own [spend limits](/docs/en/claude-apps-gateway-spend-limits#set-a-cap), the developer has one total and one cap per period, by default the lowest of their groups' caps, whichever id a session uses. To keep one team's lower cap from stopping work for the other, set a per-user cap for the developer.
 
 ## Next steps
 

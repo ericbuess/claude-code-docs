@@ -221,7 +221,11 @@ gcloud run deploy claude-gateway \
   --no-invoker-iam-check
 ```
 
-Direct VPC egress, via `--network`, `--subnet`, and `--vpc-egress=private-ranges-only`, lets the service reach the Cloud SQL private IP directly. Each instance holds up to [`store.max_connections`](/docs/en/claude-apps-gateway-config#store) Postgres connections, five by default, so keep maximum instances × `store.max_connections` below your Cloud SQL tier's connection limit; the [reference assets](#terraform-reference) cap instances at 8 for the `db-g1-small` tier for this reason. Public egress to Google Cloud's Agent Platform endpoints and `accounts.google.com` goes directly to the internet rather than through the VPC, so no Cloud NAT is needed.
+Direct VPC egress, via `--network`, `--subnet`, and `--vpc-egress=private-ranges-only`, lets the service reach the Cloud SQL private IP directly. Public egress to Google Cloud's Agent Platform endpoints and `accounts.google.com` goes directly to the internet rather than through the VPC, so no Cloud NAT is needed.
+
+> [!NOTE]
+>
+> Each instance holds up to [`store.max_connections`](/docs/en/claude-apps-gateway-config#store) Postgres connections, five by default. Use [Size the connection pool](/docs/en/claude-apps-gateway-deploy#size-the-connection-pool) to check `--max-instances=8` against the connections your database has left for the gateway, and include the extra instances a rolling update starts.
 
 The invoker IAM check must be open or disabled. The gateway runs its own OIDC and its clients carry no GCP token, so Cloud Run's invoker check has to admit unauthenticated requests. The gateway's OIDC sign-in authenticates the request once it reaches the container, with `allowed_email_domains` gating which domains may sign in.
 

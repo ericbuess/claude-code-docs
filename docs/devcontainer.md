@@ -83,9 +83,9 @@ See [Choose your API provider](/docs/en/admin-setup#choose-your-api-provider) to
 
 ## Persist authentication and settings across rebuilds
 
-By default, the container's home directory is discarded on rebuild, so engineers must sign in again each time. Claude Code stores its authentication token, user settings, and session history under the [`~/.claude`](/docs/en/claude-directory) directory. It stores your OAuth account, personal MCP servers, and per-project trust in [`~/.claude.json`](/docs/en/settings-reference#global-config-settings), a separate file outside that directory, so mounting a volume at `~/.claude` alone doesn't keep you signed in. Mount a named volume at `~/.claude` and set [`CLAUDE_CONFIG_DIR`](/docs/en/env-vars) to the same path so Claude Code writes `.claude.json` inside the volume.
+By default, the container's home directory is discarded on rebuild, so engineers must sign in again each time. Claude Code stores its authentication token, user settings, and session history under the [`~/.claude`](/docs/en/claude-directory) directory. It stores your account details, personal MCP servers, and per-project trust in a separate file outside that directory: [`~/.claude.json`](/docs/en/settings-reference#global-config-settings).
 
-The following example mounts the volume and sets `CLAUDE_CONFIG_DIR` for a container whose `remoteUser` is `node`:
+To keep the directory and the file, mount a named volume at `~/.claude` and set [`CLAUDE_CONFIG_DIR`](/docs/en/env-vars) to the same path so Claude Code writes `.claude.json` inside the volume. The following example mounts the volume and sets `CLAUDE_CONFIG_DIR` for a container whose `remoteUser` is `node`:
 
 ```json devcontainer.json theme={null}
 "mounts": [
@@ -97,6 +97,10 @@ The following example mounts the volume and sets `CLAUDE_CONFIG_DIR` for a conta
 ```
 
 Replace `/home/node` with the home directory of your container's `remoteUser`. If you already set `containerEnv`, for example in [Enforce organization policy](#enforce-organization-policy), add `CLAUDE_CONFIG_DIR` to that object rather than adding a second one.
+
+> [!NOTE]
+>
+> If Claude Code repeats first-launch setup after each rebuild despite the mounted volume, check that `containerEnv` in `devcontainer.json` sets `CLAUDE_CONFIG_DIR` to the volume's mount path. Without `CLAUDE_CONFIG_DIR`, `~/.claude.json` stays in the home directory and is discarded on rebuild, along with its record that you completed setup.
 
 To isolate state per project rather than sharing one volume across all repositories, include the `${devcontainerId}` variable in the source name. The [reference configuration](https://github.com/anthropics/claude-code/blob/main/.devcontainer/devcontainer.json) uses `source=claude-code-config-${devcontainerId}` for this purpose.
 
