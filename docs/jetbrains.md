@@ -33,7 +33,7 @@ The plugin runs the `claude` command in your IDE's integrated terminal and conne
 
 **1. Install the Claude Code CLI**
 
-Follow the [quickstart](/docs/en/quickstart) to install the CLI if you haven't already. The plugin shows a "Cannot launch Claude Code" notification when `claude` isn't on your PATH.
+Follow the [quickstart](/docs/en/quickstart.md) to install the CLI if you haven't already. The plugin shows a "Cannot launch Claude Code" notification when `claude` isn't on your PATH.
 
 **2. Install the JetBrains plugin**
 
@@ -41,7 +41,7 @@ Install the [Claude Code plugin](https://plugins.jetbrains.com/plugin/27310-clau
 
 If `claude` is installed somewhere your IDE can't find, set the full path in the plugin's [Claude command setting](#general-settings).
 
-Claude Code works with any paid Claude subscription (Pro, Max, Team, or Enterprise) or a Claude Console account, and no API key is required. You'll be prompted to [log in](/docs/en/authentication#log-in-to-claude-code) the first time you run `claude`.
+Claude Code works with any paid Claude subscription (Pro, Max, Team, or Enterprise) or a Claude Console account, and no API key is required. You'll be prompted to [log in](/docs/en/authentication.md#log-in-to-claude-code) the first time you run `claude`.
 
 ## Usage
 
@@ -189,11 +189,11 @@ When Claude Code runs in a JetBrains IDE in [`acceptEdits` permission mode](/doc
 
 When running in JetBrains IDEs, consider:
 
-* Using Manual mode for edits, because `acceptEdits` and auto mode both approve edits inside your working directory without asking, except in [protected paths](/docs/en/permission-modes#protected-paths)
+* Using Manual mode for edits, because `acceptEdits` and auto mode both approve edits inside your working directory without asking, except in [protected paths](/docs/en/permission-modes.md#protected-paths)
 * Taking extra care to ensure Claude is only used with trusted prompts
 * Being aware of which files Claude Code has access to modify
 
-For Claude Code installation or login problems outside the IDE, see [Troubleshoot installation and login](/docs/en/troubleshoot-install).
+For Claude Code installation or login problems outside the IDE, see [Troubleshoot installation and login](/docs/en/troubleshoot-install.md).
 
 ### The built-in IDE MCP server
 
@@ -203,7 +203,7 @@ The server is named `ide` and is hidden from `/mcp` because there's nothing to c
 
 **Selection and open-file context.** While connected, the CLI includes your current editor selection and the path of the active file as context on each prompt you send. The transcript shows a `⧉ Selected N lines from <file>` line when this happens.
 
-If you [queue a message while Claude works](/docs/en/interactive-mode#queue-messages-while-claude-works), it keeps the selection you had when you pressed `Enter`, whatever you select afterward.
+If you [queue a message while Claude works](/docs/en/interactive-mode.md#queue-messages-while-claude-works), it keeps the selection you had when you pressed `Enter`, whatever you select afterward.
 
 To exclude a sensitive file such as `.env`, add a [`Read` deny rule](/docs/en/permissions#read-and-edit) for its path. A matching deny rule prevents both the selected text and the open-file notice for that file from reaching Claude.
 

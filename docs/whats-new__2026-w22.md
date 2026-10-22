@@ -6,7 +6,7 @@
 
 > Run Claude Code on Claude Opus 4.8, orchestrate large tasks with dynamic workflows, catch security issues with the security-guidance plugin, and use fast mode on Opus 4.8 at a lower price.
 
-Releases [v2.1.150 → v2.1.157](/docs/en/changelog#2-1-150)
+Releases [v2.1.150 → v2.1.157](/docs/en/changelog.md#2-1-150)
 4 features · May 25–29
 
 Claude Opus 4.8
@@ -22,7 +22,7 @@ Switch to Opus 4.8 by name, or pick it from the model picker:
 /model claude-opus-4-8
 ```
 
-[Model configuration](/docs/en/model-config#available-models)
+[Model configuration](/docs/en/model-config.md#available-models)
 
 Dynamic workflows
 research preview
@@ -37,7 +37,7 @@ Describe the task and ask for a workflow:
 create a workflow that migrates every internal fetch() call to the new HttpClient wrapper
 ```
 
-[Dynamic workflows](/docs/en/workflows)
+[Dynamic workflows](/docs/en/workflows.md)
 
 Security guidance plugin
 plugin
@@ -58,7 +58,7 @@ Then activate it in the current session:
 /reload-plugins
 ```
 
-[Security guidance plugin](/docs/en/security-guidance)
+[Security guidance plugin](/docs/en/security-guidance.md)
 
 Fast mode on Opus 4.8
 research preview
@@ -71,10 +71,10 @@ Toggle fast mode, now on Opus 4.8:
 /fast
 ```
 
-[Fast mode pricing](/docs/en/fast-mode#understand-the-cost-tradeoff)
+[Fast mode pricing](/docs/en/fast-mode.md#understand-the-cost-tradeoff)
 
 Other wins
 
 In `claude agents`, prefix a shell command with `!` to run it as a background job you can attach to and detach from; also available as `claude --bg --exec 'pytest -x'`Plugins in `.claude/skills` directories are now loaded automatically, no marketplace required, and `claude plugin init <name>` scaffolds a new pluginNew `/reload-skills` command re-scans skill directories without restarting, and `SessionStart` hooks can return `reloadSkills: true` to make skills they install available in the same sessionSkills and commands can set `disallowed-tools` in frontmatter to remove tools from the model while the skill is activeNew `MessageDisplay` hook event lets hooks transform or hide assistant message text as it is displayedClaude Code now switches to your configured `--fallback-model` for the rest of the session when the primary model is not found, instead of failing every requestPlugins can declare `defaultEnabled: false` in `plugin.json` or a marketplace entry, so they install without turning on until you enable themVim mode: `/` in NORMAL mode opens reverse history search, matching Bash and Zsh vi-modeStreaming tool execution is now always enabled, including with telemetry disabled and on Amazon Bedrock, Google Cloud's Agent Platform, and Microsoft Foundry`←←` to open the agents view now works on Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry, and with telemetry disabledClaude in Chrome: pick which connected browser to use via `/chrome` → "Select browser…", or in-chat when a browser action runs with multiple connected`claude mcp list` and `claude mcp get` now show unapproved `.mcp.json` servers as pending approval instead of auto-approving and connecting when output is piped
 
-[Full changelog for v2.1.150–v2.1.157 →](/docs/en/changelog#2-1-150)
+[Full changelog for v2.1.150–v2.1.157 →](/docs/en/changelog.md#2-1-150)

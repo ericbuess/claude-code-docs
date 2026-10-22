@@ -8,7 +8,7 @@
 
 Spend limits cap how much each developer can spend through your [Claude apps gateway](/docs/en/claude-apps-gateway) in a given day, week, or month. When a developer passes their cap, the gateway returns `429` on their next request and blocks them until the period resets or an admin raises the cap. Use spend limits to give each developer, group, or the whole organization a ceiling on a credential everyone shares.
 
-By default, a Claude apps gateway forwards all inference through one shared upstream credential, so your provider's bill attributes everything to that credential, not to individual developers. On Amazon Bedrock, [per-developer AWS cost attribution](/docs/en/claude-apps-gateway-config#per-developer-aws-cost-attribution) changes this. Without per-developer limits, one runaway agent fleet can spend the organization's entire commitment. Spend limits are the gateway's per-developer view and circuit breaker on top of that shared bill.
+By default, a Claude apps gateway forwards all inference through one shared upstream credential, so your provider's bill attributes everything to that credential, not to individual developers. On Amazon Bedrock, [per-developer AWS cost attribution](/docs/en/claude-apps-gateway-config.md#per-developer-aws-cost-attribution) changes this. Without per-developer limits, one runaway agent fleet can spend the organization's entire commitment. Spend limits are the gateway's per-developer view and circuit breaker on top of that shared bill.
 
 ## Set a cap
 
@@ -34,7 +34,7 @@ curl -sS https://claude-gateway.internal.example.com/v1/organizations/spend_limi
 
 | Field | Values | Description |
 | - | - | - |
-| `scope.type` | `user`, `rbac_group`, `organization` | `user` targets one developer by their OpenID Connect (OIDC) `sub`, the stable user ID your identity provider assigns; pass it as `scope.user_id`. `rbac_group` targets an [IdP group](/docs/en/claude-apps-gateway-config#managed) by name; pass it as `scope.rbac_group_id`. `organization` is the org-wide default. The gateway accepts all three; Anthropic's public `POST` is user-only today. |
+| `scope.type` | `user`, `rbac_group`, `organization` | `user` targets one developer by their OpenID Connect (OIDC) `sub`, the stable user ID your identity provider assigns; pass it as `scope.user_id`. `rbac_group` targets an [IdP group](/docs/en/claude-apps-gateway-config.md#managed) by name; pass it as `scope.rbac_group_id`. `organization` is the org-wide default. The gateway accepts all three; Anthropic's public `POST` is user-only today. |
 | `amount` | Whole-number string of USD cents, or `null` | `null` is unlimited. `"0"` is a zero cap, which blocks every request. |
 | `period` | `daily`, `weekly`, `monthly` | A scope can hold one cap per period, and each enforces independently: a developer is blocked if over any of them. |
 
@@ -74,7 +74,7 @@ Client aborts are billed too. When a stream ends without the upstream's final us
 
 #### Long-prompt rates
 
-The list price for [Claude Haiku 5.5](https://platform.claude.com/docs/en/models/haiku-5-5/overview) has a [higher rate for prompts over a token threshold](/docs/en/model-config#haiku-5-5-context-window-and-pricing). When Haiku 5.5 serves a request whose prompt exceeds the threshold, a gateway server running Claude Code v2.1.293 or later prices the whole request at that rate. The meter counts input tokens, cache reads, and cache writes toward that threshold.
+The list price for [Claude Haiku 5.5](https://platform.claude.com/docs/en/models/haiku-5-5/overview) has a [higher rate for prompts over a token threshold](/docs/en/model-config.md#haiku-5-5-context-window-and-pricing). When Haiku 5.5 serves a request whose prompt exceeds the threshold, a gateway server running Claude Code v2.1.293 or later prices the whole request at that rate. The meter counts input tokens, cache reads, and cache writes toward that threshold.
 
 If one of your `pricing.overrides` rows matches the request, that row's rates apply at any prompt length.
 
@@ -82,11 +82,11 @@ If one of your `pricing.overrides` rows matches the request, that row's rates ap
 
 The pre-check queries Postgres with a two-second timeout. If the store is unreachable or times out, enforcement fails open by default: the request proceeds, the gateway logs a warning, and the response carries no `anthropic-ratelimit-unified-*` headers. Set [`enforcement.fail_closed_on_error: true`](/docs/en/claude-apps-gateway-config#enforcement) to fail closed instead, which returns the same `429 billing_error` but with the message `spend limit unavailable` and no period, reset time, or `retry-after` header. Fail-open keeps a store outage from becoming an inference outage; fail-closed guarantees no unmetered spend.
 
-Fail-open only helps while your load balancer or orchestrator still routes traffic to the gateway. See [Outage behavior](/docs/en/claude-apps-gateway-deploy#outage-behavior) for `store.readiness_grace_seconds`, which keeps replicas passing their readiness check through a short outage.
+Fail-open only helps while your load balancer or orchestrator still routes traffic to the gateway. See [Outage behavior](/docs/en/claude-apps-gateway-deploy.md#outage-behavior) for `store.readiness_grace_seconds`, which keeps replicas passing their readiness check through a short outage.
 
 ### Usage warnings in Claude Code
 
-Claude Code warns a developer as they approach their cap: once utilization passes 75%, and again past 95% of their most-consumed cap. When the gateway blocks a request, Claude Code shows the gateway's `429` message as is, including your `admin.blocked_message`. It also shows the cap in `/usage` and passes it to the developer's [status line](/docs/en/statusline#spend-limit-fields) script.
+Claude Code warns a developer as they approach their cap: once utilization passes 75%, and again past 95% of their most-consumed cap. When the gateway blocks a request, Claude Code shows the gateway's `429` message as is, including your `admin.blocked_message`. It also shows the cap in `/usage` and passes it to the developer's [status line](/docs/en/statusline.md#spend-limit-fields) script.
 
 Each display needs a minimum Claude Code version on the developer's machine and on the gateway server:
 
@@ -98,7 +98,7 @@ Each display needs a minimum Claude Code version on the developer's machine and 
 
 The warnings and the percentage come from the `anthropic-ratelimit-unified-*` headers, which the gateway adds to each successful `/v1/messages` response for a developer who has a cap. The headers always describe the developer's own cap: the gateway strips the upstream provider's rate-limit headers, which describe your shared quota, and never forwards them.
 
-The spend a developer sees is the gateway's own [estimate](#how-requests-are-priced), the same figure it enforces the cap with, and not an amount from your provider's bill. Claude Code reads the dollar amounts with a separate request to the gateway. If you set `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` on developers' machines, as [Compliance posture](/docs/en/claude-apps-gateway-deploy#compliance-posture) suggests, Claude Code skips that request. With that variable set, or with a gateway server older than v2.1.284, the bar and the status line stay percentage-only.
+The spend a developer sees is the gateway's own [estimate](#how-requests-are-priced), the same figure it enforces the cap with, and not an amount from your provider's bill. Claude Code reads the dollar amounts with a separate request to the gateway. If you set `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` on developers' machines, as [Compliance posture](/docs/en/claude-apps-gateway-deploy.md#compliance-posture) suggests, Claude Code skips that request. With that variable set, or with a gateway server older than v2.1.284, the bar and the status line stay percentage-only.
 
 ## Admin API reference
 
@@ -172,4 +172,4 @@ When a developer leaves, delete any per-user cap via `DELETE /v1/organizations/s
 ## Related
 
 * [`admin` and `enforcement` configuration](/docs/en/claude-apps-gateway-config#admin): enabling the admin API and tuning retention
-* [Deployment guide](/docs/en/claude-apps-gateway-deploy#postgres): Postgres schema and backup guidance
+* [Deployment guide](/docs/en/claude-apps-gateway-deploy.md#postgres): Postgres schema and backup guidance

@@ -18,7 +18,7 @@ You install a channel as a plugin and configure it with your own credentials. Te
 
 When Claude replies through a channel, you see the inbound message in your terminal but not the reply text. The terminal shows the tool call and a confirmation (like "sent"), and the actual reply appears on the other platform.
 
-If you manage a Team, Enterprise, or Console organization, see [Enable channels for your organization](#enterprise-controls). To build your own channel, see the [Channels reference](/docs/en/channels-reference).
+If you manage a Team, Enterprise, or Console organization, see [Enable channels for your organization](#enterprise-controls). To build your own channel, see the [Channels reference](/docs/en/channels-reference.md).
 
 ## Supported channels
 
@@ -43,9 +43,9 @@ Start Claude Code by running `claude` in your terminal, then enter this at its p
 If the install fails, match the message Claude Code reports:
 
 * `Marketplace "claude-plugins-official" not found`: add the marketplace with `/plugin marketplace add anthropics/claude-plugins-official`, then retry the install.
-* `Plugin "<name>" not found in marketplace "claude-plugins-official"`: your local copy of the marketplace catalog may be out of date. Refresh it with `/plugin marketplace update claude-plugins-official`, then retry the install. If the retry prints the same message, see [Plugin not found in marketplace](/docs/en/plugins/troubleshooting#plugin-not-found-in-marketplace).
+* `Plugin "<name>" not found in marketplace "claude-plugins-official"`: your local copy of the marketplace catalog may be out of date. Refresh it with `/plugin marketplace update claude-plugins-official`, then retry the install. If the retry prints the same message, see [Plugin not found in marketplace](/docs/en/plugins/troubleshooting.md#plugin-not-found-in-marketplace).
 
-When the install asks for an installation scope, choose the user scope option so the plugin is available across all your projects. Check the install summary: if it reports `Run /reload-plugins to apply.`, see [Apply plugin changes without restarting](/docs/en/plugins/cli-reference#reload-plugins) to make the plugin's configure command available.
+When the install asks for an installation scope, choose the user scope option so the plugin is available across all your projects. Check the install summary: if it reports `Run /reload-plugins to apply.`, see [Apply plugin changes without restarting](/docs/en/plugins/cli-reference.md#reload-plugins) to make the plugin's configure command available.
 
 **3. Configure your token**
 
@@ -121,9 +121,9 @@ Start Claude Code by running `claude` in your terminal, then enter this at its p
 If the install fails, match the message Claude Code reports:
 
 * `Marketplace "claude-plugins-official" not found`: add the marketplace with `/plugin marketplace add anthropics/claude-plugins-official`, then retry the install.
-* `Plugin "<name>" not found in marketplace "claude-plugins-official"`: your local copy of the marketplace catalog may be out of date. Refresh it with `/plugin marketplace update claude-plugins-official`, then retry the install. If the retry prints the same message, see [Plugin not found in marketplace](/docs/en/plugins/troubleshooting#plugin-not-found-in-marketplace).
+* `Plugin "<name>" not found in marketplace "claude-plugins-official"`: your local copy of the marketplace catalog may be out of date. Refresh it with `/plugin marketplace update claude-plugins-official`, then retry the install. If the retry prints the same message, see [Plugin not found in marketplace](/docs/en/plugins/troubleshooting.md#plugin-not-found-in-marketplace).
 
-When the install asks for an installation scope, choose the user scope option so the plugin is available across all your projects. Check the install summary: if it reports `Run /reload-plugins to apply.`, see [Apply plugin changes without restarting](/docs/en/plugins/cli-reference#reload-plugins) to make the plugin's configure command available.
+When the install asks for an installation scope, choose the user scope option so the plugin is available across all your projects. Check the install summary: if it reports `Run /reload-plugins to apply.`, see [Apply plugin changes without restarting](/docs/en/plugins/cli-reference.md#reload-plugins) to make the plugin's configure command available.
 
 **5. Configure your token**
 
@@ -186,7 +186,7 @@ Start Claude Code by running `claude` in your terminal, then enter this at its p
 If the install fails, match the message Claude Code reports:
 
 * `Marketplace "claude-plugins-official" not found`: add the marketplace with `/plugin marketplace add anthropics/claude-plugins-official`, then retry the install.
-* `Plugin "<name>" not found in marketplace "claude-plugins-official"`: your local copy of the marketplace catalog may be out of date. Refresh it with `/plugin marketplace update claude-plugins-official`, then retry the install. If the retry prints the same message, see [Plugin not found in marketplace](/docs/en/plugins/troubleshooting#plugin-not-found-in-marketplace).
+* `Plugin "<name>" not found in marketplace "claude-plugins-official"`: your local copy of the marketplace catalog may be out of date. Refresh it with `/plugin marketplace update claude-plugins-official`, then retry the install. If the retry prints the same message, see [Plugin not found in marketplace](/docs/en/plugins/troubleshooting.md#plugin-not-found-in-marketplace).
 
 When the install asks for an installation scope, choose the user scope option so the plugin is available across all your projects.
 
@@ -226,7 +226,7 @@ Once you install and enable fakechat, you can type in the browser and the messag
 
 To try the fakechat demo, you'll need:
 
-* Claude Code [installed and authenticated](/docs/en/quickstart#step-1-install-claude-code) with a claude.ai account or a Claude Console API key
+* Claude Code [installed and authenticated](/docs/en/quickstart.md#step-1-install-claude-code) with a claude.ai account or a Claude Console API key
 * [Bun](https://bun.sh) installed. The pre-built channel plugins are Bun scripts. Check with `bun --version`; if that fails, [install Bun](https://bun.sh/docs/installation).
 * **Team, Enterprise, or managed Console org**: your admin must [enable channels](#enterprise-controls) in managed settings
 
@@ -241,7 +241,7 @@ Start Claude Code by running `claude` in your terminal, then enter the install c
 If the install fails, match the message Claude Code reports:
 
 * `Marketplace "claude-plugins-official" not found`: add the marketplace with `/plugin marketplace add anthropics/claude-plugins-official`, then retry the install.
-* `Plugin "<name>" not found in marketplace "claude-plugins-official"`: your local copy of the marketplace catalog may be out of date. Refresh it with `/plugin marketplace update claude-plugins-official`, then retry the install. If the retry prints the same message, see [Plugin not found in marketplace](/docs/en/plugins/troubleshooting#plugin-not-found-in-marketplace).
+* `Plugin "<name>" not found in marketplace "claude-plugins-official"`: your local copy of the marketplace catalog may be out of date. Refresh it with `/plugin marketplace update claude-plugins-official`, then retry the install. If the retry prints the same message, see [Plugin not found in marketplace](/docs/en/plugins/troubleshooting.md#plugin-not-found-in-marketplace).
 
 When the install asks for an installation scope, choose the user scope option so the plugin is available across all your projects.
 
@@ -271,7 +271,7 @@ what's in my working directory?
 
 The message arrives in your Claude Code session. The terminal shows it as an inbound channel line like `← fakechat · web: what's in my working directory?`, while the model receives it as a `<channel source="plugin:fakechat:fakechat">` event, using the plugin's scoped server name. Claude reads it, does the work, and calls fakechat's `reply` tool. If Claude Code asks for permission for the first reply, approve it. The answer shows up in the chat UI.
 
-If Claude hits a permission prompt while you're away from the terminal, the session pauses until you respond. Channel servers that declare the [permission relay capability](/docs/en/channels-reference#relay-permission-prompts) can forward these prompts to you so you can approve or deny remotely. For unattended use, [`--dangerously-skip-permissions`](/docs/en/permission-modes#skip-all-checks-with-bypasspermissions-mode) bypasses most prompts, but only use it in environments you trust. Even then, the [actions no mode auto-approves](/docs/en/permission-modes#actions-no-mode-auto-approves) still apply.
+If Claude hits a permission prompt while you're away from the terminal, the session pauses until you respond. Channel servers that declare the [permission relay capability](/docs/en/channels-reference.md#relay-permission-prompts) can forward these prompts to you so you can approve or deny remotely. For unattended use, [`--dangerously-skip-permissions`](/docs/en/permission-modes#skip-all-checks-with-bypasspermissions-mode) bypasses most prompts, but only use it in environments you trust. Even then, the [actions no mode auto-approves](/docs/en/permission-modes.md#actions-no-mode-auto-approves) still apply.
 
 When you run channels in non-interactive mode with `-p`, tools that need terminal input, such as multiple-choice questions and plan mode approval, are disabled so the session never stalls waiting for input.
 
@@ -292,11 +292,11 @@ On top of that, you control which servers are enabled each session with `--chann
 
 Being in `.mcp.json` isn't enough to push messages: a server also has to be named in `--channels`.
 
-The allowlist also gates [permission relay](/docs/en/channels-reference#relay-permission-prompts) if the channel declares it. Anyone who can reply through the channel can approve or deny tool use in your session, so only allowlist senders you trust with that authority.
+The allowlist also gates [permission relay](/docs/en/channels-reference.md#relay-permission-prompts) if the channel declares it. Anyone who can reply through the channel can approve or deny tool use in your session, so only allowlist senders you trust with that authority.
 
 ## Enterprise controls
 
-Admins control availability through two [managed settings](/docs/en/settings) that users cannot override. The default depends on how you authenticate:
+Admins control availability through two [managed settings](/docs/en/settings.md) that users cannot override. The default depends on how you authenticate:
 
 * **claude.ai Team and Enterprise**: channels are blocked until an Owner [enables them](#enable-channels-for-your-organization).
 * **Anthropic Console with API key authentication**: channels are permitted by default. You only need this setting if your organization deploys managed settings.
@@ -333,7 +333,7 @@ By default, any plugin on the Anthropic-maintained allowlist can register as a c
 
 If you set an empty array, you block all channel plugins from the allowlist, but `--dangerously-load-development-channels` can still bypass that block for local testing. To block channels entirely including the development flag, leave `channelsEnabled` unset instead.
 
-This setting requires `channelsEnabled: true`. If a user passes a plugin to `--channels` that isn't on your list, Claude Code starts normally but the channel doesn't register, and the startup notice explains that the plugin isn't on the organization's approved list. On the v2 MCP client runtime, a channel can also fail to register because Claude Code [doesn't register a channel server that negotiates protocol revision 2026-07-28](/docs/en/mcp#push-messages-with-channels).
+This setting requires `channelsEnabled: true`. If a user passes a plugin to `--channels` that isn't on your list, Claude Code starts normally but the channel doesn't register, and the startup notice explains that the plugin isn't on the organization's approved list. On the v2 MCP client runtime, a channel can also fail to register because Claude Code [doesn't register a channel server that negotiates protocol revision 2026-07-28](/docs/en/mcp.md#push-messages-with-channels).
 
 ## Research preview
 
@@ -343,7 +343,7 @@ Neither `--channels` nor `--dangerously-load-development-channels` appears in `c
 
 During the preview, `--channels` only accepts plugins from an Anthropic-maintained allowlist, or from your organization's allowlist if an admin has set [`allowedChannelPlugins`](#restrict-which-channel-plugins-can-run). The channel plugins in [claude-plugins-official](https://github.com/anthropics/claude-plugins-official/tree/main/external_plugins) are the default approved set. If you pass something that isn't on the effective allowlist, Claude Code starts normally but the channel doesn't register, and the startup notice tells you why.
 
-To test a channel you're building, pass it to `--dangerously-load-development-channels` in the `plugin:<name>@<marketplace>` or `server:<name>` form. See [Test during the research preview](/docs/en/channels-reference#test-during-the-research-preview) for information about testing custom channels that you build.
+To test a channel you're building, pass it to `--dangerously-load-development-channels` in the `plugin:<name>@<marketplace>` or `server:<name>` form. See [Test during the research preview](/docs/en/channels-reference.md#test-during-the-research-preview) for information about testing custom channels that you build.
 
 Report issues or feedback on the [Claude Code GitHub repository](https://github.com/anthropics/claude-code/issues).
 
@@ -353,20 +353,20 @@ Several Claude Code features connect to systems outside the terminal, each suite
 
 | Feature | What it does | Good for |
 | - | - | - |
-| [Cloud sessions](/docs/en/claude-code-on-the-web) | Run tasks in a fresh cloud sandbox, cloned from GitHub | Delegating self-contained async work you check on later |
-| [Claude in Slack](/docs/en/slack) | Spawns a cloud session from an `@Claude` mention in a channel or thread | Starting tasks directly from team conversation context |
-| Standard [MCP server](/docs/en/mcp) | Claude queries it during a task; nothing is pushed to the session | Giving Claude on-demand access to read or query a system |
-| [Remote Control](/docs/en/remote-control) | You drive your local session from claude.ai or the Claude mobile app | Steering an in-progress session while away from your desk |
+| [Cloud sessions](/docs/en/claude-code-on-the-web.md) | Run tasks in a fresh cloud sandbox, cloned from GitHub | Delegating self-contained async work you check on later |
+| [Claude in Slack](/docs/en/slack.md) | Spawns a cloud session from an `@Claude` mention in a channel or thread | Starting tasks directly from team conversation context |
+| Standard [MCP server](/docs/en/mcp.md) | Claude queries it during a task; nothing is pushed to the session | Giving Claude on-demand access to read or query a system |
+| [Remote Control](/docs/en/remote-control.md) | You drive your local session from claude.ai or the Claude mobile app | Steering an in-progress session while away from your desk |
 
 Channels fill the gap in that list by pushing events from non-Claude sources into your already-running local session.
 
 * **Chat bridge**: ask Claude something from your phone via Telegram, Discord, or iMessage, and the answer comes back in the same chat while the work runs on your machine against your real files.
-* **[Webhook receiver](/docs/en/channels-reference#example-build-a-webhook-receiver)**: a webhook from CI, your error tracker, a deploy pipeline, or other external service arrives where Claude already has your files open and remembers what you were debugging.
+* **[Webhook receiver](/docs/en/channels-reference.md#example-build-a-webhook-receiver)**: a webhook from CI, your error tracker, a deploy pipeline, or other external service arrives where Claude already has your files open and remembers what you were debugging.
 
 ## Next steps
 
 Once you have a channel running, explore these related features:
 
-* [Build your own channel](/docs/en/channels-reference) for systems that don't have plugins yet
-* [Remote Control](/docs/en/remote-control) to drive a local session from your phone instead of forwarding events into it
-* [Session-scoped scheduled tasks](/docs/en/scheduled-tasks) to poll on a timer instead of reacting to pushed events
+* [Build your own channel](/docs/en/channels-reference.md) for systems that don't have plugins yet
+* [Remote Control](/docs/en/remote-control.md) to drive a local session from your phone instead of forwarding events into it
+* [Session-scoped scheduled tasks](/docs/en/scheduled-tasks.md) to poll on a timer instead of reacting to pushed events

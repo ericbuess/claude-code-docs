@@ -14,8 +14,8 @@ This page is for the person who operates a marketplace.
 >
 > These cases are covered on other pages:
 >
-> * **You haven't written the catalog file yet**: start with [Create a marketplace](/docs/en/plugins/create-marketplace)
-> * **You're an admin requiring, restricting, or pre-installing marketplaces across your organization's machines**: read [Manage plugins for your organization](/docs/en/plugins/org)
+> * **You haven't written the catalog file yet**: start with [Create a marketplace](/docs/en/plugins/create-marketplace.md)
+> * **You're an admin requiring, restricting, or pre-installing marketplaces across your organization's machines**: read [Manage plugins for your organization](/docs/en/plugins/org.md)
 
 Start with [Host your marketplace](#host-your-marketplace) to pick a host and the command your users run. Read [Keep users up to date](#keep-users-up-to-date) before your first release. Read [Rename or remove a plugin](#rename-or-remove-a-plugin) before you change a plugin's `name`.
 
@@ -30,7 +30,7 @@ You can host the marketplace on GitHub, on another git host, as a hosted `market
 | A hosted `marketplace.json` URL | `/plugin marketplace add https://plugins.example.com/marketplace.json` | HTTPS access to the URL. Users don't need `git` for the catalog itself |
 | A directory on a shared filesystem | `/plugin marketplace add /Volumes/shared/claude-plugins` | Read access to the path |
 
-To pin a branch or tag of a GitHub or git-URL marketplace, tell users to append `#<ref>`, as in `your-org/your-marketplace#stable`. The [plugin commands reference](/docs/en/plugins/cli-reference#plugin-marketplace-add) lists every form the command accepts.
+To pin a branch or tag of a GitHub or git-URL marketplace, tell users to append `#<ref>`, as in `your-org/your-marketplace#stable`. The [plugin commands reference](/docs/en/plugins/cli-reference.md#plugin-marketplace-add) lists every form the command accepts.
 
 A successful add prints `Successfully added marketplace: your-marketplace`. Claude Code takes that name from the `name` field in your `marketplace.json`, not from the repository name.
 
@@ -38,7 +38,7 @@ Users then install a plugin by its entry's `name` and the marketplace's `name`, 
 
 ### Register the marketplace for everyone in a repository
 
-To share the marketplace with everyone who works in one repository, run `claude plugin marketplace add your-org/your-marketplace --scope project` there once from your shell and commit the `.claude/settings.json` it writes. Claude Code then registers the marketplace for each teammate who [trusts the folder](/docs/en/plugins/org#require-plugins-per-repository).
+To share the marketplace with everyone who works in one repository, run `claude plugin marketplace add your-org/your-marketplace --scope project` there once from your shell and commit the `.claude/settings.json` it writes. Claude Code then registers the marketplace for each teammate who [trusts the folder](/docs/en/plugins/org.md#require-plugins-per-repository).
 
 ### Avoid relative-path entries in a URL-hosted marketplace
 
@@ -93,7 +93,7 @@ On a Team or Enterprise plan, you can also distribute the marketplace through [*
 Organization sync is stricter about the repository than `/plugin marketplace add` is:
 
 * **Marketplace repository**: on github.com and gitlab.com, it must be private or internal
-* **Plugin sources**: organization sync accepts only some [source types](/docs/en/plugins/marketplace-reference#plugin-sources)
+* **Plugin sources**: organization sync accepts only some [source types](/docs/en/plugins/marketplace-reference.md#plugin-sources)
 * **Top-level `bin/` directory**: claude.ai rejects a plugin that has one and syncs the rest of the marketplace. The error message starts with `Plugin contains a top-level bin/ directory`. Keep executables in another directory, such as `scripts/`, and reference them as `${CLAUDE_PLUGIN_ROOT}/scripts/<name>` from your hooks or MCP server configs
 
 [Sync your organization's plugins from a repository](https://claude.com/docs/plugins/org-sync) on claude.com lists the accepted sources, the GitLab setup, and the `bin/` error, and [Manage plugins for your organization](https://claude.com/docs/plugins/admin) covers the admin workflow.
@@ -113,7 +113,7 @@ Tell users what each protocol needs on their machine:
 * **SSH**: the key must work without a passphrase prompt, for example because it's loaded in `ssh-agent`. The host must already be in `known_hosts`.
 * **HTTPS**: Claude Code leaves the user's git credential helper enabled but forbids it from prompting. A credential the helper already stores works; one it would have to ask for fails. On GitHub, `gh auth login` followed by `gh auth setup-git` stores one.
 
-For a GitHub Enterprise Server host, users need git access to that host from their machine. See [Plugin marketplaces on GHES](/docs/en/github-enterprise-server#plugin-marketplaces-on-ghes) for what each Claude Code surface needs to reach a GHES-hosted marketplace.
+For a GitHub Enterprise Server host, users need git access to that host from their machine. See [Plugin marketplaces on GHES](/docs/en/github-enterprise-server.md#plugin-marketplaces-on-ghes) for what each Claude Code surface needs to reach a GHES-hosted marketplace.
 
 If you distribute through **Organization settings > Plugins & skills** on claude.ai instead, your users' git credentials aren't involved. See [Distribute through organization settings](#distribute-through-organization-settings).
 
@@ -143,7 +143,7 @@ When it's on for a private marketplace, the background check for new commits use
 After the check, Claude Code does one of the following:
 
 * **The checkout is up to date**: Claude Code leaves it as it is.
-* **The check finds new commits, or fails because it can't reach or authenticate to the remote**: Claude Code clones the marketplace again and replaces the existing checkout with the new clone. If that clone fails, the existing checkout stays in place. The re-clone can [time out on large repositories](/docs/en/plugins/troubleshooting#git-clone-timed-out-after-120s).
+* **The check finds new commits, or fails because it can't reach or authenticate to the remote**: Claude Code clones the marketplace again and replaces the existing checkout with the new clone. If that clone fails, the existing checkout stays in place. The re-clone can [time out on large repositories](/docs/en/plugins/troubleshooting.md#git-clone-timed-out-after-120s).
 
 To keep a private marketplace current, a user can do either of the following:
 
@@ -159,13 +159,13 @@ Rolling a plugin out to a company involves you as the marketplace owner, an admi
 | Who | What they do | Where it's covered |
 | :- | :- | :- |
 | You, the marketplace owner | Keep the catalog in a repository only the company can read, send the add command for your host, and say what each person needs on their machine | [Host your marketplace](#host-your-marketplace) and [Grant access to a private marketplace](#grant-access-to-a-private-marketplace) |
-| An administrator | Registers the marketplace and turns its plugins on for everyone with `extraKnownMarketplaces` and `enabledPlugins` in managed settings, and sets `autoUpdate` there | [Require a marketplace and its plugins](/docs/en/plugins/org#require-a-marketplace-and-its-plugins) and [Set update policy](/docs/en/plugins/org#set-update-policy) |
-| Each person | Needs read access to a private git repository, with credentials already stored on their machine. Without an administrator, they also run the add and install commands | [Add a private marketplace](/docs/en/plugins/install#add-a-private-marketplace) |
+| An administrator | Registers the marketplace and turns its plugins on for everyone with `extraKnownMarketplaces` and `enabledPlugins` in managed settings, and sets `autoUpdate` there | [Require a marketplace and its plugins](/docs/en/plugins/org.md#require-a-marketplace-and-its-plugins) and [Set update policy](/docs/en/plugins/org.md#set-update-policy) |
+| Each person | Needs read access to a private git repository, with credentials already stored on their machine. Without an administrator, they also run the add and install commands | [Add a private marketplace](/docs/en/plugins/install.md#add-a-private-marketplace) |
 
 For people who have no git-host account, these sections each cover one way to reach them:
 
 * **Entry sources that need no git account**: [Serve users who have no git-host account](#serve-users-who-have-no-git-host-account)
-* **A pre-populated plugins directory**: [Seed containers and CI](/docs/en/plugins/org#seed-containers-and-ci), which also serves users who have no git-host account
+* **A pre-populated plugins directory**: [Seed containers and CI](/docs/en/plugins/org.md#seed-containers-and-ci), which also serves users who have no git-host account
 * **claude.ai organization settings**: [Distribute through organization settings](#distribute-through-organization-settings), where your users' git credentials aren't involved
 
 ## Keep users up to date
@@ -177,17 +177,17 @@ Your changes reach users through background auto-update, once it's turned on for
 Background auto-update is off for your marketplace by default, and `marketplace.json` has no field to turn it on. A user or an admin turns it on:
 
 * **Tell users to turn it on**: each user goes to **Marketplaces** in `/plugin`, selects your marketplace, and selects **Enable auto-update**.
-* **Ask an admin to set it**: if an admin sets `"autoUpdate": true` on your marketplace's `extraKnownMarketplaces` entry in managed settings, it's on for everyone who receives those settings. See [Set update policy](/docs/en/plugins/org#set-update-policy).
+* **Ask an admin to set it**: if an admin sets `"autoUpdate": true` on your marketplace's `extraKnownMarketplaces` entry in managed settings, it's on for everyone who receives those settings. See [Set update policy](/docs/en/plugins/org.md#set-update-policy).
 
 Without auto-update, users receive your changes when they run `/plugin marketplace update <name>` in a session or `claude plugin update <plugin>@<name>` in the shell.
 
-For what users see when an update reaches them, see [When auto-update runs](/docs/en/plugins/loading#when-auto-update-runs).
+For what users see when an update reaches them, see [When auto-update runs](/docs/en/plugins/loading.md#when-auto-update-runs).
 
 ### Release a new version
 
-To release a new version to users, change the plugin's `version`. Users get a new copy only when the plugin's computed version differs from the one they have. That version comes from `plugin.json` first, then from the marketplace entry, per [Versions and updates](/docs/en/plugins/loading#versions-and-updates).
+To release a new version to users, change the plugin's `version`. Users get a new copy only when the plugin's computed version differs from the one they have. That version comes from `plugin.json` first, then from the marketplace entry, per [Versions and updates](/docs/en/plugins/loading.md#versions-and-updates).
 
-A plugin that users [load in place](/docs/en/plugins/loading#find-plugins-on-disk) from a marketplace they added from a local path isn't controlled by `version`. It loads your current files at every session start, whatever its version string says.
+A plugin that users [load in place](/docs/en/plugins/loading.md#find-plugins-on-disk) from a marketplace they added from a local path isn't controlled by `version`. It loads your current files at every session start, whatever its version string says.
 
 For every install other than an in-place load or one from a `command` source, either increase `version` on each release or omit it:
 
@@ -200,9 +200,9 @@ Don't set `version` in both `plugin.json` and the marketplace entry. If you do, 
 
 One marketplace serves one version of each plugin at a time, so you hold users on a version by choosing what each entry points at:
 
-* **`ref` and `sha` on the plugin entry**: `ref` names a branch or tag and `sha` names a commit for a `github`, `url`, or `git-subdir` source. See [Plugin sources](/docs/en/plugins/marketplace-reference#plugin-sources).
+* **`ref` and `sha` on the plugin entry**: `ref` names a branch or tag and `sha` names a commit for a `github`, `url`, or `git-subdir` source. See [Plugin sources](/docs/en/plugins/marketplace-reference.md#plugin-sources).
 * **`#<ref>` on the add command**: users who add `your-org/your-marketplace#stable` get that branch or tag of the catalog. For two release lines at once, see [Run release channels](#run-release-channels).
-* **`<plugin>--v<version>` tags**: a dependency's version range resolves against these tags. See [Release a plugin that others depend on](/docs/en/plugins/dependencies#tag-plugin-releases-for-version-resolution).
+* **`<plugin>--v<version>` tags**: a dependency's version range resolves against these tags. See [Release a plugin that others depend on](/docs/en/plugins/dependencies.md#tag-plugin-releases-for-version-resolution).
 
 [Release a new version](#release-a-new-version) says when a changed entry reaches users.
 
@@ -212,7 +212,7 @@ If you change the `command` of a [`command` source](/docs/en/plugins/marketplace
 
 After a user's copy of your marketplace picks up the change, that user sees the following:
 
-* **No more background runs**: the [once-per-session run](/docs/en/plugins/loading#when-a-command-source-re-runs) of the command stops for that user, so the tool's new output doesn't reach them.
+* **No more background runs**: the [once-per-session run](/docs/en/plugins/loading.md#when-a-command-source-re-runs) of the command stops for that user, so the tool's new output doesn't reach them.
 * **An entry in the `/plugin` Errors tab**: the entry shows the new command and the `claude plugin update` command to run.
 
 Tell users to run the `claude plugin update` command that entry shows, in a terminal. Claude Code shows them the new command and asks them to accept it.
@@ -247,7 +247,7 @@ With these two catalogs, users who add `stable-tools` install `code-formatter` f
 
 Give the two refs different `plugin.json` versions, or omit `version` so the commit SHA distinguishes them. Updates are detected by comparing versions, so a ref that moves without a version change leaves users on the cached copy.
 
-To assign the channels to user groups instead of letting users choose, an admin gives each group the matching `extraKnownMarketplaces` entry, as described under [Set update policy](/docs/en/plugins/org#set-update-policy).
+To assign the channels to user groups instead of letting users choose, an admin gives each group the matching `extraKnownMarketplaces` entry, as described under [Set update policy](/docs/en/plugins/org.md#set-update-policy).
 
 ## Rename or remove a plugin
 
@@ -304,7 +304,7 @@ To authenticate an [`archive`](/docs/en/plugins/marketplace-reference#archive-pl
 
 In either place, set a `headersHelper` command instead of `headers` when the value is short-lived, such as a token your registry generates on request. Claude Code runs the command and sends the JSON object it prints as that place's headers. Requires Claude Code v2.1.238 or later.
 
-The [marketplace reference](/docs/en/plugins/marketplace-reference#plugin-entries) lists the `headers` and `headersHelper` entry fields.
+The [marketplace reference](/docs/en/plugins/marketplace-reference.md#plugin-entries) lists the `headers` and `headersHelper` entry fields.
 
 The place you choose decides which downloads get the headers and when Claude Code runs the command:
 
@@ -358,7 +358,7 @@ A `headersHelper` command doesn't run, or headers from `headers` or from the com
 * **Marketplace URL doesn't start with `https://`**: that `url` source's command doesn't run, and requests carry only the headers listed in its `headers` field.
 * **Redirect leaves the origin**: when a download is redirected off the archive URL's origin, the redirected request carries no `headers` values or command output from either the marketplace `url` source or the plugin entry.
 * **Entry sets a routing or identity header**: Claude Code drops request-routing and client-identity names such as `Host`, `Cookie`, and `X-Forwarded-*` from an entry's `headers` and command output, and keeps authentication names such as `Authorization`. Every `marketplace.json` entry is filtered this way. For an inline plugin entry in settings, see [`extraKnownMarketplaces`](/docs/en/settings-reference#extraknownmarketplaces).
-* **Command set in an `--add-dir` directory's settings**: the command is ignored, on a `url` source and on an [inline plugin entry](/docs/en/settings-reference#extraknownmarketplaces) alike, and only that file's `headers` are sent.
+* **Command set in an `--add-dir` directory's settings**: the command is ignored, on a `url` source and on an [inline plugin entry](/docs/en/settings-reference.md#extraknownmarketplaces) alike, and only that file's `headers` are sent.
 * **Managed settings block the command**: setting [`disableCommandPluginSources`](/docs/en/settings-reference#disablecommandpluginsources) to `true` blocks `headersHelper` commands, and [`allowManagedHooksOnly`](/docs/en/settings-reference#allowmanagedhooksonly) blocks them too unless `disableCommandPluginSources` is explicitly `false`. Under either block, Claude Code still runs the command for a marketplace that managed settings themselves declare.
 
 ### How users accept a headersHelper command
@@ -369,7 +369,7 @@ Users can install or update the plugin inside a Claude Code session in a termina
 
 * **Terminal session**: from the plugin's own view in `/plugin`.
 * **Shell**: with `claude plugin install` or `claude plugin update`.
-* **VS Code extension**: from the [**Manage plugins** dialog](/docs/en/vs-code#manage-plugins), with version 2.1.290 or later of the extension.
+* **VS Code extension**: from the [**Manage plugins** dialog](/docs/en/vs-code.md#manage-plugins), with version 2.1.290 or later of the extension.
 
 In a non-interactive shell, pass [`--yes`](/docs/en/plugins/cli-reference#plugin-install) to accept the command. To accept only the command that a previous `--json` run displayed, pass [`--accept-command`](/docs/en/plugins/cli-reference#plugin-install) with the `sha256` the run reported.
 
@@ -389,10 +389,10 @@ You declare a marketplace `url` source's `headersHelper` in a settings file, suc
 | Settings file | When Claude Code runs the command |
 | :- | :- |
 | User settings, a `--settings` file, or a managed settings file on the machine | Without asking, including during a background marketplace refresh |
-| A project's `.claude/settings.json` or `.claude/settings.local.json` | Only after the user accepts the [workspace trust dialog](/docs/en/permissions#what-runs-before-you-trust-a-folder) for that folder itself. A `-p` or SDK session doesn't count as accepting it, and neither does trust granted to a parent folder |
-| Server-managed settings | In an interactive session, only after the user approves the delivered settings in the [security approval dialog](/docs/en/server-managed-settings#security-approval-dialogs) |
+| A project's `.claude/settings.json` or `.claude/settings.local.json` | Only after the user accepts the [workspace trust dialog](/docs/en/permissions.md#what-runs-before-you-trust-a-folder) for that folder itself. A `-p` or SDK session doesn't count as accepting it, and neither does trust granted to a parent folder |
+| Server-managed settings | In an interactive session, only after the user approves the delivered settings in the [security approval dialog](/docs/en/server-managed-settings.md#security-approval-dialogs) |
 
-For an [inline plugin entry](/docs/en/settings-reference#extraknownmarketplaces) in one of these files, Claude Code requires the same folder trust or settings approval as for a marketplace-level command in that file, and the user also accepts the entry's command on each install or update.
+For an [inline plugin entry](/docs/en/settings-reference.md#extraknownmarketplaces) in one of these files, Claude Code requires the same folder trust or settings approval as for a marketplace-level command in that file, and the user also accepts the entry's command on each install or update.
 
 ## Depend on and recommend other plugins
 
@@ -401,16 +401,16 @@ An entry can declare dependencies on other plugins.
 * **Version ranges**: a dependency can carry a semver range.
 * **Cross-marketplace dependencies**: a dependency from another marketplace installs only when your marketplace lists that marketplace in `allowCrossMarketplaceDependenciesOn`.
 
-For version ranges, the `<plugin>--v<version>` git-tag convention they resolve against, and cross-marketplace trust, see [Plugin dependencies](/docs/en/plugins/dependencies).
+For version ranges, the `<plugin>--v<version>` git-tag convention they resolve against, and cross-marketplace trust, see [Plugin dependencies](/docs/en/plugins/dependencies.md).
 
-To have Claude Code suggest a plugin when a project matches it, add a `relevance` block to the entry with the signals that identify the project. Users see suggestions from your marketplace only when an admin lists it in `pluginSuggestionMarketplaces`. For the signals and the enablement step, see [Plugin relevance](/docs/en/plugins/relevance).
+To have Claude Code suggest a plugin when a project matches it, add a `relevance` block to the entry with the signals that identify the project. Users see suggestions from your marketplace only when an admin lists it in `pluginSuggestionMarketplaces`. For the signals and the enablement step, see [Plugin relevance](/docs/en/plugins/relevance.md).
 
 ## Work around what a marketplace can't do
 
 Some things owners ask for have no field in `marketplace.json`. Here is the nearest option for each:
 
-* **Restrict what else users install**: the marketplace allowlist is a managed setting, `strictKnownMarketplaces`. See [Restrict what users can install](/docs/en/plugins/org#restrict-what-users-can-install).
-* **Install or enable a plugin without the user asking**: no entry field installs a plugin. Managed `enabledPlugins` does that for a fleet; see [Pre-install and require plugins](/docs/en/plugins/org#pre-install-and-require-plugins).
+* **Restrict what else users install**: the marketplace allowlist is a managed setting, `strictKnownMarketplaces`. See [Restrict what users can install](/docs/en/plugins/org.md#restrict-what-users-can-install).
+* **Install or enable a plugin without the user asking**: no entry field installs a plugin. Managed `enabledPlugins` does that for a fleet; see [Pre-install and require plugins](/docs/en/plugins/org.md#pre-install-and-require-plugins).
 * **Show different entries to different users**: entries carry no audience field, and every user who adds the marketplace sees the whole catalog. Host separate marketplaces for separate audiences.
 * **Mark a plugin deprecated**: there is no deprecation state. The option is to remove the entry, map its name to `null` in `renames`, and optionally set `forceRemoveDeletedPlugins`.
 * **Turn on auto-update for your users**: each user turns it on under **Marketplaces** in `/plugin`, or an admin sets `autoUpdate` in managed settings. See [Turn on auto-update](#turn-on-auto-update).
@@ -418,7 +418,7 @@ Some things owners ask for have no field in `marketplace.json`. Here is the near
 
 ## Next steps
 
-* [Marketplace reference](/docs/en/plugins/marketplace-reference): `marketplace.json` fields, source types, and validation messages
-* [Manage plugins for your organization](/docs/en/plugins/org): require, restrict, or seed your marketplace across your organization's machines
-* [Plugin dependencies](/docs/en/plugins/dependencies): tag releases so plugins that depend on yours can resolve versions
-* [Troubleshoot plugins](/docs/en/plugins/troubleshooting): the errors your users see when adding or updating from your marketplace
+* [Marketplace reference](/docs/en/plugins/marketplace-reference.md): `marketplace.json` fields, source types, and validation messages
+* [Manage plugins for your organization](/docs/en/plugins/org.md): require, restrict, or seed your marketplace across your organization's machines
+* [Plugin dependencies](/docs/en/plugins/dependencies.md): tag releases so plugins that depend on yours can resolve versions
+* [Troubleshoot plugins](/docs/en/plugins/troubleshooting.md): the errors your users see when adding or updating from your marketplace

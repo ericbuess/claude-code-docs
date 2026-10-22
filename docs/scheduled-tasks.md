@@ -12,26 +12,26 @@ Session-scoped scheduled tasks let Claude re-run a prompt automatically on an in
 >
 > These cases are covered on other pages:
 >
-> * **Reacting to events as they happen instead of polling**: see [Channels](/docs/en/channels). Your CI can push the failure into the session directly.
+> * **Reacting to events as they happen instead of polling**: see [Channels](/docs/en/channels.md). Your CI can push the failure into the session directly.
 > * **Keeping the session working turn after turn toward a condition rather than on an interval**: see [`/goal`](/docs/en/goal).
 
-Tasks are session-scoped. When you resume with `--resume` or `--continue`, Claude Code restores tasks that haven't [expired](#seven-day-expiry), except those listed under [Limitations](#limitations). For scheduling that survives independently of any session, create a [cloud scheduled task](/docs/en/routines), set up a [Desktop scheduled task](/docs/en/desktop-scheduled-tasks), or use [GitHub Actions](/docs/en/github-actions).
+Tasks are session-scoped. When you resume with `--resume` or `--continue`, Claude Code restores tasks that haven't [expired](#seven-day-expiry), except those listed under [Limitations](#limitations). For scheduling that survives independently of any session, create a [cloud scheduled task](/docs/en/routines.md), set up a [Desktop scheduled task](/docs/en/desktop-scheduled-tasks.md), or use [GitHub Actions](/docs/en/github-actions.md).
 
 ## Compare scheduling options
 
 Claude Code offers three ways to schedule recurring or one-off work:
 
-| | [Cloud](/docs/en/routines) | [Desktop](/docs/en/desktop-scheduled-tasks) | [`/loop`](/docs/en/scheduled-tasks) |
+| | [Cloud](/docs/en/routines.md) | [Desktop](/docs/en/desktop-scheduled-tasks.md) | [`/loop`](/docs/en/scheduled-tasks) |
 | :- | :- | :- | :- |
 | Runs on | Cloud, Anthropic-managed by default | Your machine | Your machine |
 | Requires machine on | No | Yes | Yes |
 | Requires open session | No | No | Yes |
-| Persistent across restarts | Yes | Yes | Restored on `--resume`, with [exceptions](/docs/en/scheduled-tasks#limitations) |
+| Persistent across restarts | Yes | Yes | Restored on `--resume`, with [exceptions](/docs/en/scheduled-tasks.md#limitations) |
 | Access to local files | No (fresh clone) | Yes | Yes |
-| MCP servers | Connectors configured per task | [Config files](/docs/en/mcp) and connectors | Inherits from session |
-| Permission prompts | No (runs autonomously) | Configurable per task | Inherits from session |
+| MCP servers | Connectors configured per task | [Config files](/docs/en/mcp.md) and connectors | Inherits from session |
+| Permission prompts | [Auto mode](/docs/en/routines.md#permission-prompts-during-a-run) by default | Configurable per task | Inherits from session |
 | Customizable schedule | Yes | Yes | Yes |
-| Minimum interval | 1 hour | 1 minute when Claude sets it, [1 hour in the forms](/docs/en/desktop-scheduled-tasks#schedule-options) | 1 minute |
+| Minimum interval | 1 hour | 1 minute when Claude sets it, [1 hour in the forms](/docs/en/desktop-scheduled-tasks.md#schedule-options) | 1 minute |
 
 > [!TIP]
 >
@@ -39,7 +39,7 @@ Claude Code offers three ways to schedule recurring or one-off work:
 
 ## Run a prompt repeatedly with /loop
 
-The `/loop` [bundled skill](/docs/en/commands) is the quickest way to run a prompt on repeat while the session stays open. Both the interval and the prompt are optional, and what you provide determines how the loop behaves.
+The `/loop` [bundled skill](/docs/en/commands.md) is the quickest way to run a prompt on repeat while the session stays open. Both the interval and the prompt are optional, and what you provide determines how the loop behaves.
 
 | What you provide | Example | What happens |
 | :- | :- | :- |
@@ -47,12 +47,12 @@ The `/loop` [bundled skill](/docs/en/commands) is the quickest way to run a prom
 | Prompt only | `/loop check the deploy` | Your prompt runs at an [interval Claude chooses](#let-claude-choose-the-interval) each iteration |
 | Interval only, or nothing | `/loop` | The [built-in maintenance prompt](#run-the-built-in-maintenance-prompt) runs, or your `loop.md` if one exists |
 
-You can also pass a skill as the prompt, for example `/loop 20m /review-pr 1234`, to re-run that skill each iteration. A scheduled fire only runs skills that Claude is [allowed to invoke on its own](/docs/en/skills#control-who-invokes-a-skill). The following reach Claude as plain text instead of executing:
+You can also pass a skill as the prompt, for example `/loop 20m /review-pr 1234`, to re-run that skill each iteration. A scheduled fire only runs skills that Claude is [allowed to invoke on its own](/docs/en/skills.md#control-who-invokes-a-skill). The following reach Claude as plain text instead of executing:
 
 * Built-in commands such as `/permissions`, `/model`, or `/clear`
 * Skills marked [`disable-model-invocation: true`](/docs/en/skills#frontmatter-reference), including the bundled `/verify` skill
-* Skills withheld from Claude by a [`skillOverrides`](/docs/en/skills#override-skill-visibility-from-settings) setting or a `Skill` [deny rule](/docs/en/skills#restrict-claude’s-skill-access)
-* [MCP prompts](/docs/en/mcp#use-mcp-prompts-as-commands) such as `/mcp__github__list_prs`
+* Skills withheld from Claude by a [`skillOverrides`](/docs/en/skills#override-skill-visibility-from-settings) setting or a `Skill` [deny rule](/docs/en/skills.md#restrict-claude’s-skill-access)
+* [MCP prompts](/docs/en/mcp.md#use-mcp-prompts-as-commands) such as `/mcp__github__list_prs`
 
 ### Run on a fixed interval
 
@@ -76,13 +76,13 @@ The example below checks CI and review comments, with Claude waiting longer betw
 /loop check whether CI passed and address any review comments
 ```
 
-In a session where the [Monitor tool is available](/docs/en/tools-reference#monitor-tool), Claude may use it directly when you ask for a dynamic `/loop` schedule. Monitor runs a background script and streams each output line back, which avoids polling altogether and is often more token-efficient and responsive than re-running a prompt on an interval.
+In a session where the [Monitor tool is available](/docs/en/tools-reference.md#monitor-tool), Claude may use it directly when you ask for a dynamic `/loop` schedule. Monitor runs a background script and streams each output line back, which avoids polling altogether and is often more token-efficient and responsive than re-running a prompt on an interval.
 
 A dynamically scheduled loop appears in your [scheduled task list](#manage-scheduled-tasks) like any other task, so you can list or cancel it the same way. The list shows its pending wakeup as a one-shot task, so a wakeup scheduled for `:00` or `:30` can [run a little early](#when-a-one-shot-task-runs-early). The [seven-day expiry](#seven-day-expiry) applies to the loop too.
 
 > [!NOTE]
 >
-> Dynamically chosen intervals and the [built-in maintenance prompt](#run-the-built-in-maintenance-prompt) work on every provider, and with [feature-flag fetching](/docs/en/env-vars#features-that-need-feature-flag-fetching) turned off. On Amazon Bedrock, Claude Platform on AWS, Google Cloud's Agent Platform, and Microsoft Foundry, or with fetching turned off, both require Claude Code v2.1.248 or later.
+> Dynamically chosen intervals and the [built-in maintenance prompt](#run-the-built-in-maintenance-prompt) work on every provider, and with [feature-flag fetching](/docs/en/env-vars.md#features-that-need-feature-flag-fetching) turned off. On Amazon Bedrock, Claude Platform on AWS, Google Cloud's Agent Platform, and Microsoft Foundry, or with fetching turned off, both require Claude Code v2.1.248 or later.
 
 ### Run the built-in maintenance prompt
 
@@ -131,7 +131,7 @@ In [self-paced mode](#let-claude-choose-the-interval), Claude can also end the l
 
 #### Detach without stopping a loop
 
-When you're [attached to a background session](/docs/en/agent-view#attach-to-a-session) and Claude is idle, press `Ctrl+C` twice on an empty prompt to detach. A self-paced loop waiting there for its next iteration keeps running, and that iteration starts on schedule. To stop the loop instead, press `Esc` before you detach. Detaching with `Ctrl+C` without stopping the loop requires Claude Code v2.1.295 or later.
+When you're [attached to a background session](/docs/en/agent-view.md#attach-to-a-session) and Claude is idle, press `Ctrl+C` twice on an empty prompt to detach. A self-paced loop waiting there for its next iteration keeps running, and that iteration starts on schedule. To stop the loop instead, press `Esc` before you detach. Detaching with `Ctrl+C` without stopping the loop requires Claude Code v2.1.295 or later.
 
 ## Set a one-time reminder
 
@@ -187,7 +187,7 @@ Unless it runs every five minutes, a recurring task starts each run late by up t
 
 * **Evenly spaced runs**: a task with equal gaps, such as hourly, daily, or every 10 minutes, runs the same number of minutes late every time, including when the session is idle.
 * **Unevenly spaced runs**: a task with uneven gaps, such as one scheduled for `:00` and `:15` each hour, can run a different number of minutes late at each.
-* **Every five minutes**: a task written `*/5 * * * *` isn't delayed. A run exactly five minutes after the last one would start after a five-minute [prompt cache](/docs/en/prompt-caching#which-ttl-each-request-gets) had expired, so each run starts 15 seconds sooner.
+* **Every five minutes**: a task written `*/5 * * * *` isn't delayed. A run exactly five minutes after the last one would start after a five-minute [prompt cache](/docs/en/prompt-caching.md#which-ttl-each-request-gets) had expired, so each run starts 15 seconds sooner.
 
 Find your schedule in the first column of this table to see when each of its runs starts.
 
@@ -206,7 +206,7 @@ A one-shot task scheduled for `:00` or `:30` runs up to 90 seconds early. Claude
 
 ### Seven-day expiry
 
-Recurring tasks automatically expire 7 days after creation. The task fires one final time, then deletes itself. This bounds how long a forgotten loop can run. If you need a recurring task to last longer, cancel and recreate it before it expires, or use [cloud scheduled tasks](/docs/en/routines) or [Desktop scheduled tasks](/docs/en/desktop-scheduled-tasks) for durable scheduling.
+Recurring tasks automatically expire 7 days after creation. The task fires one final time, then deletes itself. This bounds how long a forgotten loop can run. If you need a recurring task to last longer, cancel and recreate it before it expires, or use [cloud scheduled tasks](/docs/en/routines.md) or [Desktop scheduled tasks](/docs/en/desktop-scheduled-tasks.md) for durable scheduling.
 
 ## Cron expression reference
 
@@ -227,22 +227,22 @@ When both day-of-month and day-of-week are constrained, a date matches if either
 
 ## Disable session-scoped scheduled tasks
 
-Set `CLAUDE_CODE_DISABLE_CRON=1` in your environment to disable the scheduler entirely. The cron tools and `/loop` become unavailable, and any already-scheduled tasks stop firing. See [Environment variables](/docs/en/env-vars) for the full list of disable flags.
+Set `CLAUDE_CODE_DISABLE_CRON=1` in your environment to disable the scheduler entirely. The cron tools and `/loop` become unavailable, and any already-scheduled tasks stop firing. See [Environment variables](/docs/en/env-vars.md) for the full list of disable flags.
 
 ## Limitations
 
 Session-scoped scheduling has inherent constraints:
 
-* Tasks only fire while Claude Code is running and idle. Closing the terminal or letting the session exit stops them firing. [Backgrounding the session](/docs/en/agent-view#from-inside-a-session) carries `/loop` tasks over to a background session, which keeps running without a terminal.
+* Tasks only fire while Claude Code is running and idle. Closing the terminal or letting the session exit stops them firing. [Backgrounding the session](/docs/en/agent-view.md#from-inside-a-session) carries `/loop` tasks over to a background session, which keeps running without a terminal.
 * No catch-up for missed fires. If a task's scheduled time passes while Claude is busy on a long-running request, it fires once when Claude becomes idle, not once per missed interval.
-* In a [background session](/docs/en/agent-view#from-inside-a-session), a [self-paced loop](#let-claude-choose-the-interval) stops if its next wakeup comes due while the session's process isn't running, such as after a crash. When the process starts again, the transcript shows a [notice that the wakeup won't fire](/docs/en/errors#restarted-after-its-next-loop-wakeup-was-due). To continue the loop, [reply to the session](/docs/en/agent-view#peek-and-reply) and ask Claude to keep it running.
+* In a [background session](/docs/en/agent-view.md#from-inside-a-session), a [self-paced loop](#let-claude-choose-the-interval) stops if its next wakeup comes due while the session's process isn't running, such as after a crash. When the process starts again, the transcript shows a [notice that the wakeup won't fire](/docs/en/errors.md#restarted-after-its-next-loop-wakeup-was-due). To continue the loop, [reply to the session](/docs/en/agent-view.md#peek-and-reply) and ask Claude to keep it running.
 * When you resume a session with `claude --resume` or `claude --continue`, Claude Code restores the tasks scheduled with `CronCreate`, except recurring tasks that have [expired](#seven-day-expiry) and one-shot tasks whose scheduled time has passed. A [self-paced `/loop`](#let-claude-choose-the-interval) isn't restored, so run `/loop` again to restart it.
 * A restored recurring task doesn't fire for the runs it missed while the session wasn't running. Its next run is the first one due after you resume, and [jitter](#jitter) applies to that run.
 * When you resume with `claude --resume` or `claude --continue`, Claude Code doesn't restart the background Bash commands and monitors that were running when the session ended. If you still need one, ask Claude to start it again.
-* With [feature-flag fetching off](/docs/en/env-vars#features-that-need-feature-flag-fetching), Claude Code stores a task you asked to keep across sessions in the project's `.claude/scheduled_tasks.json` file. When the `.claude` directory or that file is a symlink, Claude Code returns an error instead of scheduling the task. A saved task runs only in the project folder where you created it. If you copy the file into another folder, such as a new worktree, sessions there list the copied tasks but don't run them, so create the task again in that folder.
+* With [feature-flag fetching off](/docs/en/env-vars.md#features-that-need-feature-flag-fetching), Claude Code stores a task you asked to keep across sessions in the project's `.claude/scheduled_tasks.json` file. When the `.claude` directory or that file is a symlink, Claude Code returns an error instead of scheduling the task. A saved task runs only in the project folder where you created it. If you copy the file into another folder, such as a new worktree, sessions there list the copied tasks but don't run them, so create the task again in that folder.
 
 For cron-driven automation that needs to run unattended:
 
-* [Cloud scheduled tasks](/docs/en/routines): run in the cloud on a schedule, via API call, or on GitHub events
-* [GitHub Actions](/docs/en/github-actions): use a `schedule` trigger in CI
-* [Desktop scheduled tasks](/docs/en/desktop-scheduled-tasks): run locally on your machine
+* [Cloud scheduled tasks](/docs/en/routines.md): run in the cloud on a schedule, via API call, or on GitHub events
+* [GitHub Actions](/docs/en/github-actions.md): use a `schedule` trigger in CI
+* [Desktop scheduled tasks](/docs/en/desktop-scheduled-tasks.md): run locally on your machine

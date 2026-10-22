@@ -10,10 +10,10 @@
 
 Several products share the Claude Code name. This page covers the `claude-code-action` workflow integration, which you configure with workflow files in your repository. For the related products, see:
 
-* [Code Review](/docs/en/code-review): automatic review on every pull request, without writing a workflow
-* [Claude Code in the cloud](/docs/en/claude-code-on-the-web): Claude Code sessions that run on cloud infrastructure instead of your machine
-* [Claude Agent SDK](/docs/en/agent-sdk/overview): custom automation outside GitHub Actions. The Claude Code GitHub Action is built on the SDK
-* [GitHub Enterprise Server](/docs/en/github-enterprise-server): Claude Code with self-hosted GitHub
+* [Code Review](/docs/en/code-review.md): automatic review on every pull request, without writing a workflow
+* [Claude Code in the cloud](/docs/en/claude-code-on-the-web.md): Claude Code sessions that run on cloud infrastructure instead of your machine
+* [Claude Agent SDK](/docs/en/agent-sdk/overview.md): custom automation outside GitHub Actions. The Claude Code GitHub Action is built on the SDK
+* [GitHub Enterprise Server](/docs/en/github-enterprise-server.md): Claude Code with self-hosted GitHub
 
 ## Setup
 
@@ -26,7 +26,7 @@ For either path, you need admin access to the repository.
 
 ### Quick setup
 
-`/install-github-app` works only with github.com repositories. If your repository's git remote is on gitlab.com or bitbucket.org, the command prints a notice and exits instead of starting setup. To run Claude Code from GitLab pipelines, see [Claude Code GitLab CI/CD](/docs/en/gitlab-ci-cd).
+`/install-github-app` works only with github.com repositories. If your repository's git remote is on gitlab.com or bitbucket.org, the command prints a notice and exits instead of starting setup. To run Claude Code from GitLab pipelines, see [Claude Code GitLab CI/CD](/docs/en/gitlab-ci-cd.md).
 
 Before you start, install the [GitHub CLI](https://cli.github.com) and authenticate it with `gh auth login`. Claude Code checks for it and warns you if it's missing.
 
@@ -53,7 +53,7 @@ After installing the GitHub App, Claude Code asks whether to continue with GitHu
 > [!NOTE]
 >
 > * When you install the GitHub App, you grant it several permissions. See [GitHub App permissions](#github-app-permissions) for the full set
-> * Quick setup works with the Claude API and Claude subscriptions. If you use Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry, see [Use Claude Code GitHub Actions with cloud providers](/docs/en/github-actions-cloud-providers)
+> * Quick setup works with the Claude API and Claude subscriptions. If you use Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry, see [Use Claude Code GitHub Actions with cloud providers](/docs/en/github-actions-cloud-providers.md)
 
 ### Manual setup
 
@@ -74,7 +74,7 @@ During installation, you also grant permissions that other Claude features use. 
 Add one of the following secrets to your repository, depending on how you authenticate. See GitHub's guide to [using secrets in GitHub Actions](https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions).
 
 * `ANTHROPIC_API_KEY`: a Claude API key from the [Claude Console](https://platform.claude.com)
-* `CLAUDE_CODE_OAUTH_TOKEN`: an OAuth token that authenticates with your Claude subscription, available on Pro, Max, Team, and Enterprise plans. Generate one by running `claude setup-token` locally. See [Generate a long-lived token](/docs/en/authentication#generate-a-long-lived-token)
+* `CLAUDE_CODE_OAUTH_TOKEN`: an OAuth token that authenticates with your Claude subscription, available on Pro, Max, Team, and Enterprise plans. Generate one by running `claude setup-token` locally. See [Generate a long-lived token](/docs/en/authentication.md#generate-a-long-lived-token)
 
 In workflow files, pass the secret to the matching input: `anthropic_api_key` for an API key, or `claude_code_oauth_token` for an OAuth token.
 
@@ -105,7 +105,7 @@ To avoid storing a long-lived secret entirely, authenticate through workload ide
 
 Grant the workflow the `id-token: write` permission, which the Claude Code GitHub Action needs for the federation exchange even when you pass your own `github_token`. See the [Claude Code GitHub Action's setup guide](https://github.com/anthropics/claude-code-action/blob/main/docs/setup.md) for the Console-side configuration.
 
-For data handling and retention questions in a security review, see [data usage](/docs/en/data-usage) and [security](/docs/en/security).
+For data handling and retention questions in a security review, see [data usage](/docs/en/data-usage.md) and [security](/docs/en/security.md).
 
 ### Uninstall
 
@@ -115,11 +115,11 @@ To remove the Claude Code GitHub Action, undo each piece of the setup that appli
 * **Secrets**: delete the `ANTHROPIC_API_KEY` or `CLAUDE_CODE_OAUTH_TOKEN` secret from the repository, and from organization-level Actions secrets if you [shared it across repositories](#set-up-for-an-organization). If you delete a secret, the credential it held stays valid. To retire an API key entirely, also delete the key in the [Claude Console](https://platform.claude.com)
 * **GitHub App**: uninstall the Claude GitHub App in your repository or organization settings under GitHub Apps, but only if you don't use it for another Claude feature, such as Code Review or web auto-fix
 
-If you configured a [cloud provider](/docs/en/github-actions-cloud-providers), also delete the provider secrets, such as `AWS_ROLE_TO_ASSUME`, the `GCP_*` secrets, or the `AZURE_*` secrets, and uninstall the custom GitHub App along with its `APP_ID` and `APP_PRIVATE_KEY` secrets.
+If you configured a [cloud provider](/docs/en/github-actions-cloud-providers.md), also delete the provider secrets, such as `AWS_ROLE_TO_ASSUME`, the `GCP_*` secrets, or the `AZURE_*` secrets, and uninstall the custom GitHub App along with its `APP_ID` and `APP_PRIVATE_KEY` secrets.
 
 ### GitHub App permissions
 
-The [Claude GitHub App](https://github.com/apps/claude) is shared by every Claude feature that integrates with GitHub, including the Claude Code GitHub Action, [Code Review](/docs/en/code-review), and [auto-fix for pull requests](/docs/en/claude-code-on-the-web#auto-fix-pull-requests) in cloud sessions. A GitHub App has a single permission set covering all of its features, so the set includes some permissions that the Claude Code GitHub Action doesn't use.
+The [Claude GitHub App](https://github.com/apps/claude) is shared by every Claude feature that integrates with GitHub, including the Claude Code GitHub Action, [Code Review](/docs/en/code-review.md), and [auto-fix for pull requests](/docs/en/claude-code-on-the-web.md#auto-fix-pull-requests) in cloud sessions. A GitHub App has a single permission set covering all of its features, so the set includes some permissions that the Claude Code GitHub Action doesn't use.
 
 When you install the app, you grant the following permissions:
 
@@ -214,12 +214,12 @@ Claude replies in a comment on the same issue or PR and updates it as it works.
 
 ### Run a skill
 
-The `prompt` input accepts a [skill](/docs/en/skills) invocation as well as plain text:
+The `prompt` input accepts a [skill](/docs/en/skills.md) invocation as well as plain text:
 
 * For a skill in your repository's `.claude/skills/` directory, run `actions/checkout` before the `anthropics/claude-code-action` step so the skill files are available on the runner, then pass `/skill-name` as the `prompt`.
-* For a skill packaged in a [plugin](/docs/en/plugins/overview), install the plugin with the `plugin_marketplaces` and `plugins` inputs, then pass the namespaced `/plugin-name:skill-name` as the `prompt`. The `plugins` input takes `plugin-name@marketplace-name`, where the marketplace name comes from the marketplace's own manifest rather than its repository URL.
+* For a skill packaged in a [plugin](/docs/en/plugins/overview.md), install the plugin with the `plugin_marketplaces` and `plugins` inputs, then pass the namespaced `/plugin-name:skill-name` as the `prompt`. The `plugins` input takes `plugin-name@marketplace-name`, where the marketplace name comes from the marketplace's own manifest rather than its repository URL.
 
-The following workflow installs the `code-review` plugin and runs its skill when a pull request is opened, updated, reopened, or marked ready for review. It runs the same plugin as the review workflow from quick setup. Use a workflow like this when you want to control the prompt, model, and triggers yourself. For automatic reviews without maintaining a workflow file, see [Code Review](/docs/en/code-review). On public repositories, GitHub withholds secrets from runs triggered by fork pull requests, so the review runs only on pull requests from branches in the same repository.
+The following workflow installs the `code-review` plugin and runs its skill when a pull request is opened, updated, reopened, or marked ready for review. It runs the same plugin as the review workflow from quick setup. Use a workflow like this when you want to control the prompt, model, and triggers yourself. For automatic reviews without maintaining a workflow file, see [Code Review](/docs/en/code-review.md). On public repositories, GitHub withholds secrets from runs triggered by fork pull requests, so the review runs only on pull requests from branches in the same repository.
 
 ```yaml theme={null}
 name: Code Review
@@ -286,7 +286,7 @@ jobs:
 
 ### Define project standards in CLAUDE.md
 
-Create a `CLAUDE.md` file in your repository root to define code style guidelines, review criteria, project-specific rules, and preferred patterns. Claude follows these guidelines when creating PRs and responding to requests. See the [memory documentation](/docs/en/memory) for details.
+Create a `CLAUDE.md` file in your repository root to define code style guidelines, review criteria, project-specific rules, and preferred patterns. Claude follows these guidelines when creating PRs and responding to requests. See the [memory documentation](/docs/en/memory.md) for details.
 
 ### Protect your credentials
 
@@ -314,11 +314,11 @@ You can lower both kinds of cost by giving Claude clearer context and by capping
 * Set workflow-level timeouts to avoid runaway jobs
 * Use GitHub's concurrency controls to limit parallel runs
 
-For usage tracking across your organization, see the [analytics dashboard](/docs/en/analytics) and [monitoring](/docs/en/monitoring-usage). For how usage is measured and billed, see [costs](/docs/en/costs).
+For usage tracking across your organization, see the [analytics dashboard](/docs/en/analytics.md) and [monitoring](/docs/en/monitoring-usage.md). For how usage is measured and billed, see [costs](/docs/en/costs.md).
 
 ## Use a cloud provider
 
-By default, the Claude Code GitHub Action calls the Claude API directly with your API key or OAuth token. To route inference through your own cloud account instead, set the input for your provider and follow [Use Claude Code GitHub Actions with cloud providers](/docs/en/github-actions-cloud-providers):
+By default, the Claude Code GitHub Action calls the Claude API directly with your API key or OAuth token. To route inference through your own cloud account instead, set the input for your provider and follow [Use Claude Code GitHub Actions with cloud providers](/docs/en/github-actions-cloud-providers.md):
 
 * **Amazon Bedrock**: `use_bedrock: "true"`
 * **Google Cloud's Agent Platform**: `use_vertex: "true"`
@@ -344,7 +344,7 @@ With all three providers, you authenticate through OIDC identity federation inst
 ### Authentication errors
 
 * Confirm the API key or OAuth token is valid by testing it locally with `claude` before debugging the workflow
-* For Bedrock, Agent Platform, and Foundry, see the cloud provider page's [troubleshooting section](/docs/en/github-actions-cloud-providers#troubleshooting)
+* For Bedrock, Agent Platform, and Foundry, see the cloud provider page's [troubleshooting section](/docs/en/github-actions-cloud-providers.md#troubleshooting)
 
 For more solutions, see the Claude Code GitHub Action's [FAQ](https://github.com/anthropics/claude-code-action/blob/main/docs/faq.md).
 
@@ -356,7 +356,7 @@ These are the most commonly used inputs. Each maps to a `with:` key in the `anth
 
 | Parameter | Description | Required |
 | - | - | - |
-| `prompt` | Instructions for Claude, as plain text or a [skill](/docs/en/skills) invocation. When omitted, Claude responds to the [trigger phrase](#interactive-and-automation-modes) instead | No |
+| `prompt` | Instructions for Claude, as plain text or a [skill](/docs/en/skills.md) invocation. When omitted, Claude responds to the [trigger phrase](#interactive-and-automation-modes) instead | No |
 | `claude_args` | CLI arguments passed to Claude Code | No |
 | `anthropic_api_key` | Claude API key | For the Claude API, unless you use `claude_code_oauth_token` or [workload identity federation](#set-up-for-an-organization). Not used for Bedrock, Agent Platform, or Foundry |
 | `claude_code_oauth_token` | OAuth token for authenticating with a Claude subscription, generated with `claude setup-token` | No |
@@ -373,7 +373,7 @@ For the full input list, see the Claude Code GitHub Action's [configuration refe
 
 ### Pass CLI arguments
 
-The `claude_args` parameter accepts any [Claude Code CLI argument](/docs/en/cli-reference):
+The `claude_args` parameter accepts any [Claude Code CLI argument](/docs/en/cli-reference.md):
 
 ```yaml theme={null}
 claude_args: "--max-turns 5 --model claude-sonnet-5 --mcp-config /path/to/config.json"
@@ -382,8 +382,8 @@ claude_args: "--max-turns 5 --model claude-sonnet-5 --mcp-config /path/to/config
 Common arguments:
 
 * `--max-turns`: limit the number of conversation turns
-* `--model`: model to use, for example `claude-sonnet-5`. Without this argument, the Claude Code GitHub Action uses the Claude Code [default model](/docs/en/model-config)
-* `--mcp-config`: path to [MCP configuration](/docs/en/mcp)
+* `--model`: model to use, for example `claude-sonnet-5`. Without this argument, the Claude Code GitHub Action uses the Claude Code [default model](/docs/en/model-config.md)
+* `--mcp-config`: path to [MCP configuration](/docs/en/mcp.md)
 * `--allowedTools`: comma-separated list of allowed tools. The `--allowed-tools` alias also works
 * `--debug`: enable debug output
 
@@ -400,7 +400,7 @@ For the full input mapping and before-and-after examples, see the [migration gui
 
 ## What's next
 
-* [Use Claude Code GitHub Actions with cloud providers](/docs/en/github-actions-cloud-providers): route inference through Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry
+* [Use Claude Code GitHub Actions with cloud providers](/docs/en/github-actions-cloud-providers.md): route inference through Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry
 * [Configuration reference](https://github.com/anthropics/claude-code-action/blob/main/docs/usage.md#inputs): the full list of action inputs
 * [Examples directory](https://github.com/anthropics/claude-code-action/tree/main/examples): ready-to-use workflows for more scenarios
-* [Code Review](/docs/en/code-review): automatic pull request review without maintaining a workflow file
+* [Code Review](/docs/en/code-review.md): automatic pull request review without maintaining a workflow file

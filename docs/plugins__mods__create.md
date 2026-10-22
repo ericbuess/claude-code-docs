@@ -6,20 +6,20 @@
 
 > Have Claude write a Claude Code mod from a description, or write one yourself that counts tool calls and adds a command. Learn the reload and validate loop.
 
-A mod is a Claude Code [plugin](/docs/en/plugins/overview) with an entry file, called the hooks module: a JavaScript or TypeScript file whose functions Claude Code calls when events happen. To make one:
+A mod is a Claude Code [plugin](/docs/en/plugins/overview.md) with an entry file, called the hooks module: a JavaScript or TypeScript file whose functions Claude Code calls when events happen. To make one:
 
 * **Ask Claude to write it**: [describe what you want](#ask-claude-for-a-mod) in a Claude Code session
 * **Write it yourself**: [follow the tutorial](#write-a-mod-yourself) to learn how a mod's code works. You don't need Node.js, a bundler, or a build step, because Claude Code loads `.js` and `.ts` files directly.
 
-If you haven't decided whether a mod is the right tool, read the [comparison on the overview](/docs/en/plugins/mods/overview#compare-mods-settings-hooks-skills-and-mcp-servers) first.
+If you haven't decided whether a mod is the right tool, read the [comparison on the overview](/docs/en/plugins/mods/overview.md#compare-mods-settings-hooks-skills-and-mcp-servers) first.
 
 > [!NOTE]
 >
-> Use Claude Code v2.1.287 or later. In your shell, run `claude --version` to check. To see whether mods can load for you, see [Check whether mods can load](/docs/en/plugins/mods/troubleshoot#check-whether-mods-can-load).
+> Use Claude Code v2.1.287 or later. In your shell, run `claude --version` to check. To see whether mods can load for you, see [Check whether mods can load](/docs/en/plugins/mods/troubleshoot.md#check-whether-mods-can-load).
 
 ## Ask Claude for a mod
 
-Describe the mod you want in an interactive Claude Code session, and Claude writes it. Claude works from a built-in [skill](/docs/en/skills) named `plugin-authoring`, which tells it where to write the mod, which events and methods your version has, and how the mod gets loaded. Claude can load the skill when you ask for a mod, or you can load it yourself by running `/plugin-authoring` at the Claude Code prompt.
+Describe the mod you want in an interactive Claude Code session, and Claude writes it. Claude works from a built-in [skill](/docs/en/skills.md) named `plugin-authoring`, which tells it where to write the mod, which events and methods your version has, and how the mod gets loaded. Claude can load the skill when you ask for a mod, or you can load it yourself by running `/plugin-authoring` at the Claude Code prompt.
 
 The mod runs once you approve it, except in [sessions where a mod Claude writes can't load](#sessions-that-skip-the-approval).
 
@@ -29,7 +29,7 @@ Ask for the mod in your own words, for example `make a mod that shows the curren
 
 > [!NOTE]
 >
-> In the `default` and `acceptEdits` [permission modes](/docs/en/permission-modes), Claude Code asks you to approve each of the mod's files before Claude creates it, because the mods folder is a [protected path](/docs/en/permission-modes#protected-paths). Approve each file as it comes up.
+> In the `default` and `acceptEdits` [permission modes](/docs/en/permission-modes.md), Claude Code asks you to approve each of the mod's files before Claude creates it, because the mods folder is a [protected path](/docs/en/permission-modes.md#protected-paths). Approve each file as it comes up.
 
 **2. Approve the mod**
 
@@ -61,7 +61,7 @@ A mod Claude writes loads only after you approve it, in a trusted workspace wher
 
 * **Nobody is there to approve**: the session can't show you a prompt, as in a `claude -p` run or [`dontAsk` mode](/docs/en/permission-modes)
 * **The workspace isn't trusted**: you haven't accepted the trust prompt for the directory
-* **Mods are disabled**: you started with `--safe-mode` or `--bare`, you set `disableAllHooks`, or your organization's [managed settings block it](/docs/en/plugins/mods/admin#choose-how-much-to-allow)
+* **Mods are disabled**: you started with `--safe-mode` or `--bare`, you set `disableAllHooks`, or your organization's [managed settings block it](/docs/en/plugins/mods/admin.md#choose-how-much-to-allow)
 
 ## Write a mod yourself
 
@@ -82,8 +82,8 @@ first-mod/
     └── register.js
 ```
 
-* **`plugin.json`**: the plugin's [manifest](/docs/en/plugins/manifest-reference)
-* **`hooks.json`**: [points to your code file](/docs/en/plugins/mods/reference#files)
+* **`plugin.json`**: the plugin's [manifest](/docs/en/plugins/manifest-reference.md)
+* **`hooks.json`**: [points to your code file](/docs/en/plugins/mods/reference.md#files)
 * **`register.js`**: your code, called the hooks module
 
 **1. Create the plugin directory**
@@ -104,7 +104,7 @@ New-Item -ItemType Directory -Force first-mod\.claude-plugin, first-mod\hooks
 
 **2. Write the manifest**
 
-A mod is a plugin, and a mod needs a [manifest](/docs/en/plugins/manifest-reference). This mod's manifest has no special fields. Save this as `first-mod/.claude-plugin/plugin.json`:
+A mod is a plugin, and a mod needs a [manifest](/docs/en/plugins/manifest-reference.md). This mod's manifest has no special fields. Save this as `first-mod/.claude-plugin/plugin.json`:
 
 ```json first-mod/.claude-plugin/plugin.json theme={null}
 {
@@ -205,7 +205,7 @@ claude -p "/tally" --plugin-dir ./first-mod
 first-mod: Claude has made 0 tool calls since this mod loaded
 ```
 
-If `/tally` isn't in the command list, the module didn't load. See [Find out why a mod does nothing](/docs/en/plugins/mods/troubleshoot#find-out-why-a-mod-does-nothing).
+If `/tally` isn't in the command list, the module didn't load. See [Find out why a mod does nothing](/docs/en/plugins/mods/troubleshoot.md#find-out-why-a-mod-does-nothing).
 
 **7. Change the code while the session runs**
 
@@ -225,17 +225,17 @@ A line in the transcript says `first-mod` reloaded and lists its hooks, and the 
 
 Each function you pass to `on` is a hook, which is an event handler. Claude Code passes every hook the same three arguments:
 
-* **The mods API**, named `$`: every method a mod can call to reach outside itself, in [namespaces](/docs/en/plugins/mods/reference#mods-api-methods) such as `$.ui` and `$.command`
-* **The event**, named `e`: the [event's input](/docs/en/plugins/mods/reference#events) as plain data, such as a tool call's name and arguments
+* **The mods API**, named `$`: every method a mod can call to reach outside itself, in [namespaces](/docs/en/plugins/mods/reference.md#mods-api-methods) such as `$.ui` and `$.command`
+* **The event**, named `e`: the [event's input](/docs/en/plugins/mods/reference.md#events) as plain data, such as a tool call's name and arguments
 * **The next handler**, named [`next`](/docs/en/plugins/mods/events#how-a-hook-handles-an-event): a function that passes the event on to the other mods and then to Claude Code's own behavior, and returns the result
 
 The hooks in `first-mod` handle their events in these ways:
 
 * **Observe**: the `session.start` hook registers the command, and the `tool.call` hook counts the call and asks for a redraw. Both return `next(e)`, so the session starts and the tool runs as usual.
-* **Answer**: the `command.run` hook returns its own result and never calls `next`. The second argument to `on`, `{ command: 'tally' }`, is a filter, called a [matcher](/docs/en/plugins/mods/events#filter-which-events-a-hook-handles), so the hook runs only for `/tally`.
+* **Answer**: the `command.run` hook returns its own result and never calls `next`. The second argument to `on`, `{ command: 'tally' }`, is a filter, called a [matcher](/docs/en/plugins/mods/events.md#filter-which-events-a-hook-handles), so the hook runs only for `/tally`.
 * **Rewrite**: the `ui.render` hook calls `next` with a copy of `e` whose `suffix` holds the count, so Claude Code draws its usual spinner with your text after the word
 
-Claude Code watches a directory loaded with `--plugin-dir` and hot-reloads the hooks module when a file in it changes. Each reload runs `register` again, so `calls` resets to `0` and `/tally` starts counting again. To keep a value across reloads, see [Keep state](/docs/en/plugins/mods/interface#keep-state).
+Claude Code watches a directory loaded with `--plugin-dir` and hot-reloads the hooks module when a file in it changes. Each reload runs `register` again, so `calls` resets to `0` and `/tally` starts counting again. To keep a value across reloads, see [Keep state](/docs/en/plugins/mods/interface.md#keep-state).
 
 ## Keep working on a mod
 
@@ -249,7 +249,7 @@ To change a mod you already have, start the session with `--plugin-dir` pointed 
 claude --plugin-dir ./first-mod
 ```
 
-Then ask for the change, for example `add a /tally-reset command to this mod that sets the tally back to zero`. Claude edits the hooks module, runs `claude plugin validate`, and fixes what it reports. A directory you load with `--plugin-dir` is a [protected path](/docs/en/permission-modes#protected-paths), so in `default` and `acceptEdits` modes you're asked to approve each of Claude's edits to the mod. The protected paths table gives the result for the other permission modes.
+Then ask for the change, for example `add a /tally-reset command to this mod that sets the tally back to zero`. Claude edits the hooks module, runs `claude plugin validate`, and fixes what it reports. A directory you load with `--plugin-dir` is a [protected path](/docs/en/permission-modes.md#protected-paths), so in `default` and `acceptEdits` modes you're asked to approve each of Claude's edits to the mod. The protected paths table gives the result for the other permission modes.
 
 Files Claude saves during its turn reload when the turn ends, so you can try `/tally-reset` as soon as Claude finishes.
 
@@ -299,7 +299,7 @@ Follow these rules so that static analysis can find every hook and call:
 * Inside `register`, don't declare a second variable or parameter named `on`. Validation fails with `"on" is declared again (shadowed)`.
 * Import only from files inside the plugin directory, by relative path. The one bare import allowed is `claude-code`, for types and a few helpers.
 * Use `import` declarations at the top of the file, as in `import { name } from './file.js'`. A dynamic `import()` fails with `a dynamic import(); a hooks module imports its own files with an import declaration`.
-* Write every file as an ES module, with `import` and not `require`. The [reference](/docs/en/plugins/mods/reference#files) lists the file extensions Claude Code loads.
+* Write every file as an ES module, with `import` and not `require`. The [reference](/docs/en/plugins/mods/reference.md#files) lists the file extensions Claude Code loads.
 
 ### Test the mod
 
@@ -341,26 +341,26 @@ tests/first-mod.test.ts:
 Ran 1 test across 1 file. [0.19s]
 ```
 
-[Test a mod](/docs/en/plugins/mods/test) covers stubbing a model call or the store, and testing timers and drawings.
+[Test a mod](/docs/en/plugins/mods/test.md) covers stubbing a model call or the store, and testing timers and drawings.
 
 ## Share your mod
 
 A mod is a plugin, so you version it in the manifest and people install and update it with the `/plugin` commands. How you share it depends on who it's for:
 
-* **A few people**: send them the plugin's directory or a `.zip` of it. See [Share a plugin without a marketplace](/docs/en/plugins/publish#share-a-plugin-without-a-marketplace)
-* **Your team**: list it in [your own marketplace](/docs/en/plugins/publish#publish-through-your-own-marketplace), such as a private repository with one directory for each plugin. To add that marketplace for everyone who works in a repository, [register it in the repository's settings](/docs/en/plugins/host-marketplace#register-the-marketplace-for-everyone-in-a-repository)
-* **Your whole organization**: an administrator can [install your organization's mods](/docs/en/plugins/mods/admin#install-your-organizations-mods) through managed settings
-* **Anyone**: make your marketplace's repository public, or [submit the plugin to Anthropic's directory](/docs/en/plugins/publish#submit-to-anthropics-directory)
+* **A few people**: send them the plugin's directory or a `.zip` of it. See [Share a plugin without a marketplace](/docs/en/plugins/publish.md#share-a-plugin-without-a-marketplace)
+* **Your team**: list it in [your own marketplace](/docs/en/plugins/publish.md#publish-through-your-own-marketplace), such as a private repository with one directory for each plugin. To add that marketplace for everyone who works in a repository, [register it in the repository's settings](/docs/en/plugins/host-marketplace.md#register-the-marketplace-for-everyone-in-a-repository)
+* **Your whole organization**: an administrator can [install your organization's mods](/docs/en/plugins/mods/admin.md#install-your-organizations-mods) through managed settings
+* **Anyone**: make your marketplace's repository public, or [submit the plugin to Anthropic's directory](/docs/en/plugins/publish.md#submit-to-anthropics-directory)
 
-Before you do, check the plugin's `name`: `claude plugin validate` fails a name that [looks like one of Anthropic's own](/docs/en/plugins/manifest-reference#name), such as one that starts with `claude-`. The events and methods can change between releases, so your README is the place to say which Claude Code version you tested with.
+Before you do, check the plugin's `name`: `claude plugin validate` fails a name that [looks like one of Anthropic's own](/docs/en/plugins/manifest-reference.md#name), such as one that starts with `claude-`. The events and methods can change between releases, so your README is the place to say which Claude Code version you tested with.
 
 Keep developing against the directory with `--plugin-dir`, not against an installed copy. Claude Code caches an installed plugin by version, so your edits don't reach the installed copy until you increment the version and install again.
 
 ## Next steps
 
-* [Draw in the interface](/docs/en/plugins/mods/interface): open a pane, draw above the prompt, and add buttons and text fields
-* [React to events](/docs/en/plugins/mods/events): hook tool calls, prompts, and turns
-* [Use the mods API](/docs/en/plugins/mods/api): add commands and tools, call a model, and run work on a timer
-* [Test a mod](/docs/en/plugins/mods/test): stub what Claude Code would answer, and test timers and drawings
-* [Troubleshoot a mod](/docs/en/plugins/mods/troubleshoot): the reasons a mod does nothing, and the debug log
-* [Read the source of built-in mods](/docs/en/plugins/mods/overview#read-the-source-of-built-in-mods): complete plugins, each with its hooks module and tests
+* [Draw in the interface](/docs/en/plugins/mods/interface.md): open a pane, draw above the prompt, and add buttons and text fields
+* [React to events](/docs/en/plugins/mods/events.md): hook tool calls, prompts, and turns
+* [Use the mods API](/docs/en/plugins/mods/api.md): add commands and tools, call a model, and run work on a timer
+* [Test a mod](/docs/en/plugins/mods/test.md): stub what Claude Code would answer, and test timers and drawings
+* [Troubleshoot a mod](/docs/en/plugins/mods/troubleshoot.md): the reasons a mod does nothing, and the debug log
+* [Read the source of built-in mods](/docs/en/plugins/mods/overview.md#read-the-source-of-built-in-mods): complete plugins, each with its hooks module and tests

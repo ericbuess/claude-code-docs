@@ -6,7 +6,7 @@
 
 > Draw panes, a band above the prompt, buttons, and text fields from a Claude Code mod, handle presses and input, and keep state between redraws and sessions.
 
-A mod can draw its own interface in Claude Code and change parts of the interface Claude Code already draws. Each place a mod can draw is called a [render site](/docs/en/plugins/mods/reference#render-sites), such as a pane, the band above the prompt, or the spinner. Claude Code fires the [`ui.render`](/docs/en/plugins/mods/reference#interface) event each time it's about to draw a render site, and your hook for that event returns what to draw there.
+A mod can draw its own interface in Claude Code and change parts of the interface Claude Code already draws. Each place a mod can draw is called a [render site](/docs/en/plugins/mods/reference.md#render-sites), such as a pane, the band above the prompt, or the spinner. Claude Code fires the [`ui.render`](/docs/en/plugins/mods/reference#interface) event each time it's about to draw a render site, and your hook for that event returns what to draw there.
 
 This map shows where a mod can draw in a terminal session:
 
@@ -14,11 +14,11 @@ This map shows where a mod can draw in a terminal session:
 
 In a narrower terminal, the pane sits above the prompt instead of beside the transcript.
 
-Build your [first mod](/docs/en/plugins/mods/create) before you start here. Begin with the worked example, which builds a pane with two tabs and a counter, then read the section for each piece you want to change.
+Build your [first mod](/docs/en/plugins/mods/create.md) before you start here. Begin with the worked example, which builds a pane with two tabs and a counter, then read the section for each piece you want to change.
 
 > [!NOTE]
 >
-> To look up one prop or limit, see the [reference](/docs/en/plugins/mods/reference#render-sites).
+> To look up one prop or limit, see the [reference](/docs/en/plugins/mods/reference.md#render-sites).
 
 ## Build a pane with tabs
 
@@ -32,7 +32,7 @@ The tabs are two buttons in a row. The mod keeps track of which one is active an
 
 **1. Create the plugin**
 
-A mod is a plugin with a manifest, a `hooks.json` that points to your code, and the code file. [Create a mod](/docs/en/plugins/mods/create#write-a-mod-yourself) explains each one. Create a directory named `hello-tabs` with `.claude-plugin` and `hooks` directories inside it, then save the first two files.
+A mod is a plugin with a manifest, a `hooks.json` that points to your code, and the code file. [Create a mod](/docs/en/plugins/mods/create.md#write-a-mod-yourself) explains each one. Create a directory named `hello-tabs` with `.claude-plugin` and `hooks` directories inside it, then save the first two files.
 
 Save the manifest as `hello-tabs/.claude-plugin/plugin.json`:
 
@@ -177,7 +177,7 @@ To clear the count, have the mod call `$.store.delete('count')`. [Keep state](#k
 
 ## Pick where to draw
 
-A `ui.render` hook runs for every render site unless you narrow it to the one you want to draw in. To choose the render site, pass a filter, called a [matcher](/docs/en/plugins/mods/events#filter-which-events-a-hook-handles), as the second argument to `on`. `{ component: 'Pane' }` runs the hook only for panes. In the hook, `e.component` names the site, `e.surface` says which app is drawing, and `e.props` holds the site's own data. For a pane, `e.requestId` is the `id` you opened it with.
+A `ui.render` hook runs for every render site unless you narrow it to the one you want to draw in. To choose the render site, pass a filter, called a [matcher](/docs/en/plugins/mods/events.md#filter-which-events-a-hook-handles), as the second argument to `on`. `{ component: 'Pane' }` runs the hook only for panes. In the hook, `e.component` names the site, `e.surface` says which app is drawing, and `e.props` holds the site's own data. For a pane, `e.requestId` is the `id` you opened it with.
 
 The pane and the band are empty until a mod fills them. Select a tab to see what each one is and how to draw in it:
 
@@ -193,7 +193,7 @@ To draw in your pane, filter on `{ component: 'Pane' }` and check that `e.reques
 
 The band is a strip directly above the prompt input. It's always there, and every mod shares it.
 
-Your hook returns a tree to show something in the band, or `next(e)` to show nothing. A tree replaces what the mods [after yours](/docs/en/plugins/mods/events#the-order-mods-run-in) draw there. To keep theirs, put the result of `await next(e)` among the children of a [`Box`](#build-a-tree-from-elements) in your tree.
+Your hook returns a tree to show something in the band, or `next(e)` to show nothing. A tree replaces what the mods [after yours](/docs/en/plugins/mods/events.md#the-order-mods-run-in) draw there. To keep theirs, put the result of `await next(e)` among the children of a [`Box`](#build-a-tree-from-elements) in your tree.
 
 To draw in the band, filter on `{ component: 'AbovePrompt' }`.
 
@@ -210,9 +210,9 @@ Claude Code draws most of its interface itself: messages, tool call rows, the sp
 | `Spinner`, `ToolProgress`, `TurnDuration` | Status lines for a turn: the line that animates while Claude works, a running tool's live progress line, and the line that closes a turn |
 | `InfoNotice`, `SessionMode`, `PromptHint` | Status lines under the logo, the mode labels in the footer, and the hint line under the prompt |
 
-`Pane`, `AskUserQuestion`, `Spinner`, `UserMessage`, `AssistantMessage`, and the tool call sites work in the terminal, the Desktop app, and the VS Code extension. The [render sites table](/docs/en/plugins/mods/reference#render-sites) lists where each of the others is raised.
+`Pane`, `AskUserQuestion`, `Spinner`, `UserMessage`, `AssistantMessage`, and the tool call sites work in the terminal, the Desktop app, and the VS Code extension. The [render sites table](/docs/en/plugins/mods/reference.md#render-sites) lists where each of the others is raised.
 
-At a site Claude Code already draws, your hook can change a detail, replace the drawing, or leave it alone. Select a tab to see each one applied to the spinner. The examples read a `calls` variable that another hook counts, as in the [tutorial mod](/docs/en/plugins/mods/create#write-a-mod-yourself).
+At a site Claude Code already draws, your hook can change a detail, replace the drawing, or leave it alone. Select a tab to see each one applied to the spinner. The examples read a `calls` variable that another hook counts, as in the [tutorial mod](/docs/en/plugins/mods/create.md#write-a-mod-yourself).
 
 **Change a detail**
 
@@ -317,7 +317,7 @@ const pane = { id: 'hello-tabs', title: 'Hello tabs' }
 await $.ui.open(items.length > 0 ? { ...pane, focus: true } : pane)
 ```
 
-To let a command open the pane while Claude is working, add `immediate: true` when you [register the command](/docs/en/plugins/mods/api#add-a-command). Without it, a command typed during a turn waits for the turn to end.
+To let a command open the pane while Claude is working, add `immediate: true` when you [register the command](/docs/en/plugins/mods/api.md#add-a-command). Without it, a command typed during a turn waits for the turn to end.
 
 #### Hold toasts behind a dialog
 
@@ -336,7 +336,7 @@ When the pane appears, `$.ui.open` resolves to `{ isPlaced: true }`. When the pa
 
 ### Draw in the VS Code extension
 
-In the VS Code extension, what a mod draws appears in the chat panel with extension version 2.1.299 or later. A session that [doesn't fetch feature flags](/docs/en/env-vars#features-that-need-feature-flag-fetching), such as one on Amazon Bedrock, needs 2.1.304 or later. In a `ui.render` hook for the panel, `e.surface` is `vscode`. To check which sites and elements the panel draws, and which props it ignores, see the [render sites](/docs/en/plugins/mods/reference#render-sites) and [elements](/docs/en/plugins/mods/reference#elements) tables.
+In the VS Code extension, what a mod draws appears in the chat panel with extension version 2.1.299 or later. A session that [doesn't fetch feature flags](/docs/en/env-vars.md#features-that-need-feature-flag-fetching), such as one on Amazon Bedrock, needs 2.1.304 or later. In a `ui.render` hook for the panel, `e.surface` is `vscode`. To check which sites and elements the panel draws, and which props it ignores, see the [render sites](/docs/en/plugins/mods/reference.md#render-sites) and [elements](/docs/en/plugins/mods/reference.md#elements) tables.
 
 To make a mod work in the panel as well as the terminal, account for these differences:
 
@@ -421,11 +421,11 @@ Input({
 Note: Type a note and press Enter
 ```
 
-The [interface gallery](/docs/en/plugins/mods/gallery) has samples and screenshots of most elements. This table lists every element:
+The [interface gallery](/docs/en/plugins/mods/gallery.md) has samples and screenshots of most elements. This table lists every element:
 
 | Element | What it draws | Where |
 | :- | :- | :- |
-| `Box` | A flex container that takes layout props such as `flexDirection`, [`borderStyle`](/docs/en/plugins/mods/reference#box-border-styles), and `width`. Spacing props such as `columnGap` and `padding` take a number or a [step name](/docs/en/plugins/mods/reference#box-spacing-steps) from `'xs'` to `'xl'`. | Everywhere |
+| `Box` | A flex container that takes layout props such as `flexDirection`, [`borderStyle`](/docs/en/plugins/mods/reference#box-border-styles), and `width`. Spacing props such as `columnGap` and `padding` take a number or a [step name](/docs/en/plugins/mods/reference.md#box-spacing-steps) from `'xs'` to `'xl'`. | Everywhere |
 | `Text` | Styled text. Takes `color`, `bold`, `dimColor`, `italic`, `wrap`, and others such as [`weight`](/docs/en/plugins/mods/reference#text-typography). A `color` is a theme key or a color such as `'red'`. A `wrap` is `'wrap'`, `'truncate'`, `'truncate-start'`, `'truncate-middle'`, or `'truncate-end'`. | Everywhere |
 | `Button` | A control that calls `onPress` | Everywhere |
 | `Link`, `Code`, `Markdown` | A link with `href` and an optional `label`, a code block, and text formatted the way Claude's replies are. `Markdown` takes its content in a `text` prop, not in `children`, and needs a `key` when you pass `onLinkPress`. | Everywhere |
@@ -438,7 +438,7 @@ If your module is a `.tsx` or `.jsx` file, you can write the tree as JSX. Destru
 
 If a tree uses an element the app doesn't have, a prop an element doesn't take, or a child where none goes, Claude Code draws its own version of the site.
 
-In a session started with `--plugin-dir`, a transcript line says so, such as `ui.render (Pane) refused: Text prop "bogusProp" is not allowed; the engine drew its own`. The [debug log](/docs/en/plugins/mods/troubleshoot#read-the-debug-log) records it as `ui.render (Pane): a hook returned a tree that does not validate` with the same reason. Nothing else appears in the session, so when a drawing doesn't show up, check that line or the log.
+In a session started with `--plugin-dir`, a transcript line says so, such as `ui.render (Pane) refused: Text prop "bogusProp" is not allowed; the engine drew its own`. The [debug log](/docs/en/plugins/mods/troubleshoot.md#read-the-debug-log) records it as `ui.render (Pane): a hook returned a tree that does not validate` with the same reason. Nothing else appears in the session, so when a drawing doesn't show up, check that line or the log.
 
 ### `Link` in the Desktop app and VS Code
 
@@ -512,7 +512,7 @@ A test presses or types into a control by its `key`, so give each control one. E
 
 ### Keyboard focus and hotkeys
 
-Your mod never reads the keyboard itself. The user presses a key, Claude Code decides which of your controls it's for, and that control's callback runs. Apart from a [digit hotkey on the band](/docs/en/plugins/mods/reference#elements), that happens only while your pane or band has keyboard focus. The rest of the time, keys go to the prompt.
+Your mod never reads the keyboard itself. The user presses a key, Claude Code decides which of your controls it's for, and that control's callback runs. Apart from a [digit hotkey on the band](/docs/en/plugins/mods/reference.md#elements), that happens only while your pane or band has keyboard focus. The rest of the time, keys go to the prompt.
 
 In the [VS Code extension](#draw-in-the-vs-code-extension), buttons have no hotkeys: the user clicks a button or presses Enter on it, and types into fields.
 
@@ -555,7 +555,7 @@ How a hotkey shows depends on the button and the app:
 | With brackets, the default | `[ Add one ]`, with no hotkey shown | The label with a small key beside it | The label, and the hotkey does nothing |
 | With `plain: true` | `1: One` | The label with a small key beside it | The label, and the hotkey does nothing |
 
-In the terminal, name the key in a bracketed button's label, or use `plain: true`, so the user can see what to press. The [elements reference](/docs/en/plugins/mods/reference#elements) has the other `Button` rules: `action`, digit hotkeys on the band, and two buttons on one hotkey.
+In the terminal, name the key in a bracketed button's label, or use `plain: true`, so the user can see what to press. The [elements reference](/docs/en/plugins/mods/reference.md#elements) has the other `Button` rules: `action`, digit hotkeys on the band, and two buttons on one hotkey.
 
 ### Take typed input and draw a row for each item
 
@@ -711,7 +711,7 @@ Claude Code now runs your `ui.render` hook once a second. The timer stops when t
 
 ### How often a site can redraw
 
-Claude Code throttles redraws of a site, so your mod can call `$.ui.invalidate` as often as its data changes. For how often each site can redraw, see the [limits table](/docs/en/plugins/mods/reference#limits).
+Claude Code throttles redraws of a site, so your mod can call `$.ui.invalidate` as often as its data changes. For how often each site can redraw, see the [limits table](/docs/en/plugins/mods/reference.md#limits).
 
 Calls that come faster than the limit are coalesced into one redraw. That redraw runs your hook once, and the hook reads your data as it is at that moment, so the latest value shows and the values in between don't. An animation can't run faster than the limit.
 
@@ -856,7 +856,7 @@ If a second session has pressed its own button three times since this session st
 
 ## Next steps
 
-* [React to events](/docs/en/plugins/mods/events): feed your drawing from tool calls and turns
-* [Use the mods API](/docs/en/plugins/mods/api): feed your drawing from timers and model calls
-* [Test a drawing](/docs/en/plugins/mods/test#test-a-drawing): press your buttons from a test, on more than one surface
-* [Render sites](/docs/en/plugins/mods/reference#render-sites) and [elements](/docs/en/plugins/mods/reference#elements): each site's props and each element's props
+* [React to events](/docs/en/plugins/mods/events.md): feed your drawing from tool calls and turns
+* [Use the mods API](/docs/en/plugins/mods/api.md): feed your drawing from timers and model calls
+* [Test a drawing](/docs/en/plugins/mods/test.md#test-a-drawing): press your buttons from a test, on more than one surface
+* [Render sites](/docs/en/plugins/mods/reference.md#render-sites) and [elements](/docs/en/plugins/mods/reference.md#elements): each site's props and each element's props

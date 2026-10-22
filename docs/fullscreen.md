@@ -22,22 +22,22 @@ The difference is most noticeable in terminal emulators where rendering throughp
 
 Run `/tui fullscreen` inside any Claude Code conversation. The CLI saves the [`tui` setting](/docs/en/settings-reference#tui) and relaunches into fullscreen with your conversation intact, so you can switch mid-session without losing context. Run `/tui default` to switch back to the classic renderer, or `/tui` with no argument to print which renderer is active.
 
-In [screen reader mode](/docs/en/accessibility), Claude Code always uses the classic renderer except in attached [background sessions](/docs/en/agent-view), which still render fullscreen. If you run `/tui fullscreen` in any other session, Claude Code prints an explanation instead of switching and doesn't change the saved `tui` setting.
+In [screen reader mode](/docs/en/accessibility.md), Claude Code always uses the classic renderer except in attached [background sessions](/docs/en/agent-view.md), which still render fullscreen. If you run `/tui fullscreen` in any other session, Claude Code prints an explanation instead of switching and doesn't change the saved `tui` setting.
 
 Claude Code carries these into the relaunched session:
 
 * The conversation as it appears on screen. After a [`/rewind`](/docs/en/checkpointing#rewind-and-summarize), that means:
   * If you rewound earlier in the session, Claude Code relaunches from the rewound point, not from the longer transcript saved on disk. For example, if you rewound past your last three messages, the relaunched session opens without them
   * If you rewound to before your first message, Claude Code relaunches with an empty conversation
-* Your [permission mode](/docs/en/permission-modes) and [effort level](/docs/en/model-config#adjust-effort-level)
+* Your [permission mode](/docs/en/permission-modes.md) and [effort level](/docs/en/model-config.md#adjust-effort-level)
 * The model you last picked with [`/model`](/docs/en/model-config#setting-your-model)
 * Rules you passed with [`--allowed-tools` or `--disallowed-tools`](/docs/en/cli-reference#cli-flags), and your `--agent`, `--agents`, `--append-system-prompt`, and `--system-prompt-snapshot` flags
-* A `--chrome` or `--no-chrome` flag you launched with, so [Chrome integration](/docs/en/chrome) stays on or off as you chose for this session
+* A `--chrome` or `--no-chrome` flag you launched with, so [Chrome integration](/docs/en/chrome.md) stays on or off as you chose for this session
 
 Claude Code declines to relaunch if the session has a restriction it can't pass to the restarted process. Restrictions it can't pass include:
 
 * Launch flags such as a [`--system-prompt`](/docs/en/cli-reference#cli-flags) replacement, a [`--tools`](/docs/en/cli-reference#cli-flags) allowlist, or [`--setting-sources`](/docs/en/cli-reference#cli-flags)
-* Deny or ask rules that a [hook or SDK permission update](/docs/en/hooks#permission-update-entries) added for this session only
+* Deny or ask rules that a [hook or SDK permission update](/docs/en/hooks.md#permission-update-entries) added for this session only
 
 In that case Claude Code prints [`Cannot switch renderers in this session`](/docs/en/errors#cannot-switch-renderers-in-this-session) with the reasons. It doesn't switch or save anything.
 
@@ -51,7 +51,7 @@ For how the [`tui`](/docs/en/settings-reference#tui) setting and the variable co
 
 ### Fullscreen by default
 
-Attached [background sessions](/docs/en/agent-view) render fullscreen, and other sessions in [screen reader mode](/docs/en/accessibility) use the classic renderer. Otherwise, Claude Code starts you in the renderer from the first row of this table that matches your setup:
+Attached [background sessions](/docs/en/agent-view.md) render fullscreen, and other sessions in [screen reader mode](/docs/en/accessibility.md) use the classic renderer. Otherwise, Claude Code starts you in the renderer from the first row of this table that matches your setup:
 
 | Your situation | Renderer you start in |
 | :- | :- |
@@ -60,12 +60,12 @@ Attached [background sessions](/docs/en/agent-view) render fullscreen, and other
 | Claude Code [turned fullscreen off after a failed fullscreen start](#fullscreen-renderer-didnt-finish-starting) on this machine | Classic |
 | You're in iTerm2's [`tmux -CC` integration mode](#use-with-tmux), or you're connected over SSH to Claude Code running on Windows | Classic |
 | You saved a [`tui` setting](/docs/en/settings-reference#tui) | The renderer the setting names |
-| Your session doesn't [fetch feature flags from Anthropic](/docs/en/env-vars#features-that-need-feature-flag-fetching), and Claude Code has stopped offering the startup dialog on this machine | Classic |
+| Your session doesn't [fetch feature flags from Anthropic](/docs/en/env-vars.md#features-that-need-feature-flag-fetching), and Claude Code has stopped offering the startup dialog on this machine | Classic |
 | Your session doesn't fetch feature flags from Anthropic, and this machine's first Claude Code launch ran v2.1.239 or later | Fullscreen |
 | Your session fetches feature flags from Anthropic, and you first used Claude Code on or after May 6, 2026 | Fullscreen |
 | Anything else | Classic |
 
-Sessions that don't fetch feature flags include those through [Amazon Bedrock](/docs/en/amazon-bedrock), [Google Cloud's Agent Platform](/docs/en/google-vertex-ai), or [Microsoft Foundry](/docs/en/microsoft-foundry), and those with telemetry turned off.
+Sessions that don't fetch feature flags include those through [Amazon Bedrock](/docs/en/amazon-bedrock.md), [Google Cloud's Agent Platform](/docs/en/google-vertex-ai.md), or [Microsoft Foundry](/docs/en/microsoft-foundry.md), and those with telemetry turned off.
 
 If you start in the classic renderer and haven't saved a `tui` setting, Claude Code may open a dialog at startup offering the switch:
 
@@ -102,7 +102,7 @@ Fullscreen rendering captures mouse events and handles them inside Claude Code:
 * **Click the `↑ N more` or `↓ N more` row at the edge of a list** to jump to that end of the list without choosing an option. Requires Claude Code v2.1.286 or later.
 * **Click a collapsed tool result** to expand it and see the full output. Click again to collapse. The tool call and its result expand together. Only messages that have more to show are clickable.
   * Clicking also expands the output of a `!` shell command, whether an older truncated result or the live progress row while the command runs. Requires Claude Code v2.1.257 or later.
-  * Clicking also expands a dim `Message from @<sender>` line when the sender is a [teammate](/docs/en/agent-teams) or another agent running in your session.
+  * Clicking also expands a dim `Message from @<sender>` line when the sender is a [teammate](/docs/en/agent-teams.md) or another agent running in your session.
 * **Hold `Cmd` on macOS, or `Ctrl` on Linux and Windows, and click a URL or file path** to open it. Plain `http://` and `https://` URLs open in your browser. When Claude Code handles the click, file paths in tool output, like the ones printed after an Edit or Write, open in your file manager with the file selected. A plain click without the modifier doesn't open links, matching native terminal behavior.
   * On Linux and WSL, clicking a file path needs a file manager that provides the `org.freedesktop.FileManager1` D-Bus interface. Without one, nothing opens.
   * Claude Code renders a network (UNC) path, such as `\\server\share\file.ts`, as plain text with no link, because opening a network path can send your Windows credentials to the host it names.
@@ -137,7 +137,7 @@ Fullscreen rendering handles scrolling inside the app. Use these shortcuts to na
 | `Ctrl+End` | Jump to the latest message and re-enable auto-follow |
 | Mouse wheel | Scroll a few lines at a time |
 
-If you close a [compacted](/docs/en/context-window#what-survives-compaction) session and [resume](/docs/en/sessions#what-a-resumed-session-restores) it, scrolling up stops at the `Conversation compacted` row, and your earlier messages stay on disk in the [transcript file](/docs/en/sessions#where-transcripts-are-stored). To get a detail from those messages, ask Claude to look it up in that file.
+If you close a [compacted](/docs/en/context-window.md#what-survives-compaction) session and [resume](/docs/en/sessions.md#what-a-resumed-session-restores) it, scrolling up stops at the `Conversation compacted` row, and your earlier messages stay on disk in the [transcript file](/docs/en/sessions.md#where-transcripts-are-stored). To get a detail from those messages, ask Claude to look it up in that file.
 
 On keyboards without dedicated `PgUp`, `PgDn`, `Home`, or `End` keys, like MacBook keyboards, hold `Fn` with the arrow keys: `Fn+↑` sends `PgUp`, `Fn+↓` sends `PgDn`, `Fn+←` sends `Home`, and `Fn+→` sends `End`. `Ctrl+Fn+→` doesn't reach Claude Code on macOS, so a MacBook keyboard has no working jump-to-bottom chord by default. Instead, use one of these options:
 
@@ -145,7 +145,7 @@ On keyboards without dedicated `PgUp`, `PgDn`, `Home`, or `End` keys, like MacBo
 * Scroll to the bottom with the mouse wheel to resume following.
 * Rebind `scroll:bottom` to a chord your keyboard can send.
 
-These actions are rebindable. See [Scroll actions](/docs/en/keybindings#scroll-actions) for the full list of action names, including half-page and full-page variants that have no default binding.
+These actions are rebindable. See [Scroll actions](/docs/en/keybindings.md#scroll-actions) for the full list of action names, including half-page and full-page variants that have no default binding.
 
 While you're scrolled up, a dim header row at the top of the conversation shows the most recent prompt that has scrolled above the view. Click the row to jump to that prompt.
 
@@ -213,7 +213,7 @@ Your terminal's `Cmd+f` and tmux search don't see the conversation because it li
 
 ## Watch your changes in the diff panel
 
-In fullscreen rendering, [`/diff`](/docs/en/interactive-mode#review-changes-with-%2Fdiff) opens a panel beside the conversation, so you can watch the changes accumulate while Claude works. [Diff panel](/docs/en/interactive-mode#diff-panel) covers what it shows, when it opens on its own, how to keep it closed, and how to change what it compares against.
+In fullscreen rendering, [`/diff`](/docs/en/interactive-mode#review-changes-with-%2Fdiff) opens a panel beside the conversation, so you can watch the changes accumulate while Claude works. [Diff panel](/docs/en/interactive-mode.md#diff-panel) covers what it shows, when it opens on its own, how to keep it closed, and how to change what it compares against.
 
 ## Clear the conversation
 
@@ -297,7 +297,7 @@ On macOS or Linux:
 CLAUDE_CODE_ALT_SCREEN_FULL_REPAINT=1 claude
 ```
 
-On Windows, Claude Code already enables full repaint automatically for background sessions and [agent view](/docs/en/agent-view), so you only need to set the variable for an interactive fullscreen session you launched directly.
+On Windows, Claude Code already enables full repaint automatically for background sessions and [agent view](/docs/en/agent-view.md), so you only need to set the variable for an interactive fullscreen session you launched directly.
 
 ### `Claude Code's fullscreen renderer didn't finish starting last time` appears at startup
 
@@ -327,4 +327,4 @@ If you encounter a problem, run `/feedback` inside Claude Code to report it, or 
 
 To turn fullscreen rendering off, run `/tui default`, or unset `CLAUDE_CODE_NO_FLICKER` if you enabled it that way. When you switch back with `/tui default`, Claude Code may first show an optional feedback prompt asking what made you switch. Type a reason and press `Enter` to send it, or press `Esc` to skip. The CLI relaunches into the classic renderer either way. To force the classic renderer regardless of the saved `tui` setting, set `CLAUDE_CODE_DISABLE_ALTERNATE_SCREEN=1`. The classic renderer keeps the conversation in your terminal's native scrollback so `Cmd+f` and tmux copy mode work as usual.
 
-Background sessions opened from [agent view](/docs/en/agent-view) or `claude attach` always use fullscreen rendering. The attaching terminal enters the alternate screen buffer to show the session, and the classic renderer has no scrollback or mouse handling there, so the `tui` setting and `CLAUDE_CODE_DISABLE_ALTERNATE_SCREEN` don't apply to them.
+Background sessions opened from [agent view](/docs/en/agent-view.md) or `claude attach` always use fullscreen rendering. The attaching terminal enters the alternate screen buffer to show the session, and the classic renderer has no scrollback or mouse handling there, so the `tui` setting and `CLAUDE_CODE_DISABLE_ALTERNATE_SCREEN` don't apply to them.

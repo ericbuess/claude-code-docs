@@ -6,7 +6,7 @@
 
 > Claude Opus 4.7 with the new xhigh effort level, Routines on Claude Code on the web, mobile push notifications that ping your phone when Claude needs you, a /usage breakdown that shows what's driving your limits, and native binaries replacing the bundled JavaScript.
 
-Releases [v2.1.105 → v2.1.113](/docs/en/changelog#2-1-105)
+Releases [v2.1.105 → v2.1.113](/docs/en/changelog.md#2-1-105)
 5 features · April 13–17
 
 Claude Opus 4.7
@@ -21,7 +21,7 @@ Switch model and effort in one go:
 > /effort xhigh
 ```
 
-[Model config: effort levels](/docs/en/model-config#adjust-effort-level)
+[Model config: effort levels](/docs/en/model-config.md#adjust-effort-level)
 
 Routines
 web
@@ -36,7 +36,7 @@ Create one from the web UI, or scaffold from your terminal:
 > /schedule daily PR review at 9am
 ```
 
-[Routines guide](/docs/en/routines)
+[Routines guide](/docs/en/routines.md)
 
 /usage breakdown
 CLI
@@ -51,12 +51,12 @@ Run it any time:
 > /usage
 ```
 
-[Commands reference](/docs/en/commands)
+[Commands reference](/docs/en/commands.md)
 
 Mobile push notifications
 mobile
 
-With [Remote Control](/docs/en/remote-control) connected, Claude can send a push notification to your phone when a long task finishes or it needs a decision to keep going. Turn it on with "Push when Claude decides" in `/config`, or ask for one in your prompt. Useful when you kick off a long agent run and want to step away from the terminal.
+With [Remote Control](/docs/en/remote-control.md) connected, Claude can send a push notification to your phone when a long task finishes or it needs a decision to keep going. Turn it on with "Push when Claude decides" in `/config`, or ask for one in your prompt. Useful when you kick off a long agent run and want to step away from the terminal.
 
 <video autoPlay muted loop playsInline src="https://mintcdn.com/claude-code/uII1TETOZxBUZ3lB/images/whats-new/push-notifications.mp4?fit=max&auto=format&n=uII1TETOZxBUZ3lB&q=85&s=c91a967139596500cbdb581a53822ac1" />
 
@@ -66,7 +66,7 @@ Ask Claude to ping you when it's done:
 > notify me when the tests pass
 ```
 
-[Remote Control: mobile push notifications](/docs/en/remote-control#mobile-push-notifications)
+[Remote Control: mobile push notifications](/docs/en/remote-control.md#mobile-push-notifications)
 
 Native binaries
 v2.1.113
@@ -80,10 +80,10 @@ claude update
 claude --version
 ```
 
-[Setup guide](/docs/en/setup)
+[Setup guide](/docs/en/setup.md)
 
 Other wins
 
-New [`/ultrareview`](/docs/en/ultrareview): comprehensive code review in the cloud using parallel multi-agent analysis and an adversarial critique pass. Run it bare to review your current branch, or `/ultrareview <PR#>` for a specific PR[Auto mode](/docs/en/permission-modes#eliminate-prompts-with-auto-mode) is now available for Max subscribers on Opus 4.7, and the `--enable-auto-mode` flag is no longer required[Session recap](/docs/en/interactive-mode#session-recap) shows a one-line summary of what happened while you were away; run `/recap` on demand or turn it off from `/config`New `/tui` command and `tui` setting switch between classic and flicker-free rendering mid-conversation; focus view moved from `Ctrl+O` to its own `/focus` commandPlugins can ship background watchers via a top-level `monitors` manifest key that auto-arms at session start or on skill invoke"Auto (match terminal)" option in `/theme` follows your terminal's dark/light mode`/fewer-permission-prompts` scans your transcripts for common read-only Bash and MCP calls and proposes an allowlist for `.claude/settings.json`Claude can now discover and run built-in commands like `/init`, `/review`, and `/security-review` via the Skill tool`PreCompact` hooks can block compaction by exiting with code 2 or returning `{"decision":"block"}``ENABLE_PROMPT_CACHING_1H` opts API key, Amazon Bedrock, Google Cloud's Agent Platform, and Microsoft Foundry users into 1-hour prompt cache TTL`sandbox.network.deniedDomains` setting carves specific domains out of a broader `allowedDomains` wildcard`/undo` is now an alias for `/rewind`, and `/proactive` is an alias for `/loop`Hardened Bash permissions: deny rules now match through `env`/`sudo`/`watch` wrappers, and `Bash(find:*)` allow rules no longer auto-approve `-exec` or `-delete`
+New [`/ultrareview`](/docs/en/ultrareview): comprehensive code review in the cloud using parallel multi-agent analysis and an adversarial critique pass. Run it bare to review your current branch, or `/ultrareview <PR#>` for a specific PR[Auto mode](/docs/en/permission-modes.md#eliminate-prompts-with-auto-mode) is now available for Max subscribers on Opus 4.7, and the `--enable-auto-mode` flag is no longer required[Session recap](/docs/en/interactive-mode.md#session-recap) shows a one-line summary of what happened while you were away; run `/recap` on demand or turn it off from `/config`New `/tui` command and `tui` setting switch between classic and flicker-free rendering mid-conversation; focus view moved from `Ctrl+O` to its own `/focus` commandPlugins can ship background watchers via a top-level `monitors` manifest key that auto-arms at session start or on skill invoke"Auto (match terminal)" option in `/theme` follows your terminal's dark/light mode`/fewer-permission-prompts` scans your transcripts for common read-only Bash and MCP calls and proposes an allowlist for `.claude/settings.json`Claude can now discover and run built-in commands like `/init`, `/review`, and `/security-review` via the Skill tool`PreCompact` hooks can block compaction by exiting with code 2 or returning `{"decision":"block"}``ENABLE_PROMPT_CACHING_1H` opts API key, Amazon Bedrock, Google Cloud's Agent Platform, and Microsoft Foundry users into 1-hour prompt cache TTL`sandbox.network.deniedDomains` setting carves specific domains out of a broader `allowedDomains` wildcard`/undo` is now an alias for `/rewind`, and `/proactive` is an alias for `/loop`Hardened Bash permissions: deny rules now match through `env`/`sudo`/`watch` wrappers, and `Bash(find:*)` allow rules no longer auto-approve `-exec` or `-delete`
 
-[Full changelog for v2.1.105–v2.1.113 →](/docs/en/changelog#2-1-105)
+[Full changelog for v2.1.105–v2.1.113 →](/docs/en/changelog.md#2-1-105)

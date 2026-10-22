@@ -6,20 +6,20 @@
 
 > Tune what Code Review flags on your pull requests with REVIEW.md and CLAUDE.md: recalibrate severity, skip paths, add checks, and see which copy applies.
 
-You can change what [Code Review](/docs/en/code-review) flags on your repository by committing instructions to it. This is how you cut nit volume, stop comments on generated files, or add a rule your team cares about. Put them in one of two files:
+You can change what [Code Review](/docs/en/code-review.md) flags on your repository by committing instructions to it. This is how you cut nit volume, stop comments on generated files, or add a rule your team cares about. Put them in one of two files:
 
-* **`CLAUDE.md`**: [project instructions](/docs/en/memory) that Claude Code reads for every task, reviews included. Code Review reads them as project context and flags changes that violate them.
+* **`CLAUDE.md`**: [project instructions](/docs/en/memory.md) that Claude Code reads for every task, reviews included. Code Review reads them as project context and flags changes that violate them.
 * **`REVIEW.md`**: instructions for reviews alone. Use it to say what your team wants flagged, at what severity, and what to skip.
 
 Add `REVIEW.md` at your repository root and merge it. Then [protect your default branch](#which-branch-review-md-is-read-from).
 
 > [!NOTE]
 >
-> To change how thorough reviews are or when they run, ask an Owner to change the [review level](/docs/en/code-review-setup#set-the-default-review-level) or the [**Review runs** setting](/docs/en/code-review-setup#set-when-reviews-run).
+> To change how thorough reviews are or when they run, ask an Owner to change the [review level](/docs/en/code-review-setup.md#set-the-default-review-level) or the [**Review runs** setting](/docs/en/code-review-setup.md#set-when-reviews-run).
 
 ## Use CLAUDE.md for project-wide rules
 
-Code Review reads your repository's `CLAUDE.md` files as project context. A change that violates one of their rules becomes a finding at whichever [severity level](/docs/en/code-review-pull-requests#severity-levels) fits the issue.
+Code Review reads your repository's `CLAUDE.md` files as project context. A change that violates one of their rules becomes a finding at whichever [severity level](/docs/en/code-review-pull-requests.md#severity-levels) fits the issue.
 
 A review reads the `CLAUDE.md` at your repository root and the `CLAUDE.md` files in the parent directories of each changed file. A subdirectory's `CLAUDE.md` is read when the pull request changes a file under that path.
 
@@ -127,7 +127,7 @@ When a review doesn't apply an included file, check each of these:
 * **Name**: match the file name exactly, including case, and use a name without spaces. A line whose name matches no file beside `REVIEW.md` stays in `REVIEW.md` as plain text, and the check run doesn't report it as a skipped include.
 * **One level**: list every file in the root `REVIEW.md`. An `@` line in an included file or in a subdirectory `REVIEW.md` stays as plain text, and a Markdown link to another file isn't an include.
 * **Limits**: include at most eight different files, and keep `REVIEW.md` and the files it includes under 150,000 bytes combined. A file that would reach the byte limit is skipped whole, not cut short. The check run reports how many include lines it skipped for either limit.
-* **Links**: keep Markdown links at 64 or fewer across `REVIEW.md` and the files it includes. Links to `http`, `https`, or `mailto` addresses and to `#` anchors don't count. Past that limit, the review skips your whole root `REVIEW.md`, not only the included files. The check run then [says the instructions weren't applied](/docs/en/code-review-troubleshooting#the-check-run-mentions-review-md).
+* **Links**: keep Markdown links at 64 or fewer across `REVIEW.md` and the files it includes. Links to `http`, `https`, or `mailto` addresses and to `#` anchors don't count. Past that limit, the review skips your whole root `REVIEW.md`, not only the included files. The check run then [says the instructions weren't applied](/docs/en/code-review-troubleshooting.md#the-check-run-mentions-review-md).
 * **Merged copy**: merge the included file into the [branch `REVIEW.md` is read from](#which-branch-review-md-is-read-from). The review reads both from the same commit, never from the pull request's own changes.
 
 ### Which branch REVIEW\.md is read from
@@ -160,12 +160,12 @@ Find your repository's situation in the first column of the table below.
 | The default branch isn't protected, and the base branch has no protection rule of either kind | Default branch | Root file |
 | Code Review can't confirm the protection settings. This includes an unprotected default branch with a base branch that has only a classic rule | None | None |
 
-If the check run mentions `REVIEW.md`, see [The check run mentions REVIEW.md](/docs/en/code-review-troubleshooting#the-check-run-mentions-review-md).
+If the check run mentions `REVIEW.md`, see [The check run mentions REVIEW.md](/docs/en/code-review-troubleshooting.md#the-check-run-mentions-review-md).
 
 ## Related resources
 
-* [Code Review](/docs/en/code-review): what the service is and how a review runs
-* [Read and request reviews on a pull request](/docs/en/code-review-pull-requests#severity-levels): what each severity level means and how findings appear
-* [Set up Code Review](/docs/en/code-review-setup): the review level and when reviews run, which an Owner sets
+* [Code Review](/docs/en/code-review.md): what the service is and how a review runs
+* [Read and request reviews on a pull request](/docs/en/code-review-pull-requests.md#severity-levels): what each severity level means and how findings appear
+* [Set up Code Review](/docs/en/code-review-setup.md): the review level and when reviews run, which an Owner sets
 * [Review locally with `/code-review`](/docs/en/code-review-local): the `/code-review` command, its arguments, and effort levels
-* [Memory](/docs/en/memory): how `CLAUDE.md` files work across Claude Code
+* [Memory](/docs/en/memory.md): how `CLAUDE.md` files work across Claude Code

@@ -6,7 +6,7 @@
 
 > Ultraplan cloud planning, the Monitor tool with self-pacing /loop, /team-onboarding for packaging your setup, and /autofix-pr from your terminal.
 
-Releases [v2.1.92 → v2.1.101](/docs/en/changelog#2-1-92)
+Releases [v2.1.92 → v2.1.101](/docs/en/changelog.md#2-1-92)
 4 features · April 6–10
 
 Ultraplan
@@ -43,7 +43,7 @@ This pairs with `/loop`, which now self-paces: omit the interval and Claude sche
 /loop check CI on my PR
 ```
 
-[Monitor tool reference](/docs/en/tools-reference#monitor-tool)
+[Monitor tool reference](/docs/en/tools-reference.md#monitor-tool)
 
 /autofix-pr
 CLI
@@ -58,7 +58,7 @@ Run it from the PR's branch:
 /autofix-pr
 ```
 
-[Auto-fix pull requests](/docs/en/claude-code-on-the-web#auto-fix-pull-requests)
+[Auto-fix pull requests](/docs/en/claude-code-on-the-web.md#auto-fix-pull-requests)
 
 /team-onboarding
 v2.1.101
@@ -71,10 +71,10 @@ Run it from a project you've spent real time in:
 /team-onboarding
 ```
 
-[Commands reference](/docs/en/commands)
+[Commands reference](/docs/en/commands.md)
 
 Other wins
 
-Focus view: press `Ctrl+O` in flicker-free mode to collapse the view to your last prompt, a one-line tool summary with diffstats, and Claude's final responseGuided [Amazon Bedrock](/docs/en/amazon-bedrock) and [Google Cloud's Agent Platform](/docs/en/google-vertex-ai) setup wizards on the login screen: pick "3rd-party platform" for step-by-step auth, region, credential check, and model pinning`/agents` gets a tabbed layout: a Running tab shows live subagents with a `● N running` count, plus Run agent and View running instance actions in the Library tabDefault effort level is now `high` for API-key, Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry, Team, and Enterprise users (control with `/effort`)`/cost` shows a per-model and cache-hit breakdown for subscription users`/release-notes` is now an interactive version pickerStatus line: new `refreshInterval` setting re-runs the command every N seconds, and `workspace.git_worktree` in the JSON input`CLAUDE_CODE_PERFORCE_MODE`: Edit/Write fail on read-only files with a `p4 edit` hint instead of silently overwritingOS CA certificate store is now trusted by default, so enterprise TLS proxies work without extra setup (`CLAUDE_CODE_CERT_STORE=bundled` to opt out)Amazon Bedrock powered by Mantle: set `CLAUDE_CODE_USE_MANTLE=1`Hardened Bash tool permissions: backslash-escaped flags, env-var prefixes, `/dev/tcp` redirects, and compound commands now prompt correctly`UserPromptSubmit` hooks can set the session title via `hookSpecificOutput.sessionTitle`
+Focus view: press `Ctrl+O` in flicker-free mode to collapse the view to your last prompt, a one-line tool summary with diffstats, and Claude's final responseGuided [Amazon Bedrock](/docs/en/amazon-bedrock.md) and [Google Cloud's Agent Platform](/docs/en/google-vertex-ai.md) setup wizards on the login screen: pick "3rd-party platform" for step-by-step auth, region, credential check, and model pinning`/agents` gets a tabbed layout: a Running tab shows live subagents with a `● N running` count, plus Run agent and View running instance actions in the Library tabDefault effort level is now `high` for API-key, Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry, Team, and Enterprise users (control with `/effort`)`/cost` shows a per-model and cache-hit breakdown for subscription users`/release-notes` is now an interactive version pickerStatus line: new `refreshInterval` setting re-runs the command every N seconds, and `workspace.git_worktree` in the JSON input`CLAUDE_CODE_PERFORCE_MODE`: Edit/Write fail on read-only files with a `p4 edit` hint instead of silently overwritingOS CA certificate store is now trusted by default, so enterprise TLS proxies work without extra setup (`CLAUDE_CODE_CERT_STORE=bundled` to opt out)Amazon Bedrock powered by Mantle: set `CLAUDE_CODE_USE_MANTLE=1`Hardened Bash tool permissions: backslash-escaped flags, env-var prefixes, `/dev/tcp` redirects, and compound commands now prompt correctly`UserPromptSubmit` hooks can set the session title via `hookSpecificOutput.sessionTitle`
 
-[Full changelog for v2.1.92–v2.1.101 →](/docs/en/changelog#2-1-92)
+[Full changelog for v2.1.92–v2.1.101 →](/docs/en/changelog.md#2-1-92)

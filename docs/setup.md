@@ -6,7 +6,7 @@
 
 > System requirements, platform-specific installation, version management, and uninstallation for Claude Code.
 
-This page covers system requirements, platform-specific installation details, updates, and uninstallation. For a guided walkthrough of your first session, see the [quickstart](/docs/en/quickstart). If you've never used a terminal before, see the [terminal guide](/docs/en/terminal-guide).
+This page covers system requirements, platform-specific installation details, updates, and uninstallation. For a guided walkthrough of your first session, see the [quickstart](/docs/en/quickstart.md). If you've never used a terminal before, see the [terminal guide](/docs/en/terminal-guide).
 
 ## System requirements
 
@@ -19,19 +19,19 @@ Claude Code runs on the following platforms and configurations:
   * Debian 10+
   * Alpine Linux 3.19+
 * **Hardware**: 4 GB+ RAM, x64 or ARM64 processor
-* **Network**: internet connection required. See [network configuration](/docs/en/network-config#network-access-requirements).
+* **Network**: internet connection required. See [network configuration](/docs/en/network-config.md#network-access-requirements).
 * **Shell**: Bash, Zsh, PowerShell, or CMD.
 * **Location**: [Anthropic supported countries](https://www.anthropic.com/supported-countries)
 
 ### Additional dependencies
 
-* **ripgrep**: usually included with Claude Code. If search fails, see [search troubleshooting](/docs/en/troubleshooting#search-and-discovery-issues).
+* **ripgrep**: usually included with Claude Code. If search fails, see [search troubleshooting](/docs/en/troubleshooting.md#search-and-discovery-issues).
 
 ## Install Claude Code
 
 > [!TIP]
 >
-> Prefer a graphical interface? The [Desktop app](/docs/en/desktop-quickstart) lets you use Claude Code without the terminal. Download it for [macOS](https://claude.ai/api/desktop/darwin/universal/dmg/latest/redirect?utm_source=claude_code\&utm_medium=docs), [Windows](https://claude.com/download?utm_source=claude_code\&utm_medium=docs), or [Linux](/docs/en/desktop-linux).
+> Prefer a graphical interface? The [Desktop app](/docs/en/desktop-quickstart.md) lets you use Claude Code without the terminal. Download it for [macOS](https://claude.ai/api/desktop/darwin/universal/dmg/latest/redirect?utm_source=claude_code\&utm_medium=docs), [Windows](https://claude.com/download?utm_source=claude_code\&utm_medium=docs), or [Linux](/docs/en/desktop-linux.md).
 
 To install Claude Code, open a terminal and run the command for your system. If you haven't used a terminal before, the [terminal guide](/docs/en/terminal-guide) shows how to open one and paste the command.
 
@@ -57,11 +57,11 @@ irm https://claude.ai/install.ps1 | iex
 curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd && del install.cmd
 ```
 
-The install command shows no progress while it downloads Claude Code. When the installer finishes, open a new terminal window and run `claude --version`. A working installation prints a version number. If your shell says `claude` isn't found or isn't recognized, the install directory isn't on your PATH yet: see [Fix your PATH](/docs/en/troubleshoot-install#command-not-found-claude-after-installation).
+The install command shows no progress while it downloads Claude Code. When the installer finishes, open a new terminal window and run `claude --version`. A working installation prints a version number. If your shell says `claude` isn't found or isn't recognized, the install directory isn't on your PATH yet: see [Fix your PATH](/docs/en/troubleshoot-install.md#command-not-found-claude-after-installation).
 
 If you see `The token '&&' is not a valid statement separator`, you're in PowerShell, not CMD. If you see `'irm' is not recognized as an internal or external command`, you're in CMD, not PowerShell.
 
-If the install command fails with `syntax error near unexpected token '<'`, a `403`, or any other error, see [Troubleshoot installation](/docs/en/troubleshoot-install#find-your-error) to match the error to a fix and for alternative install methods.
+If the install command fails with `syntax error near unexpected token '<'`, a `403`, or any other error, see [Troubleshoot installation](/docs/en/troubleshoot-install.md#find-your-error) to match the error to a fix and for alternative install methods.
 
 [Git for Windows](https://git-scm.com/downloads/win) is recommended on native Windows so Claude Code can use the Bash tool. If Git for Windows is not installed, Claude Code uses PowerShell as the shell tool instead. WSL setups do not need Git for Windows.
 
@@ -91,7 +91,7 @@ winget install Anthropic.ClaudeCode
 >
 > WinGet installations do not auto-update. Run `winget upgrade Anthropic.ClaudeCode` periodically to get the latest features and security fixes.
 
-You can also install with [apt, dnf, or apk](/docs/en/setup#install-with-linux-package-managers) on Debian, Fedora, RHEL, and Alpine.
+You can also install with [apt, dnf, or apk](/docs/en/setup.md#install-with-linux-package-managers) on Debian, Fedora, RHEL, and Alpine.
 
 After installation completes, open a terminal in the project you want to work in and start Claude Code:
 
@@ -101,13 +101,13 @@ claude
 
 Claude Code opens an interactive session in your terminal.
 
-If you encounter any issues during installation, see [Troubleshoot installation and login](/docs/en/troubleshoot-install).
+If you encounter any issues during installation, see [Troubleshoot installation and login](/docs/en/troubleshoot-install.md).
 
 ### Set up on Windows
 
 You can run Claude Code natively on Windows or inside WSL. Pick based on where your projects are located and which features you need:
 
-| Option | Requires | [Sandboxing](/docs/en/sandboxing) | When to use |
+| Option | Requires | [Sandboxing](/docs/en/sandboxing.md) | When to use |
 | - | - | - | - |
 | [Native Windows](#install-on-native-windows) | None; [Git for Windows](https://git-scm.com/downloads/win) is optional | Not supported | Windows-native projects and tools |
 | [WSL 2](#install-in-wsl) | WSL 2 enabled | Supported | Linux toolchains or sandboxed command execution |
@@ -115,14 +115,14 @@ You can run Claude Code natively on Windows or inside WSL. Pick based on where y
 
 #### Install on native Windows
 
-Run the [install command](#install-claude-code) from PowerShell or CMD. You do not need to run as Administrator. Installing [Git for Windows](https://git-scm.com/downloads/win) is optional. It provides Git Bash, which the [Bash tool](/docs/en/tools-reference#bash-tool-behavior) and the [Monitor tool](/docs/en/tools-reference#monitor-tool) need.
+Run the [install command](#install-claude-code) from PowerShell or CMD. You do not need to run as Administrator. Installing [Git for Windows](https://git-scm.com/downloads/win) is optional. It provides Git Bash, which the [Bash tool](/docs/en/tools-reference.md#bash-tool-behavior) and the [Monitor tool](/docs/en/tools-reference.md#monitor-tool) need.
 
 Whether you install from PowerShell or CMD only affects which install command you run. Your prompt shows `PS C:\Users\YourName>` in PowerShell and `C:\Users\YourName>` without the `PS` in CMD. If you're new to the terminal, the [terminal guide](/docs/en/terminal-guide#windows) walks through each step.
 
 After installation, launch `claude` from any terminal.
 
-* **Without Git for Windows**, Claude Code runs shell commands via the [PowerShell tool](/docs/en/tools-reference#powershell-tool).
-* **With Git for Windows**, Claude Code uses Git Bash for the [Bash tool](/docs/en/tools-reference#bash-tool-behavior). If Claude Code can't find Git Bash, set the path in your [settings.json file](/docs/en/settings):
+* **Without Git for Windows**, Claude Code runs shell commands via the [PowerShell tool](/docs/en/tools-reference.md#powershell-tool).
+* **With Git for Windows**, Claude Code uses Git Bash for the [Bash tool](/docs/en/tools-reference.md#bash-tool-behavior). If Claude Code can't find Git Bash, set the path in your [settings.json file](/docs/en/settings.md):
 
   ```json theme={null}
   {
@@ -132,7 +132,7 @@ After installation, launch `claude` from any terminal.
   }
   ```
 
-When Git for Windows is installed, the PowerShell tool is available alongside Bash: on by default for claude.ai and Console accounts, and enabled with `CLAUDE_CODE_USE_POWERSHELL_TOOL=1` in Amazon Bedrock, Google Cloud's Agent Platform, and Microsoft Foundry sessions. Set it to `0` to turn the tool off. See [PowerShell tool](/docs/en/tools-reference#powershell-tool) for setup and limitations.
+When Git for Windows is installed, the PowerShell tool is available alongside Bash: on by default for claude.ai and Console accounts, and enabled with `CLAUDE_CODE_USE_POWERSHELL_TOOL=1` in Amazon Bedrock, Google Cloud's Agent Platform, and Microsoft Foundry sessions. Set it to `0` to turn the tool off. See [PowerShell tool](/docs/en/tools-reference.md#powershell-tool) for setup and limitations.
 
 #### Install in WSL
 
@@ -176,7 +176,7 @@ claude --version
 
 A working installation prints a version number such as `2.1.211 (Claude Code)`.
 
-If this fails with `command not found` or another error, see [Troubleshoot installation and login](/docs/en/troubleshoot-install).
+If this fails with `command not found` or another error, see [Troubleshoot installation and login](/docs/en/troubleshoot-install.md).
 
 For a more detailed check of your installation and configuration, run [`claude doctor`](/docs/en/troubleshooting#get-more-help):
 
@@ -188,9 +188,9 @@ claude doctor
 
 ## Authenticate
 
-Claude Code requires a Pro, Max, Team, Enterprise, or Console account. The free claude.ai plan does not include Claude Code access. You can also use Claude Code with a third-party API provider like [Amazon Bedrock](/docs/en/amazon-bedrock), [Google Cloud's Agent Platform](/docs/en/google-vertex-ai), or [Microsoft Foundry](/docs/en/microsoft-foundry).
+Claude Code requires a Pro, Max, Team, Enterprise, or Console account. The free claude.ai plan does not include Claude Code access. You can also use Claude Code with a third-party API provider like [Amazon Bedrock](/docs/en/amazon-bedrock.md), [Google Cloud's Agent Platform](/docs/en/google-vertex-ai.md), or [Microsoft Foundry](/docs/en/microsoft-foundry.md).
 
-After installing, log in by running `claude` and following the browser prompts. If you've set the `ANTHROPIC_API_KEY` environment variable and you approve the key when Claude Code asks whether to use it, Claude Code skips the login prompt. See [Authentication](/docs/en/authentication) for all account types and team setup options.
+After installing, log in by running `claude` and following the browser prompts. If you've set the `ANTHROPIC_API_KEY` environment variable and you approve the key when Claude Code asks whether to use it, Claude Code skips the login prompt. See [Authentication](/docs/en/authentication.md) for all account types and team setup options.
 
 ## Update Claude Code
 
@@ -208,7 +208,7 @@ With a custom launcher, Claude Code also keeps every installed version on disk b
 
 To let Claude Code manage the launcher again, remove `~/.local/bin/claude` and run `claude update`.
 
-If an npm global install can't auto-update because the npm global directory isn't writable, Claude Code shows a one-time notice at startup, and `claude doctor` lists the available fixes. See [permission errors during installation](/docs/en/troubleshoot-install#permission-errors-during-installation) for details.
+If an npm global install can't auto-update because the npm global directory isn't writable, Claude Code shows a one-time notice at startup, and `claude doctor` lists the available fixes. See [permission errors during installation](/docs/en/troubleshoot-install.md#permission-errors-during-installation) for details.
 
 > [!NOTE]
 >
@@ -229,7 +229,7 @@ Control which release channel Claude Code follows for auto-updates and `claude u
 * `"latest"`, the default: receive new features as soon as they're released
 * `"stable"`: use a version that is typically about one week old, skipping releases with major regressions
 
-Configure this via `/config` → **Auto-update channel**, or add it to your [settings.json file](/docs/en/settings):
+Configure this via `/config` → **Auto-update channel**, or add it to your [settings.json file](/docs/en/settings.md):
 
 ```json theme={null}
 {
@@ -239,7 +239,7 @@ Configure this via `/config` → **Auto-update channel**, or add it to your [set
 
 A newly launched model can require a Claude Code version newer than the stable channel serves. To run the model now, move to the latest channel.
 
-For enterprise deployments, you can enforce a consistent release channel across your organization using [managed settings](/docs/en/managed-settings).
+For enterprise deployments, you can enforce a consistent release channel across your organization using [managed settings](/docs/en/managed-settings.md).
 
 Homebrew installations choose a channel by cask name instead of this setting: `claude-code` tracks stable and `claude-code@latest` tracks latest.
 
@@ -251,7 +251,7 @@ The `minimumVersion` setting establishes a floor. Background auto-updates and `c
 
 Switching from `"latest"` to `"stable"` via `/config` prompts you to either stay on the current version or allow the downgrade. Choosing to stay sets `minimumVersion` to that version. Switching back to `"latest"` clears it.
 
-Add it to your [settings.json file](/docs/en/settings) to pin a floor explicitly:
+Add it to your [settings.json file](/docs/en/settings.md) to pin a floor explicitly:
 
 ```json theme={null}
 {
@@ -260,7 +260,7 @@ Add it to your [settings.json file](/docs/en/settings) to pin a floor explicitly
 }
 ```
 
-In [managed settings](/docs/en/managed-settings), this enforces an organization-wide minimum that user and project settings cannot override.
+In [managed settings](/docs/en/managed-settings.md), this enforces an organization-wide minimum that user and project settings cannot override.
 
 The `minimumVersion` pin only constrains updates. To make Claude Code refuse to start outside a version range, use the managed settings `requiredMinimumVersion` and `requiredMaximumVersion` instead. Updates also respect the `requiredMaximumVersion` ceiling. See [`requiredMinimumVersion`](/docs/en/settings-reference#requiredminimumversion) and [`requiredMaximumVersion`](/docs/en/settings-reference#requiredmaximumversion).
 
@@ -466,13 +466,13 @@ npm install -g @anthropic-ai/claude-code
 
 The npm package installs the same native binary as the standalone installer. npm pulls the binary in through a per-platform optional dependency such as `@anthropic-ai/claude-code-darwin-arm64`, and a postinstall step links it into place. The installed `claude` binary does not itself invoke Node.
 
-Supported npm install platforms are `darwin-arm64`, `darwin-x64`, `linux-x64`, `linux-arm64`, `linux-x64-musl`, `linux-arm64-musl`, `win32-x64`, and `win32-arm64`. Your package manager must allow optional dependencies. See [troubleshooting](/docs/en/troubleshoot-install#native-binary-not-found-after-npm-install) if the binary is missing after install.
+Supported npm install platforms are `darwin-arm64`, `darwin-x64`, `linux-x64`, `linux-arm64`, `linux-x64-musl`, `linux-arm64-musl`, `win32-x64`, and `win32-arm64`. Your package manager must allow optional dependencies. See [troubleshooting](/docs/en/troubleshoot-install.md#native-binary-not-found-after-npm-install) if the binary is missing after install.
 
 To upgrade an npm installation, run `npm install -g @anthropic-ai/claude-code@latest`. Avoid `npm update -g`, which respects the semver range from the original install and may not move you to the newest release.
 
 > [!WARNING]
 >
-> Do NOT use `sudo npm install -g` as this can lead to permission issues and security risks. If you encounter permission errors, see [troubleshooting permission errors](/docs/en/troubleshoot-install#permission-errors-during-installation).
+> Do NOT use `sudo npm install -g` as this can lead to permission issues and security risks. If you encounter permission errors, see [troubleshooting permission errors](/docs/en/troubleshoot-install.md#permission-errors-during-installation).
 
 ### Install on network storage
 
@@ -574,7 +574,7 @@ In addition to the signed manifest, individual binaries carry platform-native co
 
 ## Uninstall Claude Code
 
-To remove Claude Code, follow the instructions for your installation method. If `claude` still runs afterward, you likely have a second installation or a leftover shell alias from an older installer. See [Check for conflicting installations](/docs/en/troubleshoot-install#check-for-conflicting-installations) to find and remove it.
+To remove Claude Code, follow the instructions for your installation method. If `claude` still runs afterward, you likely have a second installation or a leftover shell alias from an older installer. See [Check for conflicting installations](/docs/en/troubleshoot-install.md#check-for-conflicting-installations) to find and remove it.
 
 ### Uninstall a native installation
 
@@ -656,7 +656,7 @@ npm uninstall -g @anthropic-ai/claude-code
 >
 > Removing configuration files will delete all your settings, allowed tools, MCP server configurations, and session history.
 
-The VS Code extension, the JetBrains plugin, and the Desktop app also write to `~/.claude/`. If any of them is still installed, the directory is recreated the next time it runs. To remove Claude Code completely, uninstall the [VS Code extension](/docs/en/vs-code#uninstall-the-extension), the JetBrains plugin, and the Desktop app before deleting these files.
+The VS Code extension, the JetBrains plugin, and the Desktop app also write to `~/.claude/`. If any of them is still installed, the directory is recreated the next time it runs. To remove Claude Code completely, uninstall the [VS Code extension](/docs/en/vs-code.md#uninstall-the-extension), the JetBrains plugin, and the Desktop app before deleting these files.
 
 To remove Claude Code settings and cached data:
 

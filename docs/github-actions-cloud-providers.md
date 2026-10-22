@@ -6,11 +6,11 @@
 
 > Run Claude Code GitHub Actions through Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry instead of the Claude API
 
-[Claude Code GitHub Actions](/docs/en/github-actions) calls the Claude API by default. To route inference through your own cloud account instead, set the Claude Code GitHub Action's provider input and configure your cloud to trust the workflow's OpenID Connect (OIDC) token. The workflow authenticates with that token, so you store no long-lived cloud credential in your repository.
+[Claude Code GitHub Actions](/docs/en/github-actions.md) calls the Claude API by default. To route inference through your own cloud account instead, set the Claude Code GitHub Action's provider input and configure your cloud to trust the workflow's OpenID Connect (OIDC) token. The workflow authenticates with that token, so you store no long-lived cloud credential in your repository.
 
 > [!NOTE]
 >
-> This page builds on the [GitHub Actions setup](/docs/en/github-actions#setup). It assumes you already know the workflow file and the `anthropics/claude-code-action` step, and covers only what a cloud provider changes.
+> This page builds on the [GitHub Actions setup](/docs/en/github-actions.md#setup). It assumes you already know the workflow file and the `anthropics/claude-code-action` step, and covers only what a cloud provider changes.
 
 ## Choose your provider
 
@@ -29,9 +29,9 @@ Before you start, you need:
 * Admin access to the repository where the Claude Code GitHub Action runs, to install a GitHub App and add secrets
 * Permission to create identity resources in your cloud account: IAM roles and OIDC identity providers on AWS, Workload Identity Federation resources and service accounts on Google Cloud, or Microsoft Entra applications on Azure
 * Claude model access on your provider:
-  * **Amazon Bedrock**: access granted to Claude models. Cross-region inference profiles, such as the `us.` model IDs in this page's examples, need access granted in every region of their region group. See [Claude Code on Amazon Bedrock](/docs/en/amazon-bedrock)
-  * **Google Cloud's Agent Platform**: a project with the Agent Platform API enabled and access to Claude models. See [Claude Code on Google Cloud's Agent Platform](/docs/en/google-vertex-ai)
-  * **Microsoft Foundry**: a Foundry resource with a Claude model deployment. See [Claude Code on Microsoft Foundry](/docs/en/microsoft-foundry)
+  * **Amazon Bedrock**: access granted to Claude models. Cross-region inference profiles, such as the `us.` model IDs in this page's examples, need access granted in every region of their region group. See [Claude Code on Amazon Bedrock](/docs/en/amazon-bedrock.md)
+  * **Google Cloud's Agent Platform**: a project with the Agent Platform API enabled and access to Claude models. See [Claude Code on Google Cloud's Agent Platform](/docs/en/google-vertex-ai.md)
+  * **Microsoft Foundry**: a Foundry resource with a Claude model deployment. See [Claude Code on Microsoft Foundry](/docs/en/microsoft-foundry.md)
 
 ## Set up the integration
 
@@ -39,10 +39,10 @@ Beyond the prerequisites, you create a GitHub identity for the Claude Code GitHu
 
 **1. Choose a GitHub identity**
 
-The Claude Code GitHub Action pushes commits and posts comments through a GitHub identity. The [quick setup](/docs/en/github-actions#quick-setup) installs the official Claude GitHub App for this. With a cloud provider, you choose the identity yourself:
+The Claude Code GitHub Action pushes commits and posts comments through a GitHub identity. The [quick setup](/docs/en/github-actions.md#quick-setup) installs the official Claude GitHub App for this. With a cloud provider, you choose the identity yourself:
 
 * **Official [Claude GitHub App](https://github.com/apps/claude)**: install it on the repository, or skip to the next step if it's already installed
-* **Custom GitHub App**: create your own app when you want only the three permissions the Claude Code GitHub Action uses rather than the [official app's full set](/docs/en/github-actions#github-app-permissions)
+* **Custom GitHub App**: create your own app when you want only the three permissions the Claude Code GitHub Action uses rather than the [official app's full set](/docs/en/github-actions.md#github-app-permissions)
 * **GitHub's automatic `GITHUB_TOKEN`**: no app to create or install, but GitHub doesn't trigger your CI workflows on commits made with it
 
 The workflow examples in the fourth step authenticate with a custom app. That step also says what to change for the other two options.
@@ -64,7 +64,7 @@ Configure your cloud to trust the OIDC token that GitHub issues to the workflow,
 Create the trust configuration in your AWS account, following the [AWS guide to creating OIDC identity providers](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_providers_create_oidc.html):
 
 * Add a GitHub OIDC identity provider with provider URL `https://token.actions.githubusercontent.com` and audience `sts.amazonaws.com`
-* Create an IAM role trusted by that provider as a web identity, and attach the scoped invocation policy from [IAM configuration](/docs/en/amazon-bedrock#iam-configuration), which grants `bedrock:InvokeModel`, `bedrock:InvokeModelWithResponseStream`, `bedrock:ListInferenceProfiles`, and `bedrock:GetInferenceProfile`, along with two `aws-marketplace` subscription actions
+* Create an IAM role trusted by that provider as a web identity, and attach the scoped invocation policy from [IAM configuration](/docs/en/amazon-bedrock.md#iam-configuration), which grants `bedrock:InvokeModel`, `bedrock:InvokeModelWithResponseStream`, `bedrock:ListInferenceProfiles`, and `bedrock:GetInferenceProfile`, along with two `aws-marketplace` subscription actions
 * Limit the role's trust policy to your repository with a subject condition such as `repo:your-org/your-repo:*`. See [GitHub's OIDC hardening guide](https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/about-security-hardening-with-openid-connect) for the claim format
 
 Note the role's ARN. You add it as a secret in the next step.
@@ -84,7 +84,7 @@ Note the provider's full resource name and the service account's email address. 
 Create a Microsoft Entra application with a federated credential for your repository, following [Microsoft's guide to authenticating from GitHub Actions](https://learn.microsoft.com/en-us/azure/developer/github/connect-from-azure-openid-connect):
 
 * Register a Microsoft Entra application and add a federated identity credential that trusts tokens GitHub issues to your repository. A user-assigned managed identity works in place of an application. Both have the client ID you note below
-* Assign the application the `Azure AI User` role on your Foundry resource. See [Azure RBAC configuration](/docs/en/microsoft-foundry#azure-rbac-configuration) for a narrower custom role
+* Assign the application the `Azure AI User` role on your Foundry resource. See [Azure RBAC configuration](/docs/en/microsoft-foundry.md#azure-rbac-configuration) for a narrower custom role
 
 Note the application's client ID, your tenant ID, and your subscription ID. You add them as secrets in the next step.
 
@@ -285,9 +285,9 @@ jobs:
 
 > [!TIP]
 >
-> Use a model ID that matches a Claude deployment in your Foundry resource. See [Claude Code on Microsoft Foundry](/docs/en/microsoft-foundry) for model configuration and version pinning.
+> Use a model ID that matches a Claude deployment in your Foundry resource. See [Claude Code on Microsoft Foundry](/docs/en/microsoft-foundry.md) for model configuration and version pinning.
 
-With any provider, you can bound run length and cost by adding `--max-turns` to `claude_args`. See [Manage costs](/docs/en/github-actions#manage-costs).
+With any provider, you can bound run length and cost by adding `--max-turns` to `claude_args`. See [Manage costs](/docs/en/github-actions.md#manage-costs).
 
 **5. Test the setup**
 
@@ -298,11 +298,11 @@ Mention `@claude` in an issue or PR comment, then watch the run in the repositor
 A failing run usually breaks in one of two places:
 
 * **Authentication errors**: usually an OIDC misconfiguration. Check that the workflow includes the `id-token: write` permission, that the trust configuration's repository condition matches your repository exactly, and that the secret names in your workflow match the ones you added
-* **Trigger and CI problems**: these behave the same as when the Claude Code GitHub Action calls the Claude API. See the main page's [troubleshooting section](/docs/en/github-actions#troubleshooting) and the Claude Code GitHub Action's [FAQ](https://github.com/anthropics/claude-code-action/blob/main/docs/faq.md)
+* **Trigger and CI problems**: these behave the same as when the Claude Code GitHub Action calls the Claude API. See the main page's [troubleshooting section](/docs/en/github-actions.md#troubleshooting) and the Claude Code GitHub Action's [FAQ](https://github.com/anthropics/claude-code-action/blob/main/docs/faq.md)
 
 ## What's next
 
-* [Claude Code GitHub Actions](/docs/en/github-actions) for examples, parameters, and best practices
-* [Claude Code on Amazon Bedrock](/docs/en/amazon-bedrock) for Bedrock model IDs and regions
-* [Claude Code on Google Cloud's Agent Platform](/docs/en/google-vertex-ai) for Agent Platform model IDs and regions
-* [Claude Code on Microsoft Foundry](/docs/en/microsoft-foundry) for Foundry model and endpoint configuration
+* [Claude Code GitHub Actions](/docs/en/github-actions.md) for examples, parameters, and best practices
+* [Claude Code on Amazon Bedrock](/docs/en/amazon-bedrock.md) for Bedrock model IDs and regions
+* [Claude Code on Google Cloud's Agent Platform](/docs/en/google-vertex-ai.md) for Agent Platform model IDs and regions
+* [Claude Code on Microsoft Foundry](/docs/en/microsoft-foundry.md) for Foundry model and endpoint configuration

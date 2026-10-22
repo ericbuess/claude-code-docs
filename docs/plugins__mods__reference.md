@@ -6,11 +6,11 @@
 
 > Complete reference for Claude Code mods: hooks module layout, events, mods API methods, render sites, elements by surface, limits, and settings.
 
-Look up any event a [mod](/docs/en/plugins/mods/overview) can handle, mods API method it can call, or render site it can draw in. Entries cover the Claude Code CLI and the Desktop app as of v2.1.290, and the VS Code extension as of v2.1.299. Each entry gives the name and a one-line description, and links to the guide section that explains it where there is one.
+Look up any event a [mod](/docs/en/plugins/mods/overview.md) can handle, mods API method it can call, or render site it can draw in. Entries cover the Claude Code CLI and the Desktop app as of v2.1.290, and the VS Code extension as of v2.1.299. Each entry gives the name and a one-line description, and links to the guide section that explains it where there is one.
 
 > [!NOTE]
 >
-> The complete reference is Claude Code's [TypeScript declarations for mods](https://github.com/anthropics/claude-code/blob/main/mods/types/claude-code.d.ts), which describe every event, method, and element, with examples. The copy on GitHub can be older than the Claude Code version you have installed. When the two disagree, trust [the copy Claude Code writes for your version](/docs/en/plugins/mods/create#get-the-types-for-your-build).
+> The complete reference is Claude Code's [TypeScript declarations for mods](https://github.com/anthropics/claude-code/blob/main/mods/types/claude-code.d.ts), which describe every event, method, and element, with examples. The copy on GitHub can be older than the Claude Code version you have installed. When the two disagree, trust [the copy Claude Code writes for your version](/docs/en/plugins/mods/create.md#get-the-types-for-your-build).
 
 ## Files
 
@@ -18,8 +18,8 @@ A mod is a plugin directory with these files:
 
 | File | Required | Contents |
 | :- | :- | :- |
-| `.claude-plugin/plugin.json` | Yes | The plugin [manifest](/docs/en/plugins/manifest-reference). Mods add no required fields. |
-| `hooks/hooks.json` | Yes | `modules`: an array with one path, relative to this file, to the hooks module, as in `"modules": ["./register.js"]`. Can also hold [settings hooks](/docs/en/hooks) under `hooks`. |
+| `.claude-plugin/plugin.json` | Yes | The plugin [manifest](/docs/en/plugins/manifest-reference.md). Mods add no required fields. |
+| `hooks/hooks.json` | Yes | `modules`: an array with one path, relative to this file, to the hooks module, as in `"modules": ["./register.js"]`. Can also hold [settings hooks](/docs/en/hooks.md) under `hooks`. |
 | The hooks module, such as [`hooks/register.js`](/docs/en/plugins/mods/create#write-a-mod-yourself) | Yes | The mod's entry point. Exports `register(on, options)`. Named `.js`, `.mjs`, `.cjs`, `.jsx`, `.ts`, `.mts`, `.cts`, or `.tsx`. An ES module. |
 | [`types/index.d.ts`](/docs/en/plugins/mods/interface#declare-the-values), named by `types` in the manifest | When the mod uses `$.state` or adds a namespace to the mods API | Declares `PluginState` values and any namespace the mod adds |
 | Files whose names end in `.test.ts` or `.test.tsx` | No | Tests that [`claude plugin test`](/docs/en/plugins/mods/test#write-a-test) runs |
@@ -28,7 +28,7 @@ A mod is a plugin directory with these files:
 
 ## The hook function
 
-A mod registers each of its hooks, which are event handlers, by calling `on` inside `register`. `on` takes the event's name, an optional [matcher](/docs/en/plugins/mods/events#filter-which-events-a-hook-handles), which is a filter on the event's fields, and the hook, as in `on('tool.call', { tool: 'Bash' }, async ($, e, next) => next(e))`. `on` returns a registration with one method, `.catch(handler)`, which sets the hook's [error handler](/docs/en/plugins/mods/events#handle-a-hook-that-fails).
+A mod registers each of its hooks, which are event handlers, by calling `on` inside `register`. `on` takes the event's name, an optional [matcher](/docs/en/plugins/mods/events.md#filter-which-events-a-hook-handles), which is a filter on the event's fields, and the hook, as in `on('tool.call', { tool: 'Bash' }, async ($, e, next) => next(e))`. `on` returns a registration with one method, `.catch(handler)`, which sets the hook's [error handler](/docs/en/plugins/mods/events.md#handle-a-hook-that-fails).
 
 | Argument | What it is |
 | :- | :- |
@@ -36,7 +36,7 @@ A mod registers each of its hooks, which are event handlers, by calling `on` ins
 | [`e`](/docs/en/plugins/mods/events#how-a-hook-handles-an-event) | The event's input, as deeply frozen plain data. To change it, pass a copy to `next`. |
 | [`next(e)`](/docs/en/plugins/mods/events#how-a-hook-handles-an-event) | The next handler, as in middleware. Runs the hooks after this one, then Claude Code's behavior. Resolves to the event's result. |
 | [`next.signal`](/docs/en/plugins/mods/api#stop-background-work) | An `AbortSignal` that aborts when the event is abandoned |
-| `next.origin` | `{ plugin, tier }` of whoever fired the event. Claude Code itself is `{ plugin: 'engine', tier: 'core' }`. A mod's `tier` is its priority group in the [order mods run in](/docs/en/plugins/mods/events#the-order-mods-run-in): `prepend`, `user`, `append`, or `builtin`. |
+| `next.origin` | `{ plugin, tier }` of whoever fired the event. Claude Code itself is `{ plugin: 'engine', tier: 'core' }`. A mod's `tier` is its priority group in the [order mods run in](/docs/en/plugins/mods/events.md#the-order-mods-run-in): `prepend`, `user`, `append`, or `builtin`. |
 | `next.budget` | The hook's time limit in milliseconds: `next.budget.ms` is the whole limit, and `next.budget.remainingMs` is what's left now |
 | `next.to(e, tier)` | Skips to a later tier, which is `append`, `builtin`, or `core`. `next.to(e, 'append')` skips the mods a user installed. Only a mod in `prependPlugins` or `appendPlugins` can call it. |
 | `next.error` | In a `.catch` handler only. `kind` is `throw` or `timeout` when the hook failed, and `message` is the error's text. `kind` is `re-entry` when the hook was skipped because the event came from inside a mods API call by that hook or by your mod's code outside its hooks. `re-entry` requires Claude Code v2.1.292 or later. |
@@ -57,20 +57,20 @@ Tool events fire around each tool call Claude makes, from the description Claude
 | :- | :- | :- |
 | [`tool.call`](/docs/en/plugins/mods/events#guard-or-change-a-tool-call) | A tool is about to run | `next(e)`, `{ deny: reason }`, or `{ result }` |
 | [`tool.check`](/docs/en/plugins/mods/events#where-settings-hooks-run-in-the-order) | Claude Code decides whether a tool call may run, after the `tool.call` and `PreToolUse` hooks. `next(e)` resolves to the decision the rules, the permission mode, and those hooks reached. | `next(e)` or `{ decision }`, with `decision` set to `allow`, `ask`, or `deny` and an optional `reason` |
-| `tool.describe` | Once for each tool, when its description is first sent to Claude. A second time for an MCP tool when Claude loads it through [tool search](/docs/en/mcp#scale-with-mcp-tool-search), with `e.description` set to the text Claude reads for the loaded tool. | `{ description }`, optionally with `isDeferred` set to `true` to put the tool behind tool search or `false` to load it upfront |
+| `tool.describe` | Once for each tool, when its description is first sent to Claude. A second time for an MCP tool when Claude loads it through [tool search](/docs/en/mcp.md#scale-with-mcp-tool-search), with `e.description` set to the text Claude reads for the loaded tool. | `{ description }`, optionally with `isDeferred` set to `true` to put the tool behind tool search or `false` to load it upfront |
 
 #### Agent and organization fields on `tool.check`
 
 In a `tool.check` hook, read these fields to tell a subagent's call from the main conversation's, and to see whether your organization requires approval for a connector tool:
 
-* **`e.agentId`**: set when a [subagent](/docs/en/sub-agents) or an [in-process teammate](/docs/en/agent-teams#choose-a-display-mode) makes the call, and absent when the main conversation does
-* **`e.ceiling`**: `ask` for a connector tool your organization set to `ask`, in [sessions where that setting reaches Claude Code](/docs/en/mcp#organization-controls-on-connector-tools)
+* **`e.agentId`**: set when a [subagent](/docs/en/sub-agents.md) or an [in-process teammate](/docs/en/agent-teams.md#choose-a-display-mode) makes the call, and absent when the main conversation does
+* **`e.ceiling`**: `ask` for a connector tool your organization set to `ask`, in [sessions where that setting reaches Claude Code](/docs/en/mcp.md#organization-controls-on-connector-tools)
 
 On `tool.check`, `e.agentId` and `e.ceiling` require Claude Code v2.1.290 or later.
 
 #### The `e.isReadOnly` field on `tool.check`
 
-In a `tool.check` hook, `e.isReadOnly` is `true` when the tool reports this call as read-only. Otherwise the field is absent, not `false`. The value is the tool's own report, so read [Check whether a tool call is read-only](/docs/en/plugins/mods/events#check-whether-a-tool-call-is-read-only) before you approve a call on this field alone.
+In a `tool.check` hook, `e.isReadOnly` is `true` when the tool reports this call as read-only. Otherwise the field is absent, not `false`. The value is the tool's own report, so read [Check whether a tool call is read-only](/docs/en/plugins/mods/events.md#check-whether-a-tool-call-is-read-only) before you approve a call on this field alone.
 
 On `tool.check`, `e.isReadOnly` requires Claude Code v2.1.304 or later.
 
@@ -98,13 +98,13 @@ In a `skill.prompt` hook, you can read these fields along with the skill's name 
 
 | Field | Type | What it holds |
 | :- | :- | :- |
-| `e.source` | string | Who provides the skill: `policySettings`, `userSettings`, or `projectSettings` for a skill in the enterprise, personal, or project [location](/docs/en/skills#where-skills-live), respectively. Other sources give a word such as `plugin`, `mcp`, `syncedSkills`, or `built-in`. |
+| `e.source` | string | Who provides the skill: `policySettings`, `userSettings`, or `projectSettings` for a skill in the enterprise, personal, or project [location](/docs/en/skills.md#where-skills-live), respectively. Other sources give a word such as `plugin`, `mcp`, `syncedSkills`, or `built-in`. |
 | `e.pluginName` | string | The plugin's name, for a skill whose `e.source` is `plugin` |
-| `e.path` | string | The absolute path of the skill's `SKILL.md` file, or of its `.md` file for a skill written as a [command file](/docs/en/skills#where-skills-live). Absent when the skill has no file on this machine, as with a built-in skill. |
+| `e.path` | string | The absolute path of the skill's `SKILL.md` file, or of its `.md` file for a skill written as a [command file](/docs/en/skills.md#where-skills-live). Absent when the skill has no file on this machine, as with a built-in skill. |
 | `e.frontmatter` | object | The frontmatter of the skill's file, as plain data |
 | `e.frontmatterProblem` | string | The reason `e.frontmatter` is missing the file's frontmatter or one of its keys, as in `is a list or a single value, not a table`. Absent when `e.frontmatter` holds the whole frontmatter or the skill has none. |
 
-A hook can pass a changed `text` or `frontmatter` to `next`: the hooks after it read both, and Claude reads the final `text`. A hook that changes any other field [fails](/docs/en/plugins/mods/events#handle-a-hook-that-fails).
+A hook can pass a changed `text` or `frontmatter` to `next`: the hooks after it read both, and Claude reads the final `text`. A hook that changes any other field [fails](/docs/en/plugins/mods/events.md#handle-a-hook-that-fails).
 
 On `skill.prompt`, `e.source`, `e.pluginName`, `e.path`, `e.frontmatter`, and `e.frontmatterProblem` require Claude Code v2.1.299 or later.
 
@@ -138,7 +138,7 @@ Session events mark the session starting, ending, compacting, and exchanging mes
 | [`session.start`](/docs/en/plugins/mods/api#add-a-command-or-a-tool) | Once for each loaded mod, before the first prompt, and again after a reload of that mod. Not after `/clear`, `/resume`, or `/branch`. | `next(e)` |
 | `session.end` | The session ends, or `/clear`, `/resume`, or `/branch` runs. `e.reason` is `clear`, `resume`, `logout`, `prompt_input_exit`, or `other`. `/branch` reports `resume`. | `next(e)` |
 | `session.compact` | The conversation is about to be compacted | `{ skip: reason }` |
-| [`session.receive`](/docs/en/plugins/mods/api#send-and-receive-messages-between-sessions), [`session.send`](/docs/en/plugins/mods/api#send-and-receive-messages-between-sessions) | A message arrives from, or is about to go to, another agent or session. See [Send and receive messages between sessions](/docs/en/plugins/mods/api#send-and-receive-messages-between-sessions). | `{ consumed: reason }` for `receive`, `{ isDelivered: false, reason }` for `send` |
+| [`session.receive`](/docs/en/plugins/mods/api#send-and-receive-messages-between-sessions), [`session.send`](/docs/en/plugins/mods/api#send-and-receive-messages-between-sessions) | A message arrives from, or is about to go to, another agent or session. See [Send and receive messages between sessions](/docs/en/plugins/mods/api.md#send-and-receive-messages-between-sessions). | `{ consumed: reason }` for `receive`, `{ isDelivered: false, reason }` for `send` |
 | `session.append` | Once for each row the conversation keeps, such as a prompt, a response block, a tool result, or a notice, before it's stored | `next({ ...e, message })` with a changed `message.content`, to rewrite the row's text blocks or the `content` of a `tool_result` block in it |
 | `session.attach`, `session.detach` | Another app connects to or disconnects from the session | `next(e)` |
 | `session.measure` | After each turn, and when a plan limit's percent used changes | `next(e)` |
@@ -150,13 +150,13 @@ Subagent events fire when a subagent type is offered to Claude and when a subage
 | Event | Fires when | A hook can return |
 | :- | :- | :- |
 | `agent.offer` | A subagent type is offered to Claude | `{ isOffered: false }` to withhold it |
-| `agent.spawn` | A subagent or an [agent team](/docs/en/agent-teams) teammate is about to start. For a teammate, `e.isTeammate` is `true`. | `next({ ...e, model })` to choose its model, or `{ deny: reason }` |
+| `agent.spawn` | A subagent or an [agent team](/docs/en/agent-teams.md) teammate is about to start. For a teammate, `e.isTeammate` is `true`. | `next({ ...e, model })` to choose its model, or `{ deny: reason }` |
 
 When Claude resumes a subagent with the [`SendMessage`](/docs/en/sub-agents#resume-subagents) tool, your `agent.spawn` hook doesn't run again. To refuse the `SendMessage` calls that resume a subagent, match that tool in a [`tool.call`](/docs/en/plugins/mods/events#guard-or-change-a-tool-call) hook.
 
 ### Interface
 
-Interface events fire when Claude Code draws a render site and when the user uses a control a mod drew. [Draw in the interface](/docs/en/plugins/mods/interface) shows what a `ui.render` hook returns:
+Interface events fire when Claude Code draws a render site and when the user uses a control a mod drew. [Draw in the interface](/docs/en/plugins/mods/interface.md) shows what a `ui.render` hook returns:
 
 | Event | Fires when |
 | :- | :- |
@@ -189,7 +189,7 @@ Telemetry events fire for the usage records Claude Code logs:
 
 ### Settings hook events
 
-Each [settings hook event](/docs/en/hooks#hook-events) is an event named `classic.<Event>`, such as `classic.Stop` or `classic.PostToolUse`. `e` is the hook's stdin JSON.
+Each [settings hook event](/docs/en/hooks.md#hook-events) is an event named `classic.<Event>`, such as `classic.Stop` or `classic.PostToolUse`. `e` is the hook's stdin JSON.
 
 ### Mods API calls
 
@@ -197,7 +197,7 @@ Every [mods API method](#mods-api-methods) is also an event, named for its names
 
 ## Mods API methods
 
-The mods API is the `$` argument every hook receives. Its methods are grouped in namespaces, such as `$.ui`. This table lists each namespace's methods by name, so `open` in the `$.ui` row is the call `$.ui.open(...)`. The guides show the common ones in use, and [the types for your build](/docs/en/plugins/mods/create#get-the-types-for-your-build) document every method with an example.
+The mods API is the `$` argument every hook receives. Its methods are grouped in namespaces, such as `$.ui`. This table lists each namespace's methods by name, so `open` in the `$.ui` row is the call `$.ui.open(...)`. The guides show the common ones in use, and [the types for your build](/docs/en/plugins/mods/create.md#get-the-types-for-your-build) document every method with an example.
 
 | Namespace | Methods |
 | :- | :- |
@@ -214,7 +214,7 @@ The mods API is the `$` argument every hook receives. Its methods are grouped in
 | [`$.settings`](/docs/en/plugins/mods/api#reach-files-processes-and-the-network) | `read` |
 | [`$.env`](/docs/en/plugins/mods/api#reach-files-processes-and-the-network) | `get`, `set` |
 | [`$.fs`](/docs/en/plugins/mods/api#reach-files-processes-and-the-network) | `read`, `write`, `list`, `exists`, `stat`, `ancestors`. `write` isn't atomic: it replaces the file's content in place, so another process can read a partly written file. Keep data that several sessions change in `$.store`. |
-| [`$.store`](/docs/en/plugins/mods/interface#keep-state) | `get`, `set`, `delete`, `keys`. A key-value store that every session on the machine shares. See [Save from more than one session](/docs/en/plugins/mods/interface#save-from-more-than-one-session). |
+| [`$.store`](/docs/en/plugins/mods/interface#keep-state) | `get`, `set`, `delete`, `keys`. A key-value store that every session on the machine shares. See [Save from more than one session](/docs/en/plugins/mods/interface.md#save-from-more-than-one-session). |
 | [`$.state`](/docs/en/plugins/mods/interface#keep-a-value-in-\$-state) | Reactive state: `get`, `set`, with the helpers `atom`, `read`, `update`, `derive`, and `memberOf` imported from `claude-code` |
 | [`$.clock`](/docs/en/plugins/mods/api#run-work-in-the-background) | `now`, `sleep`, `after`, `every` |
 | [`$.http`](/docs/en/plugins/mods/api#reach-files-processes-and-the-network) | `fetch` |
@@ -225,9 +225,9 @@ The mods API is the `$` argument every hook receives. Its methods are grouped in
 
 ## Render sites
 
-A render site is an extension point in Claude Code's interface. Each row is a value of `e.component` in a `ui.render` hook, with the fields of `e.props` and the apps that render it. `e.surface` names the app that's drawing, such as `terminal`, `desktop`, or `vscode`. [Change what Claude Code already draws](/docs/en/plugins/mods/interface#change-what-claude-code-already-draws) shows what a hook can do at a site, with an example of each choice.
+A render site is an extension point in Claude Code's interface. Each row is a value of `e.component` in a `ui.render` hook, with the fields of `e.props` and the apps that render it. `e.surface` names the app that's drawing, such as `terminal`, `desktop`, or `vscode`. [Change what Claude Code already draws](/docs/en/plugins/mods/interface.md#change-what-claude-code-already-draws) shows what a hook can do at a site, with an example of each choice.
 
-Rendering in the VS Code extension requires extension version 2.1.299 or later. A session that [doesn't fetch feature flags](/docs/en/env-vars#features-that-need-feature-flag-fetching) needs 2.1.304 or later. [Draw in the VS Code extension](/docs/en/plugins/mods/interface#draw-in-the-vs-code-extension) lists what the extension draws differently.
+Rendering in the VS Code extension requires extension version 2.1.299 or later. A session that [doesn't fetch feature flags](/docs/en/env-vars.md#features-that-need-feature-flag-fetching) needs 2.1.304 or later. [Draw in the VS Code extension](/docs/en/plugins/mods/interface.md#draw-in-the-vs-code-extension) lists what the extension draws differently.
 
 | Site | `e.props` | `e.requestId` | Rendered on |
 | :- | :- | :- | :- |
@@ -257,7 +257,7 @@ A tree taller than the pane scrolls as a whole.
 
 ## Elements
 
-Elements are the building blocks of a tree a `ui.render` hook returns, and you get them from `$.ui.resolve(e)`. [Build a tree from elements](/docs/en/plugins/mods/interface#build-a-tree-from-elements) shows the common ones with how the terminal draws them, and the [interface gallery](/docs/en/plugins/mods/gallery) has screenshots of most. A check mark means the app can draw the element.
+Elements are the building blocks of a tree a `ui.render` hook returns, and you get them from `$.ui.resolve(e)`. [Build a tree from elements](/docs/en/plugins/mods/interface.md#build-a-tree-from-elements) shows the common ones with how the terminal draws them, and the [interface gallery](/docs/en/plugins/mods/gallery.md) has screenshots of most. A check mark means the app can draw the element.
 
 | Element | Main props | Terminal | Desktop | VS Code |
 | :- | :- | :-: | :-: | :-: |
@@ -271,10 +271,10 @@ Elements are the building blocks of a tree a `ui.render` hook returns, and you g
 | `Select` | `key`, `label`, `options`, `value`, `onSelect`, `autoFocus` | ✓ | ✓ | ✓ |
 | `Svg` | An SVG document, up to 131,072 characters | | ✓ | ✓ |
 | [`Client`](/docs/en/plugins/mods/interface#build-a-tree-from-elements) | `module`, `key` | ✓ | ✓ | |
-| [`Raster`](/docs/en/plugins/mods/interface#draw-a-grid-of-colored-cells) | `key`, `columns` up to 512, `rows` up to 256, `cells`. See [Draw a grid of colored cells](/docs/en/plugins/mods/interface#draw-a-grid-of-colored-cells). | ✓ | | |
-| `Image` | PNG or RGBA bytes up to 2 MiB, or a file path, `columns` and `rows` up to 255, and `alt` text. See [which terminals draw it](/docs/en/plugins/mods/gallery#image-and-client). | ✓ | | |
+| [`Raster`](/docs/en/plugins/mods/interface#draw-a-grid-of-colored-cells) | `key`, `columns` up to 512, `rows` up to 256, `cells`. See [Draw a grid of colored cells](/docs/en/plugins/mods/interface.md#draw-a-grid-of-colored-cells). | ✓ | | |
+| `Image` | PNG or RGBA bytes up to 2 MiB, or a file path, `columns` and `rows` up to 255, and `alt` text. See [which terminals draw it](/docs/en/plugins/mods/gallery.md#image-and-client). | ✓ | | |
 
-More `Button` rules: `action` names one of Claude Code's own [keybinding actions](/docs/en/keybindings), and the user's binding for it presses the button when that binding is a chord or a modified key. A digit `hotkey` on a button in the band also fires when the user types that digit alone into an empty prompt and pauses. When two buttons in one drawing name the same `hotkey`, the later one gets it. `autoFocus` accepts only `true` on any control, so omit the prop to leave it off.
+More `Button` rules: `action` names one of Claude Code's own [keybinding actions](/docs/en/keybindings.md), and the user's binding for it presses the button when that binding is a chord or a modified key. A digit `hotkey` on a button in the band also fires when the user types that digit alone into an empty prompt and pauses. When two buttons in one drawing name the same `hotkey`, the later one gets it. `autoFocus` accepts only `true` on any control, so omit the prop to leave it off.
 
 The VS Code extension ignores some element props and draws the element as if you had left them out:
 
@@ -317,7 +317,7 @@ The `Box` spacing props are `gap`, `columnGap`, `rowGap`, `padding`, `margin`, a
 
 If you set `gap`, `padding`, or `margin` to a step, the step applies across and down at once. For example, in the terminal and the VS Code extension, `padding: 'md'` is two cells at each side and one row above and below.
 
-Step names require Claude Code v2.1.299 or later. On an earlier release, Claude Code [draws its own version of the site](/docs/en/plugins/mods/interface#build-a-tree-from-elements) in place of a tree that uses a step name.
+Step names require Claude Code v2.1.299 or later. On an earlier release, Claude Code [draws its own version of the site](/docs/en/plugins/mods/interface.md#build-a-tree-from-elements) in place of a tree that uses a step name.
 
 ### `Text` typography props
 
@@ -330,13 +330,13 @@ Set `size`, `weight`, `mono`, or `tabular` on a `Text` to ask the app drawing yo
 | `mono` | `true` to ask for the app's monospaced typeface | Ignored: the terminal is always monospaced | Ignored, so text keeps the extension's own typeface |
 | `tabular` | `true` to ask for digits of equal width, so that a number that updates in place or a column of numbers stays aligned | Ignored: the terminal's digits are already one cell wide | Ignored |
 
-These four props require Claude Code v2.1.299 or later. On an earlier release, Claude Code [draws its own version of the site](/docs/en/plugins/mods/interface#build-a-tree-from-elements) in place of a tree that sets `size`, `weight`, `mono`, or `tabular`.
+These four props require Claude Code v2.1.299 or later. On an earlier release, Claude Code [draws its own version of the site](/docs/en/plugins/mods/interface.md#build-a-tree-from-elements) in place of a tree that sets `size`, `weight`, `mono`, or `tabular`.
 
 #### Replace `bold` with `weight`
 
 `bold` on a `Text` is deprecated in favor of `weight` and still works. To replace it on a `Text` with no `weight`, change `bold: true` to `weight: 'semibold'` for the same result on Claude Code v2.1.299 or later.
 
-On a release earlier than v2.1.299, a tree that sets `weight` doesn't draw, and Claude Code [draws its own version of the site](/docs/en/plugins/mods/interface#build-a-tree-from-elements) instead. If you set both `bold` and `weight` on a `Text`, `bold` has no effect.
+On a release earlier than v2.1.299, a tree that sets `weight` doesn't draw, and Claude Code [draws its own version of the site](/docs/en/plugins/mods/interface.md#build-a-tree-from-elements) instead. If you set both `bold` and `weight` on a `Text`, `bold` has no effect.
 
 ## Limits
 
@@ -346,7 +346,7 @@ Hooks and mods API calls run under time and size limits. Claude Code skips a hoo
 | :- | :- |
 | A hook's own execution time for one event, not counting time inside `next` or a mods API call other than `$.clock.sleep` | 10 seconds, or 50 milliseconds for a `prompt.edit` hook |
 | A `.catch` handler's execution time | 1 second |
-| All `session.end` hooks together | As long as the [SessionEnd hook budget](/docs/en/hooks#sessionend-input), 1.5 seconds unless you change it, counted from when your settings `SessionEnd` hooks finish |
+| All `session.end` hooks together | As long as the [SessionEnd hook budget](/docs/en/hooks.md#sessionend-input), 1.5 seconds unless you change it, counted from when your settings `SessionEnd` hooks finish |
 | `$.process.run` timeout | 30 seconds by default, 10 minutes at most |
 | `$.model.complete` `maxTokens` | 1024 by default, up to 64,000 or the model's output limit |
 | `$.fs.read` and `$.fs.write` | 4 MiB for one file |
@@ -354,9 +354,9 @@ Hooks and mods API calls run under time and size limits. Claude Code skips a hoo
 | A `$.http.fetch` response body | 4 MiB. `text` holds the first 4 MiB and the rest isn't read. When the `Content-Length` header declares more, the call rejects instead, with a reason that ends `is over the 4194304-byte limit`, except when the last request after any redirects uses the `HEAD` method. The `HEAD` exemption requires Claude Code v2.1.296 or later. |
 | One `$.http.fetch` call, redirects and body included | 30 seconds |
 | Redirects one `$.http.fetch` call follows | 5 |
-| A hook's `drop` reason or `config.set` `deny` reason | 4,096 characters. The end of a longer reason is cut, and the drop or deny still applies. The cut requires Claude Code v2.1.292 or later, and on earlier versions the hook [fails](/docs/en/plugins/mods/events#handle-a-hook-that-fails) instead. |
+| A hook's `drop` reason or `config.set` `deny` reason | 4,096 characters. The end of a longer reason is cut, and the drop or deny still applies. The cut requires Claude Code v2.1.292 or later, and on earlier versions the hook [fails](/docs/en/plugins/mods/events.md#handle-a-hook-that-fails) instead. |
 | Text in one tree | The first 100,000 characters are drawn |
-| A `Code`'s `language` or `path`, a `Select` option's `value`, or a `Client`'s `module` | 10,000 characters. If one is longer, Claude Code [draws its own version of the site](/docs/en/plugins/mods/interface#build-a-tree-from-elements). |
+| A `Code`'s `language` or `path`, a `Select` option's `value`, or a `Client`'s `module` | 10,000 characters. If one is longer, Claude Code [draws its own version of the site](/docs/en/plugins/mods/interface.md#build-a-tree-from-elements). |
 | A `Link`'s `href` | 2,048 characters. A longer `href` keeps the whole tree from drawing. |
 | `$.store` | 4 MiB of JSON in total |
 | `$.session.messages()` | The newest 4,096 entries |
@@ -375,10 +375,10 @@ These are the settings and environment variables that affect mods. The Where col
 | :- | :- | :- |
 | `CLAUDE_CODE_PLUGIN_DIRS` | Environment, or `env` in `~/.claude/settings.json` | Plugin directories to load as `--plugin-dir` does, for apps you can't pass a flag to. Absolute paths separated by `:`, or `;` on Windows. |
 | `CLAUDE_CODE_PLUGIN_DIR_WATCH` | Environment | `1` makes a long-running non-interactive session reload `--plugin-dir` mods on save |
-| `prependPlugins`, `appendPlugins` | Managed settings. User settings only on a machine with no managed settings, in a session whose credential isn't a Team or Enterprise `/login`. | Lists of plugin ids, such as `acme-guard@acme-tools`. Mods in `prependPlugins` run before every mod a user installs, and mods in `appendPlugins` run after, in the listed order. See [The order mods run in](/docs/en/plugins/mods/events#the-order-mods-run-in). |
-| `allowManagedModsOnly` | Managed settings, as an [option on the built-in guard](/docs/en/plugins/mods/admin#set-options-on-the-built-in-guard) | Only mods that [count as your organization's](/docs/en/plugins/mods/admin#install-your-organizations-mods), and mods built into Claude Code, run their hooks. Users' settings hooks keep running. |
-| `allowModsToOverrideDenyRules` | Managed settings, as an [option on the built-in guard](/docs/en/plugins/mods/admin#set-options-on-the-built-in-guard) | Lets a mod a user installed approve a tool call that a `deny` rule refuses |
-| `allowManagedHooksOnly` | Managed settings | Blocks hooks and installed mods that aren't your organization's. See [what keeps running](/docs/en/settings-reference#what-runs-under-allowmanagedhooksonly). |
+| `prependPlugins`, `appendPlugins` | Managed settings. User settings only on a machine with no managed settings, in a session whose credential isn't a Team or Enterprise `/login`. | Lists of plugin ids, such as `acme-guard@acme-tools`. Mods in `prependPlugins` run before every mod a user installs, and mods in `appendPlugins` run after, in the listed order. See [The order mods run in](/docs/en/plugins/mods/events.md#the-order-mods-run-in). |
+| `allowManagedModsOnly` | Managed settings, as an [option on the built-in guard](/docs/en/plugins/mods/admin.md#set-options-on-the-built-in-guard) | Only mods that [count as your organization's](/docs/en/plugins/mods/admin.md#install-your-organizations-mods), and mods built into Claude Code, run their hooks. Users' settings hooks keep running. |
+| `allowModsToOverrideDenyRules` | Managed settings, as an [option on the built-in guard](/docs/en/plugins/mods/admin.md#set-options-on-the-built-in-guard) | Lets a mod a user installed approve a tool call that a `deny` rule refuses |
+| `allowManagedHooksOnly` | Managed settings | Blocks hooks and installed mods that aren't your organization's. See [what keeps running](/docs/en/settings-reference.md#what-runs-under-allowmanagedhooksonly). |
 | `disableAllHooks` | Any settings file | In managed settings, no mod or hook from an installed plugin runs. In your own settings, what your organization manages keeps running. See [`disableAllHooks`](/docs/en/settings-reference#disableallhooks). |
 | `disableSideloadFlags` | Managed settings | Rejects `--plugin-dir` and `--plugin-url` at startup |
 | `pluginConfigs` | User or managed settings | Holds `userConfig` values for a mod, keyed by the plugin's id, such as `acme-guard@acme-tools`, or its name and `@inline`, such as `first-mod@inline`, for one loaded with `--plugin-dir` |

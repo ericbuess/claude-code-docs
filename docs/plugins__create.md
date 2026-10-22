@@ -14,8 +14,8 @@ This page is for people writing their own plugins.
 >
 > These cases are covered on other pages:
 >
-> * **Installing someone else's plugin**: see [Install plugins](/docs/en/plugins/install)
-> * **Not sure you need a plugin**: see [Decide whether you need a plugin](/docs/en/plugins/overview#decide-whether-you-need-a-plugin) on the overview
+> * **Installing someone else's plugin**: see [Install plugins](/docs/en/plugins/install.md)
+> * **Not sure you need a plugin**: see [Decide whether you need a plugin](/docs/en/plugins/overview.md#decide-whether-you-need-a-plugin) on the overview
 > * **Your plugin's users are on claude.ai or in Cowork**: the same folder installs there with a different subset of components. See [Plugin structure and testing](https://claude.com/docs/plugins/build) and the [component support table](https://claude.com/docs/plugins/platform-support#compare-component-support-by-app)
 
 Start from the section that matches what you already have:
@@ -36,9 +36,9 @@ To move an existing setup into a plugin, see [Convert an existing `.claude/` set
 
 ## Create your first plugin
 
-In this walkthrough, you create a plugin whose only component is one skill, a greeting, and run it with `--plugin-dir`, which loads a plugin for one session without installing it. A plugin can hold any mix of [components](/docs/en/plugins/components), such as skills, agents, hooks, and MCP servers, and none is required; one skill is the smallest example that shows the layout.
+In this walkthrough, you create a plugin whose only component is one skill, a greeting, and run it with `--plugin-dir`, which loads a plugin for one session without installing it. A plugin can hold any mix of [components](/docs/en/plugins/components.md), such as skills, agents, hooks, and MCP servers, and none is required; one skill is the smallest example that shows the layout.
 
-You need Claude Code [installed and signed in](/docs/en/quickstart#step-1-install-claude-code).
+You need Claude Code [installed and signed in](/docs/en/quickstart.md#step-1-install-claude-code).
 
 Open a terminal in the directory where you want to keep the plugin, such as `~/projects`, and run the commands in these steps from it. You can keep a plugin anywhere, because you pass its path to Claude Code when you start a session.
 
@@ -52,7 +52,7 @@ mkdir -p my-first-plugin/.claude-plugin
 
 **2. Write the manifest**
 
-The [manifest](/docs/en/plugins/manifest-reference) is a JSON file named `plugin.json` that tells Claude Code the plugin's name and describes it. Save this one as `my-first-plugin/.claude-plugin/plugin.json`:
+The [manifest](/docs/en/plugins/manifest-reference.md) is a JSON file named `plugin.json` that tells Claude Code the plugin's name and describes it. Save this one as `my-first-plugin/.claude-plugin/plugin.json`:
 
 ```json my-first-plugin/.claude-plugin/plugin.json theme={null}
 {
@@ -69,10 +69,10 @@ The four fields do this:
 
 * **`name`**: required. It identifies the plugin and becomes the prefix on every skill and agent the plugin provides. Don't put spaces in it.
 * **`description`**: the text users see for the plugin in `/plugin`.
-* **`version`**: optional. Setting it keeps users on that version until you change it; [Release a new version](/docs/en/plugins/host-marketplace#release-a-new-version) says when to set or omit it.
+* **`version`**: optional. Setting it keeps users on that version until you change it; [Release a new version](/docs/en/plugins/host-marketplace.md#release-a-new-version) says when to set or omit it.
 * **`author`**: who to credit. `name` is required inside it; `email` and `url` are optional.
 
-Every other field is on the [manifest reference](/docs/en/plugins/manifest-reference#fields).
+Every other field is on the [manifest reference](/docs/en/plugins/manifest-reference.md#fields).
 
 Only `plugin.json` goes inside `.claude-plugin/`. The skill you add next goes directly under `my-first-plugin/`, next to that folder.
 
@@ -96,7 +96,7 @@ disable-model-invocation: true
 Greet the user warmly and ask how you can help them today.
 ```
 
-The `disable-model-invocation: true` line means Claude doesn't run the skill on its own. Remove that line from a skill you want Claude to run on its own. The skill's command combines the plugin name and the skill's name, so you run this one as `/my-first-plugin:hello`. For the other frontmatter fields, see the [skill frontmatter reference](/docs/en/skills#frontmatter-reference).
+The `disable-model-invocation: true` line means Claude doesn't run the skill on its own. Remove that line from a skill you want Claude to run on its own. The skill's command combines the plugin name and the skill's name, so you run this one as `/my-first-plugin:hello`. For the other frontmatter fields, see the [skill frontmatter reference](/docs/en/skills.md#frontmatter-reference).
 
 **4. Validate the plugin**
 
@@ -126,21 +126,21 @@ Claude replies with a greeting.
 
 The plugin loads only in sessions you start with `--plugin-dir`. To keep working on it without the flag, or to test a `.zip` build, see [Develop without a marketplace](#develop-without-a-marketplace).
 
-To have Claude scaffold and check a larger plugin with you, [install](/docs/en/plugins/install#install-a-plugin) Anthropic's `plugin-dev` plugin from the `claude-plugins-official` marketplace, which adds skills and agents for writing components such as skills, hooks, and MCP servers and for validating the finished plugin. Once it's installed, run `/plugin-dev:create-plugin` followed by a description of the plugin you want, and Claude walks you through designing, creating, and validating it.
+To have Claude scaffold and check a larger plugin with you, [install](/docs/en/plugins/install.md#install-a-plugin) Anthropic's `plugin-dev` plugin from the `claude-plugins-official` marketplace, which adds skills and agents for writing components such as skills, hooks, and MCP servers and for validating the finished plugin. Once it's installed, run `/plugin-dev:create-plugin` followed by a description of the plugin you want, and Claude walks you through designing, creating, and validating it.
 
 ### Share your plugin
 
 A plugin you built with [Create your first plugin](#create-your-first-plugin) exists only on your machine. When it's ready for other people, there are three ways to get it to them:
 
-* **Send it to a few people directly**: give them the plugin's directory or a `.zip` of it, and nothing needs to be published. See [Share a plugin without a marketplace](/docs/en/plugins/publish#share-a-plugin-without-a-marketplace).
-* **List it in your own marketplace**: teammates add your marketplace once and install the plugin by name, and they receive your updates. See [Publish through your own marketplace](/docs/en/plugins/publish#publish-through-your-own-marketplace).
-* **Submit it to Anthropic's directory**: after it passes review, people can add it on claude.ai and in Cowork, and it reaches Claude Code through their account. See [Submit to Anthropic's directory](/docs/en/plugins/publish#submit-to-anthropics-directory).
+* **Send it to a few people directly**: give them the plugin's directory or a `.zip` of it, and nothing needs to be published. See [Share a plugin without a marketplace](/docs/en/plugins/publish.md#share-a-plugin-without-a-marketplace).
+* **List it in your own marketplace**: teammates add your marketplace once and install the plugin by name, and they receive your updates. See [Publish through your own marketplace](/docs/en/plugins/publish.md#publish-through-your-own-marketplace).
+* **Submit it to Anthropic's directory**: after it passes review, people can add it on claude.ai and in Cowork, and it reaches Claude Code through their account. See [Submit to Anthropic's directory](/docs/en/plugins/publish.md#submit-to-anthropics-directory).
 
 ### Plugin layout
 
-Each kind of [component](/docs/en/plugins/components), such as skills, agents, hooks, and MCP servers, goes in a fixed directory under the plugin root, which is the directory you pass to `--plugin-dir`. Add only the directories you use. To click through a complete plugin directory and read what each file does, open the [plugin explorer](/docs/en/plugins/components#explore-the-plugin-directory).
+Each kind of [component](/docs/en/plugins/components.md), such as skills, agents, hooks, and MCP servers, goes in a fixed directory under the plugin root, which is the directory you pass to `--plugin-dir`. Add only the directories you use. To click through a complete plugin directory and read what each file does, open the [plugin explorer](/docs/en/plugins/components.md#explore-the-plugin-directory).
 
-The table lists the directories most plugins start with, and the [full layout](/docs/en/plugins/manifest-reference#standard-layout) lists the rest.
+The table lists the directories most plugins start with, and the [full layout](/docs/en/plugins/manifest-reference.md#standard-layout) lists the rest.
 
 | Location | Contents |
 | :- | :- |
@@ -159,13 +159,13 @@ The table lists the directories most plugins start with, and the [full layout](/
 
 ## Develop without a marketplace
 
-You don't need a [marketplace](/docs/en/plugins/overview#get-plugins-from-a-marketplace) to run a plugin you're writing. Load it directly from disk or a URL instead:
+You don't need a [marketplace](/docs/en/plugins/overview.md#get-plugins-from-a-marketplace) to run a plugin you're writing. Load it directly from disk or a URL instead:
 
 * [`--plugin-dir`](#load-a-directory-or-archive-for-one-session): loads a directory or `.zip` archive for one session.
 * [`--plugin-url`](#fetch-an-archive-from-a-url-for-one-session): fetches a `.zip` archive from a URL for one session.
 * [`claude plugin init`](#scaffold-a-plugin-that-loads-every-session): scaffolds a plugin under `~/.claude/skills/` that loads across sessions.
 
-If two plugins loaded in different ways share a name, see [Name conflicts](/docs/en/plugins/loading#name-conflicts) for which one Claude Code keeps.
+If two plugins loaded in different ways share a name, see [Name conflicts](/docs/en/plugins/loading.md#name-conflicts) for which one Claude Code keeps.
 
 ### Load a plugin for one session
 
@@ -192,7 +192,7 @@ In an interactive session, you can also add and remove plugins in the folder aft
 * A subfolder you add loads as a new plugin once its manifest exists.
 * When you remove a subfolder, its plugin unloads.
 
-A message appears in the session for each of these changes. If loading or unloading a plugin mid-conversation would [invalidate the prompt cache](/docs/en/prompt-caching#enabling-or-disabling-a-plugin), the change is held instead, and the message tells you to run `/reload-plugins` to apply it.
+A message appears in the session for each of these changes. If loading or unloading a plugin mid-conversation would [invalidate the prompt cache](/docs/en/prompt-caching.md#enabling-or-disabling-a-plugin), the change is held instead, and the message tells you to run `/reload-plugins` to apply it.
 
 #### Load a plugin from a URL
 
@@ -210,13 +210,13 @@ If Claude Code can't fetch the archive, or the archive is invalid, it starts wit
 
 #### Load plugins from an environment variable
 
-To load plugins in a session where you can't add the `--plugin-dir` flag, list their absolute paths in the [`CLAUDE_CODE_PLUGIN_DIRS`](/docs/en/env-vars#variables) environment variable instead. Claude Code loads each path as it loads a `--plugin-dir` path. These plugins load in addition to any you pass with `--plugin-dir`. [Project and local settings can't set this variable](/docs/en/settings-reference#variables-claude-code-ignores-in-env). `CLAUDE_CODE_PLUGIN_DIRS` requires Claude Code v2.1.280 or later.
+To load plugins in a session where you can't add the `--plugin-dir` flag, list their absolute paths in the [`CLAUDE_CODE_PLUGIN_DIRS`](/docs/en/env-vars#variables) environment variable instead. Claude Code loads each path as it loads a `--plugin-dir` path. These plugins load in addition to any you pass with `--plugin-dir`. [Project and local settings can't set this variable](/docs/en/settings-reference.md#variables-claude-code-ignores-in-env). `CLAUDE_CODE_PLUGIN_DIRS` requires Claude Code v2.1.280 or later.
 
-Managed settings can turn off `--plugin-dir` and `CLAUDE_CODE_PLUGIN_DIRS`. See [Flags that load a plugin for one session](/docs/en/plugins/cli-reference#flags-that-load-a-plugin-for-one-session). To test a plugin together with a plugin it depends on, see [Test a plugin and its dependency locally](/docs/en/plugins/dependencies#test-a-plugin-and-its-dependency-locally).
+Managed settings can turn off `--plugin-dir` and `CLAUDE_CODE_PLUGIN_DIRS`. See [Flags that load a plugin for one session](/docs/en/plugins/cli-reference.md#flags-that-load-a-plugin-for-one-session). To test a plugin together with a plugin it depends on, see [Test a plugin and its dependency locally](/docs/en/plugins/dependencies.md#test-a-plugin-and-its-dependency-locally).
 
 ### Make a plugin load in every session
 
-Your personal skills directory is `~/.claude/skills/`, and a folder there that contains a `.claude-plugin/plugin.json` is a skills-directory plugin. Unless your administrator has [blocked skills-directory plugins](/docs/en/plugins/loading#skills-directory-plugins-blocked-by-managed-settings), Claude Code loads each one when a session starts, with no flag and no install step. `claude plugin init` scaffolds one for you.
+Your personal skills directory is `~/.claude/skills/`, and a folder there that contains a `.claude-plugin/plugin.json` is a skills-directory plugin. Unless your administrator has [blocked skills-directory plugins](/docs/en/plugins/loading.md#skills-directory-plugins-blocked-by-managed-settings), Claude Code loads each one when a session starts, with no flag and no install step. `claude plugin init` scaffolds one for you.
 
 #### Scaffold the plugin with `claude plugin init`
 
@@ -228,7 +228,7 @@ claude plugin init my-tool
 
 The command creates `~/.claude/skills/my-tool/` with a `.claude-plugin/plugin.json` and a root `SKILL.md`. It prints `✔ Created plugin "my-tool" at ~/.claude/skills/my-tool` followed by `It will auto-load next session as my-tool@skills-dir. Run /reload-plugins to load it now.`
 
-Pass `--with skills` to have `claude plugin init` scaffold a skill under `skills/` for you. The other `--with` values are on the [plugin commands reference](/docs/en/plugins/cli-reference#plugin-init).
+Pass `--with skills` to have `claude plugin init` scaffold a skill under `skills/` for you. The other `--with` values are on the [plugin commands reference](/docs/en/plugins/cli-reference.md#plugin-init).
 
 #### Name the plugin's skills
 
@@ -240,23 +240,23 @@ To stop loading a scaffolded plugin, delete its directory, or run `claude plugin
 
 #### Share the plugin through a repository
 
-`claude plugin init` writes the plugin to your personal skills directory at `~/.claude/skills/`, which all your projects on this machine share. To make a plugin load for everyone in one repository, create the same layout yourself at `<project>/.claude/skills/<name>/`, including its `.claude-plugin/plugin.json`. See [Plugins shared through a repository](/docs/en/plugins/loading#plugins-shared-through-a-repository) for the conditions under which Claude Code loads it.
+`claude plugin init` writes the plugin to your personal skills directory at `~/.claude/skills/`, which all your projects on this machine share. To make a plugin load for everyone in one repository, create the same layout yourself at `<project>/.claude/skills/<name>/`, including its `.claude-plugin/plugin.json`. See [Plugins shared through a repository](/docs/en/plugins/loading.md#plugins-shared-through-a-repository) for the conditions under which Claude Code loads it.
 
 ## Test and debug
 
 When a change to your plugin doesn't show up, work through these checks in order. Each one tells you what Claude Code did with the plugin:
 
-1. In your shell, run `claude plugin validate <path>`. It checks the manifest and the frontmatter of every skill, agent, and command file, and exits `0` on `Validation passed`. Add `--strict` to fail on warnings too. Exit codes and directory handling are on the [plugin commands reference](/docs/en/plugins/cli-reference#plugin-validate).
+1. In your shell, run `claude plugin validate <path>`. It checks the manifest and the frontmatter of every skill, agent, and command file, and exits `0` on `Validation passed`. Add `--strict` to fail on warnings too. Exit codes and directory handling are on the [plugin commands reference](/docs/en/plugins/cli-reference.md#plugin-validate).
 2. In the running session, run `/reload-plugins` to apply edits you made on disk. It prints one `Reloaded:` line with counts. Then confirm a skill loaded by typing its `/plugin-name:skill` command, or by finding the plugin in the `/plugin` **Installed** tab.
 3. In the same session, run `/plugin`. The **Installed** tab lists your plugin and, in the plugin's details, the components Claude Code found. The **Errors** tab lists what failed to load and why, such as a path in your manifest that doesn't exist.
 4. Back in your shell, run `claude plugin list`. It prints session-only and skills-directory plugins in their own sections with `Status: ✔ loaded` or the load error. To include the plugin you're developing, pass `--plugin-dir` with its path before `plugin list`.
-5. If your plugin is in a skills directory and `claude plugin list` doesn't print it, with no error there or in `/plugin`, see [Skills-directory plugins blocked by managed settings](/docs/en/plugins/loading#skills-directory-plugins-blocked-by-managed-settings).
+5. If your plugin is in a skills directory and `claude plugin list` doesn't print it, with no error there or in `/plugin`, see [Skills-directory plugins blocked by managed settings](/docs/en/plugins/loading.md#skills-directory-plugins-blocked-by-managed-settings).
 
-To check an MCP server, run `/mcp` in the session to see the server's status. When the server is healthy, `/mcp` lists it as connected. If it isn't, see [MCP servers that don't start](/docs/en/plugins/troubleshooting#invalid-mcp-server-config-for-and-mcp-servers-that-dont-start).
+To check an MCP server, run `/mcp` in the session to see the server's status. When the server is healthy, `/mcp` lists it as connected. If it isn't, see [MCP servers that don't start](/docs/en/plugins/troubleshooting.md#invalid-mcp-server-config-for-and-mcp-servers-that-dont-start).
 
-To check a hook, trigger the event it matches. For example, ask Claude to edit a file to trigger a `PostToolUse` hook. Then read the [debug log](/docs/en/hooks#debug-hooks), which shows which hooks matched, their exit codes, and their output.
+To check a hook, trigger the event it matches. For example, ask Claude to edit a file to trigger a `PostToolUse` hook. Then read the [debug log](/docs/en/hooks.md#debug-hooks), which shows which hooks matched, their exit codes, and their output.
 
-The next sections cover the failures you're most likely to hit while developing, and the [troubleshooting page](/docs/en/plugins/troubleshooting#build-a-plugin) has the full entry for each.
+The next sections cover the failures you're most likely to hit while developing, and the [troubleshooting page](/docs/en/plugins/troubleshooting.md#build-a-plugin) has the full entry for each.
 
 ### A component path isn't found
 
@@ -264,11 +264,11 @@ The **Errors** tab of `/plugin` shows `<component> path not found: <path>`, for 
 
 ### `--plugin-dir` at a marketplace root doesn't load the plugins under `plugins/`
 
-`--plugin-dir` takes the plugin's root directory, the one that contains `.claude-plugin/plugin.json` and the component directories such as `skills/`. If you point it at a marketplace root instead, Claude Code doesn't read `marketplace.json`, so a plugin under `plugins/` doesn't load, and you see no error. Point the flag at one plugin's folder, or add the marketplace. See [the troubleshooting entry](/docs/en/plugins/troubleshooting#plugin-dir-loads-a-plugin-with-no-components).
+`--plugin-dir` takes the plugin's root directory, the one that contains `.claude-plugin/plugin.json` and the component directories such as `skills/`. If you point it at a marketplace root instead, Claude Code doesn't read `marketplace.json`, so a plugin under `plugins/` doesn't load, and you see no error. Point the flag at one plugin's folder, or add the marketplace. See [the troubleshooting entry](/docs/en/plugins/troubleshooting.md#plugin-dir-loads-a-plugin-with-no-components).
 
 ### The plugin loads but its skills are missing
 
-The `skills/` directory is inside `.claude-plugin/`, or a `skills` entry in the manifest points at a file. Move `skills/` to the plugin root, point each `skills` entry at a directory that contains `SKILL.md`, and run `/reload-plugins` in the session. See [Plugin loads but its skills are missing](/docs/en/plugins/troubleshooting#plugin-loads-but-its-skills-are-missing).
+The `skills/` directory is inside `.claude-plugin/`, or a `skills` entry in the manifest points at a file. Move `skills/` to the plugin root, point each `skills` entry at a directory that contains `SKILL.md`, and run `/reload-plugins` in the session. See [Plugin loads but its skills are missing](/docs/en/plugins/troubleshooting.md#plugin-loads-but-its-skills-are-missing).
 
 ### The `userConfig` dialog never appears
 
@@ -276,7 +276,7 @@ The dialog for your plugin's [`userConfig`](/docs/en/plugins/components#user-con
 
 ### Check that the plugin changes Claude's behavior
 
-A plugin that loads without errors can still fail to steer Claude the way you intend. `claude plugin eval`, which you run in your shell, runs your test cases with and without the plugin and scores the difference. See [Test plugins with evals](/docs/en/plugin-evals), starting with [Create your first eval suite](/docs/en/plugin-evals#create-your-first-eval-suite).
+A plugin that loads without errors can still fail to steer Claude the way you intend. `claude plugin eval`, which you run in your shell, runs your test cases with and without the plugin and scores the difference. See [Test plugins with evals](/docs/en/plugin-evals.md), starting with [Create your first eval suite](/docs/en/plugin-evals.md#create-your-first-eval-suite).
 
 ## Convert an existing `.claude/` setup
 
@@ -370,10 +370,10 @@ After you've confirmed the plugin works, delete the originals from `.claude/` an
 
 ## Next steps
 
-* [Plugin components](/docs/en/plugins/components): add agents, hooks, MCP servers, LSP servers, and user configuration to your plugin
-* [Test plugins with evals](/docs/en/plugin-evals): write eval cases and run them with `claude plugin eval` to check how reliably the plugin guides Claude's behavior
-* [Publish a plugin](/docs/en/plugins/publish): version it, put it in a marketplace, and submit it for review
+* [Plugin components](/docs/en/plugins/components.md): add agents, hooks, MCP servers, LSP servers, and user configuration to your plugin
+* [Test plugins with evals](/docs/en/plugin-evals.md): write eval cases and run them with `claude plugin eval` to check how reliably the plugin guides Claude's behavior
+* [Publish a plugin](/docs/en/plugins/publish.md): version it, put it in a marketplace, and submit it for review
 * [Plugin structure and testing](https://claude.com/docs/plugins/build): the same plugin folder installs on claude.ai and in Cowork. Some components are Claude Code-only, and the [component support table](https://claude.com/docs/plugins/platform-support#compare-component-support-by-app) lists which load on each surface
-* [Plugin manifest reference](/docs/en/plugins/manifest-reference): every `plugin.json` field, path rule, and directory
-* [Skills](/docs/en/skills): write the skills your plugin provides
+* [Plugin manifest reference](/docs/en/plugins/manifest-reference.md): every `plugin.json` field, path rule, and directory
+* [Skills](/docs/en/skills.md): write the skills your plugin provides
 * [Anthropic's plugins in the claude-code repository](https://github.com/anthropics/claude-code/tree/main/plugins): complete worked examples of the layout on this page, such as `feature-dev` and `code-review`

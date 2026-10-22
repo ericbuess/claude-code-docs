@@ -8,15 +8,15 @@
 
 The Claude Security plugin runs a multi-agent vulnerability scan of your codebase inside a Claude Code session. A team of Claude agents maps your architecture, builds a threat model, hunts for vulnerabilities, and independently reviews every finding before writing the report. Use the plugin to scan a whole repository or [only a set of changes](#scan-only-your-changes), such as a branch's diff, a pull request's diff, or a single commit, then turn the findings you choose into patches that you review and apply yourself.
 
-The plugin runs locally in your session, uses [whichever models you have access to in Claude Code](#models-and-providers), and each scan counts toward your [usage](/docs/en/costs). If you want a managed service that monitors your repositories, or want to run scans on [Claude Mythos](https://platform.claude.com/docs/en/about-claude/models/introducing-claude-fable-5-and-claude-mythos-5), see the [Claude Security](https://claude.com/product/claude-security) product, available on the Enterprise plan.
+The plugin runs locally in your session, uses [whichever models you have access to in Claude Code](#models-and-providers), and each scan counts toward your [usage](/docs/en/costs.md). If you want a managed service that monitors your repositories, or want to run scans on [Claude Mythos](https://platform.claude.com/docs/en/about-claude/models/introducing-claude-fable-5-and-claude-mythos-5), see the [Claude Security](https://claude.com/product/claude-security) product, available on the Enterprise plan.
 
-The plugin is also distinct from the review tools already in Claude Code: the [security guidance plugin](/docs/en/security-guidance) reviews code as Claude writes it, [`/security-review`](/docs/en/commands#all-commands) runs a single pass over your branch, and [Code Review](/docs/en/code-review) reviews pull requests. For how the layers stack, see [How the plugin fits with other security tools](#how-the-plugin-fits-with-other-security-tools).
+The plugin is also distinct from the review tools already in Claude Code: the [security guidance plugin](/docs/en/security-guidance.md) reviews code as Claude writes it, [`/security-review`](/docs/en/commands#all-commands) runs a single pass over your branch, and [Code Review](/docs/en/code-review.md) reviews pull requests. For how the layers stack, see [How the plugin fits with other security tools](#how-the-plugin-fits-with-other-security-tools).
 
 ## Prerequisites
 
 To run the plugin, you need:
 
-* A paid plan, Anthropic API access, or a [third-party provider](#models-and-providers), for the [dynamic workflows](/docs/en/workflows) the scan uses to orchestrate its agents. On Pro, turn them on from the Dynamic workflows row in `/config`.
+* A paid plan, Anthropic API access, or a [third-party provider](#models-and-providers), for the [dynamic workflows](/docs/en/workflows.md) the scan uses to orchestrate its agents. On Pro, turn them on from the Dynamic workflows row in `/config`.
 * Python 3.9 or later available on your `PATH` as `python3`. Check with `python3 --version`. The plugin's tooling uses only the Python standard library, so nothing is installed.
 * Linux, macOS, or Windows.
 * Git, for change scans and for turning findings into patches; those jobs don't support other version control systems. A full scan works in any directory, with or without version control.
@@ -25,29 +25,29 @@ To run the plugin, you need:
 
 A scan runs inside your Claude Code session. The plugin makes no model calls of its own, so there's no separate API key or provider setting to configure.
 
-* **Model**: the agents that hunt for vulnerabilities, verify findings, and write and review patches run on [your session's model](/docs/en/sub-agents#choose-a-model). To change it, run [`/model`](/docs/en/model-config#setting-your-model) in your session before you start a scan. A few supporting steps, such as mapping the repository, use the [`sonnet` alias](/docs/en/model-config#model-aliases) instead.
-* **Provider**: scans run on a paid plan, with Anthropic API access, or on a [third-party provider](/docs/en/third-party-integrations) such as [Amazon Bedrock](/docs/en/amazon-bedrock), [Google Cloud's Agent Platform](/docs/en/google-vertex-ai), or [Microsoft Foundry](/docs/en/microsoft-foundry).
+* **Model**: the agents that hunt for vulnerabilities, verify findings, and write and review patches run on [your session's model](/docs/en/sub-agents.md#choose-a-model). To change it, run [`/model`](/docs/en/model-config#setting-your-model) in your session before you start a scan. A few supporting steps, such as mapping the repository, use the [`sonnet` alias](/docs/en/model-config#model-aliases) instead.
+* **Provider**: scans run on a paid plan, with Anthropic API access, or on a [third-party provider](/docs/en/third-party-integrations.md) such as [Amazon Bedrock](/docs/en/amazon-bedrock.md), [Google Cloud's Agent Platform](/docs/en/google-vertex-ai.md), or [Microsoft Foundry](/docs/en/microsoft-foundry.md).
 
-On a third-party provider, the `sonnet` alias can resolve to a different version than it does on the Anthropic API. If your account can't use that version, [pin your model versions](/docs/en/model-config#pin-models-for-third-party-deployments), including `ANTHROPIC_DEFAULT_SONNET_MODEL`.
+On a third-party provider, the `sonnet` alias can resolve to a different version than it does on the Anthropic API. If your account can't use that version, [pin your model versions](/docs/en/model-config.md#pin-models-for-third-party-deployments), including `ANTHROPIC_DEFAULT_SONNET_MODEL`.
 
-[Automatic model fallback](/docs/en/model-config#automatic-model-fallback) re-runs a request that a model's safeguards flag. On Amazon Bedrock, Google Cloud's Agent Platform, and Microsoft Foundry, the request can end with a refusal message instead, depending on [how your deployment is set up](/docs/en/model-config#enable-fallback-on-bedrock-agent-platform-and-foundry).
+[Automatic model fallback](/docs/en/model-config.md#automatic-model-fallback) re-runs a request that a model's safeguards flag. On Amazon Bedrock, Google Cloud's Agent Platform, and Microsoft Foundry, the request can end with a refusal message instead, depending on [how your deployment is set up](/docs/en/model-config.md#enable-fallback-on-bedrock-agent-platform-and-foundry).
 
 ## Install the plugin
 
-In the VS Code extension or the desktop app, install it by following [Install a plugin](/docs/en/plugins/install#install-a-plugin). In a terminal, start Claude Code by running `claude`, then enter this at its prompt to install from the [official Anthropic marketplace](/docs/en/plugins/anthropic-marketplaces):
+In the VS Code extension or the desktop app, install it by following [Install a plugin](/docs/en/plugins/install.md#install-a-plugin). In a terminal, start Claude Code by running `claude`, then enter this at its prompt to install from the [official Anthropic marketplace](/docs/en/plugins/anthropic-marketplaces.md):
 
 ```text theme={null}
 /plugin install claude-security@claude-plugins-official
 ```
 
-The command opens the plugin's details, where you choose an [installation scope](/docs/en/plugins/install#install-a-plugin) to start the install.
+The command opens the plugin's details, where you choose an [installation scope](/docs/en/plugins/install.md#install-a-plugin) to start the install.
 
 If the install fails, match the message Claude Code reports:
 
 * `Marketplace "claude-plugins-official" not found`: add the marketplace with `/plugin marketplace add anthropics/claude-plugins-official`, then retry the install.
-* `Plugin "claude-security" not found in marketplace "claude-plugins-official"`: your local copy of the marketplace catalog may be out of date. Refresh it with `/plugin marketplace update claude-plugins-official`, then retry the install. If the retry prints the same message, see [Plugin not found in marketplace](/docs/en/plugins/troubleshooting#plugin-not-found-in-marketplace).
+* `Plugin "claude-security" not found in marketplace "claude-plugins-official"`: your local copy of the marketplace catalog may be out of date. Refresh it with `/plugin marketplace update claude-plugins-official`, then retry the install. If the retry prints the same message, see [Plugin not found in marketplace](/docs/en/plugins/troubleshooting.md#plugin-not-found-in-marketplace).
 
-Check the install summary. If it reports `Run /reload-plugins to apply.`, see [Apply plugin changes without restarting](/docs/en/plugins/cli-reference#reload-plugins) to activate the plugin in your current session.
+Check the install summary. If it reports `Run /reload-plugins to apply.`, see [Apply plugin changes without restarting](/docs/en/plugins/cli-reference.md#reload-plugins) to activate the plugin in your current session.
 
 Once the plugin is active, you're ready to [scan and fix your codebase](#scan-and-fix-your-codebase).
 
@@ -83,7 +83,7 @@ Run `/claude-security` again and pick **Suggest patches**, then choose which fin
 
 Apply each patch from your shell with `git apply`, in its own pull request. Patches are never applied automatically.
 
-You don't have to start from the menu: ask for a job directly, as arguments to the command, such as `/claude-security scan my branch`, or in plain language, such as "scan commit abc1234". The plugin works best in [auto mode](/docs/en/permission-modes), which lets the scan's agents proceed without a permission prompt at each step.
+You don't have to start from the menu: ask for a job directly, as arguments to the command, such as `/claude-security scan my branch`, or in plain language, such as "scan commit abc1234". The plugin works best in [auto mode](/docs/en/permission-modes.md), which lets the scan's agents proceed without a permission prompt at each step.
 
 ### Scan only your changes
 
@@ -126,14 +126,14 @@ When the patched code has no tests, the patch's note says so, so you know its re
 
 ## How the plugin fits with other security tools
 
-The Claude Security plugin is the on-demand deep-scan layer in a defense-in-depth stack, alongside the [security guidance plugin](/docs/en/security-guidance), [`/security-review`](/docs/en/commands#all-commands), [Code Review](/docs/en/code-review), the managed [Claude Security](https://claude.com/product/claude-security) product, and your existing scanners:
+The Claude Security plugin is the on-demand deep-scan layer in a defense-in-depth stack, alongside the [security guidance plugin](/docs/en/security-guidance.md), [`/security-review`](/docs/en/commands#all-commands), [Code Review](/docs/en/code-review.md), the managed [Claude Security](https://claude.com/product/claude-security) product, and your existing scanners:
 
 | Stage | Tool | What it covers |
 | :- | :- | :- |
-| In session | [Security guidance plugin](/docs/en/security-guidance) | Common vulnerabilities in code Claude writes, fixed in the same session |
+| In session | [Security guidance plugin](/docs/en/security-guidance.md) | Common vulnerabilities in code Claude writes, fixed in the same session |
 | On demand, single pass | [`/security-review`](/docs/en/commands#all-commands) | One-time security pass on the current branch |
 | On demand, deep scan | Claude Security plugin | Multi-agent scan of a repository or diff, with independently reviewed findings and patches |
-| On pull request | [Code Review](/docs/en/code-review), Team and Enterprise plans | Multi-agent correctness and security review with full codebase context |
+| On pull request | [Code Review](/docs/en/code-review.md), Team and Enterprise plans | Multi-agent correctness and security review with full codebase context |
 | Managed | [Claude Security](https://claude.com/product/claude-security), Enterprise plan | Hosted scanning that monitors connected repositories |
 | In CI | Your existing static analysis and dependency scanners | Language-specific rules, supply-chain checks, and policy enforcement |
 
@@ -143,14 +143,14 @@ The plugin doesn't replace your existing source-code security tools. Run it alon
 
 **The `/claude-security` menu opens with a Python warning.** The plugin needs `python3` 3.9 or later on your `PATH`. When it can't find `python3` at all, the menu warns that Claude Security won't work until one is installed; when the first `python3` on your `PATH` is older, the warning names the version it found. Install Python 3, or put a newer `python3` first on your `PATH`, then start a new session.
 
-**You may see a "safeguards flagged this message" notice when scanning on a Fable model.** The message names the model you're running. Fable's cybersecurity safety classifiers flag certain requests, and Claude Code re-runs a flagged request on an Opus model through [automatic model fallback](/docs/en/model-config#automatic-model-fallback). This is expected. When the request re-runs, the scan should still complete successfully.
+**You may see a "safeguards flagged this message" notice when scanning on a Fable model.** The message names the model you're running. Fable's cybersecurity safety classifiers flag certain requests, and Claude Code re-runs a flagged request on an Opus model through [automatic model fallback](/docs/en/model-config.md#automatic-model-fallback). This is expected. When the request re-runs, the scan should still complete successfully.
 
 ## Related resources
 
 To go deeper on the pieces this page touches:
 
-* [Security guidance plugin](/docs/en/security-guidance): catch issues in code as Claude writes it, in the same session
-* [Code Review](/docs/en/code-review): set up the PR-time multi-agent review
+* [Security guidance plugin](/docs/en/security-guidance.md): catch issues in code as Claude writes it, in the same session
+* [Code Review](/docs/en/code-review.md): set up the PR-time multi-agent review
 * [Claude Security](https://claude.com/product/claude-security): the managed service that monitors connected repositories
-* [Claude Code security](/docs/en/security): how Claude Code approaches trust, permissions, and safeguards
-* [Install and manage plugins](/docs/en/plugins/install): find and install other plugins from the official marketplace
+* [Claude Code security](/docs/en/security.md): how Claude Code approaches trust, permissions, and safeguards
+* [Install and manage plugins](/docs/en/plugins/install.md): find and install other plugins from the official marketplace

@@ -8,11 +8,11 @@
 
 > [!NOTE]
 >
-> Projects are in public beta on Pro and Max plans and rolling out gradually, starting with accounts that have used [cloud sessions](/docs/en/claude-code-on-the-web) and don't have existing projects in claude.ai chat or Cowork. They aren't available on Team or Enterprise plans yet. If **Projects** doesn't appear in the sidebar at [claude.ai/code](https://claude.ai/code) or in the Code tab of the [desktop app](/docs/en/desktop), the rollout hasn't reached your account, and you can [join the waitlist](https://claude.com/form/projects). [Run agents in parallel](/docs/en/agents) lists what you can use in the meantime.
+> Projects are in public beta on Pro and Max plans and rolling out gradually, starting with accounts that have used [cloud sessions](/docs/en/claude-code-on-the-web.md) and don't have existing projects in claude.ai chat or Cowork. They aren't available on Team or Enterprise plans yet. If **Projects** doesn't appear in the sidebar at [claude.ai/code](https://claude.ai/code) or in the Code tab of the [desktop app](/docs/en/desktop.md), the rollout hasn't reached your account, and you can [join the waitlist](https://claude.com/form/projects). [Run agents in parallel](/docs/en/agents.md) lists what you can use in the meantime.
 
 A project is one ongoing conversation where Claude coordinates a stream of related work for you. You tell it what needs doing and it starts a thread for each task.
 
-Each thread is usually a [cloud session](/docs/en/claude-code-on-the-web): Claude Code running in the cloud rather than on your machine. When a task needs something only your computer has, you can ask Claude to [run that thread on your computer](#run-a-thread-on-your-own-computer) instead of in the cloud, through [Remote Control](/docs/en/remote-control). Threads run in parallel, and you can check on them and steer them from your phone. Cloud threads keep going after you close your laptop, while a thread on your computer runs only while that computer is awake.
+Each thread is usually a [cloud session](/docs/en/claude-code-on-the-web.md): Claude Code running in the cloud rather than on your machine. When a task needs something only your computer has, you can ask Claude to [run that thread on your computer](#run-a-thread-on-your-own-computer) instead of in the cloud, through [Remote Control](/docs/en/remote-control.md). Threads run in parallel, and you can check on them and steer them from your phone. Cloud threads keep going after you close your laptop, while a thread on your computer runs only while that computer is awake.
 
 Without a project, running several sessions means doing the coordinating yourself: you decide what each one works on, repeat the same background at the start of each, and check back to see which finished or needs an answer. With a project, you instead:
 
@@ -31,15 +31,15 @@ A project is worth creating when the work has a goal that outlasts one session a
 * **A build or migration bigger than a session**: "Build what `docs/spec.md` describes" or "Move the app off the deprecated ORM." The work splits into threads that each take a part, decisions you ask Claude to remember early on reach the later cloud threads, and the spec changes and bugs you find during the build go into the same conversation.
 * **Work that isn't code**: a folder of contracts or a support-ticket export you keep coming back to with new questions, such as "find the ten most common integration mistakes in these tickets." Upload the documents instead of adding a repository, and threads deliver each write-up as a file on the project's [**Library** tab](#see-what-needs-you-in-overview).
 
-In any of them you can send a batch of tasks, tell Claude to start without asking you to confirm, and walk away. When you're back, you can find the threads that need you under [**Waiting on you**](#see-what-needs-you-in-overview). You can also ask Claude to put part of the work on a schedule as a [cloud scheduled task](/docs/en/routines). If one of these is your situation, [create a project](#create-a-project).
+In any of them you can send a batch of tasks, tell Claude to start without asking you to confirm, and walk away. When you're back, you can find the threads that need you under [**Waiting on you**](#see-what-needs-you-in-overview). You can also ask Claude to put part of the work on a schedule as a [cloud scheduled task](/docs/en/routines.md). If one of these is your situation, [create a project](#create-a-project).
 
 ### When something else fits better
 
 A project still fits when only some tasks need your machine. Cloud threads work on GitHub repositories and on the files, folders, and Google Drive folders you upload to the project, and for the occasional task that needs a local database or a tool on your computer, you can ask Claude to [run that task's thread on your computer](#run-a-thread-on-your-own-computer). Something other than a project fits better in these cases:
 
-* **One task that fits in a session**: "Fix the flaky login test." Start a [cloud session](/docs/en/claude-code-on-the-web) yourself.
-* **Work where every task needs your machine**: a local database, a device emulator, or an API behind your VPN. Use a local session, or [agent view](/docs/en/agent-view) to run several at once. If the work only needs local files, upload them to the project instead.
-* **One task that repeats on a schedule with no conversation around it**: "Post a dependency report every Monday." Create a [cloud scheduled task](/docs/en/routines) on its own.
+* **One task that fits in a session**: "Fix the flaky login test." Start a [cloud session](/docs/en/claude-code-on-the-web.md) yourself.
+* **Work where every task needs your machine**: a local database, a device emulator, or an API behind your VPN. Use a local session, or [agent view](/docs/en/agent-view.md) to run several at once. If the work only needs local files, upload them to the project instead.
+* **One task that repeats on a schedule with no conversation around it**: "Post a dependency report every Monday." Create a [cloud scheduled task](/docs/en/routines.md) on its own.
 * **Several people giving Claude work and steering it together in a Slack channel**: see [Claude Tag](https://claude.com/docs/claude-tag/overview).
 
 A project draws on the same plan limits as your other Claude Code sessions and uses them faster. [Usage and cost](#usage-and-cost) covers what draws on your plan and how to keep it down.
@@ -68,7 +68,7 @@ Here is how those parts connect, from you through the conversation to the thread
 You create and use projects at [claude.ai/code](https://claude.ai/code), in the Code tab of the desktop app, or in the Claude mobile app for [iOS](https://apps.apple.com/us/app/claude-by-anthropic/id6473753684) and [Android](https://play.google.com/store/apps/details?id=com.anthropic.claude). In the browser and the desktop app there are two ways to start a project:
 
 * **From scratch**, when you know the stream of work you want Claude to run: open the **New project** dialog and name it. [Start a new project from scratch](#start-a-new-project-from-scratch) walks through the dialog.
-* **From a cloud session that's already doing the work**: choose **Continue as project** from that session's menu, and Claude proposes the project's setup from what the session was doing. See [Start from an existing cloud session](#start-from-an-existing-cloud-session).
+* **From a cloud session that's already doing the work**: in that session's sidebar menu, choose **Move to project**, then **Continue as new project**. Claude proposes the project's setup from what the session was doing. See [Start from an existing cloud session](#start-from-an-existing-cloud-session).
 
 Either way, [check the prerequisites](#check-the-prerequisites) first.
 
@@ -76,9 +76,9 @@ Either way, [check the prerequisites](#check-the-prerequisites) first.
 
 Before you create a project, check your plan, your GitHub setup, and what the work needs to reach:
 
-* **Plan**: you're on Pro or Max and **Projects** shows in your sidebar.
+* **Plan**: you're on Pro or Max, and **Projects** shows in your sidebar, directly or under **More**. Select **Projects** and check that it offers **New project** or **Get started**.
 * **GitHub, if the project will work on code**: your code is on github.com rather than GitHub Enterprise Server, GitLab, or Bitbucket, your connected GitHub account has push access to it, and the Claude GitHub App is installed on it. If you connected GitHub with [`/web-setup`](/docs/en/web-quickstart#connect-from-your-terminal), that token lets your other cloud sessions reach a repository but isn't enough for a project's cloud threads, which need the Claude GitHub App. [Set up GitHub access](#set-up-github-access) has the steps.
-* **Network access, secrets, and tools**: for cloud threads, these come from the project's [cloud environment](#choose-an-environment-for-threads). The default environment already reaches [common package registries](/docs/en/cloud-environments#default-allowed-domains), so check this only if the work needs other domains, a secret, or a tool that isn't preinstalled. If the work needs an MCP server, check that it shows as connected in your [claude.ai connectors](https://claude.ai/customize/connectors).
+* **Network access, secrets, and tools**: for cloud threads, these come from the project's [cloud environment](#choose-an-environment-for-threads). The default environment already reaches [common package registries](/docs/en/cloud-environments.md#default-allowed-domains), so check this only if the work needs other domains, a secret, or a tool that isn't preinstalled. If the work needs an MCP server, check that it shows as connected in your [claude.ai connectors](https://claude.ai/customize/connectors).
 
 ### Start a new project from scratch
 
@@ -111,10 +111,12 @@ The project is now listed under **Projects** in the sidebar, and its conversatio
 
 ### Start from an existing cloud session
 
-If you already have a cloud session doing work that belongs in a project, open the session's menu in the sidebar and choose **Continue as project** or **Move to project**:
+If a cloud session you started yourself is doing work that belongs in a project, open its sidebar menu and choose **Move to project**, then pick from the submenu:
 
-* **Continue as project** creates a new project named after the session and opens it. Claude reads the session and posts **Setup recommendations** in the conversation for you to confirm. The original session stays in your session list, and if it was in the middle of a turn it keeps running, so stop it yourself if you don't want both working at once. If you use the **Set up project** banner that can appear above a cloud session's message box instead, the result is the same, except that the session's running turn stops once the project opens.
-* **Move to project** brings the session's work into an existing project. It posts a message in that project's conversation asking Claude to read the session and pick up where it left off, and new work continues in the project's own threads. The original session stays in your session list, unchanged.
+* Choose **Continue as new project** to create a new project from the session. The project opens, and Claude reads the session and posts **Setup recommendations** in the project conversation for you to confirm. The original session stays in your session list. If it was in the middle of a turn it keeps running, so stop it yourself if you don't want both working at once.
+* Choose one of your existing projects to bring the session's work into that project. That project opens, and a message sent on your behalf asks Claude to read the session and pick up where it left off. The original session stays in your session list, unchanged.
+
+A **Set up project** banner can also appear above a cloud session's message box. If you use it instead of **Continue as new project**, the result is the same, except that the session's running turn stops once the project opens.
 
 A local session doesn't have these options. To continue its work in a project, describe the work in the project conversation, or push its branch, add that repository to the project, and name the branch in the task.
 
@@ -124,7 +126,7 @@ Most GitHub setup happens once, not per project. You connect your GitHub account
 
 **1. Connect your GitHub account**
 
-If you haven't used claude.ai/code before, your first visit walks you through connecting GitHub; see [Connect GitHub](/docs/en/web-quickstart#connect-github). Otherwise use one of the [GitHub authentication options](/docs/en/claude-code-on-the-web#github-authentication-options).
+If you haven't used claude.ai/code before, your first visit walks you through connecting GitHub; see [Connect GitHub](/docs/en/web-quickstart.md#connect-github). Otherwise use one of the [GitHub authentication options](/docs/en/claude-code-on-the-web.md#github-authentication-options).
 
 **2. Install the Claude GitHub App on the project's repositories**
 
@@ -169,7 +171,7 @@ When a cloud thread changes code, this is what it does unless you tell it otherw
 
 * **Branch**: works on a new branch, started from the repository's default branch.
 * **Pull request**: opens one when you ask, and can open one on its own for a bug fix or another concrete change.
-* **After it opens**: watches the pull request with [auto-fix](/docs/en/claude-code-on-the-web#auto-fix-pull-requests) turned on, whether or not auto-fix is on for your other cloud sessions. It pushes fixes when CI fails, addresses review comments, and replies in the thread when checks pass and the pull request is ready for you.
+* **After it opens**: watches the pull request with [auto-fix](/docs/en/claude-code-on-the-web.md#auto-fix-pull-requests) turned on, whether or not auto-fix is on for your other cloud sessions. It pushes fixes when CI fails, addresses review comments, and replies in the thread when checks pass and the pull request is ready for you.
 
 When a thread has pushed a branch or opened a pull request, its card in the conversation can show a button for the next step:
 
@@ -200,7 +202,7 @@ The pane's other tabs are:
 
 * **Library**: the files and folders you added and the files threads produced
 * **Pull requests**: shown once threads have opened any
-* **Scheduled tasks**: the [cloud scheduled tasks](/docs/en/routines) Claude set up from this project
+* **Scheduled tasks**: the [cloud scheduled tasks](/docs/en/routines.md) Claude set up from this project
 
 ### Open a thread when you need control
 
@@ -213,7 +215,7 @@ Click a thread's card in the conversation or its row in **Overview** to open its
 
 ### Choose models and let Claude manage context
 
-Set models and effort in **Project settings > General**. A new project runs Opus everywhere, with high [effort](/docs/en/model-config#adjust-effort-level) for threads and low effort for the conversation:
+Set models and effort in **Project settings > General**. A new project runs Opus everywhere, with high [effort](/docs/en/model-config.md#adjust-effort-level) for threads and low effort for the conversation:
 
 * **Thread model** and **Thread effort** apply to threads. To use a different model for one task, ask for it in the task; for a thread already running, use that thread's model picker.
 * **Coordinator model** and **Coordinator effort** apply to Claude in the project conversation.
@@ -237,13 +239,13 @@ Claude saves preferences like these to [project memory](#give-a-project-standing
 
 ### Unblock a thread waiting on approval
 
-Threads run in [auto mode](/docs/en/permission-modes#eliminate-prompts-with-auto-mode) when the thread's model supports it, so most tool calls run without asking you. When a thread needs your approval, the prompt is inside that thread and the thread waits until you answer it there. Telling Claude in the project conversation to go ahead doesn't reach it.
+Threads run in [auto mode](/docs/en/permission-modes.md#eliminate-prompts-with-auto-mode) when the thread's model supports it, so most tool calls run without asking you. When a thread needs your approval, the prompt is inside that thread and the thread waits until you answer it there. Telling Claude in the project conversation to go ahead doesn't reach it.
 
-Each approval covers that prompt, or the rest of that thread if you choose the broader option. Cloud threads don't read [permission rules](/docs/en/permissions) from a repository's `.claude/settings.json`, so you rely on auto mode and on the approvals you give inside each thread.
+Each approval covers that prompt, or the rest of that thread if you choose the broader option. Cloud threads don't read [permission rules](/docs/en/permissions.md) from a repository's `.claude/settings.json`, so you rely on auto mode and on the approvals you give inside each thread.
 
 ### Run a thread on your own computer
 
-When a task needs something only your computer has, such as a local database, a device emulator, or an API behind your VPN, ask Claude to run the thread for that task on your computer instead of in the cloud. When you ask in the project conversation, the thread is a Claude Code session in a folder on your machine, connected through [Remote Control](/docs/en/remote-control). The project's other threads keep running in the cloud. Compared with a cloud thread, a thread on your computer:
+When a task needs something only your computer has, such as a local database, a device emulator, or an API behind your VPN, ask Claude to run the thread for that task on your computer instead of in the cloud. When you ask in the project conversation, the thread is a Claude Code session in a folder on your machine, connected through [Remote Control](/docs/en/remote-control.md). The project's other threads keep running in the cloud. Compared with a cloud thread, a thread on your computer:
 
 * Works with the files, tools, MCP servers, and Claude Code settings on that machine, including its hooks and permission rules, instead of the project's cloud environment
 * Starts with the project's instructions, but not with its memory files loaded
@@ -254,7 +256,7 @@ When a task needs something only your computer has, such as a local database, a 
 On the computer that has the folder the task needs, make it available through Remote Control in one of two ways. Both need Claude Code v2.1.280 or later on that computer.
 
 * **In the Claude desktop app**: open **Settings > Claude Code**, turn on **Use this computer from your phone and claude.ai**, and add the folder to the list under that switch. Threads can run on this computer while the app is open.
-* **In a terminal**: run `claude remote-control` in the folder and leave it running. In a git repository, add `--spawn worktree` to give each thread there its own [worktree](/docs/en/worktrees) instead of the folder itself.
+* **In a terminal**: run `claude remote-control` in the folder and leave it running. In a git repository, add `--spawn worktree` to give each thread there its own [worktree](/docs/en/worktrees.md) instead of the folder itself.
 
 **2. Ask for the task with Work locally**
 
@@ -264,11 +266,11 @@ In the project conversation, choose **Work locally** from the **+** menu beside 
 
 Claude answers with an **Allow Claude to work in a folder on your device** card. Pick the folder if you connected several. Two threads working in one folder at the same time can overwrite each other's changes, so if the folder is a git repository, you can turn on **Worktree** in the folder's options to give this thread its own worktree instead. Then click **Allow once**.
 
-The thread runs in [auto mode](/docs/en/permission-modes#eliminate-prompts-with-auto-mode), so Claude runs commands and edits files in that folder without asking you each time. If auto mode is unavailable or turned off in that computer's Claude Code, the thread runs without it, and any permission prompt it raises waits for your answer in the thread, as [Unblock a thread waiting on approval](#unblock-a-thread-waiting-on-approval) describes.
+The thread runs in [auto mode](/docs/en/permission-modes.md#eliminate-prompts-with-auto-mode), so Claude runs commands and edits files in that folder without asking you each time. If auto mode is unavailable or turned off in that computer's Claude Code, the thread runs without it, and any permission prompt it raises waits for your answer in the thread, as [Unblock a thread waiting on approval](#unblock-a-thread-waiting-on-approval) describes.
 
 While the thread runs, a laptop icon in its header shows whether your computer is connected. Click it to see which folder the thread is using or to turn the connection off. The thread pauses while that computer is asleep, and stops if the desktop app or `claude remote-control` quits. [Lost contact with your folder](#lost-contact-with-your-folder) covers getting it going again. In the desktop app, turn on **Keep this computer awake for Remote Control** under **Settings > Claude Code** to stop the computer from sleeping on its own.
 
-A project can't run a thread on your computer while [**Require trusted devices**](/docs/en/remote-control#trusted-devices) is on for your account.
+A project can't run a thread on your computer while [**Require trusted devices**](/docs/en/remote-control.md#trusted-devices) is on for your account.
 
 ## Give a project standing context
 
@@ -280,7 +282,7 @@ Project memory, project instructions, and the project's repositories, files, and
 | Project instructions | Text sent to each new thread and to Claude in the project conversation, up to 16,000 characters. [Write project instructions](#write-project-instructions) covers what to put in it | **Project settings > Memory > Project instructions**, or ask Claude to change the instructions |
 | Repositories, files, and environment | The repositories every cloud thread clones, the folders and files it can read under `/mnt/project-files`, and the cloud environment it runs in | Repositories and environment in **Project settings > Environment**, or ask Claude in the conversation to add a repository to the project. [Files and folders](#add-files-and-folders) from **Add** on the **Library** tab in **Overview** |
 
-**Project settings > Memory** lists these files under **Auto memory**, because Claude writes them itself as it works in the project. They're separate from the [auto memory](/docs/en/memory) Claude Code keeps on your machine, even though both use a `MEMORY.md` index. Project memory is also separate from the `CLAUDE.md` files in the project's repositories. Each cloud thread still reads those `CLAUDE.md` files from its clone when it starts, so put instructions about a repository in its `CLAUDE.md` and notes about the project in project memory.
+**Project settings > Memory** lists these files under **Auto memory**, because Claude writes them itself as it works in the project. They're separate from the [auto memory](/docs/en/memory.md) Claude Code keeps on your machine, even though both use a `MEMORY.md` index. Project memory is also separate from the `CLAUDE.md` files in the project's repositories. Each cloud thread still reads those `CLAUDE.md` files from its clone when it starts, so put instructions about a repository in its `CLAUDE.md` and notes about the project in project memory.
 
 ### Write project instructions
 
@@ -333,7 +335,7 @@ Cloud threads load each repository's `CLAUDE.md` instructions but not its skills
 
 | In each repository | In a cloud thread |
 | :- | :- |
-| `CLAUDE.md`, `.claude/CLAUDE.md`, and `.claude/rules/` at the repository root | Loaded from every repository when the thread starts. `CLAUDE.md` files in subdirectories and [path-specific rules](/docs/en/memory#path-specific-rules) aren't loaded |
+| `CLAUDE.md`, `.claude/CLAUDE.md`, and `.claude/rules/` at the repository root | Loaded from every repository when the thread starts. `CLAUDE.md` files in subdirectories and [path-specific rules](/docs/en/memory.md#path-specific-rules) aren't loaded |
 | Skills under `.claude/skills/` | Not loaded. Enable the skill for your claude.ai account instead, as [Get skills, plugins, connectors, and tools into threads](#get-skills-plugins-connectors-and-tools-into-threads) describes |
 | Agents and commands under `.claude/` | Not loaded. To use them, [run the thread on your own computer](#run-a-thread-on-your-own-computer) |
 | MCP servers in `.mcp.json` | Not loaded. Use the connectors on your claude.ai account instead, as [Get skills, plugins, connectors, and tools into threads](#get-skills-plugins-connectors-and-tools-into-threads) describes |
@@ -344,18 +346,18 @@ Cloud threads load each repository's `CLAUDE.md` instructions but not its skills
 
 ### Choose an environment for threads
 
-Every new cloud thread starts in the project's [cloud environment](/docs/en/cloud-environments). The environment sets which domains threads can reach, which environment variables they have, which network secrets are added to their requests, and what the setup script installs before Claude starts. Cloud threads use a default Anthropic-hosted environment until you pick one in **Project settings > Environment**.
+Every new cloud thread starts in the project's [cloud environment](/docs/en/cloud-environments.md). The environment sets which domains threads can reach, which environment variables they have, which network secrets are added to their requests, and what the setup script installs before Claude starts. Cloud threads use a default Anthropic-hosted environment until you pick one in **Project settings > Environment**.
 
-If cloud threads need to reach an internal API or a private package registry, or need a token your machine normally holds, change the environment rather than the project: see [Network access](/docs/en/cloud-environments#network-access), [Add network secrets](/docs/en/cloud-environments#add-network-secrets), and [Setup scripts](/docs/en/cloud-environments#setup-scripts).
+If cloud threads need to reach an internal API or a private package registry, or need a token your machine normally holds, change the environment rather than the project: see [Network access](/docs/en/cloud-environments.md#network-access), [Add network secrets](/docs/en/cloud-environments.md#add-network-secrets), and [Setup scripts](/docs/en/cloud-environments.md#setup-scripts).
 
 ### Get skills, plugins, connectors, and tools into threads
 
-Cloud threads don't have the skills, MCP servers, plugins, and tools installed only on your machine. A thread that Claude runs on your machine through [Remote Control](/docs/en/remote-control) uses what's installed there. To make each of these available to cloud threads:
+Cloud threads don't have the skills, MCP servers, plugins, and tools installed only on your machine. A thread that Claude runs on your machine through [Remote Control](/docs/en/remote-control.md) uses what's installed there. To make each of these available to cloud threads:
 
-* Skills: enable them for your claude.ai account, and cloud threads load the [skills you enable there](/docs/en/skills#skills-in-cowork-and-cloud-sessions), apart from [some threads in a self-hosted environment](/docs/en/self-hosted-environments-configuration#how-each-session’s-config-is-assembled). Skills committed to a repository's `.claude/skills/` don't load in cloud threads.
-* Plugins: add them in **Project settings > Plugins**; they load into each new cloud thread. Plugins that a repository declares in its `.claude/settings.json` [don't load in cloud threads](/docs/en/cloud-environments#what-carries-over-from-your-setup).
-* MCP servers: cloud threads get their MCP tools from the connectors on your claude.ai account, which are MCP servers you connect once at [claude.ai/customize/connectors](https://claude.ai/customize/connectors). Every cloud thread can use all of them with no per-project setup. The project conversation itself has no connectors, so send work that needs one as a task for a cloud thread. [How connectors reach Claude Code](/docs/en/mcp#how-connectors-reach-claude-code) lists the rules for cloud sessions and the settings that turn connectors off.
-* Command-line tools and packages: install them in the environment's [setup script](/docs/en/cloud-environments#setup-scripts).
+* Skills: enable them for your claude.ai account, and cloud threads load the [skills you enable there](/docs/en/skills.md#skills-in-cowork-and-cloud-sessions), apart from [some threads in a self-hosted environment](/docs/en/self-hosted-environments-configuration.md#how-each-session’s-config-is-assembled). Skills committed to a repository's `.claude/skills/` don't load in cloud threads.
+* Plugins: add them in **Project settings > Plugins**; they load into each new cloud thread. Plugins that a repository declares in its `.claude/settings.json` [don't load in cloud threads](/docs/en/cloud-environments.md#what-carries-over-from-your-setup).
+* MCP servers: cloud threads get their MCP tools from the connectors on your claude.ai account, which are MCP servers you connect once at [claude.ai/customize/connectors](https://claude.ai/customize/connectors). Every cloud thread can use all of them with no per-project setup. The project conversation itself has no connectors, so send work that needs one as a task for a cloud thread. [How connectors reach Claude Code](/docs/en/mcp.md#how-connectors-reach-claude-code) lists the rules for cloud sessions and the settings that turn connectors off.
+* Command-line tools and packages: install them in the environment's [setup script](/docs/en/cloud-environments.md#setup-scripts).
 
 To see which connectors a running cloud thread has at claude.ai/code, open the thread and select **Connectors** from the **+** menu beside its message box. Turning a connector off there removes it from that thread and saves that as your account default, so new threads and claude.ai chats start without it until you turn it back on. A cloud thread picks up a connector you add or reconnect after the next message you send it.
 
@@ -368,7 +370,7 @@ Settings save as you change them; a text field you're editing, such as the goal 
 | Setting | Section | What it controls |
 | :- | :- | :- |
 | Name, icon, and goal | General | The project's name and icon in the sidebar, and its one-line goal |
-| Coordinator model and effort | General | The model and [effort level](/docs/en/model-config#adjust-effort-level) for Claude in the project conversation |
+| Coordinator model and effort | General | The model and [effort level](/docs/en/model-config.md#adjust-effort-level) for Claude in the project conversation |
 | Thread model and effort | General | The model and effort level for threads |
 | Project instructions | Memory | [Standing rules](#give-a-project-standing-context) every new thread receives |
 | Project repositories | Environment | The repositories new cloud threads clone |
@@ -389,11 +391,11 @@ All three controls are at the bottom of **Project settings > General**:
 
 ## Usage and cost
 
-Project usage counts against the same [plan limits](/docs/en/errors#youve-hit-your-session-limit) as your other Claude Code sessions, and a project can't spend past those limits on its own.
+Project usage counts against the same [plan limits](/docs/en/errors.md#youve-hit-your-session-limit) as your other Claude Code sessions, and a project can't spend past those limits on its own.
 
 A thread that reaches your plan's limit waits and continues on its own when the limit resets, so work you left running starts using your next usage window without a message from you. [A thread hit the usage limit](#usage-limit-reached) covers what you see, how to stop it, and the one case that doesn't wait.
 
-Work goes past your plan's limits only if you have turned on [usage credits](/docs/en/costs#add-usage-credits-to-your-subscription) for your account. A thread can't turn them on for you.
+Work goes past your plan's limits only if you have turned on [usage credits](/docs/en/costs.md#add-usage-credits-to-your-subscription) for your account. A thread can't turn them on for you.
 
 ### What draws on your plan
 
@@ -409,7 +411,7 @@ A project with no running threads, no watched pull requests, and no new messages
 
 Open **Usage** in **Project settings** to see token use by thread and by model, and how much went to the project conversation. To bring it down:
 
-* A follow-up routed to a thread that has been idle longer than the [cache lifetime](/docs/en/prompt-caching#cache-lifetime), an hour on Pro and Max within your plan's limits, re-reads that thread's whole conversation before doing anything. For new work, asking Claude to start a fresh thread can use less than reviving a large old one.
+* A follow-up routed to a thread that has been idle longer than the [cache lifetime](/docs/en/prompt-caching.md#cache-lifetime), an hour on Pro and Max within your plan's limits, re-reads that thread's whole conversation before doing anything. For new work, asking Claude to start a fresh thread can use less than reviving a large old one.
 * For work that doesn't need the largest model, [choose a smaller model or a lower effort level](#choose-models-and-let-claude-manage-context) for threads, the conversation, or both.
 * Ask Claude in the project conversation to run fewer threads at a time, or to answer small questions itself instead of starting a thread.
 
@@ -418,21 +420,21 @@ Open **Usage** in **Project settings** to see token use by thread and by model, 
 Several Claude Code features let more than one session work at the same time, so running work in parallel is not by itself what a project is for. In a project, Claude starts and tracks the sessions instead of you, and each one starts from the same instructions. This is how each neighboring feature connects to a project:
 
 * **Claude Tag**: [Claude Tag](https://claude.com/docs/claude-tag/overview) is Claude in your team's Slack channels, on Team and Enterprise plans. Anyone in a channel can give it work, everyone in the channel sees and steers it, and it uses connections an admin set up for that channel. A project is yours alone: you're the only one who sends it work or sees its threads, it uses your own GitHub access and connectors, and it's on Pro and Max. [How Claude Tag differs from Cowork and Claude Code](https://claude.com/docs/claude-tag/concepts/how-it-works#how-claude-tag-differs-from-cowork-and-claude-code) has the side-by-side.
-* **Cloud sessions**: every thread is a [cloud session](/docs/en/claude-code-on-the-web) unless you ask Claude to run it on your machine. Either way, Claude starts and tracks it instead of you. A cloud session you started yourself can become a project or feed one through [**Continue as project** or **Move to project**](#start-from-an-existing-cloud-session).
-* **Scheduled tasks**: when you ask for scheduled work in a project, Claude creates a [cloud scheduled task](/docs/en/routines) that runs as threads in that project and appears on its **Scheduled tasks** tab. Scheduled tasks you create outside a project keep working on their own.
-* **Remote Control**: [Remote Control](/docs/en/remote-control) connects claude.ai to a Claude Code session running on your machine. When you ask Claude in a project to run a thread on your computer, the project [uses Remote Control to do it](#run-a-thread-on-your-own-computer).
-* **Local sessions and agent view**: a session you start yourself in your terminal, IDE, or the desktop app's local environment can't be added to a project. [Agent view](/docs/en/agent-view) is a screen for tracking several local sessions side by side, and you still start each one and give it its task yourself.
-* **Worktrees**: a [worktree](/docs/en/worktrees) gives each local session its own working copy of a repository. Cloud threads don't need them: each clones its repositories into its own cloud sandbox and works on its own branch.
-* **Agent teams**: an [agent team](/docs/en/agent-teams) is one session that starts teammate sessions for a single task, on your machine or inside a cloud session, and ends with that task.
-* **Subagents**: a [subagent](/docs/en/sub-agents) runs inside one session, does a side task in its own context window, and returns a summary to that session. A project's threads are whole sessions that Claude starts and that report back to the project conversation, and a thread can still use subagents for its own side tasks.
+* **Cloud sessions**: every thread is a [cloud session](/docs/en/claude-code-on-the-web.md) unless you ask Claude to run it on your machine. Either way, Claude starts and tracks it instead of you. You can also bring the work of a cloud session you started yourself into a project: choose [**Move to project**](#start-from-an-existing-cloud-session) in that session's sidebar menu.
+* **Scheduled tasks**: when you ask for scheduled work in a project, Claude creates a [cloud scheduled task](/docs/en/routines.md) that runs as threads in that project and appears on its **Scheduled tasks** tab. Scheduled tasks you create outside a project keep working on their own.
+* **Remote Control**: [Remote Control](/docs/en/remote-control.md) connects claude.ai to a Claude Code session running on your machine. When you ask Claude in a project to run a thread on your computer, the project [uses Remote Control to do it](#run-a-thread-on-your-own-computer).
+* **Local sessions and agent view**: a session you start yourself in your terminal, IDE, or the desktop app's local environment can't be added to a project. [Agent view](/docs/en/agent-view.md) is a screen for tracking several local sessions side by side, and you still start each one and give it its task yourself.
+* **Worktrees**: a [worktree](/docs/en/worktrees.md) gives each local session its own working copy of a repository. Cloud threads don't need them: each clones its repositories into its own cloud sandbox and works on its own branch.
+* **Agent teams**: an [agent team](/docs/en/agent-teams.md) is one session that starts teammate sessions for a single task, on your machine or inside a cloud session, and ends with that task.
+* **Subagents**: a [subagent](/docs/en/sub-agents.md) runs inside one session, does a side task in its own context window, and returns a summary to that session. A project's threads are whole sessions that Claude starts and that report back to the project conversation, and a thread can still use subagents for its own side tasks.
 * **Projects in claude.ai chat and Cowork**: the [earlier Projects experience](https://support.claude.com/en/articles/9517075-what-are-projects), which groups conversations and reference files without threads or a coordinator. Those projects keep working as they do today until the redesigned experience reaches them.
 
-[Run agents in parallel](/docs/en/agents) compares these options side by side.
+[Run agents in parallel](/docs/en/agents.md) compares these options side by side.
 
 ## Limitations
 
 * Projects are available at claude.ai/code, in the desktop app, and in the Claude mobile app, not in the terminal CLI, the VS Code extension, or the JetBrains plugin, and not through Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry.
-* Project threads are [cloud sessions](/docs/en/claude-code-on-the-web), or sessions on your own machine through [Remote Control](/docs/en/remote-control), with Anthropic as the model provider in both cases. [Security](/docs/en/security) and [Data usage](/docs/en/data-usage) cover how cloud sessions are isolated and what's retained, and [Connection and security](/docs/en/remote-control#connection-and-security) covers how a thread on your machine connects and what's stored.
+* Project threads are [cloud sessions](/docs/en/claude-code-on-the-web.md), or sessions on your own machine through [Remote Control](/docs/en/remote-control.md), with Anthropic as the model provider in both cases. [Security](/docs/en/security.md) and [Data usage](/docs/en/data-usage.md) cover how cloud sessions are isolated and what's retained, and [Connection and security](/docs/en/remote-control.md#connection-and-security) covers how a thread on your machine connects and what's stored.
 * You can't add a session you started yourself on your machine to a project. A project reaches your machine only by [running a thread there through Remote Control](#run-a-thread-on-your-own-computer), and that section lists what it needs.
 * A cloud thread's sandbox pauses between turns and resumes when the thread continues. If the sandbox can't be resumed, the thread continues from a fresh clone, so uncommitted changes can be lost. On long tasks, ask Claude to commit and push work in progress.
 * A project belongs to one user. You can't share a project or its threads with another user, and thread transcripts don't have the share option other cloud sessions have. There are no organization-level controls for projects during the beta.
@@ -444,7 +446,7 @@ For the GitHub setup prompts in the **New project** dialog, see [Set up GitHub a
 
 ### A thread looks stuck
 
-Claude doesn't post each step a thread takes, so a thread that shows as running with no new messages in the project conversation is usually still working. A new cloud thread also provisions its [cloud environment](/docs/en/cloud-environments) before Claude begins, so its first update takes a moment. Open the thread to read its transcript. If the thread is waiting on a permission prompt, answer it there.
+Claude doesn't post each step a thread takes, so a thread that shows as running with no new messages in the project conversation is usually still working. A new cloud thread also provisions its [cloud environment](/docs/en/cloud-environments.md) before Claude begins, so its first update takes a moment. Open the thread to read its transcript. If the thread is waiting on a permission prompt, answer it there.
 
 ### Threads guessed or stalled instead of asking
 
@@ -472,11 +474,11 @@ To fix any of them, click the button the message offers, such as **Install GitHu
 
 When a thread or the project conversation reaches your plan's five-hour or weekly limit, it keeps retrying on its own and continues when the limit resets. A thread that a scheduled task started doesn't wait: its turn stops with a limit error, and you send it a message after the limit resets.
 
-While a thread waits, it shows **Service is busy** with "Claude is still retrying and will continue automatically." You don't need to do anything for the work to continue. If you'd rather it not use your next usage window, click **Stop** in the thread, or [pause the project](#pause-archive-or-delete-a-project) to hold every thread. [Usage limit errors](/docs/en/errors#youve-hit-your-session-limit) explain the limits and when they reset.
+While a thread waits, it shows **Service is busy** with "Claude is still retrying and will continue automatically." You don't need to do anything for the work to continue. If you'd rather it not use your next usage window, click **Stop** in the thread, or [pause the project](#pause-archive-or-delete-a-project) to hold every thread. [Usage limit errors](/docs/en/errors.md#youve-hit-your-session-limit) explain the limits and when they reset.
 
 ### Additional usage credits are required
 
-A thread or the project conversation made a request your plan covers only with usage credits, such as one to a model or context size your plan doesn't include, and usage credits aren't turned on for your account. [Add usage credits to your subscription](/docs/en/costs#add-usage-credits-to-your-subscription) covers who can turn them on or buy them on each plan. Once credits are available, send another message to retry.
+A thread or the project conversation made a request your plan covers only with usage credits, such as one to a model or context size your plan doesn't include, and usage credits aren't turned on for your account. [Add usage credits to your subscription](/docs/en/costs.md#add-usage-credits-to-your-subscription) covers who can turn them on or buy them on each plan. Once credits are available, send another message to retry.
 
 ### Lost contact with your folder
 
@@ -492,7 +494,7 @@ These messages name their own cause. The table gives the next step for each.
 | "Unable to connect to repository" with "Claude couldn't access your repository or environment" | Your GitHub account needs push access to the repository, and the environment must still exist. Check both in **Project settings > Environment**, then retry |
 | "Couldn't show the setup proposal" | The app you have open is older than the **Setup recommendations** Claude sent. Refresh the page or restart the desktop app, or ask Claude to propose the setup again |
 | "The project's environment was removed" | Choose a different environment in **Project settings > Environment**; the change applies to new threads |
-| "Setup script failed" | Click **Edit setup script** on the error, fix the script in the environment, then send another message. [Setup script failed](/docs/en/web-quickstart#setup-script-failed) lists common causes |
+| "Setup script failed" | Click **Edit setup script** on the error, fix the script in the environment, then send another message. [Setup script failed](/docs/en/web-quickstart.md#setup-script-failed) lists common causes |
 | "Claude ran out of context on this turn" | The thread filled its context window. If the message says the thread continues in a fresh session, it carries on by itself; otherwise ask Claude in the project conversation to start a new thread for the remaining work |
 | "Couldn't start in" followed by your folder's name | You allowed a thread to run on your computer, but the session couldn't start there. When a line under the message gives the reason, fix that, then ask Claude to run the task again |
 | "Claude is out of date on your device" | The computer you picked to run a thread has a Claude Code version older than v2.1.280. Update Claude Code there, or update the desktop app if that's what connects the folder, then ask Claude to run the task again |
@@ -500,8 +502,8 @@ These messages name their own cause. The table gives the next step for each.
 
 ## Related resources
 
-* [Use Claude Code in the cloud](/docs/en/claude-code-on-the-web): how the cloud sessions behind each cloud thread work, including GitHub access options and auto-fix on pull requests
-* [Configure cloud environments](/docs/en/cloud-environments): change what cloud threads can reach on the network, give them environment variables and network secrets, and install tools with a setup script
-* [Automate work with scheduled tasks](/docs/en/routines): schedules, triggers, and management for scheduled tasks, including the ones Claude creates from a project
-* [Manage multiple agents with agent view](/docs/en/agent-view): run and track several sessions on your own machine when the work needs tools or services only your machine can reach
+* [Use Claude Code in the cloud](/docs/en/claude-code-on-the-web.md): how the cloud sessions behind each cloud thread work, including GitHub access options and auto-fix on pull requests
+* [Configure cloud environments](/docs/en/cloud-environments.md): change what cloud threads can reach on the network, give them environment variables and network secrets, and install tools with a setup script
+* [Automate work with scheduled tasks](/docs/en/routines.md): schedules, triggers, and management for scheduled tasks, including the ones Claude creates from a project
+* [Manage multiple agents with agent view](/docs/en/agent-view.md): run and track several sessions on your own machine when the work needs tools or services only your machine can reach
 * [Projects redesigned: from folder to conversation](https://claude.com/blog/projects-redesigned): the launch announcement, with the thinking behind making a project a conversation with Claude

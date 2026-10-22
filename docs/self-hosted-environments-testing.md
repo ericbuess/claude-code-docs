@@ -8,15 +8,15 @@
 
 > [!NOTE]
 >
-> Self-hosted environments are in public beta on Team and Enterprise plans; [Availability and limitations](/docs/en/self-hosted-environments#availability-and-limitations) covers the enablement path. This page is the CI test recipe; see the [quickstart](/docs/en/self-hosted-environments-quickstart) for setup and [Deploy to production](/docs/en/self-hosted-environments-deploy) for the fleet recipes.
+> Self-hosted environments are in public beta on Team and Enterprise plans; [Availability and limitations](/docs/en/self-hosted-environments#availability-and-limitations) covers the enablement path. This page is the CI test recipe; see the [quickstart](/docs/en/self-hosted-environments-quickstart.md) for setup and [Deploy to production](/docs/en/self-hosted-environments-deploy.md) for the fleet recipes.
 
-In a [self-hosted environment](/docs/en/self-hosted-environments), Claude Code [cloud sessions](/docs/en/claude-code-on-the-web) run on a runner image you build and maintain. Before rolling a new image to your production environment, drive a full session against a test environment from a script: create a session, read Claude's reply, send a follow-up, and read that reply too. This is the shape of a CI smoke test that verifies your runner image, git access, and any custom tools before you promote a change.
+In a [self-hosted environment](/docs/en/self-hosted-environments), Claude Code [cloud sessions](/docs/en/claude-code-on-the-web.md) run on a runner image you build and maintain. Before rolling a new image to your production environment, drive a full session against a test environment from a script: create a session, read Claude's reply, send a follow-up, and read that reply too. This is the shape of a CI smoke test that verifies your runner image, git access, and any custom tools before you promote a change.
 
-This recipe assumes you've already [set up an environment and a runner](/docs/en/self-hosted-environments-quickstart#set-up-an-environment-and-runner), and that your CI job starts the runner process on the same host as the test script, the natural setup for testing a new runner image. A Stop hook you install on the runner writes each turn's final reply to a local file, and the script reads it from there, so the only calls to the Anthropic API are the two dispatches themselves. If your test runners are on separate infrastructure, see [Remote test runners](#remote-test-runners).
+This recipe assumes you've already [set up an environment and a runner](/docs/en/self-hosted-environments-quickstart.md#set-up-an-environment-and-runner), and that your CI job starts the runner process on the same host as the test script, the natural setup for testing a new runner image. A Stop hook you install on the runner writes each turn's final reply to a local file, and the script reads it from there, so the only calls to the Anthropic API are the two dispatches themselves. If your test runners are on separate infrastructure, see [Remote test runners](#remote-test-runners).
 
 ## Install the capture hook on your test runner
 
-The read-back works through a Claude Code [Stop hook](/docs/en/hooks#stop): when Claude finishes a turn, the hook receives the final assistant message as `last_assistant_message` in its stdin JSON and appends it to `$E2E_REPLY_DIR/<session_id>.txt`. Install it the same way as the [commit-nudge Stop hook](/docs/en/self-hosted-environments-configuration#prompt-sessions-to-push-their-work), on the runner host's `~/.claude/`, which the runner seeds into every session.
+The read-back works through a Claude Code [Stop hook](/docs/en/hooks.md#stop): when Claude finishes a turn, the hook receives the final assistant message as `last_assistant_message` in its stdin JSON and appends it to `$E2E_REPLY_DIR/<session_id>.txt`. Install it the same way as the [commit-nudge Stop hook](/docs/en/self-hosted-environments-configuration.md#prompt-sessions-to-push-their-work), on the runner host's `~/.claude/`, which the runner seeds into every session.
 
 ### Save the hook files
 
@@ -84,7 +84,7 @@ The `--environment` and `--ref` dispatch flags require Claude Code v2.1.224 or l
    * **Session creation failed**: the line `{"ok":false,"error":"..."}`, and the command exits with status 1
    * **Some earlier errors**, such as cloud sessions being unavailable for your organization or a missing prompt: the error on stderr with no JSON line, and the command exits with status 1
 2. Waits for the reply to appear in `$E2E_REPLY_DIR/<session_id>.txt`, written by the Stop hook on the runner once the turn completes.
-3. Sends a follow-up with `claude -p "<message>" --cloud <session_id> --output-format json` (see [Send a follow-up message to a running session](/docs/en/claude-code-on-the-web#send-follow-ups-from-the-cli)), which posts a user event to the existing session and exits.
+3. Sends a follow-up with `claude -p "<message>" --cloud <session_id> --output-format json` (see [Send a follow-up message to a running session](/docs/en/claude-code-on-the-web.md#send-follow-ups-from-the-cli)), which posts a user event to the existing session and exits.
 4. Waits for the follow-up's reply the same way as step 2.
 
 ### `--environment` dispatch behavior
@@ -198,13 +198,13 @@ Both `claude -p ... --environment` and `claude -p ... --cloud` authenticate with
 
 ### Long-lived CI host
 
-Run `claude auth login` once interactively on the machine that executes the script, using a dedicated user account for automation. Claude Code stores the token in the OS keychain on macOS, or in `~/.claude/.credentials.json` on Linux and Windows. On a macOS host whose Keychain can't be written, as is typical in an SSH session where the login Keychain stays locked, Claude Code stores the token in `~/.claude/.credentials.json` there too. See [Credential management](/docs/en/authentication#credential-management).
+Run `claude auth login` once interactively on the machine that executes the script, using a dedicated user account for automation. Claude Code stores the token in the OS keychain on macOS, or in `~/.claude/.credentials.json` on Linux and Windows. On a macOS host whose Keychain can't be written, as is typical in an SSH session where the login Keychain stays locked, Claude Code stores the token in `~/.claude/.credentials.json` there too. See [Credential management](/docs/en/authentication.md#credential-management).
 
 The CLI refreshes the short-lived access token automatically on each invocation, but the underlying refresh-token grant is capped at 30 days from the initial login, so re-run `claude auth login` interactively on that host every 30 days.
 
 ### Ephemeral CI runners
 
-There is no long-lived CI token for this today. The scope that grants cloud-session control, `user:sessions:claude_code`, is capped server-side at 30 days, so `claude setup-token`, which mints a one-year inference-only token, doesn't cover it. The [environment secret](/docs/en/self-hosted-environments-quickstart#set-up-an-environment-and-runner) isn't accepted either, since it only authorizes a runner to register with the environment, not to create sessions.
+There is no long-lived CI token for this today. The scope that grants cloud-session control, `user:sessions:claude_code`, is capped server-side at 30 days, so `claude setup-token`, which mints a one-year inference-only token, doesn't cover it. The [environment secret](/docs/en/self-hosted-environments-quickstart.md#set-up-an-environment-and-runner) isn't accepted either, since it only authorizes a runner to register with the environment, not to create sessions.
 
 To provision a stored login onto an ephemeral runner, set [`CLAUDE_CODE_OAUTH_REFRESH_TOKEN` and `CLAUDE_CODE_OAUTH_SCOPES`](/docs/en/env-vars#variables) so `claude auth login` exchanges the token without a browser; the same 30-day cap applies to the refresh grant. Contact your Anthropic account team if you need a machine-identity path that isn't bound to a human account.
 

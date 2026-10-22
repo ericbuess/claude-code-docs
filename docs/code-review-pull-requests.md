@@ -8,7 +8,7 @@
 
 Code Review is a managed service that an Owner in your Claude organization turns on for a set of GitHub repositories. Once it's on, Claude reviews pull requests in those repositories and posts its findings as inline comments, a summary in the review body, and a check run named **Claude Code Review**. A review never approves or blocks your pull request, and the check run never concludes as a failure.
 
-An Owner controls [when reviews run](/docs/en/code-review-setup#set-when-reviews-run) and [how thorough they are](/docs/en/code-review-setup#set-the-default-review-level) for each repository.
+An Owner controls [when reviews run](/docs/en/code-review-setup.md#set-when-reviews-run) and [how thorough they are](/docs/en/code-review-setup.md#set-the-default-review-level) for each repository.
 
 > [!NOTE]
 >
@@ -26,7 +26,7 @@ Claude posts each finding as an inline comment on the lines concerned and marks 
 
 When the review recorded its reasoning, the finding has a collapsed **Why this was flagged** section. Expand it to read why Claude flagged the issue and how it verified the problem.
 
-To change what Claude flags in your repository or how it ranks severity, see [Customize Code Review](/docs/en/code-review-customize).
+To change what Claude flags in your repository or how it ranks severity, see [Customize Code Review](/docs/en/code-review-customize.md).
 
 ## Respond to findings
 
@@ -51,7 +51,21 @@ The **Details** link on the **Claude Code Review** check run opens the findings 
 
 A finding that has a line but wasn't posted as an inline comment appears as an annotation in the **Files changed** tab, on the lines concerned. Important findings show in red, nits in yellow, and pre-existing bugs in gray.
 
-The check run concludes as neutral, or as skipped when an automatic review didn't run because a push changed no files. It never concludes as a failure, so a finished review doesn't fail a required check. If you don't see findings, or a review didn't run, see [Troubleshoot Code Review](/docs/en/code-review-troubleshooting).
+The check run concludes as neutral, or as skipped after some pushes that change no files and [keep the earlier result](#when-a-push-keeps-the-earlier-result). It never concludes as a failure, so a finished review doesn't fail a required check. If you don't see findings, or a review didn't run, see [Troubleshoot Code Review](/docs/en/code-review-troubleshooting.md).
+
+### When a push keeps the earlier result
+
+If the check run has one of these titles after you push, Code Review kept the result of an earlier review instead of starting a new one:
+
+* **Code review skipped — no new changes**: no [Important](#severity-levels) finding from the earlier review is still open, so you don't need a new review
+* **Code review not repeated — earlier findings still open**: to start a new review, push a fix for an open Important finding, or [resolve its thread](#respond-to-findings) and push again
+
+On github.com, Code Review can keep a result when both of these hold:
+
+* The pull request still adds and removes the same lines, as after an empty commit, a clean merge of the base branch, or a clean rebase
+* Nobody has resolved an Important finding's thread since that review
+
+To get a review without a code change, comment [`@claude review`](#comment-commands) or click **Re-run** on the check run.
 
 ### Read the result from a script
 
@@ -71,6 +85,8 @@ From your shell, list the commit's check runs and take the `id` of the `Claude C
 gh api repos/OWNER/REPO/commits/<commit-sha>/check-runs --jq '.check_runs[] | {id, name}'
 ```
 
+If the commit has had more than one `Claude Code Review` run, such as after a **Re-run**, GitHub lists only the newest.
+
 **2. Read the severity counts**
 
 Read the counts from the check run's `output.text` field, which holds the Details text. Replace `CHECK_RUN_ID` with the ID:
@@ -82,12 +98,16 @@ gh api repos/OWNER/REPO/check-runs/CHECK_RUN_ID --jq '
   // error("no severity line")'
 ```
 
-This prints a JSON object with a count per severity and its keys in alphabetical order, for example `{"nit": 1, "normal": 2, "pre_existing": 0}`. The counts include findings from earlier reviews of the pull request whose threads are still open.
+This prints a JSON object with a count per severity and its keys in alphabetical order, for example `{"nit": 1, "normal": 2, "pre_existing": 0}`. Except on a check run that [kept an earlier result](#when-a-push-keeps-the-earlier-result), the counts include findings from earlier reviews of the pull request whose threads are still open.
+
+Under the title `Code review skipped — no new changes`, the counts leave out nits and pre-existing findings from earlier reviews that are still open. No Important finding from the earlier review is still open then.
 
 **3. Act on the result**
 
-Have your script handle these cases:
+Have your script handle these cases in order:
 
+* **The title starts with `Code review not repeated`**: Code Review [kept an earlier result](#when-a-push-keeps-the-earlier-result) whose Important findings are still open, and the check run has no severity line. Read the title before the counts, with `gh api repos/OWNER/REPO/check-runs/CHECK_RUN_ID --jq .output.title`. Fail the job if you want to gate the merge.
+* **The title ends with `no new changes`**: let the job pass without reading the counts
 * **`normal` is above zero**: fail the job if you want to gate the merge. The `normal` key holds the count of Important findings, so Claude found at least one bug worth fixing before merge. To print only that count, add `| .normal` before the closing single quote.
 * **The line is missing**: the command prints an error that contains `no severity line` instead of counts, and exits with a non-zero status. Treat that as no verdict rather than as zero findings. A check run for a review that failed, timed out, was canceled, or was superseded by a newer one has no such line, and some completed reviews have none either.
 
@@ -97,9 +117,9 @@ If your pull request is a draft or comes from a fork, automatic reviews skip it,
 
 * **Open it or mark it ready**: in a repository set to **Once after PR creation** or **After every push**, a review starts when you open or reopen the pull request, or mark a draft ready for review.
 * **Comment a command**: post [`@claude review`](#comment-commands) on the pull request.
-* **Push a commit**: a push starts a review in a repository set to **After every push**, or on a pull request you subscribed with `@claude review always`.
-* **Click Re-run**: after a review fails or times out on a pull request that isn't from a fork, [run it again](/docs/en/code-review-troubleshooting#retrigger-a-failed-or-timed-out-review) from the check run.
-* **Wait for the automatic retry**: a review whose session was interrupted is retried once automatically. The [check run's summary](/docs/en/code-review-troubleshooting#retrigger-a-failed-or-timed-out-review) says when that's happening.
+* **Push a commit**: a push starts a review in a repository set to **After every push**, or on a pull request you subscribed with `@claude review always`. If your pull request still adds and removes the same lines after the push, Code Review can [keep the earlier result](#when-a-push-keeps-the-earlier-result) instead.
+* **Click Re-run**: after a review fails or times out on a pull request that isn't from a fork, [run it again](/docs/en/code-review-troubleshooting.md#retrigger-a-failed-or-timed-out-review) from the check run. On a pull request that isn't from a fork, you can also click **Re-run** after a push that [kept the earlier result](#when-a-push-keeps-the-earlier-result).
+* **Wait for the automatic retry**: a review whose session was interrupted is retried once automatically. The [check run's summary](/docs/en/code-review-troubleshooting.md#retrigger-a-failed-or-timed-out-review) says when that's happening.
 
 ### Comment commands
 
@@ -108,7 +128,7 @@ Post one of these commands as a comment on the pull request:
 | Command | What it does | When to use it |
 | :- | :- | :- |
 | `@claude review` | Starts a single review without subscribing the PR to future pushes | You want one review now, such as on a pull request in a repository set to **Manual**, or another review right away in the other modes |
-| `@claude review always` | Starts a review and subscribes the PR to push-triggered reviews going forward | You want every subsequent push to start a fresh review, such as on a high-priority PR in a repository set to **Manual** |
+| `@claude review always` | Starts a review and subscribes the PR to push-triggered reviews going forward | You want subsequent pushes to start reviews, such as on a high-priority PR in a repository set to **Manual** |
 | `@claude review once` | Same as `@claude review`: starts a single review without subscribing | The same cases as `@claude review` |
 | `@claude review stop` | Ends the PR's subscription to push-triggered reviews, without starting a review or canceling one that's already running. Claude replies with a comment instead of a check run. | You subscribed a PR with `@claude review always` in a repository set to **Manual** or **Once after PR creation**, and no longer want each push to start a review |
 | `@claude review off` or `@claude review pause` | Same as `@claude review stop` | The same cases as `@claude review stop` |
@@ -147,13 +167,13 @@ On a pull request from a fork, `@claude review always` works too, but doesn't su
 
 ### Use Code Review alongside the Claude Code GitHub Action
 
-If the repository also runs the [Claude Code GitHub Action](/docs/en/github-actions) in interactive mode with its default `@claude` trigger phrase, an `@claude review` comment starts the Action as well. To keep the two apart, set the Action's `trigger_phrase` input to a different phrase.
+If the repository also runs the [Claude Code GitHub Action](/docs/en/github-actions.md) in interactive mode with its default `@claude` trigger phrase, an `@claude review` comment starts the Action as well. To keep the two apart, set the Action's `trigger_phrase` input to a different phrase.
 
 ## Related resources
 
-* [Troubleshoot Code Review](/docs/en/code-review-troubleshooting): a review that didn't start, failed, or was skipped for budget
-* [Code Review](/docs/en/code-review): what the service is and how a review runs
-* [Set up Code Review](/docs/en/code-review-setup): for Owners, turn on Code Review and choose when reviews run and at what level
-* [Customize Code Review](/docs/en/code-review-customize): change what Claude flags with `REVIEW.md` and `CLAUDE.md`
-* [Code Review costs and usage](/docs/en/code-review-costs): how reviews are billed and where the spend limit is set
+* [Troubleshoot Code Review](/docs/en/code-review-troubleshooting.md): a review that didn't start, failed, or was skipped for budget
+* [Code Review](/docs/en/code-review.md): what the service is and how a review runs
+* [Set up Code Review](/docs/en/code-review-setup.md): for Owners, turn on Code Review and choose when reviews run and at what level
+* [Customize Code Review](/docs/en/code-review-customize.md): change what Claude flags with `REVIEW.md` and `CLAUDE.md`
+* [Code Review costs and usage](/docs/en/code-review-costs.md): how reviews are billed and where the spend limit is set
 * [Review locally with `/code-review`](/docs/en/code-review-local): run a review of your branch from a Claude Code session

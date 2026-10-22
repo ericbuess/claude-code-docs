@@ -6,7 +6,7 @@
 
 > Manage every Claude Code session from one screen with agent view, keep Claude working toward a goal until a condition holds, and run fast mode on Opus 4.7 by default.
 
-Releases [v2.1.139 → v2.1.142](/docs/en/changelog#2-1-139)
+Releases [v2.1.139 → v2.1.142](/docs/en/changelog.md#2-1-139)
 3 features · May 11–15
 
 Agent view
@@ -22,7 +22,7 @@ Open the dashboard from your shell:
 claude agents
 ```
 
-[Agent view](/docs/en/agent-view)
+[Agent view](/docs/en/agent-view.md)
 
 /goal
 v2.1.139
@@ -37,7 +37,7 @@ Set a goal and let Claude run until it holds:
 > /goal all tests in test/auth pass and the lint step is clean
 ```
 
-[Goals](/docs/en/goal)
+[Goals](/docs/en/goal.md)
 
 Fast mode on Opus 4.7
 research preview
@@ -52,10 +52,10 @@ Toggle fast mode, now running on Opus 4.7:
 > /fast
 ```
 
-[Fast mode on Opus 4.7](/docs/en/fast-mode#understand-the-cost-tradeoff)
+[Fast mode on Opus 4.7](/docs/en/fast-mode.md#understand-the-cost-tradeoff)
 
 Other wins
 
 `claude agents` gained dispatch flags (`--add-dir`, `--settings`, `--mcp-config`, `--plugin-dir`, `--permission-mode`, `--model`, `--effort`, `--dangerously-skip-permissions`) to configure background sessions, and `claude agents --cwd <path>` scopes the session list to a directoryNew hook `args: string[]` exec form spawns the command directly without a shell, so path placeholders never need quotingNew `continueOnBlock` config option for `PostToolUse` hooks feeds the hook's rejection reason back to Claude and continues the turn instead of ending itNew `terminalSequence` field in hook JSON output lets hooks emit desktop notifications, window titles, and bells without a controlling terminalThe Rewind menu added "Summarize up to here" to compress earlier context while keeping recent turns intactRemote Control, `/schedule`, claude.ai MCP connectors, and notification preferences are now disabled when `ANTHROPIC_API_KEY`, `apiKeyHelper`, or `ANTHROPIC_AUTH_TOKEN` is set, even alongside a claude.ai login; unset the API key to use these featuresMCP stdio servers now receive `CLAUDE_PROJECT_DIR` in their environment, matching hooks, and plugin configs can reference `${CLAUDE_PROJECT_DIR}` in commands`claude plugin details <name>` shows a plugin's component inventory and projected per-session token cost, and the `/plugin` details pane now also lists the LSP servers a plugin providesPlugins with a root-level `SKILL.md` and no `skills/` subdirectory are now surfaced as a skill`/feedback` can now include recent sessions from the last 24 hours or 7 days for issues spanning more than the current sessionAgent tool `subagent_type` now matches case- and separator-insensitively, so `"Code Reviewer"` resolves to `code-reviewer`
 
-[Full changelog for v2.1.139–v2.1.142 →](/docs/en/changelog#2-1-139)
+[Full changelog for v2.1.139–v2.1.142 →](/docs/en/changelog.md#2-1-139)

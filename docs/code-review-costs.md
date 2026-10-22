@@ -6,9 +6,9 @@
 
 > Estimate and cap what your organization spends on Claude Code Review: how reviews are billed through usage credits, what drives cost, and where to track usage.
 
-[Code Review](/docs/en/code-review) has no flat per-review price. What you spend depends on the cost of each review and on how many reviews run:
+[Code Review](/docs/en/code-review.md) has no flat per-review price. What you spend depends on the cost of each review and on how many reviews run:
 
-* **Cost of each review**: scales with the [review level](/docs/en/code-review-setup#set-the-default-review-level), the size of the change, the complexity of the surrounding code, and how many candidate issues need verification
+* **Cost of each review**: scales with the [review level](/docs/en/code-review-setup.md#set-the-default-review-level), the size of the change, the complexity of the surrounding code, and how many candidate issues need verification
 * **Number of reviews**: set by [how often reviews run](#how-often-reviews-run) in each repository
 
 ## Pricing
@@ -17,7 +17,7 @@ Code Review is billed on token usage through [usage credits](https://support.cla
 
 ### How often reviews run
 
-A repository you add from the admin page starts at **After every push**, which runs the most reviews. Each repository's [**Review runs** setting](/docs/en/code-review-setup#set-when-reviews-run) decides how many reviews a pull request gets:
+A repository you add from the admin page starts at **After every push**, which runs the most reviews. Each repository's [**Review runs** setting](/docs/en/code-review-setup.md#set-when-reviews-run) decides how many reviews a pull request gets:
 
 * **Once after PR creation**: a review runs when the pull request is opened, reopened, or marked ready for review
 * **After every push**: runs on each push, multiplying cost by the number of pushes
@@ -25,10 +25,10 @@ A repository you add from the admin page starts at **After every push**, which r
 
 Comment commands, drafts, and pull requests from forks adjust those counts:
 
-* **`@claude review always` in Once after PR creation or Manual mode**: [opts the PR into push-triggered reviews](/docs/en/code-review-pull-requests#comment-commands), so additional cost accrues per push after that comment
+* **`@claude review always` in Once after PR creation or Manual mode**: [opts the PR into push-triggered reviews](/docs/en/code-review-pull-requests.md#comment-commands), so additional cost accrues per push after that comment
 * **`@claude review always` in After every push mode**: pushes already trigger reviews, so the subscription doesn't change per-push cost
 * **`@claude review`**: runs a single review without subscribing to future pushes
-* **Drafts and pull requests from forks**: [automatic reviews skip both](/docs/en/code-review-pull-requests#review-drafts-and-pull-requests-from-forks), so pushes to them don't add reviews
+* **Drafts and pull requests from forks**: [automatic reviews skip both](/docs/en/code-review-pull-requests.md#review-drafts-and-pull-requests-from-forks), so pushes to them don't add reviews
 
 ## Estimate your spend
 
@@ -51,7 +51,7 @@ Code Review skips reviews when any of these runs out:
 * **Organization spend limit**: your organization's overall monthly spend limit for usage credits. Raise it on the same page.
 * **Usage credits balance**: your organization's balance of usage credits. Add credits on the same page.
 
-Code Review also skips reviews once what's left is less than the expected cost of one review. When a review is skipped, developers see a [comment on the PR](/docs/en/code-review-troubleshooting#review-didn’t-run-and-the-pr-shows-a-budget-message) that names the cause and links to the usage settings.
+Code Review also skips reviews once what's left is less than the expected cost of one review. When a review is skipped, developers see a [comment on the PR](/docs/en/code-review-troubleshooting.md#review-didn’t-run-and-the-pr-shows-a-budget-message) that names the cause and links to the usage settings.
 
 To monitor spend, use the [analytics dashboard](#view-usage).
 
@@ -70,7 +70,7 @@ The Code Review cost card shows an amount only when the current month is selecte
 
 ## Related resources
 
-* [Set up Code Review](/docs/en/code-review-setup): where to choose the review level and when reviews run in each repository
-* [Read and request reviews on a pull request](/docs/en/code-review-pull-requests): the comment commands, pull requests from forks, and the budget message developers see when a review is skipped
-* [Code Review](/docs/en/code-review): what a review checks and what it posts
-* [Manage costs effectively](/docs/en/costs): spend controls and usage tracking for the rest of Claude Code
+* [Set up Code Review](/docs/en/code-review-setup.md): where to choose the review level and when reviews run in each repository
+* [Read and request reviews on a pull request](/docs/en/code-review-pull-requests.md): the comment commands, pull requests from forks, and the budget message developers see when a review is skipped
+* [Code Review](/docs/en/code-review.md): what a review checks and what it posts
+* [Manage costs effectively](/docs/en/costs.md): spend controls and usage tracking for the rest of Claude Code

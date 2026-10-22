@@ -8,21 +8,21 @@
 
 Speak your prompts instead of typing them in the Claude Code CLI. Your speech is transcribed live into the prompt input, so you can mix voice and typing in the same message. Enable dictation with `/voice`, then either hold a key while you speak or tap once to start and again to send.
 
-In [hold mode](#hold-to-record), dictation also works in [agent view](/docs/en/agent-view#peek-and-reply). Hold your push-to-talk key while the dispatch input or a peek-panel reply is focused to dictate to a background session.
+In [hold mode](#hold-to-record), dictation also works in [agent view](/docs/en/agent-view.md#peek-and-reply). Hold your push-to-talk key while the dispatch input or a peek-panel reply is focused to dictate to a background session.
 
 ## Requirements
 
 Voice dictation streams your recorded audio to Anthropic's servers for transcription. Audio is not processed locally. It needs all of the following:
 
 * **A Claude.ai account**: the speech-to-text service is only available when you authenticate with one, and is not available when Claude Code is configured to use an Anthropic API key directly, Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry.
-* **A local microphone**: voice dictation does not work in [cloud sessions](/docs/en/claude-code-on-the-web) or SSH sessions.
+* **A local microphone**: voice dictation does not work in [cloud sessions](/docs/en/claude-code-on-the-web.md) or SSH sessions.
 * **WSLg, if you run Claude Code in WSL**: WSLg is included with WSL2 when installed from the Microsoft Store on Windows 10 or 11. If WSLg is not available, for example on WSL1, run Claude Code in native Windows instead.
 
-Transcription does not consume Claude messages or tokens and does not count toward the limits shown in `/usage`. See [data usage](/docs/en/data-usage) for how Anthropic handles your data.
+Transcription does not consume Claude messages or tokens and does not count toward the limits shown in `/usage`. See [data usage](/docs/en/data-usage.md) for how Anthropic handles your data.
 
 Audio recording uses a built-in native module on macOS, Linux, and Windows. On Linux, if the native module cannot load, Claude Code falls back to `arecord` from ALSA utils or `rec` from SoX. If neither is available, `/voice` prints an install command for your package manager.
 
-The Claude Code [VS Code extension](/docs/en/vs-code) also supports voice dictation with the same claude.ai account requirement. It is not available in VS Code Remote sessions, including SSH, Dev Containers, and Codespaces, because the microphone is on your local machine and the extension runs on the remote host.
+The Claude Code [VS Code extension](/docs/en/vs-code.md) also supports voice dictation with the same claude.ai account requirement. It is not available in VS Code Remote sessions, including SSH, Dev Containers, and Codespaces, because the microphone is on your local machine and the extension runs on the remote host.
 
 ## Enable voice dictation
 
@@ -42,7 +42,7 @@ Voice mode enabled (hold). Hold space to record. Dictation language: en (/config
 | `/voice tap` | Enable in [tap mode](#tap-to-record-and-send) |
 | `/voice off` | Disable |
 
-Voice dictation persists across sessions. Set it directly in your [user settings file](/docs/en/settings) instead of running `/voice`:
+Voice dictation persists across sessions. Set it directly in your [user settings file](/docs/en/settings.md) instead of running `/voice`:
 
 ```json theme={null}
 {
@@ -53,7 +53,7 @@ Voice dictation persists across sessions. Set it directly in your [user settings
 }
 ```
 
-For the first three sessions with voice dictation enabled, the input footer shows a `hold space to speak` hint when the prompt is empty. The hint reflects your current `voice:pushToTalk` binding and updates if you [rebind the dictation key](#rebind-the-dictation-key). The hint text is the same in both modes, and it does not appear if you have a [custom status line](/docs/en/statusline) configured.
+For the first three sessions with voice dictation enabled, the input footer shows a `hold space to speak` hint when the prompt is empty. The hint reflects your current `voice:pushToTalk` binding and updates if you [rebind the dictation key](#rebind-the-dictation-key). The hint text is the same in both modes, and it does not appear if you have a [custom status line](/docs/en/statusline.md) configured.
 
 Transcription is tuned for coding vocabulary in both modes. Common development terms like `regex`, `OAuth`, `JSON`, and `localhost` are recognized correctly, and your current project name and git branch name are added as recognition hints automatically.
 
@@ -65,7 +65,7 @@ Hold `Space` to start recording. Claude Code detects a held key by watching for 
 
 The first couple of key-repeat characters type into the input during warmup and are removed automatically when recording activates. A single `Space` tap still types a space, since hold detection only triggers on rapid repeat.
 
-Holding or tapping `Space` starts dictation only where the keypress would otherwise type into the prompt. In the [transcript viewer](/docs/en/interactive-mode#transcript-viewer), `Space` pages through the conversation, and in [vim mode](/docs/en/interactive-mode#vim-editor-mode) outside INSERT it is a command. A [rebound modifier combination](#rebind-the-dictation-key) like `meta+k` never types text, so it starts dictation from those places too.
+Holding or tapping `Space` starts dictation only where the keypress would otherwise type into the prompt. In the [transcript viewer](/docs/en/interactive-mode.md#transcript-viewer), `Space` pages through the conversation, and in [vim mode](/docs/en/interactive-mode.md#vim-editor-mode) outside INSERT it is a command. A [rebound modifier combination](#rebind-the-dictation-key) like `meta+k` never types text, so it starts dictation from those places too.
 
 > [!TIP]
 >
@@ -99,7 +99,7 @@ Press `Esc` or `Ctrl+C` to cancel a dictation instead of finalizing it. Claude C
 
 Both keys also cancel while a finished recording's transcript is still processing. A prompt you edited or submitted during processing stays as you left it.
 
-Neither key does anything else in the press that cancels: `Esc` doesn't interrupt Claude's response, and `Ctrl+C` doesn't clear the prompt or count as the first of the [two presses that exit Claude Code](/docs/en/interactive-mode#general-controls).
+Neither key does anything else in the press that cancels: `Esc` doesn't interrupt Claude's response, and `Ctrl+C` doesn't clear the prompt or count as the first of the [two presses that exit Claude Code](/docs/en/interactive-mode.md#general-controls).
 
 ## Change the dictation language
 
@@ -162,7 +162,7 @@ The `voice:pushToTalk` action uses one key at a time. When you bind a custom key
 
 In hold mode, avoid binding a bare letter key like `v` since hold detection relies on key-repeat and the letter types into the prompt during warmup. Use `Space`, or use a modifier combination like `meta+k` to start recording on the first keypress with no warmup. Tap mode has no warmup, so most keys work.
 
-Some keys are not delivered to terminal applications and can't be bound at all. For example, `Caps Lock` shows an error if you try to bind it. See [customize keyboard shortcuts](/docs/en/keybindings) for the full keybinding syntax and the list of reserved shortcuts.
+Some keys are not delivered to terminal applications and can't be bound at all. For example, `Caps Lock` shows an error if you try to bind it. See [customize keyboard shortcuts](/docs/en/keybindings.md) for the full keybinding syntax and the list of reserved shortcuts.
 
 ## Troubleshooting
 
@@ -180,8 +180,10 @@ Common issues when voice dictation does not activate or record:
 * **Tapping `Space` types a space instead of recording in tap mode**: the first tap only starts recording when the prompt input is empty. Clear the input first, or check that you are in tap mode by running `/voice tap`.
 * **`No audio detected from microphone`**: recording started but captured silence. Confirm the correct input device is set as the system default and that its input level is not muted or near zero. On Windows, open Settings → System → Sound → Input and select your microphone. On macOS, open System Settings → Sound → Input.
 * **`Voice connection failed`**: your recording never reached the transcription service because the connection failed. Check your network and try again. A recording that captures no audio reports `No audio detected from microphone` instead of this message. Before v2.1.200, a silent microphone could report a connection failure, which suggested a network problem when the actual issue was the input device.
+* **`Dictation error: WebSocket error:` followed by a certificate error such as `unable to get local issuer certificate`**: see [Dictation or the Web tab fails behind a TLS-inspecting proxy](/docs/en/vs-code.md#dictation-or-the-web-tab-fails-behind-a-tls-inspecting-proxy) on the VS Code page.
 * **`Voice stream error: WebSocket upgrade rejected with HTTP <status>`**: a server refused your connection with the HTTP status shown, so this isn't a network outage. A status in the 400 range usually means a stale sign-in, or a proxy or bot-protection service answering in place of the transcription service. Run `/login` to refresh your sign-in, and check for a VPN or proxy on your network path if the status persists. If you're still recording when the rejection arrives, Claude Code retries a status outside the 400 range once before showing this message; it doesn't retry a status in the 400 range. In v2.1.229 through v2.1.231, native builds didn't show this message: Claude Code kept recording, the hold-mode footer still showed `listening…`, and it reported `Voice connection failed` after you stopped recording.
 * **`No speech detected`**: audio reached the transcription service but no words were recognized. Speak closer to the microphone, reduce background noise, and confirm your [dictation language](#change-the-dictation-language) matches the language you are speaking.
+* **`Dictation stopped: no speech recognized for 15 seconds` or `Dictation stopped at its 2-minute limit`**: in the VS Code extension, a recording ends after 15 seconds with no recognized words, or two minutes after it starts. If you were speaking during those 15 seconds, try the fixes for `No speech detected`. Words already recognized stay in the prompt box and aren't sent. To add more, click the microphone button again.
 * **Transcription is garbled or in the wrong language**: dictation defaults to English. If you are dictating in another language, set it in `/config` first. See [Change the dictation language](#change-the-dictation-language).
 
 ### Terminal not listed in macOS Microphone settings
@@ -206,7 +208,7 @@ Start Claude Code and run `/voice`. macOS prompts for microphone access; allow i
 
 ## See also
 
-* [Customize keyboard shortcuts](/docs/en/keybindings): rebind `voice:pushToTalk` and other CLI keyboard actions
-* [All settings](/docs/en/settings-reference#voice): the `voice`, `language`, and other settings keys
-* [Interactive mode](/docs/en/interactive-mode): keyboard shortcuts, input modes, and session controls
-* [Commands](/docs/en/commands): reference for `/voice`, `/config`, and all other commands
+* [Customize keyboard shortcuts](/docs/en/keybindings.md): rebind `voice:pushToTalk` and other CLI keyboard actions
+* [All settings](/docs/en/settings-reference.md#voice): the `voice`, `language`, and other settings keys
+* [Interactive mode](/docs/en/interactive-mode.md): keyboard shortcuts, input modes, and session controls
+* [Commands](/docs/en/commands.md): reference for `/voice`, `/config`, and all other commands

@@ -6,7 +6,7 @@
 
 > Connect Claude Code to your Chrome browser to test web apps, debug with console logs, automate form filling, and extract data from web pages.
 
-Claude Code integrates with the [Claude in Chrome browser extension](https://chromewebstore.google.com/detail/claude/fcoeoabgfenejglbffodgkkbkcdhcgfn) to give you browser automation capabilities from the CLI or the [VS Code extension](/docs/en/vs-code#automate-browser-tasks-with-chrome). Build your code, then test and debug in the browser without switching contexts.
+Claude Code integrates with the [Claude in Chrome browser extension](https://chromewebstore.google.com/detail/claude/fcoeoabgfenejglbffodgkkbkcdhcgfn) to give you browser automation capabilities from the CLI or the [VS Code extension](/docs/en/vs-code.md#automate-browser-tasks-with-chrome). Build your code, then test and debug in the browser without switching contexts.
 
 Claude opens new tabs for browser tasks and shares your browser's login state, so it can access any site you're already signed into. Browser actions run in a visible Chrome window in real time. When Claude encounters a login page or CAPTCHA, it pauses and asks you to handle it manually.
 
@@ -38,10 +38,10 @@ Before using Claude Code with Chrome, you need:
 
 * [Google Chrome](https://www.google.com/chrome/), [Microsoft Edge](https://www.microsoft.com/edge), or another Chromium-based browser such as Brave, Arc, Vivaldi, or Opera
 * [Claude in Chrome extension](https://chromewebstore.google.com/detail/claude/fcoeoabgfenejglbffodgkkbkcdhcgfn) version 1.0.36 or later, available in the Chrome Web Store
-* [Claude Code](/docs/en/quickstart#step-1-install-claude-code)
+* [Claude Code](/docs/en/quickstart.md#step-1-install-claude-code)
 * A direct Anthropic plan (Pro, Max, Team, or Enterprise)
 
-In Enterprise organizations that have HIPAA enabled, Claude in Chrome is off by default, and an [Owner](/docs/en/server-managed-settings#access-control) can turn it on in [**Organization settings > Claude in Chrome**](https://claude.ai/admin-settings/browser-extension). Your Business Associate Agreement (BAA) with Anthropic doesn't cover data sent to third-party sites through Claude in Chrome. See the [Implementation Guide](https://trust.anthropic.com/resources?s=l1wrssd9hsbi4gak0tp5a6\&name=%5Banthropic%5D-hipaa-ready-offering-implementation-guide) for a list of Eligible Services.
+In Enterprise organizations that have HIPAA enabled, Claude in Chrome is off by default, and an [Owner](/docs/en/server-managed-settings.md#access-control) can turn it on in [**Organization settings > Claude in Chrome**](https://claude.ai/admin-settings/browser-extension). Your Business Associate Agreement (BAA) with Anthropic doesn't cover data sent to third-party sites through Claude in Chrome. See the [Implementation Guide](https://trust.anthropic.com/resources?s=l1wrssd9hsbi4gak0tp5a6\&name=%5Banthropic%5D-hipaa-ready-offering-implementation-guide) for a list of Eligible Services.
 
 Chrome integration also requires signing in with `/login`. If you authenticate with an API key or a long-lived token from [`claude setup-token`](/docs/en/authentication#generate-a-long-lived-token), Claude Code keeps Chrome integration off, even when you pass `--chrome`, because the browser extension can't authenticate with those credentials. Before v2.1.216, these sessions could enable Chrome integration, but every attempt to connect to the browser extension failed with a 403 error.
 
@@ -78,7 +78,7 @@ Run `/chrome` at any time to check the connection status, manage permissions, re
 
 If more than one browser is connected, you choose which one Claude uses. When a browser action starts before you've chosen, Claude prompts you to pick one. To switch browsers later, run `/chrome` and select **Select browser…**. Claude keeps using your choice even when another browser connects.
 
-For VS Code, see [browser automation in VS Code](/docs/en/vs-code#automate-browser-tasks-with-chrome).
+For VS Code, see [browser automation in VS Code](/docs/en/vs-code.md#automate-browser-tasks-with-chrome).
 
 ### Install the extension when Claude asks
 
@@ -93,11 +93,11 @@ The prompt offers three choices:
 Two managed MCP policies turn the prompt off:
 
 * If your organization blocks the `claude-in-chrome` MCP server with the [`deniedMcpServers` managed setting](/docs/en/managed-mcp#policy-based-control-with-allowlists-and-denylists), Claude Code doesn't show the install prompt.
-* If your organization deploys a [`managed-mcp.json`](/docs/en/managed-mcp#exclusive-control-with-managed-mcp-json) file without [allowing Claude in Chrome alongside the managed set](/docs/en/managed-mcp#allow-claude-in-chrome-alongside-the-managed-set), Claude Code doesn't show the install prompt.
+* If your organization deploys a [`managed-mcp.json`](/docs/en/managed-mcp#exclusive-control-with-managed-mcp-json) file without [allowing Claude in Chrome alongside the managed set](/docs/en/managed-mcp.md#allow-claude-in-chrome-alongside-the-managed-set), Claude Code doesn't show the install prompt.
 
 ### Enable Chrome by default
 
-To connect Chrome without passing `--chrome` each time, run `/chrome` in a CLI session and select **Enabled by default**. In the [VS Code extension](/docs/en/vs-code#automate-browser-tasks-with-chrome), type `/chrome` in the prompt box and turn on the **Enabled by default** switch. The two share one setting, so turning it on in either place turns it on for both the CLI and VS Code.
+To connect Chrome without passing `--chrome` each time, run `/chrome` in a CLI session and select **Enabled by default**. In the [VS Code extension](/docs/en/vs-code.md#automate-browser-tasks-with-chrome), type `/chrome` in the prompt box and turn on the **Enabled by default** switch. The two share one setting, so turning it on in either place turns it on for both the CLI and VS Code.
 
 With the setting on and Claude Code v2.1.287 or later, each VS Code session connects to your browser as it starts, so Claude can use it before you type `@browser`. On earlier versions, or with the setting off, a VS Code session connects when you type `@browser`.
 
@@ -109,7 +109,7 @@ Claude Code starts normally when Chrome isn't running.
 
 ### Manage site permissions
 
-Site-level permissions are inherited from the Chrome extension. Manage permissions in the Chrome extension settings to control which sites Claude can browse, click, and type on. In [auto mode](/docs/en/permission-modes#eliminate-prompts-with-auto-mode), when the auto mode classifier itself approves a browser call to a site, the extension skips its own per-site check for that call, unless your permission rules deny any site to Claude in Chrome.
+Site-level permissions are inherited from the Chrome extension. Manage permissions in the Chrome extension settings to control which sites Claude can browse, click, and type on. In [auto mode](/docs/en/permission-modes.md#eliminate-prompts-with-auto-mode), when the auto mode classifier itself approves a browser call to a site, the extension skips its own per-site check for that call, unless your permission rules deny any site to Claude in Chrome.
 
 ### Permission prompts in VS Code sessions
 
@@ -119,7 +119,7 @@ In a session that connected to your browser at start because [Enabled by default
 
 ### Browser tools in plan mode
 
-In [plan mode](/docs/en/permission-modes#analyze-before-you-edit-with-plan-mode), a permission prompt appears before Claude records a GIF, opens a new tab, or runs a shortcut. In an interactive CLI session, if [bypass permissions mode is available](/docs/en/permission-modes#skip-all-checks-with-bypasspermissions-mode) and [feature-flag fetching](/docs/en/env-vars#features-that-need-feature-flag-fetching) is off, these calls run without a prompt.
+In [plan mode](/docs/en/permission-modes.md#analyze-before-you-edit-with-plan-mode), a permission prompt appears before Claude records a GIF, opens a new tab, or runs a shortcut. In an interactive CLI session, if [bypass permissions mode is available](/docs/en/permission-modes.md#skip-all-checks-with-bypasspermissions-mode) and [feature-flag fetching](/docs/en/env-vars.md#features-that-need-feature-flag-fetching) is off, these calls run without a prompt.
 
 A `tabs_context_mcp` call also prompts when it sets `createIfEmpty`, and so does a `browser_batch` call that includes any of these actions.
 
@@ -175,7 +175,7 @@ and attach logs/session.log to it
 
 If Claude refuses to attach a file or an upload fails, check for these causes:
 
-* **Permissions**: Claude can upload a file only when the session is allowed to read it, so [permission rules](/docs/en/settings-reference#permission-settings) that deny `Read` access to a file also block uploading it.
+* **Permissions**: Claude can upload a file only when the session is allowed to read it, so [permission rules](/docs/en/settings-reference.md#permission-settings) that deny `Read` access to a file also block uploading it.
 * **Size**: a single upload can include up to 10 MB of files in total.
 * **Hard links**: Claude refuses files that have multiple hard links, which is common inside package-manager stores like `node_modules`. Copy the file and upload the copy.
 * **Credential names**: Claude refuses a file whose name or folder is one that credentials are kept under, such as `.env`, a `.pem` or `.key` file, or anything under `.ssh`. Requires Claude Code v2.1.293 or later.
@@ -325,17 +325,17 @@ These are the most frequently encountered errors and how to resolve them:
 
 | Error | Cause | Fix |
 | - | - | - |
-| "Browser extension is not connected" | The extension isn't installed and running in Chrome, the extension is signed in to a different claude.ai account or organization than Claude Code, or your organization's IP allowlist rejects the connection to `bridge.claudeusercontent.com` | Check that the extension is signed in to the same claude.ai account and [organization](#extension-signed-in-to-a-different-organization) as Claude Code, restart Chrome and Claude Code, then run `/chrome` to reconnect. If your organization uses IP allowlisting and the error persists, see [Organization IP allowlists and proxy egress](/docs/en/network-config#organization-ip-allowlists-and-proxy-egress) |
+| "Browser extension is not connected" | The extension isn't installed and running in Chrome, the extension is signed in to a different claude.ai account or organization than Claude Code, or your organization's IP allowlist rejects the connection to `bridge.claudeusercontent.com` | Check that the extension is signed in to the same claude.ai account and [organization](#extension-signed-in-to-a-different-organization) as Claude Code, restart Chrome and Claude Code, then run `/chrome` to reconnect. If your organization uses IP allowlisting and the error persists, see [Organization IP allowlists and proxy egress](/docs/en/network-config.md#organization-ip-allowlists-and-proxy-egress) |
 | Extension shows "Not detected" in `/chrome` | Chrome extension is not installed or is disabled | Install or enable the extension in `chrome://extensions` |
 | "No tab available" | Claude tried to act before a tab was ready | Ask Claude to create a new tab and retry |
 | "Receiving end does not exist" | Extension service worker went idle | Run `/chrome` and select "Reconnect extension" |
-| "No browsers are connected" | Chrome isn't open with the extension signed in to the same claude.ai account and organization as Claude Code, or Claude Code can't reach `bridge.claudeusercontent.com` | Confirm Chrome is open and the extension is signed in to the same claude.ai account and [organization](#extension-signed-in-to-a-different-organization) as Claude Code. If so, check that your network lets Claude Code reach `bridge.claudeusercontent.com`, listed under [Network access requirements](/docs/en/network-config#network-access-requirements) |
+| "No browsers are connected" | Chrome isn't open with the extension signed in to the same claude.ai account and organization as Claude Code, or Claude Code can't reach `bridge.claudeusercontent.com` | Confirm Chrome is open and the extension is signed in to the same claude.ai account and [organization](#extension-signed-in-to-a-different-organization) as Claude Code. If so, check that your network lets Claude Code reach `bridge.claudeusercontent.com`, listed under [Network access requirements](/docs/en/network-config.md#network-access-requirements) |
 
 ## See also
 
-* [Computer use](/docs/en/computer-use): control native macOS apps when a task can't be done in a browser
-* [Use Claude Code in VS Code](/docs/en/vs-code#automate-browser-tasks-with-chrome): browser automation in the VS Code extension
-* [CLI reference](/docs/en/cli-reference): command-line flags including `--chrome`
-* [Common workflows](/docs/en/common-workflows): more ways to use Claude Code
-* [Data and privacy](/docs/en/data-usage): how Claude Code handles your data
+* [Computer use](/docs/en/computer-use.md): control native macOS apps when a task can't be done in a browser
+* [Use Claude Code in VS Code](/docs/en/vs-code.md#automate-browser-tasks-with-chrome): browser automation in the VS Code extension
+* [CLI reference](/docs/en/cli-reference.md): command-line flags including `--chrome`
+* [Common workflows](/docs/en/common-workflows.md): more ways to use Claude Code
+* [Data and privacy](/docs/en/data-usage.md): how Claude Code handles your data
 * [Getting started with Claude in Chrome](https://support.claude.com/en/articles/12012173-getting-started-with-claude-in-chrome): full documentation for the Chrome extension, including shortcuts, scheduling, and permissions
