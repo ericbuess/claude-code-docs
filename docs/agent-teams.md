@@ -290,6 +290,11 @@ For a teammate it brings back, Claude Code re-applies a definition that came fro
 
 Teammates start with the lead's permission mode, except [`dontAsk` mode](/docs/en/permission-modes#allow-only-pre-approved-tools-with-dontask-mode), which they don't inherit. If the lead runs with `--dangerously-skip-permissions`, all teammates do too. After spawning, you can change an individual teammate's permission mode, but you can't set per-teammate permission modes at spawn time.
 
+An [in-process](#choose-a-display-mode) teammate runs under the lead's live allow and deny rules, so [`--disallowedTools`](/docs/en/cli-reference#cli-flags), `--tools`, and `--allowedTools` all apply to it. For a split-pane teammate, check each flag:
+
+* **`--disallowedTools` and `--tools`**: the teammate starts with the lead's command-line deny rules and tool list. Requires Claude Code v2.1.309 or later.
+* **`--allowedTools`**: Claude Code doesn't pass this flag to a split-pane teammate, so an action you allowed with it alone isn't pre-approved there. To approve those actions ahead of time, put the rules under `permissions.allow` in [`--settings`](/docs/en/settings#change-a-setting-for-one-session) when you start the lead. For example, run `claude --settings '{"permissions":{"allow":["Bash(npm *)"]}}'` in your shell. The rules apply to the lead and each split-pane teammate for that session.
+
 Teammate permission prompts appear in the lead session, so approve them there yourself. You don't need to approve [a teammate's plan](#have-teammates-plan-before-implementing).
 
 #### Messages between agents

@@ -439,9 +439,7 @@ Before v2.1.280, background subagents couldn't use `LSP`.
 
 [`ListAgents`](/docs/en/cross-session-messaging) follows these filters like any built-in tool: a foreground subagent inherits it in sessions where cross-session messaging is enabled, and a background subagent doesn't keep it.
 
-Teammates in [agent teams](/docs/en/agent-teams.md) additionally keep the task tools and cron tools: `TaskCreate`, `TaskGet`, `TaskList`, `TaskUpdate`, `CronCreate`, `CronDelete`, and `CronList`.
-
-In a [session without the Task tools](/docs/en/tools-reference.md#task-tool-availability), Claude Code doesn't provide the task tools to subagents either, even when the subagent runs a different model. An in-process teammate follows your session the same way, while a teammate in its own [split pane](/docs/en/agent-teams.md#choose-a-display-mode) runs as a separate Claude Code process, so its own model decides.
+Teammates in [agent teams](/docs/en/agent-teams.md) additionally keep the task tools and cron tools: `TaskCreate`, `TaskGet`, `TaskList`, `TaskUpdate`, `CronCreate`, `CronDelete`, and `CronList`. In a [session without the Task tools](/docs/en/tools-reference.md#task-tool-availability), Claude Code doesn't provide the task tools to subagents either, even when the subagent runs a different model. An in-process teammate follows your session the same way. To find out whether a split-pane teammate has the task tools, see [Task tool availability](/docs/en/tools-reference.md#task-tool-availability).
 
 #### Restrict which tools a subagent can use
 

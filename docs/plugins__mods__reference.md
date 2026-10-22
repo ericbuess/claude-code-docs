@@ -261,28 +261,29 @@ Elements are the building blocks of a tree a `ui.render` hook returns, and you g
 
 | Element | Main props | Terminal | Desktop | VS Code |
 | :- | :- | :-: | :-: | :-: |
-| [`Box`](/docs/en/plugins/mods/interface#build-a-tree-from-elements) | `key`, flex layout, [`gap`, `padding`, `margin`](#box-spacing-steps), `width`, `height`, [`borderStyle`](#box-border-styles), `backgroundColor`, `position`, `hover` | ✓ | ✓ | ✓ |
-| [`Text`](/docs/en/plugins/mods/interface#build-a-tree-from-elements) | `color`, `backgroundColor`, [`bold`](#text-bold), `italic`, `underline`, `dimColor`, `inverse`, `wrap`, [`size`, `weight`, `mono`, `tabular`](#text-typography) | ✓ | ✓ | ✓ |
-| [`Button`](/docs/en/plugins/mods/interface#respond-to-presses-and-typing) | `key`, `label`, `onPress`, `hotkey`, `plain`, `dimColor`, `autoFocus`, `action` | ✓ | ✓ | ✓ |
+| [`Box`](/docs/en/plugins/mods/interface#build-a-tree-from-elements) | `key`, flex layout, [`gap`, `padding`, `margin`](#box-spacing-steps), `width`, `height`, `minWidth`, `minHeight`, [`borderStyle`](#box-border-styles), `borderColor`, `borderDimColor`, `backgroundColor`, `position`, `top`, `left`, `right`, `bottom`, `overflow`, `display`, `hover` | ✓ | ✓ | ✓ |
+| [`Text`](/docs/en/plugins/mods/interface#build-a-tree-from-elements) | `color`, `backgroundColor`, [`bold`](#text-bold), `italic`, `underline`, `strikethrough`, `dimColor`, `inverse`, `wrap`, [`size`, `weight`, `mono`, `tabular`](#text-typography), `hover` | ✓ | ✓ | ✓ |
+| [`Button`](/docs/en/plugins/mods/interface#respond-to-presses-and-typing) | `key`, `label`, `onPress`, `hotkey`, `plain`, `dimColor`, `autoFocus`, `action`, `hover` | ✓ | ✓ | ✓ |
 | [`Link`](/docs/en/plugins/mods/interface#link-in-the-desktop-app) | `href`, `label`. See [Limits](#limits). | ✓ | ✓ | ✓ |
 | [`Code`](/docs/en/plugins/mods/gallery#show-code-and-changes) | `source`, `language`, `path`, `startLine`, `format`, `wrap` | ✓ | ✓ | ✓ |
 | `Markdown` | `text`, `key`, `dimColor`, `onLinkPress`, `pressableLinks` | ✓ | ✓ | ✓ |
 | [`Input`](/docs/en/plugins/mods/interface#take-typed-input-and-draw-a-row-for-each-item) | `key`, `label`, `placeholder`, `value`, `submitLabel`, `onSubmit`, `onInput`, `autoFocus` | ✓ | ✓ | ✓ |
 | `Select` | `key`, `label`, `options`, `value`, `onSelect`, `autoFocus` | ✓ | ✓ | ✓ |
-| `Svg` | An SVG document, up to 131,072 characters | | ✓ | ✓ |
-| [`Client`](/docs/en/plugins/mods/interface#build-a-tree-from-elements) | `module`, `key` | ✓ | ✓ | |
+| `Svg` | a `source` of SVG markup up to 131,072 characters, `alt` text, `width`, `height`, and `isInteractive` | | ✓ | ✓ |
+| [`Client`](/docs/en/plugins/mods/interface#build-a-tree-from-elements) | `module`, `key`, `props`, `width`, `height`, `flexGrow` | ✓ | ✓ | |
 | [`Raster`](/docs/en/plugins/mods/interface#draw-a-grid-of-colored-cells) | `key`, `columns` up to 512, `rows` up to 256, `cells`. See [Draw a grid of colored cells](/docs/en/plugins/mods/interface.md#draw-a-grid-of-colored-cells). | ✓ | | |
-| `Image` | PNG or RGBA bytes up to 2 MiB, or a file path, `columns` and `rows` up to 255, and `alt` text. See [which terminals draw it](/docs/en/plugins/mods/gallery.md#image-and-client). | ✓ | | |
+| `Image` | `key`, a `source` such as PNG or RGBA bytes up to 2 MiB, or a file path, `columns` and `rows` up to 255, and `alt` text. See [which terminals draw it](/docs/en/plugins/mods/gallery.md#image-and-client). | ✓ | | |
 
 More `Button` rules: `action` names one of Claude Code's own [keybinding actions](/docs/en/keybindings.md), and the user's binding for it presses the button when that binding is a chord or a modified key. A digit `hotkey` on a button in the band also fires when the user types that digit alone into an empty prompt and pauses. When two buttons in one drawing name the same `hotkey`, the later one gets it. `autoFocus` accepts only `true` on any control, so omit the prop to leave it off.
 
 The VS Code extension ignores some element props and draws the element as if you had left them out:
 
-* **`Box`**: `position` and `hover`
-* **`Text`**: `size`, `mono`, and `tabular`
-* **`Button`**: `hotkey`, `plain`, `autoFocus`, and `action`, so the user presses a button there with a click, or with Enter once it has focus
+* **`Box`**: `position` with its `top`, `left`, `right`, and `bottom`, `alignSelf`, `borderDimColor`, and `hover`
+* **`Text`**: `size`, `mono`, `tabular`, and `hover`
+* **`Button`**: `hotkey`, `plain`, `autoFocus`, `action`, and `hover`, so the user presses a button there with a click, or with Enter once it has focus
 * **`Code`**: `language`, `path`, `startLine`, `format`, and `wrap`, so code draws without colors or line numbers, and a `format: 'diff'` block shows the diff's raw text
 * **`Input` and `Select`**: `autoFocus`
+* **`Svg`**: `isInteractive`
 
 ### `Box` border styles
 

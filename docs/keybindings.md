@@ -124,6 +124,7 @@ Actions available in the `Chat` context:
 | `chat:externalEditor` | Ctrl+G, Ctrl+X Ctrl+E | Open in external editor. The [agent view dispatch input](/docs/en/agent-view.md#keyboard-shortcuts) follows this action's single-keystroke bindings too |
 | `chat:stash` | Ctrl+S | Stash current prompt |
 | `chat:imagePaste` | Ctrl+V (Alt+V on Windows and WSL) | Paste image from clipboard. On WSL, both shortcuts are bound by default |
+| `command:<name>` | (unbound) | Run the [command](/docs/en/commands.md) `/<name>`. For example, `"meta+g": "command:compact"` in a `Chat` block makes `Meta+G` run `/compact` |
 
 \*On Windows without VT mode (Node \<24.2.0/\<22.17.0, Bun \<1.2.23), defaults to Meta+M.
 

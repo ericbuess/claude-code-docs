@@ -8,7 +8,9 @@
 
 > [!NOTE]
 >
-> Projects are in public beta on Pro and Max plans and rolling out gradually, starting with accounts that have used [cloud sessions](/docs/en/claude-code-on-the-web.md) and don't have existing projects in claude.ai chat or Cowork. They aren't available on Team or Enterprise plans yet. If **Projects** doesn't appear in the sidebar at [claude.ai/code](https://claude.ai/code) or in the Code tab of the [desktop app](/docs/en/desktop.md), the rollout hasn't reached your account, and you can [join the waitlist](https://claude.com/form/projects). [Run agents in parallel](/docs/en/agents.md) lists what you can use in the meantime.
+> Projects are in public beta on Pro and Max plans and rolling out gradually. The rollout started with accounts that have used [cloud sessions](/docs/en/claude-code-on-the-web.md) and don't have existing projects in claude.ai chat or Cowork. Projects aren't offered on Team or Enterprise plans yet.
+>
+> If you don't see **Projects** in the sidebar at [claude.ai/code](https://claude.ai/code) or in the Code tab of the [desktop app](/docs/en/desktop.md), check under **More** there. If it's missing there too, the rollout hasn't reached your account yet. You can [join the waitlist](https://claude.com/form/projects), and see [Run agents in parallel](/docs/en/agents.md) for what you can use in the meantime.
 
 A project is one ongoing conversation where Claude coordinates a stream of related work for you. You tell it what needs doing and it starts a thread for each task.
 
@@ -86,7 +88,7 @@ Starting a project from scratch means opening the **New project** dialog, naming
 
 **1. Open Projects**
 
-At [claude.ai/code](https://claude.ai/code) or in the Code tab of the desktop app, select **Projects** in the left sidebar, then select **New project**. In a browser you can also go straight to [claude.ai/code/projects/browse](https://claude.ai/code/projects/browse).
+At [claude.ai/code](https://claude.ai/code) or in the Code tab of the desktop app, select **Projects** in the left sidebar, or under **More** there. In a browser you can also go straight to [claude.ai/code/projects/browse](https://claude.ai/code/projects/browse). Then select **New project**. If the button reads **Get started** instead, select it and first upgrade or archive the existing claude.ai projects it lists.
 
 **2. Fill in the New project dialog**
 

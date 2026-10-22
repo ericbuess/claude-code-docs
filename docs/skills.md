@@ -621,6 +621,13 @@ allowed-tools: Bash(git add *) Bash(git commit *) Bash(git status *)
 
 To remove tools from Claude's available pool while a skill is active, list them in `disallowed-tools` in the skill's frontmatter. The restriction clears when you send your next message. Like deny rules, the field can't remove [`EndConversation`](/docs/en/tools-reference#endconversation-tool-behavior) while any other tool remains. To block tools across all skills and prompts, add deny rules in your [permission settings](/docs/en/permissions.md).
 
+#### When managed settings lock hooks to plugins
+
+When your organization's managed settings list `hooks` in `strictPluginOnlyCustomization`, a personal or project skill whose frontmatter declares `hooks` loses its `allowed-tools` pre-approval, apart from the [skills that keep it](/docs/en/settings-reference.md#strictpluginonlycustomization-hooks).
+
+* **Check**: type `/status` in a Claude Code session. If `/status` shows [`Enterprise managed settings`](/docs/en/settings#check-what-your-organization-enforces), ask your administrator whether `strictPluginOnlyCustomization` lists `hooks`.
+* **Fix**: remove `hooks` from the skill's frontmatter, because its hooks don't run under that setting. To keep them, [move the skill into a plugin](/docs/en/hooks.md#limits-on-skill-hooks) that you install from a marketplace.
+
 #### When only managed permission rules apply
 
 When your organization sets `allowManagedPermissionRulesOnly` in managed settings, Claude Code ignores `allowed-tools` in project and personal skills and in the [other sources the setting's entry lists](/docs/en/settings-reference.md#allowmanagedpermissionrulesonly). This requires Claude Code v2.1.282 or later.

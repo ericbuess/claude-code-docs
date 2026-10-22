@@ -73,22 +73,16 @@ Checkpoints are particularly useful when:
 
 ### Bash command changes not tracked
 
-Checkpointing does not track files modified by Bash commands. For example, if Claude Code runs:
+Once Claude has edited a file with its file editing tools in your conversation, `/rewind` undoes changes that Bash commands make to that file afterward. A file that only Bash commands changed isn't tracked and stays as it is. To revert it, use version control, such as Git.
 
-```bash theme={null}
-rm file.txt
-mv old.txt new.txt
-cp source.txt dest.txt
-```
-
-These file modifications cannot be undone through rewind. Only direct file edits made through Claude's file editing tools are tracked.
+Under each prompt, the rewind menu counts changes to files Claude had already edited, whatever made them. A prompt where a shell command changed such a file lists file changes too.
 
 ### Subagent edits not restored
 
 A [subagent](/docs/en/sub-agents.md) makes edits with Claude's file editing tools, but Claude Code usually doesn't capture those edits in your session's checkpoints. Whether rewinding restores them depends on how the subagent runs:
 
 * **Foreground forked skill**: a [skill with `context: fork`](/docs/en/skills#run-skills-in-a-subagent) that runs in the foreground edits your working tree during your own turn, so rewinding restores its edits as usual. Set `background: false` to run a fork in the foreground; a few situations, [listed on the skills page](/docs/en/skills.md#run-skills-in-a-subagent), run it there regardless of the setting.
-* **Any other subagent**: rewinding restores only the files Claude had already edited in your conversation. The subagent's edits to other files stay, so use git to revert them. This includes a forked skill that runs in the background, the default, and a background [`/code-review --fix`](/docs/en/code-review-local) run.
+* **Any other subagent**: rewinding restores only the files Claude had already edited in your conversation. The subagent's edits to other files stay, so use version control, such as Git, to revert them. This includes a forked skill that runs in the background, the default, and a background [`/code-review --fix`](/docs/en/code-review-local) run.
 
 ### External changes not tracked
 

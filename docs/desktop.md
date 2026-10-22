@@ -507,7 +507,7 @@ Cloud sessions also support multiple repositories. Choose the repositories:
 * **Current layout**: in the row under the prompt box, once you select a cloud environment.
 * **[Earlier layout](#check-which-layout-you-have)**: above the prompt box. To add another repository, click **+** beside the selected one.
 
-See [Use Claude Code in the cloud](/docs/en/claude-code-on-the-web.md) for more on how cloud sessions work. When one body of work needs many cloud sessions, select **Projects** in the sidebar to create a [project](/docs/en/claude-projects.md), where Claude starts and tracks the sessions for you from one conversation.
+See [Use Claude Code in the cloud](/docs/en/claude-code-on-the-web.md) for more on how cloud sessions work. When one body of work needs many cloud sessions, use a [project](/docs/en/claude-projects.md): Claude starts and tracks the sessions for you from one conversation. [Create a project](/docs/en/claude-projects.md#create-a-project) has the steps.
 
 > [!NOTE]
 >
@@ -1021,6 +1021,8 @@ Host devbox
 
 Enter `devbox` in the **SSH host** field.
 
+If your administrator [restricts SSH hosts](#allow-jump-hosts), the jump host has to be on the list too. Run `ssh -G bastion.example.com` in a terminal on your computer, and ask them to allow the `hostname` that it prints.
+
 ##### Reach a container on a remote machine
 
 To run a session inside a container that publishes no SSH port, reach it with a `ProxyCommand`, because Desktop doesn't run the `RemoteCommand` of the entry you connect to. If your entry uses `RemoteCommand` to step into the container, the session runs on the machine that the entry logs in to, not in the container.
@@ -1531,9 +1533,37 @@ The following example allows connections to any host under `devboxes.example.com
 >
 > Also keep the same list on each user's machine, in the highest-ranked MDM policy or managed settings file there. Desktop fetches server-managed settings at launch and keeps no cached copy, so until a fetch succeeds the machine's list is the one that applies.
 
-Patterns are case-insensitive. `*` matches any host, and `*.example.com` matches `example.com` and any subdomain. Anything else is an exact match. The check runs against the hostname after `~/.ssh/config` resolution via `ssh -G`, so `Host` aliases and `ProxyCommand`/`ProxyJump` entries are permitted as long as the resolved `HostName` matches.
+Patterns are case-insensitive. `*` matches any host, and `*.example.com` matches `example.com` and any subdomain. Anything else is an exact match. The check runs against the hostname after `~/.ssh/config` resolution via `ssh -G`, so a `Host` alias is permitted as long as its resolved `HostName` matches. A session's [jump hosts](#allow-jump-hosts) have to match too.
 
 `sshHostAllowlist` is read from managed settings only; values in user or project settings are ignored. Only the Claude Desktop app honors this setting; the Claude Code CLI and IDE extensions do not read it, and it does not restrict `ssh` commands run through the Bash tool. It governs which hosts the Desktop app connects to, not network egress, so pair it with your organization's network or zero-trust controls if you need a hard boundary.
+
+##### Allow jump hosts
+
+Add each jump host that Desktop checks to `sshHostAllowlist`, by its own resolved `HostName`. Add the jump hosts before users update to Claude Desktop v3.1623.0 or later, or they can't connect through them.
+
+> [!WARNING]
+>
+> The list has one kind of entry, so users can also start a session on any host that you list. List only jump hosts that you'd also let users run sessions on.
+
+Desktop checks jump hosts in the `ProxyJump` that the user's `~/.ssh/config` sets for the session's host, or in a `ProxyCommand` written as `ssh -W %h:%p <host>`. If one that it checks isn't on the list when Desktop connects or reconnects a session, the connection fails. When a user starts a session or sends a message, the error's details give that jump host's `HostName`, which is the name to add:
+
+```text theme={null}
+SSH host "bastion.example.com" is not allowed by your organization's managed settings. It is a jump host on the way to "devbox".
+```
+
+If the message says `managed settings on this computer`, add the name to the list on the user's computer. If more than one jump host is missing, the error names one at a time. To find every name before users update, use a terminal on a user's computer:
+
+**1. Find the route**
+
+Run `ssh -G` with a host that users connect to, such as `ssh -G devbox`. Look for a `proxyjump` line, or a `proxycommand` line written as `ssh -W %h:%p <host>`. The command still counts with any of `-l`, `-p`, `-J`, `-q`, `-v`, `-N`, `-T`, `-x`, or `-a`, and the hosts after `-J` are jump hosts too. If a `proxycommand` line runs a program other than `ssh`, add nothing for it.
+
+**2. Look up each jump host**
+
+Run `ssh -G` with each jump host on that line, without any `:port`, and note the `hostname` that it prints. If the output for the first jump host on that line has a line of either kind, repeat this step with it. Ignore such a line in a later jump host's output.
+
+**3. Add the names**
+
+Add each hostname, or a wildcard that covers it, to `sshHostAllowlist` in every managed source where you set a list. Then have users quit and reopen Desktop, because it fetches server-managed settings at launch.
 
 #### Turn off local sessions and distribute SSH connections
 
@@ -1567,7 +1597,7 @@ The keys apply to the desktop app. They leave other ways to run Claude Code as t
 
 When you adapt the example, check the hostnames, the Desktop version, and the file's permissions:
 
-* **Hostnames**: make sure that a pattern in `sshHostAllowlist` matches the hostname of each `sshConfigs` entry, without `user@`, or developers can't connect to it. For how Desktop matches a hostname, see [Restrict which SSH hosts users can connect to](#restrict-which-ssh-hosts-users-can-connect-to).
+* **Hostnames**: make sure that a pattern in `sshHostAllowlist` matches the hostname of each `sshConfigs` entry, without `user@`, or developers can't connect to it. Also add a pattern that matches each [jump host](#allow-jump-hosts) that Desktop checks on the way to it. For how Desktop matches a hostname, see [Restrict which SSH hosts users can connect to](#restrict-which-ssh-hosts-users-can-connect-to).
 * **Version**: `disableDesktopLocalSessions` requires Claude Desktop v1.37937.0 or later
 * **File permissions**: make sure that each developer's account on the computer can read the managed settings file. Desktop doesn't apply the keys in a file that the account can't read, and Claude Code [starts without them](/docs/en/managed-settings.md#find-entries-claude-code-dropped) too.
 

@@ -35,7 +35,7 @@ The runner host needs:
 
 Install on the host before you start:
 
-* **Claude Code v2.1.224 or later**, with any of the [standard install methods](/docs/en/setup.md). The runner is part of the standard `claude` binary, and earlier versions don't recognize the `self-hosted-runner` subcommand. The native installer's default `latest` channel carries each release as soon as it's published; the `stable` channel, the Homebrew `claude-code` cask, and the stable apt, dnf, and apk repositories trail by about a week. To pin the exact version your fleet runs, see [Install a specific version](/docs/en/setup.md#install-a-specific-version). For container images, see the Dockerfile in [Deploy to production](/docs/en/self-hosted-environments-deploy.md#build-the-runner-image).
+* **Claude Code v2.1.224 or later**, with any of the [standard install methods](/docs/en/setup.md). The runner is part of the standard `claude` binary, and earlier versions don't recognize the `self-hosted-runner` subcommand. To pin the exact version your fleet runs, see [Install a specific version](/docs/en/setup.md#install-a-specific-version). For container images, see the Dockerfile in [Deploy to production](/docs/en/self-hosted-environments-deploy.md#build-the-runner-image).
 * **Git 2.24 or newer**. Some git options on the deploy page need newer versions; [Configure git](/docs/en/self-hosted-environments-deploy.md#configure-git) states each floor.
 
 Confirm the host is ready:
@@ -44,7 +44,7 @@ Confirm the host is ready:
 claude self-hosted-runner --help
 ```
 
-A ready host prints the runner's usage text, listing flags such as `--environment-secret-file`. On versions older than 2.1.224, the command prints the general `claude --help` output instead; upgrade with `claude update` or reinstall from the `latest` channel.
+A ready host prints the runner's usage text, listing flags such as `--environment-secret-file`. On versions older than 2.1.224, the command prints the general `claude --help` output instead. If you see that output, [update Claude Code](/docs/en/setup.md#update-claude-code). If you run `claude` from a container image, [rebuild the image](/docs/en/self-hosted-environments-deploy.md#build-the-runner-image) with version 2.1.224 or later.
 
 ## Set up an environment and runner
 
