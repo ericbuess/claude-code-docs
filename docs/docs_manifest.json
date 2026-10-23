@@ -382,8 +382,8 @@
     "cloud-environments.md": {
       "original_url": "https://code.claude.com/docs/en/cloud-environments",
       "original_md_url": "https://code.claude.com/docs/en/cloud-environments.md",
-      "hash": "a87dc1224d7e443f43d08093814620b7757a02deeb9a18d40023e05e49301621",
-      "last_updated": "2026-10-22T18:55:43.016117"
+      "hash": "6b20079e8e38fe3a6bb2439dfcb5fbae06fd04c1399e27b9f5b273f4e9fcc61a",
+      "last_updated": "2026-10-23T13:54:34.988939"
     },
     "code-review.md": {
       "original_url": "https://code.claude.com/docs/en/code-review",
@@ -1036,8 +1036,8 @@
     "security-guidance.md": {
       "original_url": "https://code.claude.com/docs/en/security-guidance",
       "original_md_url": "https://code.claude.com/docs/en/security-guidance.md",
-      "hash": "7f697a212d833fab742bfc5d44653771174244f6865bfdc369985cd0844e6fc7",
-      "last_updated": "2026-10-22T18:56:48.260219"
+      "hash": "f8b9e2848d3faf73c08df3e47adf32964ffe49e1d6c20958fb1ff624bb1138c0",
+      "last_updated": "2026-10-23T13:55:38.975299"
     },
     "self-hosted-environments.md": {
       "original_url": "https://code.claude.com/docs/en/self-hosted-environments",
@@ -1048,8 +1048,8 @@
     "self-hosted-environments-configuration.md": {
       "original_url": "https://code.claude.com/docs/en/self-hosted-environments-configuration",
       "original_md_url": "https://code.claude.com/docs/en/self-hosted-environments-configuration.md",
-      "hash": "672bf611b468b8f2618022106cc8548964df91d751d2187f5f753c80a88d0bba",
-      "last_updated": "2026-10-22T18:56:49.447494"
+      "hash": "3d50637fa4fb2a53728e883ee0a19a142b24aaba7f5ea03af0d0c2213cc486e3",
+      "last_updated": "2026-10-23T13:55:40.185116"
     },
     "self-hosted-environments-deploy.md": {
       "original_url": "https://code.claude.com/docs/en/self-hosted-environments-deploy",
@@ -1365,8 +1365,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-10-23T08:04:26.951195",
-    "fetch_duration_seconds": 138.920778,
+    "last_fetch_completed": "2026-10-23T13:56:10.238324",
+    "fetch_duration_seconds": 134.003261,
     "total_pages_discovered": 227,
     "pages_fetched_successfully": 228,
     "pages_failed": 0,
@@ -1376,7 +1376,7 @@
     "total_files": 227,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-10-23T08:04:26.951217",
+  "last_updated": "2026-10-23T13:56:10.238355",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",

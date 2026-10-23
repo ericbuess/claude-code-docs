@@ -169,7 +169,7 @@ The plugin loads all locations that exist and concatenates them, with a combined
 
 The [per-edit pattern check](#on-each-file-edit) makes no model call and adds no cost. The [end-of-turn](#at-the-end-of-each-turn) and [commit](#on-each-commit-or-push-claude-makes) reviews each spend additional model usage that counts toward your [usage](/docs/en/costs.md) like any other Claude request. The commit review is agentic and may take several model turns per commit. Expect roughly one review call per turn that changes files and one deeper review per commit, both subject to the caps above.
 
-Both model-backed reviews use Claude Opus 4.7 by default. Set `SECURITY_REVIEW_MODEL` to choose a different model for the end-of-turn review and `SG_AGENTIC_MODEL` for the commit review.
+By default, both reviews run on a Claude Opus model. Set `SECURITY_REVIEW_MODEL` to choose a different model for the end-of-turn review and `SG_AGENTIC_MODEL` for the commit review.
 
 The plugin is available on all plans.
 

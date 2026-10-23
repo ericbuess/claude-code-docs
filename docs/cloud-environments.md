@@ -62,7 +62,7 @@ On the new-session screen, select the first control in the row under the message
 * **Add an environment**: select **New environment** at the bottom of the menu to open the **New environment** dialog. Fill in the form and select **Add environment**. Your new session then uses the environment you added.
 * **Edit an environment**: find its row under **Cloud**. If **Cloud** is a single row, select it to open the list. If your environment isn't listed under **Cloud**, select the **More** row under that heading. Hover over the environment's row and select the settings icon that appears on its right to open its dialog.
 
-The dialog includes the name, network access level, environment variables, and setup script. To store a key that sessions use without seeing it, see [Add network secrets](#add-network-secrets).
+When you add an environment or edit one of your own, select the dialog's [**Network access**](#network-access), [**Setup script**](#add-a-setup-script), or [**Environment variables**](#set-environment-variables) row to open that setting. After your last change, save with **Add environment** for a new environment or **Save changes** for an existing one. To store a key that sessions use without seeing it, see [Add network secrets](#add-network-secrets).
 
 ### Set environment variables
 
@@ -100,7 +100,7 @@ Network secrets are available on Pro, Max, Team, and Enterprise plans. To check 
 These requirements decide whether you can add a secret and whether the agent proxy can use it once added:
 
 * **Role**: on Pro, Max, and Team plans, you can add and delete secrets on your own environments whatever your role. On Team and Enterprise, Owners hold an organization admin role in your claude.ai organization and Admins don't, which changes what you see in these cases:
-  * **Your own environment on Enterprise**: with an organization admin role, you add and delete secrets. Without it, the **Network secrets** section lists the secrets under the note "Only an organization admin can add or delete network secrets", with no **Add secret** or delete button. Ask an Owner to add the secret to a [shared environment](#organization-shared-environments), then run your sessions there
+  * **Your own environment on Enterprise**: with an organization admin role, you add and delete secrets. Without it, the **Network secrets** row opens the secrets list with the note "Only an organization admin can add or delete network secrets" and no **Add secret** or delete button. Ask an Owner to add the secret to a [shared environment](#organization-shared-environments), then run your sessions there
   * **A shared environment**: Owners [add and delete its secrets](#add-a-credential) from admin settings. Without an organization admin role, ask an Owner to add the secret, because the environment's dialog has no **Network secrets** section
   * **Your own environment on Team**: without an organization admin role, **Add secret** opens a [shorter form](#add-a-secret-without-the-role) that takes one host
 * **Environment type**: an Anthropic-hosted cloud environment that already exists. A [self-hosted environment](/docs/en/self-hosted-environments) doesn't have network secrets
@@ -111,11 +111,11 @@ These requirements decide whether you can add a secret and whether the agent pro
 
 You add secrets one at a time, and you can't edit a secret after you add it. To change a secret's hosts or value, delete it and add it again.
 
-To add a secret to a [shared environment](#organization-shared-environments), open it for editing from the **Cloud environments** page in [admin settings](https://claude.ai/admin-settings), then continue step 1 from the **Network secrets** section. If you're on a Team plan and don't hold an [organization admin role](#requirements), follow step 1 on your own environment, then [fill in the shorter form](#add-a-secret-without-the-role).
+To add a secret to a [shared environment](#organization-shared-environments), open it for editing from the **Cloud environments** page in [admin settings](https://claude.ai/admin-settings), then continue from step 2 in its **Network secrets** section. If you're on a Team plan and don't hold an [organization admin role](#requirements), follow step 1 on your own environment, then [fill in the shorter form](#add-a-secret-without-the-role).
 
 **1. Open the environment's network secrets**
 
-[Open the environment for editing](#configure-your-environment) at [claude.ai/code](https://claude.ai/code). In the **Edit cloud environment** dialog, find the **Network secrets** section. You see the secrets already on the environment, each with the hosts it applies to.
+[Open the environment for editing](#configure-your-environment) at [claude.ai/code](https://claude.ai/code). In the **Edit cloud environment** dialog, select the **Network secrets** row. You see the secrets already on the environment, each with the hosts it applies to.
 
 **2. Add the secret**
 
@@ -135,7 +135,7 @@ To confirm the secret works, start a session in the environment and ask Claude t
 
 #### Add a secret on a Team plan without an organization admin role
 
-If you're on a Team plan and don't hold an [organization admin role](#requirements), the **Add secret** form takes one secret for one host. Select **Add secret** in your environment's [**Network secrets** section](#add-a-credential), fill in these fields, then select the form's **Add secret** button:
+If you're on a Team plan and don't hold an [organization admin role](#requirements), the **Add secret** form takes one secret for one host. Select your environment's [**Network secrets** row](#add-a-credential) and then **Add secret**. Fill in these fields and select the form's **Add secret** button:
 
 * **Host**: the one host that gets the secret, such as `api.example.com`. The form doesn't accept a `*.` wildcard
 * **Name**: an optional label for the secret
@@ -430,7 +430,9 @@ A setup script is a Bash script that runs when a new cloud session starts, befor
 
 Scripts run as root on Ubuntu 24.04, so `apt install` and most language package managers work.
 
-To add a setup script, open the environment settings dialog and enter your script in the **Setup script** field.
+### Add a setup script
+
+To add a setup script to your own environment, you can type or paste it, or load a text file such as `setup.sh`. [Add or edit the environment](#configure-your-environment) and select the **Setup script** row. Enter the script in the box that opens, or select **Choose file** to replace the box's contents with the text of a file up to 64 KB. Then select **Add environment** or **Save changes**.
 
 This example installs [ShellCheck](https://www.shellcheck.net/), which isn't pre-installed.
 

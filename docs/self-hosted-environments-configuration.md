@@ -62,11 +62,11 @@ Quote every argument and variable that the runner passes to your wrapper or [`co
 
 The child's stdin is the runner's control channel. Token rotations and session-end signals arrive on it. The runner also opens a pipe on file descriptor 3 and reads the child's activity signals from it to drive idle and startup timeouts. A plain `exec "$CLAUDE_RUNNER_CLAUDE_BIN" "$@"` preserves both automatically.
 
-If your wrapper backgrounds the child with a bare `&`, it severs the child's stdin. The session looks healthy until the initial OAuth token's roughly 30-minute lifetime expires, and then every API call that uses the token fails with `401 authentication_error`. If your wrapper must background the child, for example to keep a teardown trap alive, save stdin on file descriptor 4 or higher and re-attach it explicitly:
+If your wrapper backgrounds the child with a bare `&`, it severs the child's stdin. The session looks healthy until the initial OAuth token's roughly 30-minute lifetime expires, and then every API call that uses the token fails with `401 authentication_error`. If your wrapper must background the child, for example to keep a teardown trap alive, save stdin on file descriptor 9 and re-attach it explicitly:
 
 ```bash theme={null}
-exec 4<&0
-"$CLAUDE_RUNNER_CLAUDE_BIN" "$@" <&4 4<&- &
+exec 9<&0   # the runner uses 3, and from v2.1.309 reserves 4 and 5
+"$CLAUDE_RUNNER_CLAUDE_BIN" "$@" <&9 9<&- &
 CHILD=$!
 trap 'teardown' EXIT
 wait "$CHILD"
@@ -75,6 +75,7 @@ wait "$CHILD"
 You can redirect the child's stdout. Keep file descriptor 3 and stderr attached to the runner:
 
 * **File descriptor 3**: carries the child's activity signals to the runner. Don't close it or reuse it in the wrapper.
+* **File descriptors 4 and 5**: runners on Claude Code v2.1.309 or later reserve them for the child. Don't close or reuse them in the wrapper. If your wrapper uses either, for example to save stdin, move that use to a descriptor from 6 to 9, which earlier versions leave free too.
 * **stderr**: when the wrapper or the child exits non-zero, the runner posts the last lines of stderr to the session and prints them in its own log. The session's user sees those lines, so don't print secrets to stderr, and remove `set -x` before you deploy the wrapper. If you redirect stderr, sessions still run, but the runner reports a failure with the exit code alone.
 
 ### Pass the system prompt flags through
