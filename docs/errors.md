@@ -226,9 +226,12 @@ Match the message you see to a section below.
 | `Error: --agents file not found` | [Command-line errors](#invalid-agents-configuration) |
 | `Error: Settings file exceeds the 2MiB limit` | [Command-line errors](#settings-file-exceeds-the-2mib-limit) |
 | `The current directory no longer exists (it was deleted or moved)` / `Can't read the current directory` | [Command-line errors](#the-current-directory-no-longer-exists) |
-| `Temp directory <dir> ... Refusing to use it` / `ENOSPC: no space left on device, mkdir '<dir>'` | [Command-line errors](#temp-directory-refused-or-cannot-be-created) |
+| `Temp directory <dir> ... Refusing to use it` / `Claude Code's temporary directory <dir> could not be created` | [Command-line errors](#temp-directory-refused-or-cannot-be-created) |
+| `ENOSPC: no space left on device, mkdir '<dir>'` | [Command-line errors](#temp-directory-refused-or-cannot-be-created) |
 | `couldn't be resolved to a real location, so its skills, commands, and agents weren't loaded` | [Command-line errors](#directory-couldnt-be-resolved-to-a-real-location) |
 | `Error: Workspace not trusted` when starting Remote Control | [Command-line errors](#workspace-not-trusted-when-starting-remote-control) |
+| `Error: Workspace not trusted` when running `claude ultrareview` | [Command-line errors](#workspace-not-trusted-when-running-claude-ultrareview) |
+| `Ultrareview did not start` | [Command-line errors](#ultrareview-did-not-start) |
 | `` `<flag>` before `remote-control` is not carried over to the sessions Remote Control starts `` | [Command-line errors](#not-carried-over-to-the-sessions-remote-control-starts) |
 | `--sandbox is not supported by claude remote-control` / `--no-sandbox is not supported by claude remote-control` | [Command-line errors](#sandbox-is-not-supported-by-claude-remote-control) |
 | `` `claude import` is not yet available in this build `` | [Command-line errors](#claude-import-is-not-yet-available-in-this-build) |
@@ -338,10 +341,11 @@ Match the message you see to a section below.
 | `its permission check expired before it ran (too many concurrent file operations)` / `ripgrep was found only by name on PATH` | [Tool errors](#refusing-after-a-symlink-changed) |
 | `task output swap refused (tasks dir moved or linked)` | [Tool errors](#task-output-swap-refused) |
 | `Command killed: its output file was replaced or could no longer be verified` | [Tool errors](#task-output-swap-refused) |
-| `Your disk quota is full on the filesystem with Claude Code's temp directory <dir> (EDQUOT)` | [Tool errors](#disk-quota-or-temp-filesystem-is-full) |
-| `The filesystem with Claude Code's temp directory <dir>, or your disk quota on it, is full (ENOSPC)` | [Tool errors](#disk-quota-or-temp-filesystem-is-full) |
+| `Disk full: this computer's volume holding <dir> (Claude Code's temporary directory) has <n> MB free` / `Nearly out of inodes: this computer's volume holding <dir>` | [Tool errors](#disk-quota-or-temp-filesystem-is-full) |
+| `Disk full: a test write beside this command's output file` / `Disk quota used up: a test write beside this command's output file` | [Tool errors](#disk-quota-or-temp-filesystem-is-full) |
+| `The command was not started: this computer's disk is full (ENOSPC)` / `the user's disk quota is used up (EDQUOT)` | [Tool errors](#disk-quota-or-temp-filesystem-is-full) |
+| `Your disk quota is full on the filesystem with Claude Code's temp directory <dir> (EDQUOT)` / `The filesystem with Claude Code's temp directory <dir>, or your disk quota on it, is full (ENOSPC)` | [Tool errors](#disk-quota-or-temp-filesystem-is-full) |
 | `Command output was lost: the temp filesystem at <dir> is full` / `is out of inodes` | [Tool errors](#disk-quota-or-temp-filesystem-is-full) |
-| `The command was not started: this computer's disk is full (ENOSPC)` / `(EDQUOT)` | [Tool errors](#disk-quota-or-temp-filesystem-is-full) |
 | `File is not valid UTF-8. It may use a legacy encoding such as Windows-1252, Shift-JIS or GBK, or be binary` | [Tool errors](#file-is-not-valid-utf-8) |
 | `the source file is not valid UTF-8 text` / `the source file is not valid UTF-16 text` | [Tool errors](#the-source-file-is-not-valid-utf-8-text) |
 | `the source file has the replacement character U+FFFD` | [Tool errors](#the-source-file-is-not-valid-utf-8-text) |
@@ -429,6 +433,7 @@ Match the message you see to a section below.
 | `Claude Code doesn't recognize the model "<model>", so it assumes a context window of 200k tokens` | [Correct the window for a gateway or custom model ID](/docs/en/model-config.md#correct-the-window-for-a-gateway-or-custom-model-id) |
 | `[claude-code:unrecognized_model]` | [Configuration warnings](#unrecognized-model-id-on-a-request) |
 | `is ignored — managed settings set allowManagedReadPathsOnly` / `is ignored — managed settings set allowManagedDomainsOnly` | [Configuration warnings](#sandbox-allow-entries-are-ignored-under-a-managed-lock) |
+| `Sandbox mask files left behind at write-deny paths` | [Configuration warnings](#stale-sandbox-mask-files-left-by-a-killed-session) |
 | `Stale sandbox mask files left by a killed session` | [Configuration warnings](#stale-sandbox-mask-files-left-by-a-killed-session) |
 | Responses seem lower quality than usual | [Response quality](#responses-seem-lower-quality-than-usual) |
 
@@ -2162,24 +2167,25 @@ The upload must fit an 8 MiB limit. On a long session, Claude Code progressively
 
 ### Couldn't send feedback
 
-You sent a report from the [`/feedback`, `/bug`, or `/share` dialog](/docs/en/commands#all-commands) and the upload to Anthropic failed. The dialog keeps your text so you can retry.
+A message starting `Couldn't send feedback` means the report you submitted from the [`/feedback`, `/bug`, or `/share` dialog](/docs/en/commands#all-commands), or a queued [feedback draft](/docs/en/tools-reference.md#sendfeedback-tool-behavior), wasn't sent. When a sentence about your organization follows the colon, your organization refuses feedback and the same report gets the same answer.
 
-```text theme={null}
+The first of these two examples is a network failure and the second is an organization's refusal:
+
+```text wrap theme={null}
 Couldn't send feedback (couldn't reach the service). If it keeps failing, you can file at https://github.com/anthropics/claude-code/issues instead.
+
+Couldn't send feedback: Feedback has not been enabled for your organization. To report a bug, open an issue at https://github.com/anthropics/claude-code/issues. Issues are public, so leave out anything confidential.
 ```
-
-The text after the prefix names what failed:
-
-* **`: not signed in. Run /login, then retry.`**: the dialog uploads only when Claude Code found Anthropic credentials as it opened, and none were usable by the time you sent. For example, you signed out on this machine in the meantime, or your login could no longer be refreshed.
-* **A parenthetical**: `(server returned <status>)` is the service's response code; `(request timed out)` and `(couldn't reach the service)` are network failures. When Claude Code can't name a reason, the parenthetical is absent.
-
-In the [feedback drafts queue](/docs/en/tools-reference.md#sendfeedback-tool-behavior), the same failure ends with `The draft is still queued. Try again later.` instead, and the draft stays in the queue for another attempt.
 
 **What to do:**
 
-* For the not-signed-in wording, run `/login` and send again
-* Otherwise, send again; if other requests are failing too, check your network connection and see [Unable to connect to API](#unable-to-connect-to-api)
-* If it keeps failing, file the report at [github.com/anthropics/claude-code/issues](https://github.com/anthropics/claude-code/issues), as the message says
+* **Not signed in**: the message continues `: not signed in. Run /login, then retry.` Run `/login`, then send again
+* **Your organization's refusal**: for example `: Feedback has not been enabled for your organization.` or `: Feedback collection is not available for organizations with custom data retention policies.` If the message adds `To report a bug, open an issue`, do so at [github.com/anthropics/claude-code/issues](https://github.com/anthropics/claude-code/issues). A queued draft stays queued, and you can [discard it](/docs/en/tools-reference.md#discard-or-keep-a-draft)
+* **Refused credentials**: the message continues `: the sign-in this session uses is not allowed to send feedback` or `: the server did not accept the credentials this session uses`. Run `/status` at the Claude Code prompt to see which login, token, or API key this session sends
+* **`(request timed out)` or `(couldn't reach the service)` straight after `Couldn't send feedback`**: these are network failures. Send the report or the queued draft again. The dialog keeps your text, and a queued draft's message says `The draft is still queued.` If other requests are failing too, check your network connection and see [Unable to connect to API](#unable-to-connect-to-api). If it keeps failing, file the report at [github.com/anthropics/claude-code/issues](https://github.com/anthropics/claude-code/issues)
+* **`(server returned <status>)`, or no reason, straight after `Couldn't send feedback`**: the status is the service's response code. The service's own message follows it when one was sent, as in `(server returned 403: Access Forbidden)`. If it keeps failing, file the report at [github.com/anthropics/claude-code/issues](https://github.com/anthropics/claude-code/issues)
+
+Issues at github.com/anthropics/claude-code are public, so leave out code, transcripts, and anything else confidential when you open one.
 
 Before v2.1.281, every send failed with this message once a Remote Control **Stop** or an urgent cross-session message had arrived while the dialog was open. On those versions, close the dialog, reopen it, and send again.
 
@@ -3169,7 +3175,7 @@ On macOS, `EPERM` for a directory in `~/Desktop`, `~/Documents`, `~/Downloads`, 
 On macOS and Linux, Claude Code creates a private temp directory at startup, `claude-<uid>` under the system temp directory or the [`CLAUDE_CODE_TMPDIR`](/docs/en/env-vars) override. When the directory can't be created, or an entry already at that path fails the safety checks, Claude Code prints the failure to stderr and exits with code 1 rather than start the session:
 
 ```text wrap theme={null}
-ENOSPC: no space left on device, mkdir '/tmp/claude-501'
+Claude Code's temporary directory /tmp/claude-501 could not be created: the volume holding /tmp is full (ENOSPC). Free space on that volume, or set CLAUDE_CODE_TMPDIR to a directory on another one, then try again.
 
 Temp directory /tmp/claude-501 is not a directory (may be an attacker-planted symlink). Refusing to use it. Set CLAUDE_CODE_TMPDIR to a directory you control, or ask an administrator to remove it.
 
@@ -3180,10 +3186,12 @@ Temp directory /tmp/claude-501 is not readable (its mode may have been altered, 
 
 **What to do:**
 
-* For `ENOSPC`, free disk space on the volume that holds the temp directory
+* For `could not be created` followed by `is full (ENOSPC)`, free disk space on the volume the message names. When it says `your disk quota on the volume holding /tmp is used up (EDQUOT)` instead, delete your own files on that volume that you no longer need
 * For the `Refusing to use it` forms, remove the named entry itself, not what a link points to, and start Claude Code again; for the `owned by uid` form, only an administrator or that user can remove it
 * For `is not readable`, run `chmod 0700` on the named directory, or remove it and start again
 * In any of these cases, set [`CLAUDE_CODE_TMPDIR`](/docs/en/env-vars) to a directory you control and start Claude Code again, leaving the refused path alone
+
+Before v2.1.309, Claude Code printed only the operating system's error text when the volume was full or your quota was used up. An example is `ENOSPC: no space left on device, mkdir '/tmp/claude-501'`, and the same steps apply.
 
 ### Directory couldn't be resolved to a real location
 
@@ -3203,6 +3211,10 @@ packages/app couldn't be resolved to a real location, so its skills, commands, a
 Before v2.1.261, this message also appeared for every `/add-dir <subdirectory>` when the working directory was on a `/net/<host>` automount, where Claude Code declines to resolve paths by design; the directory was fine and retrying couldn't help.
 
 ### Workspace not trusted when starting Remote Control
+
+> [!NOTE]
+>
+> If `claude ultrareview` printed `Error: Workspace not trusted`, see [Workspace not trusted when running claude ultrareview](#workspace-not-trusted-when-running-claude-ultrareview) instead.
 
 You started [Remote Control](/docs/en/remote-control.md) server mode with `claude remote-control` or its `claude rc` alias in a directory you haven't trusted, and the command couldn't ask you whether to trust it. For example, the command's standard input or standard output isn't a terminal because one of them is redirected or piped. The command exits with code 1:
 
@@ -3226,6 +3238,31 @@ If you answer `n` or press Enter at the [`Trust <directory>?` question](/docs/en
 * In your home directory, change to a project directory and start Remote Control there
 
 Before v2.1.284, the command never asked, even in a terminal.
+
+### Workspace not trusted when running claude ultrareview
+
+In a folder you haven't trusted, when [`claude ultrareview`](/docs/en/ultrareview#trust-the-folder-before-the-review-runs) can't ask whether you trust it, the run exits with code 1 before the review starts:
+
+```text theme={null}
+Error: Workspace not trusted. Please run `claude` in /Users/you/project first to review and accept the workspace trust dialog. Or, in a script or CI job, pass `--trust-workspace` to trust the folder for this run only.
+```
+
+For example, the subcommand can't ask when its standard input or standard output isn't a terminal. Sending the output to a file, as in `claude ultrareview --json > findings.json`, means standard output isn't a terminal.
+
+**What to do:**
+
+* In a script or CI job, append `--trust-workspace` to trust the checkout for that run only: `claude ultrareview --trust-workspace`. Append it only for code you trust, because the checkout's git configuration and Claude Code project settings can then run programs. To review a pull request whose code you don't trust, see [how to review it from a checkout you do trust](/docs/en/ultrareview.md#trust-the-folder-before-the-review-runs).
+* On your own machine, run `claude` in that folder and accept the [workspace trust dialog](/docs/en/permissions.md#project-allow-rules-and-workspace-trust), then run your original command again
+
+Each of these messages from `claude ultrareview` means that no review started and the exit code is 1:
+
+* **`Error: Workspace not trusted. This terminal ...`**: the terminal reported no row and column count, or can't fit the trust question and its warnings. Enlarge it or use a terminal that reports its size, then run `claude ultrareview` again. Outside your home directory, you can also run `claude` in that folder once and accept the trust dialog, so later runs there don't ask.
+* **`Error: Workspace not trusted. <folder> is your home directory`**: because trust for your home directory is never saved, running `claude` there first can't help. Run `claude ultrareview` from a project directory instead, after running `claude` there once to accept the trust dialog, or append `--trust-workspace`.
+* **`No answer in time.` followed by `Error: Workspace not trusted`**: the `Trust <folder>? [y/N]` question went unanswered for 5 minutes. Run `claude ultrareview` again and answer it.
+* **`Ultrareview did not start: <folder> is not trusted`**: you declined at the `Trust <folder>? [y/N]` question, for example by answering `n` or pressing Enter. To start the review, run `claude ultrareview` again and answer `y`.
+* **``Ultrareview did not start: `--trust-workspace` takes no value``**: something other than a flag follows `--trust-workspace`, such as a PR number or `false`. If you don't trust the folder, leave the flag out. To trust it for this run, put the PR number or base branch before the flag: `claude ultrareview 1234 --trust-workspace`.
+
+Before v2.1.309, `claude ultrareview` didn't accept `--trust-workspace`.
 
 ### Not carried over to the sessions Remote Control starts
 
@@ -4668,34 +4705,38 @@ Command killed: its output file was replaced or could no longer be verified
 * Or check your project's directory under the Claude Code temp directory, `/private/tmp/claude-501/-Users-you-my-project` in the example message. If that path is a symbolic link, or a directory that shouldn't be there, remove the link or directory itself rather than the link's target, and restart Claude Code
 * If the refusal repeats, a process is replacing, linking, or removing entries under Claude Code's temp directory while the session runs. Set [`CLAUDE_CODE_TMPDIR`](/docs/en/env-vars) to a directory nothing else manages and restart
 
-### Disk quota or temp filesystem is full
+### Disk full or disk quota used up
 
-Claude Code saves each Bash and PowerShell command's output to a file under its temp directory. These messages in a command's result mean that the filesystem holding that directory, or your disk quota on it, is full.
+Free up space, inodes, or disk quota on the volume that holds Claude Code's temporary directory. A line in a command's result starting `Disk full:`, `Disk quota used up:`, or `Nearly out of inodes:` names that directory.
 
-If Claude Code can't create that file because the filesystem or your quota on it is full, your command doesn't start, and the result reads:
-
-```text wrap theme={null}
-The command was not started: this computer's disk is full (ENOSPC), so the file that captures command output could not be created. Nothing ran. If this is the user's own computer, tell them before deleting anything to make room.
-```
-
-When a command exits with a nonzero code and no output at all, Claude Code checks the filesystem holding the output file. If that filesystem is out of space or inodes, or your disk quota on it is used up, a diagnostic replaces the empty output in the command's result:
+Claude Code saves each Bash and PowerShell command's output to a file under that directory. If it can't create that file because the volume or your quota on it is full, your command doesn't start, and the result Claude reads is:
 
 ```text wrap theme={null}
-Your disk quota is full on the filesystem with Claude Code's temp directory /private/tmp/claude-501/-Users-you-my-project/1f0e62dc-4b0a-4f5e-9c2d-8a7b6c5d4e3f/tasks (EDQUOT), so any output this command printed was lost, and it may have failed because it could not write. Delete files you no longer need there, or restart Claude Code with CLAUDE_CODE_TMPDIR set to a directory on another filesystem.
+The command was not started: this computer's disk is full (ENOSPC) on the volume holding /tmp/claude-501 (Claude Code's temporary directory), so the file that captures command output could not be created there and nothing ran. Free space on that volume, or restart Claude Code with CLAUDE_CODE_TMPDIR set to a directory on another one, then retry. If this is the user's own computer, tell them before deleting anything to make room.
 ```
 
-The message names what ran out:
+The other three messages follow a command that ran and exited with a nonzero code. This example is the `Disk full:` form:
 
-* `Your disk quota is full ... (EDQUOT)`: your own quota on that filesystem is used up. A quota can be full while the filesystem still shows free space
-* `The filesystem with Claude Code's temp directory ..., or your disk quota on it, is full (ENOSPC)`: the filesystem, or your quota on it, has no space left
-* `Command output was lost: the temp filesystem at ... is full` or `... is out of inodes`: the filesystem has almost no free space left, or is running out of inodes
-* `The command was not started: this computer's disk is full (ENOSPC)` or `... (EDQUOT)`: the filesystem has no space left for the output file, or with `EDQUOT` your own quota on it is used up
+```text wrap theme={null}
+Disk full: this computer's volume holding /tmp/claude-501 (Claude Code's temporary directory) has 3 MB free, so whatever this command printed was lost and its own writes may have failed with "No space left on device". Free space on that volume, or restart Claude Code with CLAUDE_CODE_TMPDIR set to a directory on another one, then retry. If this is the user's own computer, tell them before deleting anything to make room.
+```
 
 **What to do:**
 
-* Delete files you no longer need on the filesystem that holds Claude Code's temp directory. If your message doesn't name that directory, look up its default location in the [`CLAUDE_CODE_TMPDIR`](/docs/en/env-vars) reference. For `EDQUOT`, delete files that count against your own quota. For `out of inodes`, delete many files rather than a few large ones, since each file takes one inode whatever its size
-* Or restart Claude Code with [`CLAUDE_CODE_TMPDIR`](/docs/en/env-vars) set to a directory on a filesystem with room
+* On macOS and Linux, run `df -h <dir>` in your shell to see which volume holds the directory and how full it is. `df -i <dir>` shows how many inodes are free. `<dir>` is the directory your message names, as in `df -i /tmp/claude-501`
+* **`Disk full: this computer's volume` or `disk is full (ENOSPC)`**: anywhere on that volume, delete files you don't need
+* **`Disk quota used up:` or `Disk full: a test write`**: delete your own files on that volume, even if it still shows free space
+* **`disk quota is used up (EDQUOT)`**: delete your own files on that volume
+* **`Nearly out of inodes:`**: delete many files on that volume. Each takes one inode whatever its size, so their number matters, not their size
+* Or restart Claude Code with [`CLAUDE_CODE_TMPDIR`](/docs/en/env-vars) set to a directory on a volume with room
 * Then have Claude run the command again
+
+Before v2.1.309, the messages read as follows, and the same steps apply:
+
+* `Your disk quota is full on the filesystem with Claude Code's temp directory <dir> (EDQUOT)`
+* `The filesystem with Claude Code's temp directory <dir>, or your disk quota on it, is full (ENOSPC)`
+* `Command output was lost: the temp filesystem at <dir> is full` or `... is out of inodes`
+* `The command was not started: this computer's disk is full (ENOSPC), so the file that captures command output could not be created. Nothing ran.`, or the same with `(EDQUOT)`. This form names no directory: look on the volume holding your system temp directory, such as `/tmp`, or the directory set in `CLAUDE_CODE_TMPDIR`
 
 Before v2.1.305, a command that Claude Code couldn't start because the disk was full returned only the operating system's error text. That text read, for example, `ENOSPC: no space left on device, open <path>.output`.
 
@@ -5969,21 +6010,29 @@ For the network lock, the warning names `sandbox.network.allowedDomains` and `al
 * If you need those paths or domains and your organization's managed settings set the lock, ask your administrator to add them to those settings. The warning stays until you also remove the entries from the named file.
 * To clear the warning, remove the entries from the named file. For a file you share, such as a project's `.claude/settings.json`, you can leave the entries in for teammates without the lock and leave the warning showing.
 
-### Stale sandbox mask files left by a killed session
+### Sandbox mask files left behind at write-deny paths
 
-`claude doctor` prints this warning in its diagnostics, and `/status` lists the same line. It appears on Linux and WSL2 when [sandboxing](/docs/en/sandboxing.md) is enabled with filesystem isolation on.
+This warning in `claude doctor` and `/status` lists mask files: 0-byte read-only placeholder files at paths the [sandbox](/docs/en/sandboxing.md) denies writes to. It appears on Linux and WSL2 when sandboxing is enabled with filesystem isolation on. Delete them from your shell once no Claude Code session is open in the project that holds them.
 
-While a sandboxed command runs, the sandbox holds a write denial on a file that doesn't exist yet by creating a 0-byte read-only placeholder there, and removes it afterward. A session killed before that cleanup runs, for example by SIGKILL, leaves the placeholders behind. Later sessions bind them read-only again on every start, so a settings write such as saving "Yes, and don't ask again" fails where one sits.
+The sandbox creates a placeholder while a sandboxed command runs and removes it when the command ends. One stays behind in cases such as these:
+
+* The session is killed before the command ends, for example by SIGKILL
+* You quit the session while a sandboxed command is still running, such as one in the background
+
+In `claude doctor`, the warning reads:
 
 ```text theme={null}
-- Stale sandbox mask files left by a killed session: /home/you/project/.claude/settings.local.json
-  Fix: Remove each with `rm <path>` while no other Claude Code session is running in that project — a 0-byte read-only file where a settings file belongs makes "Yes, and don't ask again" fail to save, and the sandbox binds it read-only again on every start
+- Sandbox mask files left behind at write-deny paths: /home/you/project/.claude/settings.local.json
+  Fix: A session leaves one where it was killed, or where it exited while a sandboxed command was still running. Remove each with `rm <path>` while no other Claude Code session is running in that project — a 0-byte read-only file where a settings file belongs makes "Yes, and don't ask again" fail to save, and the sandbox binds it read-only again on every start
 ```
 
 **What to do:**
 
-* Quit any other Claude Code session running in that project, then delete each listed file with `rm`. The warning names up to three files and counts the rest, so rerun `claude doctor` after deleting until the warning no longer appears. A placeholder that another session's sandbox is still using is a live part of that session's write protection
+* Quit every Claude Code session open in the project that holds the listed files, including any session where `/status` showed the warning, then work from your shell. A placeholder that another session's sandbox is still using is a live part of that session's write protection
+* In your shell, delete each listed file with `rm`, and confirm if `rm` asks about a write-protected file. The warning names up to three files and counts the rest, so run `claude doctor` again after deleting until the warning no longer appears
 * If a permission choice you saved with "Yes, and don't ask again" didn't stick, save it again after deleting the placeholder
+
+Before v2.1.309, the warning read `Stale sandbox mask files left by a killed session`.
 
 Before v2.1.257, `claude doctor` didn't flag these files; earlier versions leave the same placeholders behind when a session is killed.
 

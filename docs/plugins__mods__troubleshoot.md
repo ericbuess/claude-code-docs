@@ -102,6 +102,12 @@ The line starts with the mod's name, then `hooks module did not load:`, the file
 
 Rewrite the code so its scopes nest less deeply.
 
+### `the engine ran out of stack linking the file and its imports`
+
+Code in the hooks module is nested too deeply, or its chain of imports is too long, for Claude Code to load it. The line starts with the mod's name and `hooks module did not load:`, then gives a file's name and this reason.
+
+Look through that file and the files reached through its imports for the most deeply nested part and rewrite it to nest less, or shorten the chain of imports. If you installed the mod and didn't write it, ask its author to.
+
 ### `the parser stopped` or `the engine ran out of stack loading the file`
 
 Code in one file of the hooks module is nested so deeply that Claude Code ran out of stack reading it. The line starts with the mod's name and `hooks module did not load:`, then gives that file's name and one of these reasons:
@@ -253,11 +259,18 @@ Your mod calls [`$.ui.toast`](/docs/en/plugins/mods/api#show-something-without-s
 
 Before v2.1.290, Claude Code dropped a toast raised within two seconds of the last one it showed for your mod, and the debug log line for the dropped toast said `within 2000ms of the last; dropped`.
 
+### The band shows `plugin panel hidden`
+
+The band is [collapsed](/docs/en/plugins/mods/interface.md#when-the-user-collapses-the-band). It collapses when you press Ctrl+X then Ctrl+A, or the keys you bound in their place, and in [fullscreen rendering](/docs/en/fullscreen.md) when you click the `[-]` on its first row. It stays collapsed until you expand it or start Claude Code again, and meanwhile no hotkey or `action` binding presses a button in it.
+
+To expand the band, press the keys the row names, Ctrl+X then Ctrl+A by default, or in fullscreen rendering click the row.
+
 ### Hotkeys do nothing
 
-Your pane doesn't have keyboard focus, or the drawing is in the VS Code extension, where buttons have no hotkeys. Do the one that matches:
+Your pane or band doesn't have keyboard focus, your button is in a collapsed band, or the drawing is in the VS Code extension, where buttons have no hotkeys. Do the one that matches:
 
-* **No keyboard focus**: press Ctrl+X then Tab, or click the pane. To have the pane take focus when it opens, open it with `focus: true` from a command.
+* **No keyboard focus**: press Ctrl+X then Tab or, in [fullscreen rendering](/docs/en/fullscreen.md), click the pane or band. To have the pane take focus when it opens, open it with `focus: true` from a command.
+* **The button is in a collapsed band**: the band shows one dim row that starts with `▸ plugin panel hidden`. Press the keys the row names, Ctrl+X then Ctrl+A by default, to [expand it](#plugin-panel-hidden).
 * **In the VS Code extension**: click the button, or press Enter on it once it has focus
 
 ### A drawing works in the terminal and not in the Desktop app or VS Code

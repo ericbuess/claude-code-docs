@@ -91,6 +91,15 @@ A `claude -p --resume` or `claude -p --continue` run resumes in plan mode only w
 * The run isn't started through [channels](/docs/en/channels.md)
 * No [deny rule](/docs/en/permissions.md#manage-permissions) removes the `ExitPlanMode` tool
 
+### The "Resume this conversation?" dialog
+
+If you see the "Resume this conversation?" dialog when resuming a session, its estimate is the share of your 5-hour usage limit that the saved conversation alone would use. The estimate doesn't count what you've already used.
+
+On Pro and Max plans, the dialog can appear when you resume a long conversation [after a long break](/docs/en/prompt-caching.md#resuming-a-session) or on a different model. The estimated use comes when you send your first message after **Resume**, not when you select it. Choose by whether your next task still needs the saved conversation:
+
+* **Resume**: keep working in the saved conversation.
+* **Start a new conversation**: switch to work that doesn't need the saved conversation. To reopen it later, run [`/resume`](#use-the-session-picker) at the prompt. The estimate doesn't apply to your first message in the new conversation. If the option says that Claude can look up this conversation, you can still refer to earlier work in the new conversation.
+
 ### Where the session picker looks
 
 Claude Code stores sessions per project directory. By default the session picker shows:

@@ -512,7 +512,7 @@ A test presses or types into a control by its `key`, so give each control one. E
 
 ### Keyboard focus and hotkeys
 
-Your mod never reads the keyboard itself. The user presses a key, Claude Code decides which of your controls it's for, and that control's callback runs. Apart from a [digit hotkey on the band](/docs/en/plugins/mods/reference.md#elements), that happens only while your pane or band has keyboard focus. The rest of the time, keys go to the prompt.
+Your mod never reads the keyboard itself. The user presses a key, Claude Code decides which of your controls it's for, and that control's callback runs. Apart from a [digit hotkey on the band or an `action` binding](/docs/en/plugins/mods/reference#elements), that happens only while your pane or band has keyboard focus. The rest of the time, keys go to the prompt.
 
 In the [VS Code extension](#draw-in-the-vs-code-extension), buttons have no hotkeys: the user clicks a button or presses Enter on it, and types into fields.
 
@@ -522,7 +522,7 @@ A pane gets keyboard focus when:
 
 * Your mod opens it with `focus: true` from a command or a press
 * The user presses Ctrl+X then Tab
-* The user clicks it
+* The user clicks it, which in the terminal needs [fullscreen rendering](/docs/en/fullscreen.md)
 
 Claude Code grants `focus: true` only while the prompt is empty and nothing else has keyboard focus. A pane that opens while the user is typing doesn't take their keystrokes.
 
@@ -539,6 +539,7 @@ This table lists what a key does while your pane or band has keyboard focus:
 | Page Up, Page Down, Home, and End | Scroll your pane or band when it has more rows than it can show |
 | Ctrl+X then an arrow key | Resizes your pane. Left or Up gives it more room, and Right or Down gives the room back. A pane beside the transcript stops widening at 45% of the terminal's width. |
 | Ctrl+X then X | Closes your pane, even while one of its fields has the focus |
+| Ctrl+X then Ctrl+A | [Collapses the band](#when-the-user-collapses-the-band) to one row while a mod draws there, or expands it again. These keys also work while the prompt has the focus. |
 | Esc | Returns keyboard focus to the prompt. With `closeOnEscape: true`, it also closes the pane. |
 
 A mod can't bind Tab or the arrow keys to anything else, so a game steers with `w`, `a`, `s`, and `d`.
@@ -556,6 +557,23 @@ How a hotkey shows depends on the button and the app:
 | With `plain: true` | `1: One` | The label with a small key beside it | The label, and the hotkey does nothing |
 
 In the terminal, name the key in a bracketed button's label, or use `plain: true`, so the user can see what to press. The [elements reference](/docs/en/plugins/mods/reference.md#elements) has the other `Button` rules: `action`, digit hotkeys on the band, and two buttons on one hotkey.
+
+#### When the user collapses the band
+
+In the terminal, while a mod draws in the band, the user can collapse the band to one row to get it out of the way:
+
+* **Click `[-]`**: while the band is expanded, Claude Code draws this mark at the right end of its first row. In [fullscreen rendering](/docs/en/fullscreen.md), the user clicks it to collapse the band.
+* **Press Ctrl+X then Ctrl+A**: this works whether the prompt, the band, or a pane has keyboard focus. The user can [bind other keys](/docs/en/keybindings.md#above-prompt-actions) to it through the `abovePrompt:toggle` action.
+
+A collapsed band hides everything the mods draw there and shows one dim row instead, which names the keys that expand it as the user has them bound:
+
+```text theme={null}
+▸ plugin panel hidden · ctrl+x ctrl+a or click to show
+```
+
+The same keys, or in fullscreen rendering a click on the row, expand the band again. Until then, nothing presses a button in it: no hotkey, no digit typed into an empty prompt, and no keybinding for a button's [`action`](/docs/en/plugins/mods/reference#elements). If the band has keyboard focus when the user collapses it, the focus returns to the prompt, and Ctrl+X then Tab skips the band while it's collapsed.
+
+The band stays collapsed until the user expands it, even after `/clear`, and is expanded again the next time Claude Code starts. Your mod can't expand it or tell that it's collapsed: the `ui.render` hook keeps running, and nothing in `e.props` says so. Don't make the band the only place your mod shows something the user has to answer.
 
 ### Take typed input and draw a row for each item
 

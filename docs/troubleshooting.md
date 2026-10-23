@@ -20,7 +20,7 @@ This page covers performance, stability, and search problems once Claude Code is
 | After you update Claude Code or the Agent SDK, tool calls are denied in `claude -p` or SDK runs that don't pass `--permission-mode`, `permissionMode`, or `permission_mode` | [Tool calls denied in `claude -p` and Agent SDK runs](/docs/en/permission-modes#which-mode-a-non-interactive-run-starts-in) |
 | `API Error: 5xx`, `529 Overloaded`, `429`, request validation errors | [Error reference](/docs/en/errors.md) |
 | `model not found` or `you may not have access to it` | [Error reference](/docs/en/errors.md#theres-an-issue-with-the-selected-model) |
-| A command Claude runs fails with `Your disk quota is full`, `is full (ENOSPC)`, or `Command output was lost` | [Error reference](/docs/en/errors.md#disk-quota-or-temp-filesystem-is-full) |
+| A command Claude runs fails with `Disk full:`, `Disk quota used up:`, `Nearly out of inodes:`, `The command was not started:`, `Your disk quota is full`, `is full (ENOSPC)`, or `Command output was lost` | [Error reference](/docs/en/errors.md#disk-quota-or-temp-filesystem-is-full) |
 | VS Code extension not connecting or detecting Claude | [VS Code integration](/docs/en/vs-code.md#fix-common-issues) |
 | `Claude Code process exited with code 1` in VS Code or an SDK app | [Error reference](/docs/en/errors.md#claude-code-process-exited-with-code-n) |
 | JetBrains plugin or IDE not detected | [JetBrains integration](/docs/en/jetbrains.md#troubleshooting) |

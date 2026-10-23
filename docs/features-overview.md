@@ -222,7 +222,7 @@ Each feature has a different loading strategy and context cost:
 
 | Feature | When it loads | What loads | Context cost |
 | - | - | - | - |
-| **CLAUDE.md** | Session start | Full content | Every request |
+| **CLAUDE.md** | Session start | Full content of each file that loads at session start | Every request |
 | **Output styles** | Session start, and again when you switch styles | The active style's full instructions; nothing for the Default style | Every request |
 | **Skills** | Session start + when used | Descriptions at start, full content when used | Low (descriptions every request)\* |
 | **MCP servers** | Session start | Tool names; full schemas on demand | Low until a tool is used |
@@ -242,9 +242,9 @@ Each feature loads at different points in your session. The tabs below explain w
 
 **When:** Session start
 
-**What loads:** Full content of all CLAUDE.md files (managed, user, and project levels).
+**What loads:** Full content of each CLAUDE.md file that loads at session start (managed, user, and project levels).
 
-**Inheritance:** Claude reads CLAUDE.md files from your working directory up to the root, and discovers nested ones in subdirectories as it accesses those files. See [How CLAUDE.md files load](/docs/en/memory.md#how-claude-md-files-load) for details.
+**Inheritance:** Claude reads CLAUDE.md files from your working directory up to the root, and discovers nested ones in subdirectories as it accesses those files. See [How CLAUDE.md files load](/docs/en/memory.md#how-claude-md-files-load) for details. If a nested CLAUDE.md is over its [per-file size limit](/docs/en/memory.md#claude-ignores-the-end-of-my-subdirectory-claude-md), Claude receives only the start of the file.
 
 > [!TIP]
 >

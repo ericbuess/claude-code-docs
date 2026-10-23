@@ -274,7 +274,14 @@ Elements are the building blocks of a tree a `ui.render` hook returns, and you g
 | [`Raster`](/docs/en/plugins/mods/interface#draw-a-grid-of-colored-cells) | `key`, `columns` up to 512, `rows` up to 256, `cells`. See [Draw a grid of colored cells](/docs/en/plugins/mods/interface.md#draw-a-grid-of-colored-cells). | ✓ | | |
 | `Image` | `key`, a `source` such as PNG or RGBA bytes up to 2 MiB, or a file path, `columns` and `rows` up to 255, and `alt` text. See [which terminals draw it](/docs/en/plugins/mods/gallery.md#image-and-client). | ✓ | | |
 
-More `Button` rules: `action` names one of Claude Code's own [keybinding actions](/docs/en/keybindings.md), and the user's binding for it presses the button when that binding is a chord or a modified key. A digit `hotkey` on a button in the band also fires when the user types that digit alone into an empty prompt and pauses. When two buttons in one drawing name the same `hotkey`, the later one gets it. `autoFocus` accepts only `true` on any control, so omit the prop to leave it off.
+More `Button` rules:
+
+* **`action`**: names one of Claude Code's own [keybinding actions](/docs/en/keybindings.md), and the user's binding for it presses the button when that binding is a chord or a modified key
+* **Digit hotkeys on the band**: a digit `hotkey` on a button in the band also fires when the user types that digit alone into an empty prompt and pauses
+* **A collapsed band**: while the band is [collapsed](/docs/en/plugins/mods/interface.md#when-the-user-collapses-the-band), neither an `action` binding nor a hotkey presses a button in it
+* **Two buttons on one hotkey**: when two buttons in one drawing name the same `hotkey`, the later one gets it
+
+`autoFocus` accepts only `true` on any control, so omit the prop to leave it off.
 
 The VS Code extension ignores some element props and draws the element as if you had left them out:
 

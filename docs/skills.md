@@ -193,9 +193,18 @@ Claude Code watches `.claude/skills/` in a directory you pass with `--add-dir` a
 
 These loads depend on the `project` [setting source](/docs/en/agent-sdk/claude-code-features.md#control-filesystem-settings-with-settingsources), which is on by default. A [`strictPluginOnlyCustomization`](/docs/en/settings-reference#strictpluginonlycustomization) policy, [bare mode](/docs/en/headless.md#start-faster-with-bare-mode), and [`--safe-mode`](/docs/en/cli-reference#cli-flags) each restrict them further, as those pages describe. See [Additional directories grant file access, not configuration](/docs/en/permissions.md#additional-directories-grant-file-access-not-configuration) for the full table of what an added directory loads, including `CLAUDE.md` and plugin settings.
 
+#### Run a same-named skill from an added directory
+
+An added directory's skill gets a prefix when its folder name clashes with an enterprise, personal, or project skill, or one in a directory added earlier. To run it, type `/<prefix>:<skill-name>` at the Claude Code prompt. The `/` menu lists the skill under its prefixed name, and [How a skill gets its command name](#how-a-skill-gets-its-command-name) describes where the prefix comes from. That name requires Claude Code v2.1.309 or later.
+
+For example, with `--add-dir ../cli` and a `verify` skill in both your project and `../cli`:
+
+* `/verify` runs your project's skill
+* `/cli:verify` runs the skill from `../cli`
+
 ### Resolve skills that share a name
 
-When two skills share a directory or file name, where each one came from decides which one `/name` runs. For a name set by the frontmatter `name` field, see [How a skill gets its command name](#how-a-skill-gets-its-command-name). The table covers the enterprise, personal, project, nested, plugin, and claude.ai locations, bundled skills, built-in commands, and command files:
+When two skills share a directory or file name, where each one came from decides which one `/name` runs. For a name set by the frontmatter `name` field, see [How a skill gets its command name](#how-a-skill-gets-its-command-name).
 
 | Same name in | Which one runs |
 | :- | :- |
@@ -204,6 +213,8 @@ When two skills share a directory or file name, where each one came from decides
 | Any of those locations and a [built-in command](/docs/en/commands.md) | In a local terminal session, your skill replaces the built-in command, but not its aliases. A project `usage` skill replaces `/usage`, and the built-in alias `/cost` still runs the built-in command |
 | A skill and a file in `.claude/commands/` | The skill |
 | A project-root skill and a nested skill | Both load. See [monorepos and subdirectories](#discovery-from-parent-and-nested-directories) |
+| An enterprise, personal, or project skill and a skill in an [added directory outside the project](#skills-from-additional-directories) | The enterprise, personal, or project skill, while the added directory's skill runs under a prefixed name. See [run a same-named skill from an added directory](#run-a-same-named-skill-from-an-added-directory) |
+| Two [added directories](#skills-from-additional-directories) outside the project | The skill from the directory added first, in `--add-dir` or `/add-dir` order. The other runs under a [prefixed name](#run-a-same-named-skill-from-an-added-directory) |
 | A plugin skill and a skill at any of the locations above | Both load, because plugin skills are namespaced as `/plugin-name:skill-name` |
 | Any of the above and the short name of a skill [synced from your claude.ai account](#how-synced-skills-behave) | The other skill or command. The synced skill is then listed and runs only under its full name. See [When a synced skill name matches another command](#when-a-synced-skill-name-matches-another-command) |
 
@@ -435,6 +446,7 @@ The table below shows where the command name comes from for each layout:
 | :- | :- | :- |
 | Skill directory under `~/.claude/skills/` or `.claude/skills/` | Frontmatter `name` or the directory name | `.claude/skills/deploy-staging/SKILL.md` → `/deploy-staging`, or `/deploy` with `name: deploy` |
 | [Nested](#where-skills-live) `.claude/skills/` directory, when the directory name clashes with another skill | Subdirectory path relative to the working directory, then the skill directory name | `apps/web/.claude/skills/deploy/SKILL.md` → `/apps/web:deploy` |
+| `.claude/skills/` in an [added directory outside the project](#skills-from-additional-directories), when the skill directory name clashes with an enterprise, personal, or project skill, or one in a directory added earlier | The added directory's folder name, then the skill directory name. When two added directories share a folder name, the prefix starts with the parent folder's name. Requires v2.1.309 or later | `../cli/.claude/skills/verify/SKILL.md` with `--add-dir ../cli` → `/cli:verify`. With `--add-dir ../a/cli --add-dir ../b/cli`, a `verify` skill in each, and none elsewhere, the one in `../a/cli` → `/verify` and the other → `/b/cli:verify` |
 | File under `.claude/commands/` | File name without extension | `.claude/commands/deploy.md` → `/deploy` |
 | File in a subdirectory of `.claude/commands/` | Subdirectory path relative to `commands/` with each `/` replaced by `:`, then the file name without extension | `.claude/commands/frontend/component.md` → `/frontend:component` |
 | Plugin `skills/` subdirectory | Frontmatter `name` or the directory name, namespaced by plugin | `my-plugin/skills/review/SKILL.md` → `/my-plugin:review`, or `/my-plugin:fancy` with `name: fancy` |

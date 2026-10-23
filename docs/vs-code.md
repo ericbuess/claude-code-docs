@@ -927,6 +927,50 @@ On macOS Tahoe and later, the system Game Overlay shortcut is bound to `Cmd+Esc`
 
 Alternatively, rebind the extension to a different key: open the VS Code [Keyboard Shortcuts editor](https://code.visualstudio.com/docs/configure/keybindings) (`Cmd+K Cmd+S`), search for `Claude Code: Focus input`, and assign a new binding.
 
+### Ctrl+J adds a new line in the prompt box
+
+To stop `Ctrl+J` from adding a new line in the prompt box, [unbind the key](/docs/en/keybindings.md#unbind-default-shortcuts) in Claude Code's `keybindings.json` file. The extension reads this file in version 2.1.309 or later, so update an older extension in the Extensions view first.
+
+This example is the whole file with the one entry that unbinds the key, `"ctrl+j": null` in a `Chat` block:
+
+```json theme={null}
+{
+  "bindings": [
+    {
+      "context": "Chat",
+      "bindings": {
+        "ctrl+j": null
+      }
+    }
+  ]
+}
+```
+
+The file goes in your Claude Code configuration directory, which is `~/.claude` unless you moved it with `CLAUDE_CONFIG_DIR`. Look in that directory and take the step that matches what you find:
+
+* **No `keybindings.json` yet**: create it with exactly the content of the example
+* **A `keybindings.json` with no `Chat` block**: add the example's `Chat` block to the top-level `bindings` array, at any position
+* **A `Chat` block with no `"ctrl+j"` line**: add `"ctrl+j": null` to that block's `bindings`
+* **A `Chat` block that already has a `"ctrl+j"` line**: change that line's value to `null`
+
+After you save the file, pressing `Ctrl+J` in the prompt box adds no new line.
+
+If `Ctrl+J` still adds a line in the prompt box, run these two commands from the Command Palette in order:
+
+1. **Developer: Reload Window**, then press `Ctrl+J` in the prompt box again
+2. **Claude Code: Show Logs**, then look for a warning that includes `Ctrl+J in the chat input still inserts a newline`. Correct the problem it reports in the file it names, save the file, and press `Ctrl+J` again.
+
+If the log has no such warning, check that the file is in your Claude Code configuration directory and that its `Chat` block sets `"ctrl+j"` to `null`. [Report the issue](https://github.com/anthropics/claude-code/issues) if `Ctrl+J` still adds a line.
+
+### The Claude Code panel is blank or couldn't load
+
+If the Claude Code panel opens but shows nothing at all, not even the prompt box, update the extension to v2.1.309 or later in the Extensions view. Then run **Developer: Reload Window** from the Command Palette. If you then see a `Claude Code couldn’t load` notice, work through the steps it lists in order.
+
+If the panel still doesn't load, open the extension's log and [report the issue](https://github.com/anthropics/claude-code/issues) with a copy of it:
+
+* **Still blank on v2.1.309 or later**: open the log with **Claude Code: Show Logs** from the Command Palette
+* **The notice's steps didn't help**: click **Show logs** in the notice to open the log
+
 ### A resumed conversation is blank at first
 
 When you [resume a past conversation](#resume-past-conversations) or one [comes back after a reload](#continue-conversations-after-a-reload), its messages can stay blank while the conversation's Claude Code process starts. After about a second, `Waiting for your plugins…` appears in the empty space.

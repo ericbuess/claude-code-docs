@@ -147,7 +147,7 @@ When the review finishes, Claude Code shows the verified findings as a notificat
 
 ## Run ultrareview non-interactively
 
-Use the `claude ultrareview` subcommand to start an ultrareview from CI or a script without an interactive session. The subcommand launches the same review as `/code-review ultra`, blocks until the remote review finishes, and prints the findings to stdout.
+Use the `claude ultrareview` subcommand to start an ultrareview from CI or a script without an interactive session. The subcommand launches the same review as `/code-review ultra`, blocks until the remote review finishes, and prints the findings to stdout. If the run exits with `Error: Workspace not trusted`, see [Trust the folder before the review runs](#trust-the-folder-before-the-review-runs).
 
 ```bash theme={null}
 claude ultrareview
@@ -157,11 +157,9 @@ claude ultrareview origin/main
 
 Without arguments, the subcommand reviews the diff between your current branch and the default branch, with the same [whole-repository fallback](#diff-limits-and-fallbacks) as `/code-review ultra` when no merge base exists. Pass a PR number to [review a pull request on `github.com`](#review-a-pull-request), or a base branch to review against it; [base-branch handling](#review-against-a-different-base) matches the interactive command.
 
-You consent to the whole-repository fallback and to the billing and terms prompt when you run the subcommand, so the run starts without waiting for input. Running it yourself is what counts as consent. When Claude runs the subcommand for you instead, for example through the Bash tool, Claude Code refuses the whole-repository review.
+You consent to the whole-repository fallback and to the billing and terms prompt when you run the subcommand, so the run doesn't stop to confirm them. Running it yourself is what counts as consent. When Claude runs the subcommand for you instead, for example through the Bash tool, Claude Code refuses the whole-repository review.
 
 `claude -p '/code-review ultra'` doesn't get you the findings, so use `claude ultrareview` in scripts. The `-p` run launches the cloud review and exits without waiting for it. When the review would bill usage credits, the `-p` run stops without launching it. Before v2.1.218, `/code-review ultra` in a non-interactive session ran a local review.
-
-`claude ultrareview` writes its progress messages to stderr so stdout stays parseable. Use these flags to control its output, the timeout, and whether to post the findings:
 
 | Flag | Description |
 | - | - |
@@ -169,14 +167,17 @@ You consent to the whole-repository fallback and to the billing and terms prompt
 | `--timeout <minutes>` | Maximum minutes to wait for the review to finish. Defaults to 45 |
 | `--post` | [Post the finished findings](#post-findings-to-the-pull-request) to the pull request as one plain comment from your GitHub account. Works on `github.com` pull request targets; on other targets, Claude Code ignores the flag and says so. Requires Claude Code v2.1.227 or later |
 | `--no-post` | Don't post the findings. This is the default, and if you pass both flags, Claude Code doesn't post. Requires Claude Code v2.1.227 or later |
+| `--trust-workspace` | [Trust the current folder](#trust-the-folder-before-the-review-runs) for this run only, without asking, so a script or CI job can review a checkout you haven't trusted. Takes no value: put a PR number or base branch before it. Requires Claude Code v2.1.309 or later |
+
+`claude ultrareview` writes its progress messages to stderr so stdout stays parseable.
 
 Running `claude ultrareview` requires the same authentication and usage-credits configuration as `/code-review ultra`.
 
 The subcommand exits with one of three codes:
 
 * **0**: the review completed, with or without findings
-* **1**: the review failed to launch or was stopped before it finished, the cloud session errored, or the timeout elapsed
-* **130**: you interrupted the subcommand with Ctrl-C
+* **1**: the review failed to launch or was stopped before it finished, the cloud session errored, or the timeout elapsed. The code is also 1 when the [folder isn't trusted](#trust-the-folder-before-the-review-runs), including when you answer `n` or press Ctrl-C at the trust question.
+* **130**: you pressed Ctrl-C while the subcommand was launching the review, waiting for the findings, or sending the `--post` comment, rather than at the trust question
 
 If the subcommand exits before the findings arrive, they never reach your terminal. The review may still be running in the cloud. Running the subcommand again starts a new review rather than resuming that one, and the new review [uses a free run or bills as usage credits](#pricing-and-free-runs).
 
@@ -186,6 +187,18 @@ With `--post`, the subcommand starts the post right after printing the findings,
 * If the review completes but the comment isn't posted, Claude Code prints the reason to stderr, and the findings stay on stdout so you can post them by hand.
 
 For automatic reviews on GitHub pull requests, [Code Review](/docs/en/code-review.md) integrates with your repository directly and posts findings as inline PR comments without a CLI step.
+
+### Trust the folder before the review runs
+
+When `claude ultrareview` asks `Trust <folder>? [y/N]`, answer `y` to [trust the folder](/docs/en/permissions.md#project-allow-rules-and-workspace-trust). Trust it only if you trust its code, because git and Claude Code can then run programs named in its git configuration and project settings.
+
+When it can't ask you, such as in a CI job or with output sent to a file, it exits with [`Error: Workspace not trusted`](/docs/en/errors#workspace-not-trusted-when-running-claude-ultrareview). Append `--trust-workspace` to trust the folder for that run:
+
+```bash theme={null}
+claude ultrareview 1234 --trust-workspace
+```
+
+To review an untrusted pull request, run `claude ultrareview <PR number> --trust-workspace` from a branch you trust. Unlike `y`, the flag saves nothing. The PR is [cloned in the cloud](#review-a-pull-request), so you don't need its branch locally.
 
 ## How ultrareview compares to /code-review
 
