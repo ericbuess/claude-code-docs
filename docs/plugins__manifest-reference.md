@@ -14,8 +14,8 @@ This reference is for plugin creators, and for marketplace owners who put compon
 >
 > These cases are covered on other pages:
 >
-> * **Learning to build a plugin**: start with [Create a plugin](/docs/en/plugins/create.md)
-> * **What each component does at runtime**: see [Plugin components](/docs/en/plugins/components.md)
+> * **Learning to build a plugin**: start with [Create a plugin](https://code.claude.com/docs/en/plugins/create.md)
+> * **What each component does at runtime**: see [Plugin components](https://code.claude.com/docs/en/plugins/components.md)
 
 Start at the section that matches what you're looking up:
 
@@ -23,7 +23,7 @@ Start at the section that matches what you're looking up:
 * A `userConfig` option or a `channels` entry: the [User configuration](#user-configuration) and [Channels](#channels) schemas
 * `${CLAUDE_PLUGIN_ROOT}` or another variable a plugin can reference: [Environment variables](#environment-variables)
 * Where each component's files go: [Standard layout](#standard-layout)
-* A message from `claude plugin validate`: the [troubleshooting page](/docs/en/plugins/troubleshooting.md) lists each message with its fix and links to the relevant sections on this page
+* A message from `claude plugin validate`: the [troubleshooting page](https://code.claude.com/docs/en/plugins/troubleshooting.md) lists each message with its fix and links to the relevant sections on this page
 
 ## Manifest file
 
@@ -143,7 +143,7 @@ For component keys such as `commands` and `hooks`, [Component path forms](#compo
 | [`dependencies`](#dependencies) | Array of strings or objects | Plugins that must be enabled for this one to work |
 | [`settings`](#settings) | Object | Settings Claude Code applies while the plugin is enabled. Only `agent` and `subagentStatusLine` take effect |
 | [`userConfig`](#user-configuration) | Object | Values Claude Code prompts the user for when the plugin is enabled |
-| `types` | Path | A `.d.ts` file that declares the `$.state` values and `$` nouns of a [mod](/docs/en/plugins/mods/reference.md#files) |
+| `types` | Path | A `.d.ts` file that declares the `$.state` values and `$` nouns of a [mod](https://code.claude.com/docs/en/plugins/mods/reference.md#files) |
 | [`channels`](#channels) | Array of objects | Message channels the plugin provides, each bound to one of its MCP servers |
 | `skills` | Path, or array of paths | Directories to scan for skills, each a directory of `<name>/SKILL.md` folders or one folder holding `SKILL.md` directly. `"."` names the plugin root. Adds to the default `skills/` scan |
 | [`commands`](#commands) | Path, array of paths, or object | Flat `.md` command files, directories of them, or an object map of command name to `source` or `content`. Replaces the default `commands/` scan |
@@ -152,11 +152,11 @@ For component keys such as `commands` and `hooks`, [Component path forms](#compo
 | [`mcpServers`](#mcpservers) | Path, object, or array of either | `.json` MCP config files, `.mcpb` or `.dxt` bundles, or inline server configs keyed by name. Loaded together with `.mcp.json`; a server name declared later replaces an earlier one |
 | [`lspServers`](#lspservers) | Path, object, or array of either | `.json` LSP config files or inline server configs keyed by name. Loaded together with `.lsp.json` |
 | `outputStyles` | Path, or array of paths | Output style files or directories. Replaces the default `output-styles/` scan |
-| `workflows` | Path, or array of paths | [Workflow](/docs/en/workflows.md#distribute-a-workflow-in-a-plugin) `.js` files or directories. Replaces the default `workflows/` scan |
+| `workflows` | Path, or array of paths | [Workflow](https://code.claude.com/docs/en/workflows.md#distribute-a-workflow-in-a-plugin) `.js` files or directories. Replaces the default `workflows/` scan |
 | `experimental` | Object | Container for `themes`, `monitors`, and `evals`, whose manifest shape may still change |
 | `experimental.themes` | Path, or array of paths | Theme files or directories. Replaces the default `themes/` scan. A top-level `themes` key still loads, with a `claude plugin validate` warning |
 | [`experimental.monitors`](#monitors) | Path, or inline array | A `.json` file holding the monitors array, or the array itself. Defaults to `monitors/monitors.json`. A top-level `monitors` key still loads, with a `claude plugin validate` warning. Monitors run only in interactive sessions, and not on Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry |
-| `experimental.evals` | Path, or array of paths | Directory that holds the plugin's [eval cases](/docs/en/plugin-evals.md#use-a-different-eval-directory) when it isn't the default `evals/`. `claude plugin eval --eval-dir` overrides it |
+| `experimental.evals` | Path, or array of paths | Directory that holds the plugin's [eval cases](https://code.claude.com/docs/en/plugin-evals.md#use-a-different-eval-directory) when it isn't the default `evals/`. `claude plugin eval --eval-dir` overrides it |
 
 In the Type column, a path is a string relative to the plugin root, such as `"./custom/commands"`.
 
@@ -181,11 +181,11 @@ The error reads `Plugin name "<name>" is reserved: it passes as one of Anthropic
 
 The name shown in UI in place of `name`. It may contain spaces and any casing, and it isn't used for namespacing or lookup.
 
-For a marketplace-installed plugin, a `displayName` on the [marketplace entry](/docs/en/plugins/marketplace-reference.md#plugin-entries) takes precedence over this value.
+For a marketplace-installed plugin, a `displayName` on the [marketplace entry](https://code.claude.com/docs/en/plugins/marketplace-reference.md#plugin-entries) takes precedence over this value.
 
 ### `version`
 
-A version string, not checked against semver. Setting it pins the plugin to that version until you change it; see [Versions and updates](/docs/en/plugins/loading.md#versions-and-updates). A plugin with a [`command` source](/docs/en/plugins/marketplace-reference), a plugin from a [marketplace hosted on claude.ai](/docs/en/plugins/install.md#add-from-claude-ai), and a plugin [loaded in place](/docs/en/plugins/loading.md#find-plugins-on-disk) from a marketplace added from a local path aren't pinned by this field.
+A version string, not checked against semver. Setting it pins the plugin to that version until you change it; see [Versions and updates](https://code.claude.com/docs/en/plugins/loading.md#versions-and-updates). A plugin with a [`command` source](https://code.claude.com/docs/en/plugins/marketplace-reference), a plugin from a [marketplace hosted on claude.ai](https://code.claude.com/docs/en/plugins/install.md#add-from-claude-ai), and a plugin [loaded in place](https://code.claude.com/docs/en/plugins/loading.md#find-plugins-on-disk) from a marketplace added from a local path aren't pinned by this field.
 
 ### `metadata`
 
@@ -193,7 +193,7 @@ A free-form object for your own data, such as catalog or entitlement fields. Cla
 
 ### Directory listing fields
 
-Anthropic's directory reads the `icon`, `documentationUrl`, `supportUrl`, `privacyPolicyUrl`, and `termsOfServiceUrl` fields from `plugin.json` for your plugin's listing when you [submit the plugin](/docs/en/plugins/publish.md#submit-to-anthropics-directory). Claude Code ignores them at load time. Set them only in `plugin.json`. In a [marketplace entry](#marketplace-entries-and-the-manifest), `claude plugin validate` reports each one as an unknown field.
+Anthropic's directory reads the `icon`, `documentationUrl`, `supportUrl`, `privacyPolicyUrl`, and `termsOfServiceUrl` fields from `plugin.json` for your plugin's listing when you [submit the plugin](https://code.claude.com/docs/en/plugins/publish.md#submit-to-anthropics-directory). Claude Code ignores them at load time. Set them only in `plugin.json`. In a [marketplace entry](#marketplace-entries-and-the-manifest), `claude plugin validate` reports each one as an unknown field.
 
 Set `icon` to the path of an image file inside the plugin, such as `./logo.png`, and each of the four URL fields to an `https://` URL.
 
@@ -203,21 +203,21 @@ Set `icon` to the path of an image file inside the plugin, such as `./logo.png`,
 
 ### `defaultEnabled`
 
-Whether the plugin starts enabled when the user hasn't set it in [`enabledPlugins`](/docs/en/settings-reference#enabledplugins). Defaults to `true`. A plugin that an enabled plugin depends on starts enabled regardless. The same field in the marketplace entry overrides this one.
+Whether the plugin starts enabled when the user hasn't set it in [`enabledPlugins`](https://code.claude.com/docs/en/settings-reference#enabledplugins). Defaults to `true`. A plugin that an enabled plugin depends on starts enabled regardless. The same field in the marketplace entry overrides this one.
 
 Once a user's `enabledPlugins` entry is written, it persists across plugin updates, so changing `defaultEnabled` in a later release doesn't change the setting for an existing user.
 
 ### `dependencies`
 
-Plugins that must be enabled for this one to work. Each entry is `"name"`, `"name@marketplace"`, or `{ "name": "...", "marketplace": "...", "version": "..." }`. Bare names resolve against this plugin's own marketplace. See [dependency constraints](/docs/en/plugins/dependencies.md).
+Plugins that must be enabled for this one to work. Each entry is `"name"`, `"name@marketplace"`, or `{ "name": "...", "marketplace": "...", "version": "..." }`. Bare names resolve against this plugin's own marketplace. See [dependency constraints](https://code.claude.com/docs/en/plugins/dependencies.md).
 
 ### `settings`
 
-Settings Claude Code applies while the plugin is enabled. Only `agent` and `subagentStatusLine` take effect; other keys are dropped at load. A `settings.json` at the plugin root takes precedence over this key. See [Default settings](/docs/en/plugins/components.md#default-settings).
+Settings Claude Code applies while the plugin is enabled. Only `agent` and `subagentStatusLine` take effect; other keys are dropped at load. A `settings.json` at the plugin root takes precedence over this key. See [Default settings](https://code.claude.com/docs/en/plugins/components.md#default-settings).
 
 ## Component path forms
 
-Every component key accepts a path relative to the plugin root. `hooks`, `mcpServers`, `lspServers`, and `experimental.monitors` also accept inline configuration, `commands` also accepts an object map, and `mcpServers` also accepts MCP bundle paths and URLs. The examples that follow show each accepted shape once. For what each component does at runtime, see [Plugin components](/docs/en/plugins/components.md).
+Every component key accepts a path relative to the plugin root. `hooks`, `mcpServers`, `lspServers`, and `experimental.monitors` also accept inline configuration, `commands` also accepts an object map, and `mcpServers` also accepts MCP bundle paths and URLs. The examples that follow show each accepted shape once. For what each component does at runtime, see [Plugin components](https://code.claude.com/docs/en/plugins/components.md).
 
 ### Path-only fields
 
@@ -259,9 +259,9 @@ This map declares one command from a file and one from inline content:
 
 ### `hooks`
 
-`hooks` takes a `.json` file path, an inline hooks object in the same shape as [`hooks` in `settings.json`](/docs/en/hooks#configuration), or an array mixing both. For hook events and handler fields, see the [hooks reference](/docs/en/hooks.md#hook-events).
+`hooks` takes a `.json` file path, an inline hooks object in the same shape as [`hooks` in `settings.json`](https://code.claude.com/docs/en/hooks#configuration), or an array mixing both. For hook events and handler fields, see the [hooks reference](https://code.claude.com/docs/en/hooks.md#hook-events).
 
-A hooks file wraps the event map in a top-level `"hooks"` key, the shape [`hooks/hooks.json`](/docs/en/plugins/components#hooks) uses. A file that contains only the event map, without that wrapper, fails to load. An inline object is the event map itself, with no wrapper.
+A hooks file wraps the event map in a top-level `"hooks"` key, the shape [`hooks/hooks.json`](https://code.claude.com/docs/en/plugins/components#hooks) uses. A file that contains only the event map, without that wrapper, fails to load. An inline object is the event map itself, with no wrapper.
 
 Claude Code merges whatever you declare with `hooks/hooks.json` when that file exists. This array loads one hooks file and declares one inline `PostToolUse` hook:
 
@@ -302,7 +302,7 @@ The file that array names carries the `"hooks"` wrapper around its own event map
 
 ### `mcpServers`
 
-`mcpServers` takes a `.json` file path, an MCP bundle path or URL, an inline map, or an array mixing them. For server config fields, see [plugin-provided MCP servers](/docs/en/mcp.md#plugin-provided-mcp-servers).
+`mcpServers` takes a `.json` file path, an MCP bundle path or URL, an inline map, or an array mixing them. For server config fields, see [plugin-provided MCP servers](https://code.claude.com/docs/en/mcp.md#plugin-provided-mcp-servers).
 
 Claude Code loads `.mcp.json` at the plugin root first, then each declared shape in order. A server name declared later replaces an earlier one.
 
@@ -356,7 +356,7 @@ This inline config runs `gopls` for `.go` files:
 }
 ```
 
-For the language servers Anthropic publishes as plugins and how the servers behave at runtime, see [Code intelligence](/docs/en/plugins/code-intelligence.md).
+For the language servers Anthropic publishes as plugins and how the servers behave at runtime, see [Code intelligence](https://code.claude.com/docs/en/plugins/code-intelligence.md).
 
 ### `monitors`
 
@@ -397,7 +397,7 @@ Every component path in a manifest is relative to the plugin root and must start
 * **`skills`**: also accepts `"."`. Both `"."` and `"./"` denote the plugin root. Before v2.1.221, `"."` failed manifest validation, so use `"./"` when the plugin must load on earlier versions
 * **`mcpServers`**: also accepts an `https://` bundle URL
 
-`experimental.evals` isn't a component path, so the rules in this section don't cover it, and `claude plugin eval` checks the value when it runs instead. It names a directory below the plugin root, such as `"quality/evals"`, with or without the `./` prefix. With an array, only the first entry is used. For what the value accepts and what happens with an unusable one, see [Use a different eval directory](/docs/en/plugin-evals.md#use-a-different-eval-directory).
+`experimental.evals` isn't a component path, so the rules in this section don't cover it, and `claude plugin eval` checks the value when it runs instead. It names a directory below the plugin root, such as `"quality/evals"`, with or without the `./` prefix. With an array, only the first entry is used. For what the value accepts and what happens with an unusable one, see [Use a different eval directory](https://code.claude.com/docs/en/plugin-evals.md#use-a-different-eval-directory).
 
 ### Containment and existence
 
@@ -488,30 +488,30 @@ If you declare `options` on any field, users on Claude Code versions before v2.1
 
 ### Where values are stored
 
-Non-sensitive values are saved under [`pluginConfigs`](/docs/en/settings-reference#pluginconfigs) in the user's `settings.json`. Sensitive values go to the platform's secure credential store instead. The [settings page](/docs/en/settings-reference.md#pluginconfigs) lists which settings files `pluginConfigs` is read from.
+Non-sensitive values are saved under [`pluginConfigs`](https://code.claude.com/docs/en/settings-reference#pluginconfigs) in the user's `settings.json`. Sensitive values go to the platform's secure credential store instead. The [settings page](https://code.claude.com/docs/en/settings-reference.md#pluginconfigs) lists which settings files `pluginConfigs` is read from.
 
 ### Reference a saved value
 
 Reference a saved value where the plugin needs it, in one of two forms:
 
-* **`${user_config.KEY}`**: substituted in MCP server config, LSP server config, [exec-form](/docs/en/hooks.md#exec-form-and-shell-form) hook `args`, and skill and agent content. In skill and agent content, only non-sensitive values are substituted, and a sensitive value there becomes a placeholder
+* **`${user_config.KEY}`**: substituted in MCP server config, LSP server config, [exec-form](https://code.claude.com/docs/en/hooks.md#exec-form-and-shell-form) hook `args`, and skill and agent content. In skill and agent content, only non-sensitive values are substituted, and a sensitive value there becomes a placeholder
 * **`CLAUDE_PLUGIN_OPTION_<KEY>`**: exported to hook processes for every option, with `<KEY>` uppercased. A shell-form hook reads `$CLAUDE_PLUGIN_OPTION_API_TOKEN` for `api_token`
 
 ### Fields that run through a shell
 
-Shell-form hook commands, monitor commands, and MCP [`headersHelper`](/docs/en/mcp#use-dynamic-headers-for-custom-authentication) reject `${user_config.*}`. A component that references it in one of these fields fails with an [error](/docs/en/errors.md#plugin-command-references-user-config) instead of running, because the field's value is passed to a shell that would re-parse the substituted value.
+Shell-form hook commands, monitor commands, and MCP [`headersHelper`](https://code.claude.com/docs/en/mcp#use-dynamic-headers-for-custom-authentication) reject `${user_config.*}`. A component that references it in one of these fields fails with an [error](https://code.claude.com/docs/en/errors.md#plugin-command-references-user-config) instead of running, because the field's value is passed to a shell that would re-parse the substituted value.
 
 The table shows how the value can reach each of these fields instead.
 
 | Field | How the value can reach it |
 | :- | :- |
-| Shell-form hook commands | Use [exec form](/docs/en/hooks.md#exec-form-and-shell-form) with `args`, or read `CLAUDE_PLUGIN_OPTION_<KEY>` from the hook's environment |
+| Shell-form hook commands | Use [exec form](https://code.claude.com/docs/en/hooks.md#exec-form-and-shell-form) with `args`, or read `CLAUDE_PLUGIN_OPTION_<KEY>` from the hook's environment |
 | Monitor commands | Not through Claude Code. Monitor processes don't receive `CLAUDE_PLUGIN_OPTION_<KEY>`, so the monitor script has to obtain the value on its own |
 | MCP `headersHelper` | Not through Claude Code. The helper's environment carries `CLAUDE_PLUGIN_ROOT`, `CLAUDE_CODE_MCP_SERVER_NAME`, and `CLAUDE_CODE_MCP_SERVER_URL` but no option values, so the helper script has to obtain the value on its own |
 
 ## Channels
 
-`channels` declares the message channels a plugin provides, such as a bridge to a chat app. When you declare one, Claude Code can prompt for the channel's configuration when the plugin is enabled. For how the server injects messages, see the [channels reference](/docs/en/channels-reference.md#package-as-a-plugin).
+`channels` declares the message channels a plugin provides, such as a bridge to a chat app. When you declare one, Claude Code can prompt for the channel's configuration when the plugin is enabled. For how the server injects messages, see the [channels reference](https://code.claude.com/docs/en/channels-reference.md#package-as-a-plugin).
 
 Each entry is a strict object bound to one of the plugin's MCP servers, with these fields:
 
@@ -559,9 +559,9 @@ Claude Code provides three path variables to plugin components. Reference them a
 | `${CLAUDE_PLUGIN_DATA}` | `~/.claude/plugins/data/<id>/`, created on first reference and kept across plugin updates. `<id>` is the plugin identifier with every character other than a letter, digit, `_`, or `-` replaced by `-` | Installed dependencies such as `node_modules`, generated code, and caches |
 | `${CLAUDE_PROJECT_DIR}` | The project root | Project-local scripts and config files |
 
-`${CLAUDE_PLUGIN_ROOT}` changes when the plugin updates, so don't write state there. For where the root moves and when the old directory is cleaned up, see the [loading page](/docs/en/plugins/loading.md).
+`${CLAUDE_PLUGIN_ROOT}` changes when the plugin updates, so don't write state there. For where the root moves and when the old directory is cleaned up, see the [loading page](https://code.claude.com/docs/en/plugins/loading.md).
 
-By default, Claude Code deletes the `${CLAUDE_PLUGIN_DATA}` directory when you uninstall the plugin from the last place it's installed. For `--keep-data` and the other cases where it stays, see [plugin uninstall](/docs/en/plugins/cli-reference.md#plugin-uninstall).
+By default, Claude Code deletes the `${CLAUDE_PLUGIN_DATA}` directory when you uninstall the plugin from the last place it's installed. For `--keep-data` and the other cases where it stays, see [plugin uninstall](https://code.claude.com/docs/en/plugins/cli-reference.md#plugin-uninstall).
 
 ### Where each variable resolves
 
@@ -582,10 +582,10 @@ The variables aren't present in the environment of commands Claude runs through 
 
 Keep each substituted path a single argument:
 
-* **Hook commands**: use [exec form](/docs/en/hooks.md#exec-form-and-shell-form) with `args` so each path is one argument with no quoting
+* **Hook commands**: use [exec form](https://code.claude.com/docs/en/hooks.md#exec-form-and-shell-form) with `args` so each path is one argument with no quoting
 * **Shell-form hooks and monitor commands**: wrap the variable in double quotes so a path with spaces stays one word
 
-If you leave one of these variables outside quotes in a shell-form command in a hooks file, `claude plugin validate` warns about it unless the hook sets [`shell`](/docs/en/hooks#command-hook-fields) to `"powershell"`.
+If you leave one of these variables outside quotes in a shell-form command in a hooks file, `claude plugin validate` warns about it unless the hook sets [`shell`](https://code.claude.com/docs/en/hooks#command-hook-fields) to `"powershell"`.
 
 This shell-form hook runs a script bundled with the plugin:
 
@@ -617,7 +617,7 @@ Each component type has a default location under the plugin root, used when the 
 | Manifest | `.claude-plugin/plugin.json` | Plugin metadata and configuration. Optional |
 | Skills | `skills/` | One `<name>/SKILL.md` per skill. A plugin with `SKILL.md` at its root, no `skills/`, and no `skills` key loads as a single skill |
 | Commands | `commands/` | Flat Markdown command files. Prefer `skills/` for new plugins |
-| Agents | `agents/` | Agent Markdown files. Subfolders are part of the [agent name](/docs/en/plugins/components.md#agents) |
+| Agents | `agents/` | Agent Markdown files. Subfolders are part of the [agent name](https://code.claude.com/docs/en/plugins/components.md#agents) |
 | Hooks | `hooks/hooks.json` | Hook configuration |
 | MCP servers | `.mcp.json` | MCP server definitions |
 | LSP servers | `.lsp.json` | LSP server configurations |
@@ -660,13 +660,13 @@ deploy-tools/
 └── .lsp.json
 ```
 
-To click through this layout and read what each file does, open the [plugin explorer](/docs/en/plugins/components.md#explore-the-plugin-directory).
+To click through this layout and read what each file does, open the [plugin explorer](https://code.claude.com/docs/en/plugins/components.md#explore-the-plugin-directory).
 
 A `CLAUDE.md` at the plugin root isn't loaded as context, and `claude plugin validate` warns when it finds one. To include instructions that load into Claude's context, put them in a skill.
 
 ## Marketplace entries and the manifest
 
-A [marketplace entry](/docs/en/plugins/marketplace-reference.md) accepts [its own fields](/docs/en/plugins/marketplace-reference.md#plugin-entries), including `strict`, and every field on this page except the [directory listing fields](#directory-listing-fields).
+A [marketplace entry](https://code.claude.com/docs/en/plugins/marketplace-reference.md) accepts [its own fields](https://code.claude.com/docs/en/plugins/marketplace-reference.md#plugin-entries), including `strict`, and every field on this page except the [directory listing fields](#directory-listing-fields).
 
 The `strict` field decides whether the entry may add components to a plugin that has its own `plugin.json`. It defaults to `true`.
 
@@ -678,21 +678,21 @@ The entry either serves as the manifest, adds components to it, or conflicts wit
 * **`plugin.json` present, `strict` unset or `true`**: Claude Code loads the manifest and appends the entry's `commands`, `agents`, `skills`, `outputStyles`, and `themes` to it. For `hooks`, the entry's matchers for an event replace the manifest's matchers for that same event, and events only the manifest declares keep theirs
 * **`plugin.json` present, `strict: false`**: an entry that declares any of `commands`, `agents`, `skills`, `hooks`, `outputStyles`, or `themes` is a conflict, and the plugin fails to load with `Plugin <name> has conflicting manifests`
 
-When a [marketplace entry whose `source` is the marketplace root](/docs/en/plugins/marketplace-reference) lists specific `skills` subdirectories, only those subdirectories load, and the plugin's default `skills/` directory isn't scanned. A `skills` key in the manifest instead [adds to the default](#how-each-key-combines-with-its-default-location).
+When a [marketplace entry whose `source` is the marketplace root](https://code.claude.com/docs/en/plugins/marketplace-reference) lists specific `skills` subdirectories, only those subdirectories load, and the plugin's default `skills/` directory isn't scanned. A `skills` key in the manifest instead [adds to the default](#how-each-key-combines-with-its-default-location).
 
 ### Metadata precedence
 
 Some metadata fields have a fixed precedence regardless of `strict`:
 
-* **`defaultEnabled` and display fields**: the entry's `defaultEnabled` and its [display fields](/docs/en/plugins/marketplace-reference.md#entry-and-plugin-json) such as `displayName` override the manifest's
+* **`defaultEnabled` and display fields**: the entry's `defaultEnabled` and its [display fields](https://code.claude.com/docs/en/plugins/marketplace-reference.md#entry-and-plugin-json) such as `displayName` override the manifest's
 * **`version`**: the manifest's `version` overrides the entry's
 * **`name`**: when the entry lists the plugin under a different `name` than the manifest, `enabledPlugins` uses the entry name, and components are namespaced under the manifest name
 
-For the full precedence table, see [Strict mode](/docs/en/plugins/marketplace-reference.md).
+For the full precedence table, see [Strict mode](https://code.claude.com/docs/en/plugins/marketplace-reference.md).
 
 ## Next steps
 
-* [Add components to a plugin](/docs/en/plugins/components.md): what each component does at runtime, with an example that validates
-* [Marketplace reference](/docs/en/plugins/marketplace-reference.md): the entry fields a marketplace can set for your plugin
-* [Plugin commands reference](/docs/en/plugins/cli-reference.md#plugin-validate): `claude plugin validate` flags and output
-* [Troubleshoot plugins](/docs/en/plugins/troubleshooting.md#claude-plugin-validate-reports-errors): each validation message with its fix
+* [Add components to a plugin](https://code.claude.com/docs/en/plugins/components.md): what each component does at runtime, with an example that validates
+* [Marketplace reference](https://code.claude.com/docs/en/plugins/marketplace-reference.md): the entry fields a marketplace can set for your plugin
+* [Plugin commands reference](https://code.claude.com/docs/en/plugins/cli-reference.md#plugin-validate): `claude plugin validate` flags and output
+* [Troubleshoot plugins](https://code.claude.com/docs/en/plugins/troubleshooting.md#claude-plugin-validate-reports-errors): each validation message with its fix

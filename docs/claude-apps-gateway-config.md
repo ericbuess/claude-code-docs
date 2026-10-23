@@ -8,7 +8,7 @@
 
 A Claude apps gateway deployment is configured by one YAML file, conventionally `gateway.yaml`. The file defines everything the gateway does: where it listens, how developers sign in, where inference goes, and which policies and telemetry apply. This page is the reference for every option in that file.
 
-To write your first one, start from the [quickstart](/docs/en/claude-apps-gateway#quickstart), which builds a minimal working config and runs it. Once you have a config you're happy with, the [deployment guide](/docs/en/claude-apps-gateway-deploy.md) covers containerizing and hosting it on Kubernetes, Cloud Run, or your own platform.
+To write your first one, start from the [quickstart](https://code.claude.com/docs/en/claude-apps-gateway#quickstart), which builds a minimal working config and runs it. Once you have a config you're happy with, the [deployment guide](https://code.claude.com/docs/en/claude-apps-gateway-deploy.md) covers containerizing and hosting it on Kubernetes, Cloud Run, or your own platform.
 
 The gateway reads the file once, at startup, with `claude gateway --config /path/to/gateway.yaml`. Every option is validated against a schema at boot, so a malformed config fails at start with a field-level error rather than at first use.
 
@@ -64,11 +64,11 @@ The `listen` block controls where the gateway serves: the bind address and port,
 
 The `oidc` block connects the gateway to your identity provider and decides who can sign in. It names the issuer and OAuth client, maps the claims that carry email and groups, and restricts sign-in by email domain or group.
 
-OpenID Connect (OIDC) is the SSO protocol the gateway uses with your identity provider; see [Identity provider setup](/docs/en/claude-apps-gateway-deploy.md#identity-provider-setup) for what to register on the IdP side.
+OpenID Connect (OIDC) is the SSO protocol the gateway uses with your identity provider; see [Identity provider setup](https://code.claude.com/docs/en/claude-apps-gateway-deploy.md#identity-provider-setup) for what to register on the IdP side.
 
 | Field | Required | Description |
 | - | - | - |
-| `issuer` | Yes | OIDC discovery base. Must serve discovery at `/.well-known/openid-configuration`. Use HTTPS in production; the gateway accepts an `http://` issuer. A loopback issuer such as `http://localhost:8081` is rejected by the [SSRF guard](/docs/en/claude-apps-gateway-deploy.md#threat-model-summary) unless `CLAUDE_GATEWAY_ALLOW_LOOPBACK=1` is set in the gateway's environment. |
+| `issuer` | Yes | OIDC discovery base. Must serve discovery at `/.well-known/openid-configuration`. Use HTTPS in production; the gateway accepts an `http://` issuer. A loopback issuer such as `http://localhost:8081` is rejected by the [SSRF guard](https://code.claude.com/docs/en/claude-apps-gateway-deploy.md#threat-model-summary) unless `CLAUDE_GATEWAY_ALLOW_LOOPBACK=1` is set in the gateway's environment. |
 | `client_id` | Yes | From your OAuth client registration |
 | `client_secret` | Unless `token_endpoint_auth_method` is `private_key_jwt` | From your OAuth client registration. Leave it out when you use [certificate client authentication](#certificate-client-authentication). |
 | `allowed_email_domains` | No | Reject id\_tokens whose `email` claim isn't in one of these domains, case-insensitive. Defense-in-depth against multi-tenant IdP misconfiguration. Independent of this setting, an id\_token whose `email_verified` claim is explicitly `false` is always rejected. |
@@ -76,7 +76,7 @@ OpenID Connect (OIDC) is the SSO protocol the gateway uses with your identity pr
 | `groups_claim` | No | Which id\_token claim carries group membership. Default `groups`. Microsoft Entra emits app roles under `roles`. Accepts a flat key or an RFC 6901 JSON Pointer such as `/resource_access/gateway/roles` for nested claims. |
 | `google_groups` | No | Look up the signed-in user's groups through the Google Workspace Admin SDK Directory API, because Google's id\_token carries no groups claim. Set `service_account_json_path` to a service-account key file with domain-wide delegation on the `https://www.googleapis.com/auth/admin.directory.group.readonly` scope, and `admin_email` to a Workspace administrator the service account impersonates; the Directory API requires a real admin subject. Each user's group email addresses become their groups claim, so `allowed_groups` and `managed.policies.match.groups` match on group emails. |
 | `email_claim` | No | Which id\_token claim carries the user's email. Default `email`. Some IdPs, such as ADFS and Entra B2C, emit `upn` or `preferred_username` instead. Accepts a flat key, a JSON Pointer, or a list of fallback keys where the first present key is used. |
-| `scopes` | No | Full override of the OIDC scopes the gateway requests. Default `[openid, profile, email, offline_access]`. Set when your IdP rejects scopes it doesn't recognize, or requires a custom scope to emit groups or email. Must include `openid`. Dropping `offline_access` disables refresh tokens, so developers re-run the browser login every `session.ttl_hours`. See [Identity provider setup](/docs/en/claude-apps-gateway-deploy.md#identity-provider-setup) for per-IdP scope recipes such as Google's refresh-token flow. |
+| `scopes` | No | Full override of the OIDC scopes the gateway requests. Default `[openid, profile, email, offline_access]`. Set when your IdP rejects scopes it doesn't recognize, or requires a custom scope to emit groups or email. Must include `openid`. Dropping `offline_access` disables refresh tokens, so developers re-run the browser login every `session.ttl_hours`. See [Identity provider setup](https://code.claude.com/docs/en/claude-apps-gateway-deploy.md#identity-provider-setup) for per-IdP scope recipes such as Google's refresh-token flow. |
 | `scope_on_refresh` | No | Also send `scope`, with the same list as the sign-in request, when the gateway exchanges a refresh token. Default `false`: the refresh request omits `scope`. Most IdPs return an id\_token on every refresh and don't need this. Set `true` when your IdP returns an id\_token on refresh only if asked for `openid` again, which Okta documents for its refresh grant. Without an id\_token, every refresh depends on the IdP's userinfo endpoint accepting the refreshed access token. If you gate sign-in or match policies on groups and your IdP's refresh-time id\_token omits them, also set `userinfo_fallback: true` so the gateway fills them from the userinfo endpoint. An IdP that granted fewer scopes than requested can reject the refresh with `invalid_scope`, including for existing sessions if you add entries to `scopes` while this is on. Unset the key if refreshes start failing at `token_endpoint` after you set it. Requires Claude Code v2.1.260 or later on the gateway server. |
 | `extra_auth_params` | No | Extra query parameters appended to the IdP authorization request, verbatim. This is the override mechanism for IdP-specific behavior, such as `access_type: offline` for Google refresh tokens, `domain_hint` for some Entra tenants, or `acr_values` for step-up flows. Cannot override the gateway-managed protocol params: `state`, `nonce`, `redirect_uri`, PKCE, `scope`, `response_type`, `response_mode`, and `client_id`. |
 | `userinfo_fallback` | No | When the id\_token omits email or groups, fetch them from `/userinfo`. Needed for Keycloak lightweight access tokens, the Okta org server, and ADFS minimal tokens. The id\_token stays authoritative; userinfo only fills gaps. Default `false`. |
@@ -142,14 +142,14 @@ Compare the SHA-1 thumbprint with the one the IdP shows for the certificate you 
 The gateway reads the key and certificate once at boot, so a changed file takes effect only after a restart. Rotate in this order so that no token request presents a certificate the IdP doesn't have:
 
 1. Upload the new certificate to the IdP alongside the old one.
-2. Replace the key and certificate files that `gateway.yaml` loads, then restart the gateway. If you run several replicas, a [rolling restart](/docs/en/claude-apps-gateway-deploy.md#upgrades) works, because the IdP has both certificates until you remove the old one.
+2. Replace the key and certificate files that `gateway.yaml` loads, then restart the gateway. If you run several replicas, a [rolling restart](https://code.claude.com/docs/en/claude-apps-gateway-deploy.md#upgrades) works, because the IdP has both certificates until you remove the old one.
 3. After every replica has restarted, remove the old certificate from the IdP.
 
 #### IdP requests through a forward proxy
 
 The inference upstreams honor `HTTPS_PROXY` and `HTTP_PROXY` on every version. The gateway's own requests to the IdP, discovery, JWKS, token, and userinfo, go direct unless you set `oidc.use_proxy: true`, which requires v2.1.227 or later. When a proxy variable is set, `use_proxy` is unset, and the issuer isn't covered by `NO_PROXY`, the gateway keeps those requests direct and logs a notice at boot asking you to choose; `use_proxy: false` keeps them direct and silences the notice.
 
-With `use_proxy: true`, the pod resolves each IdP endpoint's hostname itself and asks the proxy to `CONNECT` to the resolved IP address, so the proxy must accept `CONNECT` to the IP address of every host the discovery document names, not only the issuer. Use an `http://` proxy URL. `ca_cert_pem` and the [SSRF guard](/docs/en/claude-apps-gateway-deploy.md#threat-model-summary) apply on the proxied path as well.
+With `use_proxy: true`, the pod resolves each IdP endpoint's hostname itself and asks the proxy to `CONNECT` to the resolved IP address, so the proxy must accept `CONNECT` to the IP address of every host the discovery document names, not only the issuer. Use an `http://` proxy URL. `ca_cert_pem` and the [SSRF guard](https://code.claude.com/docs/en/claude-apps-gateway-deploy.md#threat-model-summary) apply on the proxied path as well.
 
 [Proxy-only egress](#proxy-only-egress) changes both of these: while it's active, IdP requests follow the proxy unless you set `use_proxy: false`, and the gateway hands the proxy each IdP hostname without resolving it first.
 
@@ -186,7 +186,7 @@ Once proxy-only egress is active, allow every destination in the proxy, includin
 
 > [!WARNING]
 >
-> Turn this on only when the proxy's allowlist is at least as strict as the gateway's own check. The proxy must refuse cloud metadata endpoints such as `169.254.169.254` and `metadata.google.internal`, link-local addresses, and the proxy host's own loopback, and it must refuse them by the address a name resolves to, not only by name, because the gateway no longer catches a hostname that resolves to one of them. A proxy that connects anywhere it's asked removes the gateway's [SSRF guard](/docs/en/claude-apps-gateway-deploy.md#threat-model-summary) for these requests.
+> Turn this on only when the proxy's allowlist is at least as strict as the gateway's own check. The proxy must refuse cloud metadata endpoints such as `169.254.169.254` and `metadata.google.internal`, link-local addresses, and the proxy host's own loopback, and it must refuse them by the address a name resolves to, not only by name, because the gateway no longer catches a hostname that resolves to one of them. A proxy that connects anywhere it's asked removes the gateway's [SSRF guard](https://code.claude.com/docs/en/claude-apps-gateway-deploy.md#threat-model-summary) for these requests.
 
 ### `session`
 
@@ -203,12 +203,12 @@ The `store` block points the gateway at its PostgreSQL database, which holds dev
 
 | Field | Required | Description |
 | - | - | - |
-| `postgres_url` | Yes | `postgres://` or `postgresql://` URL with one host, not a comma-separated list. The gateway runs its own schema migrations at boot and on upgrade, so the role needs rights to create and alter tables on the target schema. See [Upgrades](/docs/en/claude-apps-gateway-deploy.md#upgrades) and [Postgres](/docs/en/claude-apps-gateway-deploy.md#postgres). |
+| `postgres_url` | Yes | `postgres://` or `postgresql://` URL with one host, not a comma-separated list. The gateway runs its own schema migrations at boot and on upgrade, so the role needs rights to create and alter tables on the target schema. See [Upgrades](https://code.claude.com/docs/en/claude-apps-gateway-deploy.md#upgrades) and [Postgres](https://code.claude.com/docs/en/claude-apps-gateway-deploy.md#postgres). |
 | `username` | No | Overrides the user in `postgres_url` |
 | `password` | No | Database credential. Set it here rather than in `postgres_url` so the credential stays out of the URL. Accepts any characters and takes precedence over URL credentials. |
-| `max_connections` | No | Postgres connection-pool size per replica. Default `5`, which is conservative and friendly to shared databases. With [spend limits](#admin) enabled, the gateway makes a few database operations per inference request, so raise it for a dedicated database under load, within what [Size the connection pool](/docs/en/claude-apps-gateway-deploy.md#size-the-connection-pool) allows. |
+| `max_connections` | No | Postgres connection-pool size per replica. Default `5`, which is conservative and friendly to shared databases. With [spend limits](#admin) enabled, the gateway makes a few database operations per inference request, so raise it for a dedicated database under load, within what [Size the connection pool](https://code.claude.com/docs/en/claude-apps-gateway-deploy.md#size-the-connection-pool) allows. |
 | `connect_timeout_seconds` | No | Seconds the gateway waits when it opens a Postgres connection. A whole number from `1` to `60`, default `5`. Raise it if connection attempts time out when a new gateway instance starts. Requires Claude Code v2.1.274 or later on the gateway server. Earlier versions refuse to start when the key is set. |
-| `readiness_grace_seconds` | No | How many seconds `/readyz` keeps reporting ready after Postgres stops answering. A whole number from `0` to `3600`, default `0`. See [Outage behavior](/docs/en/claude-apps-gateway-deploy.md#outage-behavior) for how to pick a value. Requires Claude Code v2.1.282 or later on the gateway server. Earlier versions refuse to start when the key is set. |
+| `readiness_grace_seconds` | No | How many seconds `/readyz` keeps reporting ready after Postgres stops answering. A whole number from `0` to `3600`, default `0`. See [Outage behavior](https://code.claude.com/docs/en/claude-apps-gateway-deploy.md#outage-behavior) for how to pick a value. Requires Claude Code v2.1.282 or later on the gateway server. Earlier versions refuse to start when the key is set. |
 
 For local development, point `postgres_url` at a throwaway Postgres container, for example `docker run --rm -p 5432:5432 -e POSTGRES_HOST_AUTH_METHOD=trust postgres`.
 
@@ -235,13 +235,13 @@ The gateway returns one upstream's error response, or its own `502`, depending o
 
 When the gateway returns an upstream's response, it keeps the upstream's status code. Whether it keeps the upstream's message depends on the provider. An Anthropic API upstream's error body reaches the developer unchanged.
 
-The Amazon Bedrock, Claude Platform on AWS, Google Cloud's Agent Platform, and Microsoft Foundry upstreams can name your account IDs, role ARNs, and project IDs in their error text. The gateway records that full text in the [operational log](/docs/en/claude-apps-gateway-deploy.md#logs). What the developer sees from those upstreams depends on the rejection:
+The Amazon Bedrock, Claude Platform on AWS, Google Cloud's Agent Platform, and Microsoft Foundry upstreams can name your account IDs, role ARNs, and project IDs in their error text. The gateway records that full text in the [operational log](https://code.claude.com/docs/en/claude-apps-gateway-deploy.md#logs). What the developer sees from those upstreams depends on the rejection:
 
 * `400` or `413` in Anthropic's standard error envelope: the upstream's own message, such as `prompt is too long`. Claude Platform on AWS, Agent Platform, and Microsoft Foundry return this envelope for model API rejections.
 * `400` or `413` in the provider's own shape: a `capability_rejected:` token. When the gateway can't classify the rejection, `upstream rejected the request` on a `400` or `request too large for this upstream` on a `413`.
 * Any other status: generic per-status copy, such as `upstream rate limit exceeded` on a `429`.
 
-For example, the gateway replaces Amazon Bedrock's `Input is too long for requested model.` with `capability_rejected: prompt_too_long`. Claude Code [compacts automatically](/docs/en/errors.md#prompt-is-too-long) on that token, as it does on `prompt is too long`.
+For example, the gateway replaces Amazon Bedrock's `Input is too long for requested model.` with `capability_rejected: prompt_too_long`. Claude Code [compacts automatically](https://code.claude.com/docs/en/errors.md#prompt-is-too-long) on that token, as it does on `prompt is too long`.
 
 Keeping a cloud upstream's `400` or `413` message, or replacing it with a `capability_rejected:` token, requires gateway v2.1.233 or later.
 
@@ -302,7 +302,7 @@ The gateway adds these headers to every request it forwards to that upstream.
 
 When the IdP token carries no email, the gateway sends only `x-claude-gateway-user-id` and omits the two email headers. If your IdP puts the email in a different claim, set [`oidc.email_claim`](#oidc) to that claim.
 
-Your proxy doesn't receive the [`x-claude-code-*` headers](/docs/en/llm-gateway-protocol#request-headers) that Claude Code sends, such as `x-claude-code-session-id`. The gateway doesn't pass them to any upstream, so group requests by developer with the headers in the table above.
+Your proxy doesn't receive the [`x-claude-code-*` headers](https://code.claude.com/docs/en/llm-gateway-protocol#request-headers) that Claude Code sends, such as `x-claude-code-session-id`. The gateway doesn't pass them to any upstream, so group requests by developer with the headers in the table above.
 
 When your proxy answers `429` to a request that carried the developer's email, the gateway returns that response to the developer as-is instead of failing over to the next upstream, so your proxy's per-user budget or rate limit holds. The proxy's other responses follow the ordinary [failover rules](#upstreams). If a developer's IdP token carries no email, the gateway forwards their requests without the email headers, so a `429` to one of those requests counts as upstream capacity and fails over. Before v2.1.267 on the gateway server, every `429` failed over.
 
@@ -310,11 +310,11 @@ Set `forward_user_identity` only on an upstream whose `base_url` is a proxy you 
 
 > [!NOTE]
 >
-> If you set `forward_user_identity` on an Amazon Bedrock upstream, the gateway exits at startup with `Unrecognized key(s) in object: 'forward_user_identity'`. If your proxy sits in front of Bedrock, list it as a `provider: anthropic` upstream instead. The gateway sends that upstream the Anthropic Messages format, so your proxy has to [translate requests for Bedrock](/docs/en/llm-gateway-protocol.md#format-mismatch-with-the-upstream). To name each developer to AWS instead, see [Per-developer AWS cost attribution](#per-developer-aws-cost-attribution).
+> If you set `forward_user_identity` on an Amazon Bedrock upstream, the gateway exits at startup with `Unrecognized key(s) in object: 'forward_user_identity'`. If your proxy sits in front of Bedrock, list it as a `provider: anthropic` upstream instead. The gateway sends that upstream the Anthropic Messages format, so your proxy has to [translate requests for Bedrock](https://code.claude.com/docs/en/llm-gateway-protocol.md#format-mismatch-with-the-upstream). To name each developer to AWS instead, see [Per-developer AWS cost attribution](#per-developer-aws-cost-attribution).
 
 #### Amazon Bedrock
 
-For the client-side Amazon Bedrock deployment that the gateway replaces or fronts, see [Claude Code on Amazon Bedrock](/docs/en/amazon-bedrock.md). The gateway-side upstream:
+For the client-side Amazon Bedrock deployment that the gateway replaces or fronts, see [Claude Code on Amazon Bedrock](https://code.claude.com/docs/en/amazon-bedrock.md). The gateway-side upstream:
 
 ```yaml theme={null}
 upstreams:
@@ -340,7 +340,7 @@ Explicit credentials must be complete: the gateway fails at boot when `aws_acces
 | Setup | How |
 | - | - |
 | IAM permissions | Grant the gateway's principal `bedrock:InvokeModel` and `bedrock:InvokeModelWithResponseStream` on both the inference-profile ARNs and the underlying foundation-model ARNs. For the built-in catalog in US regions: `arn:aws:bedrock:<region>:<account>:inference-profile/us.anthropic.*` and `arn:aws:bedrock:*::foundation-model/anthropic.*`. Also grant `bedrock:CountTokens` on the foundation-model ARNs. The gateway uses it, at no charge, to count the input tokens of a request the client abandoned, so [spend limits](#admin) stay accurate. Without it the gateway falls back to a one-token Bedrock request for that count. |
-| Model access | Amazon Bedrock enables model access by default in commercial regions. The remaining account-level gate is Anthropic's one-time use case form: if no one in your AWS account has submitted it, open the Amazon Bedrock console, select an Anthropic model from the Model catalog, and complete the form. See [Submit use case details](/docs/en/amazon-bedrock.md#1-submit-use-case-details) for the AWS Organizations form and the permissions the submitter needs. |
+| Model access | Amazon Bedrock enables model access by default in commercial regions. The remaining account-level gate is Anthropic's one-time use case form: if no one in your AWS account has submitted it, open the Amazon Bedrock console, select an Anthropic model from the Model catalog, and complete the form. See [Submit use case details](https://code.claude.com/docs/en/amazon-bedrock.md#1-submit-use-case-details) for the AWS Organizations form and the permissions the submitter needs. |
 | EKS (IRSA) | Create an IAM role with the policy above and a trust policy for your cluster's OIDC provider scoped to the gateway's service account. Annotate the service account with `eks.amazonaws.com/role-arn: arn:aws:iam::<acct>:role/claude-gateway`. `auth: {}` picks it up. |
 | ECS / EC2 | Attach the IAM role to the task definition or instance profile. `auth: {}` picks it up. |
 | Anywhere else | Pass credentials via the `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, and `AWS_SESSION_TOKEN` env vars, or set them explicitly in `auth:` with `${VAR}` expansion |
@@ -430,7 +430,7 @@ models:
 
 By default the gateway signs every Bedrock request with one credential, so AWS sees all developers' requests under a single IAM principal. Add `session_name: email` to [`assume_role`](#bedrock-in-another-aws-account) and the gateway calls `sts:AssumeRole` once per developer per hour, with the session name set to that developer's email, and signs their requests with the returned credentials, so each developer's requests reach AWS under their own assumed-role session. The role can be in the gateway's own account.
 
-Requires a gateway running Claude Code v2.1.281 or later. [Cost attribution on AWS](/docs/en/claude-apps-gateway-on-aws.md#cost-attribution) covers the IAM role and where AWS billing shows the sessions.
+Requires a gateway running Claude Code v2.1.281 or later. [Cost attribution on AWS](https://code.claude.com/docs/en/claude-apps-gateway-on-aws.md#cost-attribution) covers the IAM role and where AWS billing shows the sessions.
 
 ```yaml theme={null}
 upstreams:
@@ -446,13 +446,13 @@ upstreams:
 
 An active developer costs one STS call per hour per gateway replica, and concurrent first requests share one call.
 
-The gateway also makes one call of its own on this role: the token count for a request the client abandoned, so that [spend limits](/docs/en/claude-apps-gateway-spend-limits.md) stay accurate. That count and its [one-token fallback request](#amazon-bedrock) are signed by the shared `claude-apps-gateway` session, so AWS attributes the fallback to `claude-apps-gateway` rather than to the developer.
+The gateway also makes one call of its own on this role: the token count for a request the client abandoned, so that [spend limits](https://code.claude.com/docs/en/claude-apps-gateway-spend-limits.md) stay accurate. That count and its [one-token fallback request](#amazon-bedrock) are signed by the shared `claude-apps-gateway` session, so AWS attributes the fallback to `claude-apps-gateway` rather than to the developer.
 
 For strict per-developer attribution, set `assume_role` with `session_name` on every Bedrock upstream you list. An upstream without it signs the requests it serves with its own credentials.
 
 #### Amazon Bedrock Mantle endpoint
 
-The `mantle` provider sends inference to Amazon Bedrock's [Mantle endpoint](/docs/en/amazon-bedrock.md#use-the-mantle-endpoint). It requires Claude Code v2.1.283 or later on the gateway server. Earlier gateway releases reject it at boot, so upgrade every replica before adding it.
+The `mantle` provider sends inference to Amazon Bedrock's [Mantle endpoint](https://code.claude.com/docs/en/amazon-bedrock.md#use-the-mantle-endpoint). It requires Claude Code v2.1.283 or later on the gateway server. Earlier gateway releases reject it at boot, so upgrade every replica before adding it.
 
 The example below puts Mantle first, with an Amazon Bedrock upstream behind it to serve every model the `models` field leaves out:
 
@@ -476,7 +476,7 @@ The table below lists the fields specific to a `mantle` upstream.
 | `auth` | No | Takes the same keys as the [Amazon Bedrock](#amazon-bedrock) upstream's `auth` block, under the same rules. |
 | `base_url` | No | Override the derived endpoint. Keep the `/anthropic` path at the end. |
 
-Grant the upstream's AWS identity Mantle's own IAM actions for inference and token counting, which [Use the Mantle endpoint](/docs/en/amazon-bedrock.md#use-the-mantle-endpoint) lists.
+Grant the upstream's AWS identity Mantle's own IAM actions for inference and token counting, which [Use the Mantle endpoint](https://code.claude.com/docs/en/amazon-bedrock.md#use-the-mantle-endpoint) lists.
 
 For a Mantle model ID that the gateway doesn't know, add an entry to the top-level [`models:`](#models) block whose `upstream_model` maps this upstream's name to that ID. Then put that entry's `id` in this upstream's `models` field too.
 
@@ -485,13 +485,13 @@ A `bedrock` upstream's `guardrail` and `assume_role` settings don't extend to th
 * **`guardrail`**: the gateway applies no [Bedrock guardrail](#apply-an-amazon-bedrock-guardrail) to requests it sends to Mantle, so it refuses to start when a `mantle` upstream is listed while any `bedrock` upstream sets `guardrail`.
 * **`assume_role`**: a `mantle` upstream takes no [`assume_role`](#bedrock-in-another-aws-account). Requests that Mantle serves are sent with the `mantle` upstream's own `auth` credentials, and aren't [attributed per developer](#per-developer-aws-cost-attribution).
 
-For what Mantle's own error responses mean, see [Mantle endpoint errors](/docs/en/amazon-bedrock.md#mantle-endpoint-errors).
+For what Mantle's own error responses mean, see [Mantle endpoint errors](https://code.claude.com/docs/en/amazon-bedrock.md#mantle-endpoint-errors).
 
 #### Claude Platform on AWS
 
 Claude Platform on AWS serves the first-party Anthropic API on AWS infrastructure at `aws-external-anthropic.<region>.api.aws`. It uses first-party model IDs, honors `anthropic-beta` headers as sent, and serves `count_tokens`, so none of the Bedrock-specific translation applies. The `anthropicAws` provider requires Claude Code v2.1.198 or later; earlier gateway releases reject it at boot.
 
-For the client-side deployment of the same platform, see [Claude Code on Claude Platform on AWS](/docs/en/claude-platform-on-aws.md). The gateway-side upstream:
+For the client-side deployment of the same platform, see [Claude Code on Claude Platform on AWS](https://code.claude.com/docs/en/claude-platform-on-aws.md). The gateway-side upstream:
 
 ```yaml theme={null}
 upstreams:
@@ -524,7 +524,7 @@ Because the platform resolves first-party model IDs, the built-in catalog routes
 
 #### Google Cloud Agent Platform
 
-For the equivalent client-side setup, see [Claude Code on Google Cloud](/docs/en/google-vertex-ai.md). The gateway-side upstream:
+For the equivalent client-side setup, see [Claude Code on Google Cloud](https://code.claude.com/docs/en/google-vertex-ai.md). The gateway-side upstream:
 
 ```yaml theme={null}
 upstreams:
@@ -552,7 +552,7 @@ Set `region: global` to use the [global endpoint for Google Cloud's Agent Platfo
 
 #### Microsoft Foundry
 
-For the client-side Microsoft Foundry deployment, see [Claude Code on Microsoft Foundry](/docs/en/microsoft-foundry.md). The gateway-side upstream:
+For the client-side Microsoft Foundry deployment, see [Claude Code on Microsoft Foundry](https://code.claude.com/docs/en/microsoft-foundry.md). The gateway-side upstream:
 
 ```yaml theme={null}
 upstreams:
@@ -689,7 +689,7 @@ The CLI applies the same feature gating to gateways regardless of which upstream
 
 ### `admin`
 
-Optional. Enables `/v1/organizations/spend_limits`, which mirrors Anthropic's public Admin API, and per-developer spend enforcement on `/v1/messages`. See [Spend limits](/docs/en/claude-apps-gateway-spend-limits.md) for how caps are set and enforced; this section covers the `gateway.yaml` keys that turn the feature on and tune it.
+Optional. Enables `/v1/organizations/spend_limits`, which mirrors Anthropic's public Admin API, and per-developer spend enforcement on `/v1/messages`. See [Spend limits](https://code.claude.com/docs/en/claude-apps-gateway-spend-limits.md) for how caps are set and enforced; this section covers the `gateway.yaml` keys that turn the feature on and tune it.
 
 ```yaml theme={null}
 admin:
@@ -710,9 +710,9 @@ admin:
 | Field | Required | Description |
 | - | - | - |
 | `write_keys` | No | Array of `{id, key}`. An `x-api-key` matching one of these can list, set, and delete spend limits. Key values must be at least 32 characters; `id`s must be unique across `read_keys` and `write_keys`. |
-| `read_keys` | No | Array of `{id, key}`. Read-only: every `GET` endpoint, including listing caps, fetching one by ID, and reading [`/effective`](/docs/en/claude-apps-gateway-spend-limits#%2Feffective) and [`/audit`](/docs/en/claude-apps-gateway-spend-limits#%2Faudit). |
+| `read_keys` | No | Array of `{id, key}`. Read-only: every `GET` endpoint, including listing caps, fetching one by ID, and reading [`/effective`](https://code.claude.com/docs/en/claude-apps-gateway-spend-limits#%2Feffective) and [`/audit`](https://code.claude.com/docs/en/claude-apps-gateway-spend-limits#%2Faudit). |
 | `admin_groups` | No | IdP group names. A gateway JWT whose `groups` claim includes one of these has full admin access, read and write, and audits as `oidc:<sub>`. Use this for human admins; use API keys for machines. An empty entry in this list stops the gateway at boot. See [Matcher values that stop the gateway at boot](#matcher-values-that-stop-the-gateway-at-boot). |
-| `blocked_message` | No | Appended verbatim to the `429 billing_error` a blocked developer sees. Write the whole instruction, such as a URL or a Slack channel. When unset, the gateway sends only the default message. See [How enforcement works](/docs/en/claude-apps-gateway-spend-limits.md#how-enforcement-works). |
+| `blocked_message` | No | Appended verbatim to the `429 billing_error` a blocked developer sees. Write the whole instruction, such as a URL or a Slack channel. When unset, the gateway sends only the default message. See [How enforcement works](https://code.claude.com/docs/en/claude-apps-gateway-spend-limits.md#how-enforcement-works). |
 | `audit_retention_days` | No | Default `365`. Older `admin_audit` rows are swept. |
 | `spend_retention_months` | No | Default `13`. `spend` counter rows older than this are swept. The default keeps a full year plus the current partial month for year-over-year reporting. |
 | `identity_retention_days` | No | Default `90`. Last-seen TTL for `principal_emails` rows, which hold each developer's email, display name, and groups (PII). Deliberately shorter than spend retention so a deprovisioned identity ages out while its anonymous spend counters remain. |
@@ -728,7 +728,7 @@ The `enforcement` block controls how spend-limit checks behave when the store is
 
 ### `pricing`
 
-The `pricing` block tells the spend meter what to charge instead of USD list price, so caps and [`/effective`](/docs/en/claude-apps-gateway-spend-limits#%2Feffective) reflect your contracted rates. Amounts stay in USD and remain an estimate, not an invoice. Two prerequisites:
+The `pricing` block tells the spend meter what to charge instead of USD list price, so caps and [`/effective`](https://code.claude.com/docs/en/claude-apps-gateway-spend-limits#%2Feffective) reflect your contracted rates. Amounts stay in USD and remain an estimate, not an invoice. Two prerequisites:
 
 * Claude Code v2.1.227 or later on the gateway server. Earlier versions reject the unknown key at boot.
 * An [`admin:`](#admin) block or, in v2.1.268 or later, a [`managed:`](#managed) block with at least one policy. The gateway refuses to start with `pricing` set and neither block, because nothing would read it.
@@ -752,7 +752,7 @@ pricing:
 
 How the meter matches an override row:
 
-* A row replaces list price for requests that `upstream`, an [`upstreams[].name`](#upstreams), serves for `model`. That includes the higher [fast mode](/docs/en/fast-mode.md#understand-the-cost-tradeoff) rate, so fast and standard requests meter at the same four rates.
+* A row replaces list price for requests that `upstream`, an [`upstreams[].name`](#upstreams), serves for `model`. That includes the higher [fast mode](https://code.claude.com/docs/en/fast-mode.md#understand-the-cost-tradeoff) rate, so fast and standard requests meter at the same four rates.
 * A built-in ID such as `claude-sonnet-4-6`, matched like [`models[].id`](#models), covers every dated form, regional Amazon Bedrock form, or Google Cloud's Agent Platform form the meter prices as that model. Any other string, such as an alias or an inference-profile ARN, matches the ID the client sent or the string sent upstream, case-insensitively.
 * Where rows overlap, the meter picks the most specific row rather than the first row: a row whose `model` is the exact model string sent upstream, then a row matching the exact ID the client sent, then a row naming the built-in model.
 * An unknown upstream name fails boot, and so do two rows for one upstream that name the same model, including two spellings of one built-in model. The gateway warns at boot about a row no requestable model can use.
@@ -779,7 +779,7 @@ A gateway server earlier than v2.1.271 refuses to start if you set a `multiplier
 
 #### Send the rates to signed-in clients
 
-With v2.1.268 or later on the gateway server, the gateway also puts the rates from `pricing` into the [`managed`](#managed) policies it serves, as the [`modelPricing`](/docs/en/settings-reference#modelpricing) managed setting. Developers matched by a policy then see the `pricing` rates for the first upstream that serves each model ID in `/usage`, the status line, and OpenTelemetry. A developer who matches no policy receives no managed settings, so their figures stay at list price. Clients apply the setting in Claude Code v2.1.242 or later.
+With v2.1.268 or later on the gateway server, the gateway also puts the rates from `pricing` into the [`managed`](#managed) policies it serves, as the [`modelPricing`](https://code.claude.com/docs/en/settings-reference#modelpricing) managed setting. Developers matched by a policy then see the `pricing` rates for the first upstream that serves each model ID in `/usage`, the status line, and OpenTelemetry. A developer who matches no policy receives no managed settings, so their figures stay at list price. Clients apply the setting in Claude Code v2.1.242 or later.
 
 * What the gateway adds: unless a policy's `cli` block already sets `modelPricing`, the gateway adds the `multiplier` and, for every model ID a client can request, the override row of the first upstream that serves that ID. A rate that only a failover upstream charges stays on the gateway.
 * Opt one policy out: set `modelPricing` to `{}` in that policy's `cli` block, and its developers stay at list price.
@@ -850,11 +850,11 @@ An authenticated user who matches no policy gets the gateway's defaults, which m
 >
 > The gateway keeps no user directory of its own. It authorizes each request from the user's IdP token, reading group membership from the token's `groups` claim and evaluating policies against it. There is no roster to enumerate and no accounts to pre-create, and therefore no SCIM endpoint, because there is nothing for SCIM to sync into.
 >
-> Run user and group lifecycle management at the source of truth, which is your IdP's native SCIM provisioning or a dedicated identity-governance platform. Membership and deprovisioning governed there flow into the gateway automatically through the token. If you want SCIM provisioning of Claude accounts themselves, that is a [Claude for Enterprise](/docs/en/admin-setup.md) capability.
+> Run user and group lifecycle management at the source of truth, which is your IdP's native SCIM provisioning or a dedicated identity-governance platform. Membership and deprovisioning governed there flow into the gateway automatically through the token. If you want SCIM provisioning of Claude accounts themselves, that is a [Claude for Enterprise](https://code.claude.com/docs/en/admin-setup.md) capability.
 >
 > Two propagation clocks apply:
 >
-> * **Policy contents**: editing a policy and redeploying reaches connected Claude Code clients on their next managed-settings poll, within an hour, apart from the [changes that apply only at the next launch](/docs/en/server-managed-settings.md#fetch-and-caching-behavior)
+> * **Policy contents**: editing a policy and redeploying reaches connected Claude Code clients on their next managed-settings poll, within an hour, apart from the [changes that apply only at the next launch](https://code.claude.com/docs/en/server-managed-settings.md#fetch-and-caching-behavior)
 > * **Group membership**: changing a user's group membership changes which policy matches them. This takes effect on the next session re-mint, meaning the next silent refresh, bounded by `session.ttl_hours`.
 >
 > Claude Desktop follows [its own schedule](#when-a-policy-change-reaches-claude-desktop).
@@ -863,10 +863,10 @@ An authenticated user who matches no policy gets the gateway's defaults, which m
 
 If `availableModels` leaves out Claude Code's default model, sessions get `400` responses until the developer picks a listed model, for example with `/model`. In gateway sessions the default is the Opus model the `opus` alias resolves to, and `availableModels` on its own doesn't change it.
 
-To fix this, set [`enforceAvailableModels: true`](/docs/en/model-config#enforce-the-allowlist-for-the-default-model) in the same `cli` block, then check which kind of entry the list has:
+To fix this, set [`enforceAvailableModels: true`](https://code.claude.com/docs/en/model-config#enforce-the-allowlist-for-the-default-model) in the same `cli` block, then check which kind of entry the list has:
 
 * **An alias such as `sonnet`, or a built-in ID such as `claude-sonnet-4-6`**: sessions start on one of those models, and the Default option in `/model` resolves to it
-* **No alias or built-in ID in the list**: sessions can keep starting on the built-in default, so also set [`model`](/docs/en/model-config#control-the-model-users-run-on) to one of the listed IDs in that policy's `cli` block
+* **No alias or built-in ID in the list**: sessions can keep starting on the built-in default, so also set [`model`](https://code.claude.com/docs/en/model-config#control-the-model-users-run-on) to one of the listed IDs in that policy's `cli` block
 
 This policy lists one custom ID that [`models`](#models) defines, and starts sessions on that ID:
 
@@ -929,13 +929,13 @@ When you switch, delete any `serve_to_desktop` line in the same edit that rename
 
 #### What goes in `cli`
 
-Each `code` or `cli` value is a complete Claude Code `managed-settings.json` document, the same schema you would deploy via MDM or `/etc/claude-code/managed-settings.json`, expressed here as YAML. The CLI applies the delivered document at the managed tier, above user and project settings, in place of server-managed settings. It therefore ignores the settings [restricted to OS-level policy sources](/docs/en/server-managed-settings.md#current-limitations), such as `policyHelper` and `wslInheritsWindowsSettings`.
+Each `code` or `cli` value is a complete Claude Code `managed-settings.json` document, the same schema you would deploy via MDM or `/etc/claude-code/managed-settings.json`, expressed here as YAML. The CLI applies the delivered document at the managed tier, above user and project settings, in place of server-managed settings. It therefore ignores the settings [restricted to OS-level policy sources](https://code.claude.com/docs/en/server-managed-settings.md#current-limitations), such as `policyHelper` and `wslInheritsWindowsSettings`.
 
 The gateway validates each document against the CLI's settings schema at boot, so an unrecognized top-level key fails boot with an error naming every offending key. Deliberately open parts of the schema still accept arbitrary values, because newer clients may recognize entries the gateway's schema doesn't. These open keys include `env`, `pluginConfigs`, and keys nested under `permissions`.
 
 Because validation uses the schema bundled with the gateway's installed version, putting a top-level settings key introduced by a newer Claude Code release into managed config requires upgrading the gateway first. Smoke-test a new policy on one client before rolling it out.
 
-The full key reference is in [Claude Code settings](/docs/en/settings-reference.md#all-settings). The keys most operators reach for first:
+The full key reference is in [Claude Code settings](https://code.claude.com/docs/en/settings-reference.md#all-settings). The keys most operators reach for first:
 
 ```yaml theme={null}
 managed:
@@ -973,13 +973,13 @@ managed:
 | Key | Enforced by | Effect |
 | - | - | - |
 | `availableModels` | Gateway + CLI | Model allowlist. Also checked at `/v1/messages`, so a patched client can't bypass it. |
-| [`deniedModels`](/docs/en/settings-reference#deniedmodels), [`availableModelsMatch`](/docs/en/settings-reference#availablemodelsmatch) | Gateway + CLI | [Block specific models or versions](/docs/en/model-config.md#block-specific-models-or-versions) that `availableModels` would otherwise permit. A blocked model is rejected with a `400` at `/v1/messages` and is left out of `/v1/models`. The gateway's own check requires Claude Code v2.1.299 or later on the gateway server. The CLI's check requires v2.1.283 or later on clients, and earlier clients ignore both keys. |
-| `permissions.allow` / `.deny` | CLI | Tool and command rules. See [Permissions](/docs/en/permissions.md). |
-| `permissions.disableBypassPermissionsMode` | CLI | Set to `disable` to block [`bypassPermissions`](/docs/en/permission-modes#skip-all-checks-with-bypasspermissions-mode), the mode that skips permission prompts, and the `--dangerously-skip-permissions` flag |
-| `allowManagedPermissionRulesOnly` | CLI | When `true`, managed settings become the only settings source of permission rules. The [`allowManagedPermissionRulesOnly`](/docs/en/settings-reference#allowmanagedpermissionrulesonly) entry lists every source Claude Code then ignores. |
+| [`deniedModels`](https://code.claude.com/docs/en/settings-reference#deniedmodels), [`availableModelsMatch`](https://code.claude.com/docs/en/settings-reference#availablemodelsmatch) | Gateway + CLI | [Block specific models or versions](https://code.claude.com/docs/en/model-config.md#block-specific-models-or-versions) that `availableModels` would otherwise permit. A blocked model is rejected with a `400` at `/v1/messages` and is left out of `/v1/models`. The gateway's own check requires Claude Code v2.1.299 or later on the gateway server. The CLI's check requires v2.1.283 or later on clients, and earlier clients ignore both keys. |
+| `permissions.allow` / `.deny` | CLI | Tool and command rules. See [Permissions](https://code.claude.com/docs/en/permissions.md). |
+| `permissions.disableBypassPermissionsMode` | CLI | Set to `disable` to block [`bypassPermissions`](https://code.claude.com/docs/en/permission-modes#skip-all-checks-with-bypasspermissions-mode), the mode that skips permission prompts, and the `--dangerously-skip-permissions` flag |
+| `allowManagedPermissionRulesOnly` | CLI | When `true`, managed settings become the only settings source of permission rules. The [`allowManagedPermissionRulesOnly`](https://code.claude.com/docs/en/settings-reference#allowmanagedpermissionrulesonly) entry lists every source Claude Code then ignores. |
 | `env` | CLI | Environment variables merged into the CLI process. Use for telemetry, auto-update, and model-name overrides. |
-| `hooks` | CLI | Org-wide [hooks](/docs/en/hooks.md) |
-| `managedMcpServers` | CLI | Remote MCP servers [provided to every matching developer](/docs/en/managed-mcp.md#provide-servers-through-managed-settings) alongside the servers they add themselves, `http` and `sse` only. See [MCP servers in a policy](#mcp-servers-in-a-policy). Requires Claude Code v2.1.259 or later on the gateway server and on clients. Earlier clients ignore the key. |
+| `hooks` | CLI | Org-wide [hooks](https://code.claude.com/docs/en/hooks.md) |
+| `managedMcpServers` | CLI | Remote MCP servers [provided to every matching developer](https://code.claude.com/docs/en/managed-mcp.md#provide-servers-through-managed-settings) alongside the servers they add themselves, `http` and `sse` only. See [MCP servers in a policy](#mcp-servers-in-a-policy). Requires Claude Code v2.1.259 or later on the gateway server and on clients. Earlier clients ignore the key. |
 
 Because these settings arrive over the network, the CLI shows each developer a security approval dialog before applying the settings listed below:
 
@@ -987,17 +987,17 @@ Because these settings arrive over the network, the CLI shows each developer a s
 * `env` variables that require the developer's approval, such as proxy and base-URL variables
 * shell-execution settings such as `apiKeyHelper` and `statusLine`
 * the sandbox binary settings `sandbox.bwrapPath`, `sandbox.socatPath`, and `sandbox.ripgrep`
-* Sandbox settings that intercept traffic, inject credentials, or weaken isolation, such as `sandbox.network.tlsTerminate` and the proxy port settings. [Security approval dialogs](/docs/en/server-managed-settings.md#security-approval-dialogs) lists them all.
+* Sandbox settings that intercept traffic, inject credentials, or weaken isolation, such as `sandbox.network.tlsTerminate` and the proxy port settings. [Security approval dialogs](https://code.claude.com/docs/en/server-managed-settings.md#security-approval-dialogs) lists them all.
 
-[Approval memory](/docs/en/server-managed-settings.md#approval-memory) covers how long an approval lasts and when the dialog appears again.
+[Approval memory](https://code.claude.com/docs/en/server-managed-settings.md#approval-memory) covers how long an approval lasts and when the dialog appears again.
 
 Claude Code applies some delivered `env` variables without showing the developer the approval dialog, such as model selection settings and numeric limits. Other delivered variables can require the developer's approval before they take effect; a non-empty proxy, base-URL, or `OTEL_EXPORTER_OTLP_ENDPOINT` value always does. When a delivered variable needs approval, the dialog names it.
 
-[Environment variables and the approval dialog](/docs/en/server-managed-settings.md#environment-variables-and-the-approval-dialog) has the details, including four privacy toggles whose delivered value decides whether they need approval. Before v2.1.218, Claude Code applied fewer variables without asking the developer, so more delivered variables triggered the dialog.
+[Environment variables and the approval dialog](https://code.claude.com/docs/en/server-managed-settings.md#environment-variables-and-the-approval-dialog) has the details, including four privacy toggles whose delivered value decides whether they need approval. Before v2.1.218, Claude Code applied fewer variables without asking the developer, so more delivered variables triggered the dialog.
 
 The gateway's [telemetry](#telemetry) configuration pushes `OTEL_EXPORTER_OTLP_ENDPOINT`, so setting `telemetry.forward_to` triggers the dialog on each interactive client. The dialog protects the developer's machine from a compromised or hostile gateway, not the organization from the developer.
 
-A [non-interactive run](/docs/en/server-managed-settings.md#security-approval-dialogs), such as `claude -p`, an Agent SDK session, or a session in Claude Desktop's Code tab, can't show the dialog. It applies the pushed settings for that run only and doesn't record them as approved, so the developer's next interactive session still shows the dialog.
+A [non-interactive run](https://code.claude.com/docs/en/server-managed-settings.md#security-approval-dialogs), such as `claude -p`, an Agent SDK session, or a session in Claude Desktop's Code tab, can't show the dialog. It applies the pushed settings for that run only and doesn't record them as approved, so the developer's next interactive session still shows the dialog.
 
 If a developer declines, Claude Code exits that session rather than applying the policy. When you push a new hook, or any env var that triggers the dialog, to a broad policy, every matching developer therefore sees the dialog in their interactive sessions. A running interactive session shows it on the next hourly poll, and otherwise it appears at the developer's next interactive startup.
 
@@ -1007,7 +1007,7 @@ The `cli` key was named `settings` in earlier releases, and the gateway still ac
 
 Terminal sessions signed in through `/login` use the 1M context window for Opus 4.7 and later, Sonnet 5 and later, and the Fable models. The model ID needs no `[1m]` suffix, and sessions compact at about 967K tokens. Before Claude Code v2.1.287 on the developer's machine, Claude Code treated the Opus and Fable models as having a 200K window unless the model ID ended in `[1m]`.
 
-To have terminal sessions compact at the 200K boundary instead, set the [auto-compact window](/docs/en/model-config.md#set-the-auto-compact-window) in the policy's `env`:
+To have terminal sessions compact at the 200K boundary instead, set the [auto-compact window](https://code.claude.com/docs/en/model-config.md#set-the-auto-compact-window) in the policy's `env`:
 
 ```yaml theme={null}
 managed:
@@ -1020,11 +1020,11 @@ managed:
 
 Claude Code applies this variable without showing the developer the approval dialog. The variable applies to every model, including model IDs that end in `[1m]`.
 
-To turn off 1M context instead, set [`CLAUDE_CODE_DISABLE_1M_CONTEXT: "1"`](/docs/en/model-config#extended-context) in the same `env` block. Claude Code then treats every model as having a 200K window. In interactive sessions, each developer approves this variable in the [approval dialog](#what-goes-in-cli) before it takes effect.
+To turn off 1M context instead, set [`CLAUDE_CODE_DISABLE_1M_CONTEXT: "1"`](https://code.claude.com/docs/en/model-config#extended-context) in the same `env` block. Claude Code then treats every model as having a 200K window. In interactive sessions, each developer approves this variable in the [approval dialog](#what-goes-in-cli) before it takes effect.
 
 #### One-hour prompt cache
 
-To request the one-hour [prompt cache TTL](/docs/en/prompt-caching.md#cache-lifetime) instead of the default five minutes, add these keys to a policy's existing [`code`, `cli`, or `settings` block](#choose-cli-or-code) and restart the gateway. The keys need Claude Code v2.1.242 or later on the gateway server and on clients.
+To request the one-hour [prompt cache TTL](https://code.claude.com/docs/en/prompt-caching.md#cache-lifetime) instead of the default five minutes, add these keys to a policy's existing [`code`, `cli`, or `settings` block](#choose-cli-or-code) and restart the gateway. The keys need Claude Code v2.1.242 or later on the gateway server and on clients.
 
 `promptCacheTtl` covers the main conversation. `subagentPromptCacheTtl` is optional and covers subagents, workflows, and background requests. This example adds both to a `match: {}` policy keyed `cli`:
 
@@ -1041,23 +1041,23 @@ managed:
 >
 > Set the keys only if your upstreams offer the one-hour TTL for every model the gateway serves. If an upstream rejects the TTL, the request fails, and neither the gateway nor Claude Code retries it with the five-minute TTL. For Amazon Bedrock, check [supported models, regions, and limits](https://docs.aws.amazon.com/bedrock/latest/userguide/prompt-caching.html#prompt-caching-models).
 
-To confirm `promptCacheTtl`, sign in to the gateway as a user the policy matches and [check which TTL your cache writes used](/docs/en/prompt-caching.md#choose-the-ttl-yourself). Pass `--model` to repeat the check for each model the gateway serves.
+To confirm `promptCacheTtl`, sign in to the gateway as a user the policy matches and [check which TTL your cache writes used](https://code.claude.com/docs/en/prompt-caching.md#choose-the-ttl-yourself). Pass `--model` to repeat the check for each model the gateway serves.
 
-One-hour cache writes [cost more](/docs/en/prompt-caching.md#cache-lifetime) than five-minute writes. For [spend limits](/docs/en/claude-apps-gateway-spend-limits.md#how-requests-are-priced) to count that higher rate, you need v2.1.286 or later on the gateway server.
+One-hour cache writes [cost more](https://code.claude.com/docs/en/prompt-caching.md#cache-lifetime) than five-minute writes. For [spend limits](https://code.claude.com/docs/en/claude-apps-gateway-spend-limits.md#how-requests-are-priced) to count that higher rate, you need v2.1.286 or later on the gateway server.
 
 #### MCP servers in a policy
 
-To provide MCP servers to the Claude Code clients a policy matches, set [`managedMcpServers`](/docs/en/managed-mcp#provide-servers-through-managed-settings) in that policy's `cli` block. You need Claude Code v2.1.259 or later on the gateway server and on clients.
+To provide MCP servers to the Claude Code clients a policy matches, set [`managedMcpServers`](https://code.claude.com/docs/en/managed-mcp#provide-servers-through-managed-settings) in that policy's `cli` block. You need Claude Code v2.1.259 or later on the gateway server and on clients.
 
-The gateway checks each entry at boot with [the same rules Claude Code applies on the client](/docs/en/managed-mcp.md#what-an-entry-can-contain), and if an entry fails a check, the gateway refuses to start and names the entry.
+The gateway checks each entry at boot with [the same rules Claude Code applies on the client](https://code.claude.com/docs/en/managed-mcp.md#what-an-entry-can-contain), and if an entry fails a check, the gateway refuses to start and names the entry.
 
-If you write a `${VAR}` reference in `gateway.yaml`, the gateway resolves it from its environment at boot through [secret expansion](#secret-expansion) before it runs the entry checks, so every matching client receives the literal value and can read it. The [header guidance for provided servers](/docs/en/managed-mcp.md#provide-servers-through-managed-settings) applies to the expanded value.
+If you write a `${VAR}` reference in `gateway.yaml`, the gateway resolves it from its environment at boot through [secret expansion](#secret-expansion) before it runs the entry checks, so every matching client receives the literal value and can read it. The [header guidance for provided servers](https://code.claude.com/docs/en/managed-mcp.md#provide-servers-through-managed-settings) applies to the expanded value.
 
 The gateway rejects the `.mcp.json` spelling `mcpServers` in a `cli` block, and its boot error names `managedMcpServers` as the key to use. Before v2.1.259, the gateway rejected any MCP server definition in a `cli` block.
 
 #### Claude Desktop overlay
 
-If your organization also deploys [Claude Desktop](/docs/en/desktop.md), the same gateway serves both clients. Point `bootstrapUrl`, in Claude Desktop's [managed configuration](https://claude.com/docs/third-party/claude-desktop/configuration), at `<listen.public_url>/user/bootstrap`. Claude Desktop derives the OAuth issuer from that URL, runs the same device-code sign-in against this gateway, and fetches its configuration from the response.
+If your organization also deploys [Claude Desktop](https://code.claude.com/docs/en/desktop.md), the same gateway serves both clients. Point `bootstrapUrl`, in Claude Desktop's [managed configuration](https://claude.com/docs/third-party/claude-desktop/configuration), at `<listen.public_url>/user/bootstrap`. Claude Desktop derives the OAuth issuer from that URL, runs the same device-code sign-in against this gateway, and fetches its configuration from the response.
 
 > [!NOTE]
 >
@@ -1071,7 +1071,7 @@ The gateway derives much of the bootstrap response from the matched policy's `cl
 
 * The model list, from `availableModels`. The list leaves out models that the policy blocks with [`deniedModels` or `availableModelsMatch: exact`](#what-goes-in-cli). This filter requires Claude Code v2.1.299 or later on the gateway server. [Extended context in Claude Desktop](#extended-context-in-claude-desktop) covers each model's 1M context option
 * Disabled tools, from bare tool-name `permissions.deny` entries. If you set `disabledBuiltinTools` in the policy's `desktop` block, the gateway serves the union of your value and the derived list, so you can disable more tools this way but can't re-enable one you disabled through `permissions.deny`
-* The egress allowlist, from `sandbox.network.allowedDomains`. If you set `coworkEgressAllowedHosts` in the policy's `desktop` block, the gateway uses that value instead of the derived list. If the allowlist the gateway serves includes `*` and the gateway doesn't also serve Claude Desktop's [`allowedWorkspaceFolders`](https://claude.com/docs/third-party/claude-desktop/code#applied-as-managed-policy), Claude Desktop doesn't turn on the [Bash sandbox](/docs/en/sandboxing.md) in the Code tab
+* The egress allowlist, from `sandbox.network.allowedDomains`. If you set `coworkEgressAllowedHosts` in the policy's `desktop` block, the gateway uses that value instead of the derived list. If the allowlist the gateway serves includes `*` and the gateway doesn't also serve Claude Desktop's [`allowedWorkspaceFolders`](https://claude.com/docs/third-party/claude-desktop/code#applied-as-managed-policy), Claude Desktop doesn't turn on the [Bash sandbox](https://code.claude.com/docs/en/sandboxing.md) in the Code tab
 * An OTLP endpoint that points at the gateway itself, and the signed-in user's identity attributes. The gateway relays the exports it receives at that endpoint to your `forward_to` destinations. It includes the endpoint and the attributes when you set both [`telemetry.forward_to`](#telemetry) and `listen.public_url`.
 
   Claude Desktop exports every signal with one encoding: `http/protobuf`, or `http/json` when you set `OTEL_EXPORTER_OTLP_PROTOCOL` or one of its per-signal variants to `http/json` in the policy's `env`. Before Claude Code v2.1.261 on the gateway server, the response set `http/json` regardless, so a collector that accepts only protobuf rejected Claude Desktop's exports
@@ -1099,7 +1099,7 @@ Deploy the [client-side managed settings](#client-side-managed-settings) to thos
 
 When a proxy in front of the gateway answers `/managed/settings` with its own 404, the Code tab also starts without your `code` settings, including on a machine that meets all four conditions.
 
-In a policy that has a `desktop` key, a `code` block that holds settings turns off the WebSearch tool in Cowork, Chat, and the Code tab. For MCP servers, see [Where `managedMcpServers` applies](/docs/en/managed-mcp#where-managedmcpservers-applies).
+In a policy that has a `desktop` key, a `code` block that holds settings turns off the WebSearch tool in Cowork, Chat, and the Code tab. For MCP servers, see [Where `managedMcpServers` applies](https://code.claude.com/docs/en/managed-mcp#where-managedmcpservers-applies).
 
 ##### Set Claude Desktop settings directly
 
@@ -1163,7 +1163,7 @@ To shorten the 24 hours, set [`relaunchEnforcementHours`](https://claude.com/doc
 
 #### Extended context in Claude Desktop
 
-If you serve [Claude Desktop](#claude-desktop-overlay) from the gateway, its model picker offers a 1M context option for each listed model that can run with a 1M context window. These include Claude Opus 4.6 and later, Claude Sonnet 4.6 and later, and the Fable models. The option is the model's `[1m]` variant, which [Extended context](/docs/en/model-config.md#extended-context) describes. You need Claude Code v2.1.284 or later on the gateway server.
+If you serve [Claude Desktop](#claude-desktop-overlay) from the gateway, its model picker offers a 1M context option for each listed model that can run with a 1M context window. These include Claude Opus 4.6 and later, Claude Sonnet 4.6 and later, and the Fable models. The option is the model's `[1m]` variant, which [Extended context](https://code.claude.com/docs/en/model-config.md#extended-context) describes. You need Claude Code v2.1.284 or later on the gateway server.
 
 A [`models`](#models) entry gets no 1M option when:
 
@@ -1197,21 +1197,21 @@ managed:
 
 To remove the option from the picker, set `CLAUDE_CODE_DISABLE_1M_CONTEXT: "1"` in the `env` block under the policy's `cli` key. If you also listed an entry whose `id` ends in `[1m]`, the gateway still serves it, so delete that entry too.
 
-The variable also reaches the terminal sessions of developers the policy matches. For what it changes there, see [Extended context](/docs/en/model-config.md#extended-context).
+The variable also reaches the terminal sessions of developers the policy matches. For what it changes there, see [Extended context](https://code.claude.com/docs/en/model-config.md#extended-context).
 
 #### Precedence with other managed sources
 
-If a device also has an MDM-delivered policy or a local `managed-settings.json`, gateway-delivered settings rank first. [Precedence within the managed tier](/docs/en/managed-settings.md#precedence-within-the-managed-tier) on the managed settings page says when the local sources apply, and has the [keys Claude Code reads from every admin source](/docs/en/managed-settings.md#keys-read-from-every-admin-source) regardless of which source it selected, such as the sandbox lock keys, `forceRemoteSettingsRefresh`, and the per-variable `env` merge. A [`policyHelper`](/docs/en/settings-reference#policyhelper) configured in an MDM profile or the managed settings file runs only when the gateway delivers no settings; the entry says what its output replaces.
+If a device also has an MDM-delivered policy or a local `managed-settings.json`, gateway-delivered settings rank first. [Precedence within the managed tier](https://code.claude.com/docs/en/managed-settings.md#precedence-within-the-managed-tier) on the managed settings page says when the local sources apply, and has the [keys Claude Code reads from every admin source](https://code.claude.com/docs/en/managed-settings.md#keys-read-from-every-admin-source) regardless of which source it selected, such as the sandbox lock keys, `forceRemoteSettingsRefresh`, and the per-variable `env` merge. A [`policyHelper`](https://code.claude.com/docs/en/settings-reference#policyhelper) configured in an MDM profile or the managed settings file runs only when the gateway delivers no settings; the entry says what its output replaces.
 
-Embedding hosts such as [Claude Desktop](/docs/en/desktop.md) can supply policy through the SDK `managedSettings` option. [Parent settings from embedding hosts](/docs/en/managed-settings.md#parent-settings-from-embedding-hosts) says when Claude Code applies it, and [Restrict parent settings](/docs/en/claude-apps-gateway#restrict-parent-settings) lists which allow-direction settings still apply without the `allowManaged*Only` locks.
+Embedding hosts such as [Claude Desktop](https://code.claude.com/docs/en/desktop.md) can supply policy through the SDK `managedSettings` option. [Parent settings from embedding hosts](https://code.claude.com/docs/en/managed-settings.md#parent-settings-from-embedding-hosts) says when Claude Code applies it, and [Restrict parent settings](https://code.claude.com/docs/en/claude-apps-gateway#restrict-parent-settings) lists which allow-direction settings still apply without the `allowManaged*Only` locks.
 
 Gateway policies apply to every Claude Code invocation on the machine, including non-interactive `claude -p` runs and sessions spawned by the Agent SDK. If the gateway is unreachable at startup, signed-in sessions exit with an error rather than running without their policy.
 
 ### `telemetry`
 
-The CLI sends metrics, logs, and, when enabled, traces to the gateway, which relays them verbatim to each configured destination. The exports use OpenTelemetry Protocol (OTLP) over HTTP. To skip the relay and have sessions export straight to your collector, [name the collector in a policy](#export-directly-to-your-collector). See [Monitoring usage](/docs/en/monitoring-usage.md) for the metrics and events the CLI emits.
+The CLI sends metrics, logs, and, when enabled, traces to the gateway, which relays them verbatim to each configured destination. The exports use OpenTelemetry Protocol (OTLP) over HTTP. To skip the relay and have sessions export straight to your collector, [name the collector in a policy](#export-directly-to-your-collector). See [Monitoring usage](https://code.claude.com/docs/en/monitoring-usage.md) for the metrics and events the CLI emits.
 
-In sessions signed in through `/login`, the CLI stamps each export with the authenticated user's identity, read from the gateway-issued JWT: the `user.id`, `user.email`, and `user.groups` attributes. Per-developer cost and usage attribution therefore works with no developer-side configuration. Events that Claude Code logs before the developer signs in [don't carry this identity](/docs/en/monitoring-usage.md#standard-attributes). To see which attribute follows a change in a developer's groups, see [Group changes during an open session](#group-changes-during-an-open-session).
+In sessions signed in through `/login`, the CLI stamps each export with the authenticated user's identity, read from the gateway-issued JWT: the `user.id`, `user.email`, and `user.groups` attributes. Per-developer cost and usage attribution therefore works with no developer-side configuration. Events that Claude Code logs before the developer signs in [don't carry this identity](https://code.claude.com/docs/en/monitoring-usage.md#standard-attributes). To see which attribute follows a change in a developer's groups, see [Group changes during an open session](#group-changes-during-an-open-session).
 
 [Claude Desktop](#claude-desktop-overlay) and Cowork sessions signed in through the gateway stamp their telemetry with `user.email` and `user.groups` alongside `enduser.id`, so you can cover terminal, Desktop, and Cowork usage with one query on `user.email` or `user.groups`. `user.groups` is the comma-separated IdP group list.
 
@@ -1253,7 +1253,7 @@ telemetry:
 
 Each `forward_to` URL must use `https://`, with one exception for a collector on the gateway's own loopback interface:
 
-* `http://localhost:<port>` passes config validation, but the [SSRF guard](/docs/en/claude-apps-gateway-deploy.md#threat-model-summary) blocks every export with `ECONNREFUSED_SSRF` unless you set `CLAUDE_GATEWAY_ALLOW_LOOPBACK=1` in the gateway's environment
+* `http://localhost:<port>` passes config validation, but the [SSRF guard](https://code.claude.com/docs/en/claude-apps-gateway-deploy.md#threat-model-summary) blocks every export with `ECONNREFUSED_SSRF` unless you set `CLAUDE_GATEWAY_ALLOW_LOOPBACK=1` in the gateway's environment
 * `http://127.0.0.1:<port>` or `http://[::1]:<port>` fails boot unless that variable is set
 
 For an in-cluster collector, expose it over HTTPS at its own internal address, or run it as a sidecar with the variable set.
@@ -1284,7 +1284,7 @@ Developers signed in through `/login` can't redirect exports with their own OTEL
 
 Without a `forward_to` destination for a signal, the gateway accepts and discards it. If developers already export Claude Code telemetry to one of your collectors, add it as a `forward_to` destination, with logs or traces enabled if they export those, so it keeps receiving their data after they sign in. To skip the relay instead, [name the collector in a policy](#export-directly-to-your-collector).
 
-[Traces](/docs/en/monitoring-usage.md#traces-beta) also require `CLAUDE_CODE_ENHANCED_TELEMETRY_BETA=1` on each client. Set it in a managed policy's `env` block, since the gateway doesn't push it. Developers approve it in the same [security approval dialog](#managed) that the pushed endpoint already triggers.
+[Traces](https://code.claude.com/docs/en/monitoring-usage.md#traces-beta) also require `CLAUDE_CODE_ENHANCED_TELEMETRY_BETA=1` on each client. Set it in a managed policy's `env` block, since the gateway doesn't push it. Developers approve it in the same [security approval dialog](#managed) that the pushed endpoint already triggers.
 
 Set it to `1` only in the policies whose groups you want traced. A policy that doesn't set it inherits the value from your `match: {}` catch-all policy if that policy sets one, per the [merge rules](#managed). To keep a group's clients from sending traces even when a developer sets the variable locally, set it to `0` in that group's policy.
 
@@ -1292,14 +1292,14 @@ Both protobuf and JSON OTLP encodings are relayed, and any OpenTelemetry-compati
 
 #### Send cumulative metrics
 
-If your collector accepts only cumulative metrics, set [`OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE`](/docs/en/monitoring-usage#common-configuration-variables) to `cumulative`. Claude Code sends delta metrics by default, and the gateway relays them without converting them. Set the variable where each kind of session reads it:
+If your collector accepts only cumulative metrics, set [`OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE`](https://code.claude.com/docs/en/monitoring-usage#common-configuration-variables) to `cumulative`. Claude Code sends delta metrics by default, and the gateway relays them without converting them. Set the variable where each kind of session reads it:
 
 * **Terminal sessions**: in the `env` block under a policy's [`cli` or `code` key](#choose-cli-or-code)
-* **Cowork sessions that [run on the user's machine](/docs/en/managed-settings.md#where-and-when-a-policy-applies)**: in the `env` block of the [client-side managed settings](#client-side-managed-settings) on that machine
+* **Cowork sessions that [run on the user's machine](https://code.claude.com/docs/en/managed-settings.md#where-and-when-a-policy-applies)**: in the `env` block of the [client-side managed settings](#client-side-managed-settings) on that machine
 * **Code tab sessions under a `code` policy**: in the policy's `env` block, once you meet the [conditions for `code` settings to apply](#apply-code-settings-in-the-code-tab)
 * **Code tab sessions under a `cli` policy**: in the `env` block of the client-side managed settings on the machine that runs the session. Over SSH, that's the remote host.
 
-If you add the variable to a machine's managed settings, also set [`parentSettingsBehavior: "merge"`](/docs/en/claude-apps-gateway#set-the-opt-in) in the highest-priority source on that machine. Without it, Cowork sessions and Code tab sessions under a `cli` policy run without the egress allowlist and other policy that Claude Desktop passes them as parent settings.
+If you add the variable to a machine's managed settings, also set [`parentSettingsBehavior: "merge"`](https://code.claude.com/docs/en/claude-apps-gateway#set-the-opt-in) in the highest-priority source on that machine. Without it, Cowork sessions and Code tab sessions under a `cli` policy run without the egress allowlist and other policy that Claude Desktop passes them as parent settings.
 
 #### Add your own labels
 
@@ -1328,7 +1328,7 @@ You need Claude Code v2.1.281 or later on the gateway server to set `telemetry.r
 
 Terminal sessions signed in through `/login` receive the labels as `OTEL_RESOURCE_ATTRIBUTES`, pushed with the other [telemetry variables](#telemetry). If you set `OTEL_RESOURCE_ATTRIBUTES` in a policy's `env` block, terminal sessions that policy matches get that value instead of the labels. Claude Desktop receives the labels from the gateway alongside `user.email` and the other identity attributes.
 
-Claude Code also copies each label onto every metric data point, so you can filter metrics by it in a backend that doesn't index resource attributes. To turn that copy off, see [Metrics cardinality control](/docs/en/monitoring-usage.md#metrics-cardinality-control).
+Claude Code also copies each label onto every metric data point, so you can filter metrics by it in a backend that doesn't index resource attributes. To turn that copy off, see [Metrics cardinality control](https://code.claude.com/docs/en/monitoring-usage.md#metrics-cardinality-control).
 
 #### Group changes during an open session
 
@@ -1362,7 +1362,7 @@ Claude Code checks the endpoint before it exports a signal directly, and keeps t
 * The URL uses `https://`, or `http://` to a loopback address
 * The URL resolves to a path ending in `/v1/<signal>`, with no query or fragment. Claude Code builds that path itself from the generic variable. It uses a per-signal variable such as `OTEL_EXPORTER_OTLP_METRICS_ENDPOINT` as written, so include the full path there.
 * The URL isn't the gateway's own host. An endpoint addressed to the gateway keeps the relay path and its session token.
-* Neither you nor the developer has configured [`otelHeadersHelper`](/docs/en/settings-reference#otelheadershelper) in any settings source. With a helper configured, every signal stays on the relay.
+* Neither you nor the developer has configured [`otelHeadersHelper`](https://code.claude.com/docs/en/settings-reference#otelheadershelper) in any settings source. With a helper configured, every signal stays on the relay.
 
 The endpoint you name changes only where exports go. You still choose which signals export at all with the `OTEL_*_EXPORTER` selectors.
 
@@ -1389,18 +1389,18 @@ Four optional top-level blocks, `access_control`, `limits`, `timeouts`, and `rat
 | - | - | - | - |
 | `access_control` | `allow_cidrs` / `deny_cidrs` | empty | Inbound IP allow/deny by client address, after `trusted_proxies` resolution. `deny_cidrs` is checked first; a client it matches is rejected even if `allow_cidrs` also matches. If `allow_cidrs` is non-empty the gateway is default-deny. `/healthz` and `/readyz` are exempt from `allow_cidrs`. When a trusted proxy sends an `X-Forwarded-For` entry that isn't an IP address, the real client is unknown and the gateway logs a warning once naming what to check. Where either list applies to the request, it refuses it with `403` and audit reason `xff_unparseable`. Where neither does, it serves the request and uses the proxy's own address as the client IP for per-IP rate limits and audit. |
 | `limits` | `max_request_bytes` | 32 MiB | Max inbound request body; oversize requests get `413` before the body is buffered. Raise for large file or image requests. |
-| `limits` | `max_request_header_bytes` | unset | Lowers the gateway's 256 KiB limit on a request's total headers. A request over the limit returns `431`, and a value above 256 KiB has no effect. If developers get `431` after signing in, see [Request headers too large after sign-in](/docs/en/claude-apps-gateway-deploy.md#request-headers-too-large-after-sign-in). |
+| `limits` | `max_request_header_bytes` | unset | Lowers the gateway's 256 KiB limit on a request's total headers. A request over the limit returns `431`, and a value above 256 KiB has no effect. If developers get `431` after signing in, see [Request headers too large after sign-in](https://code.claude.com/docs/en/claude-apps-gateway-deploy.md#request-headers-too-large-after-sign-in). |
 | `limits` | `max_url_length` | unset | When set, an over-long URL returns `414` |
 | `timeouts` | `upstream_ttfb_ms` | 120000 | Max wait for the upstream's response headers (time to first byte). The response body then streams with no wall-clock cap. Applies to the direct Anthropic upstream path; on every other provider the gateway waits up to one hour for the response to start. |
-| `rate_limits` | `device_authorization.max` / `.window_seconds` | 30 / 600 | Per-IP rate limit on the unauthenticated device-authorization endpoint. Raise for a large org behind a shared egress IP or NAT. [Large rollouts](/docs/en/claude-apps-gateway-deploy.md#large-rollouts) shows how to size it. These limits apply only to the device-grant sign-in flow, not to `/v1/messages` inference. See [User-code brute-force resistance](/docs/en/claude-apps-gateway-deploy.md#user-code-brute-force-resistance). |
-| `rate_limits` | `device_verify.max` / `.window_seconds` | 10 / 600 | Per-IP rate limit on `user_code` submissions at `/device`. It is what stops someone from guessing another developer's code. [Large rollouts](/docs/en/claude-apps-gateway-deploy.md#large-rollouts) shows how far to raise it. |
+| `rate_limits` | `device_authorization.max` / `.window_seconds` | 30 / 600 | Per-IP rate limit on the unauthenticated device-authorization endpoint. Raise for a large org behind a shared egress IP or NAT. [Large rollouts](https://code.claude.com/docs/en/claude-apps-gateway-deploy.md#large-rollouts) shows how to size it. These limits apply only to the device-grant sign-in flow, not to `/v1/messages` inference. See [User-code brute-force resistance](https://code.claude.com/docs/en/claude-apps-gateway-deploy.md#user-code-brute-force-resistance). |
+| `rate_limits` | `device_verify.max` / `.window_seconds` | 10 / 600 | Per-IP rate limit on `user_code` submissions at `/device`. It is what stops someone from guessing another developer's code. [Large rollouts](https://code.claude.com/docs/en/claude-apps-gateway-deploy.md#large-rollouts) shows how far to raise it. |
 
 If you leave both `access_control` lists empty, which is the default, the gateway serves any client address, so only your network restricts who can reach it. That matters because a gateway can push [managed settings](#managed) that run commands on developer machines.
 
 While `allow_cidrs` is empty, the gateway warns in two places, without changing how it answers any request:
 
 * **At boot**: a warning in the operational log recommends allowing only the private ranges `10.0.0.0/8`, `172.16.0.0/12`, `192.168.0.0/16`, `100.64.0.0/10`, `127.0.0.0/8`, `::1/128`, and `fc00::/7`, plus any other internal ranges your developers connect from. If you bind the gateway to a loopback address and set neither `trusted_proxies` nor `public_url`, as in local development, the warning doesn't appear.
-* **At runtime**: the first time a request arrives from an address outside those private ranges, the gateway logs a warning and emits an [`access.public_client` audit event](/docs/en/claude-apps-gateway-deploy#logs) carrying the client IP. Both fire once per process. Link-local addresses, `169.254.0.0/16` and `fe80::/10`, don't count as public. The gateway answers `/healthz` and `/readyz` before this check runs, so health probes from public ranges don't trigger it.
+* **At runtime**: the first time a request arrives from an address outside those private ranges, the gateway logs a warning and emits an [`access.public_client` audit event](https://code.claude.com/docs/en/claude-apps-gateway-deploy#logs) carrying the client IP. Both fire once per process. Link-local addresses, `169.254.0.0/16` and `fe80::/10`, don't count as public. The gateway answers `/healthz` and `/readyz` before this check runs, so health probes from public ranges don't trigger it.
 
 Both signals use the client address as the gateway resolves it. If a load balancer, port-forward, or tunnel relays traffic and isn't listed in `listen.trusted_proxies`, the gateway sees the relay's address, which is usually private, so neither the runtime warning nor a private allow list catches traffic relayed through it.
 
@@ -1437,11 +1437,11 @@ Give the load-test deployment its own empty database, because the gateway refuse
 
 > [!WARNING]
 >
-> Never turn this on for a gateway that developers use. Every request gets the canned reply and no model is called. The gateway logs a `load_test_mode is on` warning at boot and marks each `inference` [audit event](/docs/en/claude-apps-gateway-deploy.md#logs) with `load_test: true` while the mode is on.
+> Never turn this on for a gateway that developers use. Every request gets the canned reply and no model is called. The gateway logs a `load_test_mode is on` warning at boot and marks each `inference` [audit event](https://code.claude.com/docs/en/claude-apps-gateway-deploy.md#logs) with `load_test: true` while the mode is on.
 
 ## Complete example
 
-This full reference config exercises every core section; the [HTTP tuning blocks](#http-tuning) keep their defaults. Copy it, delete what you don't need, and fill in your values. The config in the [Quickstart](/docs/en/claude-apps-gateway#quickstart) is a minimal version of this.
+This full reference config exercises every core section; the [HTTP tuning blocks](#http-tuning) keep their defaults. Copy it, delete what you don't need, and fill in your values. The config in the [Quickstart](https://code.claude.com/docs/en/claude-apps-gateway#quickstart) is a minimal version of this.
 
 ```yaml gateway.yaml theme={null}
 # Run with:
@@ -1602,7 +1602,7 @@ telemetry:
 
 ## Client-side managed settings
 
-Everything above configures the gateway server. You point developer machines at the gateway separately, on each device, through Claude Code's [managed settings](/docs/en/managed-settings.md). The gateway can't push the login keys itself, because they're what tell the client where the gateway is.
+Everything above configures the gateway server. You point developer machines at the gateway separately, on each device, through Claude Code's [managed settings](https://code.claude.com/docs/en/managed-settings.md). The gateway can't push the login keys itself, because they're what tell the client where the gateway is.
 
 For the CLI, set these keys in the per-OS `managed-settings.json`. The two login keys route each developer's `/login` to your gateway:
 
@@ -1614,22 +1614,22 @@ For the CLI, set these keys in the per-OS `managed-settings.json`. The two login
 }
 ```
 
-`parentSettingsBehavior: "merge"` keeps Claude Desktop's delivery of the egress allowlist to its embedded Claude Code sessions working; [Deliver policy to Claude Desktop sessions](/docs/en/claude-apps-gateway#deliver-policy-to-claude-desktop-sessions) explains the mechanism and where the opt-in must sit.
+`parentSettingsBehavior: "merge"` keeps Claude Desktop's delivery of the egress allowlist to its embedded Claude Code sessions working; [Deliver policy to Claude Desktop sessions](https://code.claude.com/docs/en/claude-apps-gateway#deliver-policy-to-claude-desktop-sessions) explains the mechanism and where the opt-in must sit.
 
-To stop developers from bypassing the gateway with a cloud provider variable or an `ANTHROPIC_BASE_URL` of their own, add `"allowedProviders": ["gateway"]` to the same file. Claude Code then refuses every session on the machine that isn't set up for a Cloud gateway, and admits a gateway only when it is the one `forceLoginGatewayUrl` names or one whose URL the file's `env` block sets as `ANTHROPIC_BASE_URL`. `claude gateway` refuses to run on a machine that sets the list, so keep the key off the gateway host. See the [`allowedProviders`](/docs/en/settings-reference#allowedproviders) entry in the settings reference. Requires Claude Code v2.1.285 or later.
+To stop developers from bypassing the gateway with a cloud provider variable or an `ANTHROPIC_BASE_URL` of their own, add `"allowedProviders": ["gateway"]` to the same file. Claude Code then refuses every session on the machine that isn't set up for a Cloud gateway, and admits a gateway only when it is the one `forceLoginGatewayUrl` names or one whose URL the file's `env` block sets as `ANTHROPIC_BASE_URL`. `claude gateway` refuses to run on a machine that sets the list, so keep the key off the gateway host. See the [`allowedProviders`](https://code.claude.com/docs/en/settings-reference#allowedproviders) entry in the settings reference. Requires Claude Code v2.1.285 or later.
 
-Deploy the `managed-settings.json` file to each device, typically via your MDM platform. The file path differs by platform. See [where each mechanism stores the policy](/docs/en/managed-settings.md#where-each-mechanism-stores-the-policy).
+Deploy the `managed-settings.json` file to each device, typically via your MDM platform. The file path differs by platform. See [where each mechanism stores the policy](https://code.claude.com/docs/en/managed-settings.md#where-each-mechanism-stores-the-policy).
 
 By default, a registry policy on Windows or a managed-preferences plist on macOS replaces the `managed-settings.json` file rather than merging with it, apart from the [exception keys and cross-source checks above](#precedence-with-other-managed-sources). All three keys in this snippet follow the highest-priority-source rule, so fleets that deliver policy through Group Policy or configuration profiles must put all three in that mechanism instead.
 
 For Claude Desktop, set the `bootstrapUrl` key in Claude Desktop's own [managed configuration](https://claude.com/docs/third-party/claude-desktop/configuration) to `<listen.public_url>/user/bootstrap`. The sign-in flow and per-group policy then match the CLI's once a policy opts in server-side with a `desktop` key; without the opt-in, `/user/bootstrap` returns 404. See [Claude Desktop overlay](#claude-desktop-overlay) for the server-side half.
 
-Claude Code honors [`forceLoginGatewayUrl`](/docs/en/settings-reference#forcelogingatewayurl), [`gatewayInternalNetworks`](/docs/en/settings-reference#gatewayinternalnetworks), and the `"gateway"` value of [`forceLoginMethod`](/docs/en/settings-reference#forceloginmethod) from a managed source on the machine: `managed-settings.json`, the macOS plist or Windows HKLM registry, or a policy helper. Setting them in the gateway payload doesn't configure the gateway sign-in. For a developer's own `~/.claude/settings.json`, see [Set the gateway URL in user settings](/docs/en/claude-apps-gateway#set-the-gateway-url-in-user-settings).
+Claude Code honors [`forceLoginGatewayUrl`](https://code.claude.com/docs/en/settings-reference#forcelogingatewayurl), [`gatewayInternalNetworks`](https://code.claude.com/docs/en/settings-reference#gatewayinternalnetworks), and the `"gateway"` value of [`forceLoginMethod`](https://code.claude.com/docs/en/settings-reference#forceloginmethod) from a managed source on the machine: `managed-settings.json`, the macOS plist or Windows HKLM registry, or a policy helper. Setting them in the gateway payload doesn't configure the gateway sign-in. For a developer's own `~/.claude/settings.json`, see [Set the gateway URL in user settings](https://code.claude.com/docs/en/claude-apps-gateway#set-the-gateway-url-in-user-settings).
 
-Leave `forceLoginMethod` and `forceLoginOrgUUID` out of the payload. Claude Code still reads both keys from the payload for its startup credential check, so a developer who keeps an Anthropic-issued credential on the machine gets the startup exit described under [Administrator policy requires a Cloud gateway sign-in](/docs/en/errors.md#administrator-policy-requires-a-cloud-gateway-sign-in) even after they sign in.
+Leave `forceLoginMethod` and `forceLoginOrgUUID` out of the payload. Claude Code still reads both keys from the payload for its startup credential check, so a developer who keeps an Anthropic-issued credential on the machine gets the startup exit described under [Administrator policy requires a Cloud gateway sign-in](https://code.claude.com/docs/en/errors.md#administrator-policy-requires-a-cloud-gateway-sign-in) even after they sign in.
 
 ## Related
 
-* [Claude apps gateway overview](/docs/en/claude-apps-gateway): quickstart and developer connection
-* [Deployment guide](/docs/en/claude-apps-gateway-deploy.md): IdP setup, container image, Kubernetes and Cloud Run, and operations
-* [Spend limits](/docs/en/claude-apps-gateway-spend-limits.md): per-developer caps and the Admin API
+* [Claude apps gateway overview](https://code.claude.com/docs/en/claude-apps-gateway): quickstart and developer connection
+* [Deployment guide](https://code.claude.com/docs/en/claude-apps-gateway-deploy.md): IdP setup, container image, Kubernetes and Cloud Run, and operations
+* [Spend limits](https://code.claude.com/docs/en/claude-apps-gateway-spend-limits.md): per-developer caps and the Admin API

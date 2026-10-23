@@ -14,7 +14,7 @@ A marketplace operator writes the `relevance` entries. An administrator then all
 >
 > These cases are covered on other pages:
 >
-> * **You want to install plugins**: see [Install and manage plugins](/docs/en/plugins/install.md)
+> * **You want to install plugins**: see [Install and manage plugins](https://code.claude.com/docs/en/plugins/install.md)
 > * **You want to turn suggestions off**: see [Understand how plugin relevance works](#understand-how-plugin-relevance-works)
 
 Start with the sections for your role:
@@ -38,7 +38,7 @@ When a signal matches and the plugin isn't already installed, Claude Code sugges
 
 Claude Code never installs the plugin automatically. The user always confirms.
 
-The spinner tip and the session-start notification both stop appearing when the user or project sets [`spinnerTipsEnabled`](/docs/en/settings-reference#spinnertipsenabled) to `false`, or when a [`spinnerTipsOverride`](/docs/en/settings-reference#spinnertipsoverride) with `excludeDefault` replaces the built-in tips. The Discover-tab pin isn't affected by either setting.
+The spinner tip and the session-start notification both stop appearing when the user or project sets [`spinnerTipsEnabled`](https://code.claude.com/docs/en/settings-reference#spinnertipsenabled) to `false`, or when a [`spinnerTipsOverride`](https://code.claude.com/docs/en/settings-reference#spinnertipsoverride) with `excludeDefault` replaces the built-in tips. The Discover-tab pin isn't affected by either setting.
 
 ## Add relevance to a plugin entry
 
@@ -158,12 +158,12 @@ Each finding prints with the path of the field it concerns, and the output ends 
 
 ## Enable suggestions in managed settings
 
-Users see no suggestions from a marketplace until an administrator allowlists it in [managed settings](/docs/en/plugins/org.md), even when its `marketplace.json` declares `relevance`.
+Users see no suggestions from a marketplace until an administrator allowlists it in [managed settings](https://code.claude.com/docs/en/plugins/org.md), even when its `marketplace.json` declares `relevance`.
 
 To allowlist a marketplace, edit your managed settings as follows:
 
 * Add the marketplace name to `pluginSuggestionMarketplaces`.
-* For any marketplace other than the official Anthropic marketplace, also declare the marketplace source, either as that name's entry in [`extraKnownMarketplaces`](/docs/en/plugins/org#require-a-marketplace-and-its-plugins) or as an entry in [`strictKnownMarketplaces`](/docs/en/plugins/org#allowlist-with-strictknownmarketplaces).
+* For any marketplace other than the official Anthropic marketplace, also declare the marketplace source, either as that name's entry in [`extraKnownMarketplaces`](https://code.claude.com/docs/en/plugins/org#require-a-marketplace-and-its-plugins) or as an entry in [`strictKnownMarketplaces`](https://code.claude.com/docs/en/plugins/org#allowlist-with-strictknownmarketplaces).
 
 On a machine where the marketplace isn't registered, or is registered under the allowlisted name from a different source, no suggestions from it appear. The source check stops an unrelated source from registering under an allowlisted name to get its plugins suggested across your org.
 
@@ -217,7 +217,7 @@ Claude Code limits how often it suggests a given plugin:
 
 ## See also
 
-* [Host a marketplace](/docs/en/plugins/host-marketplace.md): run the marketplace that hosts your plugins
-* [Marketplace reference](/docs/en/plugins/marketplace-reference.md#plugin-entries): every field a plugin entry accepts
-* [Recommend your plugin from your CLI](/docs/en/plugins/cli-hints.md): prompt users from your own CLI instead of from Claude Code's session signals
-* [Manage plugins for your organization](/docs/en/plugins/org.md): `extraKnownMarketplaces`, `strictKnownMarketplaces`, and the rest of the plugin policy keys
+* [Host a marketplace](https://code.claude.com/docs/en/plugins/host-marketplace.md): run the marketplace that hosts your plugins
+* [Marketplace reference](https://code.claude.com/docs/en/plugins/marketplace-reference.md#plugin-entries): every field a plugin entry accepts
+* [Recommend your plugin from your CLI](https://code.claude.com/docs/en/plugins/cli-hints.md): prompt users from your own CLI instead of from Claude Code's session signals
+* [Manage plugins for your organization](https://code.claude.com/docs/en/plugins/org.md): `extraKnownMarketplaces`, `strictKnownMarketplaces`, and the rest of the plugin policy keys

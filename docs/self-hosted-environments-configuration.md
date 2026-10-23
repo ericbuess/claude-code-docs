@@ -8,9 +8,9 @@
 
 > [!NOTE]
 >
-> Self-hosted environments are in public beta on Team and Enterprise plans; an [Owner](/docs/en/cloud-environments.md#organization-shared-environments) enables them by turning on **Allow self-hosted environments** on the [**Cloud environments** admin page](https://claude.ai/admin-settings/cloud-environments). This page assumes a working runner; see the [quickstart](/docs/en/self-hosted-environments-quickstart.md) for setup and [Deploy to production](/docs/en/self-hosted-environments-deploy.md) for the fleet recipes.
+> Self-hosted environments are in public beta on Team and Enterprise plans; an [Owner](https://code.claude.com/docs/en/cloud-environments.md#organization-shared-environments) enables them by turning on **Allow self-hosted environments** on the [**Cloud environments** admin page](https://claude.ai/admin-settings/cloud-environments). This page assumes a working runner; see the [quickstart](https://code.claude.com/docs/en/self-hosted-environments-quickstart.md) for setup and [Deploy to production](https://code.claude.com/docs/en/self-hosted-environments-deploy.md) for the fleet recipes.
 
-A [self-hosted environment](/docs/en/self-hosted-environments) runs Claude Code [cloud sessions](/docs/en/claude-code-on-the-web.md) on your own infrastructure, executed by a runner process you deploy. With no configuration, that runner clones the session's repository, spawns Claude Code, and cleans up. This page is for the platform engineer operating the runners: it covers the extension points for when those defaults don't fit, from per-session credential provisioning to replacing checkout entirely. Wrappers and hooks run as executable files on the runner host, which is Linux or macOS, and the examples on this page assume a POSIX shell.
+A [self-hosted environment](https://code.claude.com/docs/en/self-hosted-environments) runs Claude Code [cloud sessions](https://code.claude.com/docs/en/claude-code-on-the-web.md) on your own infrastructure, executed by a runner process you deploy. With no configuration, that runner clones the session's repository, spawns Claude Code, and cleans up. This page is for the platform engineer operating the runners: it covers the extension points for when those defaults don't fit, from per-session credential provisioning to replacing checkout entirely. Wrappers and hooks run as executable files on the runner host, which is Linux or macOS, and the examples on this page assume a POSIX shell.
 
 A few hook environment variables on this page still use `pool`, such as `CLAUDE_RUNNER_POOL_ID`; the CLI flag and env var names use `environment`, such as `--environment-secret-file`.
 
@@ -28,7 +28,7 @@ The runner sets the following in the wrapper's environment:
 
 | Variable | Description |
 | :- | :- |
-| `CLAUDE_CODE_SESSION_ACCESS_TOKEN` | The session JWT, prefixed `sk-ant-cc-`. Its `act` claim identifies the session creator, with the creator's email when the creating surface recorded it. The value is the token at spawn time; refreshes arrive over the child's stdin, so a wrapper sees only the initial value. See [Verify session identity](/docs/en/self-hosted-environments-identity.md). |
+| `CLAUDE_CODE_SESSION_ACCESS_TOKEN` | The session JWT, prefixed `sk-ant-cc-`. Its `act` claim identifies the session creator, with the creator's email when the creating surface recorded it. The value is the token at spawn time; refreshes arrive over the child's stdin, so a wrapper sees only the initial value. See [Verify session identity](https://code.claude.com/docs/en/self-hosted-environments-identity.md). |
 | `CCR_SESSION_ACCOUNT_EMAIL` | The session creator's email, pre-extracted by the runner from the token's `act.email` claim without signature verification. Suitable for labelling, such as commit trailers. When the email gates credential issuance, verify the token and read the claim from it instead. See [Provision credentials scoped to the session creator](#provision-credentials-scoped-to-the-session-creator). Unset when the token carries no creator email, for example in sessions your organization's service identity creates. Treat as personally identifiable information. |
 | `CLAUDE_RUNNER_CLIENT_PLATFORM` | The client surface that created the session, such as `web_claude_ai`, `desktop_app`, `ios`, `claude_code_cli`, or `scheduled_trigger`. Anthropic records the value once at session creation, so the wrapper and every lifecycle hook see the same value. Use it for adoption analytics and labelling only, not as an authorization signal. Unset when the session has no recorded or recognized surface. Requires Claude Code v2.1.229 or later. |
 | `CLAUDE_RUNNER_CLAUDE_BIN` | Absolute path to the runner's own Claude Code binary. End your wrapper with `exec "$CLAUDE_RUNNER_CLAUDE_BIN" "$@"` to pass control to the pinned binary without hardcoding an install path. |
@@ -37,8 +37,8 @@ The runner sets the following in the wrapper's environment:
 | `CLAUDE_CODE_REMOTE_SLACK_THREAD_URL` | For a [Claude Tag](https://claude.com/docs/claude-tag/overview) session that belongs to one Slack thread, the link to that thread. Unset for other sessions, and can be unset for a thread session too. |
 | `CLAUDE_CODE_REMOTE_SLACK_THREAD_TS` | For a Claude Tag session that belongs to one Slack thread, that thread's Slack timestamp, such as `1700000000.000100`. Can be unset, and can be set when `CLAUDE_CODE_REMOTE_SLACK_THREAD_URL` isn't, so check each variable on its own. |
 | `CLAUDE_SESSION_INGRESS_TOKEN_FILE` | Absolute path to a per-session file holding the current session JWT, kept fresh across token refreshes. Shell subprocesses read it for their `Authorization` header when downloading attachments the user added to the session. `exec` preserves the variable automatically; a wrapper that rebuilds the child's environment must carry the variable over, or attachment downloads silently stop working. |
-| `CLAUDE_CONFIG_DIR` | Per-session Claude config directory, written at session start from the snapshot of the runner host's config that the runner captures at startup; see [Permissions and tool approval](#permissions-and-tool-approval). Writes here are isolated to this session. The directory stays under `<base-dir>/_sessions/` after the session ends unless you start the runner with [`--remove-session-state`](/docs/en/self-hosted-environments-reference#runner-cli-flags); see [Reuse a pre-warmed checkout](/docs/en/self-hosted-environments-deploy.md#reuse-a-pre-warmed-checkout). |
-| `CLAUDE_CODE_REMOTE_MCP_CONFIG` | Path to a file in `CLAUDE_CONFIG_DIR` holding the MCP server definitions that Anthropic's control plane delivered for this session. If your wrapper rebuilds the child's environment, carry this variable over. Without it, when the control plane updates the delivered servers, the child shuts down any stdio, HTTP, or SSE server your wrapper adds with [`--mcp-config`](/docs/en/cli-reference#cli-flags) that isn't in the update. Requires Claude Code v2.1.299 or later. |
+| `CLAUDE_CONFIG_DIR` | Per-session Claude config directory, written at session start from the snapshot of the runner host's config that the runner captures at startup; see [Permissions and tool approval](#permissions-and-tool-approval). Writes here are isolated to this session. The directory stays under `<base-dir>/_sessions/` after the session ends unless you start the runner with [`--remove-session-state`](https://code.claude.com/docs/en/self-hosted-environments-reference#runner-cli-flags); see [Reuse a pre-warmed checkout](https://code.claude.com/docs/en/self-hosted-environments-deploy.md#reuse-a-pre-warmed-checkout). |
+| `CLAUDE_CODE_REMOTE_MCP_CONFIG` | Path to a file in `CLAUDE_CONFIG_DIR` holding the MCP server definitions that Anthropic's control plane delivered for this session. If your wrapper rebuilds the child's environment, carry this variable over. Without it, when the control plane updates the delivered servers, the child shuts down any stdio, HTTP, or SSE server your wrapper adds with [`--mcp-config`](https://code.claude.com/docs/en/cli-reference#cli-flags) that isn't in the update. Requires Claude Code v2.1.299 or later. |
 | `ANTHROPIC_BASE_URL` | The API base URL the child will use, delivered by the control plane per session and normally `https://api.anthropic.com`. Don't override it: the session's inference credential is an Anthropic-issued OAuth token that other providers don't accept. |
 | `CLAUDE_CODE_OAUTH_TOKEN` | The short-lived OAuth access token the child uses for model inference, with a lifetime of about 30 minutes. The runner re-mints it before expiry and delivers the rotation over the child's stdin, so a wrapper that doesn't [keep stdin attached](#keep-stdin-and-file-descriptor-3-attached) sees only the initial value. Don't rely on your organization's IP allowlist to bound this token's use: treat it as a bearer credential that stays usable for roughly 30 minutes if it leaks, and don't log it, write it to disk, or forward it outside the session container. |
 
@@ -52,7 +52,7 @@ The wrapper also inherits the rest of the child's managed environment, including
 
 ### Quote the arguments and variables your script expands
 
-Quote every argument and variable that the runner passes to your wrapper or [`command` hook](#command). Some values contain characters a shell acts on, because they hold JSON, whole sentences, or a [permission rule](/docs/en/permissions.md#permission-rule-syntax) such as `Bash(npm run test *)`.
+Quote every argument and variable that the runner passes to your wrapper or [`command` hook](#command). Some values contain characters a shell acts on, because they hold JSON, whole sentences, or a [permission rule](https://code.claude.com/docs/en/permissions.md#permission-rule-syntax) such as `Bash(npm run test *)`.
 
 * **Arguments**: pass them on as `"$@"`
 * **Variables**: quote each one, as in `"${CLAUDE_CODE_REMOTE_SLACK_THREAD_URL:-}"`. The Slack thread link, for example, can contain `?` and `&`.
@@ -80,7 +80,7 @@ You can redirect the child's stdout. Keep file descriptor 3 and stderr attached 
 
 ### Pass the system prompt flags through
 
-The system prompt and appended system prompt that Anthropic's control plane sends for a session reach your wrapper as file paths, not as inline text. The runner writes each prompt to a file in the session's config directory, `CLAUDE_CONFIG_DIR`, and passes its path in the arguments your wrapper receives, as [`--system-prompt-file <path>` or `--append-system-prompt-file <path>`](/docs/en/cli-reference#system-prompt-flags).
+The system prompt and appended system prompt that Anthropic's control plane sends for a session reach your wrapper as file paths, not as inline text. The runner writes each prompt to a file in the session's config directory, `CLAUDE_CONFIG_DIR`, and passes its path in the arguments your wrapper receives, as [`--system-prompt-file <path>` or `--append-system-prompt-file <path>`](https://code.claude.com/docs/en/cli-reference#system-prompt-flags).
 
 Runners on Claude Code v2.1.281 or later deliver the prompts as files. Before v2.1.281, the runner passed them as `--system-prompt <text>` and `--append-system-prompt <text>`.
 
@@ -91,7 +91,7 @@ In your wrapper script or [`command` hook](#command), handle these flags as foll
 
 ### Provision credentials scoped to the session creator
 
-Use the `decode-token` subcommand to read claims from the session JWT. It reads the token from an argument, from `CLAUDE_CODE_SESSION_ACCESS_TOKEN`, or from stdin, in that order; see [Verify the token inside the session](/docs/en/self-hosted-environments-identity.md#verify-the-token-inside-the-session) for what it checks. The example below decodes the creator identity, exchanges it for short-lived AWS credentials, and execs into Claude Code:
+Use the `decode-token` subcommand to read claims from the session JWT. It reads the token from an argument, from `CLAUDE_CODE_SESSION_ACCESS_TOKEN`, or from stdin, in that order; see [Verify the token inside the session](https://code.claude.com/docs/en/self-hosted-environments-identity.md#verify-the-token-inside-the-session) for what it checks. The example below decodes the creator identity, exchanges it for short-lived AWS credentials, and execs into Claude Code:
 
 ```bash theme={null}
 #!/bin/bash
@@ -107,13 +107,13 @@ eval "$creds"
 exec "$CLAUDE_RUNNER_CLAUDE_BIN" "$@"
 ```
 
-Use `jq -re` rather than `jq -r` when the extracted claim gates an auth decision, so an absent claim exits non-zero instead of passing the literal string `null` downstream. Sessions created by an organization service identity, such as bot and agent sessions, carry an `agent:` subject rather than `user:`, so this example refuses them; if your environment serves those sessions, decide explicitly whether the wrapper falls back to a default credential for them instead of exiting. When your credential exchange needs the email instead, read `.act.email` and handle its absence: the token carries it only when the creating surface recorded it, and a [CLI-dispatched session](/docs/en/self-hosted-environments-testing.md#run-the-test-loop) can lack it. For the full claim reference and verification from services outside the runner, see [Verify session identity](/docs/en/self-hosted-environments-identity.md).
+Use `jq -re` rather than `jq -r` when the extracted claim gates an auth decision, so an absent claim exits non-zero instead of passing the literal string `null` downstream. Sessions created by an organization service identity, such as bot and agent sessions, carry an `agent:` subject rather than `user:`, so this example refuses them; if your environment serves those sessions, decide explicitly whether the wrapper falls back to a default credential for them instead of exiting. When your credential exchange needs the email instead, read `.act.email` and handle its absence: the token carries it only when the creating surface recorded it, and a [CLI-dispatched session](https://code.claude.com/docs/en/self-hosted-environments-testing.md#run-the-test-loop) can lack it. For the full claim reference and verification from services outside the runner, see [Verify session identity](https://code.claude.com/docs/en/self-hosted-environments-identity.md).
 
 ## Lifecycle hooks
 
-Lifecycle hooks replace stages of the runner's per-session pipeline with your own scripts. Point the runner at a directory of hooks with `--hooks-dir <path>`, or `SELF_HOSTED_RUNNER_HOOKS_DIR`. The runner looks for executable files with well-known names; any hook that isn't present falls through to the built-in behavior, so you only write the ones you need. Hooks run with the runner's own privileges, and session children share that UID, so mount the hooks directory read-only, or bake it into the image, so session code can't modify it; see the [hardening section](/docs/en/self-hosted-environments-deploy.md#harden-your-deployment).
+Lifecycle hooks replace stages of the runner's per-session pipeline with your own scripts. Point the runner at a directory of hooks with `--hooks-dir <path>`, or `SELF_HOSTED_RUNNER_HOOKS_DIR`. The runner looks for executable files with well-known names; any hook that isn't present falls through to the built-in behavior, so you only write the ones you need. Hooks run with the runner's own privileges, and session children share that UID, so mount the hooks directory read-only, or bake it into the image, so session code can't modify it; see the [hardening section](https://code.claude.com/docs/en/self-hosted-environments-deploy.md#harden-your-deployment).
 
-These hooks are distinct from [Claude Code hooks](/docs/en/hooks.md), which run inside the session; lifecycle hooks run on the runner, around the session.
+These hooks are distinct from [Claude Code hooks](https://code.claude.com/docs/en/hooks.md), which run inside the session; lifecycle hooks run on the runner, around the session.
 
 ### checkout
 
@@ -139,7 +139,7 @@ After your hook returns, the runner verifies that `CLAUDE_RUNNER_CHECKOUT_PATH` 
 
 The runner doesn't pass a git credential to the hook. The `decode-token` subcommand isn't available here either, because `CLAUDE_RUNNER_CLAUDE_BIN` isn't set in the checkout-hook environment. Mint a per-session clone credential from the session's identity instead, or fall back to the host's own git authentication:
 
-* **Per-session clone credential**: verify `CLAUDE_CODE_SESSION_ACCESS_TOKEN` with a standard JWT library against the JWKS endpoint under `CLAUDE_RUNNER_API_BASE_URL`, as described in [Verify the token from your service](/docs/en/self-hosted-environments-identity.md#verify-the-token-from-your-service). Then have your credential service issue a short-lived clone credential for the identity in the token's `act` claim. Key that credential on `act.sub`, and don't require `act.email`.
+* **Per-session clone credential**: verify `CLAUDE_CODE_SESSION_ACCESS_TOKEN` with a standard JWT library against the JWKS endpoint under `CLAUDE_RUNNER_API_BASE_URL`, as described in [Verify the token from your service](https://code.claude.com/docs/en/self-hosted-environments-identity.md#verify-the-token-from-your-service). Then have your credential service issue a short-lived clone credential for the identity in the token's `act` claim. Key that credential on `act.sub`, and don't require `act.email`.
 * **Host git authentication**: use whatever git authentication the host already has, such as an SSH agent, credential helper, or `.netrc`.
 
 #### When the hook fails
@@ -148,16 +148,16 @@ The hook fails when it exits non-zero, or exits 0 without leaving a usable check
 
 * **A repository the session pushes results to**: the runner fails the session, and on a non-zero exit surfaces the tail of the script's stderr to the user. Write the reason to stderr as one short line, write it last, and then exit non-zero. Don't print secrets to stderr, and remove `set -x` before you deploy the hook.
 
-  If git's `couldn't find remote ref` appears in roughly the last 4 KB of the hook's stderr, the runner reports a deleted branch instead. The session's error message then says the branch no longer exists on the remote and asks the user to restore it. If that branch exists, see [A session fails with `no longer exists on the remote` or `couldn't find remote ref`](/docs/en/self-hosted-environments-deploy#no-longer-exists-on-the-remote).
+  If git's `couldn't find remote ref` appears in roughly the last 4 KB of the hook's stderr, the runner reports a deleted branch instead. The session's error message then says the branch no longer exists on the remote and asks the user to restore it. If that branch exists, see [A session fails with `no longer exists on the remote` or `couldn't find remote ref`](https://code.claude.com/docs/en/self-hosted-environments-deploy#no-longer-exists-on-the-remote).
 * **A repository the session only reads from**, such as a repository added to a running session: the runner skips it and continues with the remaining repositories. The runner posts a `Skipped` step to the session and removes whatever the hook left at the checkout path.
 
-  When the `Skipped` step mentions the checkout hook, find the failure detail on the `[runner:warn] checkout hook failed` line in the runner's log. When the step says a source ref `no longer exists on remote`, see [A session fails with `no longer exists on the remote` or `couldn't find remote ref`](/docs/en/self-hosted-environments-deploy#no-longer-exists-on-the-remote). If skipping leaves the session with no repository at all, the runner fails the session anyway.
+  When the `Skipped` step mentions the checkout hook, find the failure detail on the `[runner:warn] checkout hook failed` line in the runner's log. When the step says a source ref `no longer exists on remote`, see [A session fails with `no longer exists on the remote` or `couldn't find remote ref`](https://code.claude.com/docs/en/self-hosted-environments-deploy#no-longer-exists-on-the-remote). If skipping leaves the session with no repository at all, the runner fails the session anyway.
 
 When the hook succeeds, the runner removes the checkout path after the session ends.
 
 ### post-session
 
-Runs once per session, after the Claude Code child has exited and before the runner tears the workspace down. This hook is your only chance to save uncommitted work: at `--capacity` above one, the runner deletes per-session worktrees right after the hook returns, and at `--capacity 1` the reused [canonical clone](/docs/en/self-hosted-environments-deploy.md#reuse-a-pre-warmed-checkout) is hard-reset when the next session starts, so uncommitted tracked changes don't survive on either path. Typical uses are pushing a snapshot branch of uncommitted changes, archiving logs, or emitting a session-ended event to your own systems.
+Runs once per session, after the Claude Code child has exited and before the runner tears the workspace down. This hook is your only chance to save uncommitted work: at `--capacity` above one, the runner deletes per-session worktrees right after the hook returns, and at `--capacity 1` the reused [canonical clone](https://code.claude.com/docs/en/self-hosted-environments-deploy.md#reuse-a-pre-warmed-checkout) is hard-reset when the next session starts, so uncommitted tracked changes don't survive on either path. Typical uses are pushing a snapshot branch of uncommitted changes, archiving logs, or emitting a session-ended event to your own systems.
 
 The hook fires on every session end where a child process was spawned, whatever the cause; the `CLAUDE_RUNNER_EXIT_REASON` values below enumerate the cases. It can't fire when the runner terminates abruptly, such as a VM preemption or a power loss; if you need guarantees against abrupt termination, snapshot periodically from inside the session with a Claude Code `PostToolUse` hook instead. The runner sets:
 
@@ -183,10 +183,10 @@ The hook fires on every session end where a child process was spawned, whatever 
   * The server moved the session off this runner.
   * The runner's poll noticed an archive or delete before the process exited.
   * The runner was draining.
-  * The session outlasted its [`--kill-session-after-min`](/docs/en/self-hosted-environments-reference#runner-cli-flags) limit.
+  * The session outlasted its [`--kill-session-after-min`](https://code.claude.com/docs/en/self-hosted-environments-reference#runner-cli-flags) limit.
 * `abandoned`: reserved for a session another runner claimed. The hook doesn't currently fire in that case.
 
-If you compare hook receipts with the [session lifecycle counters](/docs/en/self-hosted-environments-reference.md#session-lifecycle-counter-semantics), expect some `interrupted` receipts to count as `completed` there. The counters count a release, a startup timeout, a server move, and an archive or delete that the runner's poll noticed first as `completed`, because the runner handed the slot back cleanly.
+If you compare hook receipts with the [session lifecycle counters](https://code.claude.com/docs/en/self-hosted-environments-reference.md#session-lifecycle-counter-semantics), expect some `interrupted` receipts to count as `completed` there. The counters count a release, a startup timeout, a server move, and an archive or delete that the runner's poll noticed first as `completed`, because the runner handed the slot back cleanly.
 
 The hook's exit status never affects the session outcome; a failure is logged and ignored. The runner waits up to `--post-session-hook-timeout-sec`, 60 seconds by default, on every session end including runner shutdown. This example saves uncommitted work to a rescue branch:
 
@@ -215,7 +215,7 @@ done
 
 The `GIT_ALLOW_PROTOCOL` line in the script limits git to HTTPS, HTTP, and SSH remotes. If the runner's environment already sets a non-empty `GIT_ALLOW_PROTOCOL` list of its own, the script keeps that list.
 
-The hook pushes with whatever git credentials are available in its own environment on the runner host. Under the [no-credentials-in-the-image posture](/docs/en/self-hosted-environments-deploy.md#configure-git), including when the built-in clone goes through the Anthropic git proxy, there are none, so mint a short-lived push credential inside the hook before pushing: exchange the session token the hook receives in `CLAUDE_CODE_SESSION_ACCESS_TOKEN` with your own token service, verifying it as [Verify session identity](/docs/en/self-hosted-environments-identity.md) describes.
+The hook pushes with whatever git credentials are available in its own environment on the runner host. Under the [no-credentials-in-the-image posture](https://code.claude.com/docs/en/self-hosted-environments-deploy.md#configure-git), including when the built-in clone goes through the Anthropic git proxy, there are none, so mint a short-lived push credential inside the hook before pushing: exchange the session token the hook receives in `CLAUDE_CODE_SESSION_ACCESS_TOKEN` with your own token service, verifying it as [Verify session identity](https://code.claude.com/docs/en/self-hosted-environments-identity.md) describes.
 
 Treat any credential your hook gives git as one a session can obtain, and mint it so that it can do no more than this push. Git in your hook reads configuration files that a session can write, and a credential helper or filter driver named in one of them runs with your hook's privileges. Settings in those files can also change where a push goes, whatever remote you name. For the git settings the runner fixes in your hook and the ones it leaves to those files, see [Git configuration inside lifecycle hooks](#git-configuration-inside-lifecycle-hooks).
 
@@ -226,9 +226,9 @@ A released session can resume on another runner. On a runner on v2.1.236 or late
 * **Idle after a turn, or timed out at startup**: the runner stops the child and runs this hook to completion. Only then does it release the session. A user message sent while the hook runs can't resume the session on another runner before the hook finishes.
 * **Waiting for the user to answer a prompt, such as a permission prompt**: the runner releases the session first, then runs this hook. A user message sent while the hook runs can resume the session on another runner before the hook finishes.
 
-This applies whenever the runner releases a session: at the idle timeout, at the [`--retire-at`](/docs/en/self-hosted-environments-reference#runner-cli-flags) time, and, on a runner on v2.1.260 or later, at a session's [`--kill-session-after-min`](/docs/en/self-hosted-environments-reference#runner-cli-flags) limit. A session whose turn has ended and that holds only background tasks counts as idle here. Before v2.1.236, the runner released the session first and then ran this hook in both cases.
+This applies whenever the runner releases a session: at the idle timeout, at the [`--retire-at`](https://code.claude.com/docs/en/self-hosted-environments-reference#runner-cli-flags) time, and, on a runner on v2.1.260 or later, at a session's [`--kill-session-after-min`](https://code.claude.com/docs/en/self-hosted-environments-reference#runner-cli-flags) limit. A session whose turn has ended and that holds only background tasks counts as idle here. Before v2.1.236, the runner released the session first and then ran this hook in both cases.
 
-During a `SIGTERM` drain, the runner holds the session lease until the hook finishes; see [Shutdown timing](/docs/en/self-hosted-environments-deploy.md#shutdown-timing).
+During a `SIGTERM` drain, the runner holds the session lease until the hook finishes; see [Shutdown timing](https://code.claude.com/docs/en/self-hosted-environments-deploy.md#shutdown-timing).
 
 ### Git configuration inside lifecycle hooks
 
@@ -239,7 +239,7 @@ The `checkout` and `post-session` hooks run with the session's access token in t
 * **Remote protocols**: `GIT_ALLOW_PROTOCOL` is `https:http:ssh`. A clone, fetch, or push that uses a local path, a `file://` URL, or a `git://` URL fails with `fatal: transport 'file' not allowed` or `fatal: transport 'git' not allowed`.
 * **SSH command and credential prompt**: git in your hook ignores `core.sshCommand` and `core.askPass` from configuration files. To use your own SSH command, set `GIT_SSH_COMMAND` in the runner's environment. To use a credential prompt program, set `GIT_ASKPASS` there. Sessions inherit the runner's environment, so both variables also reach the session's own git. Don't put a credential in either.
 * **gpg programs**: `gpg.program`, `gpg.openpgp.program`, `gpg.x509.program`, and `gpg.ssh.program` are paths the runner sets, never values from a configuration file.
-* **Commit signing**: with [`--configure-git`](/docs/en/self-hosted-environments-deploy#let-the-runner-configure-git), commits you make from a hook are signed as the session. Without the flag, `commit.gpgsign` and `tag.gpgsign` are `false`.
+* **Commit signing**: with [`--configure-git`](https://code.claude.com/docs/en/self-hosted-environments-deploy#let-the-runner-configure-git), commits you make from a hook are signed as the session. Without the flag, `commit.gpgsign` and `tag.gpgsign` are `false`.
 
 To change one of these settings, use the runner's environment or a `git -c` option inside the hook:
 
@@ -255,7 +255,7 @@ Before v2.1.280, the runner set none of these settings, and under `--configure-g
 
 Runs once per session after checkout, in place of the built-in child spawn. The hook receives the same environment as a [wrapper script](#wrapper-scripts) and should `exec` into `"$CLAUDE_RUNNER_CLAUDE_BIN"` the same way. Use the `command` hook to keep all customization in one hooks directory; use `--exec-path` when the wrapper lives elsewhere. If `--exec-path` is also set, the flag takes precedence and the `command` hook is ignored.
 
-Always `exec` the runner's own binary rather than a PATH-resolved `claude`; otherwise you defeat [version pinning](/docs/en/self-hosted-environments-deploy.md#pin-the-version).
+Always `exec` the runner's own binary rather than a PATH-resolved `claude`; otherwise you defeat [version pinning](https://code.claude.com/docs/en/self-hosted-environments-deploy.md#pin-the-version).
 
 ## On-demand runners
 
@@ -281,7 +281,7 @@ The orchestrator runs `${hooks-dir}/spawn-runner` once per spawn request. The ho
 | :- | :- |
 | `CLAUDE_RUNNER_WORK_ORDER_FILE` | Path to a temp file containing the signed work-order JWT the new runner registers with. Deleted after the hook exits. Don't log the file's contents. |
 | `CLAUDE_RUNNER_ORDER_ID` | Opaque idempotency key, unique per spawn request and safe for Kubernetes resource names. Use only the order ID as your provisioner's dedup key. |
-| `CLAUDE_RUNNER_SESSION_ID` | The session this request is for, as the `session_...` ID in the session's URL. It repeats on every re-request for the session, so use it for logging and routing, not as a dedup key. Empty for pre-warming requests, which boot a standby runner ahead of any specific session when [`--min-idle`](/docs/en/self-hosted-environments-reference#orchestrator-cli-flags) is set, so don't assume the variable is set. |
+| `CLAUDE_RUNNER_SESSION_ID` | The session this request is for, as the `session_...` ID in the session's URL. It repeats on every re-request for the session, so use it for logging and routing, not as a dedup key. Empty for pre-warming requests, which boot a standby runner ahead of any specific session when [`--min-idle`](https://code.claude.com/docs/en/self-hosted-environments-reference#orchestrator-cli-flags) is set, so don't assume the variable is set. |
 | `CLAUDE_RUNNER_SESSION_UUID` | The same session ID in canonical UUID form. Empty for pre-warming requests. |
 | `CLAUDE_RUNNER_ATTEMPT` | A per-session counter to use for logging. It isn't a retry count or a request count. `0` for pre-warming requests, though a request for a session can carry `0` too. |
 | `CLAUDE_RUNNER_ORDER_SERVER_TIME` | Server time from the poll response's HTTP `Date` header. When the hook verifies the work-order JWT's `exp`, compare against this value instead of the local clock to tolerate skew. Empty when the gateway omitted the header. |
@@ -296,7 +296,7 @@ The orchestrator runs `${hooks-dir}/spawn-runner` once per spawn request. The ho
 
 The spawned runner registers with the work order in place of the environment secret:
 
-* **Start it with the work order**: point [`--environment-secret-file`](/docs/en/self-hosted-environments-reference#runner-cli-flags) at a file containing the work-order JWT, or set `SELF_HOSTED_RUNNER_ENVIRONMENT_SECRET` to the JWT value.
+* **Start it with the work order**: point [`--environment-secret-file`](https://code.claude.com/docs/en/self-hosted-environments-reference#runner-cli-flags) at a file containing the work-order JWT, or set `SELF_HOSTED_RUNNER_ENVIRONMENT_SECRET` to the JWT value.
 * **Copy the JWT before the hook exits**: the orchestrator deletes the work-order file after the hook exits, so copy the JWT into the workload you submit, such as a Kubernetes Secret on the spawned Job, rather than passing the file path through.
 * **Use `--capacity 1` on spawned runners**: a session-bound work order registers exactly one runner bound to that session, so a higher capacity adds slots that never receive work, and the runner logs a warning at startup.
 * **Pre-warming work orders register unbound**: the standby runner isn't bound to a session and claims queued work like a fixed-fleet runner.
@@ -309,7 +309,7 @@ The contract has four rules, whichever platform your hook provisions on:
 
    * **Exit 0**: submitted.
    * **Exit 1, or still running when `--hook-timeout` ends**: retryable failure. The session backs off and is re-offered.
-   * **Exit 2 or higher**: non-retryable failure. The session is blocked from spawning again until a user sends it a new message or an [Owner](/docs/en/cloud-environments.md#organization-shared-environments) selects **Retry** on it in the environment's **Activity** tab.
+   * **Exit 2 or higher**: non-retryable failure. The session is blocked from spawning again until a user sends it a new message or an [Owner](https://code.claude.com/docs/en/cloud-environments.md#organization-shared-environments) selects **Retry** on it in the environment's **Activity** tab.
 
    While a session backs off, it shows **Queued** in the **Activity** tab with no spawn error, so read the hook's output in the orchestrator's log. Once blocked, the session shows **Failed**. Expand it to read the spawn error, taken from the last 512 characters of the hook's stderr. Write an actionable error to stderr, and no secrets. In a shell hook, [keep transient failures retryable](#keep-transient-failures-retryable-in-a-shell-hook).
 
@@ -322,13 +322,13 @@ A session that stays queued with no spawn error in the **Activity** tab can mean
 
 #### Make on-demand runners exit when idle
 
-By default, a runner your hook starts doesn't exit when its session's turn finishes, so the workload you submitted keeps running. To make runners exit, have your hook pass these [runner flags](/docs/en/self-hosted-environments-reference.md#runner-cli-flags):
+By default, a runner your hook starts doesn't exit when its session's turn finishes, so the workload you submitted keeps running. To make runners exit, have your hook pass these [runner flags](https://code.claude.com/docs/en/self-hosted-environments-reference.md#runner-cli-flags):
 
 | Flag, with an example value | Pass it to | What it does |
 | :- | :- | :- |
-| `--release-idle-session-min 30` | Every runner your hook starts | The runner releases its session after that many idle minutes and then exits 0. The session resumes when its user sends their next message, but [work it hadn't pushed is gone](/docs/en/self-hosted-environments-deploy.md#additional-limitations). |
-| `--kill-session-after-min 480` | Every runner your hook starts | Limits each session to that many minutes, as a backstop for [sessions that don't count as idle](/docs/en/self-hosted-environments-deploy.md#some-sessions-don’t-count-as-idle), so set it above your longest expected session |
-| `--exit-if-unused-min 60` | Standby runners, which your hook starts for pre-warming requests | A standby that never takes a session exits after that many minutes. If you set [`--min-idle`](/docs/en/self-hosted-environments-reference#orchestrator-cli-flags), you get a replacement unless the standby was surplus, so use a value well above your boot time. |
+| `--release-idle-session-min 30` | Every runner your hook starts | The runner releases its session after that many idle minutes and then exits 0. The session resumes when its user sends their next message, but [work it hadn't pushed is gone](https://code.claude.com/docs/en/self-hosted-environments-deploy.md#additional-limitations). |
+| `--kill-session-after-min 480` | Every runner your hook starts | Limits each session to that many minutes, as a backstop for [sessions that don't count as idle](https://code.claude.com/docs/en/self-hosted-environments-deploy.md#some-sessions-don’t-count-as-idle), so set it above your longest expected session |
+| `--exit-if-unused-min 60` | Standby runners, which your hook starts for pre-warming requests | A standby that never takes a session exits after that many minutes. If you set [`--min-idle`](https://code.claude.com/docs/en/self-hosted-environments-reference#orchestrator-cli-flags), you get a replacement unless the standby was surplus, so use a value well above your boot time. |
 
 Remove the workload when the runner exits, for example by setting `ttlSecondsAfterFinished` on a Kubernetes Job or by having the VM's start script delete the VM afterwards.
 
@@ -345,16 +345,16 @@ Without the redirect, the process writes to the hook's stdout and stderr:
 * About a second after the hook exits, the orchestrator logs `exited, but a process it started still has the hook's stdout or stderr open`. From that line on, it logs up to 64 KB more of that output under `[runner:hook:spawn-runner:after-exit jti=<order id>]` and then drops the rest.
 * Once the orchestrator exits, the process's writes there fail.
 
-A runner your hook starts itself runs sessions on the orchestrator host, which holds the [environment secret](/docs/en/self-hosted-environments-deploy.md#harden-your-deployment).
+A runner your hook starts itself runs sessions on the orchestrator host, which holds the [environment secret](https://code.claude.com/docs/en/self-hosted-environments-deploy.md#harden-your-deployment).
 
-Before v2.1.305, a hook that had exited still reached [`--hook-timeout`](/docs/en/self-hosted-environments-reference#orchestrator-cli-flags) while a process it started had the hook's stdout or stderr open, shown as:
+Before v2.1.305, a hook that had exited still reached [`--hook-timeout`](https://code.claude.com/docs/en/self-hosted-environments-reference#orchestrator-cli-flags) while a process it started had the hook's stdout or stderr open, shown as:
 
 * **Activity tab**, in a failed session's spawn error: `spawn-runner hook timed out after 60000ms`, or the last lines on the hook's stderr.
 * **Orchestrator log**: `timed out after 60000ms, sending SIGTERM to process tree`.
 
 #### Exit the hook without waiting for the runner
 
-If every on-demand runner stops about 60 seconds after its hook starts, and your hook runs again for the same session, check whether the hook waits for the runner. The 60 seconds are the default [`--hook-timeout`](/docs/en/self-hosted-environments-reference#orchestrator-cli-flags), so if you set your own, runners stop that long after the hook starts.
+If every on-demand runner stops about 60 seconds after its hook starts, and your hook runs again for the same session, check whether the hook waits for the runner. The 60 seconds are the default [`--hook-timeout`](https://code.claude.com/docs/en/self-hosted-environments-reference#orchestrator-cli-flags), so if you set your own, runners stop that long after the hook starts.
 
 A hook that starts `claude self-hosted-runner` on the orchestrator's host and waits for it, in the foreground or with `wait`, is still running when `--hook-timeout` ends. The orchestrator then stops the hook and the processes running under it, including that runner and the session's Claude process, so a turn that's still running is cut off.
 
@@ -365,7 +365,7 @@ A hook that starts `claude self-hosted-runner` on the orchestrator's host and wa
 
 In a shell hook that uses `set -e`, a failure that a retry could have cleared can block the session. The hook stops at the failing command and exits with that command's own status, and the orchestrator applies the exit-code contract to that status. Many failures return a status of 2 or higher, such as `127` when a command isn't installed and `22` from `curl --fail` on an HTTP error, so they block the session at its first failure.
 
-A session the hook has already blocked stays blocked until a user sends it a new message or an [Owner](/docs/en/cloud-environments.md#organization-shared-environments) selects **Retry** on it in the environment's **Activity** tab.
+A session the hook has already blocked stays blocked until a user sends it a new message or an [Owner](https://code.claude.com/docs/en/cloud-environments.md#organization-shared-environments) selects **Retry** on it in the environment's **Activity** tab.
 
 To turn such a failure into exit 1 instead, put these lines directly below the hook's `#!` line, above anything that can fail:
 
@@ -404,9 +404,9 @@ To confirm the trap works, add a line directly below the `trap` line that calls 
 
 ## Send model requests to Bedrock or Agent Platform
 
-If your organization needs model requests to go through its own AWS or Google Cloud account, configure the runner for [Amazon Bedrock](/docs/en/amazon-bedrock.md) or [Google Cloud's Agent Platform, formerly Vertex AI](/docs/en/google-vertex-ai.md). Every session that runner starts then calls the model in your cloud account, with your cloud credentials. Without this configuration, sessions send model requests to the Anthropic API.
+If your organization needs model requests to go through its own AWS or Google Cloud account, configure the runner for [Amazon Bedrock](https://code.claude.com/docs/en/amazon-bedrock.md) or [Google Cloud's Agent Platform, formerly Vertex AI](https://code.claude.com/docs/en/google-vertex-ai.md). Every session that runner starts then calls the model in your cloud account, with your cloud credentials. Without this configuration, sessions send model requests to the Anthropic API.
 
-The runner still polls Anthropic for sessions, and each session still sends its event stream to `api.anthropic.com`. The event stream carries prompts, responses, and tool results. The plan requirement and the Zero Data Retention exclusion in [Availability and limitations](/docs/en/self-hosted-environments#availability-and-limitations) still apply.
+The runner still polls Anthropic for sessions, and each session still sends its event stream to `api.anthropic.com`. The event stream carries prompts, responses, and tool results. The plan requirement and the Zero Data Retention exclusion in [Availability and limitations](https://code.claude.com/docs/en/self-hosted-environments#availability-and-limitations) still apply.
 
 Sessions are routed to an environment, not to a runner, and a requeued or resumed session can run on a different runner. Configure every runner in the environment the same way. Before you start, read [what differs on these providers](#what-differs-from-sessions-on-the-anthropic-api).
 
@@ -414,25 +414,25 @@ Sessions are routed to an environment, not to a runner, and a requeued or resume
 
 Set up model access, a narrowly scoped policy or role, and network access:
 
-* **Amazon Bedrock**: [submit use case details](/docs/en/amazon-bedrock.md#1-submit-use-case-details), then create the policy in [IAM configuration](/docs/en/amazon-bedrock.md#iam-configuration), limiting `bedrock:InvokeModel` and `bedrock:InvokeModelWithResponseStream` to the inference profiles your sessions use and the foundation models behind them
-* **Agent Platform**: [enable the API](/docs/en/google-vertex-ai.md#1-enable-agent-platform-api) and [request model access](/docs/en/google-vertex-ai.md#2-request-model-access), then create the custom role that [IAM configuration](/docs/en/google-vertex-ai.md#iam-configuration) describes, with only `aiplatform.endpoints.predict`
-* **Egress**: allow your provider's endpoints through your egress rules. See [Network requirements](/docs/en/self-hosted-environments-deploy.md#network-requirements). If sessions can't reach them, Claude Code can keep retrying for hours before the session shows an error.
+* **Amazon Bedrock**: [submit use case details](https://code.claude.com/docs/en/amazon-bedrock.md#1-submit-use-case-details), then create the policy in [IAM configuration](https://code.claude.com/docs/en/amazon-bedrock.md#iam-configuration), limiting `bedrock:InvokeModel` and `bedrock:InvokeModelWithResponseStream` to the inference profiles your sessions use and the foundation models behind them
+* **Agent Platform**: [enable the API](https://code.claude.com/docs/en/google-vertex-ai.md#1-enable-agent-platform-api) and [request model access](https://code.claude.com/docs/en/google-vertex-ai.md#2-request-model-access), then create the custom role that [IAM configuration](https://code.claude.com/docs/en/google-vertex-ai.md#iam-configuration) describes, with only `aiplatform.endpoints.predict`
+* **Egress**: allow your provider's endpoints through your egress rules. See [Network requirements](https://code.claude.com/docs/en/self-hosted-environments-deploy.md#network-requirements). If sessions can't reach them, Claude Code can keep retrying for hours before the session shows an error.
 
 **2. Give sessions narrowly scoped credentials**
 
-Attach the policy or role from step 1 to an identity that can do nothing else. For the methods Claude Code accepts, see [Configure AWS credentials](/docs/en/amazon-bedrock.md#2-configure-aws-credentials) and [Configure GCP credentials](/docs/en/google-vertex-ai.md#3-configure-gcp-credentials).
+Attach the policy or role from step 1 to an identity that can do nothing else. For the methods Claude Code accepts, see [Configure AWS credentials](https://code.claude.com/docs/en/amazon-bedrock.md#2-configure-aws-credentials) and [Configure GCP credentials](https://code.claude.com/docs/en/google-vertex-ai.md#3-configure-gcp-credentials).
 
 > [!WARNING]
 >
 > Anyone who can get code to run in a session, including through prompt injection, can use these credentials at your cost for as long as the credentials are valid. Claude Code runs inside the session, so the credential it calls the model with has to be readable there.
 >
-> The shell commands Claude runs, your [Claude Code hooks](/docs/en/hooks.md), and stdio MCP servers inherit the session's environment and run as the same user as Claude Code. As a result, they can read credential variables and credential files.
+> The shell commands Claude runs, your [Claude Code hooks](https://code.claude.com/docs/en/hooks.md), and stdio MCP servers inherit the session's environment and run as the same user as Claude Code. As a result, they can read credential variables and credential files.
 >
-> When you [harden your deployment](/docs/en/self-hosted-environments-deploy.md#harden-your-deployment), you keep host credentials out of sessions, but you can't keep this credential out. Give the identity behind it nothing beyond the policy or role from step 1.
+> When you [harden your deployment](https://code.claude.com/docs/en/self-hosted-environments-deploy.md#harden-your-deployment), you keep host credentials out of sessions, but you can't keep this credential out. Give the identity behind it nothing beyond the policy or role from step 1.
 
 Check the method you choose against these runner behaviors:
 
-* **Metadata endpoint**: if you deny sessions the [cloud metadata endpoint](/docs/en/self-hosted-environments-deploy.md#harden-your-deployment) outright, credentials served from it, such as an instance profile, don't reach Claude Code either. A file-based web identity, such as IAM Roles for Service Accounts (IRSA) on Amazon EKS or a Workload Identity Federation credential file, doesn't depend on it.
+* **Metadata endpoint**: if you deny sessions the [cloud metadata endpoint](https://code.claude.com/docs/en/self-hosted-environments-deploy.md#harden-your-deployment) outright, credentials served from it, such as an instance profile, don't reach Claude Code either. A file-based web identity, such as IAM Roles for Service Accounts (IRSA) on Amazon EKS or a Workload Identity Federation credential file, doesn't depend on it.
 * **Renewal**: a session can outlive a credential, so use a method that renews itself, such as a file-based web identity
 * **Wrapper script**: the runner starts your [wrapper script](#provision-credentials-scoped-to-the-session-creator) once per session, so credentials it exports aren't renewed. Claude Code reads AWS credentials from its environment, so if your wrapper already exports AWS credentials for other work, Claude Code can sign model requests with them.
 
@@ -440,7 +440,7 @@ Check the method you choose against these runner behaviors:
 
 Set exactly one provider's variables where you set the runner's other environment variables, such as the container spec or service unit, then restart the runner. The examples show them as shell exports. With [on-demand runners](#on-demand-runners), set them on the workload your `spawn-runner` hook starts.
 
-Start these runners with [`--confine-repo-settings enforce`](/docs/en/self-hosted-environments-deploy#harden-your-deployment). It refuses sessions on repositories whose committed settings it flags, so run in the default `warn` mode first and clear what it logs.
+Start these runners with [`--confine-repo-settings enforce`](https://code.claude.com/docs/en/self-hosted-environments-deploy#harden-your-deployment). It refuses sessions on repositories whose committed settings it flags, so run in the default `warn` mode first and clear what it logs.
 
 **Amazon Bedrock**
 
@@ -451,7 +451,7 @@ export CLAUDE_CODE_USE_BEDROCK=1
 export AWS_REGION=us-east-1
 ```
 
-For how Claude Code resolves the region, see [Configure Claude Code](/docs/en/amazon-bedrock.md#3-configure-claude-code). For which inference profile prefix Claude Code uses for your region, see [Cross-region inference profile prefixes](/docs/en/amazon-bedrock.md#cross-region-inference-profile-prefixes).
+For how Claude Code resolves the region, see [Configure Claude Code](https://code.claude.com/docs/en/amazon-bedrock.md#3-configure-claude-code). For which inference profile prefix Claude Code uses for your region, see [Cross-region inference profile prefixes](https://code.claude.com/docs/en/amazon-bedrock.md#cross-region-inference-profile-prefixes).
 
 **Google Cloud's Agent Platform**
 
@@ -463,7 +463,7 @@ export CLOUD_ML_REGION=global
 export ANTHROPIC_VERTEX_PROJECT_ID=YOUR-PROJECT-ID
 ```
 
-To choose a region, see [Region configuration](/docs/en/google-vertex-ai.md#region-configuration).
+To choose a region, see [Region configuration](https://code.claude.com/docs/en/google-vertex-ai.md#region-configuration).
 
 **4. Check that the variables reached a session**
 
@@ -475,24 +475,24 @@ env | grep -E 'CLAUDE_CODE_USE_(BEDROCK|VERTEX)'
 
 A line that sets `CLAUDE_CODE_USE_BEDROCK` or `CLAUDE_CODE_USE_VERTEX` to `1` means the variable reached the session. If both appear, Claude Code uses Amazon Bedrock. No output means neither reached it.
 
-The command shows configuration, not traffic. To confirm the requests themselves, look for them in your cloud account's own metrics or request logs. If the first message fails instead, see troubleshooting for [Amazon Bedrock](/docs/en/amazon-bedrock.md#troubleshooting) or [Agent Platform](/docs/en/google-vertex-ai.md#troubleshooting).
+The command shows configuration, not traffic. To confirm the requests themselves, look for them in your cloud account's own metrics or request logs. If the first message fails instead, see troubleshooting for [Amazon Bedrock](https://code.claude.com/docs/en/amazon-bedrock.md#troubleshooting) or [Agent Platform](https://code.claude.com/docs/en/google-vertex-ai.md#troubleshooting).
 
 ### What differs from sessions on the Anthropic API
 
 A session that sends model requests to Amazon Bedrock or Google Cloud's Agent Platform differs from a session on the Anthropic API in these ways:
 
-* **Policy from claude.ai**: [server-managed settings](/docs/en/server-managed-settings.md) don't reach these sessions. Neither do the organization policies an Owner sets in Claude Code admin settings, so Claude Code doesn't enforce them inside the session. Put the rules you rely on in the runner image's [managed settings file](/docs/en/managed-settings.md#delivery-mechanisms).
+* **Policy from claude.ai**: [server-managed settings](https://code.claude.com/docs/en/server-managed-settings.md) don't reach these sessions. Neither do the organization policies an Owner sets in Claude Code admin settings, so Claude Code doesn't enforce them inside the session. Put the rules you rely on in the runner image's [managed settings file](https://code.claude.com/docs/en/managed-settings.md#delivery-mechanisms).
 * **Account skills**: these sessions don't download the skills enabled for a person's claude.ai account. See [How each session's config is assembled](#how-each-session’s-config-is-assembled).
-* **Files**: files that people attach to a session in claude.ai or the mobile or desktop app don't reach it, and Claude can't send files back with the [`SendUserFile` tool](/docs/en/tools-reference). Put input files in the repository or on the runner instead.
+* **Files**: files that people attach to a session in claude.ai or the mobile or desktop app don't reach it, and Claude can't send files back with the [`SendUserFile` tool](https://code.claude.com/docs/en/tools-reference). Put input files in the repository or on the runner instead.
 * **Model selection**: Anthropic's control plane sends each session's model, and when a session starts without one, Claude Code uses its default for the provider. You can't choose the model with `ANTHROPIC_MODEL` or `ANTHROPIC_DEFAULT_MODEL` in the runner's environment, but you can pin what an alias resolves to:
   * **`ANTHROPIC_MODEL` and `ANTHROPIC_DEFAULT_MODEL`**: the runner removes them from the environment it passes to sessions, even though the provider pages' examples set `ANTHROPIC_MODEL`.
-  * **Per-family pinning variables**: the variables in Pin model versions for [Amazon Bedrock](/docs/en/amazon-bedrock.md#4-pin-model-versions) and [Agent Platform](/docs/en/google-vertex-ai.md#5-pin-model-versions) do reach sessions. They decide what an alias such as `opus` resolves to, not what a full model ID resolves to.
-* **Models your account doesn't serve**: a session can fail on a message with an error that names the model. Enable the models your developers can choose, the background model described in Pin model versions, and the classifier model that [auto mode](/docs/en/permission-modes.md#enable-auto-mode-on-bedrock-agent-platform-or-foundry) uses. On Amazon Bedrock, allow each of them in your policy.
-* **Web search and fast mode**: [web search](/docs/en/tools-reference.md#websearch-tool-behavior) isn't available on Amazon Bedrock, and [fast mode](/docs/en/fast-mode.md) isn't available on either provider. For other capabilities that differ by provider, see [CLI capabilities that vary by provider](/docs/en/feature-availability.md#cli-capabilities-that-vary-by-provider).
+  * **Per-family pinning variables**: the variables in Pin model versions for [Amazon Bedrock](https://code.claude.com/docs/en/amazon-bedrock.md#4-pin-model-versions) and [Agent Platform](https://code.claude.com/docs/en/google-vertex-ai.md#5-pin-model-versions) do reach sessions. They decide what an alias such as `opus` resolves to, not what a full model ID resolves to.
+* **Models your account doesn't serve**: a session can fail on a message with an error that names the model. Enable the models your developers can choose, the background model described in Pin model versions, and the classifier model that [auto mode](https://code.claude.com/docs/en/permission-modes.md#enable-auto-mode-on-bedrock-agent-platform-or-foundry) uses. On Amazon Bedrock, allow each of them in your policy.
+* **Web search and fast mode**: [web search](https://code.claude.com/docs/en/tools-reference.md#websearch-tool-behavior) isn't available on Amazon Bedrock, and [fast mode](https://code.claude.com/docs/en/fast-mode.md) isn't available on either provider. For other capabilities that differ by provider, see [CLI capabilities that vary by provider](https://code.claude.com/docs/en/feature-availability.md#cli-capabilities-that-vary-by-provider).
 
 ## MCP servers
 
-To make [MCP servers](/docs/en/mcp.md) available in every session, add them at image build time with the same `claude mcp add` command used on a desktop install. If your runner is a bare process rather than a container, run the same command as the runner's user on the host, then restart the runner: it reads host config once at startup. The `--scope user` flag is required; the default local scope writes under a per-directory key that the runner doesn't seed into sessions. For example, in your Dockerfile:
+To make [MCP servers](https://code.claude.com/docs/en/mcp.md) available in every session, add them at image build time with the same `claude mcp add` command used on a desktop install. If your runner is a bare process rather than a container, run the same command as the runner's user on the host, then restart the runner: it reads host config once at startup. The `--scope user` flag is required; the default local scope writes under a per-directory key that the runner doesn't seed into sessions. For example, in your Dockerfile:
 
 ```dockerfile theme={null}
 RUN claude mcp add --scope user sidecar -- /usr/local/bin/mcp-sidecar
@@ -503,27 +503,27 @@ The runner snapshots the host's config once at startup. The snapshot captures th
 
 Claude Code also loads MCP servers from other sources:
 
-* The enterprise-scope [managed MCP file](/docs/en/managed-mcp.md) at its standard system path: `/etc/claude-code/managed-mcp.json` on Linux runner hosts, `/Library/Application Support/ClaudeCode/managed-mcp.json` on macOS hosts. Use it for locked-down fleets where only administrator-listed servers may load. See [exclusive control with managed-mcp.json](/docs/en/managed-mcp.md#exclusive-control-with-managed-mcp-json) for the precedence rules. When this file is on the runner host, Claude Code skips the MCP servers Anthropic's control plane delivers to a session, including claude.ai connectors, and names them in a warning on the session child's stderr, which the runner records at the `debug` log level. Before v2.1.229, those sessions exited at startup with `You cannot dynamically configure MCP servers when an enterprise MCP config is present`.
-* The [`managedMcpServers`](/docs/en/settings-reference#managedmcpservers) key in [managed settings](/docs/en/managed-settings.md) on the runner host: provides HTTP and SSE servers without taking exclusive control, so servers from the other sources still load. Requires Claude Code v2.1.259 or later.
-* `<repo>/.mcp.json`: project scope. Outside a [project](/docs/en/claude-projects.md#what-threads-pick-up-from-your-repositories) thread, commit the file to the repository, and its servers are auto-approved in cloud sessions. In a session with several repositories, [at most one repository's file loads](#repository-settings-in-sessions-with-several-repositories).
-* A [`--mcp-config`](/docs/en/cli-reference#cli-flags) file from your wrapper script: append the flag after `"$@"`, as in `exec "$CLAUDE_RUNNER_CLAUDE_BIN" "$@" --mcp-config /etc/claude/mcp.json`. To keep that file's servers running when the session's delivered servers are updated mid-session, have your wrapper pass the [full environment](#wrapper-scripts) to the child, as `exec` does. Before v2.1.299, the stdio, HTTP, and SSE servers in that file shut down at the first such update that didn't name them.
+* The enterprise-scope [managed MCP file](https://code.claude.com/docs/en/managed-mcp.md) at its standard system path: `/etc/claude-code/managed-mcp.json` on Linux runner hosts, `/Library/Application Support/ClaudeCode/managed-mcp.json` on macOS hosts. Use it for locked-down fleets where only administrator-listed servers may load. See [exclusive control with managed-mcp.json](https://code.claude.com/docs/en/managed-mcp.md#exclusive-control-with-managed-mcp-json) for the precedence rules. When this file is on the runner host, Claude Code skips the MCP servers Anthropic's control plane delivers to a session, including claude.ai connectors, and names them in a warning on the session child's stderr, which the runner records at the `debug` log level. Before v2.1.229, those sessions exited at startup with `You cannot dynamically configure MCP servers when an enterprise MCP config is present`.
+* The [`managedMcpServers`](https://code.claude.com/docs/en/settings-reference#managedmcpservers) key in [managed settings](https://code.claude.com/docs/en/managed-settings.md) on the runner host: provides HTTP and SSE servers without taking exclusive control, so servers from the other sources still load. Requires Claude Code v2.1.259 or later.
+* `<repo>/.mcp.json`: project scope. Outside a [project](https://code.claude.com/docs/en/claude-projects.md#what-threads-pick-up-from-your-repositories) thread, commit the file to the repository, and its servers are auto-approved in cloud sessions. In a session with several repositories, [at most one repository's file loads](#repository-settings-in-sessions-with-several-repositories).
+* A [`--mcp-config`](https://code.claude.com/docs/en/cli-reference#cli-flags) file from your wrapper script: append the flag after `"$@"`, as in `exec "$CLAUDE_RUNNER_CLAUDE_BIN" "$@" --mcp-config /etc/claude/mcp.json`. To keep that file's servers running when the session's delivered servers are updated mid-session, have your wrapper pass the [full environment](#wrapper-scripts) to the child, as `exec` does. Before v2.1.299, the stdio, HTTP, and SSE servers in that file shut down at the first such update that didn't name them.
 
-When connector delivery is enabled for your organization, Anthropic's control plane delivers the connectors you've configured on claude.ai to interactively-created sessions through server-provided MCP configuration, routed through `api.anthropic.com`. Sessions created programmatically, such as [CLI dispatches](/docs/en/self-hosted-environments-testing.md#run-the-test-loop), don't receive connector delivery; give them MCP servers through any of the other sources this section lists instead. The child's OAuth token doesn't carry a scope for fetching connectors directly, so the child doesn't attempt that fetch itself; delivery is server-driven.
+When connector delivery is enabled for your organization, Anthropic's control plane delivers the connectors you've configured on claude.ai to interactively-created sessions through server-provided MCP configuration, routed through `api.anthropic.com`. Sessions created programmatically, such as [CLI dispatches](https://code.claude.com/docs/en/self-hosted-environments-testing.md#run-the-test-loop), don't receive connector delivery; give them MCP servers through any of the other sources this section lists instead. The child's OAuth token doesn't carry a scope for fetching connectors directly, so the child doesn't attempt that fetch itself; delivery is server-driven.
 
 > [!NOTE]
 >
 > In a session that received a connector, a server of the same name from the host's `.claude.json` or a repository's `.mcp.json` isn't connected. To use both, give your server a different name.
 
-`settings.json` doesn't carry MCP server definitions, and there is no top-level `mcpServers` field in the settings schema. In managed settings, provide servers with the [`managedMcpServers`](/docs/en/settings-reference#managedmcpservers) key instead.
+`settings.json` doesn't carry MCP server definitions, and there is no top-level `mcpServers` field in the settings schema. In managed settings, provide servers with the [`managedMcpServers`](https://code.claude.com/docs/en/settings-reference#managedmcpservers) key instead.
 
-Sessions inherit the runner's environment, so set [`ENABLE_TOOL_SEARCH`](/docs/en/mcp#scale-with-mcp-tool-search) there to control MCP tool search for every session a runner spawns; the MCP page covers the values.
+Sessions inherit the runner's environment, so set [`ENABLE_TOOL_SEARCH`](https://code.claude.com/docs/en/mcp#scale-with-mcp-tool-search) there to control MCP tool search for every session a runner spawns; the MCP page covers the values.
 
 ### Wait for MCP servers before the first turn
 
 A self-hosted session waits briefly for MCP servers that are still connecting, at two separate points. A server that misses a wait has its tools missing when the first turn starts, and they become available later with no action on your part. The two waits are:
 
-* **Session startup**: before the tool list is first taken, the session waits up to 5 seconds by default for an HTTP or SSE server whose entry sets [`alwaysLoad: true`](/docs/en/mcp#exempt-a-server-from-deferral), or for all servers when you set [`MCP_CONNECTION_NONBLOCKING=0`](/docs/en/env-vars) in the runner's environment. HTTP and SSE servers otherwise connect in the background. While the session waits here, it's slower to initialize. [`MCP_CONNECT_TIMEOUT_MS`](/docs/en/env-vars) changes the 5-second default.
-* **First turn**: after the message arrives, the first turn waits up to 2 seconds for stdio servers that are still connecting. While the session waits here, the first reply is slower. To change how long this wait lasts, set [`CLAUDE_CODE_MCP_STARTUP_WAIT_MS`](/docs/en/env-vars) in the runner's environment. It doesn't change which servers the wait covers. Requires Claude Code v2.1.274 or later.
+* **Session startup**: before the tool list is first taken, the session waits up to 5 seconds by default for an HTTP or SSE server whose entry sets [`alwaysLoad: true`](https://code.claude.com/docs/en/mcp#exempt-a-server-from-deferral), or for all servers when you set [`MCP_CONNECTION_NONBLOCKING=0`](https://code.claude.com/docs/en/env-vars) in the runner's environment. HTTP and SSE servers otherwise connect in the background. While the session waits here, it's slower to initialize. [`MCP_CONNECT_TIMEOUT_MS`](https://code.claude.com/docs/en/env-vars) changes the 5-second default.
+* **First turn**: after the message arrives, the first turn waits up to 2 seconds for stdio servers that are still connecting. While the session waits here, the first reply is slower. To change how long this wait lasts, set [`CLAUDE_CODE_MCP_STARTUP_WAIT_MS`](https://code.claude.com/docs/en/env-vars) in the runner's environment. It doesn't change which servers the wait covers. Requires Claude Code v2.1.274 or later.
 
 `claude mcp add` has no `alwaysLoad` flag. To set the key, add the server with `claude mcp add-json` instead, which takes it in the server's JSON and writes it to `.claude.json`. In your Dockerfile:
 
@@ -535,9 +535,9 @@ If a server's tools don't appear on later turns either, check whether the server
 
 ### Turn off built-in session tools
 
-Anthropic's control plane attaches its own MCP server, named Claude Code Remote, to cloud sessions. Claude uses the server's tools to create [cloud scheduled tasks](/docs/en/routines.md), start and steer other cloud sessions, attach more repositories, and follow pull request activity.
+Anthropic's control plane attaches its own MCP server, named Claude Code Remote, to cloud sessions. Claude uses the server's tools to create [cloud scheduled tasks](https://code.claude.com/docs/en/routines.md), start and steer other cloud sessions, attach more repositories, and follow pull request activity.
 
-To turn off the whole server, add a [server-level deny rule](/docs/en/permissions.md#mcp) to your settings. The control plane registers the server under one of three names, depending on how the session was created. Claude Code matches the name in a rule exactly, including case, so write the rule once per name as shown:
+To turn off the whole server, add a [server-level deny rule](https://code.claude.com/docs/en/permissions.md#mcp) to your settings. The control plane registers the server under one of three names, depending on how the session was created. Claude Code matches the name in a rule exactly, including case, so write the rule once per name as shown:
 
 ```json theme={null}
 {
@@ -551,15 +551,15 @@ To turn off the whole server, add a [server-level deny rule](/docs/en/permission
 }
 ```
 
-A rule that names the whole server covers tools the server gains later too. To turn off one tool and keep the rest, append two more underscores and the tool name to each rule, as in `mcp__Claude_Code_Remote__add_repo`. To block the server from connecting at all rather than removing its tools, add the three names without the `mcp__` prefix as `serverName` entries under [`deniedMcpServers`](/docs/en/managed-mcp#policy-based-control-with-allowlists-and-denylists) instead.
+A rule that names the whole server covers tools the server gains later too. To turn off one tool and keep the rest, append two more underscores and the tool name to each rule, as in `mcp__Claude_Code_Remote__add_repo`. To block the server from connecting at all rather than removing its tools, add the three names without the `mcp__` prefix as `serverName` entries under [`deniedMcpServers`](https://code.claude.com/docs/en/managed-mcp#policy-based-control-with-allowlists-and-denylists) instead.
 
-Put the rules in [server-managed settings](/docs/en/server-managed-settings.md) to reach sessions with no change to the runner, or in `~/.claude/settings.json` on the runner. On a runner that [sends model requests to Bedrock or Agent Platform](#send-model-requests-to-bedrock-or-agent-platform), use that file, because server-managed settings don't reach those sessions. [Permissions and tool approval](#permissions-and-tool-approval) explains how settings on the runner reach sessions.
+Put the rules in [server-managed settings](https://code.claude.com/docs/en/server-managed-settings.md) to reach sessions with no change to the runner, or in `~/.claude/settings.json` on the runner. On a runner that [sends model requests to Bedrock or Agent Platform](#send-model-requests-to-bedrock-or-agent-platform), use that file, because server-managed settings don't reach those sessions. [Permissions and tool approval](#permissions-and-tool-approval) explains how settings on the runner reach sessions.
 
 To confirm the rules took effect, start a session on the environment and ask Claude to list its MCP tools. Claude Code removes a denied tool from Claude's context, so the denied tools are absent from its answer.
 
 ## Prompt sessions to push their work
 
-Anthropic-hosted sessions run a [`Stop` hook](/docs/en/hooks#stop), the Claude Code hook that runs when Claude finishes responding, that prompts Claude to commit and push its work. The runner doesn't install one. Without it, a session that ends with uncommitted changes leaves that work only on the runner's disk, and the **Create PR** button in claude.ai/code stays inactive until the branch exists on the remote.
+Anthropic-hosted sessions run a [`Stop` hook](https://code.claude.com/docs/en/hooks#stop), the Claude Code hook that runs when Claude finishes responding, that prompts Claude to commit and push its work. The runner doesn't install one. Without it, a session that ends with uncommitted changes leaves that work only on the runner's disk, and the **Create PR** button in claude.ai/code stays inactive until the branch exists on the remote.
 
 The reference implementation below has two parts. Merge the settings block into `~/.claude/settings.json` on the runner host, which the runner seeds into every session, and save the script as `~/.claude/hooks/stop-hook-nudge.sh` on the runner host and make it executable:
 
@@ -671,9 +671,9 @@ The hook prompts Claude to commit and push before the session ends, and stays si
 
 The Stop hook only prompts Claude. For the commit and push to work, set up:
 
-* **A git identity**: set `user.name` and `user.email` in your runner image, or start the runner with [`--configure-git`](/docs/en/self-hosted-environments-deploy#let-the-runner-configure-git)
-* **Push credentials**: use [Anthropic-managed git](/docs/en/self-hosted-environments-deploy.md#use-the-anthropic-git-proxy), or supply credentials as [Ship git config in your image](/docs/en/self-hosted-environments-deploy.md#ship-git-config-in-your-image) describes
-* **For resumed sessions**: set [`--push-outcome-on-release`](/docs/en/self-hosted-environments-reference#runner-cli-flags) on every runner in the environment. A resumed session then starts from the commits that Claude pushed to the session's branch. For the flag's limits, see [Resumed sessions lose unpushed work](/docs/en/self-hosted-environments-deploy.md#additional-limitations).
+* **A git identity**: set `user.name` and `user.email` in your runner image, or start the runner with [`--configure-git`](https://code.claude.com/docs/en/self-hosted-environments-deploy#let-the-runner-configure-git)
+* **Push credentials**: use [Anthropic-managed git](https://code.claude.com/docs/en/self-hosted-environments-deploy.md#use-the-anthropic-git-proxy), or supply credentials as [Ship git config in your image](https://code.claude.com/docs/en/self-hosted-environments-deploy.md#ship-git-config-in-your-image) describes
+* **For resumed sessions**: set [`--push-outcome-on-release`](https://code.claude.com/docs/en/self-hosted-environments-reference#runner-cli-flags) on every runner in the environment. A resumed session then starts from the commits that Claude pushed to the session's branch. For the flag's limits, see [Resumed sessions lose unpushed work](https://code.claude.com/docs/en/self-hosted-environments-deploy.md#additional-limitations).
 
 The Stop hook prompts at most once per turn. If the commit or push fails, the turn still ends. Look for git's error in the session and fix what it names.
 
@@ -691,22 +691,22 @@ The Stop hook checks which commit each submodule is on, not the files inside it:
 
 Search your copy of `stop-hook-nudge.sh` for `GIT_OPTIONAL_LOCKS`. If it's missing, you have an earlier copy. Replace it with the [current script](#prompt-sessions-to-push-their-work) wherever you installed it, then restart the runners. Keep your Stop hook settings, except to raise `timeout` on a large checkout.
 
-* **When**: if your sessions run with the [Bash sandbox](/docs/en/sandboxing.md) on, replace it now. Otherwise, replace it at your next image build or runner restart.
+* **When**: if your sessions run with the [Bash sandbox](https://code.claude.com/docs/en/sandboxing.md) on, replace it now. Otherwise, replace it at your next image build or runner restart.
 * **What changes**: uncommitted files in a submodule no longer prompt Claude. A new commit in a submodule that `.gitmodules` marks `ignore = all` now does.
 
 > [!WARNING]
 >
-> Hooks run outside the Bash sandbox, so the current script's git calls skip some git features that can start a program named in the checkout's git settings. They don't skip them all. Don't count on the sandbox alone, and isolate sessions as [Harden your deployment](/docs/en/self-hosted-environments-deploy.md#harden-your-deployment) describes.
+> Hooks run outside the Bash sandbox, so the current script's git calls skip some git features that can start a program named in the checkout's git settings. They don't skip them all. Don't count on the sandbox alone, and isolate sessions as [Harden your deployment](https://code.claude.com/docs/en/self-hosted-environments-deploy.md#harden-your-deployment) describes.
 
 ## Permissions and tool approval
 
-A self-hosted session has no terminal attached, so an unanswered permission prompt stalls the turn until the user responds in the UI. Anthropic's control plane sends each session's tool list and permission rules with the work payload; the default configuration pre-approves routine tool calls, including `Bash`, and cloud sessions [pre-approve file edits regardless of mode](/docs/en/permission-modes.md#switch-permission-modes). A call that nothing pre-approves prompts through the session UI.
+A self-hosted session has no terminal attached, so an unanswered permission prompt stalls the turn until the user responds in the UI. Anthropic's control plane sends each session's tool list and permission rules with the work payload; the default configuration pre-approves routine tool calls, including `Bash`, and cloud sessions [pre-approve file edits regardless of mode](https://code.claude.com/docs/en/permission-modes.md#switch-permission-modes). A call that nothing pre-approves prompts through the session UI.
 
 > [!NOTE]
 >
-> Only pin auto mode on an environment whose session containers run with [default-deny network egress](/docs/en/self-hosted-environments-deploy.md#default-deny-egress) and the rest of the [hardening section](/docs/en/self-hosted-environments-deploy.md#harden-your-deployment) in place. Routine tool calls, including `Bash` network requests, run without a human in the loop on both the default pre-approved tool set and in auto mode, so the network boundary is what limits where those calls can reach.
+> Only pin auto mode on an environment whose session containers run with [default-deny network egress](https://code.claude.com/docs/en/self-hosted-environments-deploy.md#default-deny-egress) and the rest of the [hardening section](https://code.claude.com/docs/en/self-hosted-environments-deploy.md#harden-your-deployment) in place. Routine tool calls, including `Bash` network requests, run without a human in the loop on both the default pre-approved tool set and in auto mode, so the network boundary is what limits where those calls can reach.
 
-To keep prompts to a minimum regardless of what the control plane sends, pin [auto mode](/docs/en/permission-modes.md#eliminate-prompts-with-auto-mode) from your wrapper script or [`command` hook](#command). Auto mode lets sessions run without routine permission prompts: a separate classifier model reviews actions before they run and blocks the ones it rejects, and explicit ask rules still force a prompt; the permission modes page covers what the classifier checks. The runner appends server-computed flags before invoking the wrapper, and for single-value flags such as `--permission-mode` the parser honors the last occurrence, so a flag you append after `"$@"` overrides the server-sent value:
+To keep prompts to a minimum regardless of what the control plane sends, pin [auto mode](https://code.claude.com/docs/en/permission-modes.md#eliminate-prompts-with-auto-mode) from your wrapper script or [`command` hook](#command). Auto mode lets sessions run without routine permission prompts: a separate classifier model reviews actions before they run and blocks the ones it rejects, and explicit ask rules still force a prompt; the permission modes page covers what the classifier checks. The runner appends server-computed flags before invoking the wrapper, and for single-value flags such as `--permission-mode` the parser honors the last occurrence, so a flag you append after `"$@"` overrides the server-sent value:
 
 ```bash theme={null}
 #!/bin/bash
@@ -723,45 +723,45 @@ Set `SELF_HOSTED_RUNNER_HOST_CONFIG_DIR` to seed from a different path, or point
 
 Sessions also read these settings files:
 
-* **Project settings**: outside a [project](/docs/en/claude-projects.md#what-threads-pick-up-from-your-repositories) thread, a repository-committed `.claude/settings.json` layers on top of the user-level baseline. In a session with several repositories, [at most one repository's file takes effect](#repository-settings-in-sessions-with-several-repositories).
-* **Managed settings**: sessions read [`managed-settings.json`](/docs/en/settings#where-settings-live) from the standard system path in your runner image. For whether its keys apply alongside [server-managed settings](/docs/en/server-managed-settings.md), see [how Claude Code combines managed sources](/docs/en/managed-settings.md#how-claude-code-combines-managed-sources).
+* **Project settings**: outside a [project](https://code.claude.com/docs/en/claude-projects.md#what-threads-pick-up-from-your-repositories) thread, a repository-committed `.claude/settings.json` layers on top of the user-level baseline. In a session with several repositories, [at most one repository's file takes effect](#repository-settings-in-sessions-with-several-repositories).
+* **Managed settings**: sessions read [`managed-settings.json`](https://code.claude.com/docs/en/settings#where-settings-live) from the standard system path in your runner image. For whether its keys apply alongside [server-managed settings](https://code.claude.com/docs/en/server-managed-settings.md), see [how Claude Code combines managed sources](https://code.claude.com/docs/en/managed-settings.md#how-claude-code-combines-managed-sources).
 
-For the order these sources apply in, see [settings precedence](/docs/en/settings.md#settings-precedence).
+For the order these sources apply in, see [settings precedence](https://code.claude.com/docs/en/settings.md#settings-precedence).
 
-When Anthropic's control plane supplies a session with [Claude Code hooks](/docs/en/hooks.md), the runner installs them alongside, not over, your own configuration. Requires Claude Code v2.1.229 or later.
+When Anthropic's control plane supplies a session with [Claude Code hooks](https://code.claude.com/docs/en/hooks.md), the runner installs them alongside, not over, your own configuration. Requires Claude Code v2.1.229 or later.
 
 * **Where they land**: the runner writes each supplied hook script to a reserved `hooks/.ccr-launcher/` subdirectory of the session's config directory and registers the scripts in a separate settings file it passes to the session with `--settings`, leaving the seeded `settings.json` and your own scripts at `hooks/<name>` untouched. The runner recreates the reserved subdirectory for each session and doesn't seed host content at `~/.claude/hooks/.ccr-launcher/` into sessions.
 * **Who authors them**: the control plane populates the scripts from fixed constants in its own deployment, never from per-session or third-party input.
-* **What still governs them**: hooks delivered through `--settings` enter the ordinary merged hook configuration, not the managed tier, so your managed settings still apply. `disableAllHooks` disables them, and they are not among the categories [`allowManagedHooksOnly`](/docs/en/settings-reference#allowmanagedhooksonly) keeps loaded.
+* **What still governs them**: hooks delivered through `--settings` enter the ordinary merged hook configuration, not the managed tier, so your managed settings still apply. `disableAllHooks` disables them, and they are not among the categories [`allowManagedHooksOnly`](https://code.claude.com/docs/en/settings-reference#allowmanagedhooksonly) keeps loaded.
 
-When a person starts their own session, Claude Code downloads the [skills enabled for their claude.ai account](/docs/en/skills.md#skills-in-cowork-and-cloud-sessions) into that session's config directory. A [cloud scheduled task](/docs/en/routines.md) run doesn't get its owner's skills, and a session that [sends model requests to Bedrock or Agent Platform](#send-model-requests-to-bedrock-or-agent-platform) doesn't download any. For a skill those sessions need, add it to your runner image or, outside a [project](/docs/en/claude-projects.md#what-threads-pick-up-from-your-repositories) thread, commit it to the repository's `.claude/skills/`.
+When a person starts their own session, Claude Code downloads the [skills enabled for their claude.ai account](https://code.claude.com/docs/en/skills.md#skills-in-cowork-and-cloud-sessions) into that session's config directory. A [cloud scheduled task](https://code.claude.com/docs/en/routines.md) run doesn't get its owner's skills, and a session that [sends model requests to Bedrock or Agent Platform](#send-model-requests-to-bedrock-or-agent-platform) doesn't download any. For a skill those sessions need, add it to your runner image or, outside a [project](https://code.claude.com/docs/en/claude-projects.md#what-threads-pick-up-from-your-repositories) thread, commit it to the repository's `.claude/skills/`.
 
-Outside [Claude Tag](https://claude.com/docs/claude-tag/overview) sessions, a session in a self-hosted environment runs with [auto memory](/docs/en/memory.md#auto-memory) off by default. For instructions that should carry across sessions, use the `CLAUDE.md` in your runner image or in the repository.
+Outside [Claude Tag](https://claude.com/docs/claude-tag/overview) sessions, a session in a self-hosted environment runs with [auto memory](https://code.claude.com/docs/en/memory.md#auto-memory) off by default. For instructions that should carry across sessions, use the `CLAUDE.md` in your runner image or in the repository.
 
 The runner's snapshot of the host's `~/.claude/` leaves out the `projects/` directory. Auto memory's default storage location is under that directory. If you put memory files there, the runner doesn't seed them into sessions, and they don't turn auto memory on.
 
 ### Repository settings in sessions with several repositories
 
-In a thread in a [project](/docs/en/claude-projects.md#what-threads-pick-up-from-your-repositories), no repository's `.claude/settings.json` takes effect as project settings and no repository's `.mcp.json` or skills load, wherever the thread starts. To give those threads a skill, add it to your runner image.
+In a thread in a [project](https://code.claude.com/docs/en/claude-projects.md#what-threads-pick-up-from-your-repositories), no repository's `.claude/settings.json` takes effect as project settings and no repository's `.mcp.json` or skills load, wherever the thread starts. To give those threads a skill, add it to your runner image.
 
 In any other session with several repositories, Claude Code reads project settings from the directory the session starts in, so at most one repository's `.claude/settings.json` takes effect as project settings. A hook defined in another repository's file doesn't run, a deny rule in it doesn't apply, and its `env` isn't set.
 
 * **`--capacity 1`, the default, with the built-in checkout**: the session starts in the first repository in its list of repositories. That repository's `.claude/settings.json` takes effect as project settings and its `.mcp.json` loads, and the other repositories' don't.
-* **A `--capacity` above one, or a [`checkout` hook](#checkout)**: the session starts in a per-session directory that contains the checkouts. No repository's `.claude/settings.json` takes effect as project settings, no repository's `.mcp.json` loads, and [`$CLAUDE_PROJECT_DIR`](/docs/en/hooks#reference-scripts-by-path) in a hook command is that directory, not a checkout.
+* **A `--capacity` above one, or a [`checkout` hook](#checkout)**: the session starts in a per-session directory that contains the checkouts. No repository's `.claude/settings.json` takes effect as project settings, no repository's `.mcp.json` loads, and [`$CLAUDE_PROJECT_DIR`](https://code.claude.com/docs/en/hooks#reference-scripts-by-path) in a hook command is that directory, not a checkout.
 
-Each repository's `CLAUDE.md` loads wherever the session starts. Outside a project thread, its skills load too. The runner passes every repository to Claude Code as an [additional directory](/docs/en/permissions.md#additional-directories-grant-file-access-not-configuration), so Claude Code also reads the `enabledPlugins` and `extraKnownMarketplaces` keys from each repository's `.claude/settings.json`.
+Each repository's `CLAUDE.md` loads wherever the session starts. Outside a project thread, its skills load too. The runner passes every repository to Claude Code as an [additional directory](https://code.claude.com/docs/en/permissions.md#additional-directories-grant-file-access-not-configuration), so Claude Code also reads the `enabledPlugins` and `extraKnownMarketplaces` keys from each repository's `.claude/settings.json`.
 
-To run a hook or apply a permission rule in every session, put it in `~/.claude/settings.json` on the runner host. The runner [seeds the host file into every session](#how-each-session’s-config-is-assembled), wherever the session starts. Write a path in a `Read` or `Edit` rule as a `//` absolute or `~/` home-relative [pattern](/docs/en/permissions.md#read-and-edit), because other patterns anchor at the settings source or the current directory.
+To run a hook or apply a permission rule in every session, put it in `~/.claude/settings.json` on the runner host. The runner [seeds the host file into every session](#how-each-session’s-config-is-assembled), wherever the session starts. Write a path in a `Read` or `Edit` rule as a `//` absolute or `~/` home-relative [pattern](https://code.claude.com/docs/en/permissions.md#read-and-edit), because other patterns anchor at the settings source or the current directory.
 
 ### Repository-committed permission rules
 
-Don't put a bare `"Edit"`, `"Write"`, or `"NotebookEdit"` entry in a repository-committed `permissions.allow`. A bare file-tool rule matches the tool regardless of path, granting writes anywhere on the host rather than only the workspace, so the runner's write-scope confine guard flags the session; with [`--confine-repo-settings enforce`](/docs/en/self-hosted-environments-reference#runner-cli-flags) it refuses to spawn the session instead of logging and continuing. See the [hardening section](/docs/en/self-hosted-environments-deploy.md#harden-your-deployment).
+Don't put a bare `"Edit"`, `"Write"`, or `"NotebookEdit"` entry in a repository-committed `permissions.allow`. A bare file-tool rule matches the tool regardless of path, granting writes anywhere on the host rather than only the workspace, so the runner's write-scope confine guard flags the session; with [`--confine-repo-settings enforce`](https://code.claude.com/docs/en/self-hosted-environments-reference#runner-cli-flags) it refuses to spawn the session instead of logging and continuing. See the [hardening section](https://code.claude.com/docs/en/self-hosted-environments-deploy.md#harden-your-deployment).
 
-A repository needs no file-tool rule at all: cloud sessions [pre-approve file edits regardless of mode](/docs/en/permission-modes.md#switch-permission-modes). If you do commit a rule, scope it to the workspace, such as `"Edit(/**)"`; a single leading slash is relative to the project root, which is the session's workspace. Bare file-tool rules are fine in the operator's host-level `settings.json`, since that file isn't repository-committed.
+A repository needs no file-tool rule at all: cloud sessions [pre-approve file edits regardless of mode](https://code.claude.com/docs/en/permission-modes.md#switch-permission-modes). If you do commit a rule, scope it to the workspace, such as `"Edit(/**)"`; a single leading slash is relative to the project root, which is the session's workspace. Bare file-tool rules are fine in the operator's host-level `settings.json`, since that file isn't repository-committed.
 
-A `defaultMode` of `auto` is only honored from the image-wide or user-level settings file, so a checked-out repository can't grant itself auto mode. For which modes cloud sessions accept and the full rule syntax, see [permission modes](/docs/en/permission-modes.md).
+A `defaultMode` of `auto` is only honored from the image-wide or user-level settings file, so a checked-out repository can't grant itself auto mode. For which modes cloud sessions accept and the full rule syntax, see [permission modes](https://code.claude.com/docs/en/permission-modes.md).
 
 ## What's next
 
-* [Reference](/docs/en/self-hosted-environments-reference.md): every CLI flag, environment variable, and metric
-* [Verify session identity](/docs/en/self-hosted-environments-identity.md): validate the session token from services outside the runner
+* [Reference](https://code.claude.com/docs/en/self-hosted-environments-reference.md): every CLI flag, environment variable, and metric
+* [Verify session identity](https://code.claude.com/docs/en/self-hosted-environments-identity.md): validate the session token from services outside the runner

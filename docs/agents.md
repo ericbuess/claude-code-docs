@@ -6,63 +6,63 @@
 
 > Compare the ways Claude Code can take on multiple tasks at once: subagents, agent view, agent teams, dynamic workflows, and projects.
 
-Claude Code has five ways to work on several tasks at once: [subagents](/docs/en/sub-agents.md), [agent view](/docs/en/agent-view.md), [agent teams](/docs/en/agent-teams.md), [dynamic workflows](/docs/en/workflows.md), and [projects](/docs/en/claude-projects.md). They differ in how involved you stay, from steering each conversation yourself to letting Claude coordinate a group of workers, and in whether the work runs on your machine or in the cloud.
+Claude Code has five ways to work on several tasks at once: [subagents](https://code.claude.com/docs/en/sub-agents.md), [agent view](https://code.claude.com/docs/en/agent-view.md), [agent teams](https://code.claude.com/docs/en/agent-teams.md), [dynamic workflows](https://code.claude.com/docs/en/workflows.md), and [projects](https://code.claude.com/docs/en/claude-projects.md). They differ in how involved you stay, from steering each conversation yourself to letting Claude coordinate a group of workers, and in whether the work runs on your machine or in the cloud.
 
 | Approach | What it gives you | Use it when |
 | :- | :- | :- |
-| [Subagents](/docs/en/sub-agents.md) | Delegated workers inside one session that do a side task in their own context and return a summary | A side task would flood your main conversation with search results, logs, or file contents you won't reference again |
-| [Agent view](/docs/en/agent-view.md) | One screen to dispatch and monitor sessions running in the background, opened with `claude agents`. Research preview | You have several independent tasks and want to hand them off, check status at a glance, and step in only when one needs you |
-| [Agent teams](/docs/en/agent-teams.md) | Multiple coordinated sessions with a shared task list and inter-agent messaging, managed by a lead. Experimental and disabled by default | You want Claude to split a project into pieces, assign them, and keep the workers in sync |
-| [Projects](/docs/en/claude-projects.md) | One ongoing conversation at claude.ai/code or in the desktop app. Claude starts parallel sessions called threads, in the cloud or, when you ask, on your computer through Remote Control, gives each one the project's instructions, and shows you which ones need you. Public beta on Pro and Max | The work spans many tasks over days or weeks, should keep running when your machine is off, and you'd rather describe it once than dispatch and track each session |
-| [Dynamic workflows](/docs/en/workflows.md) | A script that runs many subagents and cross-checks their results, for work too big to coordinate one turn at a time or that needs more than a single pass | A job outgrows a handful of subagents, or you want findings verified against each other: a codebase-wide audit, a 500-file migration, cross-checked research, or a plan drafted from several angles |
+| [Subagents](https://code.claude.com/docs/en/sub-agents.md) | Delegated workers inside one session that do a side task in their own context and return a summary | A side task would flood your main conversation with search results, logs, or file contents you won't reference again |
+| [Agent view](https://code.claude.com/docs/en/agent-view.md) | One screen to dispatch and monitor sessions running in the background, opened with `claude agents`. Research preview | You have several independent tasks and want to hand them off, check status at a glance, and step in only when one needs you |
+| [Agent teams](https://code.claude.com/docs/en/agent-teams.md) | Multiple coordinated sessions with a shared task list and inter-agent messaging, managed by a lead. Experimental and disabled by default | You want Claude to split a project into pieces, assign them, and keep the workers in sync |
+| [Projects](https://code.claude.com/docs/en/claude-projects.md) | One ongoing conversation at claude.ai/code or in the desktop app. Claude starts parallel sessions called threads, in the cloud or, when you ask, on your computer through Remote Control, gives each one the project's instructions, and shows you which ones need you. Public beta on Pro and Max | The work spans many tasks over days or weeks, should keep running when your machine is off, and you'd rather describe it once than dispatch and track each session |
+| [Dynamic workflows](https://code.claude.com/docs/en/workflows.md) | A script that runs many subagents and cross-checks their results, for work too big to coordinate one turn at a time or that needs more than a single pass | A job outgrows a handful of subagents, or you want findings verified against each other: a codebase-wide audit, a 500-file migration, cross-checked research, or a plan drafted from several angles |
 
-In every approach the workers are Claude sessions. To involve a different tool, expose it to Claude as an [MCP server](/docs/en/mcp.md).
+In every approach the workers are Claude sessions. To involve a different tool, expose it to Claude as an [MCP server](https://code.claude.com/docs/en/mcp.md).
 
 Three more tools support this work without being a way to run agents themselves:
 
-* [Worktrees](/docs/en/worktrees.md) give each session a separate git checkout, so parallel sessions each edit their own copy of the files. Use them for sessions you run yourself. A session you dispatch from agent view [moves into a worktree of its own before it edits files](/docs/en/agent-view.md#how-file-edits-are-isolated), and subagents you spawn can each get one too.
-* [Cross-session messaging](/docs/en/cross-session-messaging.md) lets Claude list and message your other Claude Code sessions on this machine, on another machine, or [in the cloud](/docs/en/claude-code-on-the-web.md), so sessions you run yourself can pass findings and status between themselves.
-* [`/batch`](/docs/en/commands) is a [skill](/docs/en/skills.md) that has Claude split one large change into 5 to 30 worktree-isolated subagents. It's a packaged use of subagents and worktrees, not a separate coordination style.
+* [Worktrees](https://code.claude.com/docs/en/worktrees.md) give each session a separate git checkout, so parallel sessions each edit their own copy of the files. Use them for sessions you run yourself. A session you dispatch from agent view [moves into a worktree of its own before it edits files](https://code.claude.com/docs/en/agent-view.md#how-file-edits-are-isolated), and subagents you spawn can each get one too.
+* [Cross-session messaging](https://code.claude.com/docs/en/cross-session-messaging.md) lets Claude list and message your other Claude Code sessions on this machine, on another machine, or [in the cloud](https://code.claude.com/docs/en/claude-code-on-the-web.md), so sessions you run yourself can pass findings and status between themselves.
+* [`/batch`](https://code.claude.com/docs/en/commands) is a [skill](https://code.claude.com/docs/en/skills.md) that has Claude split one large change into 5 to 30 worktree-isolated subagents. It's a packaged use of subagents and worktrees, not a separate coordination style.
 
 A few other features run Claude without you driving each step, but they solve a different problem than splitting work across agents:
 
-* A [background bash command](/docs/en/interactive-mode.md#background-bash-commands) runs one shell command without blocking the conversation. It doesn't spawn an agent.
-* A [forked subagent](/docs/en/sub-agents.md#fork-the-current-conversation) is a subagent that inherits your full conversation context instead of starting fresh. It's a way to spawn a subagent, not a separate surface. Start one with `/subtask`. Claude also spawns one itself where [fork mode](/docs/en/sub-agents.md#turn-fork-mode-on-or-off) is on. To copy the whole session into a new [background session](/docs/en/agent-view.md#from-inside-a-session) that runs alongside it, use `/fork`. With [agent view turned off](/docs/en/agent-view.md#turn-off-agent-view), the forked-subagent command is `/fork` instead and `/subtask` isn't available.
-* A [cloud scheduled task](/docs/en/routines.md) runs a session on a schedule in the cloud, not in parallel on your machine.
+* A [background bash command](https://code.claude.com/docs/en/interactive-mode.md#background-bash-commands) runs one shell command without blocking the conversation. It doesn't spawn an agent.
+* A [forked subagent](https://code.claude.com/docs/en/sub-agents.md#fork-the-current-conversation) is a subagent that inherits your full conversation context instead of starting fresh. It's a way to spawn a subagent, not a separate surface. Start one with `/subtask`. Claude also spawns one itself where [fork mode](https://code.claude.com/docs/en/sub-agents.md#turn-fork-mode-on-or-off) is on. To copy the whole session into a new [background session](https://code.claude.com/docs/en/agent-view.md#from-inside-a-session) that runs alongside it, use `/fork`. With [agent view turned off](https://code.claude.com/docs/en/agent-view.md#turn-off-agent-view), the forked-subagent command is `/fork` instead and `/subtask` isn't available.
+* A [cloud scheduled task](https://code.claude.com/docs/en/routines.md) runs a session on a schedule in the cloud, not in parallel on your machine.
 
 > [!NOTE]
 >
-> Running several sessions or subagents at once multiplies token usage. See [Costs](/docs/en/costs.md) for usage and rate-limit details.
+> Running several sessions or subagents at once multiplies token usage. See [Costs](https://code.claude.com/docs/en/costs.md) for usage and rate-limit details.
 
 ## Choose an approach
 
 The right approach depends on who coordinates the work, whether the workers need to communicate, and whether they edit the same files:
 
 * **Who coordinates the work?**
-  * Claude delegates and collects results inside one conversation: [subagents](/docs/en/sub-agents.md)
-  * You hand off independent tasks and check back later: [agent view](/docs/en/agent-view.md)
-  * Claude plans, assigns, and supervises a group of workers: [agent teams](/docs/en/agent-teams.md), experimental and disabled by default
-  * A script holds the plan instead of Claude's turn-by-turn judgment: [dynamic workflows](/docs/en/workflows.md). See [how workflows compare to subagents and skills](/docs/en/workflows.md#when-to-use-a-workflow)
-* **Do the workers need to talk to each other?** Claude can pass findings with [cross-session messaging](/docs/en/cross-session-messaging.md) between sessions you run yourself, including the sessions you dispatch from agent view. Subagents report results back to the conversation that spawned them, and agent view sessions report results only to you. Teammates in an agent team message each other directly and, when they [have the Task tools](/docs/en/tools-reference.md#task-tool-availability), share a task list.
-* **Do the tasks touch the same files?** Isolate the work with [worktrees](/docs/en/worktrees.md). Subagents and sessions you run yourself can each use a separate worktree. Agent teams don't isolate teammates in worktrees, so [partition the work](/docs/en/agent-teams.md#avoid-file-conflicts) so each teammate owns a different set of files.
+  * Claude delegates and collects results inside one conversation: [subagents](https://code.claude.com/docs/en/sub-agents.md)
+  * You hand off independent tasks and check back later: [agent view](https://code.claude.com/docs/en/agent-view.md)
+  * Claude plans, assigns, and supervises a group of workers: [agent teams](https://code.claude.com/docs/en/agent-teams.md), experimental and disabled by default
+  * A script holds the plan instead of Claude's turn-by-turn judgment: [dynamic workflows](https://code.claude.com/docs/en/workflows.md). See [how workflows compare to subagents and skills](https://code.claude.com/docs/en/workflows.md#when-to-use-a-workflow)
+* **Do the workers need to talk to each other?** Claude can pass findings with [cross-session messaging](https://code.claude.com/docs/en/cross-session-messaging.md) between sessions you run yourself, including the sessions you dispatch from agent view. Subagents report results back to the conversation that spawned them, and agent view sessions report results only to you. Teammates in an agent team message each other directly and, when they [have the Task tools](https://code.claude.com/docs/en/tools-reference.md#task-tool-availability), share a task list.
+* **Do the tasks touch the same files?** Isolate the work with [worktrees](https://code.claude.com/docs/en/worktrees.md). Subagents and sessions you run yourself can each use a separate worktree. Agent teams don't isolate teammates in worktrees, so [partition the work](https://code.claude.com/docs/en/agent-teams.md#avoid-file-conflicts) so each teammate owns a different set of files.
 
 ## Check on running work
 
 The command for checking on running work depends on which approach you used:
 
-* For background sessions, `claude agents` opens [agent view](/docs/en/agent-view.md): one screen showing every session, its state, and which ones need your input.
-* For subagents in the current session, named background subagents appear in the @-mention typeahead with their status. The `/agents` command prints a notice pointing to the subagent file locations. To [create and edit custom subagents](/docs/en/sub-agents.md#configure-subagents), ask Claude or edit the files directly. Despite the similar name, `/agents` is separate from `claude agents`.
+* For background sessions, `claude agents` opens [agent view](https://code.claude.com/docs/en/agent-view.md): one screen showing every session, its state, and which ones need your input.
+* For subagents in the current session, named background subagents appear in the @-mention typeahead with their status. The `/agents` command prints a notice pointing to the subagent file locations. To [create and edit custom subagents](https://code.claude.com/docs/en/sub-agents.md#configure-subagents), ask Claude or edit the files directly. Despite the similar name, `/agents` is separate from `claude agents`.
 * For anything running in the background of the current session, `/tasks` lists each item and lets you check on, attach to, or stop it. The list also includes subagents that have finished.
 * For dynamic workflows, `/workflows` lists running and completed runs, the phase each is in, and how many agents have finished.
 
-For a desktop view of all your sessions, see [parallel sessions in the desktop app](/docs/en/desktop.md#work-in-parallel-with-sessions).
+For a desktop view of all your sessions, see [parallel sessions in the desktop app](https://code.claude.com/docs/en/desktop.md#work-in-parallel-with-sessions).
 
 ## Learn more
 
 Each guide below covers setup and configuration for one approach:
 
-* [Create custom subagents](/docs/en/sub-agents.md): define reusable specialists and control which tools they can use.
-* [Manage agents with agent view](/docs/en/agent-view.md): dispatch sessions, watch their state, and attach when one needs you.
-* [Orchestrate agent teams](/docs/en/agent-teams.md): set up a lead and teammates, assign tasks, and review their work.
-* [Orchestrate dynamic workflows](/docs/en/workflows.md): run a bundled workflow or have Claude write one that runs many subagents and verifies their findings against each other.
-* [Run parallel sessions with worktrees](/docs/en/worktrees.md): start Claude in an isolated checkout, control what gets copied in, and clean up afterward.
+* [Create custom subagents](https://code.claude.com/docs/en/sub-agents.md): define reusable specialists and control which tools they can use.
+* [Manage agents with agent view](https://code.claude.com/docs/en/agent-view.md): dispatch sessions, watch their state, and attach when one needs you.
+* [Orchestrate agent teams](https://code.claude.com/docs/en/agent-teams.md): set up a lead and teammates, assign tasks, and review their work.
+* [Orchestrate dynamic workflows](https://code.claude.com/docs/en/workflows.md): run a bundled workflow or have Claude write one that runs many subagents and verifies their findings against each other.
+* [Run parallel sessions with worktrees](https://code.claude.com/docs/en/worktrees.md): start Claude in an isolated checkout, control what gets copied in, and clean up afterward.

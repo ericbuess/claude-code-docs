@@ -6,7 +6,7 @@
 
 > Step-by-step guides for exploring codebases, fixing bugs, refactoring, testing, and other everyday tasks with Claude Code.
 
-This page collects short recipes for everyday development. For higher-level guidance on prompting and context management, see [Best practices](/docs/en/best-practices.md).
+This page collects short recipes for everyday development. For higher-level guidance on prompting and context management, see [Best practices](https://code.claude.com/docs/en/best-practices.md).
 
 This page covers:
 
@@ -23,7 +23,7 @@ These are prompt patterns for everyday tasks like exploring unfamiliar code, deb
 
 ### Understand new codebases
 
-For configuring Claude Code in a monorepo or large codebase, see [Monorepos and large repos](/docs/en/large-codebases.md).
+For configuring Claude Code in a monorepo or large codebase, see [Monorepos and large repos](https://code.claude.com/docs/en/large-codebases.md).
 
 #### Get a quick codebase overview
 
@@ -99,7 +99,7 @@ trace the login process from front-end to database
 >
 > * Be specific about what you're looking for
 > * Use domain language from the project
-> * Install a [code intelligence plugin](/docs/en/plugins/code-intelligence.md) for your language to give Claude precise "go to definition" and "find references" navigation
+> * Install a [code intelligence plugin](https://code.claude.com/docs/en/plugins/code-intelligence.md) for your language to give Claude precise "go to definition" and "find references" navigation
 
 ***
 
@@ -231,7 +231,7 @@ create a pr
 enhance the PR description with more context about the security improvements
 ```
 
-To find the session later, run `claude --from-pr 1234` with your own PR number, which opens the session picker filtered to sessions linked to that PR, or paste the PR URL into the [`/resume` picker](/docs/en/sessions#use-the-session-picker) search. Claude Code links the session to the PR when Claude creates it with `gh pr create` or `glab mr create`, and when Claude [works on an existing PR](/docs/en/agent-view.md#pull-request-status).
+To find the session later, run `claude --from-pr 1234` with your own PR number, which opens the session picker filtered to sessions linked to that PR, or paste the PR URL into the [`/resume` picker](https://code.claude.com/docs/en/sessions#use-the-session-picker) search. Claude Code links the session to the PR when Claude creates it with `gh pr create` or `glab mr create`, and when Claude [works on an existing PR](https://code.claude.com/docs/en/agent-view.md#pull-request-status).
 
 > [!TIP]
 >
@@ -292,7 +292,7 @@ Suppose you need to work with images in your codebase, and you want Claude's hel
 You can use any of these methods:
 
 1. Drag and drop an image into the Claude Code window
-2. Copy an image and paste it into the CLI with `Ctrl+V`, or with [`Alt+V` on Windows and WSL](/docs/en/interactive-mode#general-controls)
+2. Copy an image and paste it into the CLI with `Ctrl+V`, or with [`Alt+V` on Windows and WSL](https://code.claude.com/docs/en/interactive-mode#general-controls)
 3. Provide an image path to Claude, for example "Analyze this image: /path/to/your/image.png"
 
 **2. Ask Claude to analyze the image**
@@ -351,7 +351,7 @@ Use @ to quickly include files or directories without waiting for Claude to read
 Explain the logic in @src/utils/auth.js
 ```
 
-This includes the content of the file in the conversation when it fits the [Read tool](/docs/en/tools-reference.md#read-tool-behavior)'s token limit, 25,000 tokens by default. A text file larger than 256KB isn't included.
+This includes the content of the file in the conversation when it fits the [Read tool](https://code.claude.com/docs/en/tools-reference.md#read-tool-behavior)'s token limit, 25,000 tokens by default. A text file larger than 256KB isn't included.
 
 **2. Reference a directory**
 
@@ -365,7 +365,7 @@ What's the structure of @src/components?
 Show me the data from @github:repos/owner/repo/issues
 ```
 
-This fetches data from connected MCP servers using the format @server:resource. See [MCP resources](/docs/en/mcp.md#use-mcp-resources) for details.
+This fetches data from connected MCP servers using the format @server:resource. See [MCP resources](https://code.claude.com/docs/en/mcp.md#use-mcp-resources) for details.
 
 > [!TIP]
 >
@@ -377,11 +377,11 @@ This fetches data from connected MCP servers using the format @server:resource. 
 > * Directory references show file listings, not contents
 > * You can reference multiple files in a single message (for example, "@file1.js and @file2.js")
 
-To stop `@` references from including file contents and directory listings, set [`CLAUDE_CODE_DISABLE_FILE_MENTIONS`](/docs/en/env-vars#variables) to `1` in your shell or in the [`env` block](/docs/en/env-vars#set-variables-in-settings-files) of user settings or [managed settings](/docs/en/managed-settings.md). Claude then receives the paths you referenced with a note to read them using its file tools. The variable requires Claude Code v2.1.299 or later, and Claude Code ignores it in project and local settings.
+To stop `@` references from including file contents and directory listings, set [`CLAUDE_CODE_DISABLE_FILE_MENTIONS`](https://code.claude.com/docs/en/env-vars#variables) to `1` in your shell or in the [`env` block](https://code.claude.com/docs/en/env-vars#set-variables-in-settings-files) of user settings or [managed settings](https://code.claude.com/docs/en/managed-settings.md). Claude then receives the paths you referenced with a note to read them using its file tools. The variable requires Claude Code v2.1.299 or later, and Claude Code ignores it in project and local settings.
 
-Your [`PreToolUse` hooks](/docs/en/hooks#pretooluse) don't run when Claude Code includes a file you reference with `@`, because it makes no tool call. If you rely on those hooks to control what Claude reads, block specific paths or stop `@` references from including files:
+Your [`PreToolUse` hooks](https://code.claude.com/docs/en/hooks#pretooluse) don't run when Claude Code includes a file you reference with `@`, because it makes no tool call. If you rely on those hooks to control what Claude reads, block specific paths or stop `@` references from including files:
 
-* **Block specific paths**: add a [`Read` deny rule](/docs/en/permissions#read-and-edit) for them. Claude Code doesn't include a file that the rule matches.
+* **Block specific paths**: add a [`Read` deny rule](https://code.claude.com/docs/en/permissions#read-and-edit) for them. Claude Code doesn't include a file that the rule matches.
 * **Stop `@` references from including files**: set `CLAUDE_CODE_DISABLE_FILE_MENTIONS=1`, which stops `@` file and directory references in your messages from including content, even for paths your hooks don't check. Your matching hooks then run before Claude opens a referenced path with a tool such as `Read`.
 
 ***
@@ -394,10 +394,10 @@ Pick a scheduling option based on where you want the task to run:
 
 | Option | Where it runs | Best for |
 | :- | :- | :- |
-| [Cloud scheduled tasks](/docs/en/routines.md) | Cloud, Anthropic-managed by default | Tasks that should run even when your computer is off. Can also trigger on API calls or GitHub events in addition to a schedule. Configure at [claude.ai/code/routines](https://claude.ai/code/routines). |
-| [Desktop scheduled tasks](/docs/en/desktop-scheduled-tasks.md) | Your machine, via the desktop app | Tasks that need direct access to local files, tools, or uncommitted changes. |
-| [GitHub Actions](/docs/en/github-actions.md) | Your CI pipeline | Tasks tied to repo events like opened PRs, or cron schedules that should live alongside your workflow config. |
-| [`/loop`](/docs/en/scheduled-tasks) | The current CLI session | Quick polling while a session is open. `--resume` and `--continue` restore unexpired fixed-interval loops. |
+| [Cloud scheduled tasks](https://code.claude.com/docs/en/routines.md) | Cloud, Anthropic-managed by default | Tasks that should run even when your computer is off. Can also trigger on API calls or GitHub events in addition to a schedule. Configure at [claude.ai/code/routines](https://claude.ai/code/routines). |
+| [Desktop scheduled tasks](https://code.claude.com/docs/en/desktop-scheduled-tasks.md) | Your machine, via the desktop app | Tasks that need direct access to local files, tools, or uncommitted changes. |
+| [GitHub Actions](https://code.claude.com/docs/en/github-actions.md) | Your CI pipeline | Tasks tied to repo events like opened PRs, or cron schedules that should live alongside your workflow config. |
+| [`/loop`](https://code.claude.com/docs/en/scheduled-tasks) | The current CLI session | Quick polling while a session is open. `--resume` and `--continue` restore unexpired fixed-interval loops. |
 
 > [!TIP]
 >
@@ -456,7 +456,7 @@ When a task spans multiple sittings, pick up where you left off instead of re-ex
 claude --continue
 ```
 
-This resumes the most recent session in the current directory; if there isn't one yet, it prints `No conversation found to continue` and exits. Use `claude --resume` to choose from a list, or `/resume` from inside a running session. See [Manage sessions](/docs/en/sessions.md) for naming, branching, and the full picker reference.
+This resumes the most recent session in the current directory; if there isn't one yet, it prints `No conversation found to continue` and exits. Use `claude --resume` to choose from a list, or `/resume` from inside a running session. See [Manage sessions](https://code.claude.com/docs/en/sessions.md) for naming, branching, and the full picker reference.
 
 ## Run parallel sessions with worktrees
 
@@ -466,7 +466,7 @@ Work on a feature in one terminal while Claude fixes a bug in another, without t
 claude --worktree feature-auth
 ```
 
-Run the same command with a different name in a second terminal to start an isolated parallel session. In a repository with no commits, the command fails with `Failed to resolve base branch "HEAD": git rev-parse failed`. See [Worktrees](/docs/en/worktrees.md) for cleanup, `.worktreeinclude`, and non-git VCS support. To monitor parallel sessions from one screen instead of separate terminals, see [background agents](/docs/en/agent-view.md).
+Run the same command with a different name in a second terminal to start an isolated parallel session. In a repository with no commits, the command fails with `Failed to resolve base branch "HEAD": git rev-parse failed`. See [Worktrees](https://code.claude.com/docs/en/worktrees.md) for cleanup, `.worktreeinclude`, and non-git VCS support. To monitor parallel sessions from one screen instead of separate terminals, see [background agents](https://code.claude.com/docs/en/agent-view.md).
 
 ## Plan before editing
 
@@ -476,7 +476,7 @@ For changes you want to review before they touch disk, switch to plan mode. Clau
 claude --permission-mode plan
 ```
 
-You can also press `Shift+Tab` mid-session until the status bar shows `⏸ plan mode on`. See [Plan mode](/docs/en/permission-modes.md#analyze-before-you-edit-with-plan-mode) for the approval flow and editing the plan in your text editor.
+You can also press `Shift+Tab` mid-session until the status bar shows `⏸ plan mode on`. See [Plan mode](https://code.claude.com/docs/en/permission-modes.md#analyze-before-you-edit-with-plan-mode) for the approval flow and editing the plan in your text editor.
 
 ## Delegate research to subagents
 
@@ -486,7 +486,7 @@ Exploring a large codebase fills your context with file reads. Delegate the expl
 use a subagent to investigate how our auth system handles token refresh
 ```
 
-The subagent reads files in its own context window and reports a summary. See [Subagents](/docs/en/sub-agents.md) for defining custom agents with their own tools and prompts.
+The subagent reads files in its own context window and reports a summary. See [Subagents](https://code.claude.com/docs/en/sub-agents.md) for defining custom agents with their own tools and prompts.
 
 ## Pipe Claude into scripts
 
@@ -496,22 +496,22 @@ Run Claude non-interactively for CI, pre-commit hooks, or batch processing. Stdi
 git log --oneline -20 | claude -p "summarize these recent commits"
 ```
 
-See [Non-interactive mode](/docs/en/headless.md) for output formats, permission flags, and fan-out patterns.
+See [Non-interactive mode](https://code.claude.com/docs/en/headless.md) for output formats, permission flags, and fan-out patterns.
 
 ## Next steps
 
-> **[Best practices](/docs/en/best-practices.md)**
+> **[Best practices](https://code.claude.com/docs/en/best-practices.md)**
 >
 > Patterns for getting the most out of Claude Code
 
-> **[Manage sessions](/docs/en/sessions.md)**
+> **[Manage sessions](https://code.claude.com/docs/en/sessions.md)**
 >
 > Resume, name, and branch conversations
 
-> **[Worktrees](/docs/en/worktrees.md)**
+> **[Worktrees](https://code.claude.com/docs/en/worktrees.md)**
 >
 > Run isolated parallel sessions
 
-> **[Extend Claude Code](/docs/en/features-overview.md)**
+> **[Extend Claude Code](https://code.claude.com/docs/en/features-overview.md)**
 >
 > Add skills, hooks, MCP, subagents, and plugins

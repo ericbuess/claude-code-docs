@@ -6,7 +6,7 @@
 
 > Claude Code sessions message each other, self-hosted environments run cloud sessions on your infrastructure, and auto mode becomes the default permission mode.
 
-Releases [v2.1.220 → v2.1.224](/docs/en/changelog.md#2-1-220)
+Releases [v2.1.220 → v2.1.224](https://code.claude.com/docs/en/changelog.md#2-1-220)
 3 features · August 3–7
 
 Cross-session messaging
@@ -24,7 +24,7 @@ Tell the session working on the payments API that users.name is now users.displa
 
 The other session shows a `Message from` row once Claude has read the message; press `Ctrl+O` to expand it. To see which sessions Claude can reach, run `/list-agents`.
 
-[Message another session](/docs/en/cross-session-messaging.md#message-another-session)
+[Message another session](https://code.claude.com/docs/en/cross-session-messaging.md#message-another-session)
 
 Self-hosted environments
 v2.1.224
@@ -41,7 +41,7 @@ claude self-hosted-runner setup
 
 The environment shows **Healthy** in admin settings once the runner registers.
 
-[Self-hosted environments quickstart](/docs/en/self-hosted-environments-quickstart.md#set-up-an-environment-and-runner)
+[Self-hosted environments quickstart](https://code.claude.com/docs/en/self-hosted-environments-quickstart.md#set-up-an-environment-and-runner)
 
 Auto mode becomes the default
 CLI
@@ -60,10 +60,10 @@ To start every session in auto mode before the switch, set it as your default in
 
 New sessions then show `auto mode on` in the status bar.
 
-[Auto mode requirements and controls](/docs/en/permission-modes.md#eliminate-prompts-with-auto-mode)
+[Auto mode requirements and controls](https://code.claude.com/docs/en/permission-modes.md#eliminate-prompts-with-auto-mode)
 
 Other wins
 
-The VS Code extension gets [Focus view](/docs/en/vs-code.md#extension-settings), which hides tool activity behind one expandable row per turn; toggle it from the command menu or with `Ctrl+Alt+F` (`Ctrl+Option+F` on Mac)Sandbox credential files accept [`mode: "mask"`](/docs/en/sandboxing#mask-credential-files) on Linux and WSL2, so sandboxed commands read a sentinel copy while the sandbox proxy substitutes the real value on egress; credential masking also gains `extract`, JWT-aware `decode`, and AWS SigV4 re-signing optionsMarketplaces can distribute a plugin as a [zip archive](/docs/en/plugins/marketplace-reference.md#archive-plugin-source) with the new `archive` source, downloaded over HTTPS with an optional SHA-256 pin, so installs work without git or npm`/review` is now an alias of [`/code-review`](/docs/en/code-review-local), and `/code-review` with no effort level reuses the level you typed lastA session you copy with [`/fork`](/docs/en/agent-view#copy-the-session-with-%2Ffork) now makes its code changes in a worktree of its own instead of the original session's checkoutPlugins you install from [`/plugin`](/docs/en/plugins/install#install-a-plugin) activate in the current session when it's safe to do so; the install summary reports `Plugin is now active.` or tells you to run `/reload-plugins`[Background sessions](/docs/en/agent-view.md#how-file-edits-are-isolated) that changed code in a worktree now commit and push before finishing, open a draft pull request only when the task calls for one, and follow the git instructions in your `CLAUDE.md`The 200-subagent-per-session cap is removed, so long-running sessions no longer refuse new subagents; the [concurrency](/docs/en/sub-agents.md#concurrent-subagent-limit) and depth limits still applyA repository's checked-in settings can no longer turn on [Remote Control auto-connect](/docs/en/remote-control.md#enable-remote-control-for-all-sessions); set `remoteControlAtStartup` in your user or managed settings instead, and project and local settings can only turn it off[Worktree isolation](/docs/en/worktrees.md#how-claude-code-enforces-isolation) now blocks not only file edits but also Bash commands and git redirects that reach the main checkout, in every session type and in the session's subagentsA Bash command can no longer hide part of itself from permission checks, and tab or invisible-Unicode padding no longer hides part of a command from the approval dialogPreToolUse auto-allow hooks no longer bypass tool restrictions in Claude Code's internal side tasks such as summaries and compactionThe [Ultraplan](/docs/en/ultraplan) research preview is removed, including the `/ultraplan` command and the `ultraplan` keyword; use plan mode or Claude Code on the web instead
+The VS Code extension gets [Focus view](https://code.claude.com/docs/en/vs-code.md#extension-settings), which hides tool activity behind one expandable row per turn; toggle it from the command menu or with `Ctrl+Alt+F` (`Ctrl+Option+F` on Mac)Sandbox credential files accept [`mode: "mask"`](https://code.claude.com/docs/en/sandboxing#mask-credential-files) on Linux and WSL2, so sandboxed commands read a sentinel copy while the sandbox proxy substitutes the real value on egress; credential masking also gains `extract`, JWT-aware `decode`, and AWS SigV4 re-signing optionsMarketplaces can distribute a plugin as a [zip archive](https://code.claude.com/docs/en/plugins/marketplace-reference.md#archive-plugin-source) with the new `archive` source, downloaded over HTTPS with an optional SHA-256 pin, so installs work without git or npm`/review` is now an alias of [`/code-review`](https://code.claude.com/docs/en/code-review-local), and `/code-review` with no effort level reuses the level you typed lastA session you copy with [`/fork`](https://code.claude.com/docs/en/agent-view#copy-the-session-with-%2Ffork) now makes its code changes in a worktree of its own instead of the original session's checkoutPlugins you install from [`/plugin`](https://code.claude.com/docs/en/plugins/install#install-a-plugin) activate in the current session when it's safe to do so; the install summary reports `Plugin is now active.` or tells you to run `/reload-plugins`[Background sessions](https://code.claude.com/docs/en/agent-view.md#how-file-edits-are-isolated) that changed code in a worktree now commit and push before finishing, open a draft pull request only when the task calls for one, and follow the git instructions in your `CLAUDE.md`The 200-subagent-per-session cap is removed, so long-running sessions no longer refuse new subagents; the [concurrency](https://code.claude.com/docs/en/sub-agents.md#concurrent-subagent-limit) and depth limits still applyA repository's checked-in settings can no longer turn on [Remote Control auto-connect](https://code.claude.com/docs/en/remote-control.md#enable-remote-control-for-all-sessions); set `remoteControlAtStartup` in your user or managed settings instead, and project and local settings can only turn it off[Worktree isolation](https://code.claude.com/docs/en/worktrees.md#how-claude-code-enforces-isolation) now blocks not only file edits but also Bash commands and git redirects that reach the main checkout, in every session type and in the session's subagentsA Bash command can no longer hide part of itself from permission checks, and tab or invisible-Unicode padding no longer hides part of a command from the approval dialogPreToolUse auto-allow hooks no longer bypass tool restrictions in Claude Code's internal side tasks such as summaries and compactionThe [Ultraplan](https://code.claude.com/docs/en/ultraplan) research preview is removed, including the `/ultraplan` command and the `ultraplan` keyword; use plan mode or Claude Code on the web instead
 
-[Full changelog for v2.1.220–v2.1.224 →](/docs/en/changelog.md#2-1-220)
+[Full changelog for v2.1.220–v2.1.224 →](https://code.claude.com/docs/en/changelog.md#2-1-220)

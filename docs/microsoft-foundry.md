@@ -103,7 +103,7 @@ export ANTHROPIC_FOUNDRY_RESOURCE={resource}
 # export ANTHROPIC_FOUNDRY_BASE_URL=https://{resource}.services.ai.azure.com/anthropic
 ```
 
-Set `ANTHROPIC_FOUNDRY_RESOURCE` to the resource name alone, such as `my-resource`. Claude Code [refuses a URL or host name](/docs/en/errors.md#anthropic-foundry-resource-must-be-a-foundry-resource-name) when you send a message.
+Set `ANTHROPIC_FOUNDRY_RESOURCE` to the resource name alone, such as `my-resource`. Claude Code [refuses a URL or host name](https://code.claude.com/docs/en/errors.md#anthropic-foundry-resource-must-be-a-foundry-resource-name) when you send a message.
 
 ### 4. Pin model versions
 
@@ -123,15 +123,15 @@ export ANTHROPIC_DEFAULT_HAIKU_MODEL='claude-haiku-4-5'
 
 Background tasks such as session title generation use the small/fast model, normally a Haiku-class model. On Microsoft Foundry, Claude Code defaults this to the primary model because not every account has a Haiku deployment. To use Haiku for background tasks, set `ANTHROPIC_DEFAULT_HAIKU_MODEL` to a Haiku deployment that is available in your account, as shown above.
 
-For current and legacy model IDs, see [Models overview](https://platform.claude.com/docs/en/about-claude/models/overview). See [Model configuration](/docs/en/model-config.md#pin-models-for-third-party-deployments) for the full list of environment variables.
+For current and legacy model IDs, see [Models overview](https://platform.claude.com/docs/en/about-claude/models/overview). See [Model configuration](https://code.claude.com/docs/en/model-config.md#pin-models-for-third-party-deployments) for the full list of environment variables.
 
-[Prompt caching](/docs/en/prompt-caching.md) is enabled automatically. To request a 1-hour cache TTL instead of the 5-minute default, set the following variable; cache writes with a 1-hour TTL are billed at a higher rate:
+[Prompt caching](https://code.claude.com/docs/en/prompt-caching.md) is enabled automatically. To request a 1-hour cache TTL instead of the 5-minute default, set the following variable; cache writes with a 1-hour TTL are billed at a higher rate:
 
 ```bash theme={null}
 export ENABLE_PROMPT_CACHING_1H=1
 ```
 
-To set different TTLs for your main conversation and for the requests Claude Code makes outside it, [choose the TTL yourself](/docs/en/prompt-caching.md#choose-the-ttl-yourself).
+To set different TTLs for your main conversation and for the requests Claude Code makes outside it, [choose the TTL yourself](https://code.claude.com/docs/en/prompt-caching.md#choose-the-ttl-yourself).
 
 ### 5. Run Claude Code
 
@@ -167,7 +167,7 @@ For details, see [Microsoft Foundry RBAC documentation](https://learn.microsoft.
 
 ## 1M token context window
 
-On Microsoft Foundry, when Claude Code can tell which model your deployment serves, Fable models, Sonnet 5 and later, and Opus 4.7 and later run with the [1M token context window](https://platform.claude.com/docs/en/build-with-claude/context-windows#context-window-sizes-by-model) by default, with no `[1m]` suffix needed. Claude Code reads the model from the deployment name in your model variables. Name each deployment with its model ID, such as `claude-opus-4-8`, or map the model to your deployment name with [`modelOverrides`](/docs/en/model-config#override-model-ids-per-version). For a deployment name it can't match to a model, Claude Code assumes a 200K window unless you [declare a different one](/docs/en/model-config.md#correct-the-window-for-a-gateway-or-custom-model-id).
+On Microsoft Foundry, when Claude Code can tell which model your deployment serves, Fable models, Sonnet 5 and later, and Opus 4.7 and later run with the [1M token context window](https://platform.claude.com/docs/en/build-with-claude/context-windows#context-window-sizes-by-model) by default, with no `[1m]` suffix needed. Claude Code reads the model from the deployment name in your model variables. Name each deployment with its model ID, such as `claude-opus-4-8`, or map the model to your deployment name with [`modelOverrides`](https://code.claude.com/docs/en/model-config#override-model-ids-per-version). For a deployment name it can't match to a model, Claude Code assumes a 200K window unless you [declare a different one](https://code.claude.com/docs/en/model-config.md#correct-the-window-for-a-gateway-or-custom-model-id).
 
 This `settings.json` entry tells Claude Code that a deployment named `team-opus-prod` serves Opus 4.8:
 
@@ -179,9 +179,9 @@ This `settings.json` entry tells Claude Code that a deployment named `team-opus-
 }
 ```
 
-To keep a 200K window instead, set [`CLAUDE_CODE_DISABLE_1M_CONTEXT=1`](/docs/en/model-config#turn-off-1m-context).
+To keep a 200K window instead, set [`CLAUDE_CODE_DISABLE_1M_CONTEXT=1`](https://code.claude.com/docs/en/model-config#turn-off-1m-context).
 
-Opus 4.6 and Sonnet 4.6 reach the 1M window when you append `[1m]` to the deployment name in `ANTHROPIC_DEFAULT_OPUS_MODEL` or `ANTHROPIC_DEFAULT_SONNET_MODEL`, as [Pin models for third-party deployments](/docs/en/model-config.md#pin-models-for-third-party-deployments) describes. Before v2.1.287, the Fable models and Opus 4.7 and later also needed that suffix on Microsoft Foundry and ran with a 200K window by default without it.
+Opus 4.6 and Sonnet 4.6 reach the 1M window when you append `[1m]` to the deployment name in `ANTHROPIC_DEFAULT_OPUS_MODEL` or `ANTHROPIC_DEFAULT_SONNET_MODEL`, as [Pin models for third-party deployments](https://code.claude.com/docs/en/model-config.md#pin-models-for-third-party-deployments) describes. Before v2.1.287, the Fable models and Opus 4.7 and later also needed that suffix on Microsoft Foundry and ran with a 200K window by default without it.
 
 ## Troubleshooting
 

@@ -23,7 +23,7 @@ If you explicitly opt in to methods to provide us with materials to train on, su
 
 If you choose to send us feedback about Claude Code using the `/feedback` command, we may use your feedback to improve our products and services. Transcripts shared via `/feedback`, or via `/bug` and `/share`, which report through the same path, are retained for 5 years.
 
-With [Claude-drafted feedback](/docs/en/tools-reference.md#sendfeedback-tool-behavior), Claude can also draft a feedback report and queue it on your machine for you to review. Claude Code sends nothing until you choose to send the draft, and a sent draft goes through the same submission path and retention as other `/feedback` reports.
+With [Claude-drafted feedback](https://code.claude.com/docs/en/tools-reference.md#sendfeedback-tool-behavior), Claude can also draft a feedback report and queue it on your machine for you to review. Claude Code sends nothing until you choose to send the draft, and a sent draft goes through the same submission path and retention as other `/feedback` reports.
 
 ### Session quality surveys
 
@@ -31,13 +31,13 @@ When you see the "How is Claude doing this session?" prompt in Claude Code, resp
 
 After the rating prompt, you may see a separate follow-up asking "Can Anthropic look at your session transcript to help us improve Claude Code?". This is an optional second step distinct from the rating:
 
-* **Yes**: uploads your conversation transcript, any subagent transcripts, and the raw session log file from disk to Anthropic. Known API key and token patterns are redacted before upload. Source code, file contents, and other conversation content are uploaded as-is. Shared transcripts are retained for up to 6 months. On Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry, and signed-in [Claude apps gateway](/docs/en/claude-apps-gateway) sessions, Yes writes the same payload to a local archive under `~/.claude/feedback-bundles/` instead of uploading; nothing leaves your machine until you forward that file.
+* **Yes**: uploads your conversation transcript, any subagent transcripts, and the raw session log file from disk to Anthropic. Known API key and token patterns are redacted before upload. Source code, file contents, and other conversation content are uploaded as-is. Shared transcripts are retained for up to 6 months. On Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry, and signed-in [Claude apps gateway](https://code.claude.com/docs/en/claude-apps-gateway) sessions, Yes writes the same payload to a local archive under `~/.claude/feedback-bundles/` instead of uploading; nothing leaves your machine until you forward that file.
 * **No**: declines without sending anything
 * **Don't ask again**: declines and stops this follow-up from appearing in future sessions
 
-Nothing is uploaded unless you explicitly select **Yes**. Organizations with [zero data retention](/docs/en/zero-data-retention.md), or where product feedback is disabled by organization policy, or where `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` is set, never see this follow-up. Your responses to this survey, including session transcripts submitted after the rating prompt, do not impact your data training preferences and cannot be used to train our AI models.
+Nothing is uploaded unless you explicitly select **Yes**. Organizations with [zero data retention](https://code.claude.com/docs/en/zero-data-retention.md), or where product feedback is disabled by organization policy, or where `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` is set, never see this follow-up. Your responses to this survey, including session transcripts submitted after the rating prompt, do not impact your data training preferences and cannot be used to train our AI models.
 
-To disable these surveys, set `CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1`. The survey is also disabled when `DISABLE_TELEMETRY`, `DO_NOT_TRACK`, or `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` is set. Organizations that block nonessential traffic but capture survey responses through their own [OpenTelemetry collector](/docs/en/monitoring-usage.md) can opt the survey back in by setting `CLAUDE_CODE_ENABLE_FEEDBACK_SURVEY_FOR_OTEL=1`. The survey then logs ratings to the configured collector only. The transcript-share follow-up and all other Anthropic-bound feedback traffic stay disabled. To control frequency instead of disabling, set [`feedbackSurveyRate`](/docs/en/settings-reference#feedbacksurveyrate) in your settings file to a probability between `0` and `1`.
+To disable these surveys, set `CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1`. The survey is also disabled when `DISABLE_TELEMETRY`, `DO_NOT_TRACK`, or `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` is set. Organizations that block nonessential traffic but capture survey responses through their own [OpenTelemetry collector](https://code.claude.com/docs/en/monitoring-usage.md) can opt the survey back in by setting `CLAUDE_CODE_ENABLE_FEEDBACK_SURVEY_FOR_OTEL=1`. The survey then logs ratings to the configured collector only. The transcript-share follow-up and all other Anthropic-bound feedback traffic stay disabled. To control frequency instead of disabling, set [`feedbackSurveyRate`](https://code.claude.com/docs/en/settings-reference#feedbacksurveyrate) in your settings file to a probability between `0` and `1`.
 
 ### Data retention
 
@@ -52,12 +52,12 @@ Anthropic retains Claude Code data based on your account type and preferences.
 **Commercial users (Team, Enterprise, and API)**:
 
 * Standard: 30-day retention period
-* [Zero data retention](/docs/en/zero-data-retention.md): available to qualified accounts for Claude Code on Claude for Enterprise. ZDR is not included in the standard Enterprise plan; it is enabled on a per-organization basis by your account team after confirming eligibility
-* Local caching: Claude Code clients store session transcripts locally in plaintext under `~/.claude/projects/` for 30 days by default to enable session resumption. Adjust the period with `cleanupPeriodDays`. See [application data](/docs/en/claude-directory.md#application-data) for what's stored and how to clear it.
+* [Zero data retention](https://code.claude.com/docs/en/zero-data-retention.md): available to qualified accounts for Claude Code on Claude for Enterprise. ZDR is not included in the standard Enterprise plan; it is enabled on a per-organization basis by your account team after confirming eligibility
+* Local caching: Claude Code clients store session transcripts locally in plaintext under `~/.claude/projects/` for 30 days by default to enable session resumption. Adjust the period with `cleanupPeriodDays`. See [application data](https://code.claude.com/docs/en/claude-directory.md#application-data) for what's stored and how to clear it.
 
-  Transcripts of sessions started or most recently continued in Claude Desktop or Cowork are [exempt from that limit by default](/docs/en/claude-directory.md#cleaned-up-automatically).
+  Transcripts of sessions started or most recently continued in Claude Desktop or Cowork are [exempt from that limit by default](https://code.claude.com/docs/en/claude-directory.md#cleaned-up-automatically).
 
-You can delete individual cloud sessions at any time. Deleting a session permanently removes the session's event data. For instructions on how to delete sessions, see [Delete sessions](/docs/en/claude-code-on-the-web.md#delete-sessions).
+You can delete individual cloud sessions at any time. Deleting a session permanently removes the session's event data. For instructions on how to delete sessions, see [Delete sessions](https://code.claude.com/docs/en/claude-code-on-the-web.md#delete-sessions).
 
 Learn more about data retention practices in our [Privacy Center](https://privacy.anthropic.com/).
 
@@ -65,7 +65,7 @@ For full details, please review our [Commercial Terms of Service](https://www.an
 
 ## Data access
 
-For all first party users, you can learn more about what data is logged for [local Claude Code](#local-claude-code-data-flow-and-dependencies) and [remote Claude Code](#cloud-execution-data-flow-and-dependencies). [Remote Control](/docs/en/remote-control.md) sessions follow the local data flow since all execution happens on your machine; while connected, the session transcript is also stored on Anthropic servers to sync the conversation across devices, as described in [Connection and security](/docs/en/remote-control.md#connection-and-security). Note for remote Claude Code, Claude accesses the repository where you initiate your Claude Code session. Claude does not access repositories that you have connected but have not started a session in.
+For all first party users, you can learn more about what data is logged for [local Claude Code](#local-claude-code-data-flow-and-dependencies) and [remote Claude Code](#cloud-execution-data-flow-and-dependencies). [Remote Control](https://code.claude.com/docs/en/remote-control.md) sessions follow the local data flow since all execution happens on your machine; while connected, the session transcript is also stored on Anthropic servers to sync the conversation across devices, as described in [Connection and security](https://code.claude.com/docs/en/remote-control.md#connection-and-security). Note for remote Claude Code, Claude accesses the repository where you initiate your Claude Code session. Claude does not access repositories that you have connected but have not started a session in.
 
 ## Local Claude Code: Data flow and dependencies
 
@@ -79,7 +79,7 @@ Encryption at rest depends on your model provider:
 
 | Provider | Encryption at rest |
 | - | - |
-| Anthropic API | Infrastructure-level disk encryption (AES-256). Enable [Zero Data Retention](/docs/en/zero-data-retention.md) for no server-side persistence. |
+| Anthropic API | Infrastructure-level disk encryption (AES-256). Enable [Zero Data Retention](https://code.claude.com/docs/en/zero-data-retention.md) for no server-side persistence. |
 | Amazon Bedrock | AES-256 with AWS-managed keys. Customer-managed keys available via AWS KMS. |
 | Google Cloud's Agent Platform | Google-managed encryption keys. CMEK available. |
 | Microsoft Foundry | Depends on the deployment's [hosting option](https://platform.claude.com/docs/en/build-with-claude/claude-in-microsoft-foundry#hosting-options). For Hosted on Azure deployments, prompts and completions remain within Azure; only usage metadata and content flagged by Anthropic's safety systems egress to Anthropic. For Hosted on Anthropic deployments, requests route to Anthropic infrastructure with AES-256 disk encryption. |
@@ -88,18 +88,18 @@ Claude Code is built on Anthropic's APIs. For details on API security controls, 
 
 ### Cloud execution: Data flow and dependencies
 
-[Cloud sessions](/docs/en/claude-code-on-the-web.md) run in Anthropic-managed virtual machines by default instead of locally. Sessions your organization routes to a [self-hosted environment](/docs/en/self-hosted-environments) run on infrastructure you control; for what stays on your machines and what still goes to Anthropic, see [What stays on your infrastructure](/docs/en/self-hosted-environments#what-stays-on-your-infrastructure). In Anthropic-hosted cloud sessions:
+[Cloud sessions](https://code.claude.com/docs/en/claude-code-on-the-web.md) run in Anthropic-managed virtual machines by default instead of locally. Sessions your organization routes to a [self-hosted environment](https://code.claude.com/docs/en/self-hosted-environments) run on infrastructure you control; for what stays on your machines and what still goes to Anthropic, see [What stays on your infrastructure](https://code.claude.com/docs/en/self-hosted-environments#what-stays-on-your-infrastructure). In Anthropic-hosted cloud sessions:
 
 * **Code and data storage:** Your repository is cloned into the session's isolated VM. Anthropic stores the session transcript so you can return to the session later. Code and session data are subject to the [retention and usage policies](#data-retention) for your account type
 * **Credentials:** GitHub credentials are stored encrypted on Anthropic's servers and never enter the VM. GitHub traffic from the VM goes through an Anthropic proxy that attaches them on the server side
 * **Network traffic:** All outbound traffic goes through a security proxy for audit logging and abuse prevention
 * **Session data:** Prompts, code changes, and outputs follow the same data policies as local Claude Code usage
 
-For security details about cloud execution, see [Security](/docs/en/security.md#cloud-execution-security).
+For security details about cloud execution, see [Security](https://code.claude.com/docs/en/security.md#cloud-execution-security).
 
 ## Telemetry services
 
-Claude Code sends two kinds of operational telemetry: usage metrics and error reports. You can turn each off individually with the environment variables below, or disable all non-essential traffic at once by setting `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC`. Setting `DISABLE_TELEMETRY` or `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` also disables feature-flag evaluation, which can make [Remote Control](/docs/en/remote-control.md#requirements) unavailable; `DISABLE_ERROR_REPORTING` doesn't.
+Claude Code sends two kinds of operational telemetry: usage metrics and error reports. You can turn each off individually with the environment variables below, or disable all non-essential traffic at once by setting `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC`. Setting `DISABLE_TELEMETRY` or `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` also disables feature-flag evaluation, which can make [Remote Control](https://code.claude.com/docs/en/remote-control.md#requirements) unavailable; `DISABLE_ERROR_REPORTING` doesn't.
 
 **Metrics**: latency, reliability, and usage patterns, sent to Anthropic and to third-party logging infrastructure over TLS. Metrics never include your code, prompts, or file paths. Set `DISABLE_TELEMETRY=1` to opt out.
 
@@ -112,13 +112,13 @@ Error reporting is on only when all of these apply:
 * you're connecting directly to the Claude API
 * your organization doesn't have a zero data retention or HIPAA agreement
 
-When you run the `/feedback` command, a copy of your conversation history including code is sent to Anthropic. The `/bug` and `/share` commands submit through the same path. Before submitting a report from the feedback dialog, you choose how much history to include: the current session only, which is the default, or also other sessions from the same project over the last 24 hours or 7 days. Claude Code submits [Claude-drafted feedback](/docs/en/tools-reference.md#sendfeedback-tool-behavior) through the same path, including the transcript when you chose to include it on the draft's review screen. The data is encrypted in transit via TLS and stored in Google Cloud Storage, which encrypts stored data at rest by default. Optionally, a GitHub issue is created in the public repository. To opt out, set the `DISABLE_FEEDBACK_COMMAND` environment variable to `1`.
+When you run the `/feedback` command, a copy of your conversation history including code is sent to Anthropic. The `/bug` and `/share` commands submit through the same path. Before submitting a report from the feedback dialog, you choose how much history to include: the current session only, which is the default, or also other sessions from the same project over the last 24 hours or 7 days. Claude Code submits [Claude-drafted feedback](https://code.claude.com/docs/en/tools-reference.md#sendfeedback-tool-behavior) through the same path, including the transcript when you chose to include it on the draft's review screen. The data is encrypted in transit via TLS and stored in Google Cloud Storage, which encrypts stored data at rest by default. Optionally, a GitHub issue is created in the public repository. To opt out, set the `DISABLE_FEEDBACK_COMMAND` environment variable to `1`.
 
 When you use a third-party provider such as Amazon Bedrock or Google Cloud's Agent Platform, or have no Anthropic credentials configured, `/feedback` writes the report to a local archive under `~/.claude/feedback-bundles/` instead of sending it to Anthropic. Known API key and token patterns are redacted before the archive is written. Nothing leaves your machine until you send that file to your Anthropic account representative or attach it to a support request.
 
 ## Default behaviors by API provider
 
-By default, error reporting, telemetry, and bug reporting are disabled when using Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry, or Claude Platform on AWS. Session quality surveys and the WebFetch domain safety check are exceptions and run regardless of provider. On a signed-in [Claude apps gateway](/docs/en/claude-apps-gateway) session, usage analytics, error reporting, and survey ratings to Anthropic are disabled by the gateway credential itself, with no setting to re-enable them. You can opt out of all non-essential traffic, including surveys, at once by setting `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC`. This variable doesn't affect the WebFetch check or official plugin marketplace auto-install; each has its own opt-out: `skipWebFetchPreflight` in [settings](/docs/en/settings.md) for WebFetch, and `CLAUDE_CODE_DISABLE_OFFICIAL_MARKETPLACE_AUTOINSTALL` for the marketplace. Here are the full default behaviors:
+By default, error reporting, telemetry, and bug reporting are disabled when using Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry, or Claude Platform on AWS. Session quality surveys and the WebFetch domain safety check are exceptions and run regardless of provider. On a signed-in [Claude apps gateway](https://code.claude.com/docs/en/claude-apps-gateway) session, usage analytics, error reporting, and survey ratings to Anthropic are disabled by the gateway credential itself, with no setting to re-enable them. You can opt out of all non-essential traffic, including surveys, at once by setting `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC`. This variable doesn't affect the WebFetch check or official plugin marketplace auto-install; each has its own opt-out: `skipWebFetchPreflight` in [settings](https://code.claude.com/docs/en/settings.md) for WebFetch, and `CLAUDE_CODE_DISABLE_OFFICIAL_MARKETPLACE_AUTOINSTALL` for the marketplace. Here are the full default behaviors:
 
 | Service | Claude API | Google Cloud's Agent Platform API | Amazon Bedrock API | Microsoft Foundry API | Claude Platform on AWS |
 | - | - | - | - | - | - |
@@ -126,9 +126,9 @@ By default, error reporting, telemetry, and bug reporting are disabled when usin
 | **Error reports** | On for Pro and Max sign-ins on v2.1.198+, otherwise off. `DISABLE_ERROR_REPORTING=1` to disable. | Default off. `CLAUDE_CODE_USE_VERTEX` must be 1. | Default off. `CLAUDE_CODE_USE_BEDROCK` must be 1. | Default off. `CLAUDE_CODE_USE_FOUNDRY` must be 1. | Default off. `CLAUDE_CODE_USE_ANTHROPIC_AWS` must be 1. |
 | **Claude API (`/feedback` reports)** | Default on. `DISABLE_FEEDBACK_COMMAND=1` to disable. | Default off. `CLAUDE_CODE_USE_VERTEX` must be 1. | Default off. `CLAUDE_CODE_USE_BEDROCK` must be 1. | Default off. `CLAUDE_CODE_USE_FOUNDRY` must be 1. | Default off. `CLAUDE_CODE_USE_ANTHROPIC_AWS` must be 1. |
 | **Session quality surveys** | Default on. `CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1` to disable. | Default on. `CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1` to disable. | Default on. `CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1` to disable. | Default on. `CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1` to disable. | Default on. `CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1` to disable. |
-| **WebFetch domain safety check** | Default on. `skipWebFetchPreflight: true` in [settings](/docs/en/settings.md) to disable. | Default on. `skipWebFetchPreflight: true` in [settings](/docs/en/settings.md) to disable. | Default on. `skipWebFetchPreflight: true` in [settings](/docs/en/settings.md) to disable. | Default on. `skipWebFetchPreflight: true` in [settings](/docs/en/settings.md) to disable. | Default on. `skipWebFetchPreflight: true` in [settings](/docs/en/settings.md) to disable. |
+| **WebFetch domain safety check** | Default on. `skipWebFetchPreflight: true` in [settings](https://code.claude.com/docs/en/settings.md) to disable. | Default on. `skipWebFetchPreflight: true` in [settings](https://code.claude.com/docs/en/settings.md) to disable. | Default on. `skipWebFetchPreflight: true` in [settings](https://code.claude.com/docs/en/settings.md) to disable. | Default on. `skipWebFetchPreflight: true` in [settings](https://code.claude.com/docs/en/settings.md) to disable. | Default on. `skipWebFetchPreflight: true` in [settings](https://code.claude.com/docs/en/settings.md) to disable. |
 
-All environment variables can be checked into `settings.json` (see [settings reference](/docs/en/settings-reference.md)).
+All environment variables can be checked into `settings.json` (see [settings reference](https://code.claude.com/docs/en/settings-reference.md)).
 
 When a host platform sets `CLAUDE_CODE_PROVIDER_MANAGED_BY_HOST`, metrics default to on for Google Cloud's Agent Platform, Amazon Bedrock, Microsoft Foundry, and Claude Platform on AWS, and follow the standard `DISABLE_TELEMETRY` opt-out. Error reporting and `/feedback` reports remain off by default on those providers.
 
@@ -136,4 +136,4 @@ When a host platform sets `CLAUDE_CODE_PROVIDER_MANAGED_BY_HOST`, metrics defaul
 
 Before fetching a URL, the WebFetch tool sends the requested hostname to `api.anthropic.com` to check it against a safety blocklist maintained by Anthropic. Only the hostname is sent, not the full URL, path, or page contents. Claude Code caches a hostname that passes the check for five minutes, and re-checks a blocked or failed hostname on the next request.
 
-This check runs regardless of which model provider you use and is not affected by `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC`. If your network blocks `api.anthropic.com`, WebFetch requests fail until you either allowlist the domain or set `skipWebFetchPreflight: true` in [settings](/docs/en/settings.md). Disabling the check means WebFetch attempts to retrieve any URL without consulting the blocklist, so combine it with [`WebFetch` permission rules](/docs/en/permissions#webfetch) if you need to restrict which domains Claude can reach.
+This check runs regardless of which model provider you use and is not affected by `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC`. If your network blocks `api.anthropic.com`, WebFetch requests fail until you either allowlist the domain or set `skipWebFetchPreflight: true` in [settings](https://code.claude.com/docs/en/settings.md). Disabling the check means WebFetch attempts to retrieve any URL without consulting the blocklist, so combine it with [`WebFetch` permission rules](https://code.claude.com/docs/en/permissions#webfetch) if you need to restrict which domains Claude can reach.

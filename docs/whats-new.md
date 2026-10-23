@@ -6,7 +6,7 @@
 
 > A weekly digest of notable Claude Code features, with code snippets, demos, and context on why they matter.
 
-The weekly dev digest highlights the features most likely to change how you work. Each entry includes runnable code, a short demo, and a link to the full docs. For every bug fix and minor improvement, see the [changelog](/docs/en/changelog.md).
+The weekly dev digest highlights the features most likely to change how you work. Each entry includes runnable code, a short demo, and a link to the full docs. For every bug fix and minor improvement, see the [changelog](https://code.claude.com/docs/en/changelog.md).
 
 **Week 37**
 
@@ -16,7 +16,7 @@ September 7–11, 2026
 
 Also this week: pop any **Claude Code Desktop pane** out into its own window and dock it back later; the **`maxEffortLevel`** setting caps the effort level on every provider; and a page that **WebFetch** hasn't finished downloading within five minutes fails instead of hanging.
 
-[Read the Week 37 digest →](/docs/en/whats-new/2026-w37.md)
+[Read the Week 37 digest →](https://code.claude.com/docs/en/whats-new/2026-w37.md)
 
 **Week 36**
 
@@ -26,7 +26,7 @@ August 31 – September 4, 2026
 
 Also this week: on Pro and Max plans, **computer use in the Desktop app** works in the background on macOS while you keep working; in fullscreen rendering, **`/diff`** opens a live panel beside the conversation that refreshes as Claude edits; and **`/skill-doctor`** shows what each of your skills costs in context and how often it gets used.
 
-[Read the Week 36 digest →](/docs/en/whats-new/2026-w36.md)
+[Read the Week 36 digest →](https://code.claude.com/docs/en/whats-new/2026-w36.md)
 
 **Week 35**
 
@@ -36,7 +36,7 @@ August 24–28, 2026
 
 Also this week: **Claude-drafted feedback** has Claude write up a feedback report when something goes wrong in a session, which you review and send from `/feedback`; **`--restricted`** starts a session without the command-running tools or your user and project settings, for evaluation harnesses on shared machines; and the **`modelPicker`** setting controls which models the `/model` picker lists.
 
-[Read the Week 35 digest →](/docs/en/whats-new/2026-w35.md)
+[Read the Week 35 digest →](https://code.claude.com/docs/en/whats-new/2026-w35.md)
 
 **Week 34**
 
@@ -46,7 +46,7 @@ August 17–21, 2026
 
 Also this week: the built-in **Concise output style** makes Claude lead with the result and skip preamble; any machine running `claude remote-control` shows up as a **device card** on your phone so you can start a session on it from the Code tab; and **`ANTHROPIC_DEFAULT_MODEL`** sets the model new sessions start on.
 
-[Read the Week 34 digest →](/docs/en/whats-new/2026-w34.md)
+[Read the Week 34 digest →](https://code.claude.com/docs/en/whats-new/2026-w34.md)
 
 **Week 33**
 
@@ -56,7 +56,7 @@ August 10–14, 2026
 
 Also this week: **fork mode** is on by default in interactive sessions, so Claude can delegate a side task to a subagent that inherits the full conversation; **GitLab** merge request URLs work with `--worktree` and the `claude agents` view, and marketplaces clone bare `gitlab.com` URLs; and typing **`@`** in the prompt mentions another Claude session by name.
 
-[Read the Week 33 digest →](/docs/en/whats-new/2026-w33.md)
+[Read the Week 33 digest →](https://code.claude.com/docs/en/whats-new/2026-w33.md)
 
 **Week 32**
 
@@ -66,7 +66,7 @@ August 3–7, 2026
 
 Also this week: **self-hosted environments** run Claude Code cloud sessions on infrastructure your organization operates, in public beta on Team and Enterprise plans; **auto mode** becomes the default permission mode for new sessions on Pro, Max, and Team plans starting August 14; and the **VS Code extension** gets Focus view.
 
-[Read the Week 32 digest →](/docs/en/whats-new/2026-w32.md)
+[Read the Week 32 digest →](https://code.claude.com/docs/en/whats-new/2026-w32.md)
 
 **Week 30**
 
@@ -76,7 +76,7 @@ July 20–24, 2026
 
 Also this week: **Claude Code Desktop** opens an iOS Simulator pane in public beta so Claude can run your app and tap through it while you watch; the **Claude Security plugin** runs a multi-agent vulnerability scan of your codebase and turns the findings you pick into patches you apply yourself; and **`/code-review`** runs as a background subagent.
 
-[Read the Week 30 digest →](/docs/en/whats-new/2026-w30.md)
+[Read the Week 30 digest →](https://code.claude.com/docs/en/whats-new/2026-w30.md)
 
 **Week 29**
 
@@ -86,7 +86,7 @@ July 13–17, 2026
 
 Also this week: **screen reader mode** replaces the visual terminal interface with plain, linear text for screen readers such as VoiceOver and NVDA; **`/fork`** copies your conversation into a new background session while you keep working; and **auto mode** no longer needs an opt-in variable on Amazon Bedrock, Google Cloud's Agent Platform, and Microsoft Foundry.
 
-[Read the Week 29 digest →](/docs/en/whats-new/2026-w29.md)
+[Read the Week 29 digest →](https://code.claude.com/docs/en/whats-new/2026-w29.md)
 
 **Week 28**
 
@@ -96,7 +96,7 @@ July 6–10, 2026
 
 Also this week: **`/doctor`** is a full setup checkup that diagnoses issues and can fix them, with `/checkup` as its alias; **auto mode** blocks transcript tampering and asks before `rm -rf` on unresolved variables; and **agent view rows** show a colored state word and a classifier-written headline.
 
-[Read the Week 28 digest →](/docs/en/whats-new/2026-w28.md)
+[Read the Week 28 digest →](https://code.claude.com/docs/en/whats-new/2026-w28.md)
 
 **Week 27**
 
@@ -106,7 +106,7 @@ June 29 – July 3, 2026
 
 Also this week: **Claude in Chrome** is generally available on all direct Anthropic plans; **subagents run in the background by default** so Claude keeps working while they run; **Claude Desktop on Linux** lands in beta on Ubuntu and Debian; and **`/radio`** tunes into Claude FM lo-fi radio.
 
-[Read the Week 27 digest →](/docs/en/whats-new/2026-w27.md)
+[Read the Week 27 digest →](https://code.claude.com/docs/en/whats-new/2026-w27.md)
 
 **Week 26**
 
@@ -116,7 +116,7 @@ June 22–26, 2026
 
 Also this week: **shell mode responds to command output** (`! npm test` gets an explanation without a second prompt); **`/rewind`** can resume a conversation from before `/clear` was run; and **background subagents** now surface permission prompts in the main session instead of auto-denying.
 
-[Read the Week 26 digest →](/docs/en/whats-new/2026-w26.md)
+[Read the Week 26 digest →](https://code.claude.com/docs/en/whats-new/2026-w26.md)
 
 **Week 25**
 
@@ -126,7 +126,7 @@ June 15–19, 2026
 
 Also this week: **deny and ask rules match tool parameters** with `Tool(param:value)`, for example `Agent(model:opus)`; **`/config key=value`** sets any setting from the prompt, in `-p` mode, and from Remote Control; and **auto mode blocks destructive git commands** when you didn't ask to discard local work.
 
-[Read the Week 25 digest →](/docs/en/whats-new/2026-w25.md)
+[Read the Week 25 digest →](https://code.claude.com/docs/en/whats-new/2026-w25.md)
 
 **Week 24**
 
@@ -136,7 +136,7 @@ June 8–12, 2026
 
 Also this week: **sub-agents can spawn their own sub-agents** (background chains are capped at five levels deep); **`--safe-mode`** starts Claude Code with all customizations disabled for troubleshooting; and **`fallbackModel`** configures up to three fallback models tried in order.
 
-[Read the Week 24 digest →](/docs/en/whats-new/2026-w24.md)
+[Read the Week 24 digest →](https://code.claude.com/docs/en/whats-new/2026-w24.md)
 
 **Week 23**
 
@@ -146,7 +146,7 @@ June 1–5, 2026
 
 Also this week: **safer automatic edits** prompt before writing files that can run code in `acceptEdits` mode; **`/plugin list`** prints your installed plugins inline; and **version requirements** let managed deployments require an approved Claude Code version range.
 
-[Read the Week 23 digest →](/docs/en/whats-new/2026-w23.md)
+[Read the Week 23 digest →](https://code.claude.com/docs/en/whats-new/2026-w23.md)
 
 **Week 22**
 
@@ -156,7 +156,7 @@ May 25–29, 2026
 
 Also this week: **dynamic workflows** orchestrate dozens to hundreds of subagents from a script Claude writes; the **security-guidance plugin** reviews Claude's changes for vulnerabilities as it works; and **fast mode** runs on Opus 4.8 at \$10/\$50 per MTok.
 
-[Read the Week 22 digest →](/docs/en/whats-new/2026-w22.md)
+[Read the Week 22 digest →](https://code.claude.com/docs/en/whats-new/2026-w22.md)
 
 **Week 21**
 
@@ -166,7 +166,7 @@ May 18–22, 2026
 
 Also this week: **`/usage`** breaks down what drives your plan limits by skill, subagent, plugin, and MCP server; the new **`/code-review`** command reports correctness bugs; and **background sessions** appear in `/resume` and stay alive when pinned.
 
-[Read the Week 21 digest →](/docs/en/whats-new/2026-w21.md)
+[Read the Week 21 digest →](https://code.claude.com/docs/en/whats-new/2026-w21.md)
 
 **Week 20**
 
@@ -176,7 +176,7 @@ May 11–15, 2026
 
 Also this week: **`/goal`** keeps Claude working across turns until a completion condition holds; **fast mode** now runs on Opus 4.7 by default; and the **Rewind menu** can compress earlier context with "Summarize up to here".
 
-[Read the Week 20 digest →](/docs/en/whats-new/2026-w20.md)
+[Read the Week 20 digest →](https://code.claude.com/docs/en/whats-new/2026-w20.md)
 
 **Week 19**
 
@@ -186,7 +186,7 @@ May 4–8, 2026
 
 Also this week: **`worktree.baseRef`** chooses whether new worktrees branch from the remote default or local `HEAD`; **auto mode hard deny rules** block actions unconditionally regardless of allow exceptions; and **hooks see the active effort level** via `effort.level` and `$CLAUDE_EFFORT`.
 
-[Read the Week 19 digest →](/docs/en/whats-new/2026-w19.md)
+[Read the Week 19 digest →](https://code.claude.com/docs/en/whats-new/2026-w19.md)
 
 **Week 18**
 
@@ -196,7 +196,7 @@ April 27 – May 1, 2026
 
 Also this week: **`claude ultrareview`** brings cloud code review to CI and scripts; **`claude project purge`** cleans up local state for a project; and pasting a **PR URL into `/resume`** finds the session that created it.
 
-[Read the Week 18 digest →](/docs/en/whats-new/2026-w18.md)
+[Read the Week 18 digest →](https://code.claude.com/docs/en/whats-new/2026-w18.md)
 
 **Week 17**
 
@@ -206,7 +206,7 @@ April 20–24, 2026
 
 Also this week: **session recap** shows you what happened while a terminal was unfocused; **custom themes** let you build and ship color palettes from `/theme` or a plugin; and **Claude Code on the web** gets a redesign with a new sessions sidebar and drag-and-drop layout.
 
-[Read the Week 17 digest →](/docs/en/whats-new/2026-w17.md)
+[Read the Week 17 digest →](https://code.claude.com/docs/en/whats-new/2026-w17.md)
 
 **Week 16**
 
@@ -216,7 +216,7 @@ April 13–17, 2026
 
 Also this week: **Routines** on Claude Code on the web fire templated cloud agents from a schedule, GitHub event, or API call; **mobile push notifications** ping your phone when a long task finishes or Claude needs you; `/usage` shows what's driving your limits; and the CLI moves to native binaries.
 
-[Read the Week 16 digest →](/docs/en/whats-new/2026-w16.md)
+[Read the Week 16 digest →](https://code.claude.com/docs/en/whats-new/2026-w16.md)
 
 **Week 15**
 
@@ -226,7 +226,7 @@ April 6–10, 2026
 
 Also this week: the **Monitor** tool streams background events into the conversation so Claude can tail logs and react live, `/loop` self-paces when you omit the interval, `/team-onboarding` packages your setup into a replayable guide, and `/autofix-pr` turns on PR auto-fix from your terminal.
 
-[Read the Week 15 digest →](/docs/en/whats-new/2026-w15.md)
+[Read the Week 15 digest →](https://code.claude.com/docs/en/whats-new/2026-w15.md)
 
 **Week 14**
 
@@ -236,7 +236,7 @@ March 30 – April 3, 2026
 
 Also this week: `/powerup` interactive lessons, flicker-free alt-screen rendering, a per-tool MCP result-size override up to 500K, and plugin executables on the Bash tool's `PATH`.
 
-[Read the Week 14 digest →](/docs/en/whats-new/2026-w14.md)
+[Read the Week 14 digest →](https://code.claude.com/docs/en/whats-new/2026-w14.md)
 
 **Week 13**
 
@@ -246,4 +246,4 @@ March 23–27, 2026
 
 Also this week: computer use in the Desktop app, PR auto-fix on Web, transcript search with `/`, a native PowerShell tool for Windows, and conditional `if` hooks.
 
-[Read the Week 13 digest →](/docs/en/whats-new/2026-w13.md)
+[Read the Week 13 digest →](https://code.claude.com/docs/en/whats-new/2026-w13.md)

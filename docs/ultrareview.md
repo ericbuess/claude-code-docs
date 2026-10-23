@@ -10,7 +10,7 @@
 >
 > Ultrareview is a research preview feature. The feature, pricing, and availability may change based on feedback. The command is `/code-review ultra`. When ultrareview is available to your account, `/ultrareview` is an alias.
 
-Ultrareview is a deep code review that runs as a [cloud session](/docs/en/claude-code-on-the-web.md) on Anthropic's infrastructure. When you run `/code-review ultra`, Claude Code launches a fleet of reviewer agents in a cloud sandbox to find bugs in your branch or pull request.
+Ultrareview is a deep code review that runs as a [cloud session](https://code.claude.com/docs/en/claude-code-on-the-web.md) on Anthropic's infrastructure. When you run `/code-review ultra`, Claude Code launches a fleet of reviewer agents in a cloud sandbox to find bugs in your branch or pull request.
 
 Compared to a local `/code-review`, ultrareview offers:
 
@@ -18,7 +18,7 @@ Compared to a local `/code-review`, ultrareview offers:
 * **Broader coverage**: a larger fleet of reviewer agents explores the change in parallel, which surfaces issues that a local review can miss
 * **No local resource use**: the review runs entirely in a cloud sandbox, so your terminal stays free for other work while it runs
 
-Ultrareview requires authentication with a claude.ai account because it runs as a cloud session on Anthropic's infrastructure. If you are signed in with an API key only, run `/login` and authenticate with claude.ai first. Ultrareview is not available when using Claude Code with Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry, and it is not available to organizations that have enabled Zero Data Retention or have the [HIPAA configuration](/docs/en/hipaa-setup.md) applied. In these cases, `/code-review ultra` runs a local review in your session instead. Organizations that use [customer-managed encryption keys](https://platform.claude.com/docs/en/manage-claude/cmek) (CMEK) can't run ultrareview. To review your changes locally, run `/code-review`.
+Ultrareview requires authentication with a claude.ai account because it runs as a cloud session on Anthropic's infrastructure. If you are signed in with an API key only, run `/login` and authenticate with claude.ai first. Ultrareview is not available when using Claude Code with Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry, and it is not available to organizations that have enabled Zero Data Retention or have the [HIPAA configuration](https://code.claude.com/docs/en/hipaa-setup.md) applied. In these cases, `/code-review ultra` runs a local review in your session instead. Organizations that use [customer-managed encryption keys](https://platform.claude.com/docs/en/manage-claude/cmek) (CMEK) can't run ultrareview. To review your changes locally, run `/code-review`.
 
 ## Run ultrareview from the CLI
 
@@ -30,7 +30,7 @@ Start a review from any git repository:
 
 Without arguments, ultrareview reviews the diff between your current branch and the default branch, including uncommitted and staged changes.
 
-For a branch review, Claude Code bundles the repository state and uploads it to a cloud sandbox under the rules for [uploading a local repository to a cloud session](/docs/en/claude-code-on-the-web.md#send-local-repositories-without-github), which cover the size limits, the checkout requirements, and what happens to uncommitted changes in files named like credentials or keys, such as `.env` and `*.tfvars` files. When you [review a pull request](#review-a-pull-request), Claude Code uploads nothing from your machine.
+For a branch review, Claude Code bundles the repository state and uploads it to a cloud sandbox under the rules for [uploading a local repository to a cloud session](https://code.claude.com/docs/en/claude-code-on-the-web.md#send-local-repositories-without-github), which cover the size limits, the checkout requirements, and what happens to uncommitted changes in files named like credentials or keys, such as `.env` and `*.tfvars` files. When you [review a pull request](#review-a-pull-request), Claude Code uploads nothing from your machine.
 
 Before launching, Claude Code shows a confirmation dialog with the review scope, your remaining free runs, and the estimated cost; for a branch review, the scope includes the file and line count. After you confirm, the review continues in the background while you keep using your session.
 
@@ -58,11 +58,11 @@ To review a pull request on `github.com` instead of a local branch, pass the PR 
 
 The command also accepts `#1234`, `PR 1234`, and pasted PR URLs; a pasted URL must point to the repository in your current directory.
 
-PR mode needs a repository on `github.com`. For a repository on a [GitHub Enterprise Server](/docs/en/github-enterprise-server.md) instance, run `/code-review ultra` without a PR number to review your local branch instead.
+PR mode needs a repository on `github.com`. For a repository on a [GitHub Enterprise Server](https://code.claude.com/docs/en/github-enterprise-server.md) instance, run `/code-review ultra` without a PR number to review your local branch instead.
 
 In PR mode, the cloud sandbox clones the pull request from `github.com` instead of uploading your working tree. It uses the GitHub account connected to your Claude account, so that account needs read access to the repository.
 
-Run [`/web-setup`](/docs/en/web-quickstart#connect-from-your-terminal) to connect your GitHub CLI login to your Claude account.
+Run [`/web-setup`](https://code.claude.com/docs/en/web-quickstart#connect-from-your-terminal) to connect your GitHub CLI login to your Claude account.
 
 ### Post findings to the pull request
 
@@ -73,7 +73,7 @@ Claude Code never posts unless you choose to on that run, and `--no-post` is the
 * **Interactive**: in the launch dialog, select **Run and post the findings to the PR as me**. If you add `--post` to the command, as in `/code-review ultra 1234 --post`, Claude Code preselects that choice and still asks before launching.
 * **Non-interactive**: run the [`claude ultrareview` subcommand](#run-ultrareview-non-interactively) with `--post`. You consent to the post by running the subcommand with the flag, so Claude Code posts without asking. In a `claude -p '/code-review ultra'` run, Claude Code exits before the findings arrive, so it posts nothing; use the subcommand instead.
 
-Claude Code doesn't post from your machine. It sends the review's session ID to the Anthropic API, which posts the review's stored findings as the comment through the GitHub account you've connected to Claude. Posting requires the same claude.ai sign-in as the review itself, and it isn't available on third-party providers or when you set [`CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC`](/docs/en/env-vars).
+Claude Code doesn't post from your machine. It sends the review's session ID to the Anthropic API, which posts the review's stored findings as the comment through the GitHub account you've connected to Claude. Posting requires the same claude.ai sign-in as the review itself, and it isn't available on third-party providers or when you set [`CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC`](https://code.claude.com/docs/en/env-vars).
 
 In an interactive session, Claude Code starts the post when the findings arrive, so keep the session open until the review finishes. Claude Code keeps the posting choice only in that session. If the session ends before the review finishes, Claude Code posts nothing, even if you resume the conversation later.
 
@@ -103,14 +103,14 @@ Claude Code treats your text as a note only when it has more than one word and i
 
 Ultrareview checks the diff before any review work runs and tells you when it can't review it as-is:
 
-* **Diff too large**: a branch review can include up to 500 changed files and 8,000 changed lines by default. The exact values can change, and the [refusal](/docs/en/errors.md#diff-is-too-large-for-ultrareview) names the ones in effect, the size of your diff, and the files with the most changed lines. Claude Code refuses a too-large pull request the same way, naming its file and line counts but not the per-file breakdown
+* **Diff too large**: a branch review can include up to 500 changed files and 8,000 changed lines by default. The exact values can change, and the [refusal](https://code.claude.com/docs/en/errors.md#diff-is-too-large-for-ultrareview) names the ones in effect, the size of your diff, and the files with the most changed lines. Claude Code refuses a too-large pull request the same way, naming its file and line counts but not the per-file breakdown
 * **Nothing to review**: when the diff against the base is empty, ultrareview refuses and names the branch or commit it compared against and the case you're in, such as being on the base branch itself with nothing uncommitted, or a branch whose commits are all part of the base already. It also suggests the way out for that case, such as switching to the branch with your work, staging or committing local edits, or passing a different base
 * **First commit**: a repository's first commit has nothing earlier to compare with, so ultrareview reviews every file in it after you confirm in the launch dialog. If you have untracked files, it refuses instead and tells you to `git add` the ones you want reviewed. The same size limits apply.
 
   A first commit is reviewed whole only after that confirmation, so the `claude ultrareview` subcommand and `claude -p` refuse it and point you to an interactive session instead. Requires Claude Code v2.1.277 or later
 * **No merge base**: when your branch shares no history with the base branch, or the repository has no base branch to compare with, ultrareview reviews every tracked file in the repository instead. The fallback requires a full clone and applies the same size limits. It launches only when you confirm in the launch dialog or run the `claude ultrareview` subcommand yourself. In `claude -p` and anywhere else neither happens, ultrareview refuses, says the review would cover every file, and points you to an interactive session.
 
-  On a checkout with no branches or other refs, such as a detached HEAD created by checking out `FETCH_HEAD` after fetching a URL, Claude Code [refuses the review](/docs/en/errors.md#your-checkout-has-no-branches) and suggests creating a branch first
+  On a checkout with no branches or other refs, such as a detached HEAD created by checking out `FETCH_HEAD` after fetching a URL, Claude Code [refuses the review](https://code.claude.com/docs/en/errors.md#your-checkout-has-no-branches) and suggests creating a branch first
 
 ## Pricing and free runs
 
@@ -139,7 +139,7 @@ Use `/tasks` to see running and completed reviews, open the detail view for a re
 
 Claude can also tell you that a review was stopped or that its session wasn't found:
 
-* If the review's cloud session is stopped or [archived](/docs/en/claude-code-on-the-web.md#archive-sessions) on claude.ai before the review finishes, Claude tells you it was stopped.
+* If the review's cloud session is stopped or [archived](https://code.claude.com/docs/en/claude-code-on-the-web.md#archive-sessions) on claude.ai before the review finishes, Claude tells you it was stopped.
 * If the review's cloud session was deleted, or you've signed in to a different Claude account or organization since launching it, Claude tells you the session wasn't found.
 * If you switched accounts, the review may still finish under the account that started it. If the review is still running, sign back in as that account and resume the conversation with `claude --resume` to re-attach it.
 
@@ -186,13 +186,13 @@ With `--post`, the subcommand starts the post right after printing the findings,
 * If the run fails, is stopped, or times out, the subcommand posts nothing.
 * If the review completes but the comment isn't posted, Claude Code prints the reason to stderr, and the findings stay on stdout so you can post them by hand.
 
-For automatic reviews on GitHub pull requests, [Code Review](/docs/en/code-review.md) integrates with your repository directly and posts findings as inline PR comments without a CLI step.
+For automatic reviews on GitHub pull requests, [Code Review](https://code.claude.com/docs/en/code-review.md) integrates with your repository directly and posts findings as inline PR comments without a CLI step.
 
 ### Trust the folder before the review runs
 
-When `claude ultrareview` asks `Trust <folder>? [y/N]`, answer `y` to [trust the folder](/docs/en/permissions.md#project-allow-rules-and-workspace-trust). Trust it only if you trust its code, because git and Claude Code can then run programs named in its git configuration and project settings.
+When `claude ultrareview` asks `Trust <folder>? [y/N]`, answer `y` to [trust the folder](https://code.claude.com/docs/en/permissions.md#project-allow-rules-and-workspace-trust). Trust it only if you trust its code, because git and Claude Code can then run programs named in its git configuration and project settings.
 
-When it can't ask you, such as in a CI job or with output sent to a file, it exits with [`Error: Workspace not trusted`](/docs/en/errors#workspace-not-trusted-when-running-claude-ultrareview). Append `--trust-workspace` to trust the folder for that run:
+When it can't ask you, such as in a CI job or with output sent to a file, it exits with [`Error: Workspace not trusted`](https://code.claude.com/docs/en/errors#workspace-not-trusted-when-running-claude-ultrareview). Append `--trust-workspace` to trust the folder for that run:
 
 ```bash theme={null}
 claude ultrareview 1234 --trust-workspace
@@ -217,5 +217,5 @@ Use `/code-review` for fast feedback as you work, or pass a PR number to review 
 
 ## Related resources
 
-* [Use Claude Code in the cloud](/docs/en/claude-code-on-the-web.md): learn how cloud sessions and cloud sandboxes work
-* [Manage costs effectively](/docs/en/costs.md): track usage and set spending limits
+* [Use Claude Code in the cloud](https://code.claude.com/docs/en/claude-code-on-the-web.md): learn how cloud sessions and cloud sandboxes work
+* [Manage costs effectively](https://code.claude.com/docs/en/costs.md): track usage and set spending limits

@@ -28,7 +28,7 @@ To get the most out of prefix matching, Claude Code orders each request so conte
 
 A change to the conversation layer leaves the system prompt and project context cached. A change to the system prompt invalidates everything, because all later content now sits behind a different prefix. The third column gives common triggers rather than an exhaustive list, and the sections below cover the full set.
 
-The prefix-match rule explains most of the behaviors on this page. [Plan mode](/docs/en/permission-modes.md#analyze-before-you-edit-with-plan-mode) and [skill loading](/docs/en/skills.md), for example, append their instructions as conversation messages, so the cached prefix stays intact.
+The prefix-match rule explains most of the behaviors on this page. [Plan mode](https://code.claude.com/docs/en/permission-modes.md#analyze-before-you-edit-with-plan-mode) and [skill loading](https://code.claude.com/docs/en/skills.md), for example, append their instructions as conversation messages, so the cached prefix stays intact.
 
 Two settings don't appear in the layer table but still affect what stays cached:
 
@@ -43,22 +43,22 @@ Two settings don't appear in the layer table but still affect what stays cached:
 
 Caching happens server-side, in whichever infrastructure serves your model. Where that is depends on how you authenticate:
 
-* **API key, Claude subscription, or [Claude Platform on AWS](/docs/en/claude-platform-on-aws.md)**: the cache lives in Anthropic's infrastructure, accessed through the [Claude API](https://platform.claude.com/docs)
+* **API key, Claude subscription, or [Claude Platform on AWS](https://code.claude.com/docs/en/claude-platform-on-aws.md)**: the cache lives in Anthropic's infrastructure, accessed through the [Claude API](https://platform.claude.com/docs)
 * **Amazon Bedrock or Google Cloud's Agent Platform**: the cache lives in your cloud provider's serving infrastructure
 * **Microsoft Foundry**: depends on the deployment's [hosting option](https://platform.claude.com/docs/en/build-with-claude/claude-in-microsoft-foundry#hosting-options). Hosted on Azure deployments are served on Azure infrastructure; Hosted on Anthropic deployments are served on Anthropic's infrastructure
-* **Custom `ANTHROPIC_BASE_URL` or [LLM gateway](/docs/en/llm-gateway)**: the cache lives wherever your requests are forwarded, and whether caching works depends on the gateway
+* **Custom `ANTHROPIC_BASE_URL` or [LLM gateway](https://code.claude.com/docs/en/llm-gateway)**: the cache lives wherever your requests are forwarded, and whether caching works depends on the gateway
 
-Claude Code also appends system context mid-conversation, such as file-change notices, and marks that block for caching on every provider and connection unless you set [`CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS`](/docs/en/llm-gateway-protocol#disable-pre-release-capabilities), in which case that block is sent uncached.
+Claude Code also appends system context mid-conversation, such as file-change notices, and marks that block for caching on every provider and connection unless you set [`CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS`](https://code.claude.com/docs/en/llm-gateway-protocol#disable-pre-release-capabilities), in which case that block is sent uncached.
 
-At the provider's own endpoint, Amazon Bedrock and its [Mantle endpoint](/docs/en/amazon-bedrock.md#use-the-mantle-endpoint), Google Cloud's Agent Platform, and Microsoft Foundry cache the block the same way the Claude API does.
+At the provider's own endpoint, Amazon Bedrock and its [Mantle endpoint](https://code.claude.com/docs/en/amazon-bedrock.md#use-the-mantle-endpoint), Google Cloud's Agent Platform, and Microsoft Foundry cache the block the same way the Claude API does.
 
-When your requests pass through an [LLM gateway](/docs/en/llm-gateway), a custom `ANTHROPIC_BASE_URL`, or a cloud provider base-URL override such as [`ANTHROPIC_BEDROCK_BASE_URL`](/docs/en/env-vars), what stays cached depends on how the gateway handles the [`cache_control` markers](https://platform.claude.com/docs/en/build-with-claude/prompt-caching#explicit-cache-breakpoints) Claude Code sends:
+When your requests pass through an [LLM gateway](https://code.claude.com/docs/en/llm-gateway), a custom `ANTHROPIC_BASE_URL`, or a cloud provider base-URL override such as [`ANTHROPIC_BEDROCK_BASE_URL`](https://code.claude.com/docs/en/env-vars), what stays cached depends on how the gateway handles the [`cache_control` markers](https://platform.claude.com/docs/en/build-with-claude/prompt-caching#explicit-cache-breakpoints) Claude Code sends:
 
 * **Forwards them unchanged**: the block and your conversation cache the same as at the provider's own endpoint.
 * **Rejects the marked request with a `400` error naming `cache_control`**: Claude Code re-sends the request with the marker moved off the block and onto your last conversation message, and keeps it there until Claude Code exits. The block bills as uncached input; your conversation stays cached.
 * **Removes the markers while returning success**: your entire conversation history bills as uncached input on every turn. A gateway that converts block-form system content to a plain string drops the marker the same way.
 
-For what each provider stores and processes, see [data usage](/docs/en/data-usage.md). Wherever the cache lives, entries expire after a period of inactivity, and [Cache lifetime](#cache-lifetime) below covers the TTL and how to extend it.
+For what each provider stores and processes, see [data usage](https://code.claude.com/docs/en/data-usage.md). Wherever the cache lives, entries expire after a period of inactivity, and [Cache lifetime](#cache-lifetime) below covers the TTL and how to extend it.
 
 ## Actions that invalidate the cache
 
@@ -76,40 +76,40 @@ These actions can cause the next request to miss part or all of the cache. You s
 
 ### Switching models
 
-Each model has its own cache. Switching with [`/model`](/docs/en/model-config#setting-your-model) means the next request reads the entire conversation history with no cache hits, even though the content is identical.
+Each model has its own cache. Switching with [`/model`](https://code.claude.com/docs/en/model-config#setting-your-model) means the next request reads the entire conversation history with no cache hits, even though the content is identical.
 
 When you run `/model` at the terminal, Claude Code asks you to confirm the switch only while the cache is still warm and the new model isn't the one that produced the last response. The cache stays warm for one [cache TTL](#cache-lifetime) after Claude Code last sent a request in this conversation or Claude last responded. Once that time passes, the cache has expired, so Claude Code switches without asking.
 
 Before v2.1.238, Claude Code didn't check the cache TTL and asked even after the cache had expired.
 
-You can also require this confirmation or skip it with a [PreModelSwitch hook](/docs/en/hooks.md#premodelswitch-decision-control).
+You can also require this confirmation or skip it with a [PreModelSwitch hook](https://code.claude.com/docs/en/hooks.md#premodelswitch-decision-control).
 
-The [`opusplan` model setting](/docs/en/model-config#opusplan-model-setting) resolves to Opus during plan mode and Sonnet during execution, so each plan-mode toggle is a model switch and starts a fresh cache.
+The [`opusplan` model setting](https://code.claude.com/docs/en/model-config#opusplan-model-setting) resolves to Opus during plan mode and Sonnet during execution, so each plan-mode toggle is a model switch and starts a fresh cache.
 
-[Automatic model fallback](/docs/en/model-config.md#automatic-model-fallback) on Fable models, Opus 5.5, Sonnet 5.5, and Opus 5 is also a model switch. When a safety classifier flags a request in a category that has a fallback model and Claude Code re-runs the request on that model, the session continues there.
+[Automatic model fallback](https://code.claude.com/docs/en/model-config.md#automatic-model-fallback) on Fable models, Opus 5.5, Sonnet 5.5, and Opus 5 is also a model switch. When a safety classifier flags a request in a category that has a fallback model and Claude Code re-runs the request on that model, the session continues there.
 
-When a skill or command's frontmatter names a [`model`](/docs/en/skills#frontmatter-reference) other than the session's current model, that turn is also a model switch: the next request reads the entire conversation history with no cache hits. The session model resumes on your next prompt. A `context: fork` skill sets the [forked subagent's model](/docs/en/skills.md#run-skills-in-a-subagent) instead.
+When a skill or command's frontmatter names a [`model`](https://code.claude.com/docs/en/skills#frontmatter-reference) other than the session's current model, that turn is also a model switch: the next request reads the entire conversation history with no cache hits. The session model resumes on your next prompt. A `context: fork` skill sets the [forked subagent's model](https://code.claude.com/docs/en/skills.md#run-skills-in-a-subagent) instead.
 
 ### Changing effort level
 
-On most models, changing the [effort level](/docs/en/model-config.md#adjust-effort-level) mid-session means the next request reads the entire conversation history with no cache hits. While the cache is still warm, Claude Code asks you to confirm the change first.
+On most models, changing the [effort level](https://code.claude.com/docs/en/model-config.md#adjust-effort-level) mid-session means the next request reads the entire conversation history with no cache hits. While the cache is still warm, Claude Code asks you to confirm the change first.
 
-On Opus 5.5, Sonnet 5.5, Haiku 5.5, and Fable 5.1 with an API key or a Claude subscription, changing effort keeps the cache, and Claude Code applies the new level without asking. This doesn't apply on Amazon Bedrock, Google Cloud's Agent Platform, or a [Claude apps gateway](/docs/en/claude-apps-gateway), or when you set [`CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS`](/docs/en/llm-gateway-protocol#disable-pre-release-capabilities) or your organization has a HIPAA configuration.
+On Opus 5.5, Sonnet 5.5, Haiku 5.5, and Fable 5.1 with an API key or a Claude subscription, changing effort keeps the cache, and Claude Code applies the new level without asking. This doesn't apply on Amazon Bedrock, Google Cloud's Agent Platform, or a [Claude apps gateway](https://code.claude.com/docs/en/claude-apps-gateway), or when you set [`CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS`](https://code.claude.com/docs/en/llm-gateway-protocol#disable-pre-release-capabilities) or your organization has a HIPAA configuration.
 
 Before v2.1.260, changing effort on Fable 5.1 with an API key or a Claude subscription also invalidated the cache.
 
 ### Turning on fast mode
 
-Enabling [fast mode](/docs/en/fast-mode.md) adds a request header that is part of the cache key, so the first request Claude Code sends with fast mode on reads the entire conversation history with no cache hits. Claude Code sets that header once when a turn starts and keeps it for the whole turn, so when you turn fast mode on while Claude is working, the cache miss from the header happens on the first request of your next turn. Those uncached input tokens are billed at [fast mode rates](/docs/en/fast-mode.md#understand-the-cost-tradeoff), which is why turning it on at the start of a session costs less than turning it on deep into a long one. If your current model doesn't support fast mode, enabling fast mode also [switches your model](#switching-models), and that switch starts a fresh cache on its own from the next request in the running turn.
+Enabling [fast mode](https://code.claude.com/docs/en/fast-mode.md) adds a request header that is part of the cache key, so the first request Claude Code sends with fast mode on reads the entire conversation history with no cache hits. Claude Code sets that header once when a turn starts and keeps it for the whole turn, so when you turn fast mode on while Claude is working, the cache miss from the header happens on the first request of your next turn. Those uncached input tokens are billed at [fast mode rates](https://code.claude.com/docs/en/fast-mode.md#understand-the-cost-tradeoff), which is why turning it on at the start of a session costs less than turning it on deep into a long one. If your current model doesn't support fast mode, enabling fast mode also [switches your model](#switching-models), and that switch starts a fresh cache on its own from the next request in the running turn.
 
-The cost applies once per conversation. After the first fast mode turn, Claude Code keeps sending the header and varies only the request's speed setting, which is not part of the cache key. Turning fast mode off, the [automatic fallback to standard speed](/docs/en/fast-mode.md#handle-rate-limits) after a rate limit, and turning it back on later all keep the cache. If you [run out of usage credits](/docs/en/fast-mode.md#handle-rate-limits) mid-session, Claude Code retries each rejected fast mode request at standard speed the same way, so this fallback also keeps the cache. `/clear` and `/compact` reset this, since they rebuild the cache at those points anyway.
+The cost applies once per conversation. After the first fast mode turn, Claude Code keeps sending the header and varies only the request's speed setting, which is not part of the cache key. Turning fast mode off, the [automatic fallback to standard speed](https://code.claude.com/docs/en/fast-mode.md#handle-rate-limits) after a rate limit, and turning it back on later all keep the cache. If you [run out of usage credits](https://code.claude.com/docs/en/fast-mode.md#handle-rate-limits) mid-session, Claude Code retries each rejected fast mode request at standard speed the same way, so this fallback also keeps the cache. `/clear` and `/compact` reset this, since they rebuild the cache at those points anyway.
 
 ### Connecting or removing an MCP server
 
-Tool definitions sit in the system prompt layer, so the cache invalidates when the set of tool definitions in the request changes between turns. Toggling the [advisor tool](/docs/en/advisor.md) is an exception: its definition sits after the cache breakpoint, so enabling or disabling `/advisor` keeps the cached prefix intact. Whether an [MCP server](/docs/en/mcp.md) change does this depends on whether [tool search](/docs/en/mcp.md#scale-with-mcp-tool-search) defers the session's MCP tools, the default on supported models:
+Tool definitions sit in the system prompt layer, so the cache invalidates when the set of tool definitions in the request changes between turns. Toggling the [advisor tool](https://code.claude.com/docs/en/advisor.md) is an exception: its definition sits after the cache breakpoint, so enabling or disabling `/advisor` keeps the cached prefix intact. Whether an [MCP server](https://code.claude.com/docs/en/mcp.md) change does this depends on whether [tool search](https://code.claude.com/docs/en/mcp.md#scale-with-mcp-tool-search) defers the session's MCP tools, the default on supported models:
 
 * **Tools deferred**: Claude Code keeps the tool list from the conversation's first request for the whole conversation, so a server connecting or disconnecting mid-session doesn't disturb anything already cached. A server that finishes connecting after the first request supplies its tools as deferred definitions that Claude loads on demand.
-* **Tools loaded upfront**: adding a definition invalidates the cache, and so does removing one on purpose. This applies when tool search is [off or unavailable](/docs/en/mcp.md#configure-tool-search), such as on:
+* **Tools loaded upfront**: adding a definition invalidates the cache, and so does removing one on purpose. This applies when tool search is [off or unavailable](https://code.claude.com/docs/en/mcp.md#configure-tool-search), such as on:
   * Google Cloud's Agent Platform models earlier than Opus 4.5, Sonnet 4.5, and Haiku 4.5
   * A Microsoft Foundry [deployment hosted on Azure](https://platform.claude.com/docs/en/build-with-claude/claude-in-microsoft-foundry#hosting-options) once Claude Code detects that the deployment rejects tool search
 
@@ -117,9 +117,9 @@ Without tool search, whether a mid-session server change invalidates the cache d
 
 | Mid-session change | Cache | Tool definitions in the next request |
 | - | - | - |
-| A server connects, or a [dynamic tool update](/docs/en/mcp.md#dynamic-tool-updates) adds tools | Invalidated | The new definitions are added |
-| A server drops out with no action on your part, such as a stdio server's process exiting | Kept | The server's definitions stay unchanged. A call to one of its tools returns an error instead of running, unless Claude Code [starts the server again](/docs/en/mcp.md#stdio-servers-that-exit-or-fail-to-start) for that call |
-| A remote server [reconnects automatically](/docs/en/mcp.md#automatic-reconnection) after its connection drops | Kept, unless a request sent while the server reconnects adds the `WaitForMcpServers` tool, which invalidates the cache once | The server's definitions stay unchanged. A request sent while the server reconnects can add `WaitForMcpServers` when the conversation hasn't listed it yet, and the tool then stays listed for the rest of the conversation |
+| A server connects, or a [dynamic tool update](https://code.claude.com/docs/en/mcp.md#dynamic-tool-updates) adds tools | Invalidated | The new definitions are added |
+| A server drops out with no action on your part, such as a stdio server's process exiting | Kept | The server's definitions stay unchanged. A call to one of its tools returns an error instead of running, unless Claude Code [starts the server again](https://code.claude.com/docs/en/mcp.md#stdio-servers-that-exit-or-fail-to-start) for that call |
+| A remote server [reconnects automatically](https://code.claude.com/docs/en/mcp.md#automatic-reconnection) after its connection drops | Kept, unless a request sent while the server reconnects adds the `WaitForMcpServers` tool, which invalidates the cache once | The server's definitions stay unchanged. A request sent while the server reconnects can add `WaitForMcpServers` when the conversation hasn't listed it yet, and the tool then stays listed for the rest of the conversation |
 | You remove a tool on purpose, such as with a [deny rule](#denying-an-entire-tool) or by disabling its server in `/mcp` | Invalidated | The definition is removed |
 
 When you resume a conversation whose tools load into the prefix, one of its MCP servers can still be connecting as the first request goes out. If the transcript recorded that server's tool definitions, that request includes them as recorded, so it doesn't change when the server finishes connecting with the same tools.
@@ -128,7 +128,7 @@ Editing your MCP config does not by itself change the cache. The new config take
 
 ### Enabling or disabling a plugin
 
-When you enable or disable a [plugin](/docs/en/plugins/overview.md), what the change costs depends on which component types the plugin provides. The cases below cover each component type, when Claude Code applies the change, and what happens when you disable a plugin again in the same session.
+When you enable or disable a [plugin](https://code.claude.com/docs/en/plugins/overview.md), what the change costs depends on which component types the plugin provides. The cases below cover each component type, when Claude Code applies the change, and what happens when you disable a plugin again in the same session.
 
 #### Plugin components that keep the cache
 
@@ -136,26 +136,26 @@ Claude Code never invalidates the cache for a plugin's skills, commands, agents,
 
 #### Plugins that provide MCP servers
 
-When you enable or disable a plugin that provides [MCP servers](/docs/en/plugins/components.md#mcp-servers), Claude Code follows the same rules as when you [connect or remove an MCP server](#connecting-or-removing-an-mcp-server).
+When you enable or disable a plugin that provides [MCP servers](https://code.claude.com/docs/en/plugins/components.md#mcp-servers), Claude Code follows the same rules as when you [connect or remove an MCP server](#connecting-or-removing-an-mcp-server).
 
 #### Code intelligence plugins
 
-When you enable a [code intelligence plugin](/docs/en/plugins/code-intelligence.md), Claude gets the [LSP tool](/docs/en/tools-reference.md#lsp-tool-behavior).
+When you enable a [code intelligence plugin](https://code.claude.com/docs/en/plugins/code-intelligence.md), Claude gets the [LSP tool](https://code.claude.com/docs/en/tools-reference.md#lsp-tool-behavior).
 
 #### When plugin changes apply
 
-A change you make in the `/plugin` menu goes through [`/reload-plugins`](/docs/en/plugins/cli-reference#reload-plugins), which Claude Code runs for you when you close the menu. You pay the cost, whether appended announcements or a full re-read, on the first turn after the change applies. Claude Code can also apply a change on its own:
+A change you make in the `/plugin` menu goes through [`/reload-plugins`](https://code.claude.com/docs/en/plugins/cli-reference#reload-plugins), which Claude Code runs for you when you close the menu. You pay the cost, whether appended announcements or a full re-read, on the first turn after the change applies. Claude Code can also apply a change on its own:
 
-* For a plugin with a `command` source, Claude Code [can reload the plugin itself](/docs/en/plugins/loading.md#when-a-command-source-re-runs).
-* When you [install a plugin from the `/plugin` interface](/docs/en/plugins/install#install-a-plugin), Claude Code can activate it during the install. The install summary tells you whether it did.
-* When you [move the session with `/cd`](/docs/en/permissions#move-the-session-to-another-directory) on v2.1.246 or later, Claude Code applies the plugins the new directory's settings enable as part of the move, without the full re-read warning that holds a `/reload-plugins`.
-* In interactive sessions, when you add or remove a plugin in a [folder of plugins](/docs/en/plugins/create.md#load-a-directory-or-archive-for-one-session) you passed with `--plugin-dir`, the change applies right away. If applying it would trigger a full re-read, Claude Code holds the change instead and shows a notice to run `/reload-plugins`. Requires Claude Code v2.1.265 or later.
+* For a plugin with a `command` source, Claude Code [can reload the plugin itself](https://code.claude.com/docs/en/plugins/loading.md#when-a-command-source-re-runs).
+* When you [install a plugin from the `/plugin` interface](https://code.claude.com/docs/en/plugins/install#install-a-plugin), Claude Code can activate it during the install. The install summary tells you whether it did.
+* When you [move the session with `/cd`](https://code.claude.com/docs/en/permissions#move-the-session-to-another-directory) on v2.1.246 or later, Claude Code applies the plugins the new directory's settings enable as part of the move, without the full re-read warning that holds a `/reload-plugins`.
+* In interactive sessions, when you add or remove a plugin in a [folder of plugins](https://code.claude.com/docs/en/plugins/create.md#load-a-directory-or-archive-for-one-session) you passed with `--plugin-dir`, the change applies right away. If applying it would trigger a full re-read, Claude Code holds the change instead and shows a notice to run `/reload-plugins`. Requires Claude Code v2.1.265 or later.
 
 When `/reload-plugins` runs and the reload would trigger a full re-read, Claude Code shows a warning and doesn't apply the reload. Run `/reload-plugins --force` to apply it anyway.
 
-`/reload-plugins` also runs in sessions without an interactive terminal, such as the desktop app, the Agent SDK, and [non-interactive mode](/docs/en/headless.md) with `-p`, when you type it into the session directly. Requires Claude Code v2.1.260 or later.
+`/reload-plugins` also runs in sessions without an interactive terminal, such as the desktop app, the Agent SDK, and [non-interactive mode](https://code.claude.com/docs/en/headless.md) with `-p`, when you type it into the session directly. Requires Claude Code v2.1.260 or later.
 
-In those sessions the reload applies everything except plugin MCP server changes, which [take effect in your next session](/docs/en/plugins/cli-reference.md#reload-plugins) and so never cost a full re-read mid-session.
+In those sessions the reload applies everything except plugin MCP server changes, which [take effect in your next session](https://code.claude.com/docs/en/plugins/cli-reference.md#reload-plugins) and so never cost a full re-read mid-session.
 
 #### Plugins you enable and then disable in one session
 
@@ -163,28 +163,28 @@ When you disable a plugin you enabled earlier in the session, Claude Code restor
 
 ### Denying an entire tool
 
-If you add a bare tool name like `Bash` or `WebFetch` as a [deny rule](/docs/en/permissions.md#manage-permissions), Claude can't call that tool from your next request on, whether you add the rule through `/permissions` or by [editing a settings file directly](/docs/en/settings.md#when-edits-take-effect). That includes a rule you add through `/permissions` in the middle of a turn.
+If you add a bare tool name like `Bash` or `WebFetch` as a [deny rule](https://code.claude.com/docs/en/permissions.md#manage-permissions), Claude can't call that tool from your next request on, whether you add the rule through `/permissions` or by [editing a settings file directly](https://code.claude.com/docs/en/settings.md#when-edits-take-effect). That includes a rule you add through `/permissions` in the middle of a turn.
 
-When [tool search](/docs/en/mcp.md#scale-with-mcp-tool-search) is active, which is the default on supported models, the request's tool definitions don't change and the cached prefix survives. When tool search is unavailable or disabled, Claude Code removes the definition from the next request, which invalidates the cache, and so does removing the rule later.
+When [tool search](https://code.claude.com/docs/en/mcp.md#scale-with-mcp-tool-search) is active, which is the default on supported models, the request's tool definitions don't change and the cached prefix survives. When tool search is unavailable or disabled, Claude Code removes the definition from the next request, which invalidates the cache, and so does removing the rule later.
 
-Only a deny rule that matches in the tool-name position blocks a tool this way: a bare tool name, the equivalent `Bash(*)` form, or a [tool-name glob](/docs/en/permissions.md#tool-name-wildcards) like `"*"`. A glob that matches only MCP tools, such as `"mcp__*"`, blocks those tools the same way. Scoped deny rules like `Bash(rm *)`, and all allow and ask rules, don't change which tools Claude sees. Claude Code checks them when Claude attempts a call, leaving the prefix intact.
+Only a deny rule that matches in the tool-name position blocks a tool this way: a bare tool name, the equivalent `Bash(*)` form, or a [tool-name glob](https://code.claude.com/docs/en/permissions.md#tool-name-wildcards) like `"*"`. A glob that matches only MCP tools, such as `"mcp__*"`, blocks those tools the same way. Scoped deny rules like `Bash(rm *)`, and all allow and ask rules, don't change which tools Claude sees. Claude Code checks them when Claude attempts a call, leaving the prefix intact.
 
 ### Compacting the conversation
 
-[Compaction](/docs/en/context-window.md#what-survives-compaction) replaces your message history with a summary. By design, this invalidates the conversation layer: the next request has a new, shorter history that doesn't share a prefix with the old one. The system prompt and project context layers can stay cached:
+[Compaction](https://code.claude.com/docs/en/context-window.md#what-survives-compaction) replaces your message history with a summary. By design, this invalidates the conversation layer: the next request has a new, shorter history that doesn't share a prefix with the old one. The system prompt and project context layers can stay cached:
 
 * **System prompt**: the next request reads this layer from the cache, unless a [resumed conversation](#resuming-a-session) kept a system prompt that is now out of date. The first time that conversation is compacted, Claude Code switches it to the current prompt, and the next request rebuilds this layer's cache once.
 * **Project context**: Claude Code reloads this layer from disk. The next request reads it from the cache only if CLAUDE.md and memory are unchanged since the session started.
 
 To produce the summary, Claude Code sends a separate request. The request repeats your conversation's system prompt, tools, and the history being summarized. It ends with a summarization instruction. While the cache is warm, that request reads your prefix from the cache. A mid-session `/compact` then costs a fraction of what the context size suggests and spends most of its time generating the summary.
 
-After a break longer than the [cache lifetime](#cache-lifetime), there is no cache left to read, so the summarization request reprocesses that history as uncached input. This is why `/compact` costs the most when you [resume an old session](/docs/en/sessions.md#resume-a-session). In both the warm and cold cases, the turn after compaction rebuilds the conversation cache for only the much shorter summary, so that turn isn't the slow part.
+After a break longer than the [cache lifetime](#cache-lifetime), there is no cache left to read, so the summarization request reprocesses that history as uncached input. This is why `/compact` costs the most when you [resume an old session](https://code.claude.com/docs/en/sessions.md#resume-a-session). In both the warm and cold cases, the turn after compaction rebuilds the conversation cache for only the much shorter summary, so that turn isn't the slow part.
 
 > [!TIP]
 >
 > Compaction works in your favor when the context you discard is content you no longer need. To choose when its overhead happens, run `/compact` at a natural break in your work, such as between tasks, instead of waiting for auto-compaction to trigger mid-task. If you've gone down a path you want to abandon entirely, [`/rewind`](#rewinding-the-conversation) to an earlier turn instead. Rewinding truncates back to a prefix that is already cached, rather than building a new one as compaction does.
 
-If you leave a long conversation idle in a terminal session while it is on the [one-hour TTL](#which-ttl-each-request-gets), Claude Code can compact it shortly before the cache expires. To turn idle compaction off, set [`idleCompaction`](/docs/en/settings-reference#idlecompaction) to `false`, which requires Claude Code v2.1.290 or later.
+If you leave a long conversation idle in a terminal session while it is on the [one-hour TTL](#which-ttl-each-request-gets), Claude Code can compact it shortly before the cache expires. To turn idle compaction off, set [`idleCompaction`](https://code.claude.com/docs/en/settings-reference#idlecompaction) to `false`, which requires Claude Code v2.1.290 or later.
 
 ### Accumulating many images
 
@@ -196,7 +196,7 @@ Removing images changes the messages that held them, so the next request reproce
 
 ### Upgrading Claude Code
 
-A new Claude Code version typically updates the system prompt or tool definitions, so the first conversation you start after an upgrade builds its cache from the top. [Auto-update](/docs/en/setup.md#auto-updates) downloads new versions in the background but applies them on the next launch, never mid-session, so you see this as an uncached first turn after restarting rather than a surprise during a session. Set `DISABLE_AUTOUPDATER=1` to control when upgrades apply.
+A new Claude Code version typically updates the system prompt or tool definitions, so the first conversation you start after an upgrade builds its cache from the top. [Auto-update](https://code.claude.com/docs/en/setup.md#auto-updates) downloads new versions in the background but applies them on the next launch, never mid-session, so you see this as an uncached first turn after restarting rather than a surprise during a session. Set `DISABLE_AUTOUPDATER=1` to control when upgrades apply.
 
 > [!NOTE]
 >
@@ -217,43 +217,43 @@ These actions either append to the end of the conversation or don't touch the re
 
 ### Editing files in your repository
 
-File contents enter context only when Claude reads them, and reads append to the conversation. Editing a file Claude previously read does not retroactively change the earlier read in history. Instead, Claude Code appends a [`<system-reminder>`](/docs/en/glossary#system-reminder) noting the file changed, and Claude re-reads it if needed.
+File contents enter context only when Claude reads them, and reads append to the conversation. Editing a file Claude previously read does not retroactively change the earlier read in history. Instead, Claude Code appends a [`<system-reminder>`](https://code.claude.com/docs/en/glossary#system-reminder) noting the file changed, and Claude re-reads it if needed.
 
 ### Editing CLAUDE.md mid-session
 
 Your project-root and user-level CLAUDE.md files are read once at session start and held in memory. Editing them mid-session does not invalidate the cache, but the edit also doesn't apply. Claude keeps working with the version that was loaded at session start. The new content loads on the next `/clear`, `/compact`, or restart.
 
-[Nested CLAUDE.md files in subdirectories](/docs/en/memory.md) and [rules with `paths:` frontmatter](/docs/en/memory#path-specific-rules) load later, on demand. Editing one yourself before it loads does take effect. After it loads, the content is part of the conversation history, so a mid-session edit doesn't retroactively change it.
+[Nested CLAUDE.md files in subdirectories](https://code.claude.com/docs/en/memory.md) and [rules with `paths:` frontmatter](https://code.claude.com/docs/en/memory#path-specific-rules) load later, on demand. Editing one yourself before it loads does take effect. After it loads, the content is part of the conversation history, so a mid-session edit doesn't retroactively change it.
 
 ### Changing permission mode
 
-Switching between [permission modes](/docs/en/permission-modes.md), such as from Manual to accept edits, does not change the system prompt or tool definitions, so mode changes are cache-safe. The exception is plan mode with the [`opusplan`](/docs/en/model-config#opusplan-model-setting) model setting, which switches the model between Opus and Sonnet as you enter or leave plan mode. That makes the mode toggle a [model switch](#switching-models).
+Switching between [permission modes](https://code.claude.com/docs/en/permission-modes.md), such as from Manual to accept edits, does not change the system prompt or tool definitions, so mode changes are cache-safe. The exception is plan mode with the [`opusplan`](https://code.claude.com/docs/en/model-config#opusplan-model-setting) model setting, which switches the model between Opus and Sonnet as you enter or leave plan mode. That makes the mode toggle a [model switch](#switching-models).
 
 ### Changing output style
 
-When you switch [output styles](/docs/en/output-styles.md) mid-session with [`/output-style`](/docs/en/output-styles#change-your-output-style), `/config`, or the `outputStyle` setting, Claude uses the new style starting with your next message. Claude Code delivers the new style's instructions as a message in the conversation, so that request still reads the system prompt and the earlier conversation from the cache.
+When you switch [output styles](https://code.claude.com/docs/en/output-styles.md) mid-session with [`/output-style`](https://code.claude.com/docs/en/output-styles#change-your-output-style), `/config`, or the `outputStyle` setting, Claude uses the new style starting with your next message. Claude Code delivers the new style's instructions as a message in the conversation, so that request still reads the system prompt and the earlier conversation from the cache.
 
 Before v2.1.251, a mid-session style switch kept the cache but didn't apply until you ran `/clear` or started a new session.
 
 ### Invoking skills and commands
 
-[Skills](/docs/en/skills.md) and [commands](/docs/en/commands.md) inject their instructions as user messages at the point of invocation. Nothing earlier in the conversation changes. A skill or command whose frontmatter names a `model` can be a [model switch](#switching-models) for that turn.
+[Skills](https://code.claude.com/docs/en/skills.md) and [commands](https://code.claude.com/docs/en/commands.md) inject their instructions as user messages at the point of invocation. Nothing earlier in the conversation changes. A skill or command whose frontmatter names a `model` can be a [model switch](#switching-models) for that turn.
 
 ### Running `/recap`
 
-[`/recap`](/docs/en/interactive-mode#session-recap) generates a summary for display in your terminal. Unlike `/compact`, it appends the summary as command output rather than replacing your message history, so the cached prefix stays intact.
+[`/recap`](https://code.claude.com/docs/en/interactive-mode#session-recap) generates a summary for display in your terminal. Unlike `/compact`, it appends the summary as command output rather than replacing your message history, so the cached prefix stays intact.
 
 ### Rewinding the conversation
 
-[`/rewind`](/docs/en/checkpointing) truncates your conversation back to an earlier turn. The remaining history is the same content the cache was built from at that point, and the system prompt and project context layers are unchanged, so the next request hits the earlier cache entry. Every turn since then has read through that prefix, which kept the entry warm even if the original turn was longer ago than the TTL.
+[`/rewind`](https://code.claude.com/docs/en/checkpointing) truncates your conversation back to an earlier turn. The remaining history is the same content the cache was built from at that point, and the system prompt and project context layers are unchanged, so the next request hits the earlier cache entry. Every turn since then has read through that prefix, which kept the entry warm even if the original turn was longer ago than the TTL.
 
 Restoring file checkpoints alongside the conversation has no separate effect on the cache. File contents enter context only when Claude reads them, the same as [editing files in your repository](#editing-files-in-your-repository).
 
 ## Resuming a session
 
-When you [resume a session](/docs/en/sessions.md#resume-a-session), Claude Code sends the whole conversation again, and the request reads from the cache whatever part of its prefix is unchanged and still within the [cache lifetime](#cache-lifetime). The layer table at the top of this page says what changes each layer.
+When you [resume a session](https://code.claude.com/docs/en/sessions.md#resume-a-session), Claude Code sends the whole conversation again, and the request reads from the cache whatever part of its prefix is unchanged and still within the [cache lifetime](#cache-lifetime). The layer table at the top of this page says what changes each layer.
 
-The system prompt would change after a [Claude Code upgrade](#upgrading-claude-code) or with different [`--append-system-prompt`](/docs/en/cli-reference#system-prompt-flags) text on the resume. By default, the resumed conversation keeps the system prompt it started with, so its history still sits behind the same prompt, and the change takes effect once the conversation is compacted or in a new conversation. [System prompt flags in resumed conversations](/docs/en/cli-reference.md#system-prompt-flags-in-resumed-conversations) covers the cases where Claude Code rebuilds the prompt on every request instead.
+The system prompt would change after a [Claude Code upgrade](#upgrading-claude-code) or with different [`--append-system-prompt`](https://code.claude.com/docs/en/cli-reference#system-prompt-flags) text on the resume. By default, the resumed conversation keeps the system prompt it started with, so its history still sits behind the same prompt, and the change takes effect once the conversation is compacted or in a new conversation. [System prompt flags in resumed conversations](https://code.claude.com/docs/en/cli-reference.md#system-prompt-flags-in-resumed-conversations) covers the cases where Claude Code rebuilds the prompt on every request instead.
 
 ## Cache lifetime
 
@@ -266,7 +266,7 @@ The time to live (TTL) controls how long a gap the cache survives. The API offer
 Claude Code decides the TTL per request, and every request falls in one of two fixed buckets:
 
 * **Main conversation**: your interactive turns, non-interactive `-p` runs, and Agent SDK turns, plus the helpers Claude Code runs inline with them
-* **Everything else**: the requests Claude Code makes outside that conversation, such as [subagents](/docs/en/sub-agents.md), [workflows](/docs/en/workflows.md), in-process [teammates](/docs/en/agent-teams.md), forks, compaction, and session titles
+* **Everything else**: the requests Claude Code makes outside that conversation, such as [subagents](https://code.claude.com/docs/en/sub-agents.md), [workflows](https://code.claude.com/docs/en/workflows.md), in-process [teammates](https://code.claude.com/docs/en/agent-teams.md), forks, compaction, and session titles
 
 Unless you choose a TTL yourself, Claude Code requests the one-hour TTL only on a Claude subscription within your plan's included usage. There it requests the hour for the main conversation, plus a small set of helper requests that Anthropic controls server-side. This table gives each bucket's default TTL under both kinds of billing.
 
@@ -281,8 +281,8 @@ Once you go over your plan's usage limit and Claude Code draws on [usage credits
 
 You can set a TTL for either bucket. Each control takes `5m` or `1h`, and Claude Code ignores any other value.
 
-* **Main conversation**: the [`promptCacheTtl`](/docs/en/settings-reference#promptcachettl) setting, or the `CLAUDE_CODE_PROMPT_CACHE_TTL` [environment variable](/docs/en/env-vars.md)
-* **Everything else**: the [`subagentPromptCacheTtl`](/docs/en/settings-reference#subagentpromptcachettl) setting, or the `CLAUDE_CODE_SUBAGENT_PROMPT_CACHE_TTL` environment variable
+* **Main conversation**: the [`promptCacheTtl`](https://code.claude.com/docs/en/settings-reference#promptcachettl) setting, or the `CLAUDE_CODE_PROMPT_CACHE_TTL` [environment variable](https://code.claude.com/docs/en/env-vars.md)
+* **Everything else**: the [`subagentPromptCacheTtl`](https://code.claude.com/docs/en/settings-reference#subagentpromptcachettl) setting, or the `CLAUDE_CODE_SUBAGENT_PROMPT_CACHE_TTL` environment variable
 
 Both settings and both environment variables require Claude Code v2.1.242 or later. If you sign in with an API key or use a cloud provider, set `promptCacheTtl` to `1h` to give the main conversation a one-hour cache. Requests outside it keep the five-minute default until you choose a TTL for that bucket too.
 
@@ -291,18 +291,18 @@ When more than one control applies, Claude Code takes the first match in this or
 1. `FORCE_PROMPT_CACHING_5M=1`, which forces five minutes for both buckets
 2. The bucket's environment variable
 3. The bucket's setting
-4. For a subagent's requests, the `cacheTtl` value in the subagent's [`experimental` frontmatter field](/docs/en/sub-agents#supported-frontmatter-fields), which requires Claude Code v2.1.248 or later. Claude Code ignores a `1h` there while your Claude subscription is using usage credits
+4. For a subagent's requests, the `cacheTtl` value in the subagent's [`experimental` frontmatter field](https://code.claude.com/docs/en/sub-agents#supported-frontmatter-fields), which requires Claude Code v2.1.248 or later. Claude Code ignores a `1h` there while your Claude subscription is using usage credits
 5. `ENABLE_PROMPT_CACHING_1H=1`, which requests one hour for both buckets
 6. The [default for the request's bucket](#which-ttl-each-request-gets)
 
-Set `FORCE_PROMPT_CACHING_5M=1` when you're debugging cache behavior, comparing the two TTLs, or overriding a longer TTL set in [managed settings](/docs/en/managed-settings.md).
+Set `FORCE_PROMPT_CACHING_5M=1` when you're debugging cache behavior, comparing the two TTLs, or overriding a longer TTL set in [managed settings](https://code.claude.com/docs/en/managed-settings.md).
 
 To confirm which TTL your main conversation's cache writes used, run `claude -p "hello" --output-format json` and read `usage.cache_creation` in the result. Claude Code reports one-hour cache writes under `ephemeral_1h_input_tokens` and five-minute cache writes under `ephemeral_5m_input_tokens`.
 
 To get one hour through a gateway or on Amazon Bedrock:
 
-* **LLM gateway you set with `ANTHROPIC_BASE_URL`**: part of the one-hour request travels in the `anthropic-beta` header, so configure the gateway to [forward that header unchanged](/docs/en/llm-gateway-protocol.md#request-headers)
-* **[Claude apps gateway](/docs/en/claude-apps-gateway)**: ask your administrator to request the one-hour TTL in a [gateway policy](/docs/en/claude-apps-gateway-config.md#one-hour-prompt-cache)
+* **LLM gateway you set with `ANTHROPIC_BASE_URL`**: part of the one-hour request travels in the `anthropic-beta` header, so configure the gateway to [forward that header unchanged](https://code.claude.com/docs/en/llm-gateway-protocol.md#request-headers)
+* **[Claude apps gateway](https://code.claude.com/docs/en/claude-apps-gateway)**: ask your administrator to request the one-hour TTL in a [gateway policy](https://code.claude.com/docs/en/claude-apps-gateway-config.md#one-hour-prompt-cache)
 * **Amazon Bedrock**: prompt caching support, minimum cacheable prefix length, and one-hour TTL availability all vary by model. If cache token counts stay at zero, check [supported models, regions, and limits](https://docs.aws.amazon.com/bedrock/latest/userguide/prompt-caching.html#prompt-caching-models) in the Amazon Bedrock documentation.
 
 ## Cache scope
@@ -311,11 +311,11 @@ In Claude Code, the cache is effectively scoped to one machine and directory. Th
 
 Sessions you run in parallel in the same directory build matching prefixes and read each other's cache. Sequential sessions share the prefix only when the git status snapshot taken at startup matches, since each conversation also carries the branch and recent commits from that snapshot.
 
-The underlying API cache is broader. Caches are isolated between organizations, and on some providers, [between workspaces within an organization](https://platform.claude.com/docs/en/build-with-claude/prompt-caching#cache-storage-and-sharing). Within those boundaries, any two requests with the same model and prefix read the same cache. For Agent SDK callers running fleets of automated processes, see [improve prompt caching across users and machines](/docs/en/agent-sdk/modifying-system-prompts.md#improve-prompt-caching-across-users-and-machines) to move the auto memory location out of the system prompt and share the system prompt's cache entry across users and machines.
+The underlying API cache is broader. Caches are isolated between organizations, and on some providers, [between workspaces within an organization](https://platform.claude.com/docs/en/build-with-claude/prompt-caching#cache-storage-and-sharing). Within those boundaries, any two requests with the same model and prefix read the same cache. For Agent SDK callers running fleets of automated processes, see [improve prompt caching across users and machines](https://code.claude.com/docs/en/agent-sdk/modifying-system-prompts.md#improve-prompt-caching-across-users-and-machines) to move the auto memory location out of the system prompt and share the system prompt's cache entry across users and machines.
 
 ## Check cache performance
 
-Cache performance shows up as two token counts the API reports on every response. The most direct way to watch them live is a [statusline script](/docs/en/statusline.md) that reads the `current_usage` object:
+Cache performance shows up as two token counts the API reports on every response. The most direct way to watch them live is a [statusline script](https://code.claude.com/docs/en/statusline.md) that reads the `current_usage` object:
 
 | Field | Meaning |
 | - | - |
@@ -324,26 +324,26 @@ Cache performance shows up as two token counts the API reports on every response
 
 A high read-to-creation ratio means caching is working well. If creation stays high turn after turn, something is changing in your prefix. The [actions that invalidate the cache](#actions-that-invalidate-the-cache) section lists the usual causes.
 
-For a per-session summary, run `/usage`. After the main conversation's first response, Claude Code adds a [`Prompt cache (main)` line](/docs/en/costs#prompt-cache-statistics) to the Session block, showing the session's hit ratio, miss count, and whether the cache is warm right now. A status line script can read the same numbers from the [`prompt_cache` object](/docs/en/statusline#prompt-cache-fields). Both require Claude Code v2.1.251 or later.
+For a per-session summary, run `/usage`. After the main conversation's first response, Claude Code adds a [`Prompt cache (main)` line](https://code.claude.com/docs/en/costs#prompt-cache-statistics) to the Session block, showing the session's hit ratio, miss count, and whether the cache is warm right now. A status line script can read the same numbers from the [`prompt_cache` object](https://code.claude.com/docs/en/statusline#prompt-cache-fields). Both require Claude Code v2.1.251 or later.
 
 The `Prompt cache (main)` line also names the likely cause of the last miss when Claude Code can identify one, for example `likely cause: tool definitions changed`. The likely-cause text requires Claude Code v2.1.260 or later.
 
-For visibility across an organization, the OpenTelemetry exporter reports cache read and creation tokens per user and session. See [Monitor usage](/docs/en/monitoring-usage.md) for the metric and event attribute reference.
+For visibility across an organization, the OpenTelemetry exporter reports cache read and creation tokens per user and session. See [Monitor usage](https://code.claude.com/docs/en/monitoring-usage.md) for the metric and event attribute reference.
 
 ## Subagents and the cache
 
-A [subagent](/docs/en/sub-agents.md) starts its own conversation with its own system prompt and tool set, separate from the parent's. Its first request doesn't read the parent's cache, because the two prefixes differ, and it warms a cache of its own across its turns. Subagents fall outside the main-conversation [TTL bucket](#which-ttl-each-request-gets), so they get five minutes even on a subscription until you [choose a longer one](#choose-the-ttl-yourself).
+A [subagent](https://code.claude.com/docs/en/sub-agents.md) starts its own conversation with its own system prompt and tool set, separate from the parent's. Its first request doesn't read the parent's cache, because the two prefixes differ, and it warms a cache of its own across its turns. Subagents fall outside the main-conversation [TTL bucket](#which-ttl-each-request-gets), so they get five minutes even on a subscription until you [choose a longer one](#choose-the-ttl-yourself).
 
 The parent's cache is unaffected. From the parent's side, the subagent's call and result append to the conversation, leaving the parent's prefix intact.
 
-A [fork](/docs/en/sub-agents.md#fork-the-current-conversation), by contrast, inherits the parent's system prompt, tools, and conversation history exactly, so its first request reads the parent's cache.
+A [fork](https://code.claude.com/docs/en/sub-agents.md#fork-the-current-conversation), by contrast, inherits the parent's system prompt, tools, and conversation history exactly, so its first request reads the parent's cache.
 
 Other requests can also read a prefix that an earlier request cached:
 
-* **Session copies**: a session you [copy with `/fork`](/docs/en/agent-view#copy-the-session-with-%2Ffork) receives its isolation instruction as a message at the end of the copied conversation, so the cache that the original conversation built stays intact.
+* **Session copies**: a session you [copy with `/fork`](https://code.claude.com/docs/en/agent-view#copy-the-session-with-%2Ffork) receives its isolation instruction as a message at the end of the copied conversation, so the cache that the original conversation built stays intact.
 * **Compaction**: the summarization call described in [Compacting the conversation](#compacting-the-conversation) uses the same prefix-sharing approach.
-* **Resumed subagents**: when Claude [resumes a subagent](/docs/en/sub-agents.md#resume-subagents), the resumed run's first request can read the cache the original run warmed.
-* **Workflow fan-outs**: in a [workflow fan-out](/docs/en/workflows.md#prompt-caching-in-a-fan-out) of same-prefix agents, Claude Code holds all but the first for up to 5 seconds by default, so their first requests can read the prefix that the first agent cached.
+* **Resumed subagents**: when Claude [resumes a subagent](https://code.claude.com/docs/en/sub-agents.md#resume-subagents), the resumed run's first request can read the cache the original run warmed.
+* **Workflow fan-outs**: in a [workflow fan-out](https://code.claude.com/docs/en/workflows.md#prompt-caching-in-a-fan-out) of same-prefix agents, Claude Code holds all but the first for up to 5 seconds by default, so their first requests can read the prefix that the first agent cached.
 
 ## Disable prompt caching
 
@@ -365,12 +365,12 @@ A different Haiku version that you pin as your main model keeps caching; set `DI
 
 `DISABLE_PROMPT_CACHING_SONNET` and `DISABLE_PROMPT_CACHING_OPUS` each apply to the model the `sonnet` or `opus` alias resolves to. If you set any other Sonnet or Opus model ID as your main model, that model keeps caching. For example, a session on `claude-sonnet-5` keeps caching while `sonnet` resolves to `claude-sonnet-5-5`. To disable caching for that model, set `DISABLE_PROMPT_CACHING`.
 
-To set caching policy across an organization, put any of these or the [TTL variables](#cache-lifetime) in the `env` block of [managed settings](/docs/en/managed-settings.md). For normal use, leave caching enabled.
+To set caching policy across an organization, put any of these or the [TTL variables](#cache-lifetime) in the `env` block of [managed settings](https://code.claude.com/docs/en/managed-settings.md). For normal use, leave caching enabled.
 
 ## Related resources
 
 * [Lessons from building Claude Code: Prompt caching is everything](https://claude.com/blog/lessons-from-building-claude-code-prompt-caching-is-everything): the design rationale for plan mode, deferred tool loading, and compaction
-* [Explore the context window](/docs/en/context-window.md): what loads into context and when
-* [Reduce token usage](/docs/en/costs.md#reduce-token-usage): strategies beyond caching for managing context size
-* [Track and reduce costs](/docs/en/agent-sdk/cost-tracking.md): cache token tracking and TTL configuration for Agent SDK callers
+* [Explore the context window](https://code.claude.com/docs/en/context-window.md): what loads into context and when
+* [Reduce token usage](https://code.claude.com/docs/en/costs.md#reduce-token-usage): strategies beyond caching for managing context size
+* [Track and reduce costs](https://code.claude.com/docs/en/agent-sdk/cost-tracking.md): cache token tracking and TTL configuration for Agent SDK callers
 * [Prompt caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching): the underlying API mechanism, breakpoints, and pricing

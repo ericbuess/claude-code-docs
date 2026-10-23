@@ -6,7 +6,7 @@
 
 > Claude Sonnet 5 becomes the default model, Claude in Chrome reaches general availability, subagents run in the background by default, Claude Desktop arrives on Linux in beta, and /radio tunes into Claude FM.
 
-Releases [v2.1.195 → v2.1.201](/docs/en/changelog.md#2-1-195)
+Releases [v2.1.195 → v2.1.201](https://code.claude.com/docs/en/changelog.md#2-1-195)
 5 features · June 29 – July 3
 
 Claude Sonnet 5
@@ -20,28 +20,28 @@ Switch to Sonnet 5 by name, or pick it from the model picker:
 > /model claude-sonnet-5
 ```
 
-[Model configuration](/docs/en/model-config.md#available-models)
+[Model configuration](https://code.claude.com/docs/en/model-config.md#available-models)
 
 Claude in Chrome is generally available
 v2.1.198
 
 The Chrome integration is out of preview for everyone on a direct Anthropic plan. Claude Code drives your browser through the Claude in Chrome extension: it opens tabs, clicks through pages, fills forms, reads console logs, and shares your login state, so it can test the app it builds without you switching contexts.
 
-[Use Claude Code with Chrome](/docs/en/chrome.md)
+[Use Claude Code with Chrome](https://code.claude.com/docs/en/chrome.md)
 
 Subagents run in the background by default
 v2.1.198
 
 Claude now keeps working while subagents run and picks up their results when they finish, instead of pausing the conversation to wait. Claude still runs a subagent in the foreground when it needs the result before continuing, and background subagents surface every permission prompt in your main session. Pin a subagent's behavior with the `background` frontmatter field.
 
-[Run subagents in foreground or background](/docs/en/sub-agents.md#run-subagents-in-foreground-or-background)
+[Run subagents in foreground or background](https://code.claude.com/docs/en/sub-agents.md#run-subagents-in-foreground-or-background)
 
 Claude Desktop on Linux
 Desktop
 
 The Claude desktop app is now available on Ubuntu 22.04+ and Debian 12+ in beta, on x86\_64 and arm64. You get the same Chat, Cowork, and Claude Code experience as macOS and Windows: parallel sessions, visual diff review, an integrated terminal and editor, and live app preview. Installs from Anthropic's apt repository, so updates arrive through regular package updates.
 
-[Claude Desktop on Linux](/docs/en/desktop-linux.md)
+[Claude Desktop on Linux](https://code.claude.com/docs/en/desktop-linux.md)
 
 /radio
 CLI
@@ -56,10 +56,10 @@ Tune in from any session:
 > /radio
 ```
 
-[All commands](/docs/en/commands.md#all-commands)
+[All commands](https://code.claude.com/docs/en/commands.md#all-commands)
 
 Other wins
 
-[Artifacts](/docs/en/artifacts.md) are now generally available and included on Pro and Max plans, joining Team and EnterpriseAdmins can set an [organization default model](/docs/en/model-config.md#organization-default-model) in the org console; it shows as "Org default" in `/model` when you haven't picked a model yourselfStacked skill invocations like `/skill-a /skill-b do XYZ` now load all leading skills (up to 5), not only the first`AskUserQuestion` dialogs no longer auto-continue by default; opt into an idle timeout via `/config`The "default" permission mode is now named "Manual" across the CLI, `--help`, VS Code, and JetBrains; `--permission-mode manual` is accepted alongside `default`New `/dataviz` skill gives chart and dashboard design guidance, with a runnable color-palette validatorThe built-in Explore agent now inherits the main session's model (capped at Opus) instead of running on HaikuBackground agents launched from `claude agents` now commit, push, and open a draft PR when they finish code work in a worktree, instead of stopping to askHook matchers with hyphenated identifiers like `code-reviewer` now exact-match instead of substring-matching; use `mcp__brave-search__.*` to match all tools from a hyphenated MCP serverTransient server rate-limit errors unrelated to your usage limit are now retried automatically with backoff for subscribers instead of failing the turnThe streaming idle watchdog is now on by default for all providers: it aborts and retries when a response stream produces no events for 5 minutes (`CLAUDE_ENABLE_STREAM_WATCHDOG=0` to disable)
+[Artifacts](https://code.claude.com/docs/en/artifacts.md) are now generally available and included on Pro and Max plans, joining Team and EnterpriseAdmins can set an [organization default model](https://code.claude.com/docs/en/model-config.md#organization-default-model) in the org console; it shows as "Org default" in `/model` when you haven't picked a model yourselfStacked skill invocations like `/skill-a /skill-b do XYZ` now load all leading skills (up to 5), not only the first`AskUserQuestion` dialogs no longer auto-continue by default; opt into an idle timeout via `/config`The "default" permission mode is now named "Manual" across the CLI, `--help`, VS Code, and JetBrains; `--permission-mode manual` is accepted alongside `default`New `/dataviz` skill gives chart and dashboard design guidance, with a runnable color-palette validatorThe built-in Explore agent now inherits the main session's model (capped at Opus) instead of running on HaikuBackground agents launched from `claude agents` now commit, push, and open a draft PR when they finish code work in a worktree, instead of stopping to askHook matchers with hyphenated identifiers like `code-reviewer` now exact-match instead of substring-matching; use `mcp__brave-search__.*` to match all tools from a hyphenated MCP serverTransient server rate-limit errors unrelated to your usage limit are now retried automatically with backoff for subscribers instead of failing the turnThe streaming idle watchdog is now on by default for all providers: it aborts and retries when a response stream produces no events for 5 minutes (`CLAUDE_ENABLE_STREAM_WATCHDOG=0` to disable)
 
-[Full changelog for v2.1.195–v2.1.201 →](/docs/en/changelog.md#2-1-195)
+[Full changelog for v2.1.195–v2.1.201 →](https://code.claude.com/docs/en/changelog.md#2-1-195)

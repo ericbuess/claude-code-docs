@@ -10,11 +10,11 @@ When a mod's module or one of its hooks fails, Claude Code skips it and the sess
 
 ## Find out why a mod does nothing
 
-When a mod does nothing, check what Claude Code reads from the mod's files, and the line it writes when it skips something. For the first, in your shell run [`claude plugin validate`](/docs/en/plugins/mods/create#check-what-claude-code-reads-from-your-mod) with the mod's directory, as in `claude plugin validate ./first-mod`. It catches a misspelled event, a bad manifest, and a module Claude Code can't read, without starting a session.
+When a mod does nothing, check what Claude Code reads from the mod's files, and the line it writes when it skips something. For the first, in your shell run [`claude plugin validate`](https://code.claude.com/docs/en/plugins/mods/create#check-what-claude-code-reads-from-your-mod) with the mod's directory, as in `claude plugin validate ./first-mod`. It catches a misspelled event, a bad manifest, and a module Claude Code can't read, without starting a session.
 
 When a module doesn't load, a hook is skipped, or another mod refuses yours, Claude Code writes one line that names your mod. Where you read that line depends on the session:
 
-* **A session that hot-reloads a plugin directory**: a dim line in the transcript. That's an interactive session you started with `--plugin-dir`, or one where you [enabled hot reloading](/docs/en/plugins/mods/create.md#ask-claude-for-a-mod) for mods Claude wrote.
+* **A session that hot-reloads a plugin directory**: a dim line in the transcript. That's an interactive session you started with `--plugin-dir`, or one where you [enabled hot reloading](https://code.claude.com/docs/en/plugins/mods/create.md#ask-claude-for-a-mod) for mods Claude wrote.
 * **Any other interactive session, such as one that runs a mod you installed from a marketplace**: the [debug log](#read-the-debug-log) only. To get one, start the session with `claude --debug`.
 * **A `claude -p` run with `--plugin-dir`**: stderr, in the default text output format. A refusal by another mod goes to the debug log only.
 
@@ -29,7 +29,7 @@ To check whether your setup lets mods load at all, without installing one, run `
 | `hooks modules are turned off in this process: the rollout switch served off` | Anthropic has turned installed mods off remotely. |
 | `hooks modules are turned off in this process: the rollout switch was saved off by an earlier session` | The command used a value an earlier session saved, which may be out of date. Start `claude` once to refresh it, then run the command again. |
 
-An organization can also set `allowManagedModsOnly` to allow only its own mods, which this command doesn't report. In that case Claude Code refuses a mod you install, and [a message says why](/docs/en/plugins/mods/troubleshoot.md#messages-from-the-built-in-guard).
+An organization can also set `allowManagedModsOnly` to allow only its own mods, which this command doesn't report. In that case Claude Code refuses a mod you install, and [a message says why](https://code.claude.com/docs/en/plugins/mods/troubleshoot.md#messages-from-the-built-in-guard).
 
 ## The mod doesn't load
 
@@ -37,15 +37,15 @@ Nothing the mod adds appears: no command, no drawing, and no change in behavior.
 
 ### Your version is too old
 
-See [which version to use and how to check yours](/docs/en/plugins/mods/overview.md#turn-mods-on-or-off).
+See [which version to use and how to check yours](https://code.claude.com/docs/en/plugins/mods/overview.md#turn-mods-on-or-off).
 
 ### The `mods active` line doesn't name the mod
 
-Nothing the mod adds appears, and the [`mods active` line](/docs/en/plugins/mods/overview#see-which-mods-a-session-loaded) in `/plugin` doesn't name it. The hooks module didn't load. When Claude Code refused it, the debug log has a line that starts with `hooks module`, the mod's name, and `not loaded:`, as in `hooks module first-mod@inline not loaded: disableAllHooks in managed settings` for a mod loaded with `--plugin-dir`.
+Nothing the mod adds appears, and the [`mods active` line](https://code.claude.com/docs/en/plugins/mods/overview#see-which-mods-a-session-loaded) in `/plugin` doesn't name it. The hooks module didn't load. When Claude Code refused it, the debug log has a line that starts with `hooks module`, the mod's name, and `not loaded:`, as in `hooks module first-mod@inline not loaded: disableAllHooks in managed settings` for a mod loaded with `--plugin-dir`.
 
 Read the reason after the colon. The [refusal messages](#refusal-messages) section lists each one. If the log has no such line, work through the other entries in this group.
 
-Some settings stop a mod and leave the rest of its plugin working. [Turn mods on or off](/docs/en/plugins/mods/overview.md#turn-mods-on-or-off) names them.
+Some settings stop a mod and leave the rest of its plugin working. [Turn mods on or off](https://code.claude.com/docs/en/plugins/mods/overview.md#turn-mods-on-or-off) names them.
 
 ### A `claude -p` run prints `hooks module not loaded`
 
@@ -64,16 +64,16 @@ Each of these follows `hooks module`, the mod's name, and `not loaded:` in the d
 | `disableAllHooks in managed settings` | Your organization turned off hooks from installed plugins |
 | `only managed plugins and built-in plugins run` | `allowManagedHooksOnly` is set, or `disableAllHooks` is set in a settings file other than managed settings |
 | `installed plugins that are not managed load no hooks module in this mode (--bare)` | You started Claude Code with `--bare` |
-| `another plugin of that name loads first` | Another enabled plugin has the same name as your mod and [holds the name](/docs/en/plugins/loading.md#hooks-when-two-enabled-plugins-share-a-name), so your hooks module doesn't load |
+| `another plugin of that name loads first` | Another enabled plugin has the same name as your mod and [holds the name](https://code.claude.com/docs/en/plugins/loading.md#hooks-when-two-enabled-plugins-share-a-name), so your hooks module doesn't load |
 
 ### Messages from the built-in guard
 
-On a machine with managed settings, or in a session whose credential is a Team or Enterprise `/login`, the [built-in guard](/docs/en/plugins/mods/admin.md#know-what-happens-by-default) can refuse a mod or one of its answers. Each message names the option your organization's administrator sets to change the rule.
+On a machine with managed settings, or in a session whose credential is a Team or Enterprise `/login`, the [built-in guard](https://code.claude.com/docs/en/plugins/mods/admin.md#know-what-happens-by-default) can refuse a mod or one of its answers. Each message names the option your organization's administrator sets to change the rule.
 
 | Message contains | What it means | Where it appears |
 | :- | :- | :- |
-| `mods are limited to your organization's by policy (allowManagedModsOnly)` | Your organization allows only [its own mods](/docs/en/plugins/mods/admin.md#install-your-organizations-mods), so yours was refused | The debug log, and the transcript in a [session that hot-reloads a plugin directory](#find-out-why-a-mod-does-nothing) |
-| `tried to lift a deny rule in your settings` | Your mod's [`tool.check`](/docs/en/plugins/mods/reference#tools) hook approved a call that a `deny` rule refuses. The call stays denied. | The transcript and the debug log, once for each mod in a session. In a `claude -p` run, the debug log only. |
+| `mods are limited to your organization's by policy (allowManagedModsOnly)` | Your organization allows only [its own mods](https://code.claude.com/docs/en/plugins/mods/admin.md#install-your-organizations-mods), so yours was refused | The debug log, and the transcript in a [session that hot-reloads a plugin directory](#find-out-why-a-mod-does-nothing) |
+| `tried to lift a deny rule in your settings` | Your mod's [`tool.check`](https://code.claude.com/docs/en/plugins/mods/reference#tools) hook approved a call that a `deny` rule refuses. The call stays denied. | The transcript and the debug log, once for each mod in a session. In a `claude -p` run, the debug log only. |
 | `the deny rules in your settings could not be checked for this call, so it is refused` | The guard failed while checking a call that a mod approved, so it refused the call | The reason Claude reads for the denied call |
 
 ### `validate` passes and lists no `hooks` line
@@ -88,17 +88,17 @@ The line starts with the mod's name, then `hooks module did not load:` and a rea
 
 Fix the error the reason names.
 
-If the reason ends with `; the version loaded before is unloaded`, no version of the mod is running now. Once you fix the error, run [`/reload-plugins`](/docs/en/plugins/cli-reference#reload-plugins) in the session to load the mod again. If you installed the mod and didn't write it, ask its author to fix the error.
+If the reason ends with `; the version loaded before is unloaded`, no version of the mod is running now. Once you fix the error, run [`/reload-plugins`](https://code.claude.com/docs/en/plugins/cli-reference#reload-plugins) in the session to load the mod again. If you installed the mod and didn't write it, ask its author to fix the error.
 
 ### `options do not fit plugin.json userConfig`
 
-The line starts with the mod's name, then `hooks module did not load: options do not fit plugin.json userConfig:` and a reason. An option fails validation against its [`userConfig`](/docs/en/plugins/components#user-configuration) field, such as a number above the field's `max`, or a required field has no value.
+The line starts with the mod's name, then `hooks module did not load: options do not fit plugin.json userConfig:` and a reason. An option fails validation against its [`userConfig`](https://code.claude.com/docs/en/plugins/components#user-configuration) field, such as a number above the field's `max`, or a required field has no value.
 
 Set or change the value. The end of the line names its `pluginConfigs` entry in `settings.json`.
 
 ### `code nested too deep to scan: more than 2000 scopes`
 
-The line starts with the mod's name, then `hooks module did not load:`, the file, and `code nested too deep to scan: more than 2000 scopes`. A file in a hooks module can't nest scopes, such as functions, blocks, and loops, more than [2,000 deep](/docs/en/plugins/mods/reference.md#limits). [`claude plugin validate`](/docs/en/plugins/mods/create#check-what-claude-code-reads-from-your-mod) reports the same reason.
+The line starts with the mod's name, then `hooks module did not load:`, the file, and `code nested too deep to scan: more than 2000 scopes`. A file in a hooks module can't nest scopes, such as functions, blocks, and loops, more than [2,000 deep](https://code.claude.com/docs/en/plugins/mods/reference.md#limits). [`claude plugin validate`](https://code.claude.com/docs/en/plugins/mods/create#check-what-claude-code-reads-from-your-mod) reports the same reason.
 
 Rewrite the code so its scopes nest less deeply.
 
@@ -131,9 +131,9 @@ Start without the flag.
 
 ### Claude Code stops asking to enable hot reloading
 
-Claude writes a mod in an interactive session, nothing loads, and Claude Code doesn't ask again [whether to enable hot reloading](/docs/en/plugins/mods/create.md#ask-claude-for-a-mod). If the question ends three times without an answer picked, hot reloading stays off. For example, the question ends that way when you set [`askUserQuestionTimeout`](/docs/en/settings-reference#askuserquestiontimeout) and the time passes before you answer. That setting applies here because Claude Code asks in the same [question dialog that `AskUserQuestion` uses](/docs/en/tools-reference#question-auto-continue-timeout). A question you dismiss yourself doesn't count toward the three.
+Claude writes a mod in an interactive session, nothing loads, and Claude Code doesn't ask again [whether to enable hot reloading](https://code.claude.com/docs/en/plugins/mods/create.md#ask-claude-for-a-mod). If the question ends three times without an answer picked, hot reloading stays off. For example, the question ends that way when you set [`askUserQuestionTimeout`](https://code.claude.com/docs/en/settings-reference#askuserquestiontimeout) and the time passes before you answer. That setting applies here because Claude Code asks in the same [question dialog that `AskUserQuestion` uses](https://code.claude.com/docs/en/tools-reference#question-auto-continue-timeout). A question you dismiss yourself doesn't count toward the three.
 
-To run the mod, [copy its directory out of the mods folder](/docs/en/plugins/mods/create.md#use-the-mod-in-other-sessions), then in your shell start a new session with `--plugin-dir`, as in `claude --plugin-dir ~/mods/git-branch`.
+To run the mod, [copy its directory out of the mods folder](https://code.claude.com/docs/en/plugins/mods/create.md#use-the-mod-in-other-sessions), then in your shell start a new session with `--plugin-dir`, as in `claude --plugin-dir ~/mods/git-branch`.
 
 ## A hook is skipped or a mod is unloaded
 
@@ -141,7 +141,7 @@ The mod loaded, and then Claude Code skipped one of its hooks or unloaded it.
 
 ### `hook skipped`
 
-The line names the mod and the event, then says `hook skipped:` and a reason, as in `first-mod: tool.call hook skipped: threw Error: boom`. A hook threw, exceeded its [time limit](/docs/en/plugins/mods/reference.md#limits), or returned a result of the wrong shape. The line appears once for each event and kind of failure until the mod reloads.
+The line names the mod and the event, then says `hook skipped:` and a reason, as in `first-mod: tool.call hook skipped: threw Error: boom`. A hook threw, exceeded its [time limit](https://code.claude.com/docs/en/plugins/mods/reference.md#limits), or returned a result of the wrong shape. The line appears once for each event and kind of failure until the mod reloads.
 
 Fix the error. The debug log has a line for every occurrence.
 
@@ -149,10 +149,10 @@ Fix the error. The debug log has a line for every occurrence.
 
 You run a command your mod added, and the reply names the mod and the command, as in `first-mod registered /tally but no command.run hook answered it`, then tells you to add a hook. Claude Code prints that reply when the command reaches the end of the chain with no answer, which happens in two cases:
 
-* **No hook answered the command**: the module has no `command.run` hook, the hook's [filter](/docs/en/plugins/mods/events.md#filter-which-events-a-hook-handles) names a different command, or the hook returned `next(e)`
-* **Claude Code skipped the hook**: [`hook skipped`](#hook-skipped) lists the reasons. Passing `focus: false` to [`$.ui.open`](/docs/en/plugins/mods/interface#open-a-pane-at-the-right-time) is one way to get there.
+* **No hook answered the command**: the module has no `command.run` hook, the hook's [filter](https://code.claude.com/docs/en/plugins/mods/events.md#filter-which-events-a-hook-handles) names a different command, or the hook returned `next(e)`
+* **Claude Code skipped the hook**: [`hook skipped`](#hook-skipped) lists the reasons. Passing `focus: false` to [`$.ui.open`](https://code.claude.com/docs/en/plugins/mods/interface#open-a-pane-at-the-right-time) is one way to get there.
 
-If the module already has the hook the reply describes, look for a `hook skipped` line that names `command.run`, which gives the reason. A [test](/docs/en/plugins/mods/test.md) that runs the command fails with the same reason.
+If the module already has the hook the reply describes, look for a `hook skipped` line that names `command.run`, which gives the reason. A [test](https://code.claude.com/docs/en/plugins/mods/test.md) that runs the command fails with the same reason.
 
 ### `it crashed the hooks worker`
 
@@ -162,7 +162,7 @@ Fix the hook.
 
 ### `its session.start ran again in a fresh copy`
 
-The line starts with the mod's name and names a `$.prompt.submit`, `$.command.run`, or `$.agent.spawn` call, as in `first-mod: its session.start ran again in a fresh copy; the $.prompt.submit call it had already made was not made again`. Claude Code loaded the mod's module again, for example after the hooks worker crashed and was replaced, and the fresh copy's [`session.start`](/docs/en/plugins/mods/reference#session) hook ran. The call the line names resolved with the result of its first run instead of running again, so your mod doesn't submit the prompt, run the command, or start the subagent twice. The rest of the hook ran as usual.
+The line starts with the mod's name and names a `$.prompt.submit`, `$.command.run`, or `$.agent.spawn` call, as in `first-mod: its session.start ran again in a fresh copy; the $.prompt.submit call it had already made was not made again`. Claude Code loaded the mod's module again, for example after the hooks worker crashed and was replaced, and the fresh copy's [`session.start`](https://code.claude.com/docs/en/plugins/mods/reference#session) hook ran. The call the line names resolved with the result of its first run instead of running again, so your mod doesn't submit the prompt, run the command, or start the subagent twice. The rest of the hook ran as usual.
 
 There's nothing to fix.
 
@@ -172,7 +172,7 @@ Before v2.1.292, the call ran a second time, so the prompt was submitted, the co
 
 The line starts with your mod's name, as in `first-mod: $.agent.register refused: the hooks module that made the call is no longer loaded (it was reloaded or removed)`, and the agent isn't registered. Your mod was reloaded or unloaded before the call. A reload loads a fresh copy of the hooks module, and this call came from code still running in the old copy, such as a hook that hadn't returned yet.
 
-If that hook doesn't catch the rejection, it fails and Claude Code [skips it](#hook-skipped). To register the agent from the copy that stays loaded, make the call in your [`session.start`](/docs/en/plugins/mods/reference#session) hook, which runs again in each fresh copy after a reload.
+If that hook doesn't catch the rejection, it fails and Claude Code [skips it](#hook-skipped). To register the agent from the copy that stays loaded, make the call in your [`session.start`](https://code.claude.com/docs/en/plugins/mods/reference#session) hook, which runs again in each fresh copy after a reload.
 
 ### `mods that run in the hooks worker are off for this session`
 
@@ -186,7 +186,7 @@ The mod loaded and its hooks run, and a tool call it touched is refused.
 
 ### `a hook changed this call's input after the model wrote it`
 
-In auto mode, a denied tool call gives this reason. A hook changed the tool call's input after the [server-side classifier](/docs/en/permission-modes.md#server-side-classifier-review) reviewed it, so that review doesn't cover what would run. The hook can be a mod's [`tool.call`](/docs/en/plugins/mods/reference#tools) or [`turn.step`](/docs/en/plugins/mods/reference#turns) hook, or a [`PreToolUse`](/docs/en/hooks#pretooluse) settings hook. The message doesn't say which.
+In auto mode, a denied tool call gives this reason. A hook changed the tool call's input after the [server-side classifier](https://code.claude.com/docs/en/permission-modes.md#server-side-classifier-review) reviewed it, so that review doesn't cover what would run. The hook can be a mod's [`tool.call`](https://code.claude.com/docs/en/plugins/mods/reference#tools) or [`turn.step`](https://code.claude.com/docs/en/plugins/mods/reference#turns) hook, or a [`PreToolUse`](https://code.claude.com/docs/en/hooks#pretooluse) settings hook. The message doesn't say which.
 
 The message tells Claude to issue the call once more as recorded. If that's denied too, the hook changes the input every time, so turn off the mod or hook, or leave auto mode and approve the call yourself.
 
@@ -200,9 +200,9 @@ Look them up in [Messages from the built-in guard](#messages-from-the-built-in-g
 
 ### `Stopped: type a message to continue; a mod cannot resume work after Stop`
 
-This toast means that after you stopped the turn, for example with Esc, a mod tried to start work on its own and Claude Code didn't let it. Nothing needs fixing. After your next message, mods can start work again and [some of that work comes back](/docs/en/plugins/mods/api.md#work-your-mod-started-before-the-interruption) on its own. If what you expected from the mod doesn't come back, ask for it again or run the mod's command again.
+This toast means that after you stopped the turn, for example with Esc, a mod tried to start work on its own and Claude Code didn't let it. Nothing needs fixing. After your next message, mods can start work again and [some of that work comes back](https://code.claude.com/docs/en/plugins/mods/api.md#work-your-mod-started-before-the-interruption) on its own. If what you expected from the mod doesn't come back, ask for it again or run the mod's command again.
 
-If you wrote the mod, see [Calls and background work after the user interrupts a turn](/docs/en/plugins/mods/api.md#calls-and-background-work-after-the-user-interrupts-a-turn).
+If you wrote the mod, see [Calls and background work after the user interrupts a turn](https://code.claude.com/docs/en/plugins/mods/api.md#calls-and-background-work-after-the-user-interrupts-a-turn).
 
 ## A drawing doesn't appear or respond
 
@@ -210,32 +210,32 @@ The mod loaded, and its pane, band, toast, or controls don't behave as you expec
 
 ### Another mod's band shows and yours doesn't
 
-There is one band above the prompt, and every mod shares it. A mod that runs [before yours](/docs/en/plugins/mods/events.md#the-order-mods-run-in) replaces your band when it returns a tree without the result of `next(e)` in it. To show both bands, change that mod's hook, or ask its author to:
+There is one band above the prompt, and every mod shares it. A mod that runs [before yours](https://code.claude.com/docs/en/plugins/mods/events.md#the-order-mods-run-in) replaces your band when it returns a tree without the result of `next(e)` in it. To show both bands, change that mod's hook, or ask its author to:
 
-* **Keep the bands after it**: put the result of `await next(e)` among the children of a `Box` in its tree, as in the Band above the prompt tab of [Pick where to draw](/docs/en/plugins/mods/interface.md#pick-where-to-draw)
+* **Keep the bands after it**: put the result of `await next(e)` among the children of a `Box` in its tree, as in the Band above the prompt tab of [Pick where to draw](https://code.claude.com/docs/en/plugins/mods/interface.md#pick-where-to-draw)
 * **Keep the tree valid**: don't give that `Box`, or any `Box` around it, a `width`, `height`, `minWidth`, `minHeight`, `position`, `top`, `left`, `right`, `bottom`, `display`, or `overflow` prop
 
-To find that mod, [write a debug log](#read-the-debug-log) and search it for `answered ui.render without next()`. A line such as `other-mod (user) answered ui.render without next()` names a mod that returned its tree without calling `next(e)`. It doesn't name the [render site](/docs/en/plugins/mods/reference.md#render-sites), so a pane-only mod can appear too. A mod that calls `next(e)` and drops the result gets no line, so check the hooks before yours too.
+To find that mod, [write a debug log](#read-the-debug-log) and search it for `answered ui.render without next()`. A line such as `other-mod (user) answered ui.render without next()` names a mod that returned its tree without calling `next(e)`. It doesn't name the [render site](https://code.claude.com/docs/en/plugins/mods/reference.md#render-sites), so a pane-only mod can appear too. A mod that calls `next(e)` and drops the result gets no line, so check the hooks before yours too.
 
 After the change, you see nothing in the band if any of the mods returns a tree that doesn't validate. To read the reason, look for a `ui.render (AbovePrompt) refused:` line in the transcript of a `--plugin-dir` session, or search the debug log for `does not validate`. With several mods in the band, neither line names a mod, so check each mod's tree.
 
 ### A pane or band is empty or shows Claude Code's usual content
 
-The [tree](/docs/en/plugins/mods/interface.md#build-a-tree-from-elements) your hook returned didn't validate. With `--plugin-dir`, the transcript says `ui.render (Pane) refused:` with the reason, as in `first-mod: ui.render (Pane) refused: Box prop "flexDirection" must be one of row, column, row-reverse, column-reverse; the engine drew its own`. The debug log has `a hook returned a tree that does not validate` with the same reason.
+The [tree](https://code.claude.com/docs/en/plugins/mods/interface.md#build-a-tree-from-elements) your hook returned didn't validate. With `--plugin-dir`, the transcript says `ui.render (Pane) refused:` with the reason, as in `first-mod: ui.render (Pane) refused: Box prop "flexDirection" must be one of row, column, row-reverse, column-reverse; the engine drew its own`. The debug log has `a hook returned a tree that does not validate` with the same reason.
 
 Read the reason on that line. Common causes are a prop the element doesn't take and an element the app doesn't have.
 
 ### A `ui.render` line says `threw while drawn`
 
-The line names the [render site](/docs/en/plugins/mods/reference.md#render-sites), then says `threw while drawn:` and the error, as in `first-mod: ui.render (ToolUse) threw while drawn: <error>; the engine drew its own`. Claude Code hit that error while drawing the tree your [`ui.render`](/docs/en/plugins/mods/reference#interface) hook returned, or while drawing the site from the [`props` your hook passed to `next`](/docs/en/plugins/mods/interface#change-what-claude-code-already-draws). The ending `the engine drew its own` means the site shows Claude Code's usual content.
+The line names the [render site](https://code.claude.com/docs/en/plugins/mods/reference.md#render-sites), then says `threw while drawn:` and the error, as in `first-mod: ui.render (ToolUse) threw while drawn: <error>; the engine drew its own`. Claude Code hit that error while drawing the tree your [`ui.render`](https://code.claude.com/docs/en/plugins/mods/reference#interface) hook returned, or while drawing the site from the [`props` your hook passed to `next`](https://code.claude.com/docs/en/plugins/mods/interface#change-what-claude-code-already-draws). The ending `the engine drew its own` means the site shows Claude Code's usual content.
 
 Read the error and fix the value in your hook that caused it.
 
-Before v2.1.289, this error in a transcript row ended the session with [`Claude Code exited after an unrecoverable interface error`](/docs/en/errors#exited-after-an-unrecoverable-interface-error).
+Before v2.1.289, this error in a transcript row ended the session with [`Claude Code exited after an unrecoverable interface error`](https://code.claude.com/docs/en/errors#exited-after-an-unrecoverable-interface-error).
 
 ### `the module failed without a message`
 
-A [`Client`](/docs/en/plugins/mods/interface#when-a-client-fails) failed with an error that has no message, such as `throw new Error()`. The line in its place reads like `my-mod: Client client/spinner.js: the module failed without a message`.
+A [`Client`](https://code.claude.com/docs/en/plugins/mods/interface#when-a-client-fails) failed with an error that has no message, such as `throw new Error()`. The line in its place reads like `my-mod: Client client/spinner.js: the module failed without a message`.
 
 Find the throw in your `Client`'s code and give the error a message. The line then shows that message.
 
@@ -243,17 +243,17 @@ Before v2.1.289, the line showed `Error` as the reason instead.
 
 ### `$.ui.open` runs and no pane appears
 
-The call didn't come from something the user did, and the terminal is narrower than [the width that pane needs](/docs/en/plugins/mods/interface.md#when-a-pane-waits-for-a-wider-terminal).
+The call didn't come from something the user did, and the terminal is narrower than [the width that pane needs](https://code.claude.com/docs/en/plugins/mods/interface.md#when-a-pane-waits-for-a-wider-terminal).
 
-Open the pane from a command or a button, or check the call's `isPlaced` result. See [Open a pane at the right time](/docs/en/plugins/mods/interface.md#open-a-pane-at-the-right-time).
+Open the pane from a command or a button, or check the call's `isPlaced` result. See [Open a pane at the right time](https://code.claude.com/docs/en/plugins/mods/interface.md#open-a-pane-at-the-right-time).
 
 ### A toast doesn't appear
 
-Your mod calls [`$.ui.toast`](/docs/en/plugins/mods/api#show-something-without-starting-a-turn) in an interactive terminal session and you don't see the toast. To confirm that the call ran, look in the [debug log](#read-the-debug-log) for a line with your mod's name and the toast's text, as in `$.ui.toast (first-mod): build finished`. Then check for causes such as these:
+Your mod calls [`$.ui.toast`](https://code.claude.com/docs/en/plugins/mods/api#show-something-without-starting-a-turn) in an interactive terminal session and you don't see the toast. To confirm that the call ran, look in the [debug log](#read-the-debug-log) for a line with your mod's name and the toast's text, as in `$.ui.toast (first-mod): build finished`. Then check for causes such as these:
 
 * **The line for the call is missing**: look for one that says why Claude Code refused the call, as in `first-mod: $.ui.toast dropped: timeoutMs is a whole number of ms, 1 to 60000`.
-* **A pane is holding toasts**: your mod or another one passed [`holdToasts`](/docs/en/plugins/mods/interface#hold-toasts-behind-a-dialog) when it opened the pane that's showing. Close the pane to end the hold. If the pane is yours and is meant to stay open, remove `holdToasts` from its `$.ui.open` call and open the pane again.
-* **The toast is under the prompt**: in the [classic renderer](/docs/en/fullscreen.md#enable-fullscreen-rendering), look at the right under the prompt. A toast there is one line that starts with the mod's name, rather than a box at the top right.
+* **A pane is holding toasts**: your mod or another one passed [`holdToasts`](https://code.claude.com/docs/en/plugins/mods/interface#hold-toasts-behind-a-dialog) when it opened the pane that's showing. Close the pane to end the hold. If the pane is yours and is meant to stay open, remove `holdToasts` from its `$.ui.open` call and open the pane again.
+* **The toast is under the prompt**: in the [classic renderer](https://code.claude.com/docs/en/fullscreen.md#enable-fullscreen-rendering), look at the right under the prompt. A toast there is one line that starts with the mod's name, rather than a box at the top right.
 * **Your mod raised a newer toast**: in the classic renderer, a newer toast from your mod can take the place of one that's showing or waiting to show. The debug log has another line for the older toast, which ends with `gave way, cut short` when it was showing, or `gave way, unseen` when it never appeared. To show both messages, put them in one toast.
 * **The toast ran out of time undrawn**: in fullscreen rendering, Claude Code draws at most three toasts at a time, so a toast can run out of time before it's drawn. The debug log has another line for that toast, which ends with `left the stack, never drawn`. When your mod raises several at once, put the messages in one toast.
 
@@ -261,7 +261,7 @@ Before v2.1.290, Claude Code dropped a toast raised within two seconds of the la
 
 ### The band shows `plugin panel hidden`
 
-The band is [collapsed](/docs/en/plugins/mods/interface.md#when-the-user-collapses-the-band). It collapses when you press Ctrl+X then Ctrl+A, or the keys you bound in their place, and in [fullscreen rendering](/docs/en/fullscreen.md) when you click the `[-]` on its first row. It stays collapsed until you expand it or start Claude Code again, and meanwhile no hotkey or `action` binding presses a button in it.
+The band is [collapsed](https://code.claude.com/docs/en/plugins/mods/interface.md#when-the-user-collapses-the-band). It collapses when you press Ctrl+X then Ctrl+A, or the keys you bound in their place, and in [fullscreen rendering](https://code.claude.com/docs/en/fullscreen.md) when you click the `[-]` on its first row. It stays collapsed until you expand it or start Claude Code again, and meanwhile no hotkey or `action` binding presses a button in it.
 
 To expand the band, press the keys the row names, Ctrl+X then Ctrl+A by default, or in fullscreen rendering click the row.
 
@@ -269,7 +269,7 @@ To expand the band, press the keys the row names, Ctrl+X then Ctrl+A by default,
 
 Your pane or band doesn't have keyboard focus, your button is in a collapsed band, or the drawing is in the VS Code extension, where buttons have no hotkeys. Do the one that matches:
 
-* **No keyboard focus**: press Ctrl+X then Tab or, in [fullscreen rendering](/docs/en/fullscreen.md), click the pane or band. To have the pane take focus when it opens, open it with `focus: true` from a command.
+* **No keyboard focus**: press Ctrl+X then Tab or, in [fullscreen rendering](https://code.claude.com/docs/en/fullscreen.md), click the pane or band. To have the pane take focus when it opens, open it with `focus: true` from a command.
 * **The button is in a collapsed band**: the band shows one dim row that starts with `▸ plugin panel hidden`. Press the keys the row names, Ctrl+X then Ctrl+A by default, to [expand it](#plugin-panel-hidden).
 * **In the VS Code extension**: click the button, or press Enter on it once it has focus
 
@@ -277,9 +277,9 @@ Your pane or band doesn't have keyboard focus, your button is in a collapsed ban
 
 Either that app doesn't draw the site or element, or the session is one where the VS Code extension draws nothing for mods. The mod's other hooks still run. Check for these causes:
 
-* **The site or element isn't drawn in that app**: look up your site in the [render sites](/docs/en/plugins/mods/reference.md#render-sites) table and your elements in the [elements](/docs/en/plugins/mods/reference.md#elements) table. For an element the app lacks, check `e.surface` in the hook and return a tree the app can draw.
-* **The VS Code extension is older than 2.1.299**: the chat panel draws for mods from [extension version](/docs/en/vs-code.md#install-the-extension) 2.1.299. Check the version in VS Code's Extensions view and update the extension there.
-* **The extension is older than 2.1.304 and the session doesn't fetch feature flags**: update the extension, or run `claude` in VS Code's integrated terminal instead. Sessions on Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry skip the fetch. For the others that skip it, such as a [Claude apps gateway](/docs/en/claude-apps-gateway) session, see [Features that need feature-flag fetching](/docs/en/env-vars.md#features-that-need-feature-flag-fetching).
+* **The site or element isn't drawn in that app**: look up your site in the [render sites](https://code.claude.com/docs/en/plugins/mods/reference.md#render-sites) table and your elements in the [elements](https://code.claude.com/docs/en/plugins/mods/reference.md#elements) table. For an element the app lacks, check `e.surface` in the hook and return a tree the app can draw.
+* **The VS Code extension is older than 2.1.299**: the chat panel draws for mods from [extension version](https://code.claude.com/docs/en/vs-code.md#install-the-extension) 2.1.299. Check the version in VS Code's Extensions view and update the extension there.
+* **The extension is older than 2.1.304 and the session doesn't fetch feature flags**: update the extension, or run `claude` in VS Code's integrated terminal instead. Sessions on Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry skip the fetch. For the others that skip it, such as a [Claude apps gateway](https://code.claude.com/docs/en/claude-apps-gateway) session, see [Features that need feature-flag fetching](https://code.claude.com/docs/en/env-vars.md#features-that-need-feature-flag-fetching).
 
 ## An edit or a value is lost
 
@@ -295,13 +295,13 @@ Develop with `--plugin-dir` pointed at your working copy, as in `claude --plugin
 
 Module-level variables are re-initialized on each reload.
 
-[Keep the value in `$.state` or `$.store`](/docs/en/plugins/mods/interface#keep-state).
+[Keep the value in `$.state` or `$.store`](https://code.claude.com/docs/en/plugins/mods/interface#keep-state).
 
 ### A value resets after `/clear`, `/resume`, or `/branch`
 
 A value resets, or a saved value is replaced by its default. Each of those commands resets `$.state` to its defaults, and `session.start` doesn't fire again.
 
-[Load the saved value again](/docs/en/plugins/mods/interface.md#load-a-saved-value-again-after-clear) in a `classic.SessionStart` hook.
+[Load the saved value again](https://code.claude.com/docs/en/plugins/mods/interface.md#load-a-saved-value-again-after-clear) in a `classic.SessionStart` hook.
 
 ## Read the debug log
 
@@ -323,11 +323,11 @@ A mod that loaded has a line that names it and lists the events it handles. A mo
 hooks module first-mod@inline loaded (worker, environment 2, tier user); events: session.start,tool.call,command.run,ui.render
 ```
 
-A drawing that didn't validate counts as a refused result and gets a line too. To write your own lines in the log, call [`$.ui.log`](/docs/en/plugins/mods/api#show-something-without-starting-a-turn) with a second argument, as in `$.ui.log('message', { to: 'debug' })`. Without the second argument, `$.ui.log` adds a dim line to the transcript.
+A drawing that didn't validate counts as a refused result and gets a line too. To write your own lines in the log, call [`$.ui.log`](https://code.claude.com/docs/en/plugins/mods/api#show-something-without-starting-a-turn) with a second argument, as in `$.ui.log('message', { to: 'debug' })`. Without the second argument, `$.ui.log` adds a dim line to the transcript.
 
 While you edit a mod loaded with `--plugin-dir`, the transcript shows a line for each reload that names the mod and lists its hooks. If a save breaks the module, the line says `reload failed, the previous version stays loaded:` with the reason, and the last working version keeps running until Claude Code next reloads plugins, such as when you run `/reload-plugins`.
 
 ## Next steps
 
-* [Test a mod](/docs/en/plugins/mods/test.md): catch problems before they reach a session
-* [Troubleshoot plugins](/docs/en/plugins/troubleshooting.md): problems with installing and loading a plugin that aren't specific to mods
+* [Test a mod](https://code.claude.com/docs/en/plugins/mods/test.md): catch problems before they reach a session
+* [Troubleshoot plugins](https://code.claude.com/docs/en/plugins/troubleshooting.md): problems with installing and loading a plugin that aren't specific to mods

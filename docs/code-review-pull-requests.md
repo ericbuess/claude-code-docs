@@ -8,11 +8,11 @@
 
 Code Review is a managed service that an Owner in your Claude organization turns on for a set of GitHub repositories. Once it's on, Claude reviews pull requests in those repositories and posts its findings as inline comments, a summary in the review body, and a check run named **Claude Code Review**. A review never approves or blocks your pull request, and the check run never concludes as a failure.
 
-An Owner controls [when reviews run](/docs/en/code-review-setup.md#set-when-reviews-run) and [how thorough they are](/docs/en/code-review-setup.md#set-the-default-review-level) for each repository.
+An Owner controls [when reviews run](https://code.claude.com/docs/en/code-review-setup.md#set-when-reviews-run) and [how thorough they are](https://code.claude.com/docs/en/code-review-setup.md#set-the-default-review-level) for each repository.
 
 > [!NOTE]
 >
-> If your plan doesn't include Code Review, you can still have Claude review your branch from a Claude Code session: see [Review locally with `/code-review`](/docs/en/code-review-local).
+> If your plan doesn't include Code Review, you can still have Claude review your branch from a Claude Code session: see [Review locally with `/code-review`](https://code.claude.com/docs/en/code-review-local).
 
 ## Severity levels
 
@@ -26,7 +26,7 @@ Claude posts each finding as an inline comment on the lines concerned and marks 
 
 When the review recorded its reasoning, the finding has a collapsed **Why this was flagged** section. Expand it to read why Claude flagged the issue and how it verified the problem.
 
-To change what Claude flags in your repository or how it ranks severity, see [Customize Code Review](/docs/en/code-review-customize.md).
+To change what Claude flags in your repository or how it ranks severity, see [Customize Code Review](https://code.claude.com/docs/en/code-review-customize.md).
 
 ## Respond to findings
 
@@ -36,7 +36,7 @@ To clear a finding, resolve its thread or push a fix.
 
 * **Dismiss it without a code change**: resolve the thread yourself on GitHub. Replying alone doesn't dismiss a finding.
 * **Fix the issue**: change the code and push. The next review of the pull request resolves its earlier thread when it judges the issue fixed, whether that review runs automatically on your push or you request it.
-* **Explain or disagree**: reply to the comment. Claude doesn't respond right away, and a reply doesn't start a review. The next review of the pull request reads the replies on its earlier findings, and can resolve the thread or post one follow-up reply. If the same kind of finding keeps coming back, ask a maintainer to add a rule to [`REVIEW.md`](/docs/en/code-review-customize#choose-what-to-write-in-review-md).
+* **Explain or disagree**: reply to the comment. Claude doesn't respond right away, and a reply doesn't start a review. The next review of the pull request reads the replies on its earlier findings, and can resolve the thread or post one follow-up reply. If the same kind of finding keeps coming back, ask a maintainer to add a rule to [`REVIEW.md`](https://code.claude.com/docs/en/code-review-customize#choose-what-to-write-in-review-md).
 
 To get that next review without pushing, comment `@claude review` as a [top-level pull request comment](#comment-commands).
 
@@ -51,7 +51,7 @@ The **Details** link on the **Claude Code Review** check run opens the findings 
 
 A finding that has a line but wasn't posted as an inline comment appears as an annotation in the **Files changed** tab, on the lines concerned. Important findings show in red, nits in yellow, and pre-existing bugs in gray.
 
-The check run concludes as neutral, or as skipped after some pushes that change no files and [keep the earlier result](#when-a-push-keeps-the-earlier-result). It never concludes as a failure, so a finished review doesn't fail a required check. If you don't see findings, or a review didn't run, see [Troubleshoot Code Review](/docs/en/code-review-troubleshooting.md).
+The check run concludes as neutral, or as skipped after some pushes that change no files and [keep the earlier result](#when-a-push-keeps-the-earlier-result). It never concludes as a failure, so a finished review doesn't fail a required check. If you don't see findings, or a review didn't run, see [Troubleshoot Code Review](https://code.claude.com/docs/en/code-review-troubleshooting.md).
 
 ### When a push keeps the earlier result
 
@@ -118,8 +118,8 @@ If your pull request is a draft or comes from a fork, automatic reviews skip it,
 * **Open it or mark it ready**: in a repository set to **Once after PR creation** or **After every push**, a review starts when you open or reopen the pull request, or mark a draft ready for review.
 * **Comment a command**: post [`@claude review`](#comment-commands) on the pull request.
 * **Push a commit**: a push starts a review in a repository set to **After every push**, or on a pull request you subscribed with `@claude review always`. If your pull request still adds and removes the same lines after the push, Code Review can [keep the earlier result](#when-a-push-keeps-the-earlier-result) instead.
-* **Click Re-run**: after a review fails or times out on a pull request that isn't from a fork, [run it again](/docs/en/code-review-troubleshooting.md#retrigger-a-failed-or-timed-out-review) from the check run. On a pull request that isn't from a fork, you can also click **Re-run** after a push that [kept the earlier result](#when-a-push-keeps-the-earlier-result).
-* **Wait for the automatic retry**: a review whose session was interrupted is retried once automatically. The [check run's summary](/docs/en/code-review-troubleshooting.md#retrigger-a-failed-or-timed-out-review) says when that's happening.
+* **Click Re-run**: after a review fails or times out on a pull request that isn't from a fork, [run it again](https://code.claude.com/docs/en/code-review-troubleshooting.md#retrigger-a-failed-or-timed-out-review) from the check run. On a pull request that isn't from a fork, you can also click **Re-run** after a push that [kept the earlier result](#when-a-push-keeps-the-earlier-result).
+* **Wait for the automatic retry**: a review whose session was interrupted is retried once automatically. The [check run's summary](https://code.claude.com/docs/en/code-review-troubleshooting.md#retrigger-a-failed-or-timed-out-review) says when that's happening.
 
 ### Comment commands
 
@@ -167,13 +167,13 @@ On a pull request from a fork, `@claude review always` works too, but doesn't su
 
 ### Use Code Review alongside the Claude Code GitHub Action
 
-If the repository also runs the [Claude Code GitHub Action](/docs/en/github-actions.md) in interactive mode with its default `@claude` trigger phrase, an `@claude review` comment starts the Action as well. To keep the two apart, set the Action's `trigger_phrase` input to a different phrase.
+If the repository also runs the [Claude Code GitHub Action](https://code.claude.com/docs/en/github-actions.md) in interactive mode with its default `@claude` trigger phrase, an `@claude review` comment starts the Action as well. To keep the two apart, set the Action's `trigger_phrase` input to a different phrase.
 
 ## Related resources
 
-* [Troubleshoot Code Review](/docs/en/code-review-troubleshooting.md): a review that didn't start, failed, or was skipped for budget
-* [Code Review](/docs/en/code-review.md): what the service is and how a review runs
-* [Set up Code Review](/docs/en/code-review-setup.md): for Owners, turn on Code Review and choose when reviews run and at what level
-* [Customize Code Review](/docs/en/code-review-customize.md): change what Claude flags with `REVIEW.md` and `CLAUDE.md`
-* [Code Review costs and usage](/docs/en/code-review-costs.md): how reviews are billed and where the spend limit is set
-* [Review locally with `/code-review`](/docs/en/code-review-local): run a review of your branch from a Claude Code session
+* [Troubleshoot Code Review](https://code.claude.com/docs/en/code-review-troubleshooting.md): a review that didn't start, failed, or was skipped for budget
+* [Code Review](https://code.claude.com/docs/en/code-review.md): what the service is and how a review runs
+* [Set up Code Review](https://code.claude.com/docs/en/code-review-setup.md): for Owners, turn on Code Review and choose when reviews run and at what level
+* [Customize Code Review](https://code.claude.com/docs/en/code-review-customize.md): change what Claude flags with `REVIEW.md` and `CLAUDE.md`
+* [Code Review costs and usage](https://code.claude.com/docs/en/code-review-costs.md): how reviews are billed and where the spend limit is set
+* [Review locally with `/code-review`](https://code.claude.com/docs/en/code-review-local): run a review of your branch from a Claude Code session

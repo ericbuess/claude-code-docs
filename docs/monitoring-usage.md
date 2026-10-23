@@ -41,13 +41,13 @@ claude
 
 To verify a setup that exports metrics, check your backend for the `claude_code.session.count` metric, which Claude Code emits when a session starts. To verify a logs-only setup, submit a prompt and check for the `claude_code.user_prompt` event.
 
-If nothing arrives, start Claude Code with `claude --debug-file <path>` and check the log it writes to that path. Claude Code reports failures from the exporters you configure as `[3P telemetry]` errors, where 3P means third-party. Lines prefixed `[Anthropic telemetry]` describe [Anthropic's separate operational telemetry](/docs/en/data-usage.md#telemetry-services) and don't indicate a problem with your setup.
+If nothing arrives, start Claude Code with `claude --debug-file <path>` and check the log it writes to that path. Claude Code reports failures from the exporters you configure as `[3P telemetry]` errors, where 3P means third-party. Lines prefixed `[Anthropic telemetry]` describe [Anthropic's separate operational telemetry](https://code.claude.com/docs/en/data-usage.md#telemetry-services) and don't indicate a problem with your setup.
 
 For full configuration options, see the [OpenTelemetry specification](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/protocol/exporter.md#configuration-options).
 
 ## Administrator configuration
 
-Administrators can configure OpenTelemetry settings for all users through the [managed settings file](/docs/en/managed-settings.md#delivery-mechanisms). See the [settings precedence](/docs/en/settings.md#settings-precedence) for more information about how settings are applied.
+Administrators can configure OpenTelemetry settings for all users through the [managed settings file](https://code.claude.com/docs/en/managed-settings.md#delivery-mechanisms). See the [settings precedence](https://code.claude.com/docs/en/settings.md#settings-precedence) for more information about how settings are applied.
 
 Example managed settings configuration:
 
@@ -64,9 +64,9 @@ Example managed settings configuration:
 }
 ```
 
-In the Claude Desktop app, Code tab sessions read these managed settings from the sources that [reach each kind of Desktop session](/docs/en/desktop.md#managed-settings). The OpenTelemetry form for Cowork under **Monitoring** in the admin console's [Data and privacy settings](https://claude.ai/admin-settings/data-privacy-controls) applies to Cowork sessions only, so neither the terminal CLI nor the Code tab exports to a collector you set there.
+In the Claude Desktop app, Code tab sessions read these managed settings from the sources that [reach each kind of Desktop session](https://code.claude.com/docs/en/desktop.md#managed-settings). The OpenTelemetry form for Cowork under **Monitoring** in the admin console's [Data and privacy settings](https://claude.ai/admin-settings/data-privacy-controls) applies to Cowork sessions only, so neither the terminal CLI nor the Code tab exports to a collector you set there.
 
-Claude Code ignores the [OpenTelemetry exporter variables](/docs/en/settings-reference.md#variables-claude-code-ignores-in-env) in a repository's `.claude/settings.json` and `.claude/settings.local.json`, so a repository can't use them to turn telemetry on, choose where it goes, or capture content. Set them in managed settings, or have each developer set them in their shell or `~/.claude/settings.json`. A repository can still turn a signal off by setting its exporter selector, such as `OTEL_LOGS_EXPORTER`, to `none`, unless managed settings, a `--settings` file, or the environment you start Claude Code from sets that variable.
+Claude Code ignores the [OpenTelemetry exporter variables](https://code.claude.com/docs/en/settings-reference.md#variables-claude-code-ignores-in-env) in a repository's `.claude/settings.json` and `.claude/settings.local.json`, so a repository can't use them to turn telemetry on, choose where it goes, or capture content. Set them in managed settings, or have each developer set them in their shell or `~/.claude/settings.json`. A repository can still turn a signal off by setting its exporter selector, such as `OTEL_LOGS_EXPORTER`, to `none`, unless managed settings, a `--settings` file, or the environment you start Claude Code from sets that variable.
 
 Claude Code doesn't pass `OTEL_*` environment variables to the subprocesses it spawns, including the Bash tool, hooks, MCP servers, and language servers. An OpenTelemetry-instrumented application that you run through the Bash tool doesn't inherit Claude Code's exporter endpoint or headers, so set those variables directly in the command if that application needs to export its own telemetry.
 
@@ -77,11 +77,11 @@ When you set an `OTEL_EXPORTER_OTLP_*` variable in managed settings, Claude Code
 * **Endpoints**: when you set `OTEL_EXPORTER_OTLP_ENDPOINT`, Claude Code removes every developer-set per-signal endpoint. Developers can't point one signal at a different collector, so you don't need to also set the per-signal endpoint variables in managed settings.
 * **Protocols**: when you set `OTEL_EXPORTER_OTLP_PROTOCOL`, Claude Code removes every developer-set per-signal protocol.
 * **Credentials**: when you set `OTEL_EXPORTER_OTLP_HEADERS`, `OTEL_EXPORTER_OTLP_CLIENT_KEY`, or `OTEL_EXPORTER_OTLP_CLIENT_CERTIFICATE`, Claude Code removes the developer-set per-signal versions of that variable, plus every developer-set endpoint variable, generic or per-signal, since those credentials would otherwise reach a collector the managed settings didn't choose.
-* **Exporter selectors**: `OTEL_METRICS_EXPORTER`, `OTEL_LOGS_EXPORTER`, and the beta `OTEL_TRACES_EXPORTER` follow normal per-key precedence. A developer's setting can still disable a signal or switch it to the console exporter, so set the selectors in managed settings too if you need them locked. Across [admin sources](/docs/en/managed-settings.md#precedence-within-the-managed-tier), `OTEL_LOGS_EXPORTER` follows the [telemetry unit](/docs/en/server-managed-settings.md#per-key-exceptions-across-managed-sources) while the other two selectors merge per key. Requires Claude Code v2.1.223 or later.
+* **Exporter selectors**: `OTEL_METRICS_EXPORTER`, `OTEL_LOGS_EXPORTER`, and the beta `OTEL_TRACES_EXPORTER` follow normal per-key precedence. A developer's setting can still disable a signal or switch it to the console exporter, so set the selectors in managed settings too if you need them locked. Across [admin sources](https://code.claude.com/docs/en/managed-settings.md#precedence-within-the-managed-tier), `OTEL_LOGS_EXPORTER` follows the [telemetry unit](https://code.claude.com/docs/en/server-managed-settings.md#per-key-exceptions-across-managed-sources) while the other two selectors merge per key. Requires Claude Code v2.1.223 or later.
 * **Beta tracing endpoints**: with [detailed beta tracing](#traces-beta) active, Claude Code exports logs and traces to `BETA_TRACING_ENDPOINT` instead of through the logs and traces exporters. Claude Code therefore removes a developer-set `BETA_TRACING_ENDPOINT` whenever any of these managed settings decides either signal's destination:
 
   * A generic or logs/traces endpoint or credential
-  * An [`otelHeadersHelper`](/docs/en/settings-reference#otelheadershelper)
+  * An [`otelHeadersHelper`](https://code.claude.com/docs/en/settings-reference#otelheadershelper)
   * A logs or traces exporter selector set to `none`, `console`, or empty, values that keep the signal off a collector
   * `CLAUDE_CODE_ENABLE_TELEMETRY` turned off
 
@@ -93,7 +93,7 @@ This removal behavior changes where telemetry is delivered, not what Claude Code
 
 Before v2.1.217, every variable followed per-key settings precedence independently, so a signal-specific endpoint set in user settings or the shell redirected that signal away from the managed collector.
 
-When the desktop app or a [self-hosted environment](/docs/en/self-hosted-environments) runner launches Claude Code and names an OTLP endpoint in the environment it provides, Claude Code pins the destination the same way: the launcher's telemetry variables remove developer-set variables exactly as managed settings do. Claude Code doesn't remove variables that the launcher itself set. Requires Claude Code v2.1.251 or later.
+When the desktop app or a [self-hosted environment](https://code.claude.com/docs/en/self-hosted-environments) runner launches Claude Code and names an OTLP endpoint in the environment it provides, Claude Code pins the destination the same way: the launcher's telemetry variables remove developer-set variables exactly as managed settings do. Claude Code doesn't remove variables that the launcher itself set. Requires Claude Code v2.1.251 or later.
 
 ## Configuration details
 
@@ -139,7 +139,7 @@ How you configure client certificates for the OTLP exporter depends on the OTLP 
 
 | Protocol | Client certificate variables | Trust the collector's CA with |
 | :- | :- | :- |
-| `http/protobuf`, `http/json` | `CLAUDE_CODE_CLIENT_CERT`, `CLAUDE_CODE_CLIENT_KEY`, and optionally `CLAUDE_CODE_CLIENT_KEY_PASSPHRASE`. See [Network configuration](/docs/en/network-config.md#mtls-authentication) | `NODE_EXTRA_CA_CERTS` |
+| `http/protobuf`, `http/json` | `CLAUDE_CODE_CLIENT_CERT`, `CLAUDE_CODE_CLIENT_KEY`, and optionally `CLAUDE_CODE_CLIENT_KEY_PASSPHRASE`. See [Network configuration](https://code.claude.com/docs/en/network-config.md#mtls-authentication) | `NODE_EXTRA_CA_CERTS` |
 | `grpc` | `OTEL_EXPORTER_OTLP_CLIENT_KEY` and `OTEL_EXPORTER_OTLP_CLIENT_CERTIFICATE`, or the per-signal variants such as `OTEL_EXPORTER_OTLP_METRICS_CLIENT_KEY` to use a different certificate per signal | `OTEL_EXPORTER_OTLP_CERTIFICATE` |
 
 For `grpc`, the OpenTelemetry SDK reads the standard OTLP variables directly, so existing configurations that set the per-signal metrics variables continue to work. On machines with managed settings, Claude Code [may remove developer-set per-signal credentials and endpoints](#how-managed-settings-lock-the-otlp-destination) at startup.
@@ -204,7 +204,7 @@ claude_code.interaction
 
 In Agent SDK and `claude -p` sessions, `claude_code.interaction` itself becomes a child of the caller's span when `TRACEPARENT` is set in the environment.
 
-When a `PreToolUse` hook [defers a tool call](/docs/en/hooks.md#defer-a-tool-call-for-later), Claude Code saves the trace context of the turn that deferred it. When you resume the session and the tool re-runs, the tool's spans join that earlier turn's trace as children of the turn's `claude_code.interaction` span.
+When a `PreToolUse` hook [defers a tool call](https://code.claude.com/docs/en/hooks.md#defer-a-tool-call-for-later), Claude Code saves the trace context of the turn that deferred it. When you resume the session and the tool re-runs, the tool's spans join that earlier turn's trace as children of the turn's `claude_code.interaction` span.
 
 #### Span attributes
 
@@ -231,10 +231,10 @@ Every span carries the [standard attributes](#standard-attributes) plus a `span.
 | `query_source_safe` | Bounded form of `query_source`, emitted whether or not detailed beta tracing is active, with values such as `repl_main_thread` or `agent.builtin.general-purpose`. `:` becomes `.` and user-named agents appear as `agent.custom`. Requires Claude Code v2.1.268 or later | |
 | `agent_id` | Identifier of the subagent or teammate that issued the request. Absent on the main session | |
 | `parent_agent_id` | Identifier of the agent that spawned this one. Absent for the main session and for agents spawned directly from it | |
-| `workflow.run_id` | Run identifier of the [Workflow](/docs/en/workflows.md) tool run that spawned this agent, prefixed `wf_`. Absent for agents not spawned by a workflow | |
+| `workflow.run_id` | Run identifier of the [Workflow](https://code.claude.com/docs/en/workflows.md) tool run that spawned this agent, prefixed `wf_`. Absent for agents not spawned by a workflow | |
 | `workflow.name` | Name of the workflow that spawned this agent. User-authored names are replaced with `custom` unless the gate is set | `OTEL_LOG_TOOL_DETAILS` |
 | `speed` | `fast` or `normal` | |
-| `effort` | [Effort level](/docs/en/model-config.md#adjust-effort-level) applied to the request: `low`, `medium`, `high`, `xhigh`, or `max`. Absent when Claude Code sends no effort level, for example on a model that doesn't support effort. Requires Claude Code v2.1.274 or later | |
+| `effort` | [Effort level](https://code.claude.com/docs/en/model-config.md#adjust-effort-level) applied to the request: `low`, `medium`, `high`, `xhigh`, or `max`. Absent when Claude Code sends no effort level, for example on a model that doesn't support effort. Requires Claude Code v2.1.274 or later | |
 | `llm_request.context` | `interaction`, `tool`, or `standalone` depending on the parent span | |
 | `duration_ms` | Wall-clock duration including retries | |
 | `ttft_ms` | Time to first token in milliseconds | |
@@ -289,7 +289,7 @@ Claude Code writes this event from a tool call's successful return, so a call th
 * A call to any tool other than Read, Edit, Write, Bash, WebFetch, WebSearch, and MCP tools
 * A Read that returns anything other than file text, such as an image, a PDF, or a re-read of a file whose contents haven't changed
 * An Edit or Write call, unless you also set `OTEL_LOG_TOOL_DETAILS=1`
-* A WebFetch or WebSearch call that Claude Code moved to the background while it ran so that a waiting message could reach Claude. The result that arrives later isn't recorded either. To learn when Claude Code moves a call, see [When Claude Code sends what you queued](/docs/en/interactive-mode.md#when-claude-code-sends-what-you-queued) for the terminal and the [`priority` field](/docs/en/agent-sdk/typescript#sdkusermessage) for Agent SDK sessions
+* A WebFetch or WebSearch call that Claude Code moved to the background while it ran so that a waiting message could reach Claude. The result that arrives later isn't recorded either. To learn when Claude Code moves a call, see [When Claude Code sends what you queued](https://code.claude.com/docs/en/interactive-mode.md#when-claude-code-sends-what-you-queued) for the terminal and the [`priority` field](https://code.claude.com/docs/en/agent-sdk/typescript#sdkusermessage) for Agent SDK sessions
 
 The event carries these attributes, each truncated at the content limit (60 KB by default). `Gated by` names the variable an attribute needs on top of `OTEL_LOG_TOOL_CONTENT=1`, and for Edit and Write that variable gates the event itself rather than the attribute.
 
@@ -311,7 +311,7 @@ The parent span's `tool_name` attribute tells you which tool an event came from.
 | `decision` | `accept`, `reject`, or `cancelled`, where `cancelled` means Claude Code stopped waiting for a permission decision on the tool call and didn't run it | |
 | `source` | For an `accept` or `reject`, where the decision came from, such as `config`, `hook`, or `user_temporary`, with the meanings given under the [Tool decision event](#tool-decision-event). For a `cancelled`, what ended the wait before any decision was made, such as `user_abort` | |
 
-A `cancelled` decision with `source` `user_abort` means a message needing immediate delivery interrupted the turn while the permission prompt or [auto mode](/docs/en/permission-modes.md#eliminate-prompts-with-auto-mode) check was pending. For example, during an auto mode check, the user had a message queued and [sent it immediately](/docs/en/interactive-mode.md#when-claude-code-sends-what-you-queued).
+A `cancelled` decision with `source` `user_abort` means a message needing immediate delivery interrupted the turn while the permission prompt or [auto mode](https://code.claude.com/docs/en/permission-modes.md#eliminate-prompts-with-auto-mode) check was pending. For example, during an auto mode check, the user had a message queued and [sent it immediately](https://code.claude.com/docs/en/interactive-mode.md#when-claude-code-sends-what-you-queued).
 
 **`claude_code.tool.execution`**
 
@@ -326,7 +326,7 @@ A `cancelled` decision with `source` `user_abort` means a message needing immedi
 
 **`claude_code.hook`**
 
-This span appears only when detailed beta tracing is active, which requires `ENABLE_BETA_TRACING_DETAILED=1` and `BETA_TRACING_ENDPOINT`, a pair that also [changes where your logs and traces go](/docs/en/env-vars.md#variables). Set the pair in your shell, user settings, or managed settings; both variables are ignored in [project and local settings](/docs/en/settings-reference.md#variables-claude-code-ignores-in-env). `CLAUDE_CODE_ENHANCED_TELEMETRY_BETA` alone doesn't produce it.
+This span appears only when detailed beta tracing is active, which requires `ENABLE_BETA_TRACING_DETAILED=1` and `BETA_TRACING_ENDPOINT`, a pair that also [changes where your logs and traces go](https://code.claude.com/docs/en/env-vars.md#variables). Set the pair in your shell, user settings, or managed settings; both variables are ignored in [project and local settings](https://code.claude.com/docs/en/settings-reference.md#variables-claude-code-ignores-in-env). `CLAUDE_CODE_ENHANCED_TELEMETRY_BETA` alone doesn't produce it.
 
 In interactive CLI sessions, detailed beta tracing also requires your organization to be allowlisted for the feature. Agent SDK and non-interactive `-p` sessions don't require allowlisting.
 
@@ -354,7 +354,7 @@ These attributes appear on the spans below, and `Gated by` names the variable an
 | - | - | - | - |
 | `new_context` | `claude_code.interaction` | The user prompt | `OTEL_LOG_USER_PROMPTS` |
 | `new_context` | `claude_code.llm_request` | The new user messages and tool results sent with the request | `OTEL_LOG_USER_PROMPTS` |
-| `system_reminders` | `claude_code.llm_request` | The text of the [system reminders](/docs/en/glossary.md#system-reminder) among the request's new messages | `OTEL_LOG_USER_PROMPTS` |
+| `system_reminders` | `claude_code.llm_request` | The text of the [system reminders](https://code.claude.com/docs/en/glossary.md#system-reminder) among the request's new messages | `OTEL_LOG_USER_PROMPTS` |
 | `system_prompt_preview` | `claude_code.llm_request` | First 500 characters of the complete system prompt sent with the request | `OTEL_LOG_USER_PROMPTS` |
 | `user_system_prompt` | `claude_code.llm_request` | Only the system prompt text you provide via the `systemPrompt` SDK option or `--system-prompt` and `--append-system-prompt` flags. Emitted once per session rather than per request | `OTEL_LOG_USER_PROMPTS` |
 | `response.model_output` | `claude_code.llm_request` | Text of the model's response to the request | `OTEL_LOG_USER_PROMPTS` |
@@ -391,9 +391,9 @@ echo "{\"Authorization\": \"Bearer $(get-token.sh)\", \"X-API-Key\": \"$(get-api
 
 If the helper fails or prints output that doesn't meet these requirements, exports fail and your telemetry backend receives nothing from the session until the helper works again. Claude Code reports the failure in:
 
-* A warning notification in interactive sessions, [`otelHeadersHelper failed; telemetry is not being exported`](/docs/en/errors#otelheadershelper-failed), shown once per session when the helper first fails
+* A warning notification in interactive sessions, [`otelHeadersHelper failed; telemetry is not being exported`](https://code.claude.com/docs/en/errors#otelheadershelper-failed), shown once per session when the helper first fails
 * `/status` output
-* The debug log, when running with [`--debug`](/docs/en/cli-reference#cli-flags) or after running `/debug` in the session
+* The debug log, when running with [`--debug`](https://code.claude.com/docs/en/cli-reference#cli-flags) or after running `/debug` in the session
 * stderr, in non-interactive sessions started with `-p`
 
 #### Refresh behavior
@@ -446,9 +446,9 @@ Each custom key becomes a label on every metric series, so high-cardinality valu
 
 ### Attribute telemetry to Desktop SSH sessions
 
-To see which remote machine a [Desktop SSH session](/docs/en/desktop.md#ssh-sessions) ran on, name each machine in a custom attribute. Metrics and events don't name the machine a session ran on.
+To see which remote machine a [Desktop SSH session](https://code.claude.com/docs/en/desktop.md#ssh-sessions) ran on, name each machine in a custom attribute. Metrics and events don't name the machine a session ran on.
 
-On each remote machine, add [`OTEL_RESOURCE_ATTRIBUTES`](#multi-team-organization-support) to the `env` block that turns telemetry on, in the [managed settings file the session reads](/docs/en/desktop.md#managed-settings). Write the name out in each machine's file. Claude Code doesn't expand the value, so `host.name=$(hostname)` arrives as those characters.
+On each remote machine, add [`OTEL_RESOURCE_ATTRIBUTES`](#multi-team-organization-support) to the `env` block that turns telemetry on, in the [managed settings file the session reads](https://code.claude.com/docs/en/desktop.md#managed-settings). Write the name out in each machine's file. Claude Code doesn't expand the value, so `host.name=$(hostname)` arrives as those characters.
 
 The following example names the machine `build-7`:
 
@@ -472,7 +472,7 @@ If the name doesn't arrive, check for one of these causes:
 * **You set it on the computer that runs Desktop**: Desktop doesn't pass a value you set there to the SSH session
 * **You exported it in a login file**: only login shells read a file such as `/etc/profile`. A value you `export` there reaches Claude Code that you start from a login shell. It doesn't reach a Desktop SSH session, because Desktop doesn't start Claude Code through a login shell.
 * **A value has a space inside it**: Claude Code then copies none of the keys onto events or datapoints and reports no error. [Take the space out of the value](#multi-team-organization-support).
-* **Something else already sets the variable**: in a session that the desktop app starts, a variable already set in the launch environment [takes precedence over settings files](/docs/en/settings-reference.md#how-env-values-interact-with-your-shell). The [debug log](/docs/en/debug-your-config.md) names each ignored variable. When a third-party Desktop deployment [names an OTLP endpoint](#how-managed-settings-lock-the-otlp-destination) in the environment it provides, that environment carries Desktop's own `OTEL_RESOURCE_ATTRIBUTES`.
+* **Something else already sets the variable**: in a session that the desktop app starts, a variable already set in the launch environment [takes precedence over settings files](https://code.claude.com/docs/en/settings-reference.md#how-env-values-interact-with-your-shell). The [debug log](https://code.claude.com/docs/en/debug-your-config.md) names each ignored variable. When a third-party Desktop deployment [names an OTLP endpoint](#how-managed-settings-lock-the-otlp-destination) in the environment it provides, that environment carries Desktop's own `OTEL_RESOURCE_ATTRIBUTES`.
 
 ### Example configurations
 
@@ -502,7 +502,7 @@ export CLAUDE_CODE_ENABLE_TELEMETRY=1
 export OTEL_METRICS_EXPORTER=prometheus
 ```
 
-On a [self-hosted environment](/docs/en/self-hosted-environments-reference.md#pass-through-session-child-metrics), the session binds port 9464 only at the runner's default capacity of one. At higher capacity, the runner re-exposes session counters and gauges on its own `/metrics` endpoint instead.
+On a [self-hosted environment](https://code.claude.com/docs/en/self-hosted-environments-reference.md#pass-through-session-child-metrics), the session binds port 9464 only at the runner's default capacity of one. At higher capacity, the runner re-exposes session counters and gauges on its own `/metrics` endpoint instead.
 
 To send metrics to multiple exporters:
 
@@ -544,33 +544,33 @@ export OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4317
 
 ## Telemetry from cloud sessions and Claude Tag
 
-[Cloud sessions](/docs/en/claude-code-on-the-web.md), including [Claude Tag](https://claude.com/docs/claude-tag/overview) channel sessions, run in [cloud environments](/docs/en/cloud-environments.md) rather than on your users' devices, so a managed settings file or shell profile on those devices doesn't configure their telemetry. For sessions in Anthropic-hosted environments, this section covers where to set the telemetry variables, how to make your collector reachable from the environment, and how to tell cloud and Claude Tag sessions apart in the exported data.
+[Cloud sessions](https://code.claude.com/docs/en/claude-code-on-the-web.md), including [Claude Tag](https://claude.com/docs/claude-tag/overview) channel sessions, run in [cloud environments](https://code.claude.com/docs/en/cloud-environments.md) rather than on your users' devices, so a managed settings file or shell profile on those devices doesn't configure their telemetry. For sessions in Anthropic-hosted environments, this section covers where to set the telemetry variables, how to make your collector reachable from the environment, and how to tell cloud and Claude Tag sessions apart in the exported data.
 
 To export telemetry from those sessions, set `CLAUDE_CODE_ENABLE_TELEMETRY` and the `OTEL_*` variables, using the same keys as the [administrator configuration](#administrator-configuration) example, in one of two places:
 
-* **Server-managed settings**: add them to the `env` block of your organization's [server-managed settings](/docs/en/server-managed-settings.md). Claude Code fetches those settings at startup wherever [server-managed settings apply](/docs/en/model-config.md#surface-coverage), which includes your users' machines and cloud sessions other than Claude Tag channel sessions. Claude Tag sessions don't receive your server-managed settings, so this route doesn't configure them.
-* **The environment's variables**: add them to a cloud environment's [environment variables](/docs/en/cloud-environments.md#set-environment-variables) to configure only the sessions that run in that environment. This is the route that reaches Claude Tag sessions.
+* **Server-managed settings**: add them to the `env` block of your organization's [server-managed settings](https://code.claude.com/docs/en/server-managed-settings.md). Claude Code fetches those settings at startup wherever [server-managed settings apply](https://code.claude.com/docs/en/model-config.md#surface-coverage), which includes your users' machines and cloud sessions other than Claude Tag channel sessions. Claude Tag sessions don't receive your server-managed settings, so this route doesn't configure them.
+* **The environment's variables**: add them to a cloud environment's [environment variables](https://code.claude.com/docs/en/cloud-environments.md#set-environment-variables) to configure only the sessions that run in that environment. This is the route that reaches Claude Tag sessions.
 
-Anyone who uses an environment can read its variables, so don't put a credential there, such as a collector token in `OTEL_EXPORTER_OTLP_HEADERS`. A [network secret](/docs/en/cloud-environments.md#add-network-secrets) on the environment doesn't help either, because Claude Code's own telemetry export is one of the [requests that never get the secret](/docs/en/cloud-environments.md#requests-that-never-get-the-credential). If your collector requires a credential, configure the whole export through server-managed settings instead, because when you set a credential there, [Claude Code removes endpoint variables set outside managed settings](#how-managed-settings-lock-the-otlp-destination).
+Anyone who uses an environment can read its variables, so don't put a credential there, such as a collector token in `OTEL_EXPORTER_OTLP_HEADERS`. A [network secret](https://code.claude.com/docs/en/cloud-environments.md#add-network-secrets) on the environment doesn't help either, because Claude Code's own telemetry export is one of the [requests that never get the secret](https://code.claude.com/docs/en/cloud-environments.md#requests-that-never-get-the-credential). If your collector requires a credential, configure the whole export through server-managed settings instead, because when you set a credential there, [Claude Code removes endpoint variables set outside managed settings](#how-managed-settings-lock-the-otlp-destination).
 
 Keep these constraints in mind when you configure telemetry for cloud sessions:
 
-* **Let sessions reach the collector**: Claude Code sends the export through the session's network, so whether it reaches the host in your `OTEL_EXPORTER_OTLP_ENDPOINT` depends on the environment's [network access level](/docs/en/cloud-environments.md#access-levels). If sessions can't reach the collector's domain at the level you chose, [add the domain to the environment's allowlist](/docs/en/cloud-environments.md#allow-specific-domains), because no server-managed setting adds domains to an environment's network allowlist.
-* **Claude Tag channels use organization-level environments**: channel sessions run in organization-level environments rather than members' personal ones, so make the allowlist and any environment-variable changes on the [shared environment](/docs/en/cloud-environments.md#organization-shared-environments) set as your organization's default or pinned to the channel.
-* **Cowork is configured separately**: Cowork sessions don't receive server-managed settings, as the [surface coverage table](/docs/en/model-config.md#surface-coverage) shows, so the server-managed `env` block doesn't configure their telemetry.
+* **Let sessions reach the collector**: Claude Code sends the export through the session's network, so whether it reaches the host in your `OTEL_EXPORTER_OTLP_ENDPOINT` depends on the environment's [network access level](https://code.claude.com/docs/en/cloud-environments.md#access-levels). If sessions can't reach the collector's domain at the level you chose, [add the domain to the environment's allowlist](https://code.claude.com/docs/en/cloud-environments.md#allow-specific-domains), because no server-managed setting adds domains to an environment's network allowlist.
+* **Claude Tag channels use organization-level environments**: channel sessions run in organization-level environments rather than members' personal ones, so make the allowlist and any environment-variable changes on the [shared environment](https://code.claude.com/docs/en/cloud-environments.md#organization-shared-environments) set as your organization's default or pinned to the channel.
+* **Cowork is configured separately**: Cowork sessions don't receive server-managed settings, as the [surface coverage table](https://code.claude.com/docs/en/model-config.md#surface-coverage) shows, so the server-managed `env` block doesn't configure their telemetry.
 
 ### Attribute telemetry to cloud sessions
 
-By default, metrics and events from a cloud session carry the [standard attributes](#standard-attributes), including `session.id`, `ccr.session.id`, and `organization.id`, so you can filter by session or organization without extra configuration. The `ccr.session.id` value is the session's `CLAUDE_CODE_REMOTE_SESSION_ID`. To turn it into the session's transcript URL, see [Link output back to the session](/docs/en/cloud-environments.md#link-output-back-to-the-session).
+By default, metrics and events from a cloud session carry the [standard attributes](#standard-attributes), including `session.id`, `ccr.session.id`, and `organization.id`, so you can filter by session or organization without extra configuration. The `ccr.session.id` value is the session's `CLAUDE_CODE_REMOTE_SESSION_ID`. To turn it into the session's transcript URL, see [Link output back to the session](https://code.claude.com/docs/en/cloud-environments.md#link-output-back-to-the-session).
 
 To tell cloud sessions apart, group or filter on `ccr.session.id`, not `session.id`.
 
 To attribute telemetry in more detail, use these options:
 
 * **Identify Claude Tag sessions**: set `OTEL_METRICS_INCLUDE_ENTRYPOINT=true`, as described under [Metrics cardinality control](#metrics-cardinality-control). Metrics then carry `app.entrypoint`, whose value is `claude-in-slack` for Claude Tag sessions.
-* **Add custom attributes**: set [`OTEL_RESOURCE_ATTRIBUTES`](#multi-team-organization-support) in the same place you set the other `OTEL_*` variables for those sessions. If you `export` it in the environment's [setup script](/docs/en/cloud-environments.md#setup-scripts) instead, the value doesn't reach Claude Code: the setup script is a separate Bash script that runs before Claude Code launches, and variables it exports end with it.
+* **Add custom attributes**: set [`OTEL_RESOURCE_ATTRIBUTES`](#multi-team-organization-support) in the same place you set the other `OTEL_*` variables for those sessions. If you `export` it in the environment's [setup script](https://code.claude.com/docs/en/cloud-environments.md#setup-scripts) instead, the value doesn't reach Claude Code: the setup script is a separate Bash script that runs before Claude Code launches, and variables it exports end with it.
 
-In Claude Tag channel sessions, Claude works as your organization's [shared identity](/docs/en/cloud-environments.md#set-the-environment-a-claude-tag-channel-uses) rather than as any member, so don't rely on the `user.*` attributes to identify who tagged Claude.
+In Claude Tag channel sessions, Claude works as your organization's [shared identity](https://code.claude.com/docs/en/cloud-environments.md#set-the-environment-a-claude-tag-channel-uses) rather than as any member, so don't rely on the `user.*` attributes to identify who tagged Claude.
 
 ## Available metrics and events
 
@@ -581,31 +581,31 @@ All metrics and events share these standard attributes:
 | Attribute | Description | Controlled By |
 | - | - | - |
 | `session.id` | Claude Code's own session ID, which `/clear` replaces | `OTEL_METRICS_INCLUDE_SESSION_ID` (default: true) |
-| `ccr.session.id` | Cloud session identifier, the value of `CLAUDE_CODE_REMOTE_SESSION_ID`, on sessions that run in a [cloud environment](/docs/en/cloud-environments.md) | `OTEL_METRICS_INCLUDE_SESSION_ID` (default: true) |
+| `ccr.session.id` | Cloud session identifier, the value of `CLAUDE_CODE_REMOTE_SESSION_ID`, on sessions that run in a [cloud environment](https://code.claude.com/docs/en/cloud-environments.md) | `OTEL_METRICS_INCLUDE_SESSION_ID` (default: true) |
 | `app.version` | Current Claude Code version | `OTEL_METRICS_INCLUDE_VERSION` (default: false) |
 | `app.entrypoint` | How the session was launched, such as `cli`, `sdk-cli`, `sdk-ts`, `sdk-py`, `claude-vscode`, or `claude-in-slack` for Claude Tag sessions | `OTEL_METRICS_INCLUDE_ENTRYPOINT` (default: false) |
 | `organization.id` | Organization UUID (when authenticated) | Always included when available |
 | `user.account_uuid` | Account UUID (when authenticated) | `OTEL_METRICS_INCLUDE_ACCOUNT_UUID` (default: true) |
 | `user.account_id` | Account ID in tagged format matching Anthropic admin APIs (when authenticated), such as `user_01BWBeN28...` | `OTEL_METRICS_INCLUDE_ACCOUNT_UUID` (default: true) |
 | `user.id` | Random anonymous identifier generated on first run and persisted in `~/.claude.json`. It contains no personal information and is not derived from your Claude account. Deleting the file produces a new unrelated value on next run. | Always included |
-| `user.email` | User email address, from your sign-in or, in a [cloud session](/docs/en/claude-code-on-the-web.md), from the session's own credentials | Always included when available |
+| `user.email` | User email address, from your sign-in or, in a [cloud session](https://code.claude.com/docs/en/claude-code-on-the-web.md), from the session's own credentials | Always included when available |
 | `terminal.type` | Terminal type, such as `iTerm.app`, `vscode`, `cursor`, or `tmux` | Always included when detected |
 | Keys from `OTEL_RESOURCE_ATTRIBUTES` | Custom attributes you set, such as `department` or `team.id`. See [Multi-team organization support](#multi-team-organization-support) | `OTEL_METRICS_INCLUDE_RESOURCE_ATTRIBUTES` (default: true) |
 | `vcs.repository.url.full`, `vcs.owner.name`, `vcs.repository.name`, `vcs.provider.name` | The session repository's identity, derived from its `origin` remote. See [Repository attributes](#repository-attributes) | `OTEL_METRICS_INCLUDE_REPOSITORY` (default: false). Requires Claude Code v2.1.269 or later |
 
-In sessions signed in to a [Claude apps gateway](/docs/en/claude-apps-gateway) through `/login`, the CLI stamps exports with the authenticated identity: `user.id` is the IdP subject, `user.email` is the signed-in email, and `user.groups` carries IdP group membership as a comma-separated string. Each export also carries `identity.source: gateway-oidc`. The gateway identity is applied last, so `user.*` and `identity.*` keys set through `OTEL_RESOURCE_ATTRIBUTES` are ignored on those sessions.
+In sessions signed in to a [Claude apps gateway](https://code.claude.com/docs/en/claude-apps-gateway) through `/login`, the CLI stamps exports with the authenticated identity: `user.id` is the IdP subject, `user.email` is the signed-in email, and `user.groups` carries IdP group membership as a comma-separated string. Each export also carries `identity.source: gateway-oidc`. The gateway identity is applied last, so `user.*` and `identity.*` keys set through `OTEL_RESOURCE_ATTRIBUTES` are ignored on those sessions.
 
 > [!NOTE]
 >
-> Events that Claude Code logs before a developer signs in don't carry the gateway identity. When Claude Code opens a session signed out of the gateway, for example after [the gateway ends the sign-in](/docs/en/errors.md#cloud-gateway-session-expired), the startup events logged before sign-in carry the anonymous `user.id` and no `identity.source`. These include [`managed_settings_resolved`](#managed-settings-resolved-event), [`plugin_loaded`](#plugin-loaded-event), and [`mcp_server_connection`](#mcp-server-connection-event).
+> Events that Claude Code logs before a developer signs in don't carry the gateway identity. When Claude Code opens a session signed out of the gateway, for example after [the gateway ends the sign-in](https://code.claude.com/docs/en/errors.md#cloud-gateway-session-expired), the startup events logged before sign-in carry the anonymous `user.id` and no `identity.source`. These include [`managed_settings_resolved`](#managed-settings-resolved-event), [`plugin_loaded`](#plugin-loaded-event), and [`mcp_server_connection`](#mcp-server-connection-event).
 
-For the identity attributes on Claude Desktop and Cowork sessions that connect through a gateway, see the [gateway `telemetry` reference](/docs/en/claude-apps-gateway-config#telemetry).
+For the identity attributes on Claude Desktop and Cowork sessions that connect through a gateway, see the [gateway `telemetry` reference](https://code.claude.com/docs/en/claude-apps-gateway-config#telemetry).
 
 Events additionally include the following attributes. These are never attached to metrics because they would cause unbounded cardinality:
 
 * `prompt.id`: UUID correlating a user prompt with all subsequent events until the next prompt. See [Event correlation attributes](#event-correlation-attributes).
 * `workspace.host_paths`: host workspace directories selected in the desktop app, as a string array
-* `workflow.run_id`: run identifier, prefixed `wf_`, on the API and tool events emitted by agents that belong to a [Workflow](/docs/en/workflows.md) tool run. Filtering events by one `workflow.run_id` reconstructs that run's API requests and tool results. The identifier covers the agents the workflow script spawns and any agents those spawn in turn, such as skill invocations. It matches the run identifier reported in the Workflow tool result. Absent on all other events.
+* `workflow.run_id`: run identifier, prefixed `wf_`, on the API and tool events emitted by agents that belong to a [Workflow](https://code.claude.com/docs/en/workflows.md) tool run. Filtering events by one `workflow.run_id` reconstructs that run's API requests and tool results. The identifier covers the agents the workflow script spawns and any agents those spawn in turn, such as skill invocations. It matches the run identifier reported in the Workflow tool result. Absent on all other events.
 * `workflow.name`: name of the workflow, its script's `meta.name`, emitted alongside `workflow.run_id`. Built-in workflow names appear verbatim when the run executes the unmodified built-in script. User-authored names, including edited copies of built-in scripts, are replaced with `custom` unless `OTEL_LOG_TOOL_DETAILS=1` is set.
 
 #### Repository attributes
@@ -623,7 +623,7 @@ Claude Code derives these attributes once per session from the repository's `ori
 
 Values are lowercased, and credentials, query strings, and fragments from the remote URL never appear in them. The attributes are omitted when the session has no `origin` remote, when the remote isn't URL-shaped, or when the only enclosing repository is your home directory.
 
-To get these attributes from a [cloud session](/docs/en/claude-code-on-the-web.md), set the telemetry variables, including `OTEL_METRICS_INCLUDE_REPOSITORY`, on its [cloud environment](/docs/en/cloud-environments.md#set-environment-variables). Also allow your collector's domain in the environment's [network access](/docs/en/cloud-environments.md#network-access).
+To get these attributes from a [cloud session](https://code.claude.com/docs/en/claude-code-on-the-web.md), set the telemetry variables, including `OTEL_METRICS_INCLUDE_REPOSITORY`, on its [cloud environment](https://code.claude.com/docs/en/cloud-environments.md#set-environment-variables). Also allow your collector's domain in the environment's [network access](https://code.claude.com/docs/en/cloud-environments.md#network-access).
 
 A `vcs.*` key you declare in [`OTEL_RESOURCE_ATTRIBUTES`](#multi-team-organization-support) replaces the derived value for that key. If you declare `vcs.repository.url.full`, Claude Code never reads the remote and reports only the keys you declare.
 
@@ -699,7 +699,7 @@ The `agent.name`, `skill.name`, `plugin.name`, `mcp_server.name`, and `mcp_tool.
 * `model`: Model identifier (for example, "claude-sonnet-5")
 * `query_source`: Category of the subsystem that issued the request. One of `"main"`, `"subagent"`, or `"auxiliary"`
 * `speed`: `"fast"` when the request used fast mode. Absent otherwise
-* `effort`: [Effort level](/docs/en/model-config.md#adjust-effort-level) applied to the request: `"low"`, `"medium"`, `"high"`, `"xhigh"`, or `"max"`. Absent when Claude Code sends no effort level, for example on a model that doesn't support effort.
+* `effort`: [Effort level](https://code.claude.com/docs/en/model-config.md#adjust-effort-level) applied to the request: `"low"`, `"medium"`, `"high"`, `"xhigh"`, or `"max"`. Absent when Claude Code sends no effort level, for example on a model that doesn't support effort.
 * `agent.name`: Subagent type that issued the request. Built-in agent names and agents from official-marketplace plugins appear verbatim. Other user-defined agent names are replaced with `"custom"`. Absent when the request was not issued by a named subagent type.
 * `skill.name`: Skill active for the request, set by the Skill tool or a `/` command, or inherited by a spawned subagent. Built-in, bundled, user-defined, and official-marketplace plugin skill names appear verbatim. Third-party plugin skill names are replaced with `"third-party"`. Absent when no skill is active.
 * `plugin.name`: Owning plugin when the active skill or subagent is provided by a plugin. Official-marketplace plugin names appear verbatim. Third-party plugin names are replaced with `"third-party"`. Absent when neither the skill nor the subagent has an owning plugin.
@@ -714,11 +714,11 @@ Incremented after each API request.
 **Attributes**:
 
 * All [standard attributes](#standard-attributes)
-* `type`: (`"input"`, `"output"`, `"cacheRead"`, `"cacheCreation"`). The `"input"` type excludes tokens read from or written to the prompt cache, which are counted under `"cacheRead"` and `"cacheCreation"`. The `"cacheCreation"` type counts cache writes with the five-minute and one-hour [cache lifetimes](/docs/en/prompt-caching.md#cache-lifetime) together.
+* `type`: (`"input"`, `"output"`, `"cacheRead"`, `"cacheCreation"`). The `"input"` type excludes tokens read from or written to the prompt cache, which are counted under `"cacheRead"` and `"cacheCreation"`. The `"cacheCreation"` type counts cache writes with the five-minute and one-hour [cache lifetimes](https://code.claude.com/docs/en/prompt-caching.md#cache-lifetime) together.
 * `model`: Model identifier (for example, "claude-sonnet-5")
 * `query_source`: Category of the subsystem that issued the request. One of `"main"`, `"subagent"`, or `"auxiliary"`
 * `speed`: `"fast"` when the request used fast mode. Absent otherwise
-* `effort`: [Effort level](/docs/en/model-config.md#adjust-effort-level) applied to the request. See [Cost counter](#cost-counter) for details.
+* `effort`: [Effort level](https://code.claude.com/docs/en/model-config.md#adjust-effort-level) applied to the request. See [Cost counter](#cost-counter) for details.
 * `agent.name`, `skill.name`, `plugin.name`, `marketplace.name`, `mcp_server.name`, `mcp_tool.name`: Skill, plugin, agent, and MCP attribution for the request. See [Cost counter](#cost-counter) for definitions and redaction behavior.
 
 #### Code edit tool decision counter
@@ -755,14 +755,14 @@ When a user submits a prompt, Claude Code may make multiple API calls and run se
 | `prompt.id` | UUID v4 identifier linking all events produced while processing a single user prompt |
 | `event.sequence` | 0-based counter for ordering events, counted per Claude Code process rather than per session |
 | `message.uuid` | UUID of the message as persisted in the session transcript, the `~/.claude/projects/*/*.jsonl` files. Present on `assistant_response`, on `api_response_body`, and on `user_prompt` except for command dispatches, which can produce zero or many messages. On `assistant_response` and `api_response_body`, this is the response's final transcript entry, which the next turn's `parentUuid` chains from. Requires Claude Code v2.1.274 or later on `api_response_body` |
-| `request_id` | Server-assigned ID of the API request, read from the `request-id` response header, such as `req_011...`. On a response with no `request-id` header, as on [Amazon Bedrock](/docs/en/amazon-bedrock.md), the value comes from the `x-amzn-requestid` header instead. Present on `api_request`, `api_error`, `api_refusal`, `assistant_response`, and `api_response_body` when the response carries either header. Matches the same attribute on the `llm_request` trace span. The `x-amzn-requestid` source requires Claude Code v2.1.282 or later |
+| `request_id` | Server-assigned ID of the API request, read from the `request-id` response header, such as `req_011...`. On a response with no `request-id` header, as on [Amazon Bedrock](https://code.claude.com/docs/en/amazon-bedrock.md), the value comes from the `x-amzn-requestid` header instead. Present on `api_request`, `api_error`, `api_refusal`, `assistant_response`, and `api_response_body` when the response carries either header. Matches the same attribute on the `llm_request` trace span. The `x-amzn-requestid` source requires Claude Code v2.1.282 or later |
 | `client_request_id` | Client-generated UUID sent as the `x-client-request-id` request header. Present on `api_request` and `api_error` on first-party API connections; absent on third-party provider backends and when the request was retried through the non-streaming fallback. Pairs a request with its response and remains available for failures such as timeouts that never produced a server `request_id`. Matches the same attribute on the `llm_request` trace span |
 
 To trace all activity triggered by a single prompt, filter your events by a specific `prompt.id` value. This returns the user\_prompt event, any api\_request events, and any tool\_result events that occurred while processing that prompt.
 
-`event.sequence` starts at 0 each time a Claude Code process starts and counts up for the life of that process. It keeps counting across `/clear`, which assigns a new `session.id`. If you [resume a session without forking](/docs/en/how-claude-code-works.md#resume-or-fork-sessions), the session keeps its `session.id` but takes its `event.sequence` values from the process that resumed it, so within one session a later event can carry a lower value than an earlier one, or repeat one. To order a session's events, sort by `event.timestamp` and use `event.sequence` to order events that share a timestamp.
+`event.sequence` starts at 0 each time a Claude Code process starts and counts up for the life of that process. It keeps counting across `/clear`, which assigns a new `session.id`. If you [resume a session without forking](https://code.claude.com/docs/en/how-claude-code-works.md#resume-or-fork-sessions), the session keeps its `session.id` but takes its `event.sequence` values from the process that resumed it, so within one session a later event can carry a lower value than an earlier one, or repeat one. To order a session's events, sort by `event.timestamp` and use `event.sequence` to order events that share a timestamp.
 
-For message-level reconstruction, each event class carries a key that matches a field in the session transcript. The transcript entry format is [internal to Claude Code](/docs/en/sessions.md#where-transcripts-are-stored) and changes between versions, so a pipeline that joins on these fields can break on any release; treat the joins as version-specific rather than a stable contract:
+For message-level reconstruction, each event class carries a key that matches a field in the session transcript. The transcript entry format is [internal to Claude Code](https://code.claude.com/docs/en/sessions.md#where-transcripts-are-stored) and changes between versions, so a pipeline that joins on these fields can break on any release; treat the joins as version-specific rather than a stable contract:
 
 * `message.uuid` on `user_prompt`, `assistant_response`, and `api_response_body`
 * `request_id` on the API events, persisted as `requestId` on the transcript's assistant entries
@@ -862,7 +862,7 @@ Logged for each API request to Claude.
 * `client_request_id`: Client-generated UUID sent as the `x-client-request-id` request header; see the [event correlation attributes](#event-correlation-attributes) table for when it's present
 * `speed`: `"fast"` or `"normal"`, indicating whether fast mode was active
 * `query_source`: Subsystem that issued the request, such as `"repl_main_thread"`, `"compact"`, or a subagent name
-* `effort`: [Effort level](/docs/en/model-config.md#adjust-effort-level) applied to the request: `"low"`, `"medium"`, `"high"`, `"xhigh"`, or `"max"`. Absent when Claude Code sends no effort level, for example on a model that doesn't support effort.
+* `effort`: [Effort level](https://code.claude.com/docs/en/model-config.md#adjust-effort-level) applied to the request: `"low"`, `"medium"`, `"high"`, `"xhigh"`, or `"max"`. Absent when Claude Code sends no effort level, for example on a model that doesn't support effort.
 * `agent.name`, `skill.name`, `plugin.name`, `marketplace.name`, `mcp_server.name`, `mcp_tool.name`: Skill, plugin, agent, and MCP attribution for the request. See [Cost counter](#cost-counter) for definitions and redaction behavior.
 
 #### API error event
@@ -886,7 +886,7 @@ Logged when an API request to Claude fails.
 * `client_request_id`: Client-generated UUID sent as the `x-client-request-id` request header. Available even when a failure such as a timeout or connection error never produced a server `request_id`; see the [event correlation attributes](#event-correlation-attributes) table for when it's present.
 * `speed`: `"fast"` or `"normal"`, indicating whether fast mode was active
 * `query_source`: Subsystem that issued the request, such as `"repl_main_thread"`, `"compact"`, or a subagent name
-* `effort`: [Effort level](/docs/en/model-config.md#adjust-effort-level) applied to the request. Absent when Claude Code sends no effort level, for example on a model that doesn't support effort.
+* `effort`: [Effort level](https://code.claude.com/docs/en/model-config.md#adjust-effort-level) applied to the request. Absent when Claude Code sends no effort level, for example on a model that doesn't support effort.
 * `agent.name`, `skill.name`, `plugin.name`, `marketplace.name`, `mcp_server.name`, `mcp_tool.name`: Skill, plugin, agent, and MCP attribution for the request. See [Cost counter](#cost-counter) for definitions and redaction behavior.
 
 #### API refusal event
@@ -904,9 +904,9 @@ Logged when an API request returns `stop_reason: "refusal"`. Refusals arrive on 
 * `model`: Model identifier from the request
 * `request_id`: API request ID, such as `"req_011..."`, described under [Event correlation attributes](#event-correlation-attributes).
 * `query_source`: Subsystem that issued the request, such as `"repl_main_thread"`, `"compact"`, or a subagent name. See [`api_request`](#api-request-event) for definitions.
-* `speed`: Either `"fast"` when [Fast mode](/docs/en/fast-mode.md) is active, or `"normal"`
+* `speed`: Either `"fast"` when [Fast mode](https://code.claude.com/docs/en/fast-mode.md) is active, or `"normal"`
 * `attempt`: Retry attempt number. The first attempt is `1`.
-* `effort`: [Effort level](/docs/en/model-config.md#adjust-effort-level) applied to the request. Absent when Claude Code sends no effort level, for example on a model that doesn't support effort.
+* `effort`: [Effort level](https://code.claude.com/docs/en/model-config.md#adjust-effort-level) applied to the request. Absent when Claude Code sends no effort level, for example on a model that doesn't support effort.
 * `server_fallback_hop`: `true` when the API's server-side model fallback already retried this refusal on a different model, so the user did not see this particular refusal. `false` when the request ended in a refusal. A single turn can emit both a `true` hop event and a later `false` final event when the fallback model also refuses.
 * `has_category`: `true` when the API response carried a `stop_details.category` of `"cyber"`, `"bio"`, `"frontier_llm"`, or `"reasoning_extraction"`. `false` when the response carried no category or a value outside that set. Absent when `server_fallback_hop` is `true`, because hop blocks don't carry `stop_details`.
 * `has_explanation`: `true` when the API response carried a `stop_details.explanation`, otherwise `false`. Absent when `server_fallback_hop` is `true`.
@@ -991,32 +991,32 @@ Logged when a tool permission decision is made (accept/reject).
 
     The `source` value doesn't indicate which of these sources matched. To find which one refused a call, look for the [Safety event](#safety-event) with the same `tool_use_id` and read its `category` and `rule_source` attributes. Some refused calls [have no safety event](#calls-without-a-safety-event).
 
-    Claude Code also reports `"config"` when the permission prompt request itself fails. For example, that request fails when the Agent SDK's [`canUseTool`](/docs/en/agent-sdk/typescript#canusetool) callback or the [`--permission-prompt-tool`](/docs/en/cli-reference#cli-flags) tool returns an invalid result, or when the input stream closes while the request is pending. Before v2.1.216, Claude Code reported these failures as `"user_reject"`.
+    Claude Code also reports `"config"` when the permission prompt request itself fails. For example, that request fails when the Agent SDK's [`canUseTool`](https://code.claude.com/docs/en/agent-sdk/typescript#canusetool) callback or the [`--permission-prompt-tool`](https://code.claude.com/docs/en/cli-reference#cli-flags) tool returns an invalid result, or when the input stream closes while the request is pending. Before v2.1.216, Claude Code reported these failures as `"user_reject"`.
   * `"hook"`: A `PreToolUse` or `PermissionRequest` hook returned the decision.
   * `"user_permanent"`: Emitted when the user chose "Yes, and don't ask again for ..." at a permission prompt, which saves an allow rule to their personal settings. In the interactive CLI this is emitted only for that choice itself; later calls that match the saved rule emit `"config"` instead. In Agent SDK or non-interactive `-p` sessions, both the initial choice and later rule matches emit `"user_permanent"`. Treated as an accept.
   * `"user_temporary"`: Emitted when the user chose "Yes" at a permission prompt for a one-time approval, or chose an option that grants access for the rest of the session on a file edit or read prompt. In the interactive CLI this is emitted only for the choice itself; later calls allowed by that session-scoped grant emit `"config"` instead. In Agent SDK or non-interactive `-p` sessions, both the choice and later matches emit `"user_temporary"`. Treated as an accept.
   * `"user_abort"`: Emitted when the user dismissed the permission prompt without answering. In Agent SDK and non-interactive `-p` sessions, this includes interrupting the turn while a `canUseTool` or `--permission-prompt-tool` permission request is pending; before v2.1.216, Claude Code reported that interrupt as `"user_reject"`. Treated as a reject.
   * `"user_reject"`: Emitted when the user chose "No" when prompted. In the interactive CLI this is emitted only for that choice itself; calls that match a deny rule in the user's personal settings emit `"config"` instead. In Agent SDK or non-interactive `-p` sessions, calls that match a deny rule in personal settings emit `"user_reject"`. Treated as a reject.
-* `classifier_verdict`: The auto mode [classifier](/docs/en/permission-modes.md#how-the-classifier-evaluates-actions) verdict for the call, or why Claude Code denied the call when none came. Requires Claude Code v2.1.301 or later
+* `classifier_verdict`: The auto mode [classifier](https://code.claude.com/docs/en/permission-modes.md#how-the-classifier-evaluates-actions) verdict for the call, or why Claude Code denied the call when none came. Requires Claude Code v2.1.301 or later
 
   * `"allow"`: the classifier approved the call
   * `"block"`: the classifier blocked the call. A classifier check that fails partway through can also end as `"block"`, so a partial classifier outage can appear as more blocks rather than as `"unavailable"`
-  * `"no_verdict"`: the check ran but gave [no usable verdict](/docs/en/errors.md#auto-mode-cannot-determine-the-safety-of-an-action), so Claude Code denied the call. The denial doesn't mean the classifier found the call unsafe
-  * `"unavailable"`: the request to the classifier failed, for example on a rate limit, timeout, or connection error, so Claude Code denied the call. With [server-side classifier review](/docs/en/permission-modes.md#server-side-classifier-review), it also marks a call denied because [the server returned no safety verdict](/docs/en/errors.md#the-server-returned-no-safety-verdict)
+  * `"no_verdict"`: the check ran but gave [no usable verdict](https://code.claude.com/docs/en/errors.md#auto-mode-cannot-determine-the-safety-of-an-action), so Claude Code denied the call. The denial doesn't mean the classifier found the call unsafe
+  * `"unavailable"`: the request to the classifier failed, for example on a rate limit, timeout, or connection error, so Claude Code denied the call. With [server-side classifier review](https://code.claude.com/docs/en/permission-modes.md#server-side-classifier-review), it also marks a call denied because [the server returned no safety verdict](https://code.claude.com/docs/en/errors.md#the-server-returned-no-safety-verdict)
 
-  The attribute also appears on plan mode calls when [the classifier reviews commands in plan mode](/docs/en/permission-modes.md#analyze-before-you-edit-with-plan-mode). The attribute is absent in these cases:
+  The attribute also appears on plan mode calls when [the classifier reviews commands in plan mode](https://code.claude.com/docs/en/permission-modes.md#analyze-before-you-edit-with-plan-mode). The attribute is absent in these cases:
 
-  * An allow or deny [permission rule](/docs/en/permissions.md#manage-permissions) decided the call
+  * An allow or deny [permission rule](https://code.claude.com/docs/en/permissions.md#manage-permissions) decided the call
   * Claude Code approved the call in auto mode without asking the classifier
-  * The user answered the prompt Claude Code showed after [repeated blocks](/docs/en/permission-modes.md#repeated-block-thresholds)
+  * The user answered the prompt Claude Code showed after [repeated blocks](https://code.claude.com/docs/en/permission-modes.md#repeated-block-thresholds)
   * In a `-p` run without `--permission-prompt-tool`, Claude Code denied the call after repeated blocks because there was nobody to answer a prompt. That event reports `decision` as `"reject"` and `source` as `"config"`
-* `classifier_category` (when `OTEL_LOG_TOOL_DETAILS=1`): The name of the [built-in rule](/docs/en/auto-mode-config.md#inspect-the-defaults-and-your-effective-config) the classifier named when it blocked the call, in lowercase with underscores, such as `"data_exfiltration"` for the Data Exfiltration rule. Requires Claude Code v2.1.301 or later. The attribute is present when both of these hold:
+* `classifier_category` (when `OTEL_LOG_TOOL_DETAILS=1`): The name of the [built-in rule](https://code.claude.com/docs/en/auto-mode-config.md#inspect-the-defaults-and-your-effective-config) the classifier named when it blocked the call, in lowercase with underscores, such as `"data_exfiltration"` for the Data Exfiltration rule. Requires Claude Code v2.1.301 or later. The attribute is present when both of these hold:
 
   * `classifier_verdict` is `"block"`
   * The classifier named exactly one rule, and that rule is a built-in one rather than one you wrote
 
-  Before v2.1.302, the attribute was also absent on any block that [server-side classifier review](/docs/en/permission-modes.md#server-side-classifier-review) decided.
-* `permission_mode`: [Permission mode](/docs/en/permission-modes.md) active when this call's permission check began: `"default"`, `"plan"`, `"acceptEdits"`, `"bypassPermissions"`, `"dontAsk"`, or `"auto"`. Manual mode appears as `"default"`. A [subagent](/docs/en/sub-agents.md#permission-modes) call reports the subagent's permission mode rather than the session's. Requires Claude Code v2.1.301 or later
+  Before v2.1.302, the attribute was also absent on any block that [server-side classifier review](https://code.claude.com/docs/en/permission-modes.md#server-side-classifier-review) decided.
+* `permission_mode`: [Permission mode](https://code.claude.com/docs/en/permission-modes.md) active when this call's permission check began: `"default"`, `"plan"`, `"acceptEdits"`, `"bypassPermissions"`, `"dontAsk"`, or `"auto"`. Manual mode appears as `"default"`. A [subagent](https://code.claude.com/docs/en/sub-agents.md#permission-modes) call reports the subagent's permission mode rather than the session's. Requires Claude Code v2.1.301 or later
 * `tool_parameters` (when `OTEL_LOG_TOOL_DETAILS=1`): JSON string containing tool-specific parameters. Same shape as the [Tool result event](#tool-result-event), minus post-execution fields such as `git_commit_id`. Values may differ from `tool_result` for an accepted call if the permission decision rewrites the tool input via `updatedInput`. Use this attribute to see which command was rejected when `decision` is `"reject"`.
   * For `"sdk_host_builtin_mcp"` tools: `mcp_server_name` and `mcp_tool_name` are included even when `OTEL_LOG_TOOL_DETAILS` is off, because the host application defines these names; without them, a rejected call to one of these built-in servers would be unattributable on the default stream. For user-configured MCP servers, the event's `tool_name` is always the literal `"mcp_tool"`, and the server and tool names appear only in `tool_parameters` with the flag on; argument content requires the flag everywhere.
   * For Bash tool: includes `bash_command`, `full_command`, `timeout`, `description`, `dangerouslyDisableSandbox`. The desktop app's workspace bash tool also reports `tool_name` as `Bash`, but includes only `bash_command`, `full_command`, and `timeout`
@@ -1028,7 +1028,7 @@ If you lower the OpenTelemetry SDK's `OTEL_LOGRECORD_ATTRIBUTE_COUNT_LIMIT` belo
 
 #### Safety event
 
-Logged when a check refuses a tool call or requires a permission prompt, except for [calls without a safety event](#calls-without-a-safety-event). Also logged when the [sandbox's network proxy](/docs/en/sandboxing.md#network-isolation) refuses a connection or request, and when a hook blocks a result. Requires Claude Code v2.1.307 or later.
+Logged when a check refuses a tool call or requires a permission prompt, except for [calls without a safety event](#calls-without-a-safety-event). Also logged when the [sandbox's network proxy](https://code.claude.com/docs/en/sandboxing.md#network-isolation) refuses a connection or request, and when a hook blocks a result. Requires Claude Code v2.1.307 or later.
 
 The event exports with the other events and has no separate setting. The event's own attributes hold no command text, file paths, host names, or MCP server and tool names. The record also carries the [standard attributes](#standard-attributes) every event has, which can include `workspace.host_paths` and the [repository attributes](#repository-attributes). To see the command or MCP tool behind an event, set `OTEL_LOG_TOOL_DETAILS=1` and read `tool_parameters` on the matching `tool_decision` event.
 
@@ -1048,15 +1048,15 @@ The event exports with the other events and has no separate setting. The event's
 * `rule_source`: Settings source of the rule involved, such as `"policySettings"`, `"userSettings"`, `"projectSettings"`, `"localSettings"`, `"flagSettings"`, `"cliArg"`, or `"session"`
 * `grant_scope`: `"once"` or `"session"` for a prompt approved without saving a rule to a settings file
 * `circuit_breaker`: The built-in safety check, such as `"dangerousRemoval"`, `"outsideReadsBlocked"`, or `"claudeSettingsFile"`
-* `classifier_category`: With `OTEL_LOG_TOOL_DETAILS=1`, the [built-in rule](/docs/en/auto-mode-config.md#inspect-the-defaults-and-your-effective-config) behind an auto mode block, such as `"data_exfiltration"`
+* `classifier_category`: With `OTEL_LOG_TOOL_DETAILS=1`, the [built-in rule](https://code.claude.com/docs/en/auto-mode-config.md#inspect-the-defaults-and-your-effective-config) behind an auto mode block, such as `"data_exfiltration"`
 * `hook_event`: `"pre_tool_use"` for a `PreToolUse` hook, or `"post_tool_use"`, `"post_tool_use_failure"`, `"stop"`, or `"subagent_stop"` on `"hook_review"` events
-* `tool_class`: `"bash"` for Bash and [Monitor](/docs/en/tools-reference.md#monitor-tool), `"powershell"`, `"file"` for Read, Edit, Write, NotebookEdit, Glob, and Grep, `"web"` for WebFetch and WebSearch, `"mcp"`, or `"other"`
+* `tool_class`: `"bash"` for Bash and [Monitor](https://code.claude.com/docs/en/tools-reference.md#monitor-tool), `"powershell"`, `"file"` for Read, Edit, Write, NotebookEdit, Glob, and Grep, `"web"` for WebFetch and WebSearch, `"mcp"`, or `"other"`
 * `tool_name`: The tool's name, such as `"Bash"` for a built-in tool, or `"mcp_tool"`, `"skill_tool"`, `"dynamic_tool"`, or `"other_tool"`
 * `tool_source`: `"builtin"`, `"mcp"`, or `"sdk_host_builtin_mcp"`, as on [`tool_decision`](#tool-decision-event)
-* `permission_mode`: The call's [permission mode](/docs/en/permission-modes.md) when checked: `"default"`, `"plan"`, `"acceptEdits"`, `"bypassPermissions"`, `"dontAsk"`, or `"auto"`
+* `permission_mode`: The call's [permission mode](https://code.claude.com/docs/en/permission-modes.md) when checked: `"default"`, `"plan"`, `"acceptEdits"`, `"bypassPermissions"`, `"dontAsk"`, or `"auto"`
 * `tool_use_id`: The call's ID, as on `tool_decision` and `tool_result`
 * `sandbox_violation_count`: How many distinct connections or requests from the call's command the sandbox's network proxy refused, `"0"` to `"20"` as a string. Refusals are counted for a sandboxed command that finished in the foreground
-* `sandbox_enabled`: `"true"` if [sandboxing](/docs/en/sandboxing.md) is on for the session, else `"false"`
+* `sandbox_enabled`: `"true"` if [sandboxing](https://code.claude.com/docs/en/sandboxing.md) is on for the session, else `"false"`
 
 These are the event's own attributes when a managed-settings deny rule refuses a Bash command:
 
@@ -1082,32 +1082,32 @@ These are the event's own attributes when a managed-settings deny rule refuses a
 
 | Value | Check or outcome | Detail attribute |
 | - | - | - |
-| `"permission_rule"` | A deny or ask [permission rule](/docs/en/permissions.md#manage-permissions) outside managed settings | `rule_source` |
-| `"managed_policy"` | A deny or ask rule from [managed settings](/docs/en/permissions.md#managed-settings) | `rule_source` |
-| `"permission_mode"` | [`dontAsk`](/docs/en/permission-modes#allow-only-pre-approved-tools-with-dontask-mode) or [plan](/docs/en/permission-modes.md#analyze-before-you-edit-with-plan-mode) mode, or a prompt with [no category](#prompts-with-no-category) in a session that can't show prompts, as with [`--permission-prompts none`](/docs/en/headless#turn-off-permission-prompts-in-unattended-runs) | `reason_code`, `reason_type` |
-| `"hook"` | A hook, such as [`PreToolUse`](/docs/en/hooks#pretooluse) or [`PermissionRequest`](/docs/en/hooks#permissionrequest) | `hook_event`, `reason_code` |
-| `"auto_mode_block"` | The auto mode [classifier](/docs/en/permission-modes.md#how-the-classifier-evaluates-actions) blocked the call | `classifier_category` |
-| `"auto_mode_no_verdict"` | No usable [classifier verdict](/docs/en/errors.md#auto-mode-cannot-determine-the-safety-of-an-action), such as after a failed request | `reason_code` |
-| `"safety_check"` | A built-in safety check, such as for Read, Edit, or Write outside your [working directories](/docs/en/permissions.md#working-directories) | `circuit_breaker` |
+| `"permission_rule"` | A deny or ask [permission rule](https://code.claude.com/docs/en/permissions.md#manage-permissions) outside managed settings | `rule_source` |
+| `"managed_policy"` | A deny or ask rule from [managed settings](https://code.claude.com/docs/en/permissions.md#managed-settings) | `rule_source` |
+| `"permission_mode"` | [`dontAsk`](https://code.claude.com/docs/en/permission-modes#allow-only-pre-approved-tools-with-dontask-mode) or [plan](https://code.claude.com/docs/en/permission-modes.md#analyze-before-you-edit-with-plan-mode) mode, or a prompt with [no category](#prompts-with-no-category) in a session that can't show prompts, as with [`--permission-prompts none`](https://code.claude.com/docs/en/headless#turn-off-permission-prompts-in-unattended-runs) | `reason_code`, `reason_type` |
+| `"hook"` | A hook, such as [`PreToolUse`](https://code.claude.com/docs/en/hooks#pretooluse) or [`PermissionRequest`](https://code.claude.com/docs/en/hooks#permissionrequest) | `hook_event`, `reason_code` |
+| `"auto_mode_block"` | The auto mode [classifier](https://code.claude.com/docs/en/permission-modes.md#how-the-classifier-evaluates-actions) blocked the call | `classifier_category` |
+| `"auto_mode_no_verdict"` | No usable [classifier verdict](https://code.claude.com/docs/en/errors.md#auto-mode-cannot-determine-the-safety-of-an-action), such as after a failed request | `reason_code` |
+| `"safety_check"` | A built-in safety check, such as for Read, Edit, or Write outside your [working directories](https://code.claude.com/docs/en/permissions.md#working-directories) | `circuit_breaker` |
 | `"static_analysis"` | How a Bash or Monitor command is written, such as one too complex to analyze | `reason_code` |
-| `"sandbox_override"` | The prompt to [run a command outside the sandbox](/docs/en/sandboxing.md#the-unsandboxed-retry-escape-hatch) | `reason_code` |
+| `"sandbox_override"` | The prompt to [run a command outside the sandbox](https://code.claude.com/docs/en/sandboxing.md#the-unsandboxed-retry-escape-hatch) | `reason_code` |
 | `"user_rejected"` | Someone declined or dismissed a prompt that had [no category](#prompts-with-no-category) or that only a hook required, or a `canUseTool` callback or `--permission-prompt-tool` tool denied one | `decision_source` |
-| `"sandbox_network"` | The call ran and the [sandbox's network proxy](/docs/en/sandboxing.md#network-isolation) refused a connection or request | `sandbox_violation_count` |
+| `"sandbox_network"` | The call ran and the [sandbox's network proxy](https://code.claude.com/docs/en/sandboxing.md#network-isolation) refused a connection or request | `sandbox_violation_count` |
 | `"sandbox_other"` | Like `"sandbox_network"`, but no refused target reads as a host name or IP address | `sandbox_violation_count` |
-| `"hook_review"` | A hook [blocked the call's result](/docs/en/hooks.md#posttooluse-decision-control) or [the end of a turn](/docs/en/hooks.md#stop-decision-control) | `hook_event` |
+| `"hook_review"` | A hook [blocked the call's result](https://code.claude.com/docs/en/hooks.md#posttooluse-decision-control) or [the end of a turn](https://code.claude.com/docs/en/hooks.md#stop-decision-control) | `hook_event` |
 | `"other"` | A refusal no other value describes | `reason_code` |
 
 To find proxy refusals under any `category`, filter for a `sandbox_violation_count` that is present and isn't `"0"`.
 
 ##### Calls without a safety event
 
-To find calls refused because nobody could answer a [prompt with no category](#prompts-with-no-category), look for [`tool_decision`](#tool-decision-event) events reporting `"reject"` with `source` `"config"` and no safety event sharing their `tool_use_id`. Such refusals happen in a `-p` run with neither [`--permission-prompt-tool`](/docs/en/cli-reference#cli-flags) nor `--permission-prompts none`.
+To find calls refused because nobody could answer a [prompt with no category](#prompts-with-no-category), look for [`tool_decision`](#tool-decision-event) events reporting `"reject"` with `source` `"config"` and no safety event sharing their `tool_use_id`. Such refusals happen in a `-p` run with neither [`--permission-prompt-tool`](https://code.claude.com/docs/en/cli-reference#cli-flags) nor `--permission-prompts none`.
 
 Check calls such as these for a `tool_decision` event, since they have no safety event except [`"sandbox_network"`, `"sandbox_other"`, or `"hook_review"` events](#safety-event-categories) sent after they run:
 
 * A call approved at a prompt with no category
 * A call that a `canUseTool` callback or `--permission-prompt-tool` tool approved at a prompt only a `PreToolUse` hook required
-* An [`AskUserQuestion`](/docs/en/tools-reference#askuserquestion-tool-behavior) or `ExitPlanMode` call, declined or not
+* An [`AskUserQuestion`](https://code.claude.com/docs/en/tools-reference#askuserquestion-tool-behavior) or `ExitPlanMode` call, declined or not
 
 ##### Prompts with no category
 
@@ -1129,7 +1129,7 @@ To group tool calls by the permission mode each was checked in, use `permission_
 * `event.sequence`: per-process counter for ordering events, described under [Event correlation attributes](#event-correlation-attributes)
 * `from_mode`: The previous permission mode, for example `"default"`, `"plan"`, `"acceptEdits"`, `"auto"`, or `"bypassPermissions"`
 * `to_mode`: The new permission mode
-* `trigger`: What caused the change, for example `"shift_tab"`, `"exit_plan_mode"`, or `"auto_gate_denied"`. Absent for some changes, such as when the SDK sets the permission mode through [`setPermissionMode()`](/docs/en/agent-sdk/typescript#query-object)
+* `trigger`: What caused the change, for example `"shift_tab"`, `"exit_plan_mode"`, or `"auto_gate_denied"`. Absent for some changes, such as when the SDK sets the permission mode through [`setPermissionMode()`](https://code.claude.com/docs/en/agent-sdk/typescript#query-object)
 
 #### Auth event
 
@@ -1222,14 +1222,14 @@ Logged once per enabled plugin at session start. Use this event to inventory whi
 * `plugin.version`: version from the plugin manifest. Included only when the name is not redacted and the manifest declares a version
 * `plugin.scope`: provenance category for the plugin: `"official"`, `"community"`, `"org"`, `"user-local"`, or `"default-bundle"`
 * `enabled_via`: how the plugin came to be enabled: `"default-enable"`, `"org-policy"`, `"admin-install"`, `"seed-mount"`, or `"user-install"`. The `"admin-install"` value means the plugin is set to required or auto-install for your organization in [**Organization settings > Plugins & skills**](https://claude.ai/admin-settings/skills?tab=inventory). Before v2.1.246, Claude Code reported these plugins as `"user-install"` or `"seed-mount"`
-* `plugin_id_hash`: deterministic hash of the plugin name and marketplace, sent only to your configured exporter. Lets you count the distinct third-party plugins loaded across your fleet without recording their names. For [plugins synced from claude.ai](/docs/en/plugins/loading.md#synced-plugins), Claude Code hashes the plugin name with the marketplace name that claude.ai reports for the plugin, or with `synced` otherwise. Before v2.1.246, Claude Code didn't use the marketplace name claude.ai reports in the hash
-* `has_hooks`: whether the plugin contributes hooks, through [hook configuration](/docs/en/plugins/components.md#hooks) or as a [mod](/docs/en/plugins/mods/overview.md#how-a-mod-works)
+* `plugin_id_hash`: deterministic hash of the plugin name and marketplace, sent only to your configured exporter. Lets you count the distinct third-party plugins loaded across your fleet without recording their names. For [plugins synced from claude.ai](https://code.claude.com/docs/en/plugins/loading.md#synced-plugins), Claude Code hashes the plugin name with the marketplace name that claude.ai reports for the plugin, or with `synced` otherwise. Before v2.1.246, Claude Code didn't use the marketplace name claude.ai reports in the hash
+* `has_hooks`: whether the plugin contributes hooks, through [hook configuration](https://code.claude.com/docs/en/plugins/components.md#hooks) or as a [mod](https://code.claude.com/docs/en/plugins/mods/overview.md#how-a-mod-works)
 * `has_mcp`: whether the plugin contributes MCP servers
 * `host_owned_mcp`: `true` when the SDK host manages this plugin's MCP connections and Claude Code skipped reading the plugin's MCP server configuration, `false` otherwise
 * `skill_path_count`: number of skill directories the plugin declares
 * `command_path_count`: number of command directories the plugin declares
 * `agent_path_count`: number of agent directories the plugin declares
-* `safe_mode`: `"true"` when the session was started with [`--safe-mode`](/docs/en/cli-reference), `"false"` otherwise. In safe mode this event reports configured inventory only; the plugin's commands, skills, hooks, and MCP servers don't load. Requires Claude Code v2.1.169 or later
+* `safe_mode`: `"true"` when the session was started with [`--safe-mode`](https://code.claude.com/docs/en/cli-reference), `"false"` otherwise. In safe mode this event reports configured inventory only; the plugin's commands, skills, hooks, and MCP servers don't load. Requires Claude Code v2.1.169 or later
 
 #### Skill activated event
 
@@ -1264,7 +1264,7 @@ Each time Claude Code reads a prompt, it logs at most 100 events with a `mention
 * `event.name`: `"at_mention"`
 * `event.timestamp`: ISO 8601 timestamp
 * `event.sequence`: per-process counter for ordering events, described under [Event correlation attributes](#event-correlation-attributes)
-* `mention_type`: Type of mention (`"file"`, `"directory"`, `"agent"`, `"mcp_resource"`, `"peer"`). The `"peer"` value means you mentioned [one of your other Claude Code sessions](/docs/en/cross-session-messaging.md). Requires Claude Code v2.1.232 or later
+* `mention_type`: Type of mention (`"file"`, `"directory"`, `"agent"`, `"mcp_resource"`, `"peer"`). The `"peer"` value means you mentioned [one of your other Claude Code sessions](https://code.claude.com/docs/en/cross-session-messaging.md). Requires Claude Code v2.1.232 or later
 * `success`: Whether the mention resolved successfully (`"true"` or `"false"`)
 
 #### API retries exhausted event
@@ -1301,7 +1301,7 @@ Logged once per configured hook at session start. Use this event to inventory wh
 * `hook_event`: hook event type, such as `"PreToolUse"` or `"PostToolUse"`
 * `hook_type`: hook implementation type: `"command"`, `"prompt"`, `"mcp_tool"`, `"http"`, or `"agent"`
 * `hook_source`: where the hook is defined: `"userSettings"`, `"projectSettings"`, `"localSettings"`, `"flagSettings"`, `"policySettings"`, or `"pluginHook"`
-* `safe_mode`: `"true"` when the session was started with [`--safe-mode`](/docs/en/cli-reference), `"false"` otherwise. Requires Claude Code v2.1.169 or later
+* `safe_mode`: `"true"` when the session was started with [`--safe-mode`](https://code.claude.com/docs/en/cli-reference), `"false"` otherwise. Requires Claude Code v2.1.169 or later
 * `hook_matcher` (when `OTEL_LOG_TOOL_DETAILS=1`): the matcher string from the hook configuration, when one is set
 * `plugin.name` (when `hook_source` is `"pluginHook"`): name of the contributing plugin. For plugins outside the official marketplace and built-in bundle the value is `"third-party"` unless `OTEL_LOG_TOOL_DETAILS=1`
 * `plugin_id_hash` (when `hook_source` is `"pluginHook"`): deterministic hash of the plugin name and marketplace, sent only to your configured exporter. Lets you count distinct contributing plugins without recording their names. Claude Code computes it as described under the [plugin loaded event](#plugin-loaded-event)
@@ -1323,7 +1323,7 @@ Logged when one or more hooks begin executing for a hook event.
 * `num_hooks`: Number of matching hook commands
 * `managed_only`: `"true"` when only managed-policy hooks are permitted
 * `hook_source`: `"policySettings"` or `"merged"`
-* `safe_mode`: `"true"` when the session was started with [`--safe-mode`](/docs/en/cli-reference), `"false"` otherwise. Requires Claude Code v2.1.169 or later
+* `safe_mode`: `"true"` when the session was started with [`--safe-mode`](https://code.claude.com/docs/en/cli-reference), `"false"` otherwise. Requires Claude Code v2.1.169 or later
 * `hook_definitions`: JSON-serialized hook configuration. Included only when both detailed beta tracing and `OTEL_LOG_TOOL_DETAILS=1` are enabled
 
 #### Hook execution complete event
@@ -1350,10 +1350,10 @@ Logged when all hooks for a hook event have finished.
 * `additional_context_chars`: Total characters of `additionalContext` returned by the matching hooks. Requires Claude Code v2.1.280 or later
 * `system_message_chars`: Total characters of `systemMessage` returned by the matching hooks. Requires Claude Code v2.1.280 or later
 * `initial_user_message_chars`: Total characters of `initialUserMessage` returned by the matching hooks. Requires Claude Code v2.1.280 or later
-* `num_outputs_persisted`: Number of hook outputs over the [10,000-character cap](/docs/en/hooks.md#json-output) that Claude Code saved to a file. Requires Claude Code v2.1.280 or later
+* `num_outputs_persisted`: Number of hook outputs over the [10,000-character cap](https://code.claude.com/docs/en/hooks.md#json-output) that Claude Code saved to a file. Requires Claude Code v2.1.280 or later
 * `managed_only`: `"true"` when only managed-policy hooks are permitted
 * `hook_source`: `"policySettings"` or `"merged"`
-* `safe_mode`: `"true"` when the session was started with [`--safe-mode`](/docs/en/cli-reference), `"false"` otherwise. Requires Claude Code v2.1.169 or later
+* `safe_mode`: `"true"` when the session was started with [`--safe-mode`](https://code.claude.com/docs/en/cli-reference), `"false"` otherwise. Requires Claude Code v2.1.169 or later
 * `hook_definitions`: JSON-serialized hook configuration. Included only when both detailed beta tracing and `OTEL_LOG_TOOL_DETAILS=1` are enabled
 
 #### Hook plugin metrics event
@@ -1390,11 +1390,11 @@ Logged when conversation compaction completes.
 * `pre_tokens`: Approximate token count before compaction
 * `post_tokens`: Approximate token count after compaction
 * `error`: Error message when compaction failed
-* `precompute_reuse`: Only set when `trigger` is `"manual"` or for an [idle compaction](/docs/en/settings-reference.md#idlecompaction), which reports `trigger` as `"auto"`. Auto-compaction can prepare a summary in the background before the context window fills, and this attribute records whether the compaction reused that prepared summary. `"hit"` means it was reused; `"miss_custom_instructions"`, `"miss_hook"`, and `"miss_not_ready"` give the reason a fresh summary was computed instead
+* `precompute_reuse`: Only set when `trigger` is `"manual"` or for an [idle compaction](https://code.claude.com/docs/en/settings-reference.md#idlecompaction), which reports `trigger` as `"auto"`. Auto-compaction can prepare a summary in the background before the context window fills, and this attribute records whether the compaction reused that prepared summary. `"hit"` means it was reused; `"miss_custom_instructions"`, `"miss_hook"`, and `"miss_not_ready"` give the reason a fresh summary was computed instead
 
 #### Subagent completed event
 
-Logged when a [subagent](/docs/en/sub-agents.md) finishes and returns its result to the conversation that started it. Use it to roll up tool use and run time by subagent type; for token or cost rollups, use the [token counter](#token-counter) and [cost counter](#cost-counter) filtered to `query_source` `"subagent"`, since this event's `total_tokens` covers only the final request. The `"subagent"` category also counts requests from agent-based hooks, which emit no subagent event.
+Logged when a [subagent](https://code.claude.com/docs/en/sub-agents.md) finishes and returns its result to the conversation that started it. Use it to roll up tool use and run time by subagent type; for token or cost rollups, use the [token counter](#token-counter) and [cost counter](#cost-counter) filtered to `query_source` `"subagent"`, since this event's `total_tokens` covers only the final request. The `"subagent"` category also counts requests from agent-based hooks, which emit no subagent event.
 
 **Event Name**: `claude_code.subagent_completed`
 
@@ -1407,7 +1407,7 @@ Logged when a [subagent](/docs/en/sub-agents.md) finishes and returns its result
 * `agent_type`: The subagent type. Built-in agent names and agents from official-marketplace plugins appear verbatim; other agent names are replaced with `"custom"` unless `OTEL_LOG_TOOL_DETAILS=1` is set
 * `agent.source`: Where the agent definition came from: `built-in`, `plugin`, or the settings source that defined a custom agent, such as `userSettings` or `projectSettings`
 * `is_built_in`: Whether the subagent is a built-in agent type
-* `is_async`: Whether the subagent ran in the [background](/docs/en/sub-agents.md#run-subagents-in-foreground-or-background)
+* `is_async`: Whether the subagent ran in the [background](https://code.claude.com/docs/en/sub-agents.md#run-subagents-in-foreground-or-background)
 * `total_tokens`: The token footprint of the subagent's final API request: that one request's input, cache creation, cache read, and output tokens, roughly the subagent's context size at completion. Not a sum across the run
 * `total_tool_uses`: Number of tool calls the subagent made across the whole run
 * `duration_ms`: Run time in milliseconds
@@ -1418,7 +1418,7 @@ Logged when a [subagent](/docs/en/sub-agents.md) finishes and returns its result
 
 #### Feedback survey event
 
-Logged when a session quality survey is shown or answered. See [Session quality surveys](/docs/en/data-usage.md#session-quality-surveys) for what the surveys collect and how to control them.
+Logged when a session quality survey is shown or answered. See [Session quality surveys](https://code.claude.com/docs/en/data-usage.md#session-quality-surveys) for what the surveys collect and how to control them.
 
 **Event Name**: `claude_code.feedback_survey`
 
@@ -1432,15 +1432,15 @@ Logged when a session quality survey is shown or answered. See [Session quality 
 * `appearance_id`: Unique ID linking the events emitted for one survey instance
 * `survey_type`: Which survey produced the event. `"session"` is the "How is Claude doing?" rating prompt
 * `response`: The user's selection on `responded` events
-* `enabled_via_override`: `true` when [`CLAUDE_CODE_ENABLE_FEEDBACK_SURVEY_FOR_OTEL`](/docs/en/env-vars) is set. Emitted as a Boolean, not a string. Present on `session` survey events. Filter on this attribute to confirm the override is applied across a fleet
+* `enabled_via_override`: `true` when [`CLAUDE_CODE_ENABLE_FEEDBACK_SURVEY_FOR_OTEL`](https://code.claude.com/docs/en/env-vars) is set. Emitted as a Boolean, not a string. Present on `session` survey events. Filter on this attribute to confirm the override is applied across a fleet
 
 #### Retention sweep event
 
-Logged once per run of the retention cleanup sweep, which deletes [session transcripts and other application data](/docs/en/claude-directory.md#cleaned-up-automatically) older than the [`cleanupPeriodDays`](/docs/en/settings-reference#cleanupperioddays) setting. Claude Code runs the sweep in the background at most once per session, and a run that deletes nothing still emits the event. If Claude Code ran the sweep in any session on the same machine in the last 24 hours, it delays this session's sweep by at least 10 minutes, so a session that exits sooner emits nothing. When you run `claude -p` with `--bare`, Claude Code doesn't run the sweep and emits nothing.
+Logged once per run of the retention cleanup sweep, which deletes [session transcripts and other application data](https://code.claude.com/docs/en/claude-directory.md#cleaned-up-automatically) older than the [`cleanupPeriodDays`](https://code.claude.com/docs/en/settings-reference#cleanupperioddays) setting. Claude Code runs the sweep in the background at most once per session, and a run that deletes nothing still emits the event. If Claude Code ran the sweep in any session on the same machine in the last 24 hours, it delays this session's sweep by at least 10 minutes, so a session that exits sooner emits nothing. When you run `claude -p` with `--bare`, Claude Code doesn't run the sweep and emits nothing.
 
 Like every OTel event on this page, it goes only to the telemetry backend you configure. Requires Claude Code v2.1.227 or later.
 
-When Claude Code can't safely determine the retention period, it pauses the sweep and emits the event with `result` set to `"skipped"` and a `skip_reason`. When [managed settings](/docs/en/server-managed-settings.md) set `cleanupPeriodDays`, the managed value pins the retention period and the sweep runs even when a settings file in a lower-priority scope is broken or invalid. When `managed-settings.json` itself can't be read, Claude Code still pauses the sweep unless the [managed tier](/docs/en/managed-settings.md#how-claude-code-combines-managed-sources) supplies `cleanupPeriodDays` from elsewhere, such as server-managed settings or a `managed-settings.d/` drop-in beside the broken file. The deletion counter attributes are present only when `result` is `"complete"`.
+When Claude Code can't safely determine the retention period, it pauses the sweep and emits the event with `result` set to `"skipped"` and a `skip_reason`. When [managed settings](https://code.claude.com/docs/en/server-managed-settings.md) set `cleanupPeriodDays`, the managed value pins the retention period and the sweep runs even when a settings file in a lower-priority scope is broken or invalid. When `managed-settings.json` itself can't be read, Claude Code still pauses the sweep unless the [managed tier](https://code.claude.com/docs/en/managed-settings.md#how-claude-code-combines-managed-sources) supplies `cleanupPeriodDays` from elsewhere, such as server-managed settings or a `managed-settings.d/` drop-in beside the broken file. The deletion counter attributes are present only when `result` is `"complete"`.
 
 **Event Name**: `claude_code.retention_sweep`
 
@@ -1454,11 +1454,11 @@ When Claude Code can't safely determine the retention period, it pauses the swee
 * `period_days`: The `cleanupPeriodDays` value from merged settings, in days, or `30` when no source sets it. On skipped events, the value the sweep would have used, computed from the settings sources Claude Code could read
 * `used_default`: `"true"` when no readable settings source sets `cleanupPeriodDays`, `"false"` otherwise. On complete events, `"true"` means the 30-day default applied
 * `skip_reason`: Why Claude Code paused the sweep. Present only when `result` is `"skipped"`:
-  * `"user_source_disabled"`: User settings are excluded, for example by the [`--setting-sources`](/docs/en/cli-reference#cli-flags) flag or the SDK's [`settingSources`](/docs/en/agent-sdk/typescript#options) option, and no enabled source provides `cleanupPeriodDays`
+  * `"user_source_disabled"`: User settings are excluded, for example by the [`--setting-sources`](https://code.claude.com/docs/en/cli-reference#cli-flags) flag or the SDK's [`settingSources`](https://code.claude.com/docs/en/agent-sdk/typescript#options) option, and no enabled source provides `cleanupPeriodDays`
   * `"settings_unknowable"`: A settings file couldn't be read or parsed, so `cleanupPeriodDays` or `desktopSessionCleanupPeriodDays` may be set to a value Claude Code can't see
   * `"settings_invalid_key_set"`: Settings have validation errors and `cleanupPeriodDays` or `desktopSessionCleanupPeriodDays` is explicitly set, so falling back to the default could delete or keep files against that setting
 * `transcripts_deleted`: Number of session transcripts, the top-level `~/.claude/projects/*/*.jsonl` files, that the sweep deleted
-* `transcripts_exempted_desktop`: Number of transcripts past the retention period that the sweep kept under the [Claude Desktop and Cowork rule](/docs/en/claude-directory.md#cleaned-up-automatically). These don't count toward `files_past_cutoff`. Requires Claude Code v2.1.248 or later
+* `transcripts_exempted_desktop`: Number of transcripts past the retention period that the sweep kept under the [Claude Desktop and Cowork rule](https://code.claude.com/docs/en/claude-directory.md#cleaned-up-automatically). These don't count toward `files_past_cutoff`. Requires Claude Code v2.1.248 or later
 * `session_files_deleted`: Number of artifacts the session-files sweep deleted: transcripts plus per-session companion files such as sidecars, recordings, and tool results
 * `artifacts_deleted`: Total items the sweep deleted across the data directories it covers, including the session files. Some sweeps count a whole removed directory tree as one item and a few cleanup passes don't contribute to the counter, so treat the value as a floor rather than an exact file count
 * `files_retained_fresh`: Files inspected and left in place because they're still within the retention period. Only per-file sweeps count these, so the value is a floor; a nonzero value is the normal steady state
@@ -1467,16 +1467,16 @@ When Claude Code can't safely determine the retention period, it pauses the swee
 
 #### Managed settings resolved event
 
-Logged with the [managed settings](/docs/en/managed-settings.md) a session resolved: once at session start, again when either the managed settings or the [policy helper](/docs/en/managed-settings.md#compute-the-policy-with-a-helper-program)'s state changes during the session, and when Claude Code refuses to start or ends the session for one of the reasons the `error.type` attribute lists.
+Logged with the [managed settings](https://code.claude.com/docs/en/managed-settings.md) a session resolved: once at session start, again when either the managed settings or the [policy helper](https://code.claude.com/docs/en/managed-settings.md#compute-the-policy-with-a-helper-program)'s state changes during the session, and when Claude Code refuses to start or ends the session for one of the reasons the `error.type` attribute lists.
 Use this event to find machines running on an unexpected managed source, machines whose policy helper is failing, and the reason a machine refused to start.
 Requires Claude Code v2.1.274 or later.
 
 By default, the event carries the managed sources and the policy helper's state but not the settings themselves. To add the redacted `managed_settings.settings` attribute and the `managed_settings.resolved_sha256` digest, set `OTEL_LOG_MANAGED_SETTINGS=1`:
 
 * Set it in the `env` block of managed settings, user settings, or `--settings`, or in the environment you launch Claude Code with. A value in project or local settings doesn't turn it on, because a cloned repository can write them.
-* Server-managed settings can set it without showing the [security approval dialog](/docs/en/server-managed-settings.md#security-approval-dialogs), because the variable only adds your organization's own redacted policy to an event your organization already receives.
+* Server-managed settings can set it without showing the [security approval dialog](https://code.claude.com/docs/en/server-managed-settings.md#security-approval-dialogs), because the variable only adds your organization's own redacted policy to an event your organization already receives.
 
-In an interactive session in a folder you haven't [trusted](/docs/en/permissions.md#what-runs-before-you-trust-a-folder), Claude Code doesn't export the refusal event.
+In an interactive session in a folder you haven't [trusted](https://code.claude.com/docs/en/permissions.md#what-runs-before-you-trust-a-folder), Claude Code doesn't export the refusal event.
 
 **Event Name**: `claude_code.managed_settings_resolved`
 
@@ -1488,23 +1488,23 @@ In an interactive session in a folder you haven't [trusted](/docs/en/permissions
 * `event.sequence`: per-process counter for ordering events, described under [Event correlation attributes](#event-correlation-attributes)
 * `managed_settings.trigger`: `"startup"` for the session-start event, `"change"` when the managed settings or the policy helper's state changed later in the session, or `"refused"` when a managed settings policy stopped the session. Claude Code sends a `change` event only when an attribute differs from the last event it sent, and a changed setting value counts even when `OTEL_LOG_MANAGED_SETTINGS` is off
 * `error.type`: why Claude Code stopped the session. Present only on `refused` events:
-  * `"helper_failed"`: a [policy helper run failed](/docs/en/settings-reference.md#helper-failures)
+  * `"helper_failed"`: a [policy helper run failed](https://code.claude.com/docs/en/settings-reference.md#helper-failures)
   * `"policy_invalid"`: the managed settings contain an error that stops Claude Code from starting, or an admin source failed to load for a reason other than a denied read, so Claude Code can't check organization login or provider enforcement
-  * `"provider_not_allowed"`: the session would use an API provider, or send a provider's traffic to a host, that the managed [`allowedProviders`](/docs/en/settings-reference#allowedproviders) list doesn't allow. Requires Claude Code v2.1.285 or later
-  * `"consent_rejected"`: the user rejected the [security approval dialog](/docs/en/server-managed-settings.md#security-approval-dialogs) for server-managed settings
-  * `"force_refresh_failed"`: the settings fetch that [`forceRemoteSettingsRefresh`](/docs/en/settings-reference#forceremotesettingsrefresh) requires failed
-  * `"gateway_rejected"`: a [Claude apps gateway](/docs/en/claude-apps-gateway) answered the managed settings load with HTTP 403
-  * `"version_below_minimum"`: this version of Claude Code is below [`requiredMinimumVersion`](/docs/en/settings-reference#requiredminimumversion) or above [`requiredMaximumVersion`](/docs/en/settings-reference#requiredmaximumversion)
+  * `"provider_not_allowed"`: the session would use an API provider, or send a provider's traffic to a host, that the managed [`allowedProviders`](https://code.claude.com/docs/en/settings-reference#allowedproviders) list doesn't allow. Requires Claude Code v2.1.285 or later
+  * `"consent_rejected"`: the user rejected the [security approval dialog](https://code.claude.com/docs/en/server-managed-settings.md#security-approval-dialogs) for server-managed settings
+  * `"force_refresh_failed"`: the settings fetch that [`forceRemoteSettingsRefresh`](https://code.claude.com/docs/en/settings-reference#forceremotesettingsrefresh) requires failed
+  * `"gateway_rejected"`: a [Claude apps gateway](https://code.claude.com/docs/en/claude-apps-gateway) answered the managed settings load with HTTP 403
+  * `"version_below_minimum"`: this version of Claude Code is below [`requiredMinimumVersion`](https://code.claude.com/docs/en/settings-reference#requiredminimumversion) or above [`requiredMaximumVersion`](https://code.claude.com/docs/en/settings-reference#requiredmaximumversion)
   * `"_OTHER"`: the Claude apps gateway managed settings load failed for another reason
-* `managed_settings.sources`: every managed source that delivers at least one [policy key](/docs/en/managed-settings.md#how-claude-code-combines-managed-sources), highest priority first, including sources whose keys don't take effect under `first-wins`. Values are `"remote"`, `"plist"` or `"hklm"` for the MDM or OS-level policy, `"file"` for managed settings files and drop-ins, `"parent"` when an [embedding host](/docs/en/managed-settings.md#let-an-embedding-host-add-policy) supplies settings, and `"hkcu"` for the [Windows HKCU registry value](/docs/en/managed-settings.md#where-each-mechanism-stores-the-policy) when Claude Code [reads it](/docs/en/managed-settings.md#how-claude-code-combines-managed-sources). A source that carries only control keys, or that Claude Code couldn't read, isn't listed. Emitted as an array of strings, empty when no managed source delivers a policy key
-* `managed_settings.source_behavior`: the [`managedSourcesBehavior`](/docs/en/settings-reference#managedsourcesbehavior) value Claude Code read, `"first-wins"` or `"merge"`. `"first-wins"` when no source sets the key
+* `managed_settings.sources`: every managed source that delivers at least one [policy key](https://code.claude.com/docs/en/managed-settings.md#how-claude-code-combines-managed-sources), highest priority first, including sources whose keys don't take effect under `first-wins`. Values are `"remote"`, `"plist"` or `"hklm"` for the MDM or OS-level policy, `"file"` for managed settings files and drop-ins, `"parent"` when an [embedding host](https://code.claude.com/docs/en/managed-settings.md#let-an-embedding-host-add-policy) supplies settings, and `"hkcu"` for the [Windows HKCU registry value](https://code.claude.com/docs/en/managed-settings.md#where-each-mechanism-stores-the-policy) when Claude Code [reads it](https://code.claude.com/docs/en/managed-settings.md#how-claude-code-combines-managed-sources). A source that carries only control keys, or that Claude Code couldn't read, isn't listed. Emitted as an array of strings, empty when no managed source delivers a policy key
+* `managed_settings.source_behavior`: the [`managedSourcesBehavior`](https://code.claude.com/docs/en/settings-reference#managedsourcesbehavior) value Claude Code read, `"first-wins"` or `"merge"`. `"first-wins"` when no source sets the key
 * `managed_settings.helper.state`: state of the policy helper that the selected MDM or file source configures:
   * `"ok"`: the helper's output serves as the managed settings
-  * `"bad_path"`, `"not_a_file"`, `"exit_nonzero"`, `"timed_out"`, `"oversize"`, `"parse_failed"`, `"envelope_invalid"`, or `"schema_rejected"`: the helper's last run failed. [Helper failures](/docs/en/settings-reference.md#helper-failures) describes the cases
+  * `"bad_path"`, `"not_a_file"`, `"exit_nonzero"`, `"timed_out"`, `"oversize"`, `"parse_failed"`, `"envelope_invalid"`, or `"schema_rejected"`: the helper's last run failed. [Helper failures](https://code.claude.com/docs/en/settings-reference.md#helper-failures) describes the cases
   * `"none"`: no helper is configured, or the source that configures it isn't an MDM policy or managed settings file
 * `managed_settings.helper.applied`: `"output"` while the helper's own output serves as the managed settings, `"none"` when it doesn't
-* `managed_settings.helper.entry`: `"policyHelper"` when Claude Code selected a [`policyHelper`](/docs/en/settings-reference#policyhelper). Absent when it selected no helper
-* `managed_settings.helper.path`: the helper's configured [`path`](/docs/en/settings-reference#policyhelper-path). Present whenever Claude Code selected a helper, whether or not `OTEL_LOG_MANAGED_SETTINGS` is set
+* `managed_settings.helper.entry`: `"policyHelper"` when Claude Code selected a [`policyHelper`](https://code.claude.com/docs/en/settings-reference#policyhelper). Absent when it selected no helper
+* `managed_settings.helper.path`: the helper's configured [`path`](https://code.claude.com/docs/en/settings-reference#policyhelper-path). Present whenever Claude Code selected a helper, whether or not `OTEL_LOG_MANAGED_SETTINGS` is set
 * `managed_settings.resolved_sha256` (when `OTEL_LOG_MANAGED_SETTINGS=1`): SHA-256 of the resolved managed settings before redaction, serialized as JSON with keys sorted recursively and no whitespace. Machines with the same digest run the same policy. Claude Code sends the digest only with the opt-in because a short policy can be recovered by hashing guesses. Absent when no managed settings resolved, and on `refused` events
 * `managed_settings.settings` (when `OTEL_LOG_MANAGED_SETTINGS=1`): the names and shape of the resolved managed settings as a JSON string, with the values redacted. Absent on `refused` events. Claude Code builds it from its settings schema:
 
@@ -1564,7 +1564,7 @@ Per-model breakdowns of commits can only be approximated by joining against the 
 
 Claude Code retries failed API requests internally and emits a single `claude_code.api_error` event only after it gives up, so the event itself is the terminal signal for that request. Intermediate retry attempts are not logged as separate events.
 
-The `attempt` attribute on the event records the number of attempts. `CLAUDE_CODE_MAX_RETRIES` defaults to 10 and is capped at 15; with [`CLAUDE_CODE_RETRY_WATCHDOG`](/docs/en/env-vars) set, the default is higher and there is no cap.
+The `attempt` attribute on the event records the number of attempts. `CLAUDE_CODE_MAX_RETRIES` defaults to 10 and is capped at 15; with [`CLAUDE_CODE_RETRY_WATCHDOG`](https://code.claude.com/docs/en/env-vars) set, the default is higher and there is no cap.
 
 When the request exhausts all retries on a transient error, `attempt` is at most one more than that effective limit: 11 by default.
 
@@ -1587,7 +1587,7 @@ The event data describes each Claude Code interaction in detail:
 
 ### Map input tokens to OpenTelemetry GenAI semantic conventions
 
-Claude Code exports input token counts as they appear in the API response's usage block, so these values exclude tokens read from or written to the [prompt cache](/docs/en/prompt-caching.md):
+Claude Code exports input token counts as they appear in the API response's usage block, so these values exclude tokens read from or written to the [prompt cache](https://code.claude.com/docs/en/prompt-caching.md):
 
 * `input_tokens` on the [`claude_code.llm_request`](#span-attributes) span and the [`api_request`](#api-request-event) event
 * The `"input"` type of the [`claude_code.token.usage`](#token-counter) metric
@@ -1608,9 +1608,9 @@ OpenTelemetry events are the audit data source for Claude Code activity. Every e
 
 ### Attribute actions to users
 
-The [standard attributes](#standard-attributes) on each event include the authenticated user's identity: `user.email`, `user.account_uuid`, `user.account_id`, and `organization.id` when signed in with a Claude account or, in a [cloud session](/docs/en/claude-code-on-the-web.md), when the session's own credentials carry them, plus `user.id` and the per-session `session.id`. `user.id` is an installation-scoped identifier, except in sessions signed in to a [Claude apps gateway](/docs/en/claude-apps-gateway) through `/login`, where it is the IdP subject from the gateway-issued token.
+The [standard attributes](#standard-attributes) on each event include the authenticated user's identity: `user.email`, `user.account_uuid`, `user.account_id`, and `organization.id` when signed in with a Claude account or, in a [cloud session](https://code.claude.com/docs/en/claude-code-on-the-web.md), when the session's own credentials carry them, plus `user.id` and the per-session `session.id`. `user.id` is an installation-scoped identifier, except in sessions signed in to a [Claude apps gateway](https://code.claude.com/docs/en/claude-apps-gateway) through `/login`, where it is the IdP subject from the gateway-issued token.
 
-In a session a developer starts, MCP tool calls, Bash commands, and file edits are therefore attributed to that developer. Claude Code doesn't act under a separate service account there; the identity recorded on each event is the developer's own Claude account, or the developer's IdP identity on a [Claude apps gateway](/docs/en/claude-apps-gateway) session. In Claude Tag channel sessions, Claude works as your organization's [shared identity](/docs/en/cloud-environments.md#set-the-environment-a-claude-tag-channel-uses) instead.
+In a session a developer starts, MCP tool calls, Bash commands, and file edits are therefore attributed to that developer. Claude Code doesn't act under a separate service account there; the identity recorded on each event is the developer's own Claude account, or the developer's IdP identity on a [Claude apps gateway](https://code.claude.com/docs/en/claude-apps-gateway) session. In Claude Tag channel sessions, Claude works as your organization's [shared identity](https://code.claude.com/docs/en/cloud-environments.md#set-the-environment-a-claude-tag-channel-uses) instead.
 
 When Claude Code authenticates with a direct API key, or against Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry, there is no Claude account in the session and only `user.id` and `session.id` are populated. In these deployments, attach user identity yourself with `OTEL_RESOURCE_ATTRIBUTES`, set per user through the [managed settings](#administrator-configuration) file or a launch wrapper. Claude apps gateway sessions need none of this: see [Standard attributes](#standard-attributes) for the identity their exports carry.
 
@@ -1658,30 +1658,30 @@ Claude Code emits the raw event stream only. Anomaly detection, baselining, corr
 
 ### Map egress paths to managed controls and events
 
-The table pairs paths that can carry session content off a machine, plus local retention, with the [managed settings](/docs/en/managed-settings.md) keys that restrict them and the events that record them. For what Claude Code itself sends to Anthropic, such as `/feedback` reports, see [Data usage](/docs/en/data-usage.md). The names link to their reference entries, which give the values and defaults.
+The table pairs paths that can carry session content off a machine, plus local retention, with the [managed settings](https://code.claude.com/docs/en/managed-settings.md) keys that restrict them and the events that record them. For what Claude Code itself sends to Anthropic, such as `/feedback` reports, see [Data usage](https://code.claude.com/docs/en/data-usage.md). The names link to their reference entries, which give the values and defaults.
 
 | Path | Managed controls | Events |
 | - | - | - |
-| Bash and PowerShell commands | [`sandbox.enabled`](/docs/en/settings-reference#sandbox-enabled), [`sandbox.failIfUnavailable`](/docs/en/settings-reference#sandbox-failifunavailable), [`sandbox.allowUnsandboxedCommands`](/docs/en/settings-reference#sandbox-allowunsandboxedcommands), [`sandbox.network.allowManagedDomainsOnly`](/docs/en/settings-reference#sandbox-network-allowmanageddomainsonly), [`sandbox.network.allowedDomains`](/docs/en/settings-reference#sandbox-network-alloweddomains) | [`tool_decision`](#tool-decision-event), [`tool_result`](#tool-result-event) |
-| MCP servers | [`allowedMcpServers`](/docs/en/settings-reference#allowedmcpservers), [`allowManagedMcpServersOnly`](/docs/en/settings-reference#allowmanagedmcpserversonly), [`deniedMcpServers`](/docs/en/settings-reference#deniedmcpservers), [`managed-mcp.json`](/docs/en/managed-mcp) | [`mcp_server_connection`](#mcp-server-connection-event), `tool_decision`, `tool_result` |
-| Hooks | [`allowManagedHooksOnly`](/docs/en/settings-reference#allowmanagedhooksonly), [`allowedHttpHookUrls`](/docs/en/settings-reference#allowedhttphookurls) | [`hook_registered`](#hook-registered-event), [`hook_execution_start`](#hook-execution-start-event), [`hook_execution_complete`](#hook-execution-complete-event) |
-| Plugins | [`strictKnownMarketplaces`](/docs/en/settings-reference#strictknownmarketplaces), [`disableSideloadFlags`](/docs/en/settings-reference#disablesideloadflags), [`syncClaudeAiPlugins`](/docs/en/settings-reference#syncclaudeaiplugins), [`syncClaudeAiSkills`](/docs/en/settings-reference#syncclaudeaiskills) | [`plugin_installed`](#plugin-installed-event), [`plugin_loaded`](#plugin-loaded-event) |
-| [WebFetch](/docs/en/permissions.md#webfetch) | [`permissions.deny`](/docs/en/settings-reference#permissions-deny), [`allowManagedPermissionRulesOnly`](/docs/en/settings-reference#allowmanagedpermissionrulesonly) | `tool_decision`, `tool_result` |
-| Tools that upload to claude.ai, such as Artifact | `permissions.deny`, [`enableArtifact`](/docs/en/settings-reference#enableartifact) | `tool_decision`, `tool_result` |
-| Remote Control | [`disableRemoteControl`](/docs/en/settings-reference#disableremotecontrol) | No dedicated event |
-| Local transcript retention | [`cleanupPeriodDays`](/docs/en/settings-reference#cleanupperioddays) | [`retention_sweep`](#retention-sweep-event) |
+| Bash and PowerShell commands | [`sandbox.enabled`](https://code.claude.com/docs/en/settings-reference#sandbox-enabled), [`sandbox.failIfUnavailable`](https://code.claude.com/docs/en/settings-reference#sandbox-failifunavailable), [`sandbox.allowUnsandboxedCommands`](https://code.claude.com/docs/en/settings-reference#sandbox-allowunsandboxedcommands), [`sandbox.network.allowManagedDomainsOnly`](https://code.claude.com/docs/en/settings-reference#sandbox-network-allowmanageddomainsonly), [`sandbox.network.allowedDomains`](https://code.claude.com/docs/en/settings-reference#sandbox-network-alloweddomains) | [`tool_decision`](#tool-decision-event), [`tool_result`](#tool-result-event) |
+| MCP servers | [`allowedMcpServers`](https://code.claude.com/docs/en/settings-reference#allowedmcpservers), [`allowManagedMcpServersOnly`](https://code.claude.com/docs/en/settings-reference#allowmanagedmcpserversonly), [`deniedMcpServers`](https://code.claude.com/docs/en/settings-reference#deniedmcpservers), [`managed-mcp.json`](https://code.claude.com/docs/en/managed-mcp) | [`mcp_server_connection`](#mcp-server-connection-event), `tool_decision`, `tool_result` |
+| Hooks | [`allowManagedHooksOnly`](https://code.claude.com/docs/en/settings-reference#allowmanagedhooksonly), [`allowedHttpHookUrls`](https://code.claude.com/docs/en/settings-reference#allowedhttphookurls) | [`hook_registered`](#hook-registered-event), [`hook_execution_start`](#hook-execution-start-event), [`hook_execution_complete`](#hook-execution-complete-event) |
+| Plugins | [`strictKnownMarketplaces`](https://code.claude.com/docs/en/settings-reference#strictknownmarketplaces), [`disableSideloadFlags`](https://code.claude.com/docs/en/settings-reference#disablesideloadflags), [`syncClaudeAiPlugins`](https://code.claude.com/docs/en/settings-reference#syncclaudeaiplugins), [`syncClaudeAiSkills`](https://code.claude.com/docs/en/settings-reference#syncclaudeaiskills) | [`plugin_installed`](#plugin-installed-event), [`plugin_loaded`](#plugin-loaded-event) |
+| [WebFetch](https://code.claude.com/docs/en/permissions.md#webfetch) | [`permissions.deny`](https://code.claude.com/docs/en/settings-reference#permissions-deny), [`allowManagedPermissionRulesOnly`](https://code.claude.com/docs/en/settings-reference#allowmanagedpermissionrulesonly) | `tool_decision`, `tool_result` |
+| Tools that upload to claude.ai, such as Artifact | `permissions.deny`, [`enableArtifact`](https://code.claude.com/docs/en/settings-reference#enableartifact) | `tool_decision`, `tool_result` |
+| Remote Control | [`disableRemoteControl`](https://code.claude.com/docs/en/settings-reference#disableremotecontrol) | No dedicated event |
+| Local transcript retention | [`cleanupPeriodDays`](https://code.claude.com/docs/en/settings-reference#cleanupperioddays) | [`retention_sweep`](#retention-sweep-event) |
 
 The `allowedHttpHookUrls`, `managed-mcp.json`, and hook event entries need more than the table shows:
 
 * **`allowedHttpHookUrls`**: entries merge across settings files, so a developer can add to an empty managed list. `allowManagedHooksOnly` decides which hooks run
-* **`managed-mcp.json`**: to turn MCP off, see [Disable MCP entirely](/docs/en/managed-mcp.md#disable-mcp-entirely). To confirm Claude Code reads the file, see [Validate the configuration](/docs/en/managed-mcp.md#validate-the-configuration)
+* **`managed-mcp.json`**: to turn MCP off, see [Disable MCP entirely](https://code.claude.com/docs/en/managed-mcp.md#disable-mcp-entirely). To confirm Claude Code reads the file, see [Validate the configuration](https://code.claude.com/docs/en/managed-mcp.md#validate-the-configuration)
 * **Hook events**: Claude Code logs `hook_execution_start` and `hook_execution_complete` once per hook event, covering every matching hook. `OTEL_LOG_TOOL_DETAILS=1` on its own doesn't record an HTTP hook's URL. The hook configuration appears only in `hook_definitions`, which also needs detailed beta tracing
 
 `OTEL_LOG_TOOL_DETAILS=1` adds command strings, server and tool names, and tool input to these events. That detail can contain the same sensitive content as the session itself, so enable it only when your collector is approved to hold that content.
 
 ### Check the retention sweep
 
-To give every machine the same retention period, set [`cleanupPeriodDays`](/docs/en/settings-reference#cleanupperioddays) in [managed settings](/docs/en/managed-settings.md). To check that machines run the sweep with that value, collect the [`retention_sweep`](#retention-sweep-event) event. `period_days` and the counters are strings, so cast them to numbers before you compare them.
+To give every machine the same retention period, set [`cleanupPeriodDays`](https://code.claude.com/docs/en/settings-reference#cleanupperioddays) in [managed settings](https://code.claude.com/docs/en/managed-settings.md). To check that machines run the sweep with that value, collect the [`retention_sweep`](#retention-sweep-event) event. `period_days` and the counters are strings, so cast them to numbers before you compare them.
 
 | What a machine reports | What it means |
 | - | - |
@@ -1697,7 +1697,7 @@ A machine that works as intended can go without an event for reasons such as the
 * **A session stays open**: Claude Code runs the sweep at most once per session
 * **A session ends early**: a sweep that hasn't finished when the session exits emits nothing, and neither does one that stops on an unexpected error
 
-The sweep doesn't cover every path. [Kept until you delete them](/docs/en/claude-directory.md#kept-until-you-delete-them) lists what stays, and [Clear local data](/docs/en/claude-directory.md#clear-local-data) shows how to remove it.
+The sweep doesn't cover every path. [Kept until you delete them](https://code.claude.com/docs/en/claude-directory.md#kept-until-you-delete-them) lists what stays, and [Clear local data](https://code.claude.com/docs/en/claude-directory.md#clear-local-data) shows how to remove it.
 
 ### Send events to a SIEM
 
@@ -1747,7 +1747,7 @@ For organizations requiring Daily/Weekly/Monthly Active User (DAU/WAU/MAU) metri
 
 All metrics and events are exported with the following resource attributes:
 
-* `service.name`: `claude-code` for terminal sessions, `claude-code-desktop` for local sessions started from the Code tab in the [Claude Desktop app](/docs/en/desktop.md)
+* `service.name`: `claude-code` for terminal sessions, `claude-code-desktop` for local sessions started from the Code tab in the [Claude Desktop app](https://code.claude.com/docs/en/desktop.md)
 * `service.version`: Current Claude Code version, or the Desktop app version for local Code tab sessions
 * `os.type`: Operating system type (for example, `linux`, `darwin`, `windows`)
 * `os.version`: Operating system version string
@@ -1763,7 +1763,7 @@ For a comprehensive guide on measuring return on investment for Claude Code, inc
 
 ## Security and privacy
 
-* OpenTelemetry export to your backend is opt-in and requires explicit configuration. For Anthropic's separate operational telemetry and how to disable it, see [Data usage](/docs/en/data-usage.md#telemetry-services)
+* OpenTelemetry export to your backend is opt-in and requires explicit configuration. For Anthropic's separate operational telemetry and how to disable it, see [Data usage](https://code.claude.com/docs/en/data-usage.md#telemetry-services)
 * Raw file contents and code snippets are not included in metrics or events. Trace spans are a separate data path: see the `OTEL_LOG_TOOL_CONTENT` bullet below
 * When authenticated via OAuth, `user.email` is included in telemetry attributes, sent only to the OTel endpoint you configure, never to Anthropic. If this is a concern for your organization, work with your telemetry backend to filter or redact this field
 * User prompt content is not collected by default. Only prompt length is recorded. To include prompt content, set `OTEL_LOG_USER_PROMPTS=1`. When enabled:
@@ -1792,7 +1792,7 @@ For a comprehensive guide on measuring return on investment for Claude Code, inc
   * The [cost and token counters](#cost-counter) and the `api_request`, `api_error`, and `api_refusal` events carry real agent, skill, plugin, and MCP server and tool names in their attribution attributes
   * The `claude_code.tool` span carries input-derived attributes such as `file_path`. Under detailed beta tracing it also carries a [`tool_input`](#new-context-gates) attribute
 * Tool content is not logged in trace spans by default. To include it, set `OTEL_LOG_TOOL_CONTENT=1`. The `claude_code.tool` span then carries a [`tool.output` span event](#tool-output-span-event) with raw file contents, Bash command output, and what MCP tools, WebFetch, and WebSearch return, truncated at the content limit (60 KB by default) per attribute. Results from MCP tools, WebFetch, and WebSearch require Claude Code v2.1.283 or later. Tool content also reaches spans through [`new_context`, whose gate differs per span](#new-context-gates). Configure your telemetry backend to filter or redact these attributes as needed
-* Raw Anthropic Messages API request and response bodies are not logged by default. To include them, set `OTEL_LOG_RAW_API_BODIES` in your shell, user settings, or managed settings. It's ignored in [project and local settings](/docs/en/settings-reference.md#variables-claude-code-ignores-in-env). The bodies contain the full conversation history, including the system prompt, every prior user and assistant turn, and tool results, so enabling this implies consent to everything the other `OTEL_LOG_*` content flags would reveal. Claude Code always redacts Claude's extended-thinking content from these bodies, regardless of other settings. The value you set determines how Claude Code delivers the bodies:
+* Raw Anthropic Messages API request and response bodies are not logged by default. To include them, set `OTEL_LOG_RAW_API_BODIES` in your shell, user settings, or managed settings. It's ignored in [project and local settings](https://code.claude.com/docs/en/settings-reference.md#variables-claude-code-ignores-in-env). The bodies contain the full conversation history, including the system prompt, every prior user and assistant turn, and tool results, so enabling this implies consent to everything the other `OTEL_LOG_*` content flags would reveal. Claude Code always redacts Claude's extended-thinking content from these bodies, regardless of other settings. The value you set determines how Claude Code delivers the bodies:
   * With `=1`, Claude Code emits `api_request_body` and `api_response_body` log events for each API call. The events' `body` attribute carries the JSON-serialized payload, truncated at the content limit (60 KB by default)
   * With `=file:<dir>`, Claude Code writes untruncated bodies to `.request.json` and `.response.json` files under that directory, and the events carry a `body_ref` path instead of the inline body. Ship the directory with a log collector or sidecar rather than through the telemetry stream.
 

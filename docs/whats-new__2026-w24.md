@@ -6,7 +6,7 @@
 
 > Move a session to a new directory with /cd, let subagents spawn their own subagents, and troubleshoot a broken configuration with safe mode.
 
-Releases [v2.1.166 → v2.1.176](/docs/en/changelog.md#2-1-166)
+Releases [v2.1.166 → v2.1.176](https://code.claude.com/docs/en/changelog.md#2-1-166)
 3 features · June 8–12
 
 Move a session with /cd
@@ -20,7 +20,7 @@ Move the session into another project without restarting:
 > /cd ../other-project
 ```
 
-[Commands reference](/docs/en/commands.md#all-commands)
+[Commands reference](https://code.claude.com/docs/en/commands.md#all-commands)
 
 Subagents can spawn subagents
 v2.1.172
@@ -33,7 +33,7 @@ Open the agents view to watch the nested tree as work fans out:
 > /agents
 ```
 
-[Spawn nested subagents](/docs/en/sub-agents.md#let-subagents-spawn-their-own-subagents)
+[Spawn nested subagents](https://code.claude.com/docs/en/sub-agents.md#let-subagents-spawn-their-own-subagents)
 
 Troubleshoot with safe mode
 v2.1.169
@@ -46,10 +46,10 @@ Launch a clean session to isolate a broken configuration:
 claude --safe-mode
 ```
 
-[Test against a clean configuration](/docs/en/debug-your-config.md#test-against-a-clean-configuration)
+[Test against a clean configuration](https://code.claude.com/docs/en/debug-your-config.md#test-against-a-clean-configuration)
 
 Other wins
 
-[`fallbackModel`](/docs/en/model-config#fallback-model-chains) configures up to three fallback models tried in order when the primary is overloaded or unavailable, and `--fallback-model` now applies to interactive sessions tooSession titles are now generated in the language of your conversation; pin a specific one with the `language` setting`claude agents --json` adds `--all` to include completed sessions plus new `id` and `state` fields, and no longer omits blocked or newly dispatched sessionsBrowsing a marketplace's plugins in `/plugin` now has a search barNew `disableBundledSkills` setting and `CLAUDE_CODE_DISABLE_BUNDLED_SKILLS` hide bundled skills, workflows, and built-in commands from the modelDeny rules accept a glob in the tool-name position, so `"*"` denies all tools, and unknown tool names in deny rules now warn at startupAgent messaging is hardened: messages relayed via `SendMessage` from other agents no longer carry user authority, and auto mode blocks themAmazon Bedrock reads the AWS region from `~/.aws` config files when `AWS_REGION` is unset, and `/status` shows where the region came fromNew `enforceAvailableModels` managed setting makes the `availableModels` allowlist also constrain the Default modelClaude in Chrome browser tools now load in a single batched call instead of one per tool`claude update` announces the target version before downloading instead of going silentNew `footerLinksRegexes` setting adds regex-matched link badges to the footer row
+[`fallbackModel`](https://code.claude.com/docs/en/model-config#fallback-model-chains) configures up to three fallback models tried in order when the primary is overloaded or unavailable, and `--fallback-model` now applies to interactive sessions tooSession titles are now generated in the language of your conversation; pin a specific one with the `language` setting`claude agents --json` adds `--all` to include completed sessions plus new `id` and `state` fields, and no longer omits blocked or newly dispatched sessionsBrowsing a marketplace's plugins in `/plugin` now has a search barNew `disableBundledSkills` setting and `CLAUDE_CODE_DISABLE_BUNDLED_SKILLS` hide bundled skills, workflows, and built-in commands from the modelDeny rules accept a glob in the tool-name position, so `"*"` denies all tools, and unknown tool names in deny rules now warn at startupAgent messaging is hardened: messages relayed via `SendMessage` from other agents no longer carry user authority, and auto mode blocks themAmazon Bedrock reads the AWS region from `~/.aws` config files when `AWS_REGION` is unset, and `/status` shows where the region came fromNew `enforceAvailableModels` managed setting makes the `availableModels` allowlist also constrain the Default modelClaude in Chrome browser tools now load in a single batched call instead of one per tool`claude update` announces the target version before downloading instead of going silentNew `footerLinksRegexes` setting adds regex-matched link badges to the footer row
 
-[Full changelog for v2.1.166–v2.1.176 →](/docs/en/changelog.md#2-1-166)
+[Full changelog for v2.1.166–v2.1.176 →](https://code.claude.com/docs/en/changelog.md#2-1-166)

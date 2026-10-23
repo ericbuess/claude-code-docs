@@ -6,7 +6,7 @@
 
 > Computer use in the CLI, interactive in-product lessons, flicker-free rendering, per-tool MCP result-size overrides, and plugin executables on PATH.
 
-Releases [v2.1.86 → v2.1.91](/docs/en/changelog.md#2-1-86)
+Releases [v2.1.86 → v2.1.91](https://code.claude.com/docs/en/changelog.md#2-1-86)
 5 features · March 30 – April 3
 
 Computer use in the CLI
@@ -22,7 +22,7 @@ Requires macOS and a Pro or Max plan; otherwise, `computer-use` won't appear in 
 Open the iOS simulator, tap through onboarding, and screenshot each step
 ```
 
-[Computer use guide](/docs/en/computer-use.md)
+[Computer use guide](https://code.claude.com/docs/en/computer-use.md)
 
 /powerup
 v2.1.90
@@ -37,7 +37,7 @@ Run it:
 /powerup
 ```
 
-[Commands reference](/docs/en/commands.md)
+[Commands reference](https://code.claude.com/docs/en/commands.md)
 
 Flicker-free rendering
 v2.1.89
@@ -53,7 +53,7 @@ export CLAUDE_CODE_NO_FLICKER=1
 claude
 ```
 
-[Fullscreen rendering](/docs/en/fullscreen.md)
+[Fullscreen rendering](https://code.claude.com/docs/en/fullscreen.md)
 
 MCP result-size override
 v2.1.91
@@ -72,7 +72,7 @@ Annotate the tool in your server's `tools/list` response:
 }
 ```
 
-[MCP reference](/docs/en/mcp.md#raise-the-limit-for-a-specific-tool)
+[MCP reference](https://code.claude.com/docs/en/mcp.md#raise-the-limit-for-a-specific-tool)
 
 Plugin executables on PATH
 v2.1.91
@@ -89,10 +89,10 @@ my-plugin/
     └── my-tool
 ```
 
-[Plugins reference](/docs/en/plugins/manifest-reference.md#standard-layout)
+[Plugins reference](https://code.claude.com/docs/en/plugins/manifest-reference.md#standard-layout)
 
 Other wins
 
 Auto mode follow-ups: new `PermissionDenied` hook fires on classifier denials (return `retry: true` to let Claude try a different approach), and `/permissions` → Recently denied lets you retry manually with `r`New `defer` value for `permissionDecision` in `PreToolUse` hooks: `-p` sessions pause at a tool call and exit with a `deferred_tool_use` payload so an SDK app or custom UI can surface it, then resume with `--resume``/buddy`: hatch a small creature that watches you code. An April Fools' joke, no longer available`disableSkillShellExecution` setting blocks inline shell from skills, custom commands, and plugin commandsEdit tool now works on files viewed via `cat` or `sed -n` without a separate ReadHook output over 50K saved to disk with a path + preview instead of injected into contextThinking summaries off by default in interactive sessions (`showThinkingSummaries: true` to restore)Voice mode: push-to-talk modifier combos, Windows WebSocket, macOS Apple Silicon mic permission`claude-cli://` deep links accept multi-line prompts (encoded `%0A`)
 
-[Full changelog for v2.1.86–v2.1.91 →](/docs/en/changelog.md#2-1-86)
+[Full changelog for v2.1.86–v2.1.91 →](https://code.claude.com/docs/en/changelog.md#2-1-86)

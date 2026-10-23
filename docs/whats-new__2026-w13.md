@@ -6,7 +6,7 @@
 
 > Auto mode for hands-off permissions, computer use built in, PR auto-fix in the cloud, transcript search, and a PowerShell tool for Windows.
 
-Releases [v2.1.83 → v2.1.85](/docs/en/changelog.md#2-1-83)
+Releases [v2.1.83 → v2.1.85](https://code.claude.com/docs/en/changelog.md#2-1-83)
 6 features · March 23–27
 
 Auto mode
@@ -26,7 +26,7 @@ Cycle to auto with Shift+Tab, or set it as your default:
 }
 ```
 
-[Permission modes guide](/docs/en/permission-modes.md)
+[Permission modes guide](https://code.claude.com/docs/en/permission-modes.md)
 
 Computer use
 Desktop
@@ -41,7 +41,7 @@ Enable it in Settings, grant the OS permissions, then ask Claude to verify a cha
 Open the iOS simulator, tap through the onboarding flow, and screenshot each step
 ```
 
-[Computer use guide](/docs/en/desktop.md#let-claude-use-your-computer)
+[Computer use guide](https://code.claude.com/docs/en/desktop.md#let-claude-use-your-computer)
 
 PR auto-fix
 Web
@@ -52,7 +52,7 @@ Flip a switch when you open a PR and walk away. Claude watches CI, fixes the fai
 
 After creating a PR on Claude Code web, toggle Auto fix in the CI panel.
 
-[Auto-fix pull requests](/docs/en/claude-code-on-the-web.md#auto-fix-pull-requests)
+[Auto-fix pull requests](https://code.claude.com/docs/en/claude-code-on-the-web.md#auto-fix-pull-requests)
 
 Transcript search
 v2.1.83
@@ -68,7 +68,7 @@ n         # next match
 N         # previous match
 ```
 
-[Fullscreen guide](/docs/en/fullscreen.md#search-and-review-the-conversation)
+[Fullscreen guide](https://code.claude.com/docs/en/fullscreen.md#search-and-review-the-conversation)
 
 PowerShell tool
 preview
@@ -86,7 +86,7 @@ Opt in from settings:
 }
 ```
 
-[PowerShell tool docs](/docs/en/tools-reference.md#powershell-tool)
+[PowerShell tool docs](https://code.claude.com/docs/en/tools-reference.md#powershell-tool)
 
 Conditional hooks
 v2.1.85
@@ -109,10 +109,10 @@ Scope a hook to git commits only:
 }
 ```
 
-[Hooks reference](/docs/en/hooks.md)
+[Hooks reference](https://code.claude.com/docs/en/hooks.md)
 
 Other wins
 
 Plugin `userConfig` now public: prompt for settings at enable time, keychain-backed secretsPasted images insert `[Image #N]` chips you can reference positionally`managed-settings.d/` drop-in directory for layered policy fragments`CwdChanged` and `FileChanged` hook events for direnv-style setupsAgents can declare `initialPrompt` in frontmatter to auto-submit a first turn`Ctrl+X Ctrl+E` opens your external editor, matching readlineInterrupting before any response restores your input automatically`/status` now works while Claude is respondingDeep links open in your preferred terminal, not first-detectedIdle-return nudge to `/clear` after 75+ minutes awayVS Code: rate limit banner, Esc-twice rewind picker
 
-[Full changelog for v2.1.83–v2.1.85 →](/docs/en/changelog.md#2-1-83)
+[Full changelog for v2.1.83–v2.1.85 →](https://code.claude.com/docs/en/changelog.md#2-1-83)

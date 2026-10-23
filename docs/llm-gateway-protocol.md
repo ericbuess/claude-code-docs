@@ -8,12 +8,12 @@
 
 This page documents the requests Claude Code sends to a gateway, including the endpoints it calls, the headers and body fields the gateway must forward, and which features stop working when it doesn't. It is written for operators configuring a gateway product to work with Claude Code.
 
-The [Claude apps gateway](/docs/en/claude-apps-gateway), Anthropic's self-hosted gateway, serves its own endpoint reference at `GET /protocol`, covering that gateway's sign-in, inference, managed settings, model discovery, and telemetry endpoints. It is a separate document from this guide.
+The [Claude apps gateway](https://code.claude.com/docs/en/claude-apps-gateway), Anthropic's self-hosted gateway, serves its own endpoint reference at `GET /protocol`, covering that gateway's sign-in, inference, managed settings, model discovery, and telemetry endpoints. It is a separate document from this guide.
 
 > [!NOTE]
 >
-> * To roll out an existing or third-party gateway for your organization, see [Roll out an LLM gateway](/docs/en/llm-gateway-rollout.md)
-> * If you're an individual developer authenticating Claude Code to a gateway with a credential you were given, see [Connect Claude Code to an LLM gateway](/docs/en/llm-gateway-connect.md)
+> * To roll out an existing or third-party gateway for your organization, see [Roll out an LLM gateway](https://code.claude.com/docs/en/llm-gateway-rollout.md)
+> * If you're an individual developer authenticating Claude Code to a gateway with a credential you were given, see [Connect Claude Code to an LLM gateway](https://code.claude.com/docs/en/llm-gateway-connect.md)
 
 This page covers:
 
@@ -46,7 +46,7 @@ Google Cloud's Agent Platform is Google Cloud's Claude endpoint, formerly Vertex
 
 ### Foundry and Claude Platform on AWS
 
-Microsoft Foundry and the [Claude Platform on AWS](/docs/en/claude-platform-on-aws.md) implement the Anthropic Messages format. Claude Code routes to them through their own variables, `ANTHROPIC_FOUNDRY_BASE_URL` and `ANTHROPIC_AWS_BASE_URL`, but a gateway fronting either implements the Anthropic Messages row above. A gateway fronting the Claude Platform on AWS must also forward the `anthropic-workspace-id` header, which [that platform requires on every request](/docs/en/claude-platform-on-aws.md).
+Microsoft Foundry and the [Claude Platform on AWS](https://code.claude.com/docs/en/claude-platform-on-aws.md) implement the Anthropic Messages format. Claude Code routes to them through their own variables, `ANTHROPIC_FOUNDRY_BASE_URL` and `ANTHROPIC_AWS_BASE_URL`, but a gateway fronting either implements the Anthropic Messages row above. A gateway fronting the Claude Platform on AWS must also forward the `anthropic-workspace-id` header, which [that platform requires on every request](https://code.claude.com/docs/en/claude-platform-on-aws.md).
 
 ### Optional endpoints and startup traffic
 
@@ -59,19 +59,19 @@ Match on the path, not the full URL:
 
 A gateway also sees best-effort startup traffic it can reject without breaking anything. An Anthropic Messages-format gateway receives a `HEAD /api/hello` connection-warming probe, which Claude Code skips when an HTTP proxy or client certificate is configured. An Amazon Bedrock-format gateway receives a `GET /inference-profiles?type=SYSTEM_DEFINED` request and, when the configured model is an inference profile, `GET /inference-profiles/{profile}` lookups.
 
-Sessions that go through a gateway aren't eligible for the HIPAA configuration. [Check how developers sign in and connect](/docs/en/hipaa-setup.md#check-how-developers-sign-in-and-connect) lists which sign-in and connection methods are. See [The HIPAA configuration behind a gateway](/docs/en/llm-gateway-rollout.md#the-hipaa-configuration-behind-a-gateway).
+Sessions that go through a gateway aren't eligible for the HIPAA configuration. [Check how developers sign in and connect](https://code.claude.com/docs/en/hipaa-setup.md#check-how-developers-sign-in-and-connect) lists which sign-in and connection methods are. See [The HIPAA configuration behind a gateway](https://code.claude.com/docs/en/llm-gateway-rollout.md#the-hipaa-configuration-behind-a-gateway).
 
-The [fast mode](/docs/en/fast-mode.md) availability check never appears in gateway logs: it calls `api.anthropic.com` directly rather than following `ANTHROPIC_BASE_URL`, so on a network that blocks direct egress to `api.anthropic.com`, fast mode can report a connectivity error while inference through the gateway keeps working. The [WebFetch domain safety check](/docs/en/data-usage.md#webfetch-domain-safety-check) also calls `api.anthropic.com` directly. [Use fast mode behind proxies and LLM gateways](/docs/en/fast-mode.md#use-fast-mode-behind-proxies-and-llm-gateways) covers the variables that restore it.
+The [fast mode](https://code.claude.com/docs/en/fast-mode.md) availability check never appears in gateway logs: it calls `api.anthropic.com` directly rather than following `ANTHROPIC_BASE_URL`, so on a network that blocks direct egress to `api.anthropic.com`, fast mode can report a connectivity error while inference through the gateway keeps working. The [WebFetch domain safety check](https://code.claude.com/docs/en/data-usage.md#webfetch-domain-safety-check) also calls `api.anthropic.com` directly. [Use fast mode behind proxies and LLM gateways](https://code.claude.com/docs/en/fast-mode.md#use-fast-mode-behind-proxies-and-llm-gateways) covers the variables that restore it.
 
 ### Streaming
 
 Claude Code reads each streaming inference response event by event as it arrives, so the way your gateway relays the stream affects what the user sees:
 
 * If your gateway buffers a response until it is complete, Claude Code stalls.
-* Claude Code expects each response's full event sequence, in order, through the final `message_delta` and `message_stop` events. If the body ends cleanly after a content block has started but before that final `message_delta`, Claude Code treats the response as a dropped connection. [The response above may be incomplete](/docs/en/errors.md#the-response-above-may-be-incomplete) describes what the user sees then, and [Automatic retries](/docs/en/errors.md#automatic-retries) says when Claude Code re-issues the request instead.
-* When an Amazon Bedrock guardrail blocks a reply, the events Bedrock sends can reference a content block whose `content_block_stop` already arrived, and Claude Code relies on receiving them as sent. [AWS Guardrails](/docs/en/amazon-bedrock.md#aws-guardrails) describes how that reply ends.
-* Claude Code aborts a streaming response once no bytes reach it for longer than its [streaming idle timeout](/docs/en/network-config.md#streaming-idle-watchdogs). During a long thinking pause, the upstream's SSE `ping` events can be the only bytes on the stream, so a gateway that strips or buffers them can trip that timeout partway through a response. A gateway that translates from an upstream without pings, such as Amazon Bedrock's binary event stream, has the same gap unless it emits its own `ping` events.
-* On the [Amazon Bedrock InvokeModel format](#api-formats), Claude Code reads the `/model/{model}/invoke-with-response-stream` response as the binary `application/vnd.amazon.eventstream` body Bedrock returns, and can't parse it once a gateway converts it to server-sent events or rewrites that `Content-Type` header. [Streaming errors behind a gateway or proxy](/docs/en/amazon-bedrock.md#streaming-errors-behind-a-gateway-or-proxy) describes what the user sees then.
+* Claude Code expects each response's full event sequence, in order, through the final `message_delta` and `message_stop` events. If the body ends cleanly after a content block has started but before that final `message_delta`, Claude Code treats the response as a dropped connection. [The response above may be incomplete](https://code.claude.com/docs/en/errors.md#the-response-above-may-be-incomplete) describes what the user sees then, and [Automatic retries](https://code.claude.com/docs/en/errors.md#automatic-retries) says when Claude Code re-issues the request instead.
+* When an Amazon Bedrock guardrail blocks a reply, the events Bedrock sends can reference a content block whose `content_block_stop` already arrived, and Claude Code relies on receiving them as sent. [AWS Guardrails](https://code.claude.com/docs/en/amazon-bedrock.md#aws-guardrails) describes how that reply ends.
+* Claude Code aborts a streaming response once no bytes reach it for longer than its [streaming idle timeout](https://code.claude.com/docs/en/network-config.md#streaming-idle-watchdogs). During a long thinking pause, the upstream's SSE `ping` events can be the only bytes on the stream, so a gateway that strips or buffers them can trip that timeout partway through a response. A gateway that translates from an upstream without pings, such as Amazon Bedrock's binary event stream, has the same gap unless it emits its own `ping` events.
+* On the [Amazon Bedrock InvokeModel format](#api-formats), Claude Code reads the `/model/{model}/invoke-with-response-stream` response as the binary `application/vnd.amazon.eventstream` body Bedrock returns, and can't parse it once a gateway converts it to server-sent events or rewrites that `Content-Type` header. [Streaming errors behind a gateway or proxy](https://code.claude.com/docs/en/amazon-bedrock.md#streaming-errors-behind-a-gateway-or-proxy) describes what the user sees then.
 
 ### Format mismatch with the upstream
 
@@ -82,7 +82,7 @@ Which format the client speaks determines what your gateway receives. The common
 
 Bridging that difference is your gateway's job. [Feature pass-through](#feature-pass-through) describes what breaks when it doesn't.
 
-If your upstream is Amazon Bedrock or Google Cloud's Agent Platform, you can avoid the bridging by exposing that provider's format instead. [Route to a cloud provider through a gateway](/docs/en/llm-gateway-connect.md#route-to-a-cloud-provider-through-a-gateway) shows the client configuration for that format.
+If your upstream is Amazon Bedrock or Google Cloud's Agent Platform, you can avoid the bridging by exposing that provider's format instead. [Route to a cloud provider through a gateway](https://code.claude.com/docs/en/llm-gateway-connect.md#route-to-a-cloud-provider-through-a-gateway) shows the client configuration for that format.
 
 ## How the connection method changes client behavior
 
@@ -90,43 +90,43 @@ The way a developer connects to your gateway determines which model IDs, `anthro
 
 * **Amazon Bedrock or Agent Platform format**: the developer sets `CLAUDE_CODE_USE_BEDROCK=1` with `ANTHROPIC_BEDROCK_BASE_URL`, or `CLAUDE_CODE_USE_VERTEX=1` with `ANTHROPIC_VERTEX_BASE_URL`, pointing at your gateway. Claude Code uses that provider's model IDs, request fields, and defaults.
 * **Anthropic Messages format**: the developer sets `ANTHROPIC_BASE_URL` to your gateway. Claude Code treats the gateway as the Claude API and can't tell which upstream you forward to.
-* **Claude apps gateway sign-in**: the developer signs in to a [Claude apps gateway](/docs/en/claude-apps-gateway). That gateway speaks the Anthropic Messages format but can route to any upstream, so Claude Code sends only the `anthropic-beta` values and model-capability assumptions that Amazon Bedrock and Agent Platform also accept.
+* **Claude apps gateway sign-in**: the developer signs in to a [Claude apps gateway](https://code.claude.com/docs/en/claude-apps-gateway). That gateway speaks the Anthropic Messages format but can route to any upstream, so Claude Code sends only the `anthropic-beta` values and model-capability assumptions that Amazon Bedrock and Agent Platform also accept.
 
 ### Requests and defaults by connection method
 
-The table below compares the three connection methods, one behavior per row. It leaves out Microsoft Foundry and Claude Platform on AWS, which also use the Anthropic Messages format but which Claude Code reaches through their own variables. For those, see the [Microsoft Foundry](/docs/en/microsoft-foundry.md) and [Claude Platform on AWS](/docs/en/claude-platform-on-aws.md) pages.
+The table below compares the three connection methods, one behavior per row. It leaves out Microsoft Foundry and Claude Platform on AWS, which also use the Anthropic Messages format but which Claude Code reaches through their own variables. For those, see the [Microsoft Foundry](https://code.claude.com/docs/en/microsoft-foundry.md) and [Claude Platform on AWS](https://code.claude.com/docs/en/claude-platform-on-aws.md) pages.
 
 | Behavior | Amazon Bedrock or Agent Platform format | Anthropic Messages format | Claude apps gateway sign-in |
 | :- | :- | :- | :- |
 | Model IDs in requests by default | The provider's form, such as `us.anthropic.claude-opus-4-8` on Amazon Bedrock | Anthropic IDs, such as `claude-opus-4-8` | Anthropic IDs |
 | `anthropic-beta` values sent | The subset Amazon Bedrock and Agent Platform accept | The full set described under [feature pass-through](#feature-pass-through), unless the developer sets [`CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS`](#disable-pre-release-capabilities) | The subset Amazon Bedrock and Agent Platform accept |
 | Request fields for a model ID Claude Code doesn't recognize, such as a gateway alias | Thinking with a fixed budget rather than adaptive reasoning, and no effort or context management fields. Claude Code still sends [mid-conversation system messages](#feature-pass-through) | Everything current Claude models accept on the Claude API, including adaptive reasoning, effort, and context management, which an Amazon Bedrock or Agent Platform upstream can reject | Same as the Amazon Bedrock or Agent Platform format |
-| One-hour [prompt cache TTL](/docs/en/prompt-caching.md#choose-the-ttl-yourself) when a developer opts in | Requested through the `ttl` field in `cache_control`, with no beta value | Requested through the `ttl` field plus an `extended-cache-ttl` value in `anthropic-beta`, which you must forward | Requested through the `ttl` field, with no beta value. See [One-hour prompt cache](/docs/en/claude-apps-gateway-config.md#one-hour-prompt-cache) |
-| Model for [background tasks](/docs/en/costs.md#background-token-usage) unless `ANTHROPIC_DEFAULT_HAIKU_MODEL` pins one | The default Sonnet model, or the main model once one is selected, as the [Amazon Bedrock](/docs/en/amazon-bedrock.md#4-pin-model-versions) and [Agent Platform](/docs/en/google-vertex-ai.md#5-pin-model-versions) pages describe | The main model, or the default Haiku model when `ANTHROPIC_API_KEY` or `apiKeyHelper` supplies an Anthropic Console key and `ANTHROPIC_AUTH_TOKEN` is unset | The main model |
+| One-hour [prompt cache TTL](https://code.claude.com/docs/en/prompt-caching.md#choose-the-ttl-yourself) when a developer opts in | Requested through the `ttl` field in `cache_control`, with no beta value | Requested through the `ttl` field plus an `extended-cache-ttl` value in `anthropic-beta`, which you must forward | Requested through the `ttl` field, with no beta value. See [One-hour prompt cache](https://code.claude.com/docs/en/claude-apps-gateway-config.md#one-hour-prompt-cache) |
+| Model for [background tasks](https://code.claude.com/docs/en/costs.md#background-token-usage) unless `ANTHROPIC_DEFAULT_HAIKU_MODEL` pins one | The default Sonnet model, or the main model once one is selected, as the [Amazon Bedrock](https://code.claude.com/docs/en/amazon-bedrock.md#4-pin-model-versions) and [Agent Platform](https://code.claude.com/docs/en/google-vertex-ai.md#5-pin-model-versions) pages describe | The main model, or the default Haiku model when `ANTHROPIC_API_KEY` or `apiKeyHelper` supplies an Anthropic Console key and `ANTHROPIC_AUTH_TOKEN` is unset | The main model |
 
-For the features each connection supports and the telemetry it sends to Anthropic by default, see [Feature availability](/docs/en/feature-availability.md#availability-by-model-provider) and [Default behaviors by API provider](/docs/en/data-usage.md#default-behaviors-by-api-provider).
+For the features each connection supports and the telemetry it sends to Anthropic by default, see [Feature availability](https://code.claude.com/docs/en/feature-availability.md#availability-by-model-provider) and [Default behaviors by API provider](https://code.claude.com/docs/en/data-usage.md#default-behaviors-by-api-provider).
 
 ### Settings for unrecognized model IDs
 
 Two client-side settings change what Claude Code assumes for a model ID it doesn't recognize, whichever connection method the developer uses:
 
-* **Context window**: Claude Code assumes 200K, or 1M when the ID carries `[1m]`. To declare the real window, see [Correct the window for a gateway or custom model ID](/docs/en/model-config.md#correct-the-window-for-a-gateway-or-custom-model-id)
-* **Capabilities**: to give a gateway alias the capabilities of the model behind it, map that model's Anthropic ID to your alias with a [`modelOverrides`](/docs/en/errors#unrecognized-model-id-on-a-request) entry in the settings you distribute. For where the `ANTHROPIC_DEFAULT_*_MODEL_SUPPORTED_CAPABILITIES` variables apply, see [feature pass-through](#feature-pass-through)
+* **Context window**: Claude Code assumes 200K, or 1M when the ID carries `[1m]`. To declare the real window, see [Correct the window for a gateway or custom model ID](https://code.claude.com/docs/en/model-config.md#correct-the-window-for-a-gateway-or-custom-model-id)
+* **Capabilities**: to give a gateway alias the capabilities of the model behind it, map that model's Anthropic ID to your alias with a [`modelOverrides`](https://code.claude.com/docs/en/errors#unrecognized-model-id-on-a-request) entry in the settings you distribute. For where the `ANTHROPIC_DEFAULT_*_MODEL_SUPPORTED_CAPABILITIES` variables apply, see [feature pass-through](#feature-pass-through)
 
 ## Request headers
 
-Claude Code includes these headers on API requests. Header names are case-insensitive on the wire. Forward `anthropic-version` and `anthropic-beta` unchanged, plus `anthropic-workspace-id` when the upstream is the [Claude Platform on AWS](/docs/en/claude-platform-on-aws.md); the rest the gateway may consume for routing, attribution, and tracing, and need not forward.
+Claude Code includes these headers on API requests. Header names are case-insensitive on the wire. Forward `anthropic-version` and `anthropic-beta` unchanged, plus `anthropic-workspace-id` when the upstream is the [Claude Platform on AWS](https://code.claude.com/docs/en/claude-platform-on-aws.md); the rest the gateway may consume for routing, attribution, and tracing, and need not forward.
 
 | Header | Description |
 | :- | :- |
-| `Authorization`, `x-api-key` | The developer's gateway credential, in one or both headers depending on which [credential variable](/docs/en/llm-gateway-connect.md#set-the-credential-variable) they set |
+| `Authorization`, `x-api-key` | The developer's gateway credential, in one or both headers depending on which [credential variable](https://code.claude.com/docs/en/llm-gateway-connect.md#set-the-credential-variable) they set |
 | `anthropic-version` | API version, currently `2023-06-01`. Amazon Bedrock- and Google Cloud's Agent Platform-format requests also carry the `anthropic_version` body field, whose value is the provider dialect string, not this header's value |
 | `anthropic-beta` | Comma-separated capability values for the request. Forward the header verbatim; don't allowlist individual values, because the set changes with Claude Code releases. When the developer authenticates with a claude.ai login, which is possible when `ANTHROPIC_BASE_URL` is set without a gateway credential variable, this header also carries an OAuth capability that the upstream requires, and stripping it fails those requests with `401` |
 | `x-claude-code-session-id` | A unique identifier for the current Claude Code session. Use it to aggregate all requests from one session without parsing request bodies |
-| `x-claude-code-agent-id` | Identifier of the [subagent](/docs/en/sub-agents.md) that issued the request, present only on requests from an agent Claude Code spawned inside the session. Use it with the session ID to attribute cost to parallel agents |
+| `x-claude-code-agent-id` | Identifier of the [subagent](https://code.claude.com/docs/en/sub-agents.md) that issued the request, present only on requests from an agent Claude Code spawned inside the session. Use it with the session ID to attribute cost to parallel agents |
 | `x-claude-code-parent-agent-id` | Identifier of the agent that spawned the requesting agent, present only for nested agents |
 
-Subagent IDs are generated fresh each time Claude Code spawns a subagent. Teammate agents, the named members of an [agent team](/docs/en/agent-teams.md), reuse a stable name-based ID across reconnections. In both cases the ID identifies an agent, not a person or a device, so don't treat the agent ID header as a user identifier.
+Subagent IDs are generated fresh each time Claude Code spawns a subagent. Teammate agents, the named members of an [agent team](https://code.claude.com/docs/en/agent-teams.md), reuse a stable name-based ID across reconnections. In both cases the ID identifies an agent, not a person or a device, so don't treat the agent ID header as a user identifier.
 
 If your developers set `ANTHROPIC_CUSTOM_HEADERS`, those headers appear on requests as well.
 
@@ -137,7 +137,7 @@ Claude Code can also send routing hints: per-request facts a gateway or router c
 Whether a request carries them depends on where Claude Code sends it:
 
 * Direct connection to the Anthropic API: sent by default
-* Custom base URL: off by default, because a proxy that rejects unknown headers would fail the request. To receive them, set [`CLAUDE_CODE_GATEWAY_HINT_HEADERS=1`](/docs/en/env-vars) for your developers, for example in the `env` block of [managed settings](/docs/en/managed-settings.md)
+* Custom base URL: off by default, because a proxy that rejects unknown headers would fail the request. To receive them, set [`CLAUDE_CODE_GATEWAY_HINT_HEADERS=1`](https://code.claude.com/docs/en/env-vars) for your developers, for example in the `env` block of [managed settings](https://code.claude.com/docs/en/managed-settings.md)
 * Any other backend, including Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry, and Claude Platform on AWS: sent only when `CLAUDE_CODE_GATEWAY_HINT_HEADERS=1` is set
 
 Setting `CLAUDE_CODE_GATEWAY_HINT_HEADERS` to `0` stops the headers on every connection.
@@ -146,9 +146,9 @@ The headers carry only what the rows below list: fixed vocabularies, tool names,
 
 | Header | Description |
 | :- | :- |
-| `x-claude-code-request-class` | What kind of request this is: `main` for a turn of the main conversation, `subagent` for a turn of a [subagent](/docs/en/sub-agents.md), `workflow` for an agent running inside a workflow, `compaction` for the summarization request that compacts a conversation, or `auxiliary` for side requests such as session titles, classifiers, and summaries. Sent on every request |
-| `x-claude-code-agent-type` | The kind of subagent that issued the request: a built-in agent type name such as `Explore`, `Plan`, or `general-purpose`, or `custom` for a user-defined agent, `teammate` for an [agent team](/docs/en/agent-teams.md) member running in the lead's process, or `fork` for a [fork](/docs/en/sub-agents.md#fork-the-current-conversation). Present only on a subagent's own turns; a subagent's compaction or side requests keep the agent ID but carry no type. A user-chosen agent name is never sent |
-| `x-claude-code-compaction` | Present on the request that summarizes the conversation during a [compaction](/docs/en/prompt-caching.md#compacting-the-conversation). The value says what triggered it: `auto` when the context window approached capacity, `manual` for `/compact`, or `reactive` when the API rejected a request as too long. The value is also `auto` for [idle compaction](/docs/en/settings-reference.md#idlecompaction). Absent on every other request |
+| `x-claude-code-request-class` | What kind of request this is: `main` for a turn of the main conversation, `subagent` for a turn of a [subagent](https://code.claude.com/docs/en/sub-agents.md), `workflow` for an agent running inside a workflow, `compaction` for the summarization request that compacts a conversation, or `auxiliary` for side requests such as session titles, classifiers, and summaries. Sent on every request |
+| `x-claude-code-agent-type` | The kind of subagent that issued the request: a built-in agent type name such as `Explore`, `Plan`, or `general-purpose`, or `custom` for a user-defined agent, `teammate` for an [agent team](https://code.claude.com/docs/en/agent-teams.md) member running in the lead's process, or `fork` for a [fork](https://code.claude.com/docs/en/sub-agents.md#fork-the-current-conversation). Present only on a subagent's own turns; a subagent's compaction or side requests keep the agent ID but carry no type. A user-chosen agent name is never sent |
+| `x-claude-code-compaction` | Present on the request that summarizes the conversation during a [compaction](https://code.claude.com/docs/en/prompt-caching.md#compacting-the-conversation). The value says what triggered it: `auto` when the context window approached capacity, `manual` for `/compact`, or `reactive` when the API rejected a request as too long. The value is also `auto` for [idle compaction](https://code.claude.com/docs/en/settings-reference.md#idlecompaction). Absent on every other request |
 | `x-claude-code-context-compacted` | Present once, on the first main-conversation request after a compaction, with the same values as `x-claude-code-compaction`. The conversation prefix before this request is no longer used, so a cache keyed on it can be dropped |
 | `x-claude-code-prev-tool-durations` | Measured run time of the tool calls whose results this request carries, as `<name>=<ms>;<name>=<ms>`, for example `Bash=742;Read=9`. Sent on the next request of the same conversation after a batch of tool calls, from the main session or a subagent |
 | `x-claude-code-prompt-id` | Random UUID that identifies the user prompt a request serves. Requests serving one prompt share the value, including the turns of subagents that prompt started. Requests not attributed to a prompt omit it. Use it to group a session's requests by prompt. Requires Claude Code v2.1.283 or later |
@@ -176,10 +176,10 @@ Claude Code reads these response headers to detect stalled streams, to decide wh
 
 | Header | What to return and why |
 | :- | :- |
-| `content-type` | Return `text/event-stream` on streamed Anthropic Messages-format responses, and `application/vnd.amazon.eventstream`, unmodified, on Amazon Bedrock-format responses, where [a different type fails the request](/docs/en/amazon-bedrock.md#streaming-errors-behind-a-gateway-or-proxy) |
-| `retry-after` | Return integer seconds rather than an HTTP date. Claude Code waits at least that long before the next [automatic retry](/docs/en/errors.md#automatic-retries), and outside [`CLAUDE_CODE_RETRY_WATCHDOG`](/docs/en/env-vars) sessions a value above 60 stops the retries and shows the error at once |
-| `x-should-retry` | Pass the upstream's value through unchanged. Claude Code reads this header as one input when deciding whether to retry a failed request: `true` marks the response retryable and `false` marks it not retryable. For retry counts, backoff, and which failures Claude Code retries, see [automatic retries](/docs/en/errors.md#automatic-retries) |
-| `anthropic-ratelimit-unified-*` | Forward the upstream's values unchanged on every response. Claude Code reads them on successful responses to show usage against plan limits to developers signed in with claude.ai, and on a `429` to tell a plan limit or spend cap from a temporary throttle; see [usage limits](/docs/en/errors.md#usage-limits) |
+| `content-type` | Return `text/event-stream` on streamed Anthropic Messages-format responses, and `application/vnd.amazon.eventstream`, unmodified, on Amazon Bedrock-format responses, where [a different type fails the request](https://code.claude.com/docs/en/amazon-bedrock.md#streaming-errors-behind-a-gateway-or-proxy) |
+| `retry-after` | Return integer seconds rather than an HTTP date. Claude Code waits at least that long before the next [automatic retry](https://code.claude.com/docs/en/errors.md#automatic-retries), and outside [`CLAUDE_CODE_RETRY_WATCHDOG`](https://code.claude.com/docs/en/env-vars) sessions a value above 60 stops the retries and shows the error at once |
+| `x-should-retry` | Pass the upstream's value through unchanged. Claude Code reads this header as one input when deciding whether to retry a failed request: `true` marks the response retryable and `false` marks it not retryable. For retry counts, backoff, and which failures Claude Code retries, see [automatic retries](https://code.claude.com/docs/en/errors.md#automatic-retries) |
+| `anthropic-ratelimit-unified-*` | Forward the upstream's values unchanged on every response. Claude Code reads them on successful responses to show usage against plan limits to developers signed in with claude.ai, and on a `429` to tell a plan limit or spend cap from a temporary throttle; see [usage limits](https://code.claude.com/docs/en/errors.md#usage-limits) |
 
 ## System prompt attribution block
 
@@ -189,12 +189,12 @@ The strip is positional, so it only works when the gateway forwards the `system`
 
 * Forward the `system` array exactly as received, keeping the block first: prepending another system block, reordering the array, or converting it to a single string defeats the strip, and the block then reaches the model and the prompt cache key.
 * Keep the block in its own array entry: the endpoint treats a merged block that starts with the attribution header as attribution in its entirety and drops everything merged into it, including the rest of the system prompt.
-* If your gateway must reshape system content, set [`CLAUDE_CODE_ATTRIBUTION_HEADER=0`](/docs/en/env-vars) so Claude Code omits the block. Anthropic and the cloud providers' Claude endpoints read the block for attribution, so omit it at the client rather than stripping or moving it in the gateway.
+* If your gateway must reshape system content, set [`CLAUDE_CODE_ATTRIBUTION_HEADER=0`](https://code.claude.com/docs/en/env-vars) so Claude Code omits the block. Anthropic and the cloud providers' Claude endpoints read the block for attribution, so omit it at the client rather than stripping or moving it in the gateway.
 
-The variable exists for gateway and third-party caching compatibility, not as a privacy control: on a direct connection the full request already goes to the Anthropic API either way. When both of these hold, Claude Code keeps the block on [auto mode](/docs/en/permission-modes.md#eliminate-prompts-with-auto-mode) classifier requests even when you set the variable to `0`:
+The variable exists for gateway and third-party caching compatibility, not as a privacy control: on a direct connection the full request already goes to the Anthropic API either way. When both of these hold, Claude Code keeps the block on [auto mode](https://code.claude.com/docs/en/permission-modes.md#eliminate-prompts-with-auto-mode) classifier requests even when you set the variable to `0`:
 
 * The requests go to `api.anthropic.com`, with `ANTHROPIC_BASE_URL` unset or naming that host and no third-party provider selected.
-* The active credential isn't an [Anthropic profile or federation credential](/docs/en/authentication.md#anthropic-profiles-and-federation-credentials).
+* The active credential isn't an [Anthropic profile or federation credential](https://code.claude.com/docs/en/authentication.md#anthropic-profiles-and-federation-credentials).
 
 Classifier requests skip the rest of Claude Code's system prompt, so on those requests the block is the only marker in the request body that identifies them as Claude Code traffic. When either condition fails, through an LLM gateway, on a third-party provider, or with a profile or federation credential active, setting `0` removes the block from classifier requests too. Before v2.1.229, this exception didn't exist: setting `0` removed the block from those classifier requests, and when the API declined the unidentified requests, auto mode failed on every action it sent to the classifier.
 
@@ -207,7 +207,7 @@ From Claude Code v2.1.181, the block is stable for the lifetime of a conversatio
 
 Claude Code treats an `ANTHROPIC_BASE_URL` gateway as an Anthropic-format endpoint and sends it the beta headers and request body fields it sends to `api.anthropic.com`, except a small set of diagnostics and defaults reserved for direct connections, such as the fine-grained tool streaming default covered below. That set varies by release, so don't depend on its contents.
 
-Fine-grained tool streaming is one of the direct-connection defaults: it is off by default whenever requests route through a custom base URL, and a gateway receives it when developers set [`CLAUDE_CODE_ENABLE_FINE_GRAINED_TOOL_STREAMING=1`](/docs/en/env-vars).
+Fine-grained tool streaming is one of the direct-connection defaults: it is off by default whenever requests route through a custom base URL, and a gateway receives it when developers set [`CLAUDE_CODE_ENABLE_FINE_GRAINED_TOOL_STREAMING=1`](https://code.claude.com/docs/en/env-vars).
 
 ### Beta header and body field pairs
 
@@ -217,38 +217,38 @@ A gateway that rewrites or redacts request bodies for content inspection breaks 
 
 | Feature | Header and body pair | Symptom when broken | Remediation |
 | :- | :- | :- | :- |
-| [Adaptive reasoning](/docs/en/model-config.md#adjust-effort-level) | No beta header. Claude Code sends `thinking: {"type": "adaptive"}` for Claude Opus 4.6, Claude Sonnet 4.6, Claude Haiku 5.5, Claude Fable 5, and later models, and treats model names it doesn't recognize, such as gateway aliases, as current models that receive the field | `400` naming the `thinking` field or the `adaptive` tag when the upstream model build doesn't accept it | Upgrade the upstream. On Opus 4.6 and Sonnet 4.6, developers can set `CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING=1` instead |
+| [Adaptive reasoning](https://code.claude.com/docs/en/model-config.md#adjust-effort-level) | No beta header. Claude Code sends `thinking: {"type": "adaptive"}` for Claude Opus 4.6, Claude Sonnet 4.6, Claude Haiku 5.5, Claude Fable 5, and later models, and treats model names it doesn't recognize, such as gateway aliases, as current models that receive the field | `400` naming the `thinking` field or the `adaptive` tag when the upstream model build doesn't accept it | Upgrade the upstream. On Opus 4.6 and Sonnet 4.6, developers can set `CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING=1` instead |
 | [Context management](https://platform.claude.com/docs/en/build-with-claude/context-editing) | Context management beta header pairs with the `context_management` body field | `400` with `Extra inputs are not permitted`. Common when a gateway accepts Anthropic-format requests but forwards them to Amazon Bedrock. On v2.1.304 or later, Claude Code [retries on its own without the pair](#automatic-retry-and-error-forwarding) | Forward both, or [`CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS=1`](#disable-pre-release-capabilities) |
 | [Extended context](https://platform.claude.com/docs/en/build-with-claude/context-windows#context-window-sizes-by-model) and [interleaved thinking](https://platform.claude.com/docs/en/build-with-claude/extended-thinking#interleaved-thinking) | Beta headers only, no body field | Silently unavailable when the header is stripped; the upstream never sees the capability request | Forward `anthropic-beta` verbatim |
 | Beta [tool fields](https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview) | Tool-related beta headers pair with tool schema fields such as `strict` and `defer_loading` | `400` naming the unrecognized tool schema field when the body passes through without its header. For `defer_loading`, see [Retry without tool search](#retry-without-tool-search) | Forward both, or [`CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS=1`](#disable-pre-release-capabilities) |
-| [Effort](https://platform.claude.com/docs/en/build-with-claude/effort) and [structured outputs](https://platform.claude.com/docs/en/build-with-claude/structured-outputs) | The `output_config` body field carries effort, structured-output format, and task budget settings; each pairs with its own beta header | `400` naming `output_config`, often `Extra inputs are not permitted`, on Amazon Bedrock and Google Cloud's Agent Platform upstreams | Forward the field and its headers together, or have developers set [`CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS=1`](#disable-pre-release-capabilities), which removes the format and task budget settings but not effort. To remove only the format, they can set [`CLAUDE_CODE_DISABLE_STRUCTURED_OUTPUTS=1`](/docs/en/env-vars) instead, which requires v2.1.288 or later |
+| [Effort](https://platform.claude.com/docs/en/build-with-claude/effort) and [structured outputs](https://platform.claude.com/docs/en/build-with-claude/structured-outputs) | The `output_config` body field carries effort, structured-output format, and task budget settings; each pairs with its own beta header | `400` naming `output_config`, often `Extra inputs are not permitted`, on Amazon Bedrock and Google Cloud's Agent Platform upstreams | Forward the field and its headers together, or have developers set [`CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS=1`](#disable-pre-release-capabilities), which removes the format and task budget settings but not effort. To remove only the format, they can set [`CLAUDE_CODE_DISABLE_STRUCTURED_OUTPUTS=1`](https://code.claude.com/docs/en/env-vars) instead, which requires v2.1.288 or later |
 | Mid-conversation system messages | No beta header. Claude Code sends some reminder and attachment text as `role: "system"` entries in `messages` for Claude Opus 4.8, models released after it, and unrecognized model IDs | `400` such as `Unexpected role "system"` | Claude Code [retries without system messages](#automatic-retry-and-error-forwarding). To stop system messages on an alias of a model released before Claude Opus 4.8, add a [`modelOverrides` entry](#settings-for-unrecognized-model-ids) to the settings you distribute |
-| [Effort set per turn](/docs/en/prompt-caching.md#changing-effort-level) | On Opus 5.5, Sonnet 5.5, Haiku 5.5, and Fable 5.1, a beta header pairs with `output_config.effort` on `role: "system"` entries, either a system message or an entry with empty content | `400` with `messages.N: system content must contain at least one block` when your gateway strips the field from an empty entry | Forward both, or have developers set [`CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS=1`](#disable-pre-release-capabilities) to stop the field and the empty entries |
-| [Prompt caching](/docs/en/prompt-caching.md) | No beta pairing. Claude Code attaches `cache_control` markers to `system` blocks and to `messages` entries, including `role: "system"` entries appended mid-conversation | No error: the conversation bills as uncached input on every turn, visible as high `input_tokens` with little or no cache activity in `usage` | Forward `cache_control` unchanged wherever it appears, and don't convert block-form `system` or message content to plain strings |
+| [Effort set per turn](https://code.claude.com/docs/en/prompt-caching.md#changing-effort-level) | On Opus 5.5, Sonnet 5.5, Haiku 5.5, and Fable 5.1, a beta header pairs with `output_config.effort` on `role: "system"` entries, either a system message or an entry with empty content | `400` with `messages.N: system content must contain at least one block` when your gateway strips the field from an empty entry | Forward both, or have developers set [`CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS=1`](#disable-pre-release-capabilities) to stop the field and the empty entries |
+| [Prompt caching](https://code.claude.com/docs/en/prompt-caching.md) | No beta pairing. Claude Code attaches `cache_control` markers to `system` blocks and to `messages` entries, including `role: "system"` entries appended mid-conversation | No error: the conversation bills as uncached input on every turn, visible as high `input_tokens` with little or no cache activity in `usage` | Forward `cache_control` unchanged wherever it appears, and don't convert block-form `system` or message content to plain strings |
 | [Token counting](https://platform.claude.com/docs/en/build-with-claude/token-counting) | No beta pairing; uses the `count_tokens` endpoint | No error: Claude Code falls back to a character-based estimate, so `/context` shows approximate counts | Expose the endpoint for exact token counts |
 
-The `ANTHROPIC_DEFAULT_*_MODEL_SUPPORTED_CAPABILITIES` [variables](/docs/en/model-config.md) declare model capabilities only in the provider configurations: `CLAUDE_CODE_USE_BEDROCK`, `CLAUDE_CODE_USE_VERTEX`, `CLAUDE_CODE_USE_FOUNDRY`, and [`CLAUDE_CODE_USE_MANTLE`](/docs/en/amazon-bedrock#use-the-mantle-endpoint). They have no effect behind an `ANTHROPIC_BASE_URL` gateway.
+The `ANTHROPIC_DEFAULT_*_MODEL_SUPPORTED_CAPABILITIES` [variables](https://code.claude.com/docs/en/model-config.md) declare model capabilities only in the provider configurations: `CLAUDE_CODE_USE_BEDROCK`, `CLAUDE_CODE_USE_VERTEX`, `CLAUDE_CODE_USE_FOUNDRY`, and [`CLAUDE_CODE_USE_MANTLE`](https://code.claude.com/docs/en/amazon-bedrock#use-the-mantle-endpoint). They have no effect behind an `ANTHROPIC_BASE_URL` gateway.
 
 ### Automatic retry and error forwarding
 
 When the upstream rejects one of these capabilities, Claude Code can retry the request on its own with the rejected part removed or changed:
 
-* When a `400` says the `thinking.type` value `enabled` or `adaptive` isn't supported, Claude Code retries once with the other type and keeps the `thinking` field. Later requests to that model keep the switched type until Claude Code exits. Before v2.1.121, Claude Code didn't retry, so [`thinking.type.enabled is not supported`](/docs/en/errors#thinking-type-enabled-is-not-supported-for-this-model) reached the developer
+* When a `400` says the `thinking.type` value `enabled` or `adaptive` isn't supported, Claude Code retries once with the other type and keeps the `thinking` field. Later requests to that model keep the switched type until Claude Code exits. Before v2.1.121, Claude Code didn't retry, so [`thinking.type.enabled is not supported`](https://code.claude.com/docs/en/errors#thinking-type-enabled-is-not-supported-for-this-model) reached the developer
 * When the upstream rejects a `role: "system"` entry inside `messages`, Claude Code retries once without those mid-conversation system messages and carries their text in user messages instead. Later requests in the conversation keep that shape until the developer runs `/clear` or the conversation compacts
 * When the upstream rejects only the `cache_control` marker on a mid-conversation system message, Claude Code keeps the system messages and retries once with the marker moved. The marker goes on the last entry in `messages` that isn't a system message, in that retry and in later requests until Claude Code exits
 * When the upstream rejects a [thinking signature](https://platform.claude.com/docs/en/build-with-claude/extended-thinking), including with a `400` whose message says the block is `bound to a different conversation`, Claude Code removes earlier thinking blocks from the request, retries, and keeps them out of every later request. New responses still include thinking
-* When the gateway or its upstream rejects the [advisor tool](/docs/en/advisor.md) entry in `tools` as an unrecognized tool type, Claude Code retries the request once without that entry and its `anthropic-beta` value. Later requests to that base URL leave the advisor out until Claude Code exits, and `/advisor` is unavailable to the developer for that time. Claude Code recognizes this rejection by a `400` or `422` response whose message names the tool type after `Input tag`, such as `Input tag 'advisor_20260301'`. Before v2.1.280, Claude Code didn't retry this rejection
+* When the gateway or its upstream rejects the [advisor tool](https://code.claude.com/docs/en/advisor.md) entry in `tools` as an unrecognized tool type, Claude Code retries the request once without that entry and its `anthropic-beta` value. Later requests to that base URL leave the advisor out until Claude Code exits, and `/advisor` is unavailable to the developer for that time. Claude Code recognizes this rejection by a `400` or `422` response whose message names the tool type after `Input tag`, such as `Input tag 'advisor_20260301'`. Before v2.1.280, Claude Code didn't retry this rejection
 * When the upstream rejects `output_config.effort`, Claude Code retries the request without effort and leaves it out of later requests to that model until Claude Code exits. Claude Code recognizes this rejection by a `400` whose message names `output_config.effort` together with `Extra inputs are not permitted`, or says the model doesn't support the effort parameter
 * When the upstream rejects the `context_management` field or its `anthropic-beta` value, the gateway sees the request once more without them. If the gateway sees them again in a later request and the upstream rejects them again, the same retry follows. Claude Code recognizes this rejection by its message, for example one containing `context_management: Extra inputs are not permitted`. Before v2.1.304, Claude Code didn't retry this rejection
 * When the upstream rejects a beta tool field other than `defer_loading`, such as `strict`, the `400` reaches the developer. Before it does, the gateway can see the request again [without the tool search fields](#retry-without-tool-search). To stop sending such fields, have developers set [`CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS=1`](#disable-pre-release-capabilities)
 
 The `bound to a different conversation` rejection comes from the API's [preserved thinking](https://platform.claude.com/docs/en/build-with-claude/preserved-thinking) check, which fails when `system`, `tools`, or earlier `messages` content differs from the request that produced the thinking. A gateway that rewrites any of that content can cause the rejection itself; [Libraries, proxies, and gateways](https://platform.claude.com/docs/en/build-with-claude/preserved-thinking#libraries-proxies-gateways) covers what to pass through unchanged.
 
-Most of this retry logic matches on the upstream's error wording, so forward error response bodies unmodified. A gateway that wraps upstream errors in its own envelope breaks the recovery path, even when it preserves the status code, unless the envelope's message carries a stable `capability_rejected:` token. [Claude apps gateway substitutes those tokens for cloud providers' error wording](/docs/en/claude-apps-gateway-config.md#upstream-error-messages), for example `capability_rejected: prompt_too_long`.
+Most of this retry logic matches on the upstream's error wording, so forward error response bodies unmodified. A gateway that wraps upstream errors in its own envelope breaks the recovery path, even when it preserves the status code, unless the envelope's message carries a stable `capability_rejected:` token. [Claude apps gateway substitutes those tokens for cloud providers' error wording](https://code.claude.com/docs/en/claude-apps-gateway-config.md#upstream-error-messages), for example `capability_rejected: prompt_too_long`.
 
 #### Retry without tool search
 
-On v2.1.305 or later, a request carrying [`defer_loading` fields and `tool_reference` blocks](/docs/en/mcp#tool-search-through-a-gateway) can arrive again without them after a `400` or `422` whose cause Claude Code doesn't recognize. After a successful retry, later requests omit them too.
+On v2.1.305 or later, a request carrying [`defer_loading` fields and `tool_reference` blocks](https://code.claude.com/docs/en/mcp#tool-search-through-a-gateway) can arrive again without them after a `400` or `422` whose cause Claude Code doesn't recognize. After a successful retry, later requests omit them too.
 
 The developer's requests keep working without any change on the gateway, with their MCP tools loaded upfront. Claude Code tries tool search again later, so the gateway can see another rejected request followed by its retry. To keep the fields out of every request, have developers set `ENABLE_TOOL_SEARCH=false`. For tool search itself, Claude Code expects the gateway to forward the `defer_loading` fields and `tool_reference` blocks with their `anthropic-beta` value.
 
@@ -260,7 +260,7 @@ When your gateway or its upstream rejects pre-release `anthropic-beta` values or
 * The beta tool schema fields, such as `strict` and `defer_loading`. The standard `name`, `description`, `input_schema`, and `cache_control` tool fields stay
 * The structured-output `output_config.format` field. Requires Claude Code v2.1.287 or later
 * The `output_config.task_budget` field
-* [MCP tool search](/docs/en/mcp.md#scale-with-mcp-tool-search), so every MCP tool loads upfront unless your organization keeps it on through managed settings
+* [MCP tool search](https://code.claude.com/docs/en/mcp.md#scale-with-mcp-tool-search), so every MCP tool loads upfront unless your organization keeps it on through managed settings
 
 The variable doesn't strip every `anthropic-beta` value. What it leaves in place includes:
 
@@ -269,23 +269,23 @@ The variable doesn't strip every `anthropic-beta` value. What it leaves in place
 * The adaptive reasoning `thinking` field, which has no beta header
 * The `role: "system"` entries that carry [mid-conversation system messages](#feature-pass-through)
 * The OAuth `anthropic-beta` value that subscription authentication requires
-* Header values and body fields developers add themselves through [`ANTHROPIC_BETAS`](/docs/en/env-vars) or [`CLAUDE_CODE_EXTRA_BODY`](/docs/en/env-vars)
+* Header values and body fields developers add themselves through [`ANTHROPIC_BETAS`](https://code.claude.com/docs/en/env-vars) or [`CLAUDE_CODE_EXTRA_BODY`](https://code.claude.com/docs/en/env-vars)
 
-When a host platform that embeds Claude Code sets [`CLAUDE_CODE_PROVIDER_MANAGED_BY_HOST`](/docs/en/env-vars), `CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS` doesn't stop auto mode sessions on Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry, or a [Claude apps gateway](/docs/en/claude-apps-gateway) from asking the server for [classifier review](/docs/en/permission-modes.md#server-side-classifier-review). That review adds an `anthropic-beta` value and a `safeguards` request field. Set `CLAUDE_CODE_AUTO_MODE_SERVER=0` to stop it there.
+When a host platform that embeds Claude Code sets [`CLAUDE_CODE_PROVIDER_MANAGED_BY_HOST`](https://code.claude.com/docs/en/env-vars), `CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS` doesn't stop auto mode sessions on Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry, or a [Claude apps gateway](https://code.claude.com/docs/en/claude-apps-gateway) from asking the server for [classifier review](https://code.claude.com/docs/en/permission-modes.md#server-side-classifier-review). That review adds an `anthropic-beta` value and a `safeguards` request field. Set `CLAUDE_CODE_AUTO_MODE_SERVER=0` to stop it there.
 
-On Claude Code v2.1.227 or later, your organization can keep [MCP tool search](/docs/en/mcp.md#scale-with-mcp-tool-search) on under this variable through [managed settings](/docs/en/managed-settings.md). What Claude Code sends with that override in place depends on how you connect:
+On Claude Code v2.1.227 or later, your organization can keep [MCP tool search](https://code.claude.com/docs/en/mcp.md#scale-with-mcp-tool-search) on under this variable through [managed settings](https://code.claude.com/docs/en/managed-settings.md). What Claude Code sends with that override in place depends on how you connect:
 
 * On a direct connection without the HIPAA configuration, or through a gateway set with `ANTHROPIC_BASE_URL`, Claude Code keeps sending the tool-search beta header, `defer_loading` tool fields, and `tool_reference` blocks
-* On a cloud provider, or signed in through a [Claude apps gateway](/docs/en/claude-apps-gateway), the override has no effect
-* In a session that [gets the HIPAA configuration](/docs/en/hipaa-setup.md#check-how-developers-sign-in-and-connect), the override has no effect and tool search stays off
+* On a cloud provider, or signed in through a [Claude apps gateway](https://code.claude.com/docs/en/claude-apps-gateway), the override has no effect
+* In a session that [gets the HIPAA configuration](https://code.claude.com/docs/en/hipaa-setup.md#check-how-developers-sign-in-and-connect), the override has no effect and tool search stays off
 
 The set of capabilities Claude Code sends grows over releases. For current beta header strings, see the [beta headers reference](https://platform.claude.com/docs/en/api/beta-headers); test your gateway against new Claude Code releases rather than pinning to an observed list.
 
 ## Model discovery
 
-When `ANTHROPIC_BASE_URL` points at a gateway that exposes the Anthropic Messages format, Claude Code can query the gateway's `/v1/models` endpoint at startup and add the returned models to the `/model` picker. If you or your administrator set `replaceBuiltInOptions` in a [`modelPicker`](/docs/en/settings-reference#modelpicker) lineup, Claude Code hides the discovered models from the picker.
+When `ANTHROPIC_BASE_URL` points at a gateway that exposes the Anthropic Messages format, Claude Code can query the gateway's `/v1/models` endpoint at startup and add the returned models to the `/model` picker. If you or your administrator set `replaceBuiltInOptions` in a [`modelPicker`](https://code.claude.com/docs/en/settings-reference#modelpicker) lineup, Claude Code hides the discovered models from the picker.
 
-Developers enable it by setting [`CLAUDE_CODE_ENABLE_GATEWAY_MODEL_DISCOVERY=1`](/docs/en/env-vars), in their own environment or through managed settings. Discovery is off by default so that gateways backed by a shared API key don't surface every model the key can access to every user.
+Developers enable it by setting [`CLAUDE_CODE_ENABLE_GATEWAY_MODEL_DISCOVERY=1`](https://code.claude.com/docs/en/env-vars), in their own environment or through managed settings. Discovery is off by default so that gateways backed by a shared API key don't surface every model the key can access to every user.
 
 ### When discovery runs
 
@@ -294,17 +294,17 @@ Discovery applies only to the Anthropic Messages format. It doesn't run when:
 * Any `CLAUDE_CODE_USE_*` provider variable is set, even if `ANTHROPIC_BASE_URL` is also set
 * `ANTHROPIC_BASE_URL` is unset or points at `api.anthropic.com`
 
-Discovery still runs when [nonessential traffic is turned off](/docs/en/llm-gateway-connect.md#turn-off-traffic-outside-the-gateway-path), because the request goes only to your gateway. Before v2.1.257, discovery didn't run while nonessential traffic was turned off.
+Discovery still runs when [nonessential traffic is turned off](https://code.claude.com/docs/en/llm-gateway-connect.md#turn-off-traffic-outside-the-gateway-path), because the request goes only to your gateway. Before v2.1.257, discovery didn't run while nonessential traffic was turned off.
 
 ### Request and response
 
 The request is `GET /v1/models?limit=1000` with a timeout of 3 seconds by default, and any redirect is treated as failure so the credential can't leak to a redirect target. A gateway that responds slower than the timeout, or one that redirects `/v1/models`, even `http` to `https`, fails discovery silently; serve the endpoint directly at the configured base URL.
 
-To give a slow gateway longer, set [`CLAUDE_CODE_GATEWAY_MODEL_DISCOVERY_TIMEOUT_MS`](/docs/en/env-vars#variables). The variable requires Claude Code v2.1.269 or later.
+To give a slow gateway longer, set [`CLAUDE_CODE_GATEWAY_MODEL_DISCOVERY_TIMEOUT_MS`](https://code.claude.com/docs/en/env-vars#variables). The variable requires Claude Code v2.1.269 or later.
 
 Claude Code sends the discovery request with both credential headers below and omits a header whose value doesn't resolve. Sending both headers requires Claude Code v2.1.248 or later. Earlier versions send only `Authorization` when `ANTHROPIC_AUTH_TOKEN` is set and only `x-api-key` otherwise.
 
-* `Authorization`: `ANTHROPIC_AUTH_TOKEN` as a bearer token, otherwise the [`apiKeyHelper`](/docs/en/llm-gateway-connect#rotate-credentials-with-apikeyhelper) value as a bearer token.
+* `Authorization`: `ANTHROPIC_AUTH_TOKEN` as a bearer token, otherwise the [`apiKeyHelper`](https://code.claude.com/docs/en/llm-gateway-connect#rotate-credentials-with-apikeyhelper) value as a bearer token.
 * `x-api-key`: the API key Claude Code resolved, such as `ANTHROPIC_API_KEY`. When a helper value is the only credential, this header carries it too, so the value arrives in both headers.
 
 Claude Code also sends any headers from `ANTHROPIC_CUSTOM_HEADERS`. When a custom header has a non-empty value, Claude Code sends it in place of a built-in header of the same name, matching names case-insensitively.
@@ -330,26 +330,26 @@ Claude Code keeps an entry when its `id` contains `claude` or `anthropic` anywhe
 
 ### Picker entries and caching
 
-The picker is the interactive model list that opens when a developer runs `/model` in Claude Code. Each discovered entry uses `display_name` as its name when the gateway sends one that differs from the `id`. Otherwise the entry shows the model's name when Claude Code [recognizes the `id`](/docs/en/model-config#customize-pinned-model-display-and-capabilities), and the `id` when it doesn't. For example, an entry with the `id` `my-gateway-claude-sonnet-4-6` and no `display_name` appears as `Sonnet 4.6`.
+The picker is the interactive model list that opens when a developer runs `/model` in Claude Code. Each discovered entry uses `display_name` as its name when the gateway sends one that differs from the `id`. Otherwise the entry shows the model's name when Claude Code [recognizes the `id`](https://code.claude.com/docs/en/model-config#customize-pinned-model-display-and-capabilities), and the `id` when it doesn't. For example, an entry with the `id` `my-gateway-claude-sonnet-4-6` and no `display_name` appears as `Sonnet 4.6`.
 
-Discovery adds only models that the [`availableModels` managed setting](/docs/en/settings-reference#availablemodels) allows.
+Discovery adds only models that the [`availableModels` managed setting](https://code.claude.com/docs/en/settings-reference#availablemodels) allows.
 
 Each entry also shows the model's `description`, collapsed to one line. An entry without a `description` reads "From gateway" instead. Before v2.1.257, every discovered entry read "From gateway".
 
 A discovered ID doesn't get its own row when it matches a row already in the picker:
 
-* Same ID: the discovered ID exactly matches an existing row's ID, or the two IDs are spellings of the same [Fable](/docs/en/model-config.md#work-with-fable) version.
+* Same ID: the discovered ID exactly matches an existing row's ID, or the two IDs are spellings of the same [Fable](https://code.claude.com/docs/en/model-config.md#work-with-fable) version.
 * Same model as a built-in alias: when a discovered explicit ID names the model that a built-in alias currently resolves to, the picker shows only the alias row. For example, while `sonnet` resolves to `claude-sonnet-5-5`, a discovered `claude-sonnet-5-5` collapses into the `sonnet` row, and a discovered `claude-sonnet-5` still gets its own row.
 
-Results are cached to `~/.claude/cache/gateway-models.json`, or `%USERPROFILE%\.claude\cache\gateway-models.json` on Windows, and refreshed on each startup. If you set [`CLAUDE_CONFIG_DIR`](/docs/en/env-vars), the cache lives under that directory instead. If the request fails or the gateway doesn't implement `/v1/models`, the picker falls back to the cached list from the previous startup or to the built-in model list. If your gateway serves Claude models under aliases that don't match the discovery filter, developers can add those aliases manually with the [model configuration](/docs/en/model-config.md) variables.
+Results are cached to `~/.claude/cache/gateway-models.json`, or `%USERPROFILE%\.claude\cache\gateway-models.json` on Windows, and refreshed on each startup. If you set [`CLAUDE_CONFIG_DIR`](https://code.claude.com/docs/en/env-vars), the cache lives under that directory instead. If the request fails or the gateway doesn't implement `/v1/models`, the picker falls back to the cached list from the previous startup or to the built-in model list. If your gateway serves Claude models under aliases that don't match the discovery filter, developers can add those aliases manually with the [model configuration](https://code.claude.com/docs/en/model-config.md) variables.
 
 ## Related resources
 
 For the rest of the gateway documentation set and the underlying API references:
 
-* [Gateway overview](/docs/en/gateways.md): what a gateway is and how to choose between Claude apps gateway and another product
-* [Other LLM gateways](/docs/en/llm-gateway): how to roll out a gateway your organization runs and how it interacts with claude.ai subscriptions
-* [Roll out an LLM gateway for your organization](/docs/en/llm-gateway-rollout.md): the admin checklist that uses this guide
-* [Connect Claude Code to an LLM gateway](/docs/en/llm-gateway-connect.md): per-developer configuration and the troubleshooting table
+* [Gateway overview](https://code.claude.com/docs/en/gateways.md): what a gateway is and how to choose between Claude apps gateway and another product
+* [Other LLM gateways](https://code.claude.com/docs/en/llm-gateway): how to roll out a gateway your organization runs and how it interacts with claude.ai subscriptions
+* [Roll out an LLM gateway for your organization](https://code.claude.com/docs/en/llm-gateway-rollout.md): the admin checklist that uses this guide
+* [Connect Claude Code to an LLM gateway](https://code.claude.com/docs/en/llm-gateway-connect.md): per-developer configuration and the troubleshooting table
 * [Beta headers reference](https://platform.claude.com/docs/en/api/beta-headers): the current set of `anthropic-beta` values
 * [Messages API](https://platform.claude.com/docs/en/api/messages): the API format an Anthropic-format gateway implements

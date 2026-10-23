@@ -6,7 +6,7 @@
 
 > Publish a live, shareable page from your session with Artifacts, match tool parameters in deny and ask rules, and set any setting from the prompt with /config.
 
-Releases [v2.1.178 → v2.1.183](/docs/en/changelog.md#2-1-178)
+Releases [v2.1.178 → v2.1.183](https://code.claude.com/docs/en/changelog.md#2-1-178)
 3 features · June 15–19
 
 Artifacts
@@ -21,7 +21,7 @@ Ask Claude for a page, then approve the publish prompt:
 Make an artifact that walks through this PR with the diff annotated inline.
 ```
 
-[Create an artifact](/docs/en/artifacts.md#create-an-artifact)
+[Create an artifact](https://code.claude.com/docs/en/artifacts.md#create-an-artifact)
 
 Match by input parameter
 v2.1.178
@@ -38,7 +38,7 @@ Add a parameter rule to the deny list in `settings.json`:
 }
 ```
 
-[Match by input parameter](/docs/en/permissions.md#match-by-input-parameter)
+[Match by input parameter](https://code.claude.com/docs/en/permissions.md#match-by-input-parameter)
 
 Set any setting from the prompt
 v2.1.181
@@ -51,10 +51,10 @@ Set the `thinking` setting from the prompt:
 /config thinking=false
 ```
 
-[Commands reference](/docs/en/commands.md#all-commands)
+[Commands reference](https://code.claude.com/docs/en/commands.md#all-commands)
 
 Other wins
 
 Auto mode now blocks destructive git commands (`git reset --hard`, `git clean -fd`, `git stash drop`) when you didn't ask to discard local work, and blocks `terraform destroy` unless you asked for the specific stackSet the new `attribution.sessionUrl` setting to `false` to omit the claude.ai session link from commits and PRs in web and Remote Control sessionsIn the `/config` interface, Enter and Space both change the selected setting, and Esc now saves and closes instead of revertingNew `sandbox.allowAppleEvents` opt-in setting lets sandboxed commands send Apple Events on macOSPoint `CLAUDE_CLIENT_PRESENCE_FILE` at a marker file to suppress mobile push notifications while you're at the machineLong paragraphs now stream line by line instead of waiting for the first line breakAPI connection drops mid-thinking now retry automatically instead of showing "Connection closed while thinking"With `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` set, every session has one implicit team, so you spawn teammates directly with the Agent tool's `name` parameterSkills in nested `.claude/skills` directories load when working on files there; on a name clash the nested skill appears as `<dir>:<name>` so both stay availableFixed prompt caching not reading on a custom `ANTHROPIC_BASE_URL` and on Microsoft FoundryFixed Write and Edit producing zero-byte or truncated files on network drives and cloud-synced folders
 
-[Full changelog for v2.1.178–v2.1.183 →](/docs/en/changelog.md#2-1-178)
+[Full changelog for v2.1.178–v2.1.183 →](https://code.claude.com/docs/en/changelog.md#2-1-178)

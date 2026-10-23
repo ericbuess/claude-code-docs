@@ -22,16 +22,16 @@ Three approaches keep the current session running between prompts. Pick based on
 | Approach | Next turn starts when | Stops when |
 | :- | :- | :- |
 | `/goal` | The previous turn finishes, or, in an interactive session, an [idle check-in](#background-work-defers-evaluation) or an [automatic retry](#other-errors-retry-or-pause-the-goal) comes due | A model confirms the condition is met or judges it impossible, or a turn fails on [an error you have to fix](#errors-you-have-to-fix-clear-the-goal), or you run [`/goal clear`](#clear-a-goal) |
-| [`/loop`](/docs/en/scheduled-tasks#run-a-prompt-repeatedly-with-%2Floop) | A time interval elapses | You stop it, or Claude decides the work is done |
-| [Stop hook](/docs/en/hooks-guide.md#prompt-based-hooks) | The previous turn finishes | Your own script or prompt decides |
+| [`/loop`](https://code.claude.com/docs/en/scheduled-tasks#run-a-prompt-repeatedly-with-%2Floop) | A time interval elapses | You stop it, or Claude decides the work is done |
+| [Stop hook](https://code.claude.com/docs/en/hooks-guide.md#prompt-based-hooks) | The previous turn finishes | Your own script or prompt decides |
 
 `/goal` and a Stop hook both fire after every turn. `/goal` is a session-scoped shortcut: you type a condition and it's active for the current session only. A Stop hook lives in your settings file, applies to every session in its scope, and can run a script for deterministic checks or a prompt for model-evaluated ones.
 
-[Auto mode](/docs/en/auto-mode-config.md) on its own approves tool calls within a single turn but doesn't start a new one. Claude stops when it judges the work done. `/goal` adds a separate evaluator that checks your condition after every turn, so completion is decided by a fresh model rather than the one doing the work. The two are complementary: auto mode removes per-tool prompts, and `/goal` removes per-turn prompts.
+[Auto mode](https://code.claude.com/docs/en/auto-mode-config.md) on its own approves tool calls within a single turn but doesn't start a new one. Claude stops when it judges the work done. `/goal` adds a separate evaluator that checks your condition after every turn, so completion is decided by a fresh model rather than the one doing the work. The two are complementary: auto mode removes per-tool prompts, and `/goal` removes per-turn prompts.
 
 > [!TIP]
 >
-> The approaches above keep the current session running. You can also schedule work that runs independent of any open session, such as nightly tests or morning triage. See [scheduling options](/docs/en/scheduled-tasks.md#compare-scheduling-options) for cloud and Desktop scheduled tasks.
+> The approaches above keep the current session running. You can also schedule work that runs independent of any open session, such as nightly tests or morning triage. See [scheduling options](https://code.claude.com/docs/en/scheduled-tasks.md#compare-scheduling-options) for cloud and Desktop scheduled tasks.
 
 ## Use `/goal`
 
@@ -47,7 +47,7 @@ Run `/goal` followed by the condition you want satisfied. If a goal is already a
 
 Setting a goal starts a turn immediately, with the condition itself as the directive. You don't need to send a separate prompt. While the goal is active, a `◎ /goal active` indicator shows how long the goal has been running.
 
-A goal doesn't change your permission mode. To let goal turns run unattended, run `/goal` in [auto mode](/docs/en/auto-mode-config.md). In [Manual mode](/docs/en/permission-modes.md), Claude still asks before tool calls that your settings don't already allow, such as the test command above.
+A goal doesn't change your permission mode. To let goal turns run unattended, run `/goal` in [auto mode](https://code.claude.com/docs/en/auto-mode-config.md). In [Manual mode](https://code.claude.com/docs/en/permission-modes.md), Claude still asks before tool calls that your settings don't already allow, such as the test command above.
 
 While the goal is active, the transcript shows each verdict the evaluator returns, and you can press Ctrl+O to see the reason behind it. The status view also shows the most recent reason, so you can see what Claude is working toward next.
 
@@ -99,13 +99,13 @@ Claude prints `Goal cleared:` followed by the condition to confirm, or `No goal 
 
 ### Resume with an active goal
 
-When you resume a session, Claude Code restores a goal that was still active when the session ended. Claude Code restores it on every resume route: `--continue`, `--resume` with a session ID, name, or [transcript file path](/docs/en/sessions.md#resume-a-session), and the [session picker](/docs/en/sessions.md#use-the-session-picker). Before v2.1.239, Claude Code restored the goal on every route except the `claude --resume` picker.
+When you resume a session, Claude Code restores a goal that was still active when the session ended. Claude Code restores it on every resume route: `--continue`, `--resume` with a session ID, name, or [transcript file path](https://code.claude.com/docs/en/sessions.md#resume-a-session), and the [session picker](https://code.claude.com/docs/en/sessions.md#use-the-session-picker). Before v2.1.239, Claude Code restored the goal on every route except the `claude --resume` picker.
 
 Claude Code carries the condition over but resets the turn count, timer, and token-spend baseline. It doesn't restore a goal that was already achieved or cleared.
 
 ### Run non-interactively
 
-`/goal` works in [non-interactive mode](/docs/en/headless.md), in the [desktop app](/docs/en/desktop.md), and through [Remote Control](/docs/en/remote-control.md). Setting a goal with `-p` runs the loop to completion in a single invocation:
+`/goal` works in [non-interactive mode](https://code.claude.com/docs/en/headless.md), in the [desktop app](https://code.claude.com/docs/en/desktop.md), and through [Remote Control](https://code.claude.com/docs/en/remote-control.md). Setting a goal with `-p` runs the loop to completion in a single invocation:
 
 ```bash theme={null}
 claude -p "/goal CHANGELOG.md has an entry for every PR merged this week"
@@ -117,13 +117,13 @@ Interrupt the process with Ctrl+C to stop a non-interactive goal before it resol
 
 ## How evaluation works
 
-`/goal` is a wrapper around a session-scoped [prompt-based Stop hook](/docs/en/hooks.md#prompt-based-hooks). Each time Claude finishes a turn, Claude Code sends the condition and the conversation so far to your configured [small fast model](/docs/en/model-config.md). The model returns one of three verdicts, each with a short reason:
+`/goal` is a wrapper around a session-scoped [prompt-based Stop hook](https://code.claude.com/docs/en/hooks.md#prompt-based-hooks). Each time Claude finishes a turn, Claude Code sends the condition and the conversation so far to your configured [small fast model](https://code.claude.com/docs/en/model-config.md). The model returns one of three verdicts, each with a short reason:
 
 * **Not yet met**: Claude keeps working and takes the reason as guidance for the next turn.
 * **Met**: Claude Code clears the goal and records an achieved entry in the transcript.
 * **Impossible**: the evaluator judged that the condition can never be satisfied. Claude Code clears the goal and records a failed entry in the transcript along with the reason. You don't need to clear it yourself.
 
-If Claude keeps answering the evaluator without making progress (no tool use for several turns in a row), Claude Code stops the loop, prints a warning, and returns control to you with the goal still set. Evaluation resumes after your next prompt. The [hooks guide](/docs/en/hooks-guide.md#stop-hook-hits-the-block-cap) explains the underlying mechanism.
+If Claude keeps answering the evaluator without making progress (no tool use for several turns in a row), Claude Code stops the loop, prints a warning, and returns control to you with the goal still set. Evaluation resumes after your next prompt. The [hooks guide](https://code.claude.com/docs/en/hooks-guide.md#stop-hook-hits-the-block-cap) explains the underlying mechanism.
 
 ### When a turn fails
 
@@ -133,9 +133,9 @@ When a turn fails, Claude Code clears the goal if the error is one you have to f
 
 If a turn fails on an error that won't clear until you fix it, Claude Code clears the goal and prints a warning naming the cause. The warning starts with `Goal cleared after an unrecoverable error` and ends with `Run /goal again to continue`. Fix the cause, then [set the goal again](#set-a-goal) with `/goal <condition>`. Four kinds of failure clear the goal:
 
-* An authentication failure, when Claude Code manages its own credentials. When a host manages them for you, such as the desktop app or a [cloud session](/docs/en/claude-code-on-the-web.md), Claude Code leaves the goal active because the host restores access on its own.
+* An authentication failure, when Claude Code manages its own credentials. When a host manages them for you, such as the desktop app or a [cloud session](https://code.claude.com/docs/en/claude-code-on-the-web.md), Claude Code leaves the goal active because the host restores access on its own.
 * An exhausted credit balance
-* A context overflow that [auto-compaction](/docs/en/model-config.md#set-the-auto-compact-window) couldn't clear
+* A context overflow that [auto-compaction](https://code.claude.com/docs/en/model-config.md#set-the-auto-compact-window) couldn't clear
 * A model that isn't available
 
 #### Other errors retry or pause the goal
@@ -143,9 +143,9 @@ If a turn fails on an error that won't clear until you fix it, Claude Code clear
 After any other failure the goal stays set. In an interactive session on Claude Code v2.1.269 or later, Claude Code also prints a line naming the cause and either retries on its own or waits for you:
 
 * **Retry**: after a failure that tends to clear on its own, such as an overloaded server or a dropped connection, a notice starting with `Goal still active` shows the wait before the next attempt. After three automatic retries, the goal pauses instead.
-* **Pause**: after a failure that a retry would only repeat, such as an API rate limit, a claude.ai [usage limit](/docs/en/errors.md#youve-hit-your-session-limit), or a hook that ended the turn, a notice starting with `Goal paused` names the cause. If the session is [waiting to continue automatically when a usage limit resets](/docs/en/interactive-mode.md#wait-for-a-usage-limit-to-reset), Claude resumes work toward the goal then.
+* **Pause**: after a failure that a retry would only repeat, such as an API rate limit, a claude.ai [usage limit](https://code.claude.com/docs/en/errors.md#youve-hit-your-session-limit), or a hook that ended the turn, a notice starting with `Goal paused` names the cause. If the session is [waiting to continue automatically when a usage limit resets](https://code.claude.com/docs/en/interactive-mode.md#wait-for-a-usage-limit-to-reset), Claude resumes work toward the goal then.
 
-Send a message at any time to start the next turn immediately. To turn automatic retries off, set [`CLAUDE_CODE_GOAL_CHECKIN_MINUTES`](/docs/en/env-vars) to `0`, which also turns [check-ins](#background-work-defers-evaluation) off.
+Send a message at any time to start the next turn immediately. To turn automatic retries off, set [`CLAUDE_CODE_GOAL_CHECKIN_MINUTES`](https://code.claude.com/docs/en/env-vars) to `0`, which also turns [check-ins](#background-work-defers-evaluation) off.
 
 ### Background work defers evaluation
 
@@ -158,17 +158,17 @@ Once background work has kept the goal waiting for 30 minutes, a check-in is due
 
 Before v2.1.239, only idle check-ins backed off this way; a check-in delivered at a turn end recurred at the first interval.
 
-To change the first interval, set [`CLAUDE_CODE_GOAL_CHECKIN_MINUTES`](/docs/en/env-vars). Claude Code uses your value in place of the 30-minute interval and scales the later intervals with it. Set it to `0` to turn off check-ins and [automatic retries](#other-errors-retry-or-pause-the-goal).
+To change the first interval, set [`CLAUDE_CODE_GOAL_CHECKIN_MINUTES`](https://code.claude.com/docs/en/env-vars). Claude Code uses your value in place of the 30-minute interval and scales the later intervals with it. Set it to `0` to turn off check-ins and [automatic retries](#other-errors-retry-or-pause-the-goal).
 
 Check-ins require Claude Code v2.1.234 or later.
 
 ### Evaluation model and cost
 
-To evaluate on a different model, set [`ANTHROPIC_DEFAULT_HAIKU_MODEL`](/docs/en/model-config#environment-variables).
+To evaluate on a different model, set [`ANTHROPIC_DEFAULT_HAIKU_MODEL`](https://code.claude.com/docs/en/model-config#environment-variables).
 
 > [!WARNING]
 >
-> Claude Code reads `ANTHROPIC_DEFAULT_HAIKU_MODEL` everywhere it uses the small fast model, not only for `/goal` evaluation. When you set it, Claude Code also resolves the [`haiku` alias](/docs/en/model-config#model-aliases) to that model and runs [background functionality](/docs/en/costs.md#background-token-usage), such as conversation summarization, on it.
+> Claude Code reads `ANTHROPIC_DEFAULT_HAIKU_MODEL` everywhere it uses the small fast model, not only for `/goal` evaluation. When you set it, Claude Code also resolves the [`haiku` alias](https://code.claude.com/docs/en/model-config#model-aliases) to that model and runs [background functionality](https://code.claude.com/docs/en/costs.md#background-token-usage), such as conversation summarization, on it.
 
 The evaluator runs on whichever provider your session is configured for. It does not call tools, so it can only judge what Claude has already surfaced in the conversation.
 
@@ -178,11 +178,11 @@ The evaluator runs on whichever provider your session is configured for. It does
 
 ## Requirements
 
-Claude Code makes `/goal` available under the same [workspace trust rule as hooks in settings files](/docs/en/permissions.md#what-runs-before-you-trust-a-folder), because the evaluator is part of the hooks system. `/goal` is also unavailable when [`disableAllHooks`](/docs/en/hooks#disable-or-remove-hooks) is `true` after settings precedence applies, or when [`allowManagedHooksOnly`](/docs/en/settings-reference#allowmanagedhooksonly) is set in managed settings. In each case, the command tells you why instead of silently doing nothing.
+Claude Code makes `/goal` available under the same [workspace trust rule as hooks in settings files](https://code.claude.com/docs/en/permissions.md#what-runs-before-you-trust-a-folder), because the evaluator is part of the hooks system. `/goal` is also unavailable when [`disableAllHooks`](https://code.claude.com/docs/en/hooks#disable-or-remove-hooks) is `true` after settings precedence applies, or when [`allowManagedHooksOnly`](https://code.claude.com/docs/en/settings-reference#allowmanagedhooksonly) is set in managed settings. In each case, the command tells you why instead of silently doing nothing.
 
 ## See also
 
-* [Run a prompt repeatedly with `/loop`](/docs/en/scheduled-tasks#run-a-prompt-repeatedly-with-%2Floop): re-run on a time interval instead of toward a condition
-* [Prompt-based hooks](/docs/en/hooks-guide.md#prompt-based-hooks): write your own Stop hook when you need custom evaluation logic
-* [Auto mode](/docs/en/auto-mode-config.md): approve tool calls automatically so each goal turn runs unattended
-* [Scheduling comparison](/docs/en/scheduled-tasks.md#compare-scheduling-options): run work on a schedule independent of any open session
+* [Run a prompt repeatedly with `/loop`](https://code.claude.com/docs/en/scheduled-tasks#run-a-prompt-repeatedly-with-%2Floop): re-run on a time interval instead of toward a condition
+* [Prompt-based hooks](https://code.claude.com/docs/en/hooks-guide.md#prompt-based-hooks): write your own Stop hook when you need custom evaluation logic
+* [Auto mode](https://code.claude.com/docs/en/auto-mode-config.md): approve tool calls automatically so each goal turn runs unattended
+* [Scheduling comparison](https://code.claude.com/docs/en/scheduled-tasks.md#compare-scheduling-options): run work on a schedule independent of any open session

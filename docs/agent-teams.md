@@ -8,11 +8,11 @@
 
 > [!WARNING]
 >
-> Agent teams are experimental and disabled by default. Enable them by setting `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` in your [settings.json](/docs/en/settings.md) or environment. Without that variable, no team is set up at session start, no team directories are written, and Claude does not spawn or propose teammates. Agent teams have [known limitations](#limitations) around session resumption, task coordination, and shutdown behavior.
+> Agent teams are experimental and disabled by default. Enable them by setting `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` in your [settings.json](https://code.claude.com/docs/en/settings.md) or environment. Without that variable, no team is set up at session start, no team directories are written, and Claude does not spawn or propose teammates. Agent teams have [known limitations](#limitations) around session resumption, task coordination, and shutdown behavior.
 
 Agent teams let you coordinate multiple Claude Code instances working together. One session acts as the team lead, coordinating work, assigning tasks, and synthesizing results. Teammates work independently, each in its own context window, and communicate directly with each other. You can also talk to any teammate directly without going through the lead.
 
-Before you set up a team, check whether a lighter option does the job. [Subagents](/docs/en/sub-agents.md) work within a single session, and with [cross-session messaging](/docs/en/cross-session-messaging.md) Claude can pass findings between the sessions you run yourself.
+Before you set up a team, check whether a lighter option does the job. [Subagents](https://code.claude.com/docs/en/sub-agents.md) work within a single session, and with [cross-session messaging](https://code.claude.com/docs/en/cross-session-messaging.md) Claude can pass findings between the sessions you run yourself.
 
 ## When to use agent teams
 
@@ -23,11 +23,11 @@ Agent teams are most effective for tasks where parallel exploration adds real va
 * **Debugging with competing hypotheses**: teammates test different theories in parallel and converge on the answer faster
 * **Cross-layer coordination**: changes that span frontend, backend, and tests, each owned by a different teammate
 
-Agent teams add coordination overhead and use significantly more tokens than a single session. They work best when teammates can operate independently. For sequential tasks, same-file edits, or work with many dependencies, a single session or [subagents](/docs/en/sub-agents.md) are more effective.
+Agent teams add coordination overhead and use significantly more tokens than a single session. They work best when teammates can operate independently. For sequential tasks, same-file edits, or work with many dependencies, a single session or [subagents](https://code.claude.com/docs/en/sub-agents.md) are more effective.
 
 ### Compare with subagents
 
-Both agent teams and [subagents](/docs/en/sub-agents.md) let you parallelize work, but they operate differently. For separate sessions that pass messages to each other without a team, see [cross-session messaging](/docs/en/cross-session-messaging.md).
+Both agent teams and [subagents](https://code.claude.com/docs/en/sub-agents.md) let you parallelize work, but they operate differently. For separate sessions that pass messages to each other without a team, see [cross-session messaging](https://code.claude.com/docs/en/cross-session-messaging.md).
 
 ![Diagram comparing subagent and agent team architectures. Subagents are spawned by the main agent, do work, and report results back. Agent teams coordinate through a shared task list, with teammates communicating directly with each other.](https://mintcdn.com/claude-code/nsvRFSDNfpSU5nT7/images/subagents-vs-agent-teams-light.png?fit=max\&auto=format\&n=nsvRFSDNfpSU5nT7\&q=85\&s=2f8db9b4f3705dd3ab931fbe2d96e42a)
 
@@ -36,8 +36,8 @@ Subagents report results back to the main agent. In agent teams, teammates share
 | | Subagents | Agent teams |
 | :- | :- | :- |
 | **Context** | Own context window; results return to the caller | Own context window; fully independent |
-| **Communication** | Return a result to the caller. Subagents that Claude [named](/docs/en/sub-agents.md#subagent-names) when it spawned them can also [message each other](/docs/en/sub-agents.md#what-loads-at-startup) | Teammates message each other directly |
-| **Coordination** | Main agent manages all work | Self-coordination through messages, plus a shared task list for [agents that have the Task tools](/docs/en/tools-reference.md#task-tool-availability) |
+| **Communication** | Return a result to the caller. Subagents that Claude [named](https://code.claude.com/docs/en/sub-agents.md#subagent-names) when it spawned them can also [message each other](https://code.claude.com/docs/en/sub-agents.md#what-loads-at-startup) | Teammates message each other directly |
+| **Coordination** | Main agent manages all work | Self-coordination through messages, plus a shared task list for [agents that have the Task tools](https://code.claude.com/docs/en/tools-reference.md#task-tool-availability) |
 | **Best for** | Focused tasks where only the result matters | Complex work requiring discussion and collaboration |
 | **Token cost** | Lower: results summarized back to main context | Higher: each teammate is a separate Claude instance |
 
@@ -45,7 +45,7 @@ Use subagents when you need quick, focused workers that report back. Use agent t
 
 ## Enable agent teams
 
-Agent teams are disabled by default. Enable them by setting the `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` environment variable to `1`, either in your shell environment or through [settings.json](/docs/en/settings.md):
+Agent teams are disabled by default. Enable them by setting the `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` environment variable to `1`, either in your shell environment or through [settings.json](https://code.claude.com/docs/en/settings.md):
 
 ```json settings.json theme={null}
 {
@@ -55,9 +55,9 @@ Agent teams are disabled by default. Enable them by setting the `CLAUDE_CODE_EXP
 }
 ```
 
-Enabling agent teams also changes ordinary delegation. Claude may [name a subagent](/docs/en/sub-agents.md#subagent-names) on its own, and while agent teams are enabled, a subagent that Claude names launches as a teammate, so teams can form even when you didn't ask for one. For more, see [How Claude starts agent teams](#how-claude-starts-agent-teams); to turn the behavior off, see [Claude spawns teammates instead of subagents](#claude-spawns-teammates-instead-of-subagents).
+Enabling agent teams also changes ordinary delegation. Claude may [name a subagent](https://code.claude.com/docs/en/sub-agents.md#subagent-names) on its own, and while agent teams are enabled, a subagent that Claude names launches as a teammate, so teams can form even when you didn't ask for one. For more, see [How Claude starts agent teams](#how-claude-starts-agent-teams); to turn the behavior off, see [Claude spawns teammates instead of subagents](#claude-spawns-teammates-instead-of-subagents).
 
-Spawning teammates also requires an interactive session. In [non-interactive mode](/docs/en/headless.md) with the `-p` flag, including Agent SDK sessions, Claude doesn't spawn teammates, and a subagent that Claude names runs as an ordinary [subagent](/docs/en/sub-agents.md) even with agent teams enabled.
+Spawning teammates also requires an interactive session. In [non-interactive mode](https://code.claude.com/docs/en/headless.md) with the `-p` flag, including Agent SDK sessions, Claude doesn't spawn teammates, and a subagent that Claude names runs as an ordinary [subagent](https://code.claude.com/docs/en/sub-agents.md) even with agent teams enabled.
 
 ## Start your first agent team
 
@@ -71,9 +71,9 @@ their codebase. Spawn three teammates to explore this from different angles:
 one on UX, one on technical architecture, one playing devil's advocate.
 ```
 
-From there, Claude populates a [shared task list](/docs/en/interactive-mode.md#task-list) in a [session that has the Task tools](/docs/en/tools-reference.md#task-tool-availability), spawns teammates for each perspective, has them explore the problem, and synthesizes findings when finished.
+From there, Claude populates a [shared task list](https://code.claude.com/docs/en/interactive-mode.md#task-list) in a [session that has the Task tools](https://code.claude.com/docs/en/tools-reference.md#task-tool-availability), spawns teammates for each perspective, has them explore the problem, and synthesizes findings when finished.
 
-Claude may sometimes use [subagents](/docs/en/sub-agents.md) instead of creating a team. Subagents appear in the same agent panel as teammates, so the panel alone doesn't confirm a team formed. If Claude spawned subagents instead, ask again and explicitly request an agent team.
+Claude may sometimes use [subagents](https://code.claude.com/docs/en/sub-agents.md) instead of creating a team. Subagents appear in the same agent panel as teammates, so the panel alone doesn't confirm a team formed. If Claude spawned subagents instead, ask again and explicitly request an agent team.
 
 The lead's terminal lists teammates in the agent panel below the prompt input. From the panel:
 
@@ -106,7 +106,7 @@ The default is `"in-process"`. Set `"auto"` to enable split panes when you're al
 
 Set `"iterm2"` to use iTerm2 native split panes explicitly. This mode requires the [`it2` CLI](https://github.com/mkusaka/it2) and shows an error with the install command if `it2` is missing. The setup prompt that offers to install `it2` or switch to tmux appears under `"auto"` or `"tmux"` when your terminal is iTerm2 and tmux is available as a fallback.
 
-To override the default, set [`teammateMode`](/docs/en/settings-reference#teammatemode) in `~/.claude/settings.json`:
+To override the default, set [`teammateMode`](https://code.claude.com/docs/en/settings-reference#teammatemode) in `~/.claude/settings.json`:
 
 ```json theme={null}
 {
@@ -140,12 +140,12 @@ Claude Code picks each teammate's model from the first of these that applies:
 
 1. The model your spawn prompt names for that teammate.
 2. For a teammate spawned from a [subagent definition](#use-subagent-definitions-for-teammates), the definition's `model`, where `inherit` selects the lead's model.
-3. [`CLAUDE_CODE_SUBAGENT_MODEL`](/docs/en/model-config#environment-variables), when it's set to anything other than `inherit`.
+3. [`CLAUDE_CODE_SUBAGENT_MODEL`](https://code.claude.com/docs/en/model-config#environment-variables), when it's set to anything other than `inherit`.
 4. The lead's current model.
 
-If an installed [mod](/docs/en/plugins/mods/overview.md) sets a model in its [`agent.spawn`](/docs/en/plugins/mods/reference#subagents) hook, Claude Code uses that model in place of the first source.
+If an installed [mod](https://code.claude.com/docs/en/plugins/mods/overview.md) sets a model in its [`agent.spawn`](https://code.claude.com/docs/en/plugins/mods/reference#subagents) hook, Claude Code uses that model in place of the first source.
 
-If you set [`CLAUDE_CODE_SUBAGENT_MODEL_FORCE=1`](/docs/en/sub-agents#run-every-subagent-on-one-model), the first two sources don't apply. Claude Code picks every teammate's model from `CLAUDE_CODE_SUBAGENT_MODEL` when it's set to anything other than `inherit`, and from the lead's current model otherwise. Requires Claude Code v2.1.257 or later.
+If you set [`CLAUDE_CODE_SUBAGENT_MODEL_FORCE=1`](https://code.claude.com/docs/en/sub-agents#run-every-subagent-on-one-model), the first two sources don't apply. Claude Code picks every teammate's model from `CLAUDE_CODE_SUBAGENT_MODEL` when it's set to anything other than `inherit`, and from the lead's current model otherwise. Requires Claude Code v2.1.257 or later.
 
 Before v2.1.251, `CLAUDE_CODE_SUBAGENT_MODEL` came first in this order.
 
@@ -153,16 +153,16 @@ Before v2.1.251, `CLAUDE_CODE_SUBAGENT_MODEL` came first in this order.
 >
 > `teammateDefaultModel` was removed in v2.1.234; Claude Code ignores a leftover value. Name the model in your prompt instead.
 
-Claude Code checks the model it selects for a teammate against your organization's [`availableModels`](/docs/en/model-config#restrict-model-selection) allowlist. When the allowlist blocks a value, Claude Code substitutes another model:
+Claude Code checks the model it selects for a teammate against your organization's [`availableModels`](https://code.claude.com/docs/en/model-config#restrict-model-selection) allowlist. When the allowlist blocks a value, Claude Code substitutes another model:
 
-* **Family alias such as `opus`**: On the Anthropic API and Claude Platform on AWS, Claude Code runs the teammate on the newest version of that family the allowlist permits. On providers with provider-specific model IDs, where the [substitution doesn't operate](/docs/en/model-config.md#restrict-model-selection), a blocked alias falls back like any other blocked value per the next bullet
+* **Family alias such as `opus`**: On the Anthropic API and Claude Platform on AWS, Claude Code runs the teammate on the newest version of that family the allowlist permits. On providers with provider-specific model IDs, where the [substitution doesn't operate](https://code.claude.com/docs/en/model-config.md#restrict-model-selection), a blocked alias falls back like any other blocked value per the next bullet
 * **Any other blocked value, including a family alias on providers where the substitution doesn't operate, or one whose family has no permitted version**: Claude Code runs the teammate on the lead's model instead. If you set `CLAUDE_CODE_SUBAGENT_MODEL`, Claude Code tries that model first, under these same rules
 
-By default, teammates inherit the lead's [effort level](/docs/en/model-config.md#adjust-effort-level). In split-pane mode this applies from v2.1.186; earlier versions did not pass the lead's session effort to split-pane teammates.
+By default, teammates inherit the lead's [effort level](https://code.claude.com/docs/en/model-config.md#adjust-effort-level). In split-pane mode this applies from v2.1.186; earlier versions did not pass the lead's session effort to split-pane teammates.
 
 ### Have teammates plan before implementing
 
-For complex or risky tasks, you can have teammates plan before implementing. A teammate that Claude spawns while the lead is in [plan mode](/docs/en/permission-modes.md#analyze-before-you-edit-with-plan-mode) works in read-only plan mode until its plan is ready. Switch the lead into plan mode first, then ask for the teammate:
+For complex or risky tasks, you can have teammates plan before implementing. A teammate that Claude spawns while the lead is in [plan mode](https://code.claude.com/docs/en/permission-modes.md#analyze-before-you-edit-with-plan-mode) works in read-only plan mode until its plan is ready. Switch the lead into plan mode first, then ask for the teammate:
 
 ```text wrap theme={null}
 Spawn an architect teammate to refactor the authentication module.
@@ -170,7 +170,7 @@ Spawn an architect teammate to refactor the authentication module.
 
 When that teammate finishes planning, it sends a plan approval request to the lead. If you haven't changed that teammate's permission mode since it was spawned, Claude Code approves the plan as soon as the request arrives, without the lead reviewing it. The teammate's edits and commands still go through the permission prompts described in [Permissions](#permissions). Once approved, the teammate exits plan mode and begins implementation.
 
-If you put a running in-process teammate in plan mode by pressing [`Shift+Tab`](/docs/en/permission-modes#switch-permission-modes) while viewing its session, the lead reviews that run's plan instead of Claude Code approving it. You aren't asked to approve it; the lead approves it or sends it back for revision.
+If you put a running in-process teammate in plan mode by pressing [`Shift+Tab`](https://code.claude.com/docs/en/permission-modes#switch-permission-modes) while viewing its session, the lead reviews that run's plan instead of Claude Code approving it. You aren't asked to approve it; the lead approves it or sends it back for revision.
 
 ### Talk to teammates directly
 
@@ -179,7 +179,7 @@ Each teammate is a full, independent Claude Code session. You can message any te
 * **In-process mode**: use the up and down arrow keys in the agent panel to select a teammate, then press Enter to view its session and type to send it a message. Press `x` on a selected teammate to stop it. Press Ctrl+T to toggle the task list.
 * **Split-pane mode**: click into a teammate's pane to interact with their session directly. Each teammate has a full view of their own terminal.
 
-While you're viewing an in-process teammate, plain text and [skills](/docs/en/skills.md) go to that teammate, and built-in commands go to the lead's session, with these safeguards:
+While you're viewing an in-process teammate, plain text and [skills](https://code.claude.com/docs/en/skills.md) go to that teammate, and built-in commands go to the lead's session, with these safeguards:
 
 * `/compact`, `/clear`, and `/rewind` act on the lead's conversation, so Claude Code asks you to confirm before running one of them from this view.
 * `/model` and `/fast` set the lead's model and fast mode, not the teammate's, so they don't run from this view. A notice tells you why.
@@ -190,7 +190,7 @@ A teammate's model and fast mode are fixed when it spawns.
 
 The shared task list coordinates work across the team. The lead creates tasks and teammates work through them. Tasks have three states: pending, in progress, and completed. Tasks can also depend on other tasks: a pending task with unresolved dependencies cannot be claimed until those dependencies are completed.
 
-Agents [without the Task tools](/docs/en/tools-reference.md#task-tool-availability) coordinate through messages instead of the shared task list.
+Agents [without the Task tools](https://code.claude.com/docs/en/tools-reference.md#task-tool-availability) coordinate through messages instead of the shared task list.
 
 The lead can assign tasks explicitly, or teammates can self-claim:
 
@@ -213,11 +213,11 @@ The team's shared directories are cleaned up automatically when the session ends
 
 ### Enforce quality gates with hooks
 
-Use [hooks](/docs/en/hooks.md) to enforce rules when teammates finish work or tasks are created or completed:
+Use [hooks](https://code.claude.com/docs/en/hooks.md) to enforce rules when teammates finish work or tasks are created or completed:
 
-* [`TeammateIdle`](/docs/en/hooks#teammateidle): runs when a teammate is about to go idle. Exit with code 2 to send feedback and keep the teammate working.
-* [`TaskCreated`](/docs/en/hooks#taskcreated): runs when a task is being created. Exit with code 2 to prevent creation and send feedback.
-* [`TaskCompleted`](/docs/en/hooks#taskcompleted): runs when a task is being marked complete. Exit with code 2 to prevent completion and send feedback.
+* [`TeammateIdle`](https://code.claude.com/docs/en/hooks#teammateidle): runs when a teammate is about to go idle. Exit with code 2 to send feedback and keep the teammate working.
+* [`TaskCreated`](https://code.claude.com/docs/en/hooks#taskcreated): runs when a task is being created. Exit with code 2 to prevent creation and send feedback.
+* [`TaskCompleted`](https://code.claude.com/docs/en/hooks#taskcompleted): runs when a task is being marked complete. Exit with code 2 to prevent completion and send feedback.
 
 ## How agent teams work
 
@@ -225,7 +225,7 @@ This section covers the architecture and mechanics behind agent teams. If you wa
 
 ### How Claude starts agent teams
 
-To start a team, ask Claude for teammates. Claude launches a teammate when it calls the [Agent tool](/docs/en/tools-reference.md) with a [`name`](/docs/en/sub-agents#subagent-names) while agent teams are enabled, unless the call is a [fork](/docs/en/sub-agents.md#fork-the-current-conversation) or passes `isolation` on the call itself. Claude Code doesn't ask you to confirm the launch.
+To start a team, ask Claude for teammates. Claude launches a teammate when it calls the [Agent tool](https://code.claude.com/docs/en/tools-reference.md) with a [`name`](https://code.claude.com/docs/en/sub-agents#subagent-names) while agent teams are enabled, unless the call is a [fork](https://code.claude.com/docs/en/sub-agents.md#fork-the-current-conversation) or passes `isolation` on the call itself. Claude Code doesn't ask you to confirm the launch.
 
 Claude also names ordinary subagents on its own so it can message them later. Those calls follow the same rule, so teams can form even when you didn't ask for one. If you want subagents instead, [turn agent teams off](#claude-spawns-teammates-instead-of-subagents).
 
@@ -242,14 +242,14 @@ An agent team consists of:
 
 Each agent's mailbox is a JSON file at `~/.claude/teams/{team-name}/inboxes/{agent-name}.json`. Claude Code validates every entry when it reads a mailbox file. Entries that don't match the message format are reported as errors and removed from the file; the valid messages are still delivered.
 
-Claude Code reports a message as sent only when the write to the recipient's mailbox file succeeds, whether the message is plain text or a structured protocol message such as a plan approval or shutdown request. When the write fails, for example because the disk is full or the mailbox directory isn't writable, the sending agent receives an error and nothing is sent. See [Failed to write to a teammate's inbox](/docs/en/errors.md#failed-to-write-to-a-teammate-inbox) for the error messages and recovery steps.
+Claude Code reports a message as sent only when the write to the recipient's mailbox file succeeds, whether the message is plain text or a structured protocol message such as a plan approval or shutdown request. When the write fails, for example because the disk is full or the mailbox directory isn't writable, the sending agent receives an error and nothing is sent. See [Failed to write to a teammate's inbox](https://code.claude.com/docs/en/errors.md#failed-to-write-to-a-teammate-inbox) for the error messages and recovery steps.
 
 Claude Code manages task dependencies automatically: when a teammate completes a task that other tasks depend on, it unblocks the dependent tasks without any action from you.
 
 Teams and tasks are stored locally under a session-derived name. The name is `session-` followed by the first eight characters of the session ID:
 
 * **Team config**: `~/.claude/teams/{team-name}/config.json`. Claude Code removes the team config directory when the session ends.
-* **Task list**: `~/.claude/tasks/{team-name}/`. This directory stays on disk after the session ends. To change [how long Claude Code keeps it](/docs/en/claude-directory.md#cleaned-up-automatically), set [`cleanupPeriodDays`](/docs/en/settings-reference#cleanupperioddays).
+* **Task list**: `~/.claude/tasks/{team-name}/`. This directory stays on disk after the session ends. To change [how long Claude Code keeps it](https://code.claude.com/docs/en/claude-directory.md#cleaned-up-automatically), set [`cleanupPeriodDays`](https://code.claude.com/docs/en/settings-reference#cleanupperioddays).
 
 Claude Code generates both of these automatically at session startup and updates them as teammates join, go idle, or leave.
 
@@ -257,13 +257,13 @@ The team config holds runtime state such as session IDs and tmux pane IDs, so do
 
 To define reusable teammate roles, use [subagent definitions](#use-subagent-definitions-for-teammates) instead.
 
-The team config contains a `members` array with each member's name and agent ID. The lead's entry always carries the agent type `team-lead`. A teammate's entry carries whatever agent type the lead named when spawning it, whether a [built-in type](/docs/en/sub-agents.md#built-in-subagents) or a [subagent definition](#use-subagent-definitions-for-teammates), and omits the field when the lead named none. Teammates can read this file to discover other team members.
+The team config contains a `members` array with each member's name and agent ID. The lead's entry always carries the agent type `team-lead`. A teammate's entry carries whatever agent type the lead named when spawning it, whether a [built-in type](https://code.claude.com/docs/en/sub-agents.md#built-in-subagents) or a [subagent definition](#use-subagent-definitions-for-teammates), and omits the field when the lead named none. Teammates can read this file to discover other team members.
 
 There is no project-level equivalent of the team config. A file like `.claude/teams/teams.json` in your project directory is not recognized as configuration; Claude treats it as an ordinary file.
 
 ### Use subagent definitions for teammates
 
-When spawning a teammate in either display mode, you can reference a [subagent](/docs/en/sub-agents.md) type from the project, user, managed, or plugin [subagent scope](/docs/en/sub-agents.md#choose-the-subagent-scope). This lets you define a role once, such as a security-reviewer or test-runner, and reuse it both as a delegated subagent and as an agent team teammate.
+When spawning a teammate in either display mode, you can reference a [subagent](https://code.claude.com/docs/en/sub-agents.md) type from the project, user, managed, or plugin [subagent scope](https://code.claude.com/docs/en/sub-agents.md#choose-the-subagent-scope). This lets you define a role once, such as a security-reviewer or test-runner, and reuse it both as a delegated subagent and as an agent team teammate.
 
 To use a subagent definition, name it when you ask Claude to spawn the teammate:
 
@@ -273,42 +273,42 @@ Spawn a teammate using the security-reviewer agent type to audit the auth module
 
 Claude Code reads the subagent definition you named and applies these parts of it to the teammate. Where a part depends on the teammate's [display mode](#choose-a-display-mode), the entry says so:
 
-* **`tools`**: Claude Code limits the teammate to the tools in the definition's `tools` list. For an in-process teammate, Claude Code adds `SendMessage` to that list, and in a [session that has the Task tools](/docs/en/tools-reference.md#task-tool-availability) it adds `TaskCreate`, `TaskGet`, `TaskList`, and `TaskUpdate` too.
+* **`tools`**: Claude Code limits the teammate to the tools in the definition's `tools` list. For an in-process teammate, Claude Code adds `SendMessage` to that list, and in a [session that has the Task tools](https://code.claude.com/docs/en/tools-reference.md#task-tool-availability) it adds `TaskCreate`, `TaskGet`, `TaskList`, and `TaskUpdate` too.
 * **`model`**: Claude Code uses the definition's `model` in either display mode when your spawn prompt doesn't name one. See [how Claude Code picks a teammate's model](#specify-teammates-and-models).
 * **`disallowedTools`**: for an in-process teammate, Claude Code removes the tools in the definition's `disallowedTools` from the teammate's set. `SendMessage` and the Task tools it adds stay available even when the list names them.
-* **`effort`**: for an in-process teammate, Claude Code applies the definition's [`effort`](/docs/en/sub-agents#supported-frontmatter-fields) under the [frontmatter effort rules](/docs/en/model-config.md#set-the-effort-level).
-* **`autoCompactWindow`**: for an in-process teammate, Claude Code applies the definition's [`autoCompactWindow`](/docs/en/sub-agents#supported-frontmatter-fields) under [that field's rules](/docs/en/sub-agents.md#subagent-auto-compact-window). A split-pane teammate ignores the field. Requires Claude Code v2.1.296 or later.
+* **`effort`**: for an in-process teammate, Claude Code applies the definition's [`effort`](https://code.claude.com/docs/en/sub-agents#supported-frontmatter-fields) under the [frontmatter effort rules](https://code.claude.com/docs/en/model-config.md#set-the-effort-level).
+* **`autoCompactWindow`**: for an in-process teammate, Claude Code applies the definition's [`autoCompactWindow`](https://code.claude.com/docs/en/sub-agents#supported-frontmatter-fields) under [that field's rules](https://code.claude.com/docs/en/sub-agents.md#subagent-auto-compact-window). A split-pane teammate ignores the field. Requires Claude Code v2.1.296 or later.
 * **Body**: for an in-process teammate, Claude Code appends the definition's body to its default system prompt as additional instructions. For a split-pane teammate, Claude Code uses the body in place of its default system prompt.
 * **`skills`**: Claude Code doesn't apply the definition's `skills` to a teammate in either display mode. The teammate loads skills from your project and user settings.
-* **`mcpServers`**: for a split-pane teammate, Claude Code applies the definition's `mcpServers` under the [rules for that field](/docs/en/sub-agents.md#scope-mcp-servers-to-a-subagent), which cover a session started with `--agent` as well. An in-process teammate ignores the field and loads MCP servers from your project and user settings.
+* **`mcpServers`**: for a split-pane teammate, Claude Code applies the definition's `mcpServers` under the [rules for that field](https://code.claude.com/docs/en/sub-agents.md#scope-mcp-servers-to-a-subagent), which cover a session started with `--agent` as well. An in-process teammate ignores the field and loads MCP servers from your project and user settings.
 
 When Claude messages an in-process teammate that is no longer running, Claude Code brings it back in the same session, restores any conversation saved for it, and gives it the message as its next prompt. After you resume a session, teammates aren't brought back this way, per [the resume limitation](#limitations).
 
-For a teammate it brings back, Claude Code re-applies a definition that came from a project's `.claude/agents/` directory or an `--add-dir` directory only if you've [trusted the folder the agent file is in](/docs/en/permissions.md#what-runs-before-you-trust-a-folder). Trusting a parent folder doesn't count. Until then, the teammate comes back with none of the definition's tools or instructions, keeping only the tools Claude Code adds to every in-process teammate. See [the teammate's agent definition was not restored](/docs/en/errors.md#teammate-agent-definition-not-restored) for the notice text.
+For a teammate it brings back, Claude Code re-applies a definition that came from a project's `.claude/agents/` directory or an `--add-dir` directory only if you've [trusted the folder the agent file is in](https://code.claude.com/docs/en/permissions.md#what-runs-before-you-trust-a-folder). Trusting a parent folder doesn't count. Until then, the teammate comes back with none of the definition's tools or instructions, keeping only the tools Claude Code adds to every in-process teammate. See [the teammate's agent definition was not restored](https://code.claude.com/docs/en/errors.md#teammate-agent-definition-not-restored) for the notice text.
 
 ### Permissions
 
-Teammates start with the lead's permission mode, except [`dontAsk` mode](/docs/en/permission-modes#allow-only-pre-approved-tools-with-dontask-mode), which they don't inherit. If the lead runs with `--dangerously-skip-permissions`, all teammates do too. After spawning, you can change an individual teammate's permission mode, but you can't set per-teammate permission modes at spawn time.
+Teammates start with the lead's permission mode, except [`dontAsk` mode](https://code.claude.com/docs/en/permission-modes#allow-only-pre-approved-tools-with-dontask-mode), which they don't inherit. If the lead runs with `--dangerously-skip-permissions`, all teammates do too. After spawning, you can change an individual teammate's permission mode, but you can't set per-teammate permission modes at spawn time.
 
-An [in-process](#choose-a-display-mode) teammate runs under the lead's live allow and deny rules, so [`--disallowedTools`](/docs/en/cli-reference#cli-flags), `--tools`, and `--allowedTools` all apply to it. For a split-pane teammate, check each flag:
+An [in-process](#choose-a-display-mode) teammate runs under the lead's live allow and deny rules, so [`--disallowedTools`](https://code.claude.com/docs/en/cli-reference#cli-flags), `--tools`, and `--allowedTools` all apply to it. For a split-pane teammate, check each flag:
 
 * **`--disallowedTools` and `--tools`**: the teammate starts with the lead's command-line deny rules and tool list. Requires Claude Code v2.1.309 or later.
-* **`--allowedTools`**: Claude Code doesn't pass this flag to a split-pane teammate, so an action you allowed with it alone isn't pre-approved there. To approve those actions ahead of time, put the rules under `permissions.allow` in [`--settings`](/docs/en/settings#change-a-setting-for-one-session) when you start the lead. For example, run `claude --settings '{"permissions":{"allow":["Bash(npm *)"]}}'` in your shell. The rules apply to the lead and each split-pane teammate for that session.
+* **`--allowedTools`**: Claude Code doesn't pass this flag to a split-pane teammate, so an action you allowed with it alone isn't pre-approved there. To approve those actions ahead of time, put the rules under `permissions.allow` in [`--settings`](https://code.claude.com/docs/en/settings#change-a-setting-for-one-session) when you start the lead. For example, run `claude --settings '{"permissions":{"allow":["Bash(npm *)"]}}'` in your shell. The rules apply to the lead and each split-pane teammate for that session.
 
 Teammate permission prompts appear in the lead session, so approve them there yourself. You don't need to approve [a teammate's plan](#have-teammates-plan-before-implementing).
 
 #### Messages between agents
 
-When one agent sends another a message over `SendMessage`, Claude Code tells the receiving agent the message came from another Claude session, not from you. A teammate can't approve a permission prompt or supply consent on your behalf, and a teammate that was denied an action can't relay it to another teammate to bypass the check. The same rules apply to a message that arrives from [one of your other Claude Code sessions](/docs/en/cross-session-messaging.md#how-a-session-treats-an-incoming-message), outside the team entirely.
+When one agent sends another a message over `SendMessage`, Claude Code tells the receiving agent the message came from another Claude session, not from you. A teammate can't approve a permission prompt or supply consent on your behalf, and a teammate that was denied an action can't relay it to another teammate to bypass the check. The same rules apply to a message that arrives from [one of your other Claude Code sessions](https://code.claude.com/docs/en/cross-session-messaging.md#how-a-session-treats-an-incoming-message), outside the team entirely.
 
-In [auto mode](/docs/en/permission-modes.md#eliminate-prompts-with-auto-mode), the classifier applies two checks to messages between agents:
+In [auto mode](https://code.claude.com/docs/en/permission-modes.md#eliminate-prompts-with-auto-mode), the classifier applies two checks to messages between agents:
 
 * It treats an approval claim relayed from another agent as untrusted input rather than confirmation from you.
 * It reviews each message before Claude Code delivers it, whether a plain message or a structured protocol message such as a shutdown request or plan approval response. A message it blocks never reaches the recipient.
 
 ### Context and communication
 
-Each teammate has its own context window. When spawned, a teammate loads the same project context as a regular session: CLAUDE.md, MCP servers, and skills. If you start the lead with [`--setting-sources`](/docs/en/cli-reference#cli-flags), teammates load from the same restricted list of sources. Before v2.1.281, [split-pane](#choose-a-display-mode) teammates loaded every settings source.
+Each teammate has its own context window. When spawned, a teammate loads the same project context as a regular session: CLAUDE.md, MCP servers, and skills. If you start the lead with [`--setting-sources`](https://code.claude.com/docs/en/cli-reference#cli-flags), teammates load from the same restricted list of sources. Before v2.1.281, [split-pane](#choose-a-display-mode) teammates loaded every settings source.
 
 A teammate also receives the spawn prompt from the lead. The lead's conversation history does not carry over.
 
@@ -316,16 +316,16 @@ A teammate also receives the spawn prompt from the lead. The lead's conversation
 
 * **Automatic message delivery**: when teammates send messages, they're delivered automatically to recipients. The lead doesn't need to poll for updates.
 * **Idle notifications**: when a teammate finishes and stops, it automatically notifies the lead and includes its final answer in the notification. A teammate whose turn ends on an API error notifies the lead that it failed and includes the error text.
-* **Shared task list**: [agents that have the Task tools](/docs/en/tools-reference.md#task-tool-availability) can see task status and claim available work.
+* **Shared task list**: [agents that have the Task tools](https://code.claude.com/docs/en/tools-reference.md#task-tool-availability) can see task status and claim available work.
 * **Teammate messaging**: send a message to one specific teammate by name. To reach everyone, send one message per recipient.
 
 The lead assigns every teammate a name when it spawns them, and any teammate can message any other by that name. To get predictable names you can reference in later prompts, tell the lead what to call each teammate in your spawn instruction.
 
 ### Token usage
 
-Agent teams use significantly more tokens than a single session. Each teammate has its own context window, and token usage scales with the number of active teammates. For research, review, and new feature work, the extra tokens are usually worthwhile. For routine tasks, a single session is more cost-effective. See [agent team token costs](/docs/en/costs.md#agent-team-token-costs) for usage guidance.
+Agent teams use significantly more tokens than a single session. Each teammate has its own context window, and token usage scales with the number of active teammates. For research, review, and new feature work, the extra tokens are usually worthwhile. For routine tasks, a single session is more cost-effective. See [agent team token costs](https://code.claude.com/docs/en/costs.md#agent-team-token-costs) for usage guidance.
 
-An in-process teammate's requests fall outside the main conversation's [cache TTL bucket](/docs/en/prompt-caching.md#which-ttl-each-request-gets), so its cache holds for five minutes by default, including on a Claude subscription. To keep it for an hour, set [`subagentPromptCacheTtl`](/docs/en/settings-reference#subagentpromptcachettl) to `1h`. The API bills 1-hour cache writes at a higher rate.
+An in-process teammate's requests fall outside the main conversation's [cache TTL bucket](https://code.claude.com/docs/en/prompt-caching.md#which-ttl-each-request-gets), so its cache holds for five minutes by default, including on a Claude subscription. To keep it for an hour, set [`subagentPromptCacheTtl`](https://code.claude.com/docs/en/settings-reference#subagentpromptcachettl) to `1h`. The API bills 1-hour cache writes at a higher rate.
 
 ## Use case examples
 
@@ -377,7 +377,7 @@ httpOnly cookies. Report any issues with severity ratings."
 
 There's no hard limit on the number of teammates, but practical constraints apply:
 
-* **Token costs scale linearly**: each teammate has its own context window and consumes tokens independently. See [agent team token costs](/docs/en/costs.md#agent-team-token-costs) for details.
+* **Token costs scale linearly**: each teammate has its own context window and consumes tokens independently. See [agent team token costs](https://code.claude.com/docs/en/costs.md#agent-team-token-costs) for details.
 * **Coordination overhead increases**: more teammates means more communication, task coordination, and potential for conflicts
 * **Diminishing returns**: beyond a certain point, additional teammates don't speed up work proportionally
 
@@ -448,14 +448,14 @@ You don't need to start a new session: Claude Code reapplies settings-file `env`
 
 Setting the variable to `0` in your user `settings.json` overrides a shell export. Other settings sources can still enable agent teams:
 
-* **Higher-precedence settings files**: project settings, local settings, and a `--settings` payload apply after user settings, so an `env` entry that sets the variable to `1` in any of them wins. See [Settings precedence](/docs/en/settings.md#settings-precedence).
-* **Managed settings**: [managed settings](/docs/en/server-managed-settings.md) apply after every other source. If your organization enables agent teams there, ask your administrator to change the managed value.
+* **Higher-precedence settings files**: project settings, local settings, and a `--settings` payload apply after user settings, so an `env` entry that sets the variable to `1` in any of them wins. See [Settings precedence](https://code.claude.com/docs/en/settings.md#settings-precedence).
+* **Managed settings**: [managed settings](https://code.claude.com/docs/en/server-managed-settings.md) apply after every other source. If your organization enables agent teams there, ask your administrator to change the managed value.
 
-After the change, Claude may still name subagents, and the name keeps working as a [`SendMessage` address](/docs/en/sub-agents#resume-subagents). Claude receives each subagent's result when it completes.
+After the change, Claude may still name subagents, and the name keeps working as a [`SendMessage` address](https://code.claude.com/docs/en/sub-agents#resume-subagents). Claude receives each subagent's result when it completes.
 
 ### Too many permission prompts
 
-Teammate permission requests bubble up to the lead, which can create friction. Pre-approve common operations in your [permission settings](/docs/en/permissions.md) before spawning teammates to reduce interruptions.
+Teammate permission requests bubble up to the lead, which can create friction. Pre-approve common operations in your [permission settings](https://code.claude.com/docs/en/permissions.md) before spawning teammates to reduce interruptions.
 
 ### Agents stopping early
 
@@ -486,7 +486,7 @@ Agent teams are experimental. Current limitations to be aware of:
 * **Shutdown can be slow**: teammates finish their current request or tool call before shutting down, which can take time.
 * **One team per session**: a session has exactly one team, scoped to that session. You can't create additional named teams or share a team across sessions.
 * **No nested teams**: teammates cannot spawn their own teammates. Only the lead can manage the team.
-* **No background subagents from in-process teammates**: an in-process teammate's own subagents run in the foreground, because a teammate's background work can't outlive the lead's process. Claude Code returns an error when a teammate spawns a subagent whose definition sets `background: true`. A teammate's `run_in_background: true` request also fails, either with an error or by running silently in the foreground. Subagents launched from the main conversation follow the [background default](/docs/en/sub-agents.md#run-subagents-in-foreground-or-background).
+* **No background subagents from in-process teammates**: an in-process teammate's own subagents run in the foreground, because a teammate's background work can't outlive the lead's process. Claude Code returns an error when a teammate spawns a subagent whose definition sets `background: true`. A teammate's `run_in_background: true` request also fails, either with an error or by running silently in the foreground. Subagents launched from the main conversation follow the [background default](https://code.claude.com/docs/en/sub-agents.md#run-subagents-in-foreground-or-background).
 * **Lead is fixed**: the main session is the lead for its lifetime. You can't promote a teammate to lead or transfer leadership.
 * **Permissions set at spawn**: teammates start with the permission mode described under [Permissions](#permissions). You can change an individual teammate's permission mode after spawning, but you can't set per-teammate permission modes at spawn time.
 * **Split panes require tmux or iTerm2**: the default in-process mode works in any terminal. Split-pane mode isn't supported in VS Code's integrated terminal, Windows Terminal, or Ghostty.
@@ -495,6 +495,6 @@ Agent teams are experimental. Current limitations to be aware of:
 
 Explore related approaches for parallel work and delegation:
 
-* **Lightweight delegation**: [subagents](/docs/en/sub-agents.md) spawn helper agents for research or verification within your session, better for tasks that don't need inter-agent coordination
-* **Messaging between your own sessions**: [cross-session messaging](/docs/en/cross-session-messaging.md) lets Claude pass findings between the sessions you run yourself
-* **Manual parallel sessions**: [Git worktrees](/docs/en/worktrees.md) let you run multiple Claude Code sessions yourself without automated team coordination
+* **Lightweight delegation**: [subagents](https://code.claude.com/docs/en/sub-agents.md) spawn helper agents for research or verification within your session, better for tasks that don't need inter-agent coordination
+* **Messaging between your own sessions**: [cross-session messaging](https://code.claude.com/docs/en/cross-session-messaging.md) lets Claude pass findings between the sessions you run yourself
+* **Manual parallel sessions**: [Git worktrees](https://code.claude.com/docs/en/worktrees.md) let you run multiple Claude Code sessions yourself without automated team coordination

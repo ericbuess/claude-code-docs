@@ -12,7 +12,7 @@
 
 The iOS Simulator pane shows your app running in Apple's iOS Simulator next to your conversation in Claude Code Desktop. When Claude builds, installs, launches, or checks your app in a simulator, the pane opens automatically and streams the device screen live. Use it to watch Claude run and test your app, or to tap through the app yourself while Claude keeps working.
 
-The simulator pane drives the simulator directly, so it doesn't need [computer use](/docs/en/desktop.md#let-claude-use-your-computer) and never takes over your screen or hides your other windows. From the CLI, Claude reaches the iOS Simulator through [computer use](/docs/en/computer-use.md#test-a-simulator-flow) instead, which controls the simulator on your screen the same way you would with a mouse.
+The simulator pane drives the simulator directly, so it doesn't need [computer use](https://code.claude.com/docs/en/desktop.md#let-claude-use-your-computer) and never takes over your screen or hides your other windows. From the CLI, Claude reaches the iOS Simulator through [computer use](https://code.claude.com/docs/en/computer-use.md#test-a-simulator-flow) instead, which controls the simulator on your screen the same way you would with a mouse.
 
 ## Requirements
 
@@ -27,7 +27,7 @@ The simulator pane uses Apple's simulator tooling, which the desktop app doesn't
 >
 > On this page, "device" refers to a simulated iPhone or iPad, one of the same simulator devices you manage in Xcode under **Window → Devices and Simulators**, not physical hardware.
 
-The simulator pane is available in local sessions only. In [cloud](/docs/en/desktop.md#run-long-running-tasks-in-the-cloud) and [SSH](/docs/en/desktop.md#ssh-sessions) sessions, Claude runs on a machine that can't reach the simulators on your Mac.
+The simulator pane is available in local sessions only. In [cloud](https://code.claude.com/docs/en/desktop.md#run-long-running-tasks-in-the-cloud) and [SSH](https://code.claude.com/docs/en/desktop.md#ssh-sessions) sessions, Claude runs on a machine that can't reach the simulators on your Mac.
 
 ### Choose which Xcode the simulator pane uses
 
@@ -49,7 +49,7 @@ You don't need a command or setting to open the simulator pane. Claude opens it 
 
 **1. Open your iOS project**
 
-In Claude Code Desktop, open the **Code** tab and start a session with your app's project as the [project folder](/docs/en/desktop.md#start-a-session). Any project that builds an app for the iOS Simulator works.
+In Claude Code Desktop, open the **Code** tab and start a session with your app's project as the [project folder](https://code.claude.com/docs/en/desktop.md#start-a-session). Any project that builds an app for the iOS Simulator works.
 
 **2. Ask Claude to run or test the app**
 
@@ -88,7 +88,7 @@ You and Claude drive the same device, so your taps change the app state Claude s
 
 ## How sessions manage devices
 
-Each device belongs to the session that launched it, so [parallel sessions](/docs/en/desktop.md#work-in-parallel-with-sessions) don't share a device: what you see in one session's pane reflects that session's work, not another's. Switching sessions in the sidebar switches the simulator view along with the conversation, and switching back resumes the same device where it left off. If Claude works with more than one device, each opens its own pane, up to 4 per session.
+Each device belongs to the session that launched it, so [parallel sessions](https://code.claude.com/docs/en/desktop.md#work-in-parallel-with-sessions) don't share a device: what you see in one session's pane reflects that session's work, not another's. Switching sessions in the sidebar switches the simulator view along with the conversation, and switching back resumes the same device where it left off. If Claude works with more than one device, each opens its own pane, up to 4 per session.
 
 Claude Code Desktop shuts down the simulators it booted once they're no longer in use: when you quit the app, when you archive the session, or 10 minutes after you detach a device from its pane. Devices you boot outside Claude Code Desktop, such as in Apple's Simulator app or in Device Hub, are never shut down automatically. To shut down the attached device right away, use the shutdown button in the pane.
 
@@ -106,7 +106,7 @@ If you decline, the device still boots and the pane still works for your own tap
 
 ### Actions that follow your permission mode
 
-Two actions follow your session's [permission mode](/docs/en/permissions.md#permission-modes) instead of the one-time consent:
+Two actions follow your session's [permission mode](https://code.claude.com/docs/en/permissions.md#permission-modes) instead of the one-time consent:
 
 * Opening a URL on the device, for example to test a deep link or load a page in the device's Safari, because a URL can carry data off the device.
 * Building the app, because `xcodebuild` runs your project's build scripts on your Mac. Checking on a build already in progress doesn't prompt.
@@ -115,7 +115,7 @@ Two actions follow your session's [permission mode](/docs/en/permissions.md#perm
 
 You can turn Claude's simulator access off in the desktop app's settings. Organizations have two ways to turn it off for everyone:
 
-* The `disableMobileSimulatorTools` [managed setting](/docs/en/desktop.md#managed-settings) blocks Claude's simulator tools. The simulator pane stays usable for your own taps, and the setting can't be overridden from within the app.
+* The `disableMobileSimulatorTools` [managed setting](https://code.claude.com/docs/en/desktop.md#managed-settings) blocks Claude's simulator tools. The simulator pane stays usable for your own taps, and the setting can't be overridden from within the app.
 * The `requireCoworkFullVmSandbox` policy key, which runs Claude's tools inside an isolated virtual machine instead of on your Mac, disables the simulator pane and Claude's simulator tools entirely, so the pane can't attach a device while it's set.
 
 Claude tells you when either applies.
@@ -142,7 +142,7 @@ Xcode is installed but has no iOS simulators to list. The simulator pane shows t
 
 ## See also
 
-* [Computer use in Desktop](/docs/en/desktop.md#let-claude-use-your-computer): screen control for apps without a dedicated pane
-* [Computer use from the CLI](/docs/en/computer-use.md): how the CLI reaches the iOS Simulator
-* [Run a session in its own worktree](/docs/en/desktop.md#run-a-session-in-its-own-worktree): how sessions isolate changes
-* [Get started with Claude Code Desktop](/docs/en/desktop-quickstart.md)
+* [Computer use in Desktop](https://code.claude.com/docs/en/desktop.md#let-claude-use-your-computer): screen control for apps without a dedicated pane
+* [Computer use from the CLI](https://code.claude.com/docs/en/computer-use.md): how the CLI reaches the iOS Simulator
+* [Run a session in its own worktree](https://code.claude.com/docs/en/desktop.md#run-a-session-in-its-own-worktree): how sessions isolate changes
+* [Get started with Claude Code Desktop](https://code.claude.com/docs/en/desktop-quickstart.md)
