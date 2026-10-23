@@ -902,6 +902,10 @@ Run `/mcp` to see the server's status. When the server is healthy, `/mcp` lists 
 
 To read the error the server printed while starting, run `claude --debug` and open the log at `~/.claude/debug/<session-id>.txt`. The `--debug` flag doesn't print to the terminal.
 
+> [!NOTE]
+>
+> When a connection to a [plugin's stdio server](/docs/en/mcp.md#plugin-provided-mcp-servers) failed less than 15 minutes before you ran `claude --debug`, Claude Code [doesn't start the server](/docs/en/errors.md#skipping-connection-recent-failure-cached). In the new session, select **Reconnect** from the server's menu in `/mcp` to start it, then open the log.
+
 A server entry in `.mcp.json` that fails the schema doesn't appear in the **Errors** tab. Claude Code drops that server and records `Invalid MCP server config for <server> in <path>` only in that debug log. To find the entry without loading the plugin, run `claude plugin validate` in your shell on the plugin directory, which reports it as an error.
 
 Before v2.1.281, `claude plugin validate` didn't check `.mcp.json`.

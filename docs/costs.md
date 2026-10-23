@@ -58,7 +58,9 @@ Status line scripts can read the same numbers from the [`prompt_cache` object](/
 On a Pro, Max, Team, or Enterprise plan, `/usage` also shows a breakdown of what counts against your plan limits, with recommendations:
 
 * **Attribution**: recent usage attributed to skills, subagents, plugins, and individual MCP servers, each shown as a percentage of the total. An MCP server's share counts only the requests that consumed one of its tool results. Before v2.1.222, after one call to an MCP server, Claude Code attributed every subsequent request to that server, overstating its share.
-* **Recommendations**: changes that lower your usage, one per row. Each row starts with the share of recent usage it addresses, at least 10%, as in `25%  Trim ~/code/api/CLAUDE.md · 49k tokens per request`. To have Claude Code apply the ones it can, see [Apply recommendations with the fix shortcut](#apply-recommendations-with-the-fix-shortcut).
+* **Recommendations**: suggested changes, one per row. Each row starts with a share of your recent usage, at least 10%, as in `25%  Trim ~/code/api/CLAUDE.md · 49k tokens per request`.
+  * **How to read the share**: it tells you how much of your usage the row applies to, not how much the change saves. One request can count toward several rows, so the shares can add up to more than 100%.
+  * **How to apply recommendations**: to have Claude Code apply the ones it can, see [Apply recommendations with the fix shortcut](#apply-recommendations-with-the-fix-shortcut)
 * **Loops**: a row for each of the heaviest [`/loop` or other session-scoped scheduled tasks](/docs/en/scheduled-tasks) that ran recently, ordered by total tokens, with a count of the rest. Requires Claude Code v2.1.242 or later.
   * **What each row reports**: how often the task fires, how many times it ran, its total and per-run tokens, and when it last ran
   * **Stopped and re-created loops**: Claude Code keys a row by the task's prompt, so a loop you stop and re-create stays one row

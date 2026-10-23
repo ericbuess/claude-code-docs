@@ -314,6 +314,7 @@ Match the message you see to a section below.
 | `"<plugin>" was not uninstalled: <file> is there and could not be read` | [Plugin errors](#plugin-was-not-uninstalled) |
 | `Plugin "<plugin>" was not uninstalled: installed_plugins.json` | [Plugin troubleshooting](/docs/en/plugins/troubleshooting.md#installed-plugins-json-holds-a-record-this-version-cannot-read) |
 | `Plugin directory does not exist: <path>` | [Plugin troubleshooting](/docs/en/plugins/troubleshooting.md#plugin-directory-does-not-exist) |
+| `Skipping connection (recent failure cached; retries automatically in 15 min, or edit the plugin config to retry now)` | [Plugin errors](#skipping-connection-recent-failure-cached) |
 | `Error: No such tool available: <tool name>` | [Tool errors](#no-such-tool-available) |
 | `MCP server "<name>" connection closed before the tool call was answered` | [Tool errors](#connection-closed-before-the-tool-call-was-answered) |
 | `would be spawned with zero tools — refusing` | [Tool errors](#agent-would-be-spawned-with-zero-tools) |
@@ -448,7 +449,7 @@ Claude Code retries these failures:
 * Dropped connections. When a connection drops partway through a request before Claude has completed any part of its response, including its thinking, Claude Code re-issues the request with the same backoff and the turn continues, even if some text had already started streaming. When it drops after Claude has finished thinking but before it has started any text or tool call, Claude Code instead re-issues the request up to two times in quick succession, and ends the turn with `Connection lost before a response was produced` if the connection keeps dropping at that point.
 * A connection that Claude Code detects was broken by your computer going to sleep partway through a request. Claude Code counts it as a dropped connection under the rules above; once the retry label names the specific reason, it reads `Connection lost while your computer was asleep`, and if the turn ends after Claude has finished thinking but before any text or tool call, the message reads `Your computer went to sleep before a response was produced`.
 * A stalled response stream, when the response headers have arrived but none of Claude's response has arrived, or when Claude has finished thinking but hasn't started any text or tool call: Claude Code aborts the stalled connection and streams the request again at most once. If the response stalls a second time after Claude has finished thinking but before any text or tool call, Claude Code ends the turn with `The response stalled before a response was produced`.
-* A streaming request the API never answers with response headers, on a connection where the [first-byte deadline runs](/docs/en/network-config.md#streaming-idle-watchdogs): Claude Code aborts it at the deadline and re-sends it at most once per model request, within the retry budget, then ends the turn with [No response from API](#no-response-from-api) if that attempt goes unanswered too. When you set `CLAUDE_CODE_RETRY_WATCHDOG`, the one-retry cap doesn't apply.
+* A streaming request the API never answers with response headers, on a connection where the [first-byte deadline runs](/docs/en/network-config.md#streaming-idle-watchdogs). At the deadline, Claude Code aborts the request and re-sends it within the retry budget. If the deadline fires for a re-send too, the turn ends with [No response from API](#no-response-from-api). When you set `CLAUDE_CODE_RETRY_WATCHDOG`, Claude Code keeps re-sending within the budget instead.
 * A streaming response that the API's output content filter stops before Claude has either finished thinking or started any text or tool call. Claude Code re-sends the request once, within the retry budget, and shows [Output blocked by content filtering policy](#output-blocked-by-content-filtering-policy) if the filter stops the second response too.
 * Temporary 429 throttles, but not a gateway's spend-limit `429`, which isn't a throttle; see [Spend limit reached](#spend-limit-reached).
   * When you're signed in with a claude.ai subscription, this includes 429 throttles that don't carry your plan's quota headers. Before v2.1.199, Claude Code retried those throttles only for API key and Enterprise sign-ins.
@@ -566,7 +567,9 @@ The default request timeout is 10 minutes. If you set [`API_TIMEOUT_MS`](/docs/e
 
 ### No response from API
 
-Claude Code sent a streaming request and the API returned no response headers within the deadline for the first byte, so Claude Code aborted the request instead of waiting for the full `API_TIMEOUT_MS` request timeout, 10 minutes by default. Claude Code sends the request again at most once, if the [retry budget](#tune-retry-behavior) allows. When the retry goes unanswered too, the turn ends with this message, which shows how long each attempt waited. When you set [`CLAUDE_CODE_RETRY_WATCHDOG`](/docs/en/env-vars), the one-retry cap doesn't apply and Claude Code retries under the budget described in [Tune retry behavior](#tune-retry-behavior).
+Claude Code sent a streaming request, and the API returned no response headers within the deadline for the first byte. Claude Code aborts such a request rather than wait for the full `API_TIMEOUT_MS` request timeout, and sends it again if the [retry budget](#tune-retry-behavior) allows. When the deadline passes for the retry too, the turn ends with this message, which shows how long each attempt waited.
+
+If you set [`CLAUDE_CODE_RETRY_WATCHDOG`](/docs/en/env-vars), Claude Code keeps retrying under the budget described in [Tune retry behavior](#tune-retry-behavior) instead of ending the turn.
 
 ```text theme={null}
 API Error: No response from API (waited 3m, then 10m on the retry). If a proxy or gateway on your network holds responses until they complete, raise API_TIMEOUT_MS or CLAUDE_STREAM_FIRST_BYTE_TIMEOUT_MS to wait longer.
@@ -581,6 +584,8 @@ Claude Code sets the first attempt's wait for response headers and the retry's w
 
 Neither wait exceeds one second less than a positive `API_TIMEOUT_MS`, and a positive `API_TIMEOUT_MS` under 11 seconds turns the deadline off. The byte-level watchdog starts only once the response headers arrive, so a response that stops sending bytes after that follows the [stalled-stream rules](#automatic-retries) instead of this deadline.
 
+In a [Claude apps gateway](/docs/en/claude-apps-gateway) session, this deadline runs only when you [turn it on](/docs/en/claude-apps-gateway-deploy.md#retry-an-unanswered-request-sooner-with-the-first-byte-deadline) by setting `CLAUDE_STREAM_FIRST_BYTE_TIMEOUT_MS` to `1` or more.
+
 **What to do:**
 
 * Send your message again. Your original message is still in the conversation, so for a long prompt you can type `try again` instead of pasting the whole thing.
@@ -588,7 +593,7 @@ Neither wait exceeds one second less than a positive `API_TIMEOUT_MS`, and a pos
 * If a proxy or gateway on your network holds responses until they complete, raise `API_TIMEOUT_MS` so the retry waits longer. On Amazon Bedrock, raise `CLAUDE_STREAM_FIRST_BYTE_TIMEOUT_MS` as well.
 * If the first attempt keeps timing out and the retry then succeeds, raise `CLAUDE_STREAM_FIRST_BYTE_TIMEOUT_MS` so the first attempt waits long enough too.
 
-Before v2.1.242, Claude Code waited for the full `API_TIMEOUT_MS` request timeout, 10 minutes by default, before failing an unanswered streaming request. Before v2.1.261, the retry waited the same deadline as the first attempt and the message showed no durations.
+Before v2.1.242, Claude Code waited for the full `API_TIMEOUT_MS` request timeout, 10 minutes by default, before failing an unanswered streaming request. Before v2.1.261, the retry waited the same deadline as the first attempt and the message showed no durations. Before v2.1.307, Claude Code ignored `CLAUDE_STREAM_FIRST_BYTE_TIMEOUT_MS` in a Claude apps gateway session.
 
 ### The response above may be incomplete
 
@@ -4353,6 +4358,27 @@ The middle of the message names the file and the cause:
 **What to do:**
 
 * Follow the last sentence of the message: repair or replace the settings file it names, or remove the plugin's entry from `enabledPlugins` in that file yourself, then run the uninstall again
+
+### Skipping connection (recent failure cached; retries automatically in 15 min, or edit the plugin config to retry now)
+
+This message means Claude Code didn't start a stdio [MCP server that a plugin provides](/docs/en/mcp.md#plugin-provided-mcp-servers), because a connection to that server failed less than 15 minutes earlier:
+
+```text theme={null}
+Skipping connection (recent failure cached; retries automatically in 15 min, or edit the plugin config to retry now)
+```
+
+The session continues without the server's tools, and Claude Code doesn't try the server again in that session when the 15 minutes end. When you start a new session or [`claude -p`](/docs/en/headless) run at least 15 minutes after the most recent failed connection, Claude Code tries the server again.
+
+**What to do:**
+
+To have Claude Code try the server again without waiting:
+
+* **In an interactive session**: run `/mcp`, select the server, and select **Reconnect**
+* **In an [Agent SDK](/docs/en/agent-sdk/overview.md) application**: call [`reconnectMcpServer()`](/docs/en/agent-sdk/typescript#methods) in TypeScript or [`ClaudeSDKClient.reconnect_mcp_server()`](/docs/en/agent-sdk/python#methods) in Python with the server's name
+* **In `claude -p`**: start an interactive session that loads the same plugin, on the same machine and with the same operating system account and [`CLAUDE_CONFIG_DIR`](/docs/en/env-vars) value as your runs. Reconnect the server there from `/mcp`. Once it connects, Claude Code tries the connection in your next run.
+* **If you're developing the plugin**: change the server's `command`, `args`, or `env` in the plugin's `.mcp.json` or `plugin.json`. Claude Code tries the connection in the next session or `claude -p` run that loads the changed entry.
+
+The message replaces the error from the failed connection. If the new attempt fails too, Claude Code reports that attempt's error instead of this message.
 
 ## Tool errors
 

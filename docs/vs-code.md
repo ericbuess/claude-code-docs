@@ -320,7 +320,7 @@ Run `/usage` to open the Account & usage dialog, which shows your signed-in acco
 
   The dialog also breaks down what is contributing to your plan limits:
 
-  * **Recommendations**: changes that lower your usage, one per row with the share of recent usage it addresses, such as `Trim ~/code/api/CLAUDE.md · 49k tokens per request`
+  * **Recommendations**: suggested changes, one per row, such as `Trim ~/code/api/CLAUDE.md · 49k tokens per request`
   * **Fix button**: to have Claude Code apply the recommendations it can, click the button under them, such as **Fix both**. To learn which rows the button acts on and what then happens in your session, see [Apply recommendations with the fix shortcut](/docs/en/costs.md#apply-recommendations-with-the-fix-shortcut). Requires Claude Code v2.1.305 or later.
 
     The button isn't shown while [Remote Control](/docs/en/remote-control.md) is connected. If a warning reads `The usage fix wasn’t fully sent. Open usage and try again.` after Remote Control connected, [disconnect Remote Control](/docs/en/remote-control.md#check-connection-status) before you try again.

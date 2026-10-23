@@ -766,7 +766,7 @@ For message-level reconstruction, each event class carries a key that matches a 
 
 * `message.uuid` on `user_prompt`, `assistant_response`, and `api_response_body`
 * `request_id` on the API events, persisted as `requestId` on the transcript's assistant entries
-* `tool_use_id` on `tool_result` and `tool_decision` events
+* `tool_use_id` on `tool_result` and `tool_decision` events, and on `safety_event` events except those for the [end of a turn](#safety-event)
 
 #### User prompt event
 
@@ -989,7 +989,7 @@ Logged when a tool permission decision is made (accept/reject).
     * A grant for the rest of the session, given at an earlier permission prompt in the same interactive CLI session
     * The tool being inherently safe
 
-    The `source` value doesn't indicate which of these sources matched.
+    The `source` value doesn't indicate which of these sources matched. To find which one refused a call, look for the [Safety event](#safety-event) with the same `tool_use_id` and read its `category` and `rule_source` attributes. Some refused calls [have no safety event](#calls-without-a-safety-event).
 
     Claude Code also reports `"config"` when the permission prompt request itself fails. For example, that request fails when the Agent SDK's [`canUseTool`](/docs/en/agent-sdk/typescript#canusetool) callback or the [`--permission-prompt-tool`](/docs/en/cli-reference#cli-flags) tool returns an invalid result, or when the input stream closes while the request is pending. Before v2.1.216, Claude Code reported these failures as `"user_reject"`.
   * `"hook"`: A `PreToolUse` or `PermissionRequest` hook returned the decision.
@@ -1025,6 +1025,93 @@ Logged when a tool permission decision is made (accept/reject).
   * For Agent tool or legacy Task tool: includes `subagent_type`
 
 If you lower the OpenTelemetry SDK's `OTEL_LOGRECORD_ATTRIBUTE_COUNT_LIMIT` below the number of attributes on a `tool_decision` event, the SDK drops the attributes that Claude Code set last. The SDK drops `permission_mode` first, `classifier_category` second, and `classifier_verdict` third, and drops the event's other attributes only after those three. This ordering requires Claude Code v2.1.302 or later.
+
+#### Safety event
+
+Logged when a check refuses a tool call or requires a permission prompt, except for [calls without a safety event](#calls-without-a-safety-event). Also logged when the [sandbox's network proxy](/docs/en/sandboxing.md#network-isolation) refuses a connection or request, and when a hook blocks a result. Requires Claude Code v2.1.307 or later.
+
+The event exports with the other events and has no separate setting. The event's own attributes hold no command text, file paths, host names, or MCP server and tool names. The record also carries the [standard attributes](#standard-attributes) every event has, which can include `workspace.host_paths` and the [repository attributes](#repository-attributes). To see the command or MCP tool behind an event, set `OTEL_LOG_TOOL_DETAILS=1` and read `tool_parameters` on the matching `tool_decision` event.
+
+**Event Name**: `claude_code.safety_event`
+
+**Attributes**:
+
+* All [standard attributes](#standard-attributes)
+* `event.name`: `"safety_event"`
+* `event.timestamp`: ISO 8601 timestamp
+* `event.sequence`: per-process counter for ordering events, described under [Event correlation attributes](#event-correlation-attributes)
+* `category`: The check or outcome, a [category value](#safety-event-categories)
+* `decision`: `"accept"`, `"reject"`, or `"sent_back"` when a hook blocked a result or turn end
+* `decision_source`: Who or what decided, a [`tool_decision`](#tool-decision-event) `source` value or `"other"`
+* `reason_code`: The check's reason, such as `"rule:policySettings"`, `"mode:dontAsk"`, `"hook:PreToolUse"`, `"classifier:auto-mode"`, `"bashMiss:too-complex"`, or `"unknown"`
+* `reason_type`: The check's reason type, such as `"rule"`, `"subcommandResults"`, `"mode"`, `"hook"`, `"classifier"`, or `"asyncAgent"`
+* `rule_source`: Settings source of the rule involved, such as `"policySettings"`, `"userSettings"`, `"projectSettings"`, `"localSettings"`, `"flagSettings"`, `"cliArg"`, or `"session"`
+* `grant_scope`: `"once"` or `"session"` for a prompt approved without saving a rule to a settings file
+* `circuit_breaker`: The built-in safety check, such as `"dangerousRemoval"`, `"outsideReadsBlocked"`, or `"claudeSettingsFile"`
+* `classifier_category`: With `OTEL_LOG_TOOL_DETAILS=1`, the [built-in rule](/docs/en/auto-mode-config.md#inspect-the-defaults-and-your-effective-config) behind an auto mode block, such as `"data_exfiltration"`
+* `hook_event`: `"pre_tool_use"` for a `PreToolUse` hook, or `"post_tool_use"`, `"post_tool_use_failure"`, `"stop"`, or `"subagent_stop"` on `"hook_review"` events
+* `tool_class`: `"bash"` for Bash and [Monitor](/docs/en/tools-reference.md#monitor-tool), `"powershell"`, `"file"` for Read, Edit, Write, NotebookEdit, Glob, and Grep, `"web"` for WebFetch and WebSearch, `"mcp"`, or `"other"`
+* `tool_name`: The tool's name, such as `"Bash"` for a built-in tool, or `"mcp_tool"`, `"skill_tool"`, `"dynamic_tool"`, or `"other_tool"`
+* `tool_source`: `"builtin"`, `"mcp"`, or `"sdk_host_builtin_mcp"`, as on [`tool_decision`](#tool-decision-event)
+* `permission_mode`: The call's [permission mode](/docs/en/permission-modes.md) when checked: `"default"`, `"plan"`, `"acceptEdits"`, `"bypassPermissions"`, `"dontAsk"`, or `"auto"`
+* `tool_use_id`: The call's ID, as on `tool_decision` and `tool_result`
+* `sandbox_violation_count`: How many distinct connections or requests from the call's command the sandbox's network proxy refused, `"0"` to `"20"` as a string. Refusals are counted for a sandboxed command that finished in the foreground
+* `sandbox_enabled`: `"true"` if [sandboxing](/docs/en/sandboxing.md) is on for the session, else `"false"`
+
+These are the event's own attributes when a managed-settings deny rule refuses a Bash command:
+
+```json theme={null}
+{
+  "event.name": "safety_event",
+  "category": "managed_policy",
+  "decision": "reject",
+  "decision_source": "config",
+  "reason_code": "rule:policySettings",
+  "rule_source": "policySettings",
+  "tool_class": "bash",
+  "tool_name": "Bash",
+  "tool_source": "builtin",
+  "permission_mode": "default",
+  "tool_use_id": "toolu_01ABC123...",
+  "sandbox_violation_count": "0",
+  "sandbox_enabled": "false"
+}
+```
+
+##### Safety event categories
+
+| Value | Check or outcome | Detail attribute |
+| - | - | - |
+| `"permission_rule"` | A deny or ask [permission rule](/docs/en/permissions.md#manage-permissions) outside managed settings | `rule_source` |
+| `"managed_policy"` | A deny or ask rule from [managed settings](/docs/en/permissions.md#managed-settings) | `rule_source` |
+| `"permission_mode"` | [`dontAsk`](/docs/en/permission-modes#allow-only-pre-approved-tools-with-dontask-mode) or [plan](/docs/en/permission-modes.md#analyze-before-you-edit-with-plan-mode) mode, or a prompt with [no category](#prompts-with-no-category) in a session that can't show prompts, as with [`--permission-prompts none`](/docs/en/headless#turn-off-permission-prompts-in-unattended-runs) | `reason_code`, `reason_type` |
+| `"hook"` | A hook, such as [`PreToolUse`](/docs/en/hooks#pretooluse) or [`PermissionRequest`](/docs/en/hooks#permissionrequest) | `hook_event`, `reason_code` |
+| `"auto_mode_block"` | The auto mode [classifier](/docs/en/permission-modes.md#how-the-classifier-evaluates-actions) blocked the call | `classifier_category` |
+| `"auto_mode_no_verdict"` | No usable [classifier verdict](/docs/en/errors.md#auto-mode-cannot-determine-the-safety-of-an-action), such as after a failed request | `reason_code` |
+| `"safety_check"` | A built-in safety check, such as for Read, Edit, or Write outside your [working directories](/docs/en/permissions.md#working-directories) | `circuit_breaker` |
+| `"static_analysis"` | How a Bash or Monitor command is written, such as one too complex to analyze | `reason_code` |
+| `"sandbox_override"` | The prompt to [run a command outside the sandbox](/docs/en/sandboxing.md#the-unsandboxed-retry-escape-hatch) | `reason_code` |
+| `"user_rejected"` | Someone declined or dismissed a prompt that had [no category](#prompts-with-no-category) or that only a hook required, or a `canUseTool` callback or `--permission-prompt-tool` tool denied one | `decision_source` |
+| `"sandbox_network"` | The call ran and the [sandbox's network proxy](/docs/en/sandboxing.md#network-isolation) refused a connection or request | `sandbox_violation_count` |
+| `"sandbox_other"` | Like `"sandbox_network"`, but no refused target reads as a host name or IP address | `sandbox_violation_count` |
+| `"hook_review"` | A hook [blocked the call's result](/docs/en/hooks.md#posttooluse-decision-control) or [the end of a turn](/docs/en/hooks.md#stop-decision-control) | `hook_event` |
+| `"other"` | A refusal no other value describes | `reason_code` |
+
+To find proxy refusals under any `category`, filter for a `sandbox_violation_count` that is present and isn't `"0"`.
+
+##### Calls without a safety event
+
+To find calls refused because nobody could answer a [prompt with no category](#prompts-with-no-category), look for [`tool_decision`](#tool-decision-event) events reporting `"reject"` with `source` `"config"` and no safety event sharing their `tool_use_id`. Such refusals happen in a `-p` run with neither [`--permission-prompt-tool`](/docs/en/cli-reference#cli-flags) nor `--permission-prompts none`.
+
+Check calls such as these for a `tool_decision` event, since they have no safety event except [`"sandbox_network"`, `"sandbox_other"`, or `"hook_review"` events](#safety-event-categories) sent after they run:
+
+* A call approved at a prompt with no category
+* A call that a `canUseTool` callback or `--permission-prompt-tool` tool approved at a prompt only a `PreToolUse` hook required
+* An [`AskUserQuestion`](/docs/en/tools-reference#askuserquestion-tool-behavior) or `ExitPlanMode` call, declined or not
+
+##### Prompts with no category
+
+A prompt has no category when no [`category` value](#safety-event-categories) names its check, such as the `default` mode prompt for an edit inside your working directory.
 
 #### Permission mode changed event
 
@@ -1553,11 +1640,14 @@ When building detection rules, look up the signal you want to monitor and query 
 
 | Signal | Event | Key attributes |
 | - | - | - |
-| Tool call allowed or denied, and where the decision came from, such as a rule, a hook, or the user | [`tool_decision`](#tool-decision-event) | `decision`, `source`, `classifier_verdict`, `permission_mode`, `tool_name`; `tool_parameters` when you set `OTEL_LOG_TOOL_DETAILS=1` |
+| Tool call allowed or denied, and where the decision came from, such as configuration, a hook, or the user | [`tool_decision`](#tool-decision-event) | `decision`, `source`, `classifier_verdict`, `permission_mode`, `tool_name`; `tool_parameters` when you set `OTEL_LOG_TOOL_DETAILS=1` |
+| Which check refused a tool call or required a permission prompt for it | [`safety_event`](#safety-event) where `category` names the check, such as `"managed_policy"`, `"permission_rule"`, `"hook"`, or `"auto_mode_block"`. `decision` is `"reject"` for a call that didn't run. Some calls [have no safety event](#calls-without-a-safety-event) | `category`, `decision`, `reason_code`, `rule_source`, `tool_name`, `tool_use_id` |
 | Auto mode classifier allowed or blocked a tool call, or Claude Code denied the call without a classifier verdict | [`tool_decision`](#tool-decision-event) where `classifier_verdict` is present. For a denial without a verdict, `classifier_verdict` is `"no_verdict"` or `"unavailable"` | `classifier_verdict`, `permission_mode`, `tool_name`; `classifier_category` when you set `OTEL_LOG_TOOL_DETAILS=1` |
 | Permission mode escalation | `permission_mode_changed` | `from_mode`, `to_mode`, `trigger` |
 | Which permission mode each tool call was checked in, including calls subagents make | [`tool_decision`](#tool-decision-event) | `permission_mode`, `session.id` |
 | Policy hook blocked an action | `hook_execution_complete` | `hook_event`, `num_blocking` |
+| Which tool call a hook refused, and which result or turn end a hook blocked | [`safety_event`](#safety-event) where `category` is `"hook"` and `decision` is `"reject"` for a refused call, or `category` is `"hook_review"` for a blocked result or turn end | `category`, `decision`, `hook_event`; `tool_use_id` for a tool call |
+| Sandbox's network proxy refused a connection or request from a Bash or PowerShell command | [`safety_event`](#safety-event) where `sandbox_violation_count` is present and isn't `"0"` | `sandbox_violation_count`, `category`, `sandbox_enabled`, `tool_use_id` |
 | Login, logout, and authentication failure | `auth` | `action`, `success`, `error_category` |
 | MCP server connect or failure | `mcp_server_connection` | `status`, `server_name`, `is_plugin`, `error_code` |
 | Plugin installed and its source | `plugin_installed` | `plugin.name`, `marketplace.name`, `marketplace.is_official` |
