@@ -831,9 +831,20 @@ Find the environment's entry in the [environment selector](#start-a-session):
 * **Edit or delete**: hover over the entry and click the gear icon. To delete a local or SSH environment, click **Delete environment** in **Edit environment**.
 * **Archive cloud environments**: see [Archive an environment](https://code.claude.com/docs/en/cloud-environments.md#archive-an-environment).
 
-### Local sessions
+### Environment variables in local sessions
 
-The desktop app does not always inherit your full shell environment. On macOS, when you launch the app from the Dock or Finder, it reads your shell profile, such as `~/.zshrc` or `~/.bashrc`, to give Claude Code `PATH` and a fixed set of Claude Code variables, but not other variables you export there. On Windows, the app inherits user and system environment variables but does not read PowerShell profiles.
+To set an environment variable for a local session, [add it to a saved local environment](#set-environment-variables-for-local-sessions), then start a new session from that environment.
+
+Variables such as `PATH` and `CLAUDE_CONFIG_DIR` have their own instructions:
+
+| Variable | What to do instead |
+| :- | :- |
+| `PATH`, the folders your system searches for programs such as `npm` | See [Session not finding installed tools](#session-not-finding-installed-tools). On Windows, Desktop doesn't read PowerShell profiles, so set `PATH` in your user or system environment variables, then quit and reopen Desktop. |
+| A variable for an MCP server from [`claude_desktop_config.json`](#mcp-servers-from-the-claude-desktop-chat-app) | Quit Desktop, set it in that server's `env` block, then reopen Desktop |
+| [`CLAUDE_CONFIG_DIR`](https://code.claude.com/docs/en/env-vars#variables) or [`CLAUDE_CODE_TMPDIR`](https://code.claude.com/docs/en/env-vars#variables) | Set it in [one of the places you'd set a variable for dev servers](#set-environment-variables-for-dev-servers), then quit and reopen Desktop |
+| `API_TIMEOUT_MS`, `ANTHROPIC_BASE_URL`, or another variable Desktop sets itself | See [Environment variables Desktop sets itself](#environment-variables-desktop-sets-itself) |
+
+On macOS or Linux, if you already set your variable with `export` in `~/.zshrc` or `~/.bashrc`, see [Exported variable missing or wrong in commands Claude runs](#exported-variable-missing-or-wrong-in-commands-claude-runs).
 
 #### Set environment variables for local sessions
 
@@ -843,9 +854,10 @@ Add the variables to a saved local environment and start your sessions from it. 
 >
 > If your environment selector is above the prompt box, you have the [earlier layout](#check-which-layout-you-have), which has no saved local environments. Use the [local environment editor](#use-the-local-environment-editor) instead.
 
-**1. Open the environment's form**
+**1. Open a local environment's form**
 
-Open [**New environment**](#create-a-saved-environment) or [**Edit environment**](#use-edit-or-remove-a-saved-environment).
+* **To create a saved local environment**: select [**New environment**](#create-a-saved-environment) at the bottom of the environment selector's menu, then the **Local** tab
+* **To change one you already have**: in the environment selector, hover over a saved environment under **Local** and click the gear icon to open [**Edit environment**](#use-edit-or-remove-a-saved-environment)
 
 **2. Enter the variables**
 
@@ -878,6 +890,28 @@ To open the local environment editor, click the gear icon on the entry for your 
 
 Enter one `KEY=value` per line and select **Save changes**. Variables you save here are stored encrypted on your machine. Local sessions get them, except any variable that [Desktop sets itself](#environment-variables-desktop-sets-itself), such as `API_TIMEOUT_MS`. Restart Desktop to give your variables to dev servers.
 
+#### Exported variable missing or wrong in commands Claude runs
+
+If a command Claude runs on macOS or Linux doesn't get a variable you set with `export` in `~/.zshrc` or `~/.bashrc`, or gets the wrong value, try these in order:
+
+**1. Start a new session**
+
+Ask Claude to run the command again.
+
+**2. Quit and reopen Desktop**
+
+Then start a new session.
+
+**3. Check your saved variables**
+
+If a command gets the wrong value, check whether you also set the variable in a [saved environment](#use-edit-or-remove-a-saved-environment) or the [local environment editor](#use-the-local-environment-editor). If so, change the value there and start a new session.
+
+**4. Use a saved environment**
+
+Add the variable to a [saved local environment](#set-environment-variables-for-local-sessions), then start a new session from that environment. For a variable such as `PATH` or `CLAUDE_CONFIG_DIR`, follow [its own instructions](#environment-variables-in-local-sessions) instead.
+
+Before v2.1.304, Claude Code doesn't pass exported variables to commands, so [check which version the session runs](#claude-code-version-in-the-code-tab).
+
 #### Environment variables Desktop sets itself
 
 If you set `API_TIMEOUT_MS` or `ANTHROPIC_BASE_URL` and nothing changed in your local sessions, it's because Desktop sets those [variables](https://code.claude.com/docs/en/env-vars.md#variables), among others, itself. A local session gets Desktop's value whether you set yours in your shell profile, your Windows user or system variables, the local environment editor, or a saved environment. Moving yours to a settings file doesn't help, because Claude Code [ignores that value](https://code.claude.com/docs/en/settings-reference.md#how-env-values-interact-with-your-shell) in a local session.
@@ -895,7 +929,7 @@ On Opus 5, also select effort `high` or lower before you start the session. In t
 
 On models with [adaptive reasoning](https://code.claude.com/docs/en/model-config.md#adjust-effort-level), Claude Code ignores the number itself in a positive `MAX_THINKING_TOKENS` value because adaptive reasoning controls thinking depth instead. On Opus 4.6 and Sonnet 4.6, set `CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING` to `1` to use a fixed thinking budget; Fable models, Sonnet 5 and later, Haiku 5.5, and Opus 4.7 and later always use adaptive reasoning and have no fixed-budget mode.
 
-#### Local sessions on managed devices
+### Local sessions on managed devices
 
 If the entry for your computer is grayed out in the environment selector, with the tooltip **Disabled by your organization**, your administrator has [turned off local sessions](#managed-settings). On Windows the [WSL](https://code.claude.com/docs/en/desktop-wsl.md) entry, whose availability on managed devices is [governed separately](https://code.claude.com/docs/en/admin-setup.md#wsl-sessions-in-claude-code-desktop), is grayed out the same way.
 
@@ -1488,6 +1522,156 @@ If the link opens Desktop without a dialog about the connection, look for one of
 * **Desktop is older than v2.110.0**: earlier versions ignore the SSH parameters and open the new-session page with only the prompt.
 * **SSH sessions are turned off**: if your administrator sets the allowlist to an empty array, Desktop refuses SSH links.
 
+#### Create an SSH connection from a command
+
+If a command-line tool makes your remote machines on demand, add its command to `sshHostCommands` in [`~/.claude/settings.json`](https://code.claude.com/docs/en/settings#settings-files). The environment selector then lists an item named after your entry, such as **Create Dev box**. When you select it, Desktop runs the command on your computer, saves the host that the command prints as an SSH connection, and connects.
+
+> [!NOTE]
+>
+> Connections from a command require Claude Desktop v3.6556.0 or later on macOS or Linux, signed in with a Claude account. Administrators can [distribute commands to a team](#distribute-commands-to-your-team).
+
+Each entry is one connection, with one host at a time. Desktop runs the command only when you create the connection or [replace its host](#replace-the-host), not each time you connect. To keep two machines at once, add a second entry.
+
+> [!WARNING]
+>
+> Desktop doesn't stop or delete machines. Each of these keeps running, and can keep costing money, until you delete it with your tool:
+>
+> * A host that you replaced
+> * The host of an entry that you removed from the file, or whose `id` you changed
+> * A machine that your command made without Desktop saving its host, for example in these cases:
+>   * The command fails or runs out of time
+>   * Desktop can't use the printed host, another connection already uses it, or your organization doesn't allow it
+>   * While the command runs, you cancel it, remove its entry, change its `command` or `id`, or quit Desktop
+
+The following example adds a connection named Dev box. If the file doesn't exist, create it. If it already holds settings, add the key beside them. The command `acme-dev create` stands for your own tool, and `~/project` is the folder that Desktop selects on each machine your command makes:
+
+```json ~/.claude/settings.json theme={null}
+{
+  "sshHostCommands": [
+    {
+      "id": "devbox",
+      "name": "Dev box",
+      "command": "acme-dev create",
+      "startDirectory": "~/project"
+    }
+  ]
+}
+```
+
+Each entry takes these fields, and `id`, `name`, and `command` are required:
+
+| Field | Value |
+| :- | :- |
+| `id` | Up to 64 ASCII letters, digits, `.`, `_`, and `-`, starting with a letter or digit. Use an `id` that no other entry in `sshHostCommands` or [`sshConfigs`](#pre-configure-ssh-connections-for-your-team) has. Desktop keeps the connection's host under it, so if you change it, the connection starts over with no host and the old machine keeps running. |
+| `name` | The connection's name in the environment selector, up to 200 characters on one line |
+| `command` | A program and its arguments, as [Write the command](#write-the-command) describes |
+| `sshIdentityFile` | Path to your private key, such as `~/.ssh/id_ed25519`. Leave it out to use your SSH configuration or SSH agent. |
+| `startDirectory` | The default folder on the remote machine. Start it with `/` or `~/`, or use `~`. |
+
+To change or remove the connection, edit its entry in the file, because the app's SSH connection dialog doesn't open for it. You don't need to restart Desktop after you edit the file. If the entry doesn't show up or you can't select it, see [If a command is missing or gray](#if-a-command-is-missing-or-gray).
+
+##### Write the command
+
+Desktop starts the program directly, with no shell and no terminal:
+
+* **Program**: write its name, or its full path from `/`, without spaces. Desktop looks for a bare name on the `PATH` that your login shell exports. Relative paths such as `./acme-dev`, paths that start with `~`, and shell aliases and functions don't work.
+* **Arguments**: separate plain arguments with spaces. The command can hold only spaces, ASCII letters, digits, and the characters `+,-./:=@_~`, and no word can start with `~`.
+* **Scripts**: if the command needs anything else, such as quotes, pipes, variables, or a URL with `?` or `&`, put it in a script. Make the script executable, start it with a `#!` line, and set `command` to its full path, such as `/Users/you/bin/make-devbox`. On macOS, keep the script out of the Documents, Desktop, and Downloads folders, where macOS can block it.
+* **Input**: the program gets no input and no terminal, so it can't prompt you there. If your tool signs you in through a browser or a prompt, sign in from a terminal first, and again whenever that sign-in lapses.
+* **Environment**: the program runs in your home directory with the variables that your login shell exports. Desktop reads them when it starts, as it does for [a `ProxyCommand`](#use-variables-from-your-shell-in-a-proxycommand), so quit and reopen Desktop after you change them.
+* **Time limit**: Desktop stops a program that is still running after 10 minutes. Desktop's progress message doesn't show the program's output. To stop the program sooner, select **Cancel** next to that message.
+
+The program has to exit with code 0 and print only the host on standard output, in one of two forms:
+
+* **One line**: `host` or `user@host`, written as for `ssh_host` in [an SSH link](#open-an-ssh-session-from-a-link). To name a port, use the JSON form.
+* **One JSON object**: `sshHost`, and optionally a numeric `sshPort` and a `startDirectory` that replaces the entry's, such as `{"sshHost": "dev@devbox-1234.example.com", "sshPort": 2222}`
+
+To see the output that Desktop reads, run the command in a terminal with no input and with standard output in a file:
+
+```bash theme={null}
+acme-dev create < /dev/null > host.txt
+```
+
+The file has to hold only the host. When you run this test, your tool makes a machine too, so delete it with your tool afterward.
+
+If your tool prints other lines before the host, such as progress messages, wrap it in a script that prints only the host. The following script prints the last line of your tool's output. If your tool fails, the script exits with the same code, so that Desktop reports the failure:
+
+```bash theme={null}
+#!/bin/bash
+out=$(mktemp) || exit
+trap 'rm -f "$out"' EXIT
+acme-dev create > "$out" || exit
+tail -n 1 "$out"
+```
+
+If the command fails, **View details** in Desktop's message shows the last line that the command wrote to standard error, if any.
+
+##### Connect to a new host
+
+Answer two questions the first time you connect to each new host:
+
+* **Host key**: with OpenSSH's default host key checking, check the key's fingerprint, then choose whether to connect. To skip the question, have your command add the key to `~/.ssh/known_hosts` before it prints the host, using a key that your tool learned when it made the machine. For a port other than 22, that line starts with `[host]:port`. If your tool reuses host names, remove the old key's line too.
+* **Folder**: choose whether you trust the folder that you open there
+
+Keep host key checking on for these hosts, and keep a `known_hosts` file for them. If `StrictHostKeyChecking` is `no` or `accept-new` and `UserKnownHostsFile` is also `/dev/null` or `none`, nothing records the key. When your tool then reuses a name, you can connect to a different machine without a warning.
+
+##### Replace the host
+
+Once Dev box has a host, the selector lists Dev box among your SSH connections, and **Create Dev box** becomes **Replace Dev box's host**. If that item isn't in the list, look under **More**.
+
+Select it when the machine is gone or you want a fresh one. On the new-session page, the message that says Desktop can't reach the host offers it too. Desktop runs the command again, and new sessions use the new host.
+
+* **A new host**: the item is gray for 10 minutes after Desktop saves a host, because a new machine can take a while to start. While a new host doesn't answer, the new-session page keeps trying to connect for those 10 minutes.
+* **Sessions on the old host**: they stay on it, and Desktop doesn't connect to that host unless you add it back. To continue one, open the session and select **Add SSH connection**. Desktop fills in the old host. Save it as a connection of its own.
+
+##### Distribute commands to your team
+
+To give your team a connection, set `sshHostCommands` in Claude Code's [managed settings](https://code.claude.com/docs/en/managed-settings.md) file or MDM policy on each computer, not in the desktop app's own [device management policy](#device-management-policies). Users see your entries alongside their own, and the app offers no way to edit or remove an entry, theirs or yours.
+
+The following managed settings file gives users a connection named Dev box and turns off their own entries, along with Claude Code hooks from user, project, and local settings:
+
+```json managed-settings.json theme={null}
+{
+  "sshHostCommands": [
+    {
+      "id": "acme-devbox",
+      "name": "Dev box",
+      "command": "/usr/local/bin/acme-dev create"
+    }
+  ],
+  "strictPluginOnlyCustomization": ["hooks"]
+}
+```
+
+Before you deploy the key, settle each of these:
+
+* **Where to put the key**: if your MDM policy for Claude Code already sets a [policy key](https://code.claude.com/docs/en/managed-settings.md#how-claude-code-combines-managed-sources), put it there. Otherwise, put it in the managed settings file. By default, such a policy outranks the file, and Desktop then ignores entries in the file. Set it on the computer even where [server-managed settings](https://code.claude.com/docs/en/server-managed-settings.md) apply: Desktop ignores the key there, and in project and local settings.
+* **The `id`**: if a user's `sshHostCommands` entry has your `id`, only yours works. If any other SSH connection has it, such as one in a user's `sshConfigs`, your entry is gray. Pick an `id` that users are unlikely to choose.
+* **The program**: give its full path, because Desktop looks up a bare name on each user's own `PATH`. The program runs as the user, with the variables that their login shell exports.
+* **Users' own entries**: Desktop treats a user's entry like a [hook](https://code.claude.com/docs/en/hooks.md), because both run a program on the computer. To allow only your entries, set [`strictPluginOnlyCustomization`](https://code.claude.com/docs/en/settings-reference#strictpluginonlycustomization) to `["hooks"]`, or add `"hooks"` to its list. You also stop Claude Code hooks from user, project, and local settings, with no way to keep them. If you set that key or [`allowManagedHooksOnly`](https://code.claude.com/docs/en/settings-reference#allowmanagedhooksonly) to `true` instead, you block more, as each key's entry lists.
+* **Every entry**: to turn off your entries too, set [`disableAllHooks`](https://code.claude.com/docs/en/settings-reference#disableallhooks) in managed settings. If you set [`disableDesktopLocalSessions`](https://code.claude.com/docs/en/settings-reference#disabledesktoplocalsessions), or an `sshHostAllowlist` that allows no host, the selector lists no **Create** or **Replace** items.
+* **Where the locks count**: for these entries, Desktop reads `allowManagedHooksOnly`, `strictPluginOnlyCustomization`, and `disableAllHooks` from server-managed settings and from the computer's own file or policy, and applies the stricter result. Every entry stays gray until Desktop has checked claude.ai for server-managed settings, even if your organization has none.
+* **Allowed hosts**: if you set [`sshHostAllowlist`](#restrict-which-ssh-hosts-users-can-connect-to), make sure that a pattern matches each hostname that your tool prints, and leave `user@` out of the pattern. Desktop checks the printed name only after the command has run, so a machine that the list refuses already exists, and the user has to delete it with your tool. At each connection, the resolved `HostName` has to match too.
+
+After you deploy the key, restart Desktop on a test computer. In the Code tab's environment selector, look under **SSH**, or in the single **SSH** row. Your entry shows as a **Create** item, or as a gray item that gives the reason when you hover over it. If it's missing, check where you put the key, then the cases in [If a command is missing or gray](#if-a-command-is-missing-or-gray).
+
+##### If a command is missing or gray
+
+The environment selector lists no **Create** or **Replace** item in these cases:
+
+* **The file**: `~/.claude/settings.json` has [invalid JSON or a value that the schema rejects](https://code.claude.com/docs/en/settings.md#fix-a-broken-settings-file), you misspelled the key, or you put it in a project's settings. Fix the file.
+* **Platform and account**: you use Windows, or a [third-party provider](https://code.claude.com/docs/en/third-party-integrations.md) instead of a Claude account. Add each host as an [SSH connection](#ssh-sessions) yourself.
+* **Your organization's settings**: your administrator turned off local sessions, or turned off SSH sessions. Ask them whether you can use commands.
+* **No `ssh` program**: Desktop couldn't start the OpenSSH client on your computer. Install it, or ask your administrator to allow it, then restart Desktop.
+
+An entry that you can't select is gray. Hover over it to see the reason:
+
+* **A mistake in the entry**: fix the field or the command that the message names. If the `id` is in use, give the entry another one.
+* **A broken settings file**: while your own settings file is broken, your administrator's entries may be gray, with a message that names the file. [Fix the file](https://code.claude.com/docs/en/settings.md#fix-a-broken-settings-file).
+* **A new host**: you can [replace a host](#replace-the-host) once it's 10 minutes old.
+* **Hooks are off or restricted**: your own entries work only where your own hooks can run. Remove `disableAllHooks` from your settings, or ask your administrator.
+* **Settings are still loading**: every entry is gray until Desktop has loaded your organization's [server-managed settings](https://code.claude.com/docs/en/server-managed-settings.md), usually a few seconds after launch. If the entries stay gray, check your connection to claude.ai.
+
 #### Pre-configure SSH connections for your team
 
 Administrators can distribute SSH connections to team members by setting `sshConfigs` in [managed settings](https://code.claude.com/docs/en/managed-settings.md).
@@ -1646,7 +1830,7 @@ In Enterprise organizations that have HIPAA enabled, the **Desktop** toggle is o
 
 ### Managed settings
 
-Managed settings override project and user settings and apply to Claude Code sessions in Desktop. You can set these keys in your organization's [managed settings](https://code.claude.com/docs/en/managed-settings.md) file or push them remotely through the admin console.
+Managed settings override project and user settings and apply to Claude Code sessions in Desktop. You can set these keys in your organization's [managed settings](https://code.claude.com/docs/en/managed-settings.md) file or push them remotely through the admin console, unless a key's row says otherwise.
 
 | Key | Description |
 | - | - |
@@ -1657,6 +1841,7 @@ Managed settings override project and user settings and apply to Claude Code ses
 | `disableMobileSimulatorTools` | set to `true` to block Claude's tools for controlling and capturing devices in the [iOS Simulator pane](https://code.claude.com/docs/en/desktop-ios-simulator.md#turn-off-simulator-access). The pane stays usable for the user's own taps; only Claude's access is removed. The value must be the JSON boolean `true`; the string `"true"` is ignored. |
 | `disableBrowserExternalNavigation` | set to `true` to turn off external browsing in the [Browser pane](#browse-external-sites) entirely. Neither users nor Claude can navigate to external sites, and localhost dev server previews are unaffected. The value must be the JSON boolean `true`; the string `"true"` is ignored. |
 | `sshConfigs` | pre-configure [SSH connections](#pre-configure-ssh-connections-for-your-team) that appear in the environment selector. Users can't delete managed connections or edit anything but their own **Worktree folder**. |
+| `sshHostCommands` | give users [SSH connections whose host comes from a command](#distribute-commands-to-your-team), alongside their own. Desktop reads it from the managed settings file or MDM policy on the computer, and ignores it in [server-managed settings](https://code.claude.com/docs/en/server-managed-settings.md). Requires Claude Desktop v3.6556.0 or later on macOS or Linux, signed in with a Claude account. |
 | `sshHostAllowlist` | restrict [SSH sessions](#restrict-which-ssh-hosts-users-can-connect-to) to hosts whose resolved hostname matches one of these patterns. Read from managed settings only. |
 | `disableDesktopLocalSessions` | set to `true` to turn off [Code sessions that run on the device](#local-sessions-on-managed-devices), leaving SSH sessions to other hosts and cloud sessions available. The value must be the JSON boolean `true`. Read from managed settings only. Requires Claude Desktop v1.37937.0 or later. |
 | `disableSshSavedPasswords` | set to `true` to stop Desktop from offering to remember SSH passwords and from using or showing the ones it saved earlier. Turning it on doesn't delete them. Read from managed settings only. Requires Claude Desktop v1.49585.0 or later. |
