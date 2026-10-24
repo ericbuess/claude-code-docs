@@ -605,8 +605,10 @@ Events additionally include the following attributes. These are never attached t
 
 * `prompt.id`: UUID correlating a user prompt with all subsequent events until the next prompt. See [Event correlation attributes](#event-correlation-attributes).
 * `workspace.host_paths`: host workspace directories selected in the desktop app, as a string array
-* `workflow.run_id`: run identifier, prefixed `wf_`, on the API and tool events emitted by agents that belong to a [Workflow](https://code.claude.com/docs/en/workflows.md) tool run. Filtering events by one `workflow.run_id` reconstructs that run's API requests and tool results. The identifier covers the agents the workflow script spawns and any agents those spawn in turn, such as skill invocations. It matches the run identifier reported in the Workflow tool result. Absent on all other events.
+* `workflow.run_id`: run identifier, prefixed `wf_`, on the API and tool events emitted by agents that belong to a [Workflow](https://code.claude.com/docs/en/workflows.md) tool run. Filtering events by one `workflow.run_id` reconstructs that run's API requests and tool results. The identifier covers the agents the workflow script spawns and any agents those spawn in turn, such as skill invocations. It matches the run identifier reported in the Workflow tool result.
 * `workflow.name`: name of the workflow, its script's `meta.name`, emitted alongside `workflow.run_id`. Built-in workflow names appear verbatim when the run executes the unmodified built-in script. User-authored names, including edited copies of built-in scripts, are replaced with `custom` unless `OTEL_LOG_TOOL_DETAILS=1` is set.
+* `agent_id`: identifier of the [subagent](https://code.claude.com/docs/en/sub-agents.md) that raised the event, such as `a3f2c1b4d5e6f7a80`. Events that carry it include a subagent's API and tool events, its [`assistant_response`](#assistant-response-event) events, and [`subagent_completed`](#subagent-completed-event) for the finished subagent. Absent on main-session and [in-process teammate](https://code.claude.com/docs/en/agent-teams.md#choose-a-display-mode) events. The subagent's [span `agent_id`](#span-attributes) is the same value, or adds a label after the leading `a` as in `acompact-3f2c1b4d5e6f7a80`. Requires Claude Code v2.1.310 or later
+* `parent_agent_id`: the `agent_id` of the agent that spawned or last resumed the subagent that raised the event. Absent when that agent is the main session. Requires Claude Code v2.1.310 or later
 
 #### Repository attributes
 
@@ -755,7 +757,7 @@ When a user submits a prompt, Claude Code may make multiple API calls and run se
 | `prompt.id` | UUID v4 identifier linking all events produced while processing a single user prompt |
 | `event.sequence` | 0-based counter for ordering events, counted per Claude Code process rather than per session |
 | `message.uuid` | UUID of the message as persisted in the session transcript, the `~/.claude/projects/*/*.jsonl` files. Present on `assistant_response`, on `api_response_body`, and on `user_prompt` except for command dispatches, which can produce zero or many messages. On `assistant_response` and `api_response_body`, this is the response's final transcript entry, which the next turn's `parentUuid` chains from. Requires Claude Code v2.1.274 or later on `api_response_body` |
-| `request_id` | Server-assigned ID of the API request, read from the `request-id` response header, such as `req_011...`. On a response with no `request-id` header, as on [Amazon Bedrock](https://code.claude.com/docs/en/amazon-bedrock.md), the value comes from the `x-amzn-requestid` header instead. Present on `api_request`, `api_error`, `api_refusal`, `assistant_response`, and `api_response_body` when the response carries either header. Matches the same attribute on the `llm_request` trace span. The `x-amzn-requestid` source requires Claude Code v2.1.282 or later |
+| `request_id` | Server-assigned ID of the API request, read from the `request-id` response header, such as `req_011...`. On a response with no `request-id` header, as on [Amazon Bedrock](https://code.claude.com/docs/en/amazon-bedrock.md), the value comes from the `x-amzn-requestid` header instead. Present on `api_request`, `api_error`, `api_refusal`, `assistant_response`, `api_response_body`, [`tool_result`](#tool-result-event), and [`tool_decision`](#tool-decision-event) when the response carries either header. Matches the same attribute on the `llm_request` trace span. The `x-amzn-requestid` source requires Claude Code v2.1.282 or later |
 | `client_request_id` | Client-generated UUID sent as the `x-client-request-id` request header. Present on `api_request` and `api_error` on first-party API connections; absent on third-party provider backends and when the request was retried through the non-streaming fallback. Pairs a request with its response and remains available for failures such as timeouts that never produced a server `request_id`. Matches the same attribute on the `llm_request` trace span |
 
 To trace all activity triggered by a single prompt, filter your events by a specific `prompt.id` value. This returns the user\_prompt event, any api\_request events, and any tool\_result events that occurred while processing that prompt.
@@ -820,6 +822,7 @@ Logged when a tool completes execution. Not emitted if the tool call was rejecte
 * `event.sequence`: per-process counter for ordering events, described under [Event correlation attributes](#event-correlation-attributes)
 * `tool_name`: Name of the tool
 * `tool_use_id`: Unique identifier for this tool invocation. Matches the `tool_use_id` passed to hooks, allowing correlation between OTel events and hook-captured data.
+* `request_id`: the [`request_id`](#event-correlation-attributes) of the API response that contained this tool call, so you can join the call to that response's API events. Absent when that response had no request ID, or when no API response contained the call. Requires Claude Code v2.1.310 or later
 * `success`: `"true"` or `"false"`
 * `duration_ms`: Execution time in milliseconds
 * `error_type`: Error category string when the tool failed, such as `"Error:ENOENT"` or `"ShellError"`
@@ -972,6 +975,7 @@ Logged when a tool permission decision is made (accept/reject).
 * `event.sequence`: per-process counter for ordering events, described under [Event correlation attributes](#event-correlation-attributes)
 * `tool_name`: Name of the tool (for example, "Read", "Edit", "Write", "NotebookEdit")
 * `tool_use_id`: Unique identifier for this tool invocation. Matches the `tool_use_id` passed to hooks, allowing correlation between OTel events and hook-captured data.
+* `request_id`: the [`request_id`](#event-correlation-attributes) of the API response that contained this tool call, so you can join the call to that response's API events. Absent when that response had no request ID, or when no API response contained the call. Requires Claude Code v2.1.310 or later
 * `decision`: Either `"accept"` or `"reject"`
 * `tool_source`: Always present. The tool's provenance, as a closed set of CLI-authored values:
   * `"builtin"`: the CLI's own tools
@@ -1024,7 +1028,16 @@ Logged when a tool permission decision is made (accept/reject).
   * For Skill tool: includes `skill_name`
   * For Agent tool or legacy Task tool: includes `subagent_type`
 
-If you lower the OpenTelemetry SDK's `OTEL_LOGRECORD_ATTRIBUTE_COUNT_LIMIT` below the number of attributes on a `tool_decision` event, the SDK drops the attributes that Claude Code set last. The SDK drops `permission_mode` first, `classifier_category` second, and `classifier_verdict` third, and drops the event's other attributes only after those three. This ordering requires Claude Code v2.1.302 or later.
+If you lower the OpenTelemetry SDK's `OTEL_LOGRECORD_ATTRIBUTE_COUNT_LIMIT` below the number of attributes on a `tool_decision` event, the SDK drops the attributes that Claude Code set last. The SDK drops these before any other attribute, in this order, skipping any the event doesn't carry:
+
+1. `parent_agent_id`
+2. `agent_id`
+3. `request_id`
+4. `permission_mode`
+5. `classifier_category`
+6. `classifier_verdict`
+
+`permission_mode`, `classifier_category`, and `classifier_verdict` drop in this order on Claude Code v2.1.302 or later. `parent_agent_id`, `agent_id`, and `request_id` require v2.1.310 or later.
 
 #### Safety event
 

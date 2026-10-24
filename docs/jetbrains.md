@@ -61,7 +61,7 @@ claude
 /ide
 ```
 
-When the connection succeeds, Claude Code confirms with a message like `Connected to IntelliJ IDEA.` If Claude Code detects a running IDE that doesn't have the plugin, `/ide` installs the plugin for you and asks you to restart the IDE.
+When the connection succeeds, Claude Code confirms with a message like `Connected to IntelliJ IDEA.`
 
 If you want Claude to have access to the same files as your IDE, start Claude Code from the same directory as your IDE project root.
 

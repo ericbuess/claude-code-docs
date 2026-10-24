@@ -317,6 +317,7 @@ Match the message you see to a section below.
 | `Skipping connection (recent failure cached; retries automatically in 15 min, or edit the plugin config to retry now)` | [Plugin errors](#skipping-connection-recent-failure-cached) |
 | `Error: No such tool available: <tool name>` | [Tool errors](#no-such-tool-available) |
 | `MCP server "<name>" connection closed before the tool call was answered` | [Tool errors](#connection-closed-before-the-tool-call-was-answered) |
+| `MCP server "<name>" tool "<tool>" timed out after <N>s. The server asked the user a question, and no answer came before the time limit.` | [Tool errors](#mcp-tool-call-timed-out-with-the-servers-question-unanswered) |
 | `would be spawned with zero tools — refusing` | [Tool errors](#agent-would-be-spawned-with-zero-tools) |
 | `File is covered by a Read deny rule in your permission settings` | [Tool errors](#file-is-covered-by-a-read-deny-rule) |
 | `cannot contain null bytes (\0)` | [Tool errors](#path-cannot-contain-null-bytes) |
@@ -4418,6 +4419,23 @@ Repeating the call could repeat the tool's action, such as creating a second iss
 * If the action happened, don't run the tool again. Claude received this message in place of the tool's result, so tell Claude the outcome.
 * If the action didn't happen, ask Claude to run the tool again. You don't need to reconnect the server first, because Claude Code connects to it again for the next call to one of its tools. If that connection fails too, see [Mid-session drops of a remote server](https://code.claude.com/docs/en/mcp.md#mid-session-drops-of-a-remote-server).
 * If you build the server and the tool is safe to call twice, [mark it as safe to repeat](https://code.claude.com/docs/en/mcp.md#tool-calls-pending-when-a-connection-closes) so that Claude Code can repeat a lost call
+
+### MCP tool call timed out with the server's question unanswered
+
+In [non-interactive mode](https://code.claude.com/docs/en/headless.md), an [MCP server](https://code.claude.com/docs/en/mcp.md) asked for input through [elicitation](https://code.claude.com/docs/en/mcp.md#respond-to-mcp-elicitation-requests) during a tool call, and the call's time limit ran out before an answer came:
+
+```text theme={null}
+MCP server "<name>" tool "<tool>" timed out after <N>s. The server asked the user a question, and no answer came before the time limit. Do not call this tool again in this turn. Tell the user that the server's question got no answer, and wait for their reply.
+```
+
+Before v2.1.310, the result ended at `timed out after <N>s` and said nothing about the question.
+
+**What to do:**
+
+* Set up an [`Elicitation` hook](https://code.claude.com/docs/en/hooks#elicitation) that answers the server's requests
+* In a TypeScript Agent SDK application, make your [`onElicitation`](https://code.claude.com/docs/en/agent-sdk/typescript#options) callback return its answer before the limit runs out
+* To give an answer more time, set a longer [`timeout`](https://code.claude.com/docs/en/mcp#time-limits-on-mcp-tool-calls) in milliseconds in the server's configuration entry, such as `"timeout": 600000` for 10 minutes
+* Run the task in an interactive session instead and answer the server's [dialog](https://code.claude.com/docs/en/mcp.md#respond-to-mcp-elicitation-requests) yourself
 
 ### Agent would be spawned with zero tools
 
