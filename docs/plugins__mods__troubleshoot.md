@@ -106,7 +106,7 @@ Rewrite the code so its scopes nest less deeply.
 
 Code in the hooks module is nested too deeply, or its chain of imports is too long, for Claude Code to load it. The line starts with the mod's name and `hooks module did not load:`, then gives a file's name and this reason.
 
-Look through that file and the files reached through its imports for the most deeply nested part and rewrite it to nest less, or shorten the chain of imports. If you installed the mod and didn't write it, ask its author to.
+In that file and the files its imports reach, find the most deeply nested code and rewrite it to nest less, or shorten the chain of imports. If you didn't write the mod, ask its author to fix it.
 
 ### `the parser stopped` or `the engine ran out of stack loading the file`
 

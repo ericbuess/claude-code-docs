@@ -537,7 +537,7 @@ Inside the directories that sandboxed commands can write to, the sandbox still d
 
 * **In your working directory and the directories above it**: the `.claude` settings files, the `.claude/skills`, `.claude/agents`, `.claude/commands`, and `.claude/hooks` directories, `.mcp.json`, and the files Claude Code runs on its own, such as `.claude/workflows` and `.claude/scheduled_tasks.json`
 * **In your working directory only**: shell startup files such as `.bashrc` and `.zshrc`, `.gitconfig`, the `.vscode` and `.idea` directories, and `hooks` and `config` inside `.git`
-* **Files that would turn your working directory into a bare git repository**: `HEAD`, `objects`, and `refs` at the top level, plus existing `config` and `hooks` entries there when a `HEAD` sits beside them. A file named `config` is denied even with no `HEAD`. On Linux and WSL2, the sandbox deletes a top-level `HEAD` file or `objects` or `refs` directory that appears while a sandboxed command is running
+* **Files that would turn your working directory into a bare git repository**: `HEAD`, `objects`, and `refs` at the top level, plus existing `config` and `hooks` entries there when a `HEAD` file or symlink sits beside them. A file named `config` is denied even with no `HEAD`. [A `HEAD`, `objects`, or `refs` that appears later can be deleted](#when-the-sandbox-deletes-head-objects-or-refs). On Linux and WSL2, a sandboxed command can create one where none exists.
 * **In `~/.claude`, or the directory `CLAUDE_CONFIG_DIR` points to**: most of its contents, plus `~/.claude.json` and the `.credentials.json` credential store
 
 If a symlink appears at a protected settings file's path during the session, the sandbox also denies writes to the file it points to, starting with the next command.
@@ -551,6 +551,12 @@ If you add an `allowWrite` entry or an `Edit` allow rule that covers one of thes
 To see most of these paths resolved for your machine, run `/sandbox` and open the **Config** tab, which lists them under **Denied within allowed**, mixed in with your own `denyWrite` entries.
 
 If `git merge` or `git checkout` fails with `unable to unlink old` on one of these paths, see [A git command fails with `unable to unlink old`](#a-git-command-fails-with-unable-to-unlink-old).
+
+#### When the sandbox deletes `HEAD`, `objects`, or `refs`
+
+After a sandboxed command ends, a newer top-level `HEAD`, `objects`, or `refs` entry in your working directory is deleted unless it's a folder with contents. Newer means the entry wasn't there when the sandbox last built its configuration: at session start, or after a change such as [`/cd`](https://code.claude.com/docs/en/commands).
+
+A newer `objects` or `refs` folder with contents is deleted too, with its contents, when a `HEAD` file or symlink was there the last time the sandbox built its configuration. To keep a folder, see [A folder named `objects` or `refs` disappears after a command](#a-folder-named-objects-or-refs-disappears-after-a-command).
 
 #### Denied paths that pass through a symlink
 
@@ -880,6 +886,12 @@ When Claude pipes text to one of these tools, adding the tool to [`excludedComma
 * Outside the directories the sandbox lets commands write to at all
 
 After the failure, Claude may [offer to rerun the command outside the sandbox](#the-unsandboxed-retry-escape-hatch). Approve that retry, or run the git command yourself in another terminal. If you've set `allowUnsandboxedCommands` to `false`, Claude can't offer the retry, so run the command yourself.
+
+### A folder named `objects` or `refs` disappears after a command
+
+A top-level `objects` or `refs` folder that appeared during the session can be [deleted after a sandboxed command ends](#when-the-sandbox-deletes-head-objects-or-refs). It doesn't matter whether a command, Claude, or you created it. To keep a folder, leave something in it. If a `HEAD` file or symlink has been at the top level during the session, move it away, then restart every Claude Code session open there.
+
+Before v2.1.307, the folder was deleted even with something in it and no `HEAD`. On an earlier version, [update Claude Code](https://code.claude.com/docs/en/setup.md#update-claude-code).
 
 ### Bubblewrap fails to start inside a container
 

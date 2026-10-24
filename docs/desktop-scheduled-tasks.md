@@ -15,6 +15,10 @@ The Desktop app's **Scheduled tasks** page lists both local scheduled tasks and 
 
 This page covers local scheduled tasks; for cloud scheduled tasks and their trigger options, see [Automate work with scheduled tasks](https://code.claude.com/docs/en/routines.md).
 
+> [!NOTE]
+>
+> If your app shows the feature under its [earlier name](https://code.claude.com/docs/en/routines.md#where-the-name-routines-still-appears), click **Routines** wherever this page says **Scheduled** and **New routine** where it says **New task**.
+
 ## Compare scheduling options
 
 Claude Code offers three ways to schedule recurring or one-off work:
@@ -45,11 +49,15 @@ Local scheduled tasks require Claude Desktop 1.1.5368 or later.
 
 **1. Open the Scheduled tasks page**
 
-In the [**Code** tab](https://code.claude.com/docs/en/desktop.md), click **Scheduled** in the sidebar or in the sidebar's **More** menu.
+In the [**Code** tab](https://code.claude.com/docs/en/desktop.md), click **Scheduled** in the sidebar or in the sidebar's **More** menu. If the sidebar shows **Routines** instead of **Scheduled**, click **Routines**, then click **New routine**, and continue with [Full-page form](#full-page-form).
 
 **2. Start a new task**
 
-Click **New task**. If a menu opens with **Create with Claude** and **Set up manually**, select **Set up manually**. The **New scheduled task** dialog opens. If **Only on this computer** is at the top of the dialog, go to [Dialog with Only on this computer at the top](#dialog-with-only-on-this-computer-at-the-top) before you enter anything.
+Click **New task** to open the **New scheduled task** dialog. Check for these screens before you continue:
+
+* If a menu opens with **Create with Claude** and **Set up manually**, select **Set up manually** to open the dialog.
+* If **Only on this computer** is at the top of the dialog, go to [Dialog with Only on this computer at the top](#dialog-with-only-on-this-computer-at-the-top) before you enter anything.
+* If a menu with **Local** and **Cloud** opens, or a full page opens in place of the dialog, go to [Full-page form](#full-page-form).
 
 **3. Name the task**
 
@@ -99,9 +107,20 @@ Then fill in the local form's fields:
 
 Click **Create**. The task's detail page opens.
 
+### Full-page form
+
+If a menu with **Local** and **Cloud** opens, select **Local**. A page titled **New local routine** or **New local scheduled task** opens. Fill in its fields:
+
+* **Name**: enter a name that is unique across your tasks.
+* **Description**: enter one.
+* **Instructions**: enter what Claude should do when the task runs. In the same box, select the permission mode, the model, and the folder the task runs in.
+* **Schedule**: select one of the [schedule options](#schedule-options).
+
+If **Create** is unavailable, hover over it to see what the form still needs. Click **Create**, and the task's detail page opens.
+
 ## Schedule options
 
-When you turn on **Only on this computer** under **Advanced settings**, the **Trigger** card offers Hourly, Daily, Weekdays, and Weekly. To get **Manual** or **Custom** for such a task, open its [**Edit** form](#manage-scheduled-tasks) after you create it. That form and the [dialog with **Only on this computer** at the top](#dialog-with-only-on-this-computer-at-the-top) offer these six options:
+When you turn on **Only on this computer** under **Advanced settings**, the **Trigger** card offers Hourly, Daily, Weekdays, and Weekly. To get **Manual** or **Custom** for such a task, open its [**Edit** form](#manage-scheduled-tasks) after you create it. That form, the [dialog with **Only on this computer** at the top](#dialog-with-only-on-this-computer-at-the-top), and the [full-page form](#full-page-form) offer these six options:
 
 * **Hourly**: runs every hour
 * **Daily**: runs every day at the local time you pick

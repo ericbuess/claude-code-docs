@@ -1001,15 +1001,20 @@ If one formula shows as written while others near it are typeset, check it for t
 
 ### Dictation or the Web tab fails behind a TLS-inspecting proxy
 
-When dictation or the Web tab fails with a certificate error such as `unable to get local issuer certificate`, set [`NODE_EXTRA_CA_CERTS`](https://code.claude.com/docs/en/network-config#custom-ca-certificates) in the `env` block of `~/.claude/settings.json`. Set it to the path of a PEM file with your proxy's root CA certificate, which your IT team can give you. That error text is on the microphone button or in the extension's logs:
+When dictation or the Web tab fails with a certificate error such as `unable to get local issuer certificate`, set [`NODE_EXTRA_CA_CERTS`](https://code.claude.com/docs/en/network-config#custom-ca-certificates) in the `env` block of `~/.claude/settings.json`. Set it to the path of a PEM file with your proxy's root CA certificate, which your IT team can give you. The failure appears on the microphone button or Web tab, or in the logs:
 
 * **Dictation**: the microphone button shows the error text after `Dictation error: WebSocket error:`.
 * **Web tab**: the tab that lists [cloud sessions](#resume-cloud-sessions-from-claude-ai) shows `Remote server is not connected` without the error text. To read it in the logs:
   1. Run **Claude Code: Show Logs** from the [Command Palette](#vs-code-commands-and-shortcuts) to open the `Claude VSCode` output channel.
   2. Click **Reconnect** on the tab and wait until it stops showing `Connecting…`.
   3. Search the channel for `Error fetching remote sessions:` or `Failed to fetch organization UUID:`, then read the error text after that prefix on the newest matching line.
+* **Log warning**: a warning naming `an authority that Claude Code does not trust` reports a certificate error. Behind a TLS-inspecting proxy, set `NODE_EXTRA_CA_CERTS` in `env` in `~/.claude/settings.json`. Versions before v2.1.309 don't log this warning.
 
 This fix requires extension version 2.1.307 or later, so update the extension first. Then set `NODE_EXTRA_CA_CERTS` to the certificate file's full path, written without `~`. For a Windows path, write each backslash twice in `settings.json`, as in `C:\\certs\\example-ca.pem`.
+
+> [!NOTE]
+>
+> In a window connected to WSL, an SSH host, a dev container, or another system, save the certificate file and edit `~/.claude/settings.json` on that system, not on your local computer.
 
 This example names a certificate file at the Linux or macOS path `/etc/ssl/certs/example-ca.pem`:
 

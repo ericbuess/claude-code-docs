@@ -317,6 +317,7 @@ Match the message you see to a section below.
 | `Skipping connection (recent failure cached; retries automatically in 15 min, or edit the plugin config to retry now)` | [Plugin errors](#skipping-connection-recent-failure-cached) |
 | `Error: No such tool available: <tool name>` | [Tool errors](#no-such-tool-available) |
 | `MCP server "<name>" connection closed before the tool call was answered` | [Tool errors](#connection-closed-before-the-tool-call-was-answered) |
+| `MCP server "<name>" is disabled — re-enable it via /mcp to use its tools` | [Tool errors](#mcp-server-is-disabled) |
 | `MCP server "<name>" tool "<tool>" timed out after <N>s. The server asked the user a question, and no answer came before the time limit.` | [Tool errors](#mcp-tool-call-timed-out-with-the-servers-question-unanswered) |
 | `would be spawned with zero tools — refusing` | [Tool errors](#agent-would-be-spawned-with-zero-tools) |
 | `File is covered by a Read deny rule in your permission settings` | [Tool errors](#file-is-covered-by-a-read-deny-rule) |
@@ -349,6 +350,7 @@ Match the message you see to a section below.
 | `Your disk quota is full on the filesystem with Claude Code's temp directory <dir> (EDQUOT)` / `The filesystem with Claude Code's temp directory <dir>, or your disk quota on it, is full (ENOSPC)` | [Tool errors](#disk-quota-or-temp-filesystem-is-full) |
 | `Command output was lost: the temp filesystem at <dir> is full` / `is out of inodes` | [Tool errors](#disk-quota-or-temp-filesystem-is-full) |
 | `File is not valid UTF-8. It may use a legacy encoding such as Windows-1252, Shift-JIS or GBK, or be binary` | [Tool errors](#file-is-not-valid-utf-8) |
+| `git is not installed on this Mac. To install it, run xcode-select --install, then try again.` | [Tool errors](#git-is-not-installed-on-this-mac) |
 | `the source file is not valid UTF-8 text` / `the source file is not valid UTF-16 text` | [Tool errors](#the-source-file-is-not-valid-utf-8-text) |
 | `the source file has the replacement character U+FFFD` | [Tool errors](#the-source-file-is-not-valid-utf-8-text) |
 | `Not published: that file is on a network share` | [Tool errors](#not-published-that-file-is-on-a-network-share) |
@@ -487,6 +489,16 @@ If no data arrives on the response stream for 20 seconds while a request is stil
 The banner clears on its own once data resumes or a retry succeeds. If it reappears on every attempt, treat it as a [network issue](#unable-to-connect-to-api). Before v2.1.185, the banner appeared after 10 seconds with different wording.
 
 While Claude is consulting the [advisor](https://code.claude.com/docs/en/advisor.md), the banner appears after 90 seconds without data instead of 20, because a long advisor review can send nothing for well over 20 seconds. Before v2.1.214, the 20-second threshold applied during advisor calls too, so the banner appeared during advisor reviews even when nothing was wrong.
+
+#### The waiting banner comes and goes behind a gateway
+
+If the `Waiting for API response` banner comes and goes while Claude thinks and you connect through a gateway, [update Claude Code](https://code.claude.com/docs/en/setup.md#update-claude-code) to v2.1.309 or later. The banner appears after 45 seconds without data on these connections:
+
+* [`ANTHROPIC_BASE_URL`](https://code.claude.com/docs/en/env-vars) set to a host other than the Anthropic API, such as an [LLM gateway](https://code.claude.com/docs/en/llm-gateway)
+* A [Claude apps gateway](https://code.claude.com/docs/en/claude-apps-gateway) session
+* [Claude Platform on AWS](https://code.claude.com/docs/en/claude-platform-on-aws.md) with `ANTHROPIC_AWS_BASE_URL` set
+
+Before v2.1.309, the banner appeared after 20 seconds on these connections.
 
 ### Tune retry behavior
 
@@ -3257,7 +3269,7 @@ For example, the subcommand can't ask when its standard input or standard output
 
 **What to do:**
 
-* In a script or CI job, append `--trust-workspace` to trust the checkout for that run only: `claude ultrareview --trust-workspace`. Append it only for code you trust, because the checkout's git configuration and Claude Code project settings can then run programs. To review a pull request whose code you don't trust, see [how to review it from a checkout you do trust](https://code.claude.com/docs/en/ultrareview.md#trust-the-folder-before-the-review-runs).
+* In a script or CI job, append `--trust-workspace` to trust the folder for that run: `claude ultrareview --trust-workspace`. Append it only for code you trust, because git and Claude Code can then run programs named in the folder's git configuration and project settings. For a pull request whose code you don't trust, [run the review from a branch you trust](https://code.claude.com/docs/en/ultrareview.md#trust-the-folder-before-the-review-runs).
 * On your own machine, run `claude` in that folder and accept the [workspace trust dialog](https://code.claude.com/docs/en/permissions.md#project-allow-rules-and-workspace-trust), then run your original command again
 
 Each of these messages from `claude ultrareview` means that no review started and the exit code is 1:
@@ -4420,6 +4432,20 @@ Repeating the call could repeat the tool's action, such as creating a second iss
 * If the action didn't happen, ask Claude to run the tool again. You don't need to reconnect the server first, because Claude Code connects to it again for the next call to one of its tools. If that connection fails too, see [Mid-session drops of a remote server](https://code.claude.com/docs/en/mcp.md#mid-session-drops-of-a-remote-server).
 * If you build the server and the tool is safe to call twice, [mark it as safe to repeat](https://code.claude.com/docs/en/mcp.md#tool-calls-pending-when-a-connection-closes) so that Claude Code can repeat a lost call
 
+### MCP server is disabled
+
+This message in a tool result means Claude called a tool on an [MCP server](https://code.claude.com/docs/en/mcp.md) that is [turned off](https://code.claude.com/docs/en/mcp.md#disable-a-server-without-removing-it). Claude Code didn't connect to the server, so the tool didn't run, and Claude received this text in place of a result:
+
+```text wrap theme={null}
+MCP server "<name>" is disabled — re-enable it via /mcp to use its tools
+```
+
+**What to do:**
+
+* If you meant to turn the server off, you don't need to do anything
+* If Claude needs the server's tools, turn it back on from `/mcp` at the Claude Code prompt
+* In an [Agent SDK](https://code.claude.com/docs/en/agent-sdk/overview.md) application, turn the server back on by calling [`toggleMcpServer()`](https://code.claude.com/docs/en/agent-sdk/typescript#togglemcpserver) in TypeScript with `enabled` set to `true`, or [`toggle_mcp_server()`](https://code.claude.com/docs/en/agent-sdk/python#claudesdkclient) in Python with `enabled` set to `True`
+
 ### MCP tool call timed out with the server's question unanswered
 
 In [non-interactive mode](https://code.claude.com/docs/en/headless.md), an [MCP server](https://code.claude.com/docs/en/mcp.md) asked for input through [elicitation](https://code.claude.com/docs/en/mcp.md#respond-to-mcp-elicitation-requests) during a tool call, and the call's time limit ran out before an answer came:
@@ -4759,7 +4785,7 @@ Claude Code saves each Bash and PowerShell command's output to a file under that
 The command was not started: this computer's disk is full (ENOSPC) on the volume holding /tmp/claude-501 (Claude Code's temporary directory), so the file that captures command output could not be created there and nothing ran. Free space on that volume, or restart Claude Code with CLAUDE_CODE_TMPDIR set to a directory on another one, then retry. If this is the user's own computer, tell them before deleting anything to make room.
 ```
 
-The other three messages follow a command that ran and exited with a nonzero code. This example is the `Disk full:` form:
+The `Disk full:`, `Disk quota used up:`, and `Nearly out of inodes:` messages follow a command that ran and exited with a nonzero code. For example:
 
 ```text wrap theme={null}
 Disk full: this computer's volume holding /tmp/claude-501 (Claude Code's temporary directory) has 3 MB free, so whatever this command printed was lost and its own writes may have failed with "No space left on device". Free space on that volume, or restart Claude Code with CLAUDE_CODE_TMPDIR set to a directory on another one, then retry. If this is the user's own computer, tell them before deleting anything to make room.
@@ -4769,8 +4795,7 @@ Disk full: this computer's volume holding /tmp/claude-501 (Claude Code's tempora
 
 * On macOS and Linux, run `df -h <dir>` in your shell to see which volume holds the directory and how full it is. `df -i <dir>` shows how many inodes are free. `<dir>` is the directory your message names, as in `df -i /tmp/claude-501`
 * **`Disk full: this computer's volume` or `disk is full (ENOSPC)`**: anywhere on that volume, delete files you don't need
-* **`Disk quota used up:` or `Disk full: a test write`**: delete your own files on that volume, even if it still shows free space
-* **`disk quota is used up (EDQUOT)`**: delete your own files on that volume
+* **`Disk quota used up:`, `disk quota is used up (EDQUOT)`, or `Disk full: a test write`**: delete your own files on that volume, even if it still shows free space
 * **`Nearly out of inodes:`**: delete many files on that volume. Each takes one inode whatever its size, so their number matters, not their size
 * Or restart Claude Code with [`CLAUDE_CODE_TMPDIR`](https://code.claude.com/docs/en/env-vars) set to a directory on a volume with room
 * Then have Claude run the command again
@@ -4783,6 +4808,20 @@ Before v2.1.309, the messages read as follows, and the same steps apply:
 * `The command was not started: this computer's disk is full (ENOSPC), so the file that captures command output could not be created. Nothing ran.`, or the same with `(EDQUOT)`. This form names no directory: look on the volume holding your system temp directory, such as `/tmp`, or the directory set in `CLAUDE_CODE_TMPDIR`
 
 Before v2.1.305, a command that Claude Code couldn't start because the disk was full returned only the operating system's error text. That text read, for example, `ENOSPC: no space left on device, open <path>.output`.
+
+### git is not installed on this Mac
+
+This message means a step in Claude Code needed git, and the git it found is Apple's stand-in at `/usr/bin/git`. The developer tools that provide git aren't installed.
+
+Claude Code doesn't start the stand-in and shows this text instead, for example inside a longer message:
+
+```text wrap theme={null}
+git is not installed on this Mac. To install it, run xcode-select --install, then try again.
+```
+
+**What to do:**
+
+* In Terminal, run `xcode-select --install`, finish the installation it starts, then retry what you were doing in Claude Code
 
 ### File is not valid UTF-8
 

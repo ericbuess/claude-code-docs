@@ -123,12 +123,72 @@ Code Review includes the files when it reads `REVIEW.md` from a protected branch
 
 When a review doesn't apply an included file, check each of these:
 
-* **Location**: move the file to the repository root. A path into a subdirectory such as `@docs/review-rules.md` isn't included.
+* **Location**: move the file to the repository root. Except for a [skill file](#include-a-skill-file), a path into a subdirectory such as `@docs/review-rules.md` isn't included.
 * **Name**: match the file name exactly, including case, and use a name without spaces. A line whose name matches no file beside `REVIEW.md` stays in `REVIEW.md` as plain text, and the check run doesn't report it as a skipped include.
-* **One level**: list every file in the root `REVIEW.md`. An `@` line in an included file or in a subdirectory `REVIEW.md` stays as plain text, and a Markdown link to another file isn't an include.
+* **One level**: list every file in the root `REVIEW.md`. An `@` line in an included file or in a subdirectory `REVIEW.md` stays as plain text ([skill files differ](#include-a-skill-file)), and a Markdown link to another file isn't an include.
 * **Limits**: include at most eight different files, and keep `REVIEW.md` and the files it includes under 150,000 bytes combined. A file that would reach the byte limit is skipped whole, not cut short. The check run reports how many include lines it skipped for either limit.
-* **Links**: keep Markdown links at 64 or fewer across `REVIEW.md` and the files it includes. Links to `http`, `https`, or `mailto` addresses and to `#` anchors don't count. Past that limit, the review skips your whole root `REVIEW.md`, not only the included files. The check run then [says the instructions weren't applied](https://code.claude.com/docs/en/code-review-troubleshooting.md#the-check-run-mentions-review-md).
+* **Links**: keep Markdown links at 64 or fewer across `REVIEW.md` and the files it includes. Links to `http`, `https`, or `mailto` addresses and to `#` anchors don't count, and neither do links in a [skill file](#include-a-skill-file). Past that limit, the review skips your whole root `REVIEW.md`, not only the included files. The check run then [says the instructions weren't applied](https://code.claude.com/docs/en/code-review-troubleshooting.md#the-check-run-mentions-review-md).
 * **Merged copy**: merge the included file into the [branch `REVIEW.md` is read from](#which-branch-review-md-is-read-from). The review reads both from the same commit, never from the pull request's own changes.
+
+### Include a skill file
+
+To have reviews follow guidance you keep in a [skill](https://code.claude.com/docs/en/skills.md), include the skill's `SKILL.md` in your root `REVIEW.md`. Code Review doesn't run skills.
+
+Add `@` and the path to `SKILL.md`, in the form `.claude/skills/<folder>/SKILL.md`, on a line of its own:
+
+```markdown theme={null}
+# Review instructions
+
+Report at most five Nits per review.
+
+@.claude/skills/api-review/SKILL.md
+
+Treat any change under `migrations/` as Important.
+```
+
+Protect the [branch that `REVIEW.md` is read from](#which-branch-review-md-is-read-from), because Code Review includes a skill file only when it reads `REVIEW.md` from a protected branch. The skill file counts toward the limits of eight files and 150,000 bytes, and has its own limit of 30,000 bytes.
+
+#### Write a skill line that Code Review includes
+
+Use a folder name without spaces. A line with a space in its path stays in `REVIEW.md` as plain text, and the check run doesn't report it as a skipped include.
+
+If the `@` line for a skill breaks one of the rules below, Code Review doesn't include the skill from that line:
+
+* **Path**: write the path as `.claude/skills/<folder>/SKILL.md` from the repository root, with the skill's folder directly under `skills/`. Unlike a file name at the root, a path of this form that matches no file is skipped and counted.
+* **Source**: copy guidance from any other file under `.claude/`, or from a [bundled, personal, or plugin skill](https://code.claude.com/docs/en/skills.md#where-skills-live), into a file beside `REVIEW.md`. You can't include those directly.
+* **File**: commit `SKILL.md` as a regular text file. Code Review doesn't follow a symbolic link, whether the link is the file or a folder in its path.
+* **Size**: keep `SKILL.md` at 30,000 bytes or less, frontmatter included
+* **Count**: write at most eight skill lines. A repeated line counts again toward the eight.
+* **Blocks in `REVIEW.md`**: keep the `@` line out of code fences. Close every HTML comment and every `<pre>`, `<script>`, `<style>`, or `<textarea>` block above it.
+
+When Code Review skips a skill line for breaking the File, Size, Count, or Blocks rule, the check run's [message about skipped include lines](https://code.claude.com/docs/en/code-review-troubleshooting.md#the-check-run-mentions-review-md) counts it. The message appears only when the review applies `REVIEW.md` from a protected branch.
+
+#### Check what a review gets from a skill
+
+When the skill is included, a review gets the body of `SKILL.md` and nothing else from the skill, so check the skill against the list below.
+
+* **Frontmatter**: repeat in the body anything a review needs from the [frontmatter](https://code.claude.com/docs/en/skills.md#frontmatter-reference), for example the conditions that `description` gives for using the skill
+* **Injected commands**: write out what a [`!` command](https://code.claude.com/docs/en/skills#inject-dynamic-context) would supply. Code Review doesn't run the command, and replaces the whole line or block that holds it with a placeholder.
+* **Substitutions**: replace `$ARGUMENTS` and other [substitutions](https://code.claude.com/docs/en/skills.md#available-string-substitutions) with fixed text, because a review passes no arguments and leaves them as written
+* **Supporting files**: copy what a review needs into `SKILL.md`, because Code Review doesn't load scripts, linked files, or `@file` references
+* **Exclusions and Nit caps**: write instructions that exclude findings or cap Nits in `REVIEW.md` or a file beside it, not in the skill. Code Review doesn't accept a skill's text as the reason for either.
+* **Links to repository files**: state in words what a link or `@file` reference points to. The review sees the path as plain text or as a placeholder.
+
+If you edit the skill's `!` commands, `$ARGUMENTS`, or links, you also change how it works in Claude Code. If your team relies on those, copy the guidance into a file beside `REVIEW.md` and include that file in place of the skill.
+
+#### Characters that Code Review changes in skill text
+
+Code Review changes some characters in the skill's text, so your code samples reach a review in the form below.
+
+```text theme={null}
+In SKILL.md:       Use `items[0]`, never `List<String>`.
+The review reads:  Use ˋitems(0)ˋ, never ˋList< String>ˋ.
+
+In SKILL.md:       Run `ps | grep api` and ask @alice.
+The review reads:  Run ˋps ¦ grep apiˋ and ask @ alice.
+```
+
+Where a rule depends on one of those characters, state it in words too.
 
 ### Which branch REVIEW\.md is read from
 
@@ -139,6 +199,8 @@ Keep `REVIEW.md` on your default branch and protect that branch. When a review r
 * Lowering a finding's severity
 * Excluding paths, files, or classes of issue
 * Capping nit comments
+
+Write exclusions and Nit caps in `REVIEW.md` or a file beside it, not in an [included skill](#include-a-skill-file).
 
 #### What counts as branch protection
 

@@ -353,12 +353,35 @@ An `Image` draws as a picture in these terminals:
 
 In any other terminal, the user sees the `Image`'s `alt` text, dimmed, in place of the picture. Write `alt` text that stands on its own, because it also shows in these cases, among others:
 
-* **tmux and screen**: a session running inside tmux or screen, in any terminal.
+* **GNU screen**: a session running inside screen, in any terminal.
+* **tmux**: a session running inside tmux that misses a [requirement for drawing inside tmux](#draw-an-image-inside-tmux).
 * **Background sessions**: every [background session](https://code.claude.com/docs/en/agent-view.md), whatever terminal it's attached from.
 * **iTerm2 outside fullscreen rendering**: in iTerm2 the picture draws only under [fullscreen rendering](https://code.claude.com/docs/en/fullscreen.md), and not while [`CLAUDE_CODE_ALT_SCREEN_FULL_REPAINT`](https://code.claude.com/docs/en/env-vars) is set to `1`. To see the picture, run `/tui fullscreen` at the Claude Code prompt and leave that variable unset.
-* **A file path source in iTerm2**: iTerm2 draws an `Image` whose `source` prop holds `png` or `rgba` bytes, and shows the `alt` text for one whose `source` names a `file`. If your mod has iTerm2 users, pass the picture as base64 in `source.png` or `source.rgba` rather than as a path in `source.file`.
+* **A file path source in iTerm2 or tmux**: in iTerm2 and inside tmux, an `Image` whose `source` names a `file` shows the `alt` text instead of the picture. If your mod has iTerm2 or tmux users, pass the picture as base64 in `source.png` or `source.rgba` rather than as a path in `source.file`.
 
-If your mod's users see the dimmed text in a terminal that draws kitty graphics protocol images with Unicode placeholders, they can set [`CLAUDE_CODE_FORCE_TERMINAL_IMAGES`](https://code.claude.com/docs/en/env-vars) to `1`. Inside tmux or screen that doesn't help: the `alt` text goes away, and Claude Code sends the picture without wrapping it for tmux or screen passthrough.
+If your mod's users see the dimmed text in a terminal that draws kitty graphics protocol images with Unicode placeholders, they can set [`CLAUDE_CODE_FORCE_TERMINAL_IMAGES`](https://code.claude.com/docs/en/env-vars) to `1`. They shouldn't set it inside GNU screen, inside tmux older than 3.3, in a tmux popup, or with tmux's `allow-passthrough` off. There they see no picture and a box in place of the `alt` text.
+
+#### Draw an `Image` inside tmux
+
+If an `Image` shows its `alt` text inside tmux, check these requirements along with the [other `alt` text cases](#image-and-client) such as a background session:
+
+* Claude Code v2.1.310 or later
+* tmux 3.3 or later
+* Claude Code runs in a tmux pane, not a tmux popup
+* tmux runs inside kitty 0.28 or later, Ghostty, or iTerm2 3.5 or later
+* The tmux options `focus-events` and `allow-passthrough` are `on`. Inside kitty or Ghostty, `allow-passthrough` can also be `all`.
+* Inside iTerm2, tmux runs [without `-CC`](https://code.claude.com/docs/en/fullscreen#use-with-tmux), [fullscreen rendering](https://code.claude.com/docs/en/fullscreen.md) is on, and `CLAUDE_CODE_ALT_SCREEN_FULL_REPAINT` is unset.
+* Inside iTerm2, the tmux window is no bigger than the iTerm2 window. To check, run `tmux display-message -p '#{window_bigger}'` in that tmux window. If it prints `1`, make the tmux window fit, then restart Claude Code.
+* The mod's author passes the picture as `png` or `rgba` bytes, not as a `file` path. If you use a mod you didn't write and the other requirements hold, ask its author to check this one.
+
+For each tmux option that isn't already set as required, run its command in your shell:
+
+```bash theme={null}
+tmux set -g allow-passthrough on
+tmux set -g focus-events on
+```
+
+Then detach from tmux, attach again, and restart Claude Code. Restart it again whenever you attach tmux from a different terminal. To keep both options across tmux server restarts, [add both lines to `~/.tmux.conf`](https://code.claude.com/docs/en/terminal-config#configure-tmux) too.
 
 ## See where a mod can draw
 

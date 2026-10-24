@@ -109,7 +109,7 @@ These requirements decide whether you can add a secret and whether the agent pro
 
 #### Add a secret
 
-You add secrets one at a time, and you can't edit a secret after you add it. To change a secret's hosts or value, delete it and add it again.
+You add secrets one at a time. To change a secret's hosts or value, delete it and add it again.
 
 To add a secret to a [shared environment](#organization-shared-environments), open it for editing from the **Cloud environments** page in [admin settings](https://claude.ai/admin-settings), then continue from step 2 in its **Network secrets** section. If you're on a Team plan and don't hold an [organization admin role](#requirements), follow step 1 on your own environment, then [fill in the shorter form](#add-a-secret-without-the-role).
 
@@ -119,7 +119,7 @@ To add a secret to a [shared environment](#organization-shared-environments), op
 
 **2. Add the secret**
 
-Select **Add secret** and fill in the form. Keep the default **Secret type**, **Bearer**, for an API key that travels in a request header, and fill in these fields:
+Select **Add secret**, labeled **Add** in admin settings, and fill in the form. Keep the default **Secret type**, **Bearer**, for an API key that travels in a request header, and fill in these fields:
 
 * **Name**: a label for the secret, such as `Internal billing API`
 * **Allowed websites**: the API's hosts, such as `api.example.com`. A leading `*.` matches every subdomain
@@ -443,11 +443,12 @@ apt update && apt install -y shellcheck
 
 ### Script requirements
 
-A setup script has three constraints to write around:
+A setup script has four constraints to write around:
 
 * **Exit zero**: if the script exits non-zero, the session fails to start. Append `|| true` to non-critical commands so an intermittent install failure doesn't block the session.
 * **Finish within five minutes**: keep the script's total runtime under roughly five minutes so the [environment cache](#environment-caching) can build. When setup takes longer than that, the environment isn't cached. Run independent installs in parallel with `&` and `wait`, and move any single download that won't fit into a [SessionStart hook](#setup-scripts-vs-sessionstart-hooks) that launches it in the background. If new sessions stall or fail during setup, see [New sessions hang or time out during setup](https://code.claude.com/docs/en/web-quickstart.md#new-sessions-hang-or-time-out-during-setup).
 * **Network access for installs**: package installs need to reach registries. The default **Trusted** level covers [common package registries](#default-allowed-domains) including npm, PyPI, RubyGems, and crates.io; with **None** network access, installs fail.
+* **The environment's variables aren't set yet**: the script runs before the session sets the environment's [environment variables](#set-environment-variables). Set any value the script needs in the script itself.
 
 ### Environment caching
 

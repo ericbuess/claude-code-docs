@@ -25,7 +25,7 @@ A scheduled task doesn't need a schedule:
 * A task with only an API trigger runs when you call its endpoint.
 * A task with only a GitHub trigger runs when a matching repository event occurs.
 
-Scheduled tasks are available on Pro, Max, Team, and Enterprise plans. Create and manage them at [claude.ai/code/routines](https://claude.ai/code/routines), or from the CLI with `/schedule`. The earlier name, routines, [still appears](#where-the-name-routines-still-appears) in the web address, the CLI, and the API.
+Scheduled tasks are available on Pro, Max, Team, and Enterprise plans. Create and manage them at [claude.ai/code/routines](https://claude.ai/code/routines), or from the CLI with `/schedule`. The earlier name, routines, [still appears](#where-the-name-routines-still-appears).
 
 > [!NOTE]
 >
@@ -66,7 +66,12 @@ Scheduled tasks belong to your individual claude.ai account. They are not shared
 
 **1. Open the creation dialog**
 
-Go to [claude.ai/code/routines](https://claude.ai/code/routines) and click **New task**. If a menu opens first, select **Set up manually**. The **New scheduled task** dialog opens. The menu's other option, **Create with Claude**, lets you describe the task in a chat and have Claude create it instead.
+Go to [claude.ai/code/routines](https://claude.ai/code/routines) and click **New task** to open the **New scheduled task** dialog. Check for these screens before you continue:
+
+* If the button reads **New routine** instead of **New task**, click **New routine** and continue with [Full-page form](#full-page-form).
+* In the Desktop app, if a menu with **Local** and **Cloud** opens, go to [Full-page form](#full-page-form).
+* If a menu opens with **Create with Claude** and **Set up manually**, select **Set up manually** to open the dialog. **Create with Claude** lets you describe the task in a chat and have Claude create it instead.
+* If a full page opens in place of the dialog, go to [Full-page form](#full-page-form).
 
 If **Repositories** and **Environment** are already showing when the dialog opens, see [how that dialog differs](#dialog-with-repositories-and-environment-in-the-main-view). Otherwise, this dialog also creates scheduled tasks for claude.ai chat. To make yours what the dialog calls a Claude Code task, select a repository or add a GitHub event or API trigger in the steps that follow. That kind of task runs Claude Code in a cloud session.
 
@@ -126,6 +131,17 @@ Follow the [steps to create from the web](#create-from-the-web), and fill in eac
 
 Select the repository before you add a GitHub event trigger, because that trigger is unavailable until a repository is selected.
 
+#### Full-page form
+
+In the Desktop app, if a menu with **Local** and **Cloud** opens, select **Cloud**. A page titled **New routine** or **New scheduled task** opens. Fill in its fields:
+
+* **Name**: enter one.
+* **Instructions**: enter the prompt. In the same box, select the model, the repositories, and the environment. For what each one controls, see the steps under [Create from the web](#create-from-the-web).
+* **Select a trigger**: select **Schedule**, **GitHub event**, or **API**. For a schedule, see [Add a schedule trigger](#add-a-schedule-trigger). For a [GitHub event](#add-a-github-trigger), select a repository. For an [API trigger](#add-an-api-trigger), copy the token from the **API token** dialog that opens after you click **Create**, because it is shown once. To combine several triggers, click **Add another trigger**.
+* **Connectors**: all of your connected connectors are included by default, so remove the ones the task doesn't need.
+
+If **Create** is unavailable, hover over it to see what the form still needs. Click **Create**, and the task's detail page opens.
+
 ### Create from the CLI
 
 Run `/schedule` in any session to create a scheduled task conversationally. You can also pass a description directly, for a recurring task like `/schedule daily PR review at 9am` or a one-off like `/schedule clean up feature flag in one week`. Claude walks through the same information the web dialog collects, then saves the task to your account. The command is also available under the alias `/routines`.
@@ -152,6 +168,7 @@ A schedule trigger runs the task on a recurring cadence, or once at a specific f
 * **Runs on the hour**: if you schedule a run exactly on the hour, such as 9:00, it can start several minutes late. To start close to the scheduled time, pick a few minutes past the hour, for example 9:07.
 * **Custom intervals**: for a cadence the presets lack, create the task and select **Custom** in its [edit dialog](#edit-and-control-scheduled-tasks). Then enter a cron expression, such as `0 */2 * * *` for every two hours. To set one from the CLI, run [`/schedule update`](#manage-scheduled-tasks-from-the-cli). Expressions that run more often than once per hour are rejected.
 * **Time zone**: when you pick a preset frequency, enter the time in your local time zone.
+* **Cron expression time zone**: when the expression is five fields alone, write the hours in UTC, so `0 9 * * 1-5` runs at 9:00 AM UTC on weekdays. If the field opens with a `CRON_TZ=` prefix, keep it and write the hours in its zone, or delete it and write them in UTC.
 
 #### Schedule a one-off run
 
@@ -455,6 +472,7 @@ While your subscription is paused, your scheduled tasks are put on hold and don'
 
 Scheduled tasks were previously called routines, and these places keep the earlier name. Each one refers to the same feature:
 
+* **App**: in some accounts the sidebar entry and page title read **Routines**, the button reads **New routine**, and other labels say routine. To create a task there, see [Full-page form](#full-page-form).
 * **Web address**: `claude.ai/code/routines`
 * **CLI**: the `/routines` alias for `/schedule`, the command's description, and Claude's replies while it sets up a task
 * **API**: the `/fire` endpoint path, its beta header, its response `type`, the `<routine-fire-payload>` tag, and the [Trigger a routine through the API](https://platform.claude.com/docs/en/api/claude-code/routines-fire) reference page

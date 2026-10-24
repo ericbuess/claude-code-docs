@@ -349,7 +349,7 @@ Without `enforceAvailableModels` or the `env` block, a user who selects Default 
 
 When the managed settings Claude Code applies define `availableModels`, that list alone applies, apart from a [host platform that supplies its own](https://code.claude.com/docs/en/settings.md#exceptions-to-managed-settings-precedence): entries in user, project, or local settings cannot extend it, and Claude Code never merges `availableModels` across managed sources either; [how Claude Code combines managed sources](https://code.claude.com/docs/en/managed-settings.md#how-claude-code-combines-managed-sources) says which source's list applies. Otherwise, lists from user, project, and local settings are [concatenated and deduplicated](https://code.claude.com/docs/en/settings.md#settings-precedence) like other array settings. Before Claude Code v2.1.175, entries from lower-precedence scopes merged into the managed list instead of being replaced by it.
 
-Within the effective list, an entry naming a specific model in a family, whether a version prefix or a full model ID, disables that family's wildcard entry: `["sonnet", "claude-sonnet-4-5"]` allows only Sonnet 4.5 versions, not every Sonnet model.
+Within the effective list, an entry naming a specific model in a family, whether a version prefix or a full model ID, disables that family's wildcard entry. For example, with `["sonnet", "claude-sonnet-4-5"]`, users can pick only the model IDs that `claude-sonnet-4-5` [matches](#restrict-model-selection), not every Sonnet model.
 
 ### Mantle model IDs
 
@@ -947,7 +947,12 @@ When you set an `ANTHROPIC_DEFAULT_*_MODEL` variable, the `/model` picker shows 
 >
 > An `availableModels` allowlist delivered through [MDM or a managed settings file](https://code.claude.com/docs/en/managed-settings.md#delivery-mechanisms) still applies when using third-party providers; [server-managed settings are not delivered there](https://code.claude.com/docs/en/server-managed-settings.md#platform-availability).
 >
-> Filtering matches on a model alias such as `opus`, a version prefix such as `claude-opus-4-8`, or the full provider-form model ID. Provider-specific prefixes such as `us.anthropic.` are not stripped, so to allow a specific model, list its full provider-form ID, or map it through [`modelOverrides`](#override-model-ids-per-version). For a pinned model, that ID is the value you set in its `ANTHROPIC_DEFAULT_*_MODEL` variable. Any `[1m]` suffix is stripped from both the allowlist entry and the requested model before matching.
+> Filtering matches on a model alias such as `opus`, a version prefix such as `claude-opus-4-8`, or the full provider-form model ID. Provider-specific prefixes such as `us.anthropic.` are not stripped, so to allow a specific model, map it through [`modelOverrides`](#override-model-ids-per-version) or list its full provider-form ID:
+>
+> * **Google Cloud's Agent Platform**: when the ID Claude Code requests carries an `@` date, such as `claude-sonnet-4-5@20250929`, include the date in your allowlist entry. On its own, `claude-sonnet-4-5` doesn't match that ID under either [`availableModelsMatch`](https://code.claude.com/docs/en/settings-reference#availablemodelsmatch) setting.
+> * **Pinned models**: list the value you set in the model's `ANTHROPIC_DEFAULT_*_MODEL` variable
+>
+> Any `[1m]` suffix is stripped from both the allowlist entry and the requested model before matching.
 
 ### Customize pinned model display and capabilities
 

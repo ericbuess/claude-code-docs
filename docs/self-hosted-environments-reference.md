@@ -83,7 +83,7 @@ The `self-hosted-runner orchestrator` subcommand, which spawns [on-demand runner
 
 | Flag | Default | Description |
 | :- | :- | :- |
-| `--hook-concurrency <n>` | `4` | Maximum `spawn-runner` hooks running in parallel. Also caps how many spawn requests are claimed per poll. |
+| `--hook-concurrency <n>` | `4` | Maximum `spawn-runner` hooks running in parallel. Also caps how many spawn requests are claimed per poll. The orchestrator checks for new spawn requests only after every hook it started has finished, so one slow hook delays that orchestrator's next hooks. |
 | `--hook-timeout <sec>` | `60` | Terminate the hook's process tree after this many seconds. The timeout plus its 5-second kill grace must stay below `--expected-spawn-seconds`; the orchestrator enforces this at startup. |
 | `--expected-spawn-seconds <sec>` | `120` | Expected p99 time from when the orchestrator receives a spawn request to when the runner registers, including any wait for capacity on your platform. The server enforces a range of 10 to 3600. Sent on every poll as the server-side lease: if no runner registers before it elapses, the session is re-offered with a fresh order ID. All replicas must share this value. |
 | `--min-idle <n>` | `0` | Keep at least N idle session slots free by spawning standby runners proactively. `0` disables pre-warming. Pair with the runner's `--exit-if-unused-min` so surplus standby runners reclaim themselves. |
@@ -116,7 +116,7 @@ These runner settings are read from the environment only and cover behavior most
 | `SELF_HOSTED_RUNNER_MAX_LIFETIME_GRACE_MS` | `900000` | How long the runner waits after a session reaches its `--kill-session-after-min` limit, for a running turn to finish or the release to complete, before it terminates the session |
 | `SELF_HOSTED_RUNNER_POST_TURN_SETTLE_MS` | `7000` | Cap on how long the runner counts a session as busy for the `--drain-wait-sec` drain after a turn finishes, while the session's process reports the turn's end to Anthropic. `0` or an unusable value falls back to the default, so the hold can't be turned off. Requires Claude Code v2.1.275 or later. |
 | `SELF_HOSTED_RUNNER_SIGKILL_GRACE_MS` | `30000` | How long the runner waits for the OS to deliver `SIGKILL` to a child stuck in uninterruptible I/O before exiting itself. Floored at `--post-session-hook-timeout-sec` plus 15 seconds, and 30 more when `--push-outcome-on-release` is set, so the effective minimum is 75 seconds at defaults. |
-| `CLAUDE_RUNNER_FETCH_DEPTH` | `50` | Git fetch depth for fresh clones. Set a positive integer, or `full` or `0` for a complete fetch. Repositories already present in the workspace keep their existing depth. |
+| `CLAUDE_RUNNER_FETCH_DEPTH` | `50` | Git fetch depth for fresh clones. Set a positive integer, or `full` or `0` for a complete fetch. For a clone that's already in the workspace, see [Reuse a pre-warmed checkout](https://code.claude.com/docs/en/self-hosted-environments-deploy.md#reuse-a-pre-warmed-checkout). |
 | `CLAUDE_RUNNER_FETCH_SERVER_PROGRESS_CAP_MS` | `600000` | How long in milliseconds, per attempt, a git fetch may wait for its first data while the git server's own progress numbers keep rising, as when the server prepares the pack for a large repository. `0` or `off` turns the wait off: such a fetch is then cut off after two minutes without data. Any other whole number is clamped to between `120000` and `1800000`, 2 to 30 minutes. Requires Claude Code v2.1.295 or later. |
 | `CLAUDE_RUNNER_SKIP_GIT_VERIFY` | unset | When `1`, skip the `.git` presence check after a `checkout` hook runs. Set this when your hook materializes a non-git source. |
 | `FORCE_AUTOUPDATE_PLUGINS` | unset | When `1`, let plugin marketplaces auto-update even though the binary is pinned |
@@ -231,6 +231,8 @@ spec:
       interval: 30s
 ```
 
+### Sample alert rules
+
 These sample alert rules are a starting point; tune the thresholds for your fleet size:
 
 ```yaml theme={null}
@@ -252,11 +254,11 @@ groups:
         annotations:
           summary: "Runners are running mixed versions"
       - alert: ClaudeRunnerInitErrorsHigh
-        expr: increase(claude_code_self_hosted_runner_session_init_errors_total[10m]) > 3
+        expr: sum by (namespace) (increase(claude_code_self_hosted_runner_session_init_errors_total[10m])) > 3
         for: 5m
         labels: {severity: warning}
         annotations:
-          summary: "Runner {{ $labels.pod }}: >3 session init failures in 10m (checkout hook / git / token / pre-init crash)"
+          summary: "Sessions are failing before init (checkout hook / git / token / pre-init crash)"
       - alert: ClaudeRunnerPollErrors
         expr: sum by (pod) (rate(claude_code_self_hosted_runner_poll_errors_total[5m])) > 0
         for: 2m
@@ -264,11 +266,11 @@ groups:
         annotations:
           summary: "Runner {{ $labels.pod }}: PollWork failing ({{ $value | humanize }}/s over 5m)"
       - alert: ClaudeRunnerSessionStartHookErrors
-        expr: increase(claude_code_self_hosted_runner_session_start_hook_errors_total[10m]) > 3
+        expr: sum by (namespace) (increase(claude_code_self_hosted_runner_session_start_hook_errors_total[10m])) > 3
         for: 5m
         labels: {severity: warning}
         annotations:
-          summary: "Runner {{ $labels.pod }}: >3 SessionStart hook failures in 10m"
+          summary: "SessionStart hooks are failing"
 
   - name: claude-code-self-hosted-orchestrator
     rules:
@@ -285,7 +287,7 @@ groups:
         annotations:
           summary: "Orchestrator {{ $labels.pod }} has not polled in >90s (poll loop waits on hook execution)"
       - alert: ClaudeOrchestratorCircuitBroken
-        expr: claude_code_self_hosted_orchestrator_queue_circuit_broken_sessions > 0
+        expr: max by (namespace) (claude_code_self_hosted_orchestrator_queue_circuit_broken_sessions and on (instance) max_over_time(claude_code_self_hosted_orchestrator_connected[2m]) == 1) > 0
         for: 1m
         labels: {severity: critical}
         annotations:
@@ -303,6 +305,66 @@ groups:
         annotations:
           summary: "Orchestrator {{ $labels.pod }}: >3 spawn-runner hook failures in 5m"
 ```
+
+### Alert on lost runners and waiting sessions
+
+On a [fixed fleet](https://code.claude.com/docs/en/self-hosted-environments-deploy.md#scale-the-fleet), load `ClaudeRunnersBelowFloor`. With [on-demand runners](https://code.claude.com/docs/en/self-hosted-environments-configuration.md#on-demand-runners), load `ClaudeOrchestratorSessionsWaiting` and `ClaudeOrchestratorQueueWaitHigh` instead.
+
+#### Alert when a fixed fleet loses runners
+
+`ClaudeRunnersBelowFloor` fires when fewer registered, scraped runners than the floor are left for 10 minutes:
+
+```yaml theme={null}
+groups:
+  # Fixed fleets only. With on-demand runners the count follows demand,
+  # so ClaudeRunnersBelowFloor would fire whenever demand is low.
+  - name: claude-code-self-hosted-fixed-fleet-capacity
+    rules:
+      - alert: ClaudeRunnersBelowFloor
+        expr: (count(claude_code_self_hosted_runner_info{namespace="claude-runners"}) or vector(0)) < 2
+        for: 10m
+        labels: {severity: critical, namespace: claude-runners}
+        annotations:
+          summary: "Runners registered and scraped: {{ $value }}, below the floor. Check the runner workloads first, then the scrape targets if all are running."
+```
+
+* **Floor**: set the `2` in `expr` to about half your replica count, rounded up. With three replicas keep `2`, and the alert fires when one runner or none is left.
+* **Namespace**: replace `claude-runners` in the matcher and in `labels`, and copy the alert for each further namespace. If your targets have no `namespace` label, remove the matcher and the label, or the alert reads 0 and fires.
+* **`ClaudeRunnerPollStale` and `ClaudeRunnerPollErrors`**: keep them loaded from the [sample alert rules](#sample-alert-rules), because `ClaudeRunnersBelowFloor` still counts a runner that can't poll
+
+#### Alert when sessions wait for on-demand runners
+
+`ClaudeOrchestratorSessionsWaiting` fires when the number of sessions waiting for a runner stays above 0 for 10 minutes. `ClaudeOrchestratorQueueWaitHigh` fires when over 1% of queue waits in the last 10 minutes exceeded 160 seconds, and that holds for 5 minutes:
+
+```yaml theme={null}
+groups:
+  # On-demand runners only. Needs no edit for the namespace.
+  - name: claude-code-self-hosted-on-demand-capacity
+    rules:
+      - alert: ClaudeOrchestratorSessionsWaiting
+        expr: |
+          max by (namespace) (
+            claude_code_self_hosted_orchestrator_pool_pending_sessions
+            and on (instance)
+            max_over_time(claude_code_self_hosted_orchestrator_connected[2m]) == 1
+          ) > 0
+        for: 10m
+        labels: {severity: warning}
+        annotations:
+          summary: "Sessions waiting for a runner: {{ $value }}, above the threshold for 10 minutes. Check claude_code_self_hosted_orchestrator_spawn_hooks_total by result, then runner workloads that don't start."
+      - alert: ClaudeOrchestratorQueueWaitHigh
+        expr: |
+          histogram_quantile(0.99, sum by (namespace, le) (
+            rate(claude_code_self_hosted_orchestrator_session_queue_wait_seconds_bucket[10m])
+          )) > 160
+        for: 5m
+        labels: {severity: warning}
+        annotations:
+          summary: "Over 1% of queue waits in the last 10 minutes exceeded 160 seconds. Check whether ClaudeOrchestratorDisconnected is firing, then claude_code_self_hosted_orchestrator_spawn_hooks_total by result and claude_code_self_hosted_orchestrator_spawn_hook_duration_seconds."
+```
+
+* **Threshold**: if some session is always waiting, raise the `> 0` in `ClaudeOrchestratorSessionsWaiting` above the number you usually see
+* **`ClaudeOrchestratorDisconnected`**: keep it loaded from the [sample alert rules](#sample-alert-rules), because `ClaudeOrchestratorSessionsWaiting` stops firing about 2 minutes after the last orchestrator in the namespace disconnects
 
 ### Pass through session-child metrics
 

@@ -36,6 +36,7 @@ The runner sets the following in the wrapper's environment:
 | `CLAUDE_CODE_REMOTE_SESSION_UUID` | The same session ID in canonical UUID form, for systems that key on UUIDs. |
 | `CLAUDE_CODE_REMOTE_SLACK_THREAD_URL` | For a [Claude Tag](https://claude.com/docs/claude-tag/overview) session that belongs to one Slack thread, the link to that thread. Unset for other sessions, and can be unset for a thread session too. |
 | `CLAUDE_CODE_REMOTE_SLACK_THREAD_TS` | For a Claude Tag session that belongs to one Slack thread, that thread's Slack timestamp, such as `1700000000.000100`. Can be unset, and can be set when `CLAUDE_CODE_REMOTE_SLACK_THREAD_URL` isn't, so check each variable on its own. |
+| `CLAUDE_CODE_REMOTE_SLACK_CHANNEL_ID` | For a Claude Tag session, the ID of the Slack channel or direct message that the session serves or that its thread is in, such as `C0123ABCDE`. A Slack timestamp identifies a message within one channel, so record this ID together with `CLAUDE_CODE_REMOTE_SLACK_THREAD_TS`. Unset for other sessions, and can be unset for a Claude Tag session too. |
 | `CLAUDE_SESSION_INGRESS_TOKEN_FILE` | Absolute path to a per-session file holding the current session JWT, kept fresh across token refreshes. Shell subprocesses read it for their `Authorization` header when downloading attachments the user added to the session. `exec` preserves the variable automatically; a wrapper that rebuilds the child's environment must carry the variable over, or attachment downloads silently stop working. |
 | `CLAUDE_CONFIG_DIR` | Per-session Claude config directory, written at session start from the snapshot of the runner host's config that the runner captures at startup; see [Permissions and tool approval](#permissions-and-tool-approval). Writes here are isolated to this session. The directory stays under `<base-dir>/_sessions/` after the session ends unless you start the runner with [`--remove-session-state`](https://code.claude.com/docs/en/self-hosted-environments-reference#runner-cli-flags); see [Reuse a pre-warmed checkout](https://code.claude.com/docs/en/self-hosted-environments-deploy.md#reuse-a-pre-warmed-checkout). |
 | `CLAUDE_CODE_REMOTE_MCP_CONFIG` | Path to a file in `CLAUDE_CONFIG_DIR` holding the MCP server definitions that Anthropic's control plane delivered for this session. If your wrapper rebuilds the child's environment, carry this variable over. Without it, when the control plane updates the delivered servers, the child shuts down any stdio, HTTP, or SSE server your wrapper adds with [`--mcp-config`](https://code.claude.com/docs/en/cli-reference#cli-flags) that isn't in the update. Requires Claude Code v2.1.299 or later. |
@@ -44,11 +45,11 @@ The runner sets the following in the wrapper's environment:
 
 The wrapper also inherits the rest of the child's managed environment, including any server-provided environment variables. `exec` propagates all of it automatically; if your wrapper spawns the child another way, forward the full environment.
 
-`CLAUDE_CODE_REMOTE_SLACK_THREAD_URL` and `CLAUDE_CODE_REMOTE_SLACK_THREAD_TS` reach your wrapper or [`command` hook](#command). They also reach what the session runs, such as shell commands, git hooks, and Claude Code hooks. The `checkout`, `post-session`, and `spawn-runner` hooks don't receive them.
+You can read the `CLAUDE_CODE_REMOTE_SLACK_*` variables in your wrapper or [`command` hook](#command), and in what the session runs, such as shell commands, git hooks, and Claude Code hooks. The `checkout`, `post-session`, and `spawn-runner` hooks don't receive them.
 
 ### Give a default to variables that can be unset
 
-`CCR_SESSION_ACCOUNT_EMAIL`, `CLAUDE_RUNNER_CLIENT_PLATFORM`, `CLAUDE_CODE_REMOTE_SLACK_THREAD_URL`, and `CLAUDE_CODE_REMOTE_SLACK_THREAD_TS` can each be unset. If your script uses `set -u`, Bash stops with `unbound variable` when it expands one that's unset, so expand them with a default, such as `"${CCR_SESSION_ACCOUNT_EMAIL:-}"`.
+If your script uses `set -u`, expand `CCR_SESSION_ACCOUNT_EMAIL`, `CLAUDE_RUNNER_CLIENT_PLATFORM`, `CLAUDE_CODE_REMOTE_SLACK_THREAD_URL`, `CLAUDE_CODE_REMOTE_SLACK_THREAD_TS`, and `CLAUDE_CODE_REMOTE_SLACK_CHANNEL_ID` with a default, such as `"${CCR_SESSION_ACCOUNT_EMAIL:-}"`. Each can be unset, and under `set -u` Bash stops with `unbound variable` when it expands an unset one.
 
 ### Quote the arguments and variables your script expands
 
@@ -89,6 +90,26 @@ In your wrapper script or [`command` hook](#command), handle these flags as foll
 * **Pass them through**: end the wrapper with `exec "$CLAUDE_RUNNER_CLAUDE_BIN" "$@"`, which forwards the file flags along with every other argument. Don't drop or rewrite them. If a session loses a prompt file flag, it runs without the instructions the control plane sent for it.
 * **On a runner at v2.1.281 or later, a file flag you append replaces the server's, never adds to it**: each prompt file flag takes a single value and Claude Code keeps the last occurrence, so if you append `--append-system-prompt-file <path>` after `"$@"`, your file's contents replace the server's appended instructions. To add instructions on top of the server's, put them in the runner image's `CLAUDE.md`, which the runner [seeds into every session's user-level config](#how-each-session’s-config-is-assembled).
 
+#### Fix `Argument list too long` at session start
+
+On Linux, if you join the control plane's prompt and your own text into one `--append-system-prompt` argument, the runner logs a line like this once the argument reaches 128 KB:
+
+```text theme={null}
+Session <id> finished: failed — reason: child exited 126: /opt/wrapper.sh: line 9: /usr/local/bin/claude: Argument list too long
+```
+
+Linux limits each single argument to 32 memory pages, or 128 KB with the usual 4 KB pages. The figure from `getconf ARG_MAX`, often 2 MB, is a separate limit on all arguments and the environment together.
+
+On Claude Code v2.1.283 or later, leave the file flags in `"$@"` and pass only your own text as `--append-system-prompt`. Claude Code [uses both](https://code.claude.com/docs/en/cli-reference.md#system-prompt-flags), the control plane's prompt first and then your own text:
+
+```bash theme={null}
+exec "$CLAUDE_RUNNER_CLAUDE_BIN" "$@" --append-system-prompt "$(cat /opt/team-instructions.md)"
+```
+
+On Linux, if your own text reaches 128 KB, move it to the runner image's `CLAUDE.md`, because it's still one argument.
+
+On v2.1.281 or v2.1.282, that command exits with `Cannot use both --append-system-prompt and --append-system-prompt-file`. On earlier versions, your text replaces the control plane's prompt with no error. On any of them, update first, or move your own text to `CLAUDE.md`.
+
 ### Provision credentials scoped to the session creator
 
 Use the `decode-token` subcommand to read claims from the session JWT. It reads the token from an argument, from `CLAUDE_CODE_SESSION_ACCESS_TOKEN`, or from stdin, in that order; see [Verify the token inside the session](https://code.claude.com/docs/en/self-hosted-environments-identity.md#verify-the-token-inside-the-session) for what it checks. The example below decodes the creator identity, exchanges it for short-lived AWS credentials, and execs into Claude Code:
@@ -122,7 +143,7 @@ Runs once per repository, in place of the runner's built-in clone and fetch. Use
 | Variable | Description |
 | :- | :- |
 | `CLAUDE_RUNNER_REPO_URL` | Repository URL to clone, after any `--git-host-rewrite` and `--git-ssh-rewrite` have been applied |
-| `CLAUDE_RUNNER_REPO_REF` | Revision to check out, as the session requested it: a branch, tag, commit SHA, or full reference name such as `refs/pull/<number>/head`. Empty means the repository's default branch. |
+| `CLAUDE_RUNNER_REPO_REF` | Revision to check out, as the session requested it: a branch, tag, commit SHA, or full reference name such as `refs/heads/<branch>` or `refs/pull/<number>/head`. Empty means the repository's default branch. |
 | `CLAUDE_RUNNER_CHECKOUT_PATH` | Absolute path where the working tree must be left |
 | `CLAUDE_RUNNER_SESSION_ID` | Session ID in the tagged `session_...` form, for logging and correlation |
 | `CLAUDE_RUNNER_SESSION_UUID` | The same session ID in canonical UUID form |
@@ -303,12 +324,12 @@ The spawned runner registers with the work order in place of the environment sec
 
 The contract has four rules, whichever platform your hook provisions on:
 
-1. **Be idempotent on `CLAUDE_RUNNER_ORDER_ID`.** Redelivery of the same request must spawn at most one runner. Derive a deterministic resource name from the order ID and let your platform reject the duplicate. Don't key on `CLAUDE_RUNNER_SESSION_ID` instead. Every re-request for a session carries the same session ID with a new order ID, so a workload named or deduplicated by the session ID is created once and never again for that session.
+1. **Be idempotent on `CLAUDE_RUNNER_ORDER_ID`.** Redelivery of the same request must spawn at most one runner. Derive a deterministic resource name from the order ID and let your platform reject the duplicate. Don't key on `CLAUDE_RUNNER_SESSION_ID` instead. Every re-request for a session carries the same session ID with a new order ID. A workload named or deduplicated by the session ID isn't created again while the first one exists.
 2. **Don't retry the workload.** One order ID means at most one created workload. If the runner never registers, Anthropic re-requests with a fresh order ID after `--expected-spawn-seconds`.
 3. **Use the exit-code contract.** Exit with the status that matches the outcome:
 
    * **Exit 0**: submitted.
-   * **Exit 1, or still running when `--hook-timeout` ends**: retryable failure. The session backs off and is re-offered.
+   * **Exit 1, or still running when `--hook-timeout` ends**: retryable failure. The session backs off and is re-offered. After 10 failed requests in a row, it's blocked as it is after exit 2 or higher.
    * **Exit 2 or higher**: non-retryable failure. The session is blocked from spawning again until a user sends it a new message or an [Owner](https://code.claude.com/docs/en/cloud-environments.md#organization-shared-environments) selects **Retry** on it in the environment's **Activity** tab.
 
    While a session backs off, it shows **Queued** in the **Activity** tab with no spawn error, so read the hook's output in the orchestrator's log. Once blocked, the session shows **Failed**. Expand it to read the spawn error, taken from the last 512 characters of the hook's stderr. Write an actionable error to stderr, and no secrets. In a shell hook, [keep transient failures retryable](#keep-transient-failures-retryable-in-a-shell-hook).
@@ -318,7 +339,41 @@ The contract has four rules, whichever platform your hook provisions on:
 
 Everything the hook writes to stdout or stderr appears in the orchestrator's log with credentials automatically redacted. If sessions stay queued, check the orchestrator's `/healthz` body for queue counts, then open your environment's **Activity** tab on the [**Cloud environments** admin page](https://claude.ai/admin-settings/cloud-environments): expand a failed session there for its spawn error, and select **Retry** to re-request it.
 
-A session that stays queued with no spawn error in the **Activity** tab can mean the hook is keyed on the session ID. To confirm, check whether your platform has a workload for that session's first spawn request and none for the re-requests. If so, key the workload on `CLAUDE_RUNNER_ORDER_ID` instead.
+#### Fix re-opened sessions that stay Queued or show Failed
+
+If re-opened sessions stay **Queued** or show **Failed**, or your hook times out on them, one cause is a hook that names or deduplicates workloads by the session ID. A session is re-opened when its user sends it a message after its runner has exited. For example, take a hook that builds each workload's name like this:
+
+```bash theme={null}
+name="runner-${CLAUDE_RUNNER_SESSION_ID}"
+```
+
+1. At the session's first spawn request, the hook creates a workload with that name, and a runner starts
+2. The runner exits, for example after [`--release-idle-session-min`](#make-on-demand-runners-exit-when-idle), and the user later re-opens the session
+3. The session's next spawn request carries the same session ID and a new order ID, so the hook builds the same name
+4. If your platform still has the workload from the first request, because nothing [removed](#make-on-demand-runners-exit-when-idle) it when its runner exited, the hook creates no new workload and no runner starts
+5. Each later spawn request for the session ends the same way
+
+Open your own hook and read what it does when the workload already exists, for example when your platform rejects the duplicate name. Find that behavior in the first column to see what the re-opened session shows in the **Activity** tab:
+
+| When the workload exists, your hook | **Queued** changes to **Failed** | Spawn error |
+| :- | :- | :- |
+| Exits 0 without creating anything | After 10 such requests in a row | `runner did not register within ETA after max attempts` |
+| Exits 1 | After 10 such requests in a row | Your hook's stderr tail, or `exit 1` if it wrote nothing to stderr |
+| Exits 2 or higher | Right away | Your hook's stderr tail, or `exit` and the code, such as `exit 2`, if it wrote nothing to stderr |
+| Waits until `--hook-timeout` ends | After 10 such requests in a row | Your hook's stderr tail, or `spawn-runner hook timed out after 60000ms` if it wrote nothing to stderr |
+
+In the last row's spawn error, `60000` is your `--hook-timeout` in milliseconds. When a hook waits until `--hook-timeout` ends, the orchestrator's log also gets a `timed out after` line.
+
+To fix the hook, build each name or key from `CLAUDE_RUNNER_ORDER_ID`, as [rule 1 of the hook contract](#the-spawn-runner-hook) requires. In the example, the name becomes:
+
+```bash theme={null}
+name="runner-${CLAUDE_RUNNER_ORDER_ID}"
+```
+
+If your hook waits, also make it exit once it has submitted the workload, because a waiting hook [delays its orchestrator's next hooks](https://code.claude.com/docs/en/self-hosted-environments-reference.md#orchestrator-cli-flags). After you change the hook, check each stuck session's status in the **Activity** tab:
+
+* **Queued**: the session gets its next spawn request on its own
+* **Failed**: select **Retry** on it as an Owner, or have its user send it a new message
 
 #### Make on-demand runners exit when idle
 
@@ -739,6 +794,27 @@ When a person starts their own session, Claude Code downloads the [skills enable
 Outside [Claude Tag](https://claude.com/docs/claude-tag/overview) sessions, a session in a self-hosted environment runs with [auto memory](https://code.claude.com/docs/en/memory.md#auto-memory) off by default. For instructions that should carry across sessions, use the `CLAUDE.md` in your runner image or in the repository.
 
 The runner's snapshot of the host's `~/.claude/` leaves out the `projects/` directory. Auto memory's default storage location is under that directory. If you put memory files there, the runner doesn't seed them into sessions, and they don't turn auto memory on.
+
+### Stop sessions that fail to fetch server-managed settings
+
+To keep a session that fetches [server-managed settings](https://code.claude.com/docs/en/server-managed-settings.md) from starting when that fetch fails, set [`forceRemoteSettingsRefresh`](https://code.claude.com/docs/en/settings-reference#forceremotesettingsrefresh) to `true` in the [`managed-settings.json`](https://code.claude.com/docs/en/settings#where-settings-live) in your runner image. A reply from Anthropic's API that your organization has no server-managed settings counts as a successful fetch.
+
+Before you add the key, check whether the environment runs Claude Tag channel sessions or sends model requests to Bedrock or Agent Platform:
+
+* **Claude Tag channel sessions**: leave the key out on runners in an environment that an Owner [routes Claude Tag channels to](https://code.claude.com/docs/en/cloud-environments.md#set-the-environment-a-claude-tag-channel-uses). Anthropic's API refuses these sessions' request for server-managed settings, so with the key set they fail to start. Put their rules in the runner image's `managed-settings.json`, which [they still read](https://code.claude.com/docs/en/managed-settings.md#where-and-when-a-policy-applies). To use the key for your other sessions, run those in a separate environment.
+* **Bedrock or Agent Platform**: sessions on these providers [don't fetch server-managed settings](#what-differs-from-sessions-on-the-anthropic-api), so they start whether or not you set the key. Enforce your rules from the same `managed-settings.json` instead.
+
+This `managed-settings.json` sets the key:
+
+```json managed-settings.json theme={null}
+{
+  "forceRemoteSettingsRefresh": true
+}
+```
+
+Set the key in that file even if you also set it in the claude.ai admin console. A new session has no [cached copy](https://code.claude.com/docs/en/server-managed-settings.md#fetch-and-caching-behavior) of your server-managed settings, so if you set the key only in the console, the session doesn't have it yet. If its fetch then fails, the session runs without those settings until a later fetch succeeds.
+
+To confirm that a failed settings fetch is why a session didn't start, look at [Claude Code's last output](#keep-stdin-and-file-descriptor-3-attached) in the session or the runner's log. It includes `Your organization requires remote managed settings to load, but they could not be loaded.`
 
 ### Repository settings in sessions with several repositories
 

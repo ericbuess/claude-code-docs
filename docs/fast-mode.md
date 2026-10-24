@@ -155,25 +155,35 @@ Another option to disable fast mode entirely is to set `CLAUDE_CODE_DISABLE_FAST
 
 Before offering fast mode, Claude Code checks your organization's fast mode availability with a request directly to `api.anthropic.com`. The check doesn't follow [`ANTHROPIC_BASE_URL`](https://code.claude.com/docs/en/llm-gateway-connect#set-the-base-url-and-credential), so on a network that routes Claude traffic through an [LLM gateway](https://code.claude.com/docs/en/llm-gateway) and blocks direct egress to `api.anthropic.com`, the check fails even though inference requests work. The check does use a configured [HTTP proxy](https://code.claude.com/docs/en/network-config.md#proxy-configuration), so a network block fails the check only where `api.anthropic.com` is unreachable even through the proxy.
 
-When the check fails, `/fast` reports "Fast mode unavailable due to network connectivity issues", and requests run at standard speed, even when your organization has fast mode enabled. A check that succeeded in the past keeps working from its cached result, so a blocked check mostly affects new installations.
+If your organization has fast mode enabled and `/fast` says otherwise, find the message it shows among these cases.
 
-The same connectivity message appears on an open network when the check reaches `api.anthropic.com` but presents a credential Anthropic rejects. A session whose resolved key is a gateway-issued credential, held in [`ANTHROPIC_API_KEY`](https://code.claude.com/docs/en/llm-gateway-connect#set-the-base-url-and-credential) or produced by an [`apiKeyHelper`](https://code.claude.com/docs/en/settings-reference#apikeyhelper), sends the check with that key, and the rejected request is reported as a connectivity failure.
+#### Fast mode unavailable due to network connectivity issues
 
-To restore fast mode, allowlist direct egress to `api.anthropic.com` where a network block is the cause, or set whichever variable matches how the check fails:
+The availability check failed, for example because your network blocks `api.anthropic.com`, and requests run at standard speed. A check that succeeded in the past keeps working from its cached result, so a blocked check mostly affects new installations.
 
-* `CLAUDE_CODE_SKIP_FAST_MODE_NETWORK_ERRORS=1` treats a failed check as available and still honors a "disabled by your organization" response. Use it when your network refuses the connection, or when Anthropic rejects a gateway credential; allowlisting doesn't help the credential case, since nothing is blocked.
-* `CLAUDE_CODE_SKIP_FAST_MODE_ORG_CHECK=1` skips the check entirely. Use it when your network intercepts the request rather than refusing it.
+To restore fast mode, allowlist direct egress to `api.anthropic.com`, or set `CLAUDE_CODE_SKIP_FAST_MODE_NETWORK_ERRORS=1`, which treats a failed check as available and still honors a "disabled by your organization" response.
 
-Two gateway configurations report "Fast mode has been disabled by your organization" rather than the connectivity message, even when your organization has fast mode enabled:
+#### Fast mode is currently unavailable
 
-* A session that authenticates with [`ANTHROPIC_AUTH_TOKEN`](https://code.claude.com/docs/en/llm-gateway-connect#set-the-base-url-and-credential) alone skips the check: without a claude.ai login or an Anthropic API key, and without a cached successful check, Claude Code treats fast mode as disabled by your organization without sending the request.
-* A proxy that intercepts the check and answers with its own page, for example a TLS-inspecting proxy returning an HTTP 200 block page, is read as a response saying your organization has fast mode disabled.
+Behind a gateway, check for these configurations, in which Claude Code doesn't send the availability check and has no earlier successful check cached:
 
-In both cases, set `CLAUDE_CODE_SKIP_FAST_MODE_ORG_CHECK=1` to restore fast mode. `CLAUDE_CODE_SKIP_FAST_MODE_NETWORK_ERRORS` doesn't apply to either case, since it only bypasses failed checks and both of these produce a disabled response instead. Allowlisting direct egress doesn't help the bearer-token case, which never sends the request.
+* You point `ANTHROPIC_BASE_URL` at your gateway and set [`ANTHROPIC_API_KEY`](https://code.claude.com/docs/en/llm-gateway-connect#set-the-base-url-and-credential) to a gateway-issued key that isn't in the format of an Anthropic API key. Claude Code withholds such a key from `api.anthropic.com`.
+* You set [`CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC`](https://code.claude.com/docs/en/env-vars), so Claude Code skips the check.
 
-The variables affect only the client-side check. When your organization has fast mode disabled, the API rejects fast mode requests whether or not they're set. A rejection from the API stands even with a skip variable set. Claude Code retries the rejected request at standard speed, turns fast mode off, and `/fast` reports that your organization has disabled fast mode.
+To restore fast mode in either configuration, set `CLAUDE_CODE_SKIP_FAST_MODE_NETWORK_ERRORS=1`.
 
-Setting `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` also suppresses the availability check. Without a previously cached successful check, `/fast` reports "Fast mode is currently unavailable"; both skip variables restore fast mode in that configuration too.
+#### Fast mode has been disabled by your organization
+
+Behind a gateway, you can see this message even when your organization has fast mode enabled, in either of these configurations:
+
+* You authenticate with [`ANTHROPIC_AUTH_TOKEN`](https://code.claude.com/docs/en/llm-gateway-connect#set-the-base-url-and-credential) alone, with no claude.ai login, no API key, and no cached successful check. Claude Code then treats fast mode as disabled by your organization without sending the request.
+* A proxy intercepts the check and answers with its own page, for example a TLS-inspecting proxy returning an HTTP 200 block page. Claude Code reads that page as a response saying your organization has fast mode disabled.
+
+In both cases, set `CLAUDE_CODE_SKIP_FAST_MODE_ORG_CHECK=1`, which skips the check entirely, rather than `CLAUDE_CODE_SKIP_FAST_MODE_NETWORK_ERRORS`, which doesn't apply to either.
+
+> [!NOTE]
+>
+> The skip variables change only the client-side check. When your organization has fast mode disabled, the API rejects fast mode requests whether or not they're set. Claude Code then retries the request at standard speed, turns fast mode off, and `/fast` reports that your organization has disabled fast mode.
 
 ### Require per-session opt-in
 
