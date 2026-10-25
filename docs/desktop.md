@@ -984,7 +984,12 @@ A Linux or macOS remote machine needs a supported processor, an SSH server with 
 
 * **System**: an x86\_64 or arm64 processor. The machine also has to meet Claude Code's [system requirements](https://code.claude.com/docs/en/setup.md#system-requirements). On Linux, Claude Code needs glibc 2.17 or later, or musl. To see which one the machine has, run `ldd --version` there. On a musl-based distribution such as Alpine Linux, also install the [packages that Claude Code needs](https://code.claude.com/docs/en/setup.md#alpine-linux-and-musl-based-distributions).
 * **SFTP**: the SSH server has to offer the SFTP subsystem, which a `Subsystem sftp` line in its `sshd_config` turns on. To check, connect to the same host and port with `sftp` in a terminal on your computer. A working server shows the `sftp>` prompt.
-* **Sessions per connection**: Desktop on macOS and Linux opens several sessions on one SSH connection. If the server's `sshd_config` sets `MaxSessions 1`, raise it, for example to OpenSSH's default of 10.
+* **`MaxSessions 1` on the server**: to connect to a server whose `sshd_config` sets `MaxSessions 1`, do one of these:
+  * **Your computer runs macOS or Linux**: update to Claude Desktop v3.1623.0 or later
+  * **Your computer runs Windows**: make sure that Desktop [connects through the OpenSSH client](#use-your-ssh-configuration), because Desktop's built-in SSH client can't connect to that server
+  * **You can change the server**: raise `MaxSessions`, for example to OpenSSH's default of 10
+* **Logins with `MaxSessions 1`**: use a login that works without a prompt, such as a key that your SSH agent holds. Desktop logs in at least twice each time it connects or reconnects. Expect at least one more login for each [terminal](#run-commands-in-the-terminal) tab, and for each Desktop session in which you run commands that start with `!`. Expect none for commands that Claude runs.
+* **One-time codes with `MaxSessions 1`**: if every login prompts you, as with one-time codes, `!` commands fail. Run those commands in a terminal tab instead, which prompts in its own pane.
 * **Install folder**: Desktop installs a helper program and Claude Code under `~/.claude/remote/` in your home directory. It runs them from there, so that folder can't be on a file system mounted `noexec`. Allow about 1 GB of disk space in the home directory of each user who connects. For what that folder holds, see [Files and processes on the remote machine](#files-and-processes-on-the-remote-machine).
 * **Shell**: the shell set for your account on the remote machine has to run commands sent over SSH, as Bash, Zsh, and `sh` do
 * **Network**: Claude Code runs on the remote machine and makes its network requests from there, so the machine needs the [network access that Claude Code requires](https://code.claude.com/docs/en/network-config.md#network-access-requirements). If the machine can't download Claude Code, Desktop downloads it on your computer and uploads it. Claude Code's other requests still go out from the remote machine. On a Linux remote machine, if those requests need a proxy, [set it for SSH sessions](#set-a-proxy-or-a-ca-certificate-for-ssh-sessions).
@@ -993,7 +998,7 @@ A Linux or macOS remote machine needs a supported processor, an SSH server with 
 
 If a Linux remote machine reaches the internet through a proxy or needs a CA certificate, add the [proxy and CA variables](https://code.claude.com/docs/en/network-config.md) under `env` in `~/.claude/settings.json` there. Add them even if you already export them in `~/.profile`, `~/.bash_profile`, `~/.zprofile`, or `~/.zshrc` on that machine.
 
-An SSH session doesn't get them from those files, even when `claude` in a terminal on that machine does. The session can then hang, or show **The connection from … to the API failed** or **Authentication failed**, and signing in again doesn't help.
+In an SSH session, Claude Code doesn't get the variables from those files, even when `claude` in a terminal on that machine does. The session can then hang, or show **The connection from … to the API failed** or **Authentication failed**, and signing in again doesn't help.
 
 **1. Add the variables**
 
@@ -1028,19 +1033,42 @@ If the list has the variable, change it in the file that sets it, such as `~/.zs
 
 Restart the remote machine, or quit Desktop and end the helper's processes, as in the first two steps to [remove the helper](#files-and-processes-on-the-remote-machine). Do this when no task is running, because either way interrupts Claude's work.
 
-#### Use your SSH configuration on macOS and Linux
+#### Use your SSH configuration
 
-On macOS and Linux, Desktop connects by running the OpenSSH client on your computer, so it uses your `~/.ssh/config`. Connecting through the OpenSSH client requires Claude Desktop v1.37937.0 or later. Enter a `Host` name from that file in the **SSH host** field to use settings from its entry, such as `HostName`, `User`, `IdentityFile`, `CertificateFile`, `ProxyJump`, and `ProxyCommand`.
+You can use your SSH configuration on macOS, Linux, and Windows when Desktop connects through the OpenSSH client on your computer:
+
+* **macOS and Linux**: Desktop connects by running the OpenSSH client on your computer, so it uses your `~/.ssh/config`. Connecting through the OpenSSH client requires Claude Desktop v1.37937.0 or later.
+* **Windows**: when Desktop connects through the OpenSSH client, it uses your `%USERPROFILE%\.ssh\config`. If you use a Claude account rather than a third-party provider, connecting through the OpenSSH client requires all of these:
+
+  * Claude Desktop v2.2553.0 or later. To find your version, see [Check your version](#check-your-version).
+  * Microsoft's OpenSSH 9.4 or later
+  * Desktop installed with the download buttons at the top of this page, because Desktop from the Microsoft Store doesn't connect through the OpenSSH client
+
+  If you can't meet these requirements, or you use a third-party provider, see [Connect on Windows without the OpenSSH client](#connect-on-windows-without-the-openssh-client).
+
+With the OpenSSH client, enter a `Host` name from your configuration file in the **SSH host** field. Desktop then uses settings from that `Host` entry, such as `HostName`, `User`, `IdentityFile`, `CertificateFile`, `ProxyJump`, and `ProxyCommand`.
 
 Before you add the connection, check the client and the entry in a terminal on your computer:
 
-* **Client version**: run `ssh -V`. The client has to be OpenSSH 7.6 or later.
-* **Entry**: run `ssh` with the `Host` name, such as `ssh devbox`. If that fails, fix the entry first.
+* **Client version on macOS and Linux**: run `ssh -V`. The client has to be OpenSSH 7.6 or later.
+* **Client version on Windows**: Desktop tries the `ssh` on your `PATH` first, so run `ssh -V`. The client passes if the output shows `OpenSSH_for_Windows_` and 9.4 or later. If it doesn't pass, check the two folders that Desktop tries next: run `.\ssh.exe -V` in `C:\Windows\System32\OpenSSH`, then in `C:\Program Files\OpenSSH`.
+* **No client passes on Windows**: add the **OpenSSH Client** optional feature in Windows and install pending Windows updates, or install [Microsoft's newer build](https://learn.microsoft.com/en-us/troubleshoot/windows-server/system-management-components/upgrade-in-box-openssh-to-latest-openssh-release). Then quit and reopen Desktop. To see whether Desktop found a usable OpenSSH client, look in [`ssh.log`](#get-desktops-logs-for-an-ssh-problem) for `Windows OpenSSH client:` and a version, or for `no usable Windows OpenSSH client`.
+* **Entry**: on Windows, use the client that passed the version check. Run `ssh` with the `Host` name, such as `ssh devbox`. If that fails, fix the entry first.
 
 You can leave the **SSH port** and **SSH key (optional)** fields empty. If you fill one in, Desktop uses it with the entry:
 
 * **SSH port**: a value here overrides the entry's `Port`
-* **SSH key (optional)**: Desktop offers the key file you pick in addition to the entry's `IdentityFile` and the keys in your SSH agent
+* **SSH key (optional)**: with the OpenSSH client, Desktop offers the key file you pick in addition to the entry's `IdentityFile` and the keys in your SSH agent. On Windows, pick a key in OpenSSH format, because `ssh` doesn't read a PuTTY `.ppk` file.
+
+##### Connect on Windows without the OpenSSH client
+
+On Windows, you connect through Desktop's built-in SSH client if your computer doesn't meet [the requirements for the OpenSSH client](#use-your-ssh-configuration). With a third-party provider, you connect through the built-in client by default, and your administrator can change that. For the setting, see [SSH remote sessions in Claude Desktop on 3P](https://claude.com/docs/third-party/claude-desktop/ssh-remote-sessions).
+
+With the built-in client, you can still enter a `Host` name from your SSH configuration in the **SSH host** field if your `PATH` has an `ssh` command, with these limits:
+
+* **Settings from the entry**: Desktop takes `HostName`, `User`, `Port`, and `IdentityFile`. It also takes `ProxyCommand` if an `sh` shell is on your `PATH`.
+* **SSH key (optional)**: leave this field empty to keep the entry's `IdentityFile`, because a key file that you pick here replaces the `IdentityFile`
+* **`CertificateFile` and `ProxyJump`**: Desktop ignores `CertificateFile`, and the connection fails if the entry sets `ProxyJump`. To use either setting, [connect through the OpenSSH client](#use-your-ssh-configuration).
 
 ##### Reach a machine behind a jump host
 
@@ -1095,7 +1123,7 @@ Then enter `devbox-container` in the **SSH host** field.
 
 ##### Use variables from your shell in a `ProxyCommand`
 
-To use an environment variable of your own in a `ProxyCommand` or `Match exec` command, export it in a shell startup file, such as `~/.zshrc`, then quit and reopen Desktop. When Desktop starts, it reads what your login shell exports, and it keeps those values until you quit.
+On macOS and Linux, to use an environment variable of your own in a `ProxyCommand` or `Match exec` command, export it in a shell startup file, such as `~/.zshrc`. Then quit and reopen Desktop. When Desktop starts, it reads what your login shell exports, and it keeps those values until you quit.
 
 This requires Claude Desktop v2.37337.0 or later and an `env` command that accepts `-0`, which you can check by running `env -0` in a terminal on your computer.
 
@@ -1103,7 +1131,7 @@ This requires Claude Desktop v2.37337.0 or later and an `env` command that accep
 >
 > If your shell sets temporary AWS credentials, [give the AWS CLI a profile](#use-aws-credentials-in-a-proxycommand) instead of exporting `AWS_*` variables.
 
-##### Use AWS credentials in a `ProxyCommand`
+##### Use AWS credentials in a `ProxyCommand` on macOS and Linux
 
 If you set temporary AWS credentials in a shell startup file, a `ProxyCommand` that runs the AWS CLI can connect in a terminal and fail in Desktop. When your shell exports `AWS_SESSION_TOKEN`, `AWS_SECURITY_TOKEN`, or `AWS_CREDENTIAL_EXPIRATION`, `ssh` and your `ProxyCommand` in Desktop don't get the shell's AWS credentials, `AWS_REGION`, or `AWS_PROFILE`.
 
@@ -1242,8 +1270,9 @@ When you come back and the task isn't done, check for word that Desktop can't re
 
 ##### Prepare a long task
 
-* **Update first**: update Desktop before you start a long task. On macOS and Windows, Desktop can restart on its own to install an update that it has downloaded. That restart waits while Claude is working on an SSH task. On macOS with a Claude account, by default the restart can go ahead anyway once the update has waited 72 hours.
-* **Don't quit on Windows, or before v2.42304.0 with a third-party provider**: after a quit there you lose the running task, so leave Desktop open during the task. In any other case, see [what you get back](#reopen-a-session-after-you-quit-desktop) before you quit.
+* **Update first**: update Desktop before you start a long task. On macOS and Windows, Desktop can restart on its own to install an update that it has downloaded. That restart waits while Claude is working on an SSH task. By default, once the update has waited 72 hours, the restart can go ahead during the task if Desktop can [rejoin the task afterward](#reopen-a-session-after-you-quit-desktop).
+* **Check before you quit**: you don't always get the running task back after a quit or restart, for example after some Desktop updates. For the cases, see [Reopen a session after you quit Desktop](#reopen-a-session-after-you-quit-desktop).
+* **On an older version, leave Desktop open**: on Windows with Claude Desktop before v3.1623.0, you don't get the running task back after Desktop quits or restarts. The same is true with a third-party provider on macOS or Linux before v2.42304.0. In both cases, leave Desktop open during the task. To find your version, see [Check your version](#check-your-version).
 * **Reduce requests**: choose a permission mode, rules, or hooks that [make the task wait for you less often](#handle-requests-that-arrive-while-you-are-away)
 * **Check the jump host**: if your jump host asks for a sign-in, for example a push to a phone, switch to a login that works without a prompt. Otherwise Desktop can send another push each time it tries to reconnect.
 * **Test the remote machine**: start a short task, quit Desktop while the task is still running, and open the session again well after the task should be done. If the task isn't finished and the session shows no authentication error, check the remote machine for [what can end a task](#limits-while-desktop-is-disconnected).
@@ -1320,11 +1349,11 @@ If Desktop hasn't reconnected when you come back, send a message in the session.
 
 After you quit Desktop, the task keeps running on the remote machine, but it stops when the session opens again unless Desktop can rejoin its process. While Desktop is closed, the task runs until it finishes, needs you, or reaches one of the [limits](#limits-while-desktop-is-disconnected).
 
-* **Desktop on Windows**: you don't get the running task back, because Desktop never rejoins after a quit. Start Desktop again only when you expect the task to be done, because the session can open as Desktop starts.
-* **Third-party provider, task from an earlier version**: if you started the task in a Desktop version before v2.42304.0, you don't get it back on macOS or Linux either. Start Desktop again only when you expect the task to be done.
-* **Any other task, with Desktop on macOS or Linux**: start Desktop and open the session, and the task goes on if Desktop rejoins. It can't always rejoin, for example after some Desktop updates, so [update before a long task](#prepare-a-long-task).
+* **Desktop on Windows, task started in a version before v3.1623.0**: you don't get the task back, even if Desktop has updated since. Start Desktop again only when you expect the task to be done, because the session can open as Desktop starts, and the task stops when the session opens. If you don't know which version you started the task in, also wait until you expect it to be done.
+* **Third-party provider on macOS or Linux, task started in a version before v2.42304.0**: you don't get the task back. Start Desktop again only when you expect the task to be done.
+* **Any other task**: start Desktop and open the session, and the task goes on if Desktop rejoins. It can't always rejoin, for example after some Desktop updates, so [update before a long task](#prepare-a-long-task).
 
-When Desktop can't rejoin, you also lose any approval or question that was waiting for you. If the task doesn't continue on its own, send a message, and Claude continues from the conversation's saved history.
+When the task stops, the session can show `Restarting Claude Code on <host>…` while Desktop starts a new process. You also lose any approval or question that was waiting for you. If Claude doesn't continue on its own, send a message, and Claude continues from the conversation's saved history.
 
 For third-party deployments, see [SSH remote sessions in Claude Desktop on 3P](https://claude.com/docs/third-party/claude-desktop/ssh-remote-sessions).
 
@@ -1410,6 +1439,8 @@ Programs that Claude Code starts, such as shell commands and MCP servers, start 
 ##### See who connected to the remote machine
 
 To find out who connected to a remote machine, read the SSH server's log on that machine, where a login from Desktop looks like one from a terminal. With Desktop on macOS or Linux, expect an entry each time Desktop connects, not one for each session.
+
+If the server sets `MaxSessions 1`, expect at least two entries each time Desktop connects or reconnects. Expect at least one more for each terminal tab, and for each Desktop session in which you run commands that start with `!`.
 
 You won't find Desktop's SSH connections in Claude Code's [metrics and events](https://code.claude.com/docs/en/monitoring-usage.md#available-metrics-and-events). To find out from them which remote machine an SSH session ran on, see [Attribute telemetry to Desktop SSH sessions](https://code.claude.com/docs/en/monitoring-usage.md#attribute-telemetry-to-desktop-ssh-sessions). For Desktop's own record of its connections, see [Get Desktop's logs for an SSH problem](#get-desktops-logs-for-an-ssh-problem).
 
@@ -2112,7 +2143,7 @@ Find the card's title, or the code that ends the error message, in this table, t
 | - | - | - |
 | `<host>'s SSH server has SFTP turned off` | `[SFTP_UNAVAILABLE]` | Turn on SFTP in the server's `sshd_config`, as described under [remote machine requirements](#remote-machine-requirements-for-ssh-sessions) |
 | `SFTP doesn't start on <host>` | `[SFTP_NOT_STARTED]` | Connect to the same host with `sftp` in a terminal on your computer to see what stops it, then check the settings and files that Desktop's message names |
-| `<host> allows too few SSH sessions per connection` | `[SESSION_LIMIT]` | Raise `MaxSessions` in the server's `sshd_config`, for example to OpenSSH's default of 10 |
+| `<host> allows too few SSH sessions per connection` | `[SESSION_LIMIT]` | Update to Claude Desktop v3.1623.0 or later, or raise `MaxSessions` in the server's `sshd_config`, for example to OpenSSH's default of 10 |
 | `<host> is out of disk space` | `[ENOSPC]` or `[EDQUOT]` | Free space or quota on the remote machine, in your home directory or `/tmp` |
 | `Free up disk space on this computer` | `[ENOSPC]` or `[EDQUOT]`, in a message that starts with `Couldn't prepare the deploy locally` | Free space on your computer |
 | `Claude Code won't start on <host>` | `[CLI_UNRESPONSIVE]` | Wait a minute, then try again. If it keeps failing, run the command that the message names on the remote machine to see whether Claude Code answers there. |

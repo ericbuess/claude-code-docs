@@ -380,10 +380,21 @@ At the default `--capacity 1`, the rewrite doesn't apply: the session's child bi
 
 #### Join a session's metrics to the runner's
 
-To put a session's own metrics beside `claude_code_self_hosted_runner_session_idle_seconds`, join on the runner's `session_id`:
+To see what idle sessions have cost, join the runner's `claude_code_self_hosted_runner_session_idle_seconds` to Claude Code's cost metric on `ccr_session_id`. The runner's metric doesn't carry that label, so give it one with `label_replace`, as in this query:
 
-* **At `--capacity` above one**: join directly. On the runner's `/metrics`, the session's series carry the same `session_id` as that metric, in `session_...` form.
-* **At `--capacity 1`**: join on a converted `ccr_session_id`. By default, each Claude Code metric on port 9464 carries that label, which holds the session ID in `cse_...` form. In a new label, replace its `cse_` prefix with `session_` to get the runner's `session_id`. The metric's own `session_id` holds Claude Code's own [`session.id`](https://code.claude.com/docs/en/monitoring-usage#standard-attributes), which matches no runner series.
+```text theme={null}
+sum by (ccr_session_id) (claude_code_cost_usage_total)
+and on (ccr_session_id)
+label_replace(
+  claude_code_self_hosted_runner_session_idle_seconds > 600,
+  "ccr_session_id", "cse_$1", "session_id", "session_(.*)"
+)
+```
+
+The query returns one result per session idle for over ten minutes: the cost in US dollars its Claude Code process has counted so far. To join another Claude Code metric, replace `claude_code_cost_usage_total` in the query. The query works at any `--capacity`.
+
+* **`session_id`**: on port 9464, that label on Claude Code metrics holds Claude Code's own [`session.id`](https://code.claude.com/docs/en/monitoring-usage#standard-attributes), which matches no runner series. A join on it returns nothing, so join on `ccr_session_id`.
+* **Claude Code metrics have no `ccr_session_id`**: check that [`OTEL_METRICS_INCLUDE_SESSION_ID`](https://code.claude.com/docs/en/monitoring-usage#metrics-cardinality-control) isn't set to `false`
 
 ### Session lifecycle counter semantics
 

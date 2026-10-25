@@ -48,6 +48,8 @@ Run `/plugin` at the Claude Code prompt and press Tab until the **Installed** ta
 
 Use what you asked for. For the example prompt, the current branch name appears above the prompt box. If the mod doesn't do what you wanted, tell Claude what to change. The mod reloads at the end of each turn that changes its files, so you can try the change as soon as Claude finishes.
 
+If a transcript line that starts with the mod's name says the [change didn't load](https://code.claude.com/docs/en/plugins/mods/troubleshoot.md#this-mods-change-didnt-load), paste that line into your next message when you ask Claude for a fix. Claude doesn't see the line unless you paste it.
+
 ### Use the mod in other sessions
 
 A mod Claude wrote loads only in the session that made it, and Claude Code deletes that session's mods folder once it's older than [`cleanupPeriodDays`](https://code.claude.com/docs/en/settings-reference#cleanupperioddays). To keep the mod, copy its directory out of the mods folder to a place of your own, such as `~/mods/git-branch`. Then choose how to load it:

@@ -327,6 +327,8 @@ Match the message you see to a section below.
 | `Cannot read this as an image: <path> is a pipe or a device` | [Tool errors](#file-is-too-large-to-read-as-an-image) |
 | `subagent_type is required: the general-purpose agent is not available in this session` | [Tool errors](#subagent-type-is-required) |
 | `Error: this write left the memory index at MEMORY.md at ..., over its ... read limit` | [Tool errors](#memory-index-is-over-its-read-limit) |
+| `Sandbox is required but failed to initialize: <reason>` | [Sandboxing troubleshooting](https://code.claude.com/docs/en/sandboxing.md#commands-refused-with-sandbox-is-required) |
+| `Sandbox is required (sandbox.failIfUnavailable) and stopped being available in this session: <reason>` | [Sandboxing troubleshooting](https://code.claude.com/docs/en/sandboxing.md#commands-refused-with-sandbox-is-required) |
 | `pkill: refusing to run` | [Tool errors](#pkill-pattern-matches-the-claude-code-process) |
 | `Failed to write to <name>'s inbox — nothing was sent` | [Tool errors](#failed-to-write-to-a-teammate-inbox) |
 | `Failed to write the plan approval request to the lead's inbox — plan not submitted` | [Tool errors](#failed-to-write-to-a-teammate-inbox) |

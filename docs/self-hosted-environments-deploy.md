@@ -348,12 +348,12 @@ Anthropic doesn't publish a pre-built runner image. Build your own around the `c
 
 The recipes below use `--capacity 4`, so one container serves up to four concurrent sessions from the same locked owner. That doesn't provide the per-session container isolation in the [hardening section](#harden-your-deployment): before connecting an environment to production systems, either run the recipes at `--capacity 1` with one container per session, or use [on-demand runners](https://code.claude.com/docs/en/self-hosted-environments-configuration.md#on-demand-runners), which also keep the environment secret off session-running hosts. If you add the [Anthropic git proxy](#use-the-anthropic-git-proxy) to one of these recipes, also change `--capacity` to `1`.
 
-This Dockerfile is a minimal starting point:
+This Dockerfile is a minimal starting point. It installs `python3` because the [hooks Anthropic's control plane supplies](https://code.claude.com/docs/en/self-hosted-environments-configuration.md#how-each-session’s-config-is-assembled) to Claude Tag sessions, including the one that has Claude post its reply in Slack, run `python3`. Keep `python3` on `PATH` in any image that serves Claude Tag sessions:
 
 ```dockerfile theme={null}
 FROM debian:bookworm-slim
 ARG CLAUDE_CODE_VERSION
-RUN apt-get update && apt-get install -y --no-install-recommends git curl ca-certificates openssh-client jq \
+RUN apt-get update && apt-get install -y --no-install-recommends git curl ca-certificates openssh-client jq python3 \
  && rm -rf /var/lib/apt/lists/*
 RUN curl -fsSL "https://downloads.claude.ai/claude-code-releases/${CLAUDE_CODE_VERSION:?set with --build-arg CLAUDE_CODE_VERSION}/linux-x64/claude" \
       -o /usr/local/bin/claude && chmod +x /usr/local/bin/claude
@@ -363,7 +363,7 @@ RUN git config --system user.name "Claude" \
 ENTRYPOINT ["claude"]
 ```
 
-Swap `linux-x64` for `linux-arm64` if your nodes are ARM, or for `linux-x64-musl` or `linux-arm64-musl` on a musl-based image such as Alpine; see [Alpine Linux setup](https://code.claude.com/docs/en/setup.md#alpine-linux-and-musl-based-distributions) for the extra packages musl images need. The URL is the standard Claude Code release location, so you can verify the downloaded binary against the release's signed manifest as described in [Binary integrity and code signing](https://code.claude.com/docs/en/setup.md#binary-integrity-and-code-signing). The runner requires Claude Code version 2.1.224 or later. Build the image, then push it to your registry and reference it in the recipes below:
+Swap `linux-x64` for `linux-arm64` if your nodes are ARM, or for `linux-x64-musl` or `linux-arm64-musl` on a musl-based image such as Alpine; see [Alpine Linux setup](https://code.claude.com/docs/en/setup.md#alpine-linux-and-musl-based-distributions) for the extra packages musl images need. The URL is the standard Claude Code release location, so you can verify the downloaded binary against the release's signed manifest as described in [Binary integrity and code signing](https://code.claude.com/docs/en/setup.md#binary-integrity-and-code-signing). The runner requires Claude Code version 2.1.224 or later, or 2.1.229 or later to serve Claude Tag sessions. Build the image, then push it to your registry and reference it in the recipes below:
 
 ```bash theme={null}
 docker build \
@@ -825,6 +825,7 @@ Common issues:
   Once the runner is upgraded or the cause is fixed, retry the session or start a new one. If none of these checks finds the cause, [report an issue](#report-an-issue).
 
   For the source the session pushes results to, a deleted branch fails the session. For a git source the session only reads from, the runner skips that source and continues on the remaining ones. The runner fails the session when skipping would leave it with no repository at all. Before v2.1.228, such a session started in an empty directory.
+* **Claude Tag sometimes doesn't post its reply in Slack**: the reply reminder is a [hook the control plane supplies](https://code.claude.com/docs/en/self-hosted-environments-configuration.md#how-each-session’s-config-is-assembled). Confirm the runner is Claude Code v2.1.229 or later with `claude --version`, since older runners ignore supplied hooks; confirm `python3 --version` succeeds inside the runner image, since the hooks run `python3`; and confirm no settings file turns hooks off, whether `disableAllHooks` in `managed-settings.json`, the runner user's `~/.claude/settings.json`, or the repository's `.claude/settings.json` or `.claude/settings.local.json`, or `allowManagedHooksOnly` or a [`strictPluginOnlyCustomization`](https://code.claude.com/docs/en/settings-reference#strictpluginonlycustomization) that covers hooks in managed settings.
 * **A session starts without one of its repositories**: on a runner with no [`checkout` hook](https://code.claude.com/docs/en/self-hosted-environments-configuration#checkout), the git host can refuse the runner's access check for a repository the session only reads from. The runner then skips that repository, logs a `[runner:warn] could not access context source` line naming the refusal, and starts the session on the remaining ones.
 
   The runner skips only a clear refusal: the host answers that the repository wasn't found, git finds no credentials for the host, or authentication fails. A network failure, a timeout, or an HTTP `403` still fails the session start, as does a refusal for a repository the session pushes results to. The runner still fails a session that skipping would leave with no repository at all. With [`--use-anthropic-git-proxy`](#use-the-anthropic-git-proxy), the runner skips only a repository the git proxy itself denies.

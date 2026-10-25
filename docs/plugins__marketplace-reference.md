@@ -172,6 +172,36 @@ A relative path resolves only when Claude Code has the marketplace's files, so c
 * **`url`**: Claude Code fetches only `marketplace.json`, so relative paths can't resolve. Give each plugin an object source instead, such as `github` or `git-subdir`.
 * **`settings`**: relative paths are rejected outright.
 
+#### Git submodules in the marketplace repository
+
+When Claude Code clones a marketplace repository, it fetches only the git submodules that hold plugin files. Requires Claude Code v2.1.295 or later.
+
+Earlier versions fetch every submodule, nested ones included. If the repository has a large submodule, Claude Code can then run past the [clone timeout](https://code.claude.com/docs/en/plugins/troubleshooting.md#git-clone-timed-out-after-120s) while fetching it.
+
+For a plugin in a subdirectory, such as `./plugins/formatter`, Claude Code fetches a submodule in these cases:
+
+* **The plugin is inside the submodule**: the submodule is the plugin's directory or a directory above it
+* **The submodule is inside the plugin**: the submodule is anywhere under the plugin's directory
+* **A symbolic link points into the submodule**: a link committed to the repository has its target in the submodule
+
+A plugin at the marketplace root, with `"source": "./"`, gets every submodule in the repository or none of them. Claude Code fetches every submodule when one of these points into any submodule:
+
+* **A component directory**: a directory at the root that holds plugin components, such as `skills/`, `hooks/`, or `bin/`
+* **A path in the plugin's configuration**: a path in the plugin's marketplace entry, in its `plugin.json`, or in a config file such as `.mcp.json` or `hooks/hooks.json`
+* **A symbolic link**: a link committed to the repository
+* **Text in the plugin's files**: a submodule's path, such as `vendor/tool`, written in a config file or in a file under a component directory
+
+When none of them does, Claude Code fetches no submodule for that plugin. A repository that is both a project and a plugin often has submodules that only the project's build uses, and this rule leaves them out.
+
+Claude Code also fetches every submodule where it can't tell which ones hold plugin files, such as:
+
+* **A `SKILL.md` at the root**: the whole repository is then one skill's directory
+* **A file Claude Code can't read**: the marketplace file, one of the plugin's config files, or `.gitmodules`
+
+If you add a marketplace with `--sparse`, or its source sets `sparsePaths`, Claude Code checks out only the directories named there and fetches no submodule. Earlier versions do the same.
+
+To keep a submodule your plugins don't use out of the clone, see [Keep unused submodules out of the clone](https://code.claude.com/docs/en/plugins/create-marketplace.md#keep-unused-submodules-out-of-the-clone).
+
 #### Bare names under pluginRoot
 
 A bare name is a single directory name with no `/`, such as `"formatter"`. To write bare names instead of `./` paths, set [`metadata.pluginRoot`](#top-level-fields) to the directory they resolve under. With `"pluginRoot": "./plugins"`, `"source": "formatter"` resolves to `./plugins/formatter`. Requires Claude Code v2.1.239 or later.

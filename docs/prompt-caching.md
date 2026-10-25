@@ -100,9 +100,12 @@ Before v2.1.260, changing effort on Fable 5.1 with an API key or a Claude subscr
 
 ### Turning on fast mode
 
-Enabling [fast mode](https://code.claude.com/docs/en/fast-mode.md) adds a request header that is part of the cache key, so the first request Claude Code sends with fast mode on reads the entire conversation history with no cache hits. Claude Code sets that header once when a turn starts and keeps it for the whole turn, so when you turn fast mode on while Claude is working, the cache miss from the header happens on the first request of your next turn. Those uncached input tokens are billed at [fast mode rates](https://code.claude.com/docs/en/fast-mode.md#understand-the-cost-tradeoff), which is why turning it on at the start of a session costs less than turning it on deep into a long one. If your current model doesn't support fast mode, enabling fast mode also [switches your model](#switching-models), and that switch starts a fresh cache on its own from the next request in the running turn.
+[Fast mode](https://code.claude.com/docs/en/fast-mode.md) and standard speed keep separate caches, so after you turn fast mode on or off, the next request can't use what the other speed cached. The first time you turn fast mode on in a conversation, the next request reads the whole conversation so far uncached at [fast mode rates](https://code.claude.com/docs/en/fast-mode.md#understand-the-cost-tradeoff). To keep that cost small, turn it on at the start of a session.
 
-The cost applies once per conversation. After the first fast mode turn, Claude Code keeps sending the header and varies only the request's speed setting, which is not part of the cache key. Turning fast mode off, the [automatic fallback to standard speed](https://code.claude.com/docs/en/fast-mode.md#handle-rate-limits) after a rate limit, and turning it back on later all keep the cache. If you [run out of usage credits](https://code.claude.com/docs/en/fast-mode.md#handle-rate-limits) mid-session, Claude Code retries each rejected fast mode request at standard speed the same way, so this fallback also keeps the cache. `/clear` and `/compact` reset this, since they rebuild the cache at those points anyway.
+* If you turn it on while Claude is working, that turn finishes at standard speed, and you pay for any uncached read on your next turn's first request.
+* If your current model doesn't support fast mode, enabling fast mode also [switches you to Opus](https://code.claude.com/docs/en/fast-mode.md#toggle-fast-mode). That [model switch](#switching-models) starts a fresh cache on its own from the next request in the running turn.
+
+Each later toggle reads uncached whatever the speed you switch to doesn't have cached. Speed changes Claude Code makes on its own, such as the [fallback to standard speed](https://code.claude.com/docs/en/fast-mode.md#handle-rate-limits) after a rate limit and the return to fast mode later, count as toggles too.
 
 ### Connecting or removing an MCP server
 
@@ -309,9 +312,12 @@ To get one hour through a gateway or on Amazon Bedrock:
 
 In Claude Code, the cache is effectively scoped to one machine and directory. The system prompt embeds your auto memory paths, and the conversation opens with an announcement of the working directory, platform, shell, and OS version. Two sessions in different directories therefore build different prefixes and miss each other's cache.
 
-Sessions you run in parallel in the same directory build matching prefixes and read each other's cache. Sequential sessions share the prefix only when the git status snapshot taken at startup matches, since each conversation also carries the branch and recent commits from that snapshot.
+* Sessions you run in parallel in the same directory build matching prefixes and can read each other's cache.
+* Sequential sessions share the prefix only when the git status snapshot taken at startup matches, since each conversation also carries the branch and recent commits from that snapshot.
 
-The underlying API cache is broader. Caches are isolated between organizations, and on some providers, [between workspaces within an organization](https://platform.claude.com/docs/en/build-with-claude/prompt-caching#cache-storage-and-sharing). Within those boundaries, any two requests with the same model and prefix read the same cache. For Agent SDK callers running fleets of automated processes, see [improve prompt caching across users and machines](https://code.claude.com/docs/en/agent-sdk/modifying-system-prompts.md#improve-prompt-caching-across-users-and-machines) to move the auto memory location out of the system prompt and share the system prompt's cache entry across users and machines.
+The underlying API cache is broader. Caches are isolated between organizations, and on some providers, [between workspaces within an organization](https://platform.claude.com/docs/en/build-with-claude/prompt-caching#cache-storage-and-sharing). Within those boundaries, two requests share a cache only when their model, [speed](#turning-on-fast-mode), and prefix match.
+
+For Agent SDK callers running fleets of automated processes, see [improve prompt caching across users and machines](https://code.claude.com/docs/en/agent-sdk/modifying-system-prompts.md#improve-prompt-caching-across-users-and-machines) to move the auto memory location out of the system prompt.
 
 ## Check cache performance
 

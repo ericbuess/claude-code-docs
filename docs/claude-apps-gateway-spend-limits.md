@@ -98,7 +98,7 @@ Each display needs a minimum Claude Code version on the developer's machine and 
 
 The warnings and the percentage come from the `anthropic-ratelimit-unified-*` headers, which the gateway adds to each successful `/v1/messages` response for a developer who has a cap. The headers always describe the developer's own cap: the gateway strips the upstream provider's rate-limit headers, which describe your shared quota, and never forwards them.
 
-The spend a developer sees is the gateway's own [estimate](#how-requests-are-priced), the same figure it enforces the cap with, and not an amount from your provider's bill. Claude Code reads the dollar amounts with a separate request to the gateway. If you set `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` on developers' machines, as [Compliance posture](https://code.claude.com/docs/en/claude-apps-gateway-deploy.md#compliance-posture) suggests, Claude Code skips that request. With that variable set, or with a gateway server older than v2.1.284, the bar and the status line stay percentage-only.
+The spend a developer sees is the gateway's own [estimate](#how-requests-are-priced), the same figure it enforces the cap with. It isn't an amount from your provider's bill. Claude Code reads the dollar amounts with a separate request to the gateway, which it sends even if you set `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` on developers' machines. Before v2.1.295, Claude Code skipped that request when the variable was set, and `/usage` and the status line showed the percentage and the reset date, with no dollar amounts.
 
 ## Admin API reference
 

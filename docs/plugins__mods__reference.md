@@ -21,7 +21,7 @@ A mod is a plugin directory with these files:
 | `.claude-plugin/plugin.json` | Yes | The plugin [manifest](https://code.claude.com/docs/en/plugins/manifest-reference.md). Mods add no required fields. |
 | `hooks/hooks.json` | Yes | `modules`: an array with one path, relative to this file, to the hooks module, as in `"modules": ["./register.js"]`. Can also hold [settings hooks](https://code.claude.com/docs/en/hooks.md) under `hooks`. |
 | The hooks module, such as [`hooks/register.js`](https://code.claude.com/docs/en/plugins/mods/create#write-a-mod-yourself) | Yes | The mod's entry point. Exports `register(on, options)`. Named `.js`, `.mjs`, `.cjs`, `.jsx`, `.ts`, `.mts`, `.cts`, or `.tsx`. An ES module. |
-| [`types/index.d.ts`](https://code.claude.com/docs/en/plugins/mods/interface#declare-the-values), named by `types` in the manifest | When the mod uses `$.state` or adds a namespace to the mods API | Declares `PluginState` values and any namespace the mod adds |
+| [`types/index.d.ts`](https://code.claude.com/docs/en/plugins/mods/interface#declare-the-values), unless `types` in the manifest names another path | When the mod uses `$.state` or adds a namespace to the mods API | Declares `PluginState` values and any namespace the mod adds. To leave `types` out of the manifest, you need v2.1.299 or later. |
 | Files whose names end in `.test.ts` or `.test.tsx` | No | Tests that [`claude plugin test`](https://code.claude.com/docs/en/plugins/mods/test#write-a-test) runs |
 
 `register` receives `on` and `options`. `options` holds the values of the [`userConfig`](https://code.claude.com/docs/en/plugins/components#user-configuration) fields the manifest declares, with defaults filled in.
@@ -110,7 +110,7 @@ On `skill.prompt`, `e.source`, `e.pluginName`, `e.path`, `e.frontmatter`, and `e
 
 ### Commands and configuration
 
-Command and configuration events fire when a command runs or is listed, and when a `/config` row is shown or changed:
+Command and configuration events fire when a command runs or is listed, when a `/config` row is shown or changed, and on a settings read:
 
 | Event | Fires when | A hook can return |
 | :- | :- | :- |
@@ -118,6 +118,14 @@ Command and configuration events fire when a command runs or is listed, and when
 | `command.describe` | Once for each command, for the command list | `{ description, argumentHint, isHidden }` |
 | `config.set` | A `/config` row is about to change | `next({ ...e, value })` or `{ deny: reason }` |
 | `config.describe` | Once for each `/config` row | `{ label, description, isHidden }` |
+| [`settings.read`](https://code.claude.com/docs/en/plugins/mods/events#settings-read-hook) | A mod calls [`$.settings.read`](https://code.claude.com/docs/en/plugins/mods/api#reach-files-processes-and-the-network), or Claude Code builds the session's merged settings | `next(e)`, `{ value }`, or `{ deny: reason }` |
+
+#### `e.layers` and `e.source` on `settings.read`
+
+* **`e.layers`**: one `{ source, settings }` object for each source in use that holds settings, lowest [precedence](https://code.claude.com/docs/en/settings.md#settings-precedence) first. See [What a `settings.read` hook receives](https://code.claude.com/docs/en/plugins/mods/events#settings-read-receives).
+* **`e.source`**: the one source a mod asked for, as in `$.settings.read({ source: 'policy' })`. Absent on Claude Code's own read and on any other read of the merged settings
+
+On `settings.read`, the event firing on Claude Code's own read and the `e.layers` field require Claude Code v2.1.304 or later. For when the hook runs and what the hook can return, with an example, see [Change or refuse a settings read](https://code.claude.com/docs/en/plugins/mods/events.md#settings-read-hook).
 
 ### Turns
 

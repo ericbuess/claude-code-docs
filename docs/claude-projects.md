@@ -111,7 +111,7 @@ On your first project, Claude takes a turn of its own as soon as the project is 
 
 The project is now listed under **Projects** in the sidebar, and its conversation is open. [Your first batch](#your-first-batch) covers what to set up before you send it work.
 
-### Start from an existing cloud session
+### Start from an existing session
 
 If a cloud session you started yourself is doing work that belongs in a project, open its sidebar menu and choose **Move to project**, then pick from the submenu:
 
@@ -120,7 +120,12 @@ If a cloud session you started yourself is doing work that belongs in a project,
 
 A **Set up project** banner can also appear above a cloud session's message box. If you use it instead of **Continue as new project**, the result is the same, except that the session's running turn stops once the project opens.
 
-A local session doesn't have these options. To continue its work in a project, describe the work in the project conversation, or push its branch, add that repository to the project, and name the branch in the task.
+A session on your own machine gets the same sidebar menu at claude.ai/code once you connect it through [Remote Control](https://code.claude.com/docs/en/remote-control.md#start-a-remote-control-session). From a project, Claude can't read the transcript of a session that connected while [**Require trusted devices**](https://code.claude.com/docs/en/remote-control.md#trusted-devices) was on for your account. If that setting is off:
+
+1. If the session isn't connected yet, run `/remote-control` in it. If it connected while that setting was on, disconnect it and connect it again first.
+2. In a browser, find the session's row in the sidebar at [claude.ai/code](https://claude.ai/code), open its menu, and pick from the same submenu.
+
+If **Require trusted devices** is on, or you don't use Remote Control, describe the work in the project conversation yourself. Or push the session's branch, add its repository to the project, and tell Claude the branch name.
 
 ### Set up GitHub access
 
@@ -425,7 +430,7 @@ Several Claude Code features let more than one session work at the same time, so
 * **Cloud sessions**: every thread is a [cloud session](https://code.claude.com/docs/en/claude-code-on-the-web.md) unless you ask Claude to run it on your machine. Either way, Claude starts and tracks it instead of you. You can also bring the work of a cloud session you started yourself into a project: choose [**Move to project**](#start-from-an-existing-cloud-session) in that session's sidebar menu.
 * **Scheduled tasks**: when you ask for scheduled work in a project, Claude creates a [cloud scheduled task](https://code.claude.com/docs/en/routines.md) that runs as threads in that project and appears on its **Scheduled tasks** tab. Scheduled tasks you create outside a project keep working on their own.
 * **Remote Control**: [Remote Control](https://code.claude.com/docs/en/remote-control.md) connects claude.ai to a Claude Code session running on your machine. When you ask Claude in a project to run a thread on your computer, the project [uses Remote Control to do it](#run-a-thread-on-your-own-computer).
-* **Local sessions and agent view**: a session you start yourself in your terminal, IDE, or the desktop app's local environment can't be added to a project. [Agent view](https://code.claude.com/docs/en/agent-view.md) is a screen for tracking several local sessions side by side, and you still start each one and give it its task yourself.
+* **Local sessions and agent view**: a session you start yourself in your terminal, IDE, or the desktop app's local environment stays outside your projects, though you can [bring its work into one](#start-from-an-existing-cloud-session). [Agent view](https://code.claude.com/docs/en/agent-view.md) is a screen for tracking several local sessions side by side, and you still start each one and give it its task yourself.
 * **Worktrees**: a [worktree](https://code.claude.com/docs/en/worktrees.md) gives each local session its own working copy of a repository. Cloud threads don't need them: each clones its repositories into its own cloud sandbox and works on its own branch.
 * **Agent teams**: an [agent team](https://code.claude.com/docs/en/agent-teams.md) is one session that starts teammate sessions for a single task, on your machine or inside a cloud session, and ends with that task.
 * **Subagents**: a [subagent](https://code.claude.com/docs/en/sub-agents.md) runs inside one session, does a side task in its own context window, and returns a summary to that session. A project's threads are whole sessions that Claude starts and that report back to the project conversation, and a thread can still use subagents for its own side tasks.
@@ -437,7 +442,7 @@ Several Claude Code features let more than one session work at the same time, so
 
 * Projects are available at claude.ai/code, in the desktop app, and in the Claude mobile app, not in the terminal CLI, the VS Code extension, or the JetBrains plugin, and not through Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry.
 * Project threads are [cloud sessions](https://code.claude.com/docs/en/claude-code-on-the-web.md), or sessions on your own machine through [Remote Control](https://code.claude.com/docs/en/remote-control.md), with Anthropic as the model provider in both cases. [Security](https://code.claude.com/docs/en/security.md) and [Data usage](https://code.claude.com/docs/en/data-usage.md) cover how cloud sessions are isolated and what's retained, and [Connection and security](https://code.claude.com/docs/en/remote-control.md#connection-and-security) covers how a thread on your machine connects and what's stored.
-* You can't add a session you started yourself on your machine to a project. A project reaches your machine only by [running a thread there through Remote Control](#run-a-thread-on-your-own-computer), and that section lists what it needs.
+* You can't add a session you started yourself on your machine to a project, though you can [bring its work into one](#start-from-an-existing-cloud-session). A project reaches your machine by [running a thread there through Remote Control](#run-a-thread-on-your-own-computer), and that section lists what it needs.
 * A cloud thread's sandbox pauses between turns and resumes when the thread continues. If the sandbox can't be resumed, the thread continues from a fresh clone, so uncommitted changes can be lost. On long tasks, ask Claude to commit and push work in progress.
 * A project belongs to one user. You can't share a project or its threads with another user, and thread transcripts don't have the share option other cloud sessions have. There are no organization-level controls for projects during the beta.
 * A thread belongs to the one project that started it. You can't move or copy a thread to another project, or move it out to stand alone. [**Move to project**](#start-from-an-existing-cloud-session) goes the other way only: it brings a cloud session's work into a project. You can't merge two projects into one.

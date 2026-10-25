@@ -313,9 +313,9 @@ For a call that rejects, such as `$.command.run`, catch the error and test its m
 
 #### What refused calls return
 
-In the results, `<reason>` stands for `the session was stopped and nobody has sent input since`:
+In the results, `<reason>` stands for the reason the call was refused. After an interruption, that's `the session was stopped and nobody has sent input since`. For other reasons, see [Calls refused in `claude -p` runs and Agent SDK sessions](#calls-refused-in-non-interactive-runs).
 
-| Some refused calls | Result until the user's next input |
+| Some refused calls | Result |
 | :- | :- |
 | `$.prompt.submit` | Resolves with `{ drop: '<reason>' }` and queues no prompt |
 | `$.command.run` | Rejects with an error whose message ends with `<reason>` |
@@ -324,7 +324,7 @@ In the results, `<reason>` stands for `the session was stopped and nobody has se
 | `$.session.send` to an [agent team](https://code.claude.com/docs/en/agent-teams.md) teammate | Resolves with `{ isDelivered: false, reason: 'Teammate "<name>" was not messaged: <reason>.' }`, where `<name>` is the teammate's name |
 | [`$.tool.call`](https://code.claude.com/docs/en/plugins/mods/reference#mods-api-methods) of Bash with `run_in_background: true`, Monitor, or CronCreate | Resolves with `{ deny: '<tool> was not run: it starts background work, a schedule or a goal, and <reason>' }`, where `<tool>` is the tool's name |
 
-Along with these `$.session.send` and `$.tool.call` results, the user can see the [`Stopped:` toast](https://code.claude.com/docs/en/plugins/mods/troubleshoot#stopped-type-a-message-to-continue).
+When one of these `$.session.send` or `$.tool.call` calls is refused after an interruption in an interactive session, the user can see the [`Stopped:` toast](https://code.claude.com/docs/en/plugins/mods/troubleshoot#stopped-type-a-message-to-continue).
 
 #### Work your mod started before the interruption
 
@@ -340,6 +340,31 @@ After the user stops a running turn, for example with Esc, some work your mod ha
 | A subagent your mod spawned and later resumed with `$.session.send` that finishes before the user's next input | Its finish notice waits, and reaches the conversation after that input | Nothing needed |
 
 When a scheduled job comes due or a monitor raises an event before the user's next input, the user can see the [`Stopped:` toast](https://code.claude.com/docs/en/plugins/mods/troubleshoot#stopped-type-a-message-to-continue).
+
+### Calls refused in `claude -p` runs and Agent SDK sessions
+
+In a `claude -p` run or an [Agent SDK](https://code.claude.com/docs/en/agent-sdk/overview.md) session, a result such as `{ drop: 'the run reached its --max-turns limit' }` means the run refused your mod's call.
+
+A refused `$.prompt.submit` resolves with `{ drop: '<reason>' }`. Other refused calls, such as `$.command.run` and `$.agent.spawn`, give the results shown in [What refused calls return](#what-refused-calls-return) with the reason in place of `<reason>`. Find your `<reason>` below for what to do about it:
+
+* **`the run reached its --max-turns limit`**: turns from your mod's prompts and from subagents it spawns count toward [`--max-turns`](https://code.claude.com/docs/en/cli-reference#cli-flags) or the Agent SDK's [turn limit](https://code.claude.com/docs/en/agent-sdk/configuration.md#limit-turns-and-spend). For more turns, start the run with a higher limit. If you can't, have your mod stop making the refused call. If the run takes another prompt from the user or the SDK application, the turn count resets and the run accepts calls again.
+* **`the run is past its --max-budget-usd limit`**: start the run with a higher `--max-budget-usd`, or raise the Agent SDK's [spend limit](https://code.claude.com/docs/en/agent-sdk/configuration.md#limit-turns-and-spend). If you can't, have your mod stop making the refused call. The limit applies to the run's total cost so far. That total keeps adding up when the run takes another prompt, so a retry returns the same reason.
+* **`the host has ended its input`**: for example, the SDK application ended its [streaming input](https://code.claude.com/docs/en/agent-sdk/streaming-vs-single-mode.md), or stdin closed on a run started with [`--input-format stream-json`](https://code.claude.com/docs/en/cli-reference#cli-flags). The run is ending and takes no more input, so a retry returns the same reason. Have your mod stop making the refused call. If you start the run yourself, next time keep that input open until your mod has no more calls to make.
+* **`the session was stopped and nobody has sent input since`**: the run was [interrupted](#calls-and-background-work-after-the-user-interrupts-a-turn), for example with the Agent SDK's [`interrupt()`](https://code.claude.com/docs/en/agent-sdk/typescript#query-object). To make the call again after the next message from the user or the SDK application, follow [Retry a refused or dropped call](#retry-a-refused-or-dropped-call).
+
+### A `claude -p` run with your mod never exits
+
+If your mod submits a prompt at the end of every turn, each prompt starts another turn. Without [`--max-turns`](https://code.claude.com/docs/en/cli-reference#cli-flags) or `--max-budget-usd`, a `claude -p` run that loads the mod goes on until you stop it yourself.
+
+To make the run end on its own, add either flag to the command in your shell. If other people start the run, have your mod stop submitting prompts once its work is done. This command adds `--max-turns`:
+
+```bash theme={null}
+claude -p "find the TODOs" --max-turns 5
+```
+
+Once the run reaches that limit, the mod's next prompt is [refused](#calls-refused-in-non-interactive-runs) instead of starting a turn, and the run ends.
+
+If the run still goes past the limit, run `claude --version` in your shell, and [update Claude Code](https://code.claude.com/docs/en/setup.md#update-claude-code) if yours is earlier than v2.1.304. The mod's prompts are refused at the limit from v2.1.299. If your mod spawns subagents, their turns count toward `--max-turns` from v2.1.304.
 
 ## Send and receive messages between sessions
 
@@ -390,7 +415,7 @@ A mod reaches the file system, processes, and the network through the mods API, 
 | `$.http` | `fetch(url, init)` over `http` or `https`. It resolves to `{ status, ok, headers, text }` once the body is read. |
 | `$.store` | A JSON key-value store of your plugin's own, kept between sessions |
 | `$.env` | `get` and `set` environment variables. Write the name as a string literal. |
-| `$.settings` | `read` what the settings files and managed policy hold |
+| `$.settings` | `read()` resolves to all settings, merged into one object. With `{ source }` or `{ key }`, it resolves to [one source's settings or one key's value](#read-one-source-or-one-key) instead. |
 | `$.session` | `messages()` returns the transcript as a list of `{ role, text, toolUses }`. Also the working directory, model, and more. [`usage()`](https://code.claude.com/docs/en/plugins/mods/reference#mods-api-methods) returns context window use and plan limits. |
 | `$.mcp` | `call` a tool on a connected MCP server |
 
@@ -407,6 +432,27 @@ A mod can refuse your `$.process.spawn` call after the command has produced outp
 
 * **`$.process.spawn started, and a plugin withheld its result:`**: the refusing mod hadn't read the command's output to the end. Claude Code stops the command if it's still running.
 * **`$.process.spawn ran, and a plugin withheld its result:`**: the refusing mod had read the command's output to the end, so the command had exited
+
+### Read all settings, one source, or one key
+
+`$.settings.read()` resolves to one object that holds the settings from all sources in use, merged by [precedence](https://code.claude.com/docs/en/settings.md#settings-precedence). Pass `{ source }` to read one source instead, `{ key }` to read one key, or both:
+
+| Call | Resolves to |
+| :- | :- |
+| `$.settings.read()` | The merged settings as one object. Its top-level keys are those of a `settings.json` file, such as `permissions` and `hooks`. |
+| `$.settings.read({ source: 'policy' })` | That one source's settings as one object, or `{}` when that source holds no settings |
+| `$.settings.read({ key: 'spinnerTipsEnabled' })` | That key's value in the merged settings, or `undefined` when the key isn't set |
+| `$.settings.read({ key: 'spinnerTipsEnabled', source: 'user' })` | That key's value in that one source, or `undefined` when that source doesn't set it |
+
+For `source`, pass the name of the one settings source to read:
+
+* **`user`**: `~/.claude/settings.json`
+* **`project`**: `.claude/settings.json`
+* **`local`**: `.claude/settings.local.json`
+* **`flag`**: what you pass with `--settings`, and the SDK's inline settings
+* **`policy`**: [managed settings](https://code.claude.com/docs/en/managed-settings.md#how-claude-code-combines-managed-sources)
+
+For `key`, pass the exact name of one top-level key, not a dotted path into a nested object. The `key` argument requires Claude Code v2.1.304 or later.
 
 ## Next steps
 

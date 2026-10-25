@@ -168,6 +168,15 @@ There's nothing to fix.
 
 Before v2.1.292, the call ran a second time, so the prompt was submitted, the command run, or the subagent started twice.
 
+### `This mod's change didn't load` or `the earlier version is no longer running`
+
+A change to a [mod Claude wrote in this session](https://code.claude.com/docs/en/plugins/mods/create.md#ask-claude-for-a-mod) couldn't load. The transcript line starts with the mod's name and ends with the reason:
+
+* `This mod's change didn't load, so the earlier version is still running: <reason>.`
+* `This mod didn't load, and the earlier version is no longer running: <reason>.`
+
+Claude doesn't see this line, so paste it into your next message when you ask Claude for a fix.
+
 ### `$.agent.register refused: the hooks module that made the call is no longer loaded`
 
 The line starts with your mod's name, as in `first-mod: $.agent.register refused: the hooks module that made the call is no longer loaded (it was reloaded or removed)`, and the agent isn't registered. Your mod was reloaded or unloaded before the call. A reload loads a fresh copy of the hooks module, and this call came from code still running in the old copy, such as a hook that hadn't returned yet.
@@ -224,6 +233,15 @@ After the change, you see nothing in the band if any of the mods returns a tree 
 The [tree](https://code.claude.com/docs/en/plugins/mods/interface.md#build-a-tree-from-elements) your hook returned didn't validate. With `--plugin-dir`, the transcript says `ui.render (Pane) refused:` with the reason, as in `first-mod: ui.render (Pane) refused: Box prop "flexDirection" must be one of row, column, row-reverse, column-reverse; the engine drew its own`. The debug log has `a hook returned a tree that does not validate` with the same reason.
 
 Read the reason on that line. Common causes are a prop the element doesn't take and an element the app doesn't have.
+
+### `needs a key`, `is drawn twice`, or `key each once`
+
+An element in the tree your `ui.render` hook returns has no valid [`key`](https://code.claude.com/docs/en/plugins/mods/interface#which-controls-need-a-key), or two elements share one. Find the message you got:
+
+* **`<Input> needs a key` or `<Select> needs a key`**: the element has no `key` prop, or its `key` is empty or isn't a string, as in `key: 3`. Give it a non-empty string as its `key`.
+* **`<Button> needs a key`**: give the button a non-empty string as its `key`
+* **`is drawn twice; each takes its own key`**: two elements of the kind the message names have the same `key`, as in `Input "size" is drawn twice; each takes its own key`. Give each element its own `key`.
+* **`key each once` from `press` in a [test](https://code.claude.com/docs/en/plugins/mods/test.md#test-a-drawing)**: the drawing has more than one button with the key you passed. Buttons with the same label and no `key` prop share that label as their key. Give each button its own `key`.
 
 ### A `ui.render` line says `threw while drawn`
 
@@ -302,6 +320,48 @@ Module-level variables are re-initialized on each reload.
 A value resets, or a saved value is replaced by its default. Each of those commands resets `$.state` to its defaults, and `session.start` doesn't fire again.
 
 [Load the saved value again](https://code.claude.com/docs/en/plugins/mods/interface.md#load-a-saved-value-again-after-clear) in a `classic.SessionStart` hook.
+
+### A key your `settings.read` hook returns doesn't take effect
+
+Returned `env` entries don't become environment variables. Returned `allow`, `ask`, and `deny` rules aren't checked on tool calls. Set those in a [settings file](https://code.claude.com/docs/en/settings.md), or call [`$.env.set`](https://code.claude.com/docs/en/plugins/mods/api#reach-files-processes-and-the-network) for environment variables.
+
+For another key, check [which mods get `settings.read` and from which version](https://code.claude.com/docs/en/plugins/mods/events#settings-read-hook), then search the [debug log](#read-the-debug-log) for `settings.read` and look for one of these lines:
+
+| Log line | Meaning and step |
+| :- | :- |
+| `settings.read hook skipped`, after your mod's name | Your hook failed. [Fix the error the line reports](#hook-skipped). |
+| `settings.read bypassed by cc-plugin-sec-default`, on a line that names your mod ahead of it | The [built-in guard](https://code.claude.com/docs/en/plugins/mods/admin.md#know-what-happens-by-default) skipped your hook. Ask your organization's administrator to [install the mod as one of the organization's mods](https://code.claude.com/docs/en/plugins/mods/admin.md#install-your-organizations-mods). |
+| `settings.read: the answer for <key> is no value the key can hold` | The returned value doesn't fit the key's schema. [Return one it allows](#settings-read-key-refused). |
+| `settings.read: the merge never settles for <key>` | The keys the line names keep the settings sources' values. Set them in a settings file. |
+| `answered settings.read without next()`, after a mod's name | Relevant only if that mod [runs before yours](https://code.claude.com/docs/en/plugins/mods/events.md#the-order-mods-run-in). Then your hook didn't run on that read. [Turn that mod off](https://code.claude.com/docs/en/plugins/mods/overview.md#turn-mods-on-or-off), or if your organization deployed it, ask its administrator to. |
+| `settings.read: refused to the engine` | The read was refused, so no hook's `{ value }` applied. [Find what refused it](#settings-read-refused). |
+
+If no line explains the key, check the mods that run before yours for a `settings.read` hook that [changes the key](https://code.claude.com/docs/en/plugins/mods/events.md#settings-read-example). Turn that mod off, or ask your organization's administrator to. If no hook does, set the key in a settings file.
+
+### `the answer for <key> is no value the key can hold`
+
+This [debug log](#read-the-debug-log) line means Claude Code refused the value your [`settings.read`](https://code.claude.com/docs/en/plugins/mods/events#settings-read-hook) hook returned for the named key, and that key alone:
+
+```text theme={null}
+settings.read: the answer for <key> is no value the key can hold; the settings' own value stands
+```
+
+The value you returned for the named key didn't fit that key's schema, for example by type or by range. Return a value that the key's [settings reference](https://code.claude.com/docs/en/settings-reference.md) entry allows. While your value doesn't fit, the key keeps the value merged from the settings sources before any hook answered. The line calls it the settings' own value.
+
+### `settings.read: refused to the engine`
+
+This [debug log](#read-the-debug-log) line means [Claude Code's own read](https://code.claude.com/docs/en/plugins/mods/events.md#settings-read-hook) was refused, so no hook's `{ value }` applied, yours included. When a `settings.read` hook refuses that read with [`{ deny: reason }`](https://code.claude.com/docs/en/plugins/mods/events#settings-read-returns), the line carries that hook's reason:
+
+```text theme={null}
+settings.read: refused to the engine (engine: $.settings.read: <reason>); the settings' own values stand
+```
+
+Search your own hook's code for the `<reason>` text:
+
+* **Your code has it**: your hook refused the read. Make it return `{ value }` when [`next.origin`](https://code.claude.com/docs/en/plugins/mods/events#settings-read-origin) shows Claude Code's own read.
+* **Your code doesn't have it**: [turn off](https://code.claude.com/docs/en/plugins/mods/overview.md#turn-mods-on-or-off) your other mods one at a time. After each, rerun this session's command from your shell with one `--debug-file` on a new path, and search that file for `refused to the engine`. If the line is there, turn off the next mod. If not, the last mod you turned off refused the read, so keep it off.
+
+With no other mod left, use a [settings file](https://code.claude.com/docs/en/settings.md) for the keys your hook returns. Its values hold while the read is refused.
 
 ## Read the debug log
 

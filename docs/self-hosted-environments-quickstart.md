@@ -35,7 +35,7 @@ The runner host needs:
 
 Install on the host before you start:
 
-* **Claude Code v2.1.224 or later**, with any of the [standard install methods](https://code.claude.com/docs/en/setup.md). The runner is part of the standard `claude` binary, and earlier versions don't recognize the `self-hosted-runner` subcommand. To pin the exact version your fleet runs, see [Install a specific version](https://code.claude.com/docs/en/setup.md#install-a-specific-version). For container images, see the Dockerfile in [Deploy to production](https://code.claude.com/docs/en/self-hosted-environments-deploy.md#build-the-runner-image).
+* **Claude Code v2.1.224 or later**, with any of the [standard install methods](https://code.claude.com/docs/en/setup.md). The runner is part of the standard `claude` binary, and earlier versions don't recognize the `self-hosted-runner` subcommand. A runner that serves Claude Tag sessions needs v2.1.229 or later and `python3` on its `PATH`, since the [hooks the control plane supplies](https://code.claude.com/docs/en/self-hosted-environments-configuration.md#how-each-session’s-config-is-assembled) for those sessions run `python3`. To pin the exact version your fleet runs, see [Install a specific version](https://code.claude.com/docs/en/setup.md#install-a-specific-version). For container images, see the Dockerfile in [Deploy to production](https://code.claude.com/docs/en/self-hosted-environments-deploy.md#build-the-runner-image).
 * **Git 2.24 or newer**. Some git options on the deploy page need newer versions; [Configure git](https://code.claude.com/docs/en/self-hosted-environments-deploy.md#configure-git) states each floor.
 
 Confirm the host is ready:
