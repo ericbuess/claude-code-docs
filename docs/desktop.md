@@ -223,7 +223,7 @@ The session details panel is a set of cards beside the chat that show where the 
 
 #### Hide or show the session details panel
 
-To hide or show the panel, click **Hide session rail** or **Show session rail** in the session's title bar, or in the bar's **⋮** menu when the window is narrow. If you still don't see the panel, [check which Code tab layout you have](#check-which-layout-you-have).
+To hide or show the panel, click **Hide session rail** or **Show session rail** in the session's title bar, or in the bar's **⋮** menu. If you still don't see the panel, [check which Code tab layout you have](#check-which-layout-you-have).
 
 ### Run commands in the terminal
 

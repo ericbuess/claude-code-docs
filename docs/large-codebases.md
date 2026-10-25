@@ -306,7 +306,7 @@ For sibling directories that everyone in this area needs, commit `additionalDire
 
 ## Add per-directory skills
 
-Any subdirectory can define [skills](https://code.claude.com/docs/en/skills.md) scoped to its own stack. A skill loads on demand when Claude determines it's relevant, so API-specific tooling doesn't consume context during frontend work.
+Any subdirectory can define [skills](https://code.claude.com/docs/en/skills.md) scoped to its own stack. A skill loads on demand when Claude determines it's relevant.
 
 Skills live under `.claude/skills/` inside the directory. Commit them alongside that area's code so anyone who clones the repository gets them. In a monorepo this can be one set of skills per package. In a large single-tree codebase it's one set per subsystem such as `src/db/.claude/skills/`.
 
@@ -347,7 +347,7 @@ Each route file has a corresponding `.test.ts` file.
 - Mock external services in `src/__tests__/mocks/`
 ```
 
-A different subdirectory holds different skills the same way: `packages/web/.claude/skills/component-patterns/` describes the frontend's component conventions instead of testing. When Claude works on a file in `packages/api/`, it loads the api-testing skill. When it works in `packages/web/`, it loads component-patterns instead. Neither directory's skills load during the other's tasks.
+A different subdirectory holds different skills the same way: `packages/web/.claude/skills/component-patterns/` describes the frontend's component conventions instead of testing. When Claude works on a file in `packages/api/`, it loads the api-testing skill. When it works in `packages/web/`, it loads component-patterns.
 
 You can also scope a skill by file pattern instead of by placement. The [`paths` frontmatter field](https://code.claude.com/docs/en/skills#frontmatter-reference) takes glob patterns, and Claude loads the skill automatically only when it works with matching files. Use this for a skill that lives in the repository root's `.claude/skills/` but applies only to certain files, such as a database-migration skill scoped to `**/migrations/**`.
 

@@ -121,6 +121,8 @@ If it does and you see no status for a session, check for each of these causes:
 * **Background session**: a [background session](https://code.claude.com/docs/en/agent-view.md) doesn't report its status to your terminal, even while you're attached to it. Agent view shows its status instead.
 * **[`CLAUDE_CODE_DISABLE_TERMINAL_TITLE`](https://code.claude.com/docs/en/env-vars#variables)**: if you set this variable to `1`, Claude Code doesn't check for support or report status. Unset it.
 
+The tab title doesn't start with a status glyph in a terminal that reports support for the protocol. The terminal shows the session's state itself, so Claude Code leaves out the glyph it puts in front of the title in other terminals.
+
 ## Configure tmux
 
 When Claude Code runs inside tmux, by default Shift+Enter submits instead of inserting a newline, and desktop notifications and the [progress bar](https://code.claude.com/docs/en/settings-reference.md#terminalprogressbarenabled) never reach the outer terminal. Add these lines to `~/.tmux.conf`, then run `tmux source-file ~/.tmux.conf` to apply them to the running server:

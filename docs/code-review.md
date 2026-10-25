@@ -67,7 +67,7 @@ Each review leaves these on the pull request:
 
 * **Findings**: inline comments on the lines concerned, with a summary in the review body
 * **A check run**: named **Claude Code Review**, with the findings listed in its [details](https://code.claude.com/docs/en/code-review-pull-requests.md#check-run-output). The check run doesn't conclude as a failure.
-* **When it finds nothing**: the check run's title reads **Code review found no issues**, and Claude posts the same short note on the pull request
+* **A note in place of findings**: posted when the check run's title reads **Code review found no issues**
 
 Code Review chooses the Claude models that reviews run on, and its admin settings don't offer a model choice. To make reviews more or less thorough, change the [review level](#review-levels).
 

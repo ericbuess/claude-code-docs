@@ -293,12 +293,13 @@ Change the repository if needed, choose an event from the [supported events](#su
 
 #### Supported events
 
-GitHub triggers can subscribe to either of the following event categories. Within each category you can pick a specific action, such as `pull_request.opened`, or react to all actions in the category.
+Choose an event from any of the following categories. Within each category you can pick a specific action, such as `pull_request.opened`, or react to all actions in the category.
 
 | Event | Triggers when |
 | :- | :- |
 | Pull request | A PR is opened, closed, assigned, labeled, synchronized, or otherwise updated |
 | Release | A release is created, published, edited, or deleted |
+| Issue | An issue is opened, edited, closed, reopened, labeled, assigned, or otherwise updated |
 
 #### Filter pull requests
 
@@ -333,9 +334,13 @@ Click a scheduled task in the list to open its detail page. The detail page show
 
 Click any run to open it as a full session. From there you can see what Claude did, review changes, create a pull request, or continue the conversation. Each run session works like any other session: use the dropdown menu next to the session title to rename, archive, or delete it.
 
-> [!NOTE]
->
-> A green status in the run list means the session started and exited without an infrastructure error. It does not mean the work your prompt describes succeeded. Open the run to read the transcript and confirm what Claude actually did. Blocked network requests, missing connector tools, and failures in the work itself all surface there rather than in the status indicator.
+Under **History** on the task's detail page, each finished run's row ends with **Error** if the run failed, **Cancelled** if it was cancelled, and neither word if it succeeded. The **Status** filter names the same three outcomes **Failed**, **Cancelled**, and **Succeeded**. These outcomes say how the session ended, not whether Claude completed the work your prompt describes, so open the run and read its transcript to see what happened.
+
+* **Succeeded**: the session ended without Claude Code reporting a failure. Blocked network requests, missing connector tools, and work Claude couldn't complete appear in the transcript rather than on the row
+* **Failed**: the session didn't finish normally. For example, it stopped unexpectedly, ended on an error, or was archived before the run started
+* **Cancelled**: the run didn't fail, and its session was archived. If you archive the session of a run that succeeded, the run changes to **Cancelled**. Nothing in the task needs to change
+
+If a warning appears under **History**, see ["The last run" warnings](#the-last-run-didnt-start).
 
 ### Edit and control scheduled tasks
 
@@ -498,6 +503,21 @@ If the cause is your CLI sign-in or being inside a cloud session, you can still 
 ### "Routines are disabled by your organization's policy"
 
 An Owner in your Team or Enterprise organization has likely turned off the **Scheduled tasks (Was Routines)** toggle at [**Organization settings > Capabilities > Remote sessions**](https://claude.ai/admin-settings/capabilities). On Claude Code v2.1.227 or later, the same toggle also hides `/schedule` in the CLI. This is a server-side organization setting, so it cannot be overridden from your local configuration. Ask an Owner to turn scheduled tasks back on for your organization.
+
+### "The last run" warnings
+
+When a warning under **History** begins with "The last run", find it in the first column and do what its row says. The warning clears once a later run starts.
+
+| Warning | What to do |
+| :- | :- |
+| "The last run didn't start because your organization had reached its limit on cloud sessions running at once." | The task needs no change. Click **Run now** later, or wait for the next run |
+| "The last run didn't start because its cloud environment couldn't be found or used." | On the task's detail page, open the menu next to its name, select **Edit**, and find the [cloud environment selector](#environments-and-network-access). If it reads **Unavailable environment**, that environment was archived or is no longer available to your account, so choose another one there and save your changes. Otherwise, retry with **Run now** on the detail page, or pick another environment in the selector and save your changes |
+| "The last run was blocked because it couldn't access something it needs, or your organization's policy doesn't allow it." | Check that your [GitHub access](#repositories-and-branch-permissions) covers the task's repositories. If it does, ask an [Owner](https://code.claude.com/docs/en/server-managed-settings.md#access-control) of your Claude organization whether a policy blocks the task |
+| "The last run didn't start because of a problem that's usually temporary." | Click **Run now** to try again, or wait for the next run |
+| "The last run didn't start because its repository or branch wasn't available." | Check on GitHub that each repository in the task has the [branch the run starts from](#repositories-and-branch-permissions). Also check that your [GitHub access](#repositories-and-branch-permissions) covers each repository, and reconnect GitHub if your connection expired |
+| "The last run didn't start because some of its settings weren't accepted." | On the task's detail page, open the menu next to its name and select **Edit**. The dialog doesn't mark which setting wasn't accepted, so check each one there, including the task's name, prompt, model, repositories, environment, connectors, and triggers |
+| "The last run stopped because a usage limit was reached." | For when the task's runs can start again after a usage limit, see [Usage and limits](#usage-and-limits) |
+| "The last run failed." | Click **Run now** to try again, or wait for the next run. The failed run has no session to open |
 
 ## Related resources
 

@@ -179,7 +179,7 @@ A connected device shows the conversation in your terminal as it happens. These 
 * **Diff of your changes**: when the session's directory is in a git repository, a connected device's diff pane shows your changes. On a branch that has commits ahead of the repository's default branch, the pane shows the changes since the branch split from it, including your uncommitted edits. On the default branch itself, or on a branch that isn't ahead of it, the pane shows only your uncommitted changes.
 * **Model**: when you pick a [model](https://code.claude.com/docs/en/model-config.md) from a connected device, Claude Code runs the session on that model. Requires Claude Code v2.1.238 or later. A model you pick from the device's model control applies to the current session only. When you send `/model <name>` from the device to an interactive session, Claude Code also sets your default for new sessions.
 * **Effort level**: when you set the [effort level](https://code.claude.com/docs/en/model-config.md#adjust-effort-level) from a connected device, with `/effort` or the device's effort control, Claude Code applies it to the session on your machine. If you pinned a level with `CLAUDE_CODE_EFFORT_LEVEL`, the session keeps that level, and Claude Code refuses a different pick from the effort control. Picking a level from the effort control requires Claude Code v2.1.234 or later on your machine.
-* **Reconnecting after a connection failure**: run `/remote-control` to reconnect. If compaction rewrote the conversation or you switched conversations with `/resume` in the meantime, Claude Code archives the server session it was using instead of leaving it in the session list. You can still find it by [filtering for archived sessions](https://code.claude.com/docs/en/claude-code-on-the-web.md#archive-sessions). Switching conversations while a device is still connected doesn't archive the session.
+* **Reconnecting after a connection failure**: run `/remote-control` to reconnect. If compaction rewrote the conversation or you switched conversations with `/resume` in the meantime, Claude Code archives the server session it was using instead of leaving it in the session list. You can still find that session among your [archived sessions](https://code.claude.com/docs/en/claude-code-on-the-web.md#find-an-archived-session) at claude.ai/code. Switching conversations while a device is still connected doesn't archive the session.
 
 ### Enable Remote Control for all sessions
 
@@ -401,6 +401,14 @@ In the terminal, Claude Code prints `Successfully reconnected to claude.ai Slack
 
 ## Troubleshooting
 
+### "Remote Control disconnected" or "Can't reach"
+
+At [claude.ai/code](https://claude.ai/code) or in the Desktop app, **Remote Control disconnected** or a **Can't reach** message means your browser or app lost contact with Claude Code on your computer. Neither message tells you whether Claude or a subagent you were watching is still working on your computer. On that computer, check the state Claude Code is in and follow the matching step to reconnect:
+
+* **An interactive session shows `Remote Control disconnected`**: follow [the reconnect steps for the reason that line gives](#session-ended-elsewhere)
+* **Claude Code is running and shows no failure**: an interactive session reconnects by itself once the machine is awake and online, so you don't need to act. If you used `claude remote-control`, see **Extended network outage** under [Limitations](#limitations)
+* **Claude Code isn't running**: [start it again and bring the session back](#resume-sessions-after-stopping-the-server)
+
 ### "Remote Control requires a claude.ai subscription"
 
 You're not signed in with a claude.ai account, or another credential is taking precedence over your login. The message takes one of these forms:
@@ -463,7 +471,7 @@ Your organization's policy stopped allowing Remote Control while a session was c
 * **With `/remote-control`, `claude --remote-control`, or [auto-connect](#enable-remote-control-for-all-sessions)**: the session keeps running without Remote Control, and Claude Code archives it at claude.ai
 * **With `claude remote-control`**: the server stops and archives the sessions it was serving, then exits
 
-You can still find an archived session by [filtering for archived sessions](https://code.claude.com/docs/en/claude-code-on-the-web.md#archive-sessions).
+To find one of these sessions again, open your [archived sessions](https://code.claude.com/docs/en/claude-code-on-the-web.md#find-an-archived-session) at claude.ai/code.
 
 Remote Control doesn't reconnect on its own. To turn it back on after your organization allows it again, run `/remote-control` in the session or `claude remote-control` in your shell. Either command fails with [`Remote Control is disabled by your organization's policy`](#remote-control-is-disabled-by-your-organizations-policy) until Claude Code on this machine has fetched the changed policy. An open session fetches it about once an hour. To find out what is blocking Remote Control, match the full text the command prints against that entry.
 

@@ -177,7 +177,10 @@ When Claude finishes, review the changes, leave feedback on specific lines, and 
 
 **1. Open the diff view**
 
-A diff indicator shows lines added and removed across the session, for example `+42 -18`. Select it to open the diff view, with a file list on the left and changes on the right.
+After Claude pushes its changes to a branch, the **Changes** card in the panel beside the chat shows the lines added and removed across the session, for example `+42 -18`. Click those counts to open the diff view.
+
+* You can also click **Changes** in the session's title bar, or in the bar's **⋮** menu.
+* To show the panel when it's hidden, click the **Show session rail** icon in the session's title bar, or in the bar's **⋮** menu.
 
 The diff compares the session's changes against its base branch by default. To compare against a different branch, select **Compare against** and pick one.
 
@@ -187,7 +190,10 @@ Select any line in the diff, type your feedback, and press Enter. Comments queue
 
 **3. Create a pull request**
 
-When the diff looks right, select **Create PR** at the top of the diff view. You can open it as a full PR, a draft, or jump to GitHub's compose page with a generated title and description.
+When the diff looks right, [show the panel again](https://code.claude.com/docs/en/claude-code-on-the-web.md#review-changes) if the **Changes** card is out of view, then create a pull request or a draft from the card:
+
+* Click **Create PR**. Claude Code creates the pull request with a generated title and description.
+* To open a draft instead, right-click **Create PR**, select **Create draft PR** to change what the button does, then click the button
 
 **4. Keep iterating after the PR**
 

@@ -18,7 +18,7 @@ You can start a cloud session from any of these surfaces:
 
 * **Browser**: [claude.ai/code](https://claude.ai/code), also called Claude Code on the web
 * **Mobile**: the **Code** tab in the [Claude app](https://code.claude.com/docs/en/mobile.md)
-* **Desktop app**: select **Cloud** instead of **Local** when you [start a session](https://code.claude.com/docs/en/desktop.md#run-long-running-tasks-in-the-cloud)
+* **Desktop app**: select an environment under **Cloud** in the environment selector when you [start a session](https://code.claude.com/docs/en/desktop.md#run-long-running-tasks-in-the-cloud)
 * **Terminal**: [`claude --cloud`](#from-terminal-to-cloud)
 * **Cloud scheduled tasks**: [scheduled and triggered runs](https://code.claude.com/docs/en/routines.md) each run as a cloud session
 
@@ -247,9 +247,15 @@ Claude Code resumes a session in the permission mode it was in when you do eithe
 
 ### Review changes
 
-Each session shows a diff indicator with lines added and removed, like `+42 -18`. Select it to open the diff view, leave inline comments on specific lines, and send them to Claude with your next message.
+After Claude pushes its changes to a branch, the **Changes** card in the panel beside the chat shows the lines added and removed, such as `+42 -18`. Click the line counts on the **Changes** card to open the diff view.
 
-The diff view compares the session's changes against its base branch by default. To compare against any other branch in the repository, select **Compare against** and pick one.
+* You can also click **Changes** in the session's title bar, or in the bar's **⋮** menu.
+* To show the panel when it's hidden, click the **Show session rail** icon in the session's title bar, or in the bar's **⋮** menu.
+
+In the diff view, you can comment on lines and compare against another branch:
+
+* **Comment**: leave inline comments on specific lines, then send the comments to Claude with your next message
+* **Compare**: the diff view compares the session's changes against its base branch by default. To compare against any other branch in the repository, select **Compare against** and pick one
 
 Claude Code computes these diffs from raw git blob content, so diff drivers and `textconv` filters configured in the repository don't apply.
 
@@ -313,16 +319,19 @@ To require recipients to have repository access, or to hide your name from share
 
 ### Archive sessions
 
-You can archive sessions to keep your session list organized. Archived sessions are hidden from the default session list but can be viewed by filtering for archived sessions.
+Archive a session to remove it from the sidebar's session list. To archive one, hover over it in the sidebar, open its **⋯** menu, and select **Archive**.
 
-To archive a session, hover over the session in the sidebar and select the archive icon.
+#### Find an archived session
+
+To see your archived sessions, go to [claude.ai/code/sessions](https://claude.ai/code/sessions) and open the **Archived** tab. To put one back in the sidebar's session list, hover over it on that tab, open its **⋮** menu, and select **Unarchive**.
 
 ### Delete sessions
 
-Deleting a session permanently removes the session and its data. This action can't be undone. You can delete a session in two ways:
+Deleting a session permanently removes the session and its data. This action can't be undone. Delete a session from the sidebar, from the session menu, or from the **Archived** tab if you've already archived it:
 
-* **From the sidebar**: filter for archived sessions, then hover over the session you want to delete and select the delete icon
+* **From the sidebar**: hover over the session, open its **⋯** menu, and select **Delete**
 * **From the session menu**: open a session, select the dropdown next to the session title, and select **Delete**
+* **From the Archived tab**: hover over the session on the [**Archived** tab](#find-an-archived-session), open its **⋮** menu, and select **Delete**
 
 You will be asked to confirm before a session is deleted.
 
@@ -336,12 +345,12 @@ Claude can watch a pull request and automatically respond to CI failures and rev
 
 There are a few ways to turn on auto-fix depending on where the PR came from and what device you're using:
 
-* **PRs created in a cloud session**: open the session at claude.ai/code, open the CI status bar, and select **Auto-fix**
+* **PRs created in a cloud session**: open the session at claude.ai/code and find the pull request in the [**Changes** card](#review-changes). Open the **⋮** menu next to the pull request's title and turn on **Auto-fix**
 * **From your terminal**: run [`/autofix-pr`](https://code.claude.com/docs/en/commands) while on the PR's branch. Claude Code detects the open PR with `gh`, spawns a cloud session, and turns on auto-fix in one step
 * **From the mobile app**: tell Claude to auto-fix the PR, for example "watch this PR and fix any CI failures or review comments"
 * **Any existing PR**: paste the PR URL into a session and tell Claude to auto-fix it
 
-Auto-fix is a per-PR toggle. To stop monitoring, open the CI status bar in the session at claude.ai/code and clear the **Auto-fix** toggle, or tell Claude to stop watching the PR.
+To stop monitoring, turn off **Auto-fix** in the pull request's **⋮** menu in the session's [**Changes** card](#review-changes), or tell Claude to stop watching the PR.
 
 ### How Claude responds to PR activity
 
@@ -380,6 +389,17 @@ If a new session fails to start with `Session creation failed` or stalls at prov
 * Check [status.claude.com](https://status.claude.com) for cloud session incidents
 * Retry after a minute, as capacity is provisioned on demand
 * Confirm your GitHub connection can reach the repository by following [No repositories appear after connecting GitHub](https://code.claude.com/docs/en/web-quickstart.md#no-repositories-appear-after-connecting-github)
+
+### Your new session couldn't start
+
+Your prompt is back in the box you sent it from.
+
+* **Connection lost**: check your internet connection and any VPN or proxy you use, then send your prompt again
+* **Server error**: wait a moment, then send your prompt again. If the notice reappears, check [status.claude.com](https://status.claude.com)
+
+### Can't rewind to this message
+
+**Rewind to here** fails with this error on any message except the newest when your session runs on a [self-hosted runner](https://code.claude.com/docs/en/self-hosted-environments) with Claude Code before v2.1.246. Ask whoever runs your organization's runners to [upgrade them](https://code.claude.com/docs/en/self-hosted-environments-deploy.md#pin-the-version).
 
 ### Unable to get organization UUID
 

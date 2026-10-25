@@ -678,11 +678,11 @@ At the main prompt, Claude Code matches every key against the active contexts, s
 
 ## Vim mode interaction
 
-When vim mode is enabled via `/config` → Editor mode, keybindings and vim mode operate independently:
+When you enable vim mode with the Editor mode setting in `/config`, keybindings and vim mode operate independently:
 
-* **Vim mode** handles input at the text input level (cursor movement, modes, motions)
-* **Keybindings** handle actions at the component level (toggle todos, submit, etc.)
-* The Escape key in vim mode switches INSERT to NORMAL mode; it does not trigger `chat:cancel`
+* **Vim mode** handles input at the text input level: cursor movement, modes, and motions
+* **Keybindings** handle actions at the component level, such as toggling todos or submitting a message
+* The Escape key in vim mode switches INSERT to NORMAL mode; it doesn't trigger `chat:cancel`
 * Most Ctrl+key shortcuts pass through vim mode to the keybinding system
 * Vim keys aren't remappable through the keybindings file. To map a two-key INSERT-mode sequence such as `jj` to Escape, use the [`vimInsertModeRemaps`](https://code.claude.com/docs/en/interactive-mode#remap-insert-mode-key-sequences) setting
 * In vim NORMAL mode, `?` shows the help menu (vim behavior)

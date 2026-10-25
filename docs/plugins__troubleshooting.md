@@ -251,12 +251,12 @@ You added or updated a marketplace from a git repository, and the clone failed w
 
 First check the repository itself: a misspelled `owner/repo`, a repository that doesn't exist, or a private repository you can't see also ends in this message. Open the repository URL in your browser, or run `git ls-remote <url>` in your terminal, to confirm it exists and you have access.
 
-If the repository is right, the cause is credentials. Claude Code runs git with interactive prompts disabled, so it can't ask you for a password, a key passphrase, or a credential the way your terminal would. If git needs to prompt, you see `fatal: Cannot prompt because user interactivity has been disabled` or `terminal prompts disabled` in the original error. Only credentials that already work non-interactively succeed:
+If the repository is right, the cause is credentials. Claude Code turns off git's prompts and askpass programs, including one set in `GIT_ASKPASS`, and runs SSH in batch mode. When git needs to prompt, the clone's error includes `fatal: Cannot prompt because user interactivity has been disabled`, `terminal prompts disabled`, or `fatal: unable to get password from user`. Only credentials git can get without a prompt or askpass program succeed:
 
 * **SSH**: `ssh -T git@<host>` must succeed without prompting for a passphrase, and the host must already be in `known_hosts`
-* **HTTPS**: your credential helper must hold a token for the host. For GitHub, run `gh auth login` and `gh auth setup-git`. For another host, store a personal access token in your git credential helper. Test with `git ls-remote <url>`
+* **HTTPS**: your credential helper must hold a token for the host. For GitHub, run `gh auth login` and `gh auth setup-git`. For another host, store a personal access token in your git credential helper. To test, unset `GIT_ASKPASS` in your terminal and run `git -c core.askPass= ls-remote <url>`.
 
-Once `git ls-remote` succeeds in your terminal without a prompt, run the add or update again. A successful add prints `Successfully added marketplace: <name>`. A successful update prints `Successfully updated marketplace: <name>` from your shell, or `✔ Updated 1 marketplace` in a session.
+Once the check for your protocol succeeds without a prompt, run the add or update again. A successful add prints `Successfully added marketplace: <name>`. A successful update prints `Successfully updated marketplace: <name>` from your shell, or `✔ Updated 1 marketplace` in a session.
 
 To make Claude Code skip SSH for GitHub `owner/repo` sources, set `CLAUDE_CODE_PLUGIN_PREFER_HTTPS=1`. Without it, Claude Code clones those sources over SSH when an SSH key for `github.com` looks configured, and falls back to HTTPS when the SSH clone fails.
 

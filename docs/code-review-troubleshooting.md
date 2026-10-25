@@ -15,7 +15,7 @@ Find the **Claude Code Review** check run on your pull request, then match its t
 | Check run title | What it means | What to do |
 | :- | :- | :- |
 | **Code review queued...** or **Code review in progress...** | The review hasn't finished | Wait for the title to change |
-| **Code review found no issues** | The review finished and found nothing to flag | Nothing |
+| **Code review found no issues** | The review finished and posted no findings | If this isn't the pull request's first review, look in the review body for a count of [findings the review left out](https://code.claude.com/docs/en/code-review-pull-requests.md#what-a-later-review-covers). Otherwise, nothing |
 | A title that says issues were found | The review finished with findings | If you don't see them on the diff, see [Find issues that aren't showing as inline comments](#find-issues-that-aren’t-showing-as-inline-comments) |
 | **Code review skipped — no new changes** | An automatic review didn't run on your latest push | To get a review anyway, comment `@claude review` |
 | **Code review not repeated — earlier findings still open** | An automatic review didn't run on your latest push, and Important findings from the earlier review are still open | Push a fix, or to get a review anyway, comment `@claude review`. See [When a push keeps the earlier result](https://code.claude.com/docs/en/code-review-pull-requests.md#when-a-push-keeps-the-earlier-result) |

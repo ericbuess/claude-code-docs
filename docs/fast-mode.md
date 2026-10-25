@@ -167,7 +167,7 @@ To restore fast mode, allowlist direct egress to `api.anthropic.com`, or set `CL
 
 Behind a gateway, check for these configurations, in which Claude Code doesn't send the availability check and has no earlier successful check cached:
 
-* You point `ANTHROPIC_BASE_URL` at your gateway and set [`ANTHROPIC_API_KEY`](https://code.claude.com/docs/en/llm-gateway-connect#set-the-base-url-and-credential) to a gateway-issued key that isn't in the format of an Anthropic API key. Claude Code withholds such a key from `api.anthropic.com`.
+* You point `ANTHROPIC_BASE_URL` at your gateway and set [`ANTHROPIC_API_KEY`](https://code.claude.com/docs/en/llm-gateway-connect#set-the-base-url-and-credential) to a gateway-issued key that isn't in the format of an Anthropic API key.
 * You set [`CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC`](https://code.claude.com/docs/en/env-vars), so Claude Code skips the check.
 
 To restore fast mode in either configuration, set `CLAUDE_CODE_SKIP_FAST_MODE_NETWORK_ERRORS=1`.
