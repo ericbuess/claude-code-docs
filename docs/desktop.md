@@ -994,6 +994,28 @@ A Linux or macOS remote machine needs a supported processor, an SSH server with 
 * **Shell**: the shell set for your account on the remote machine has to run commands sent over SSH, as Bash, Zsh, and `sh` do
 * **Network**: Claude Code runs on the remote machine and makes its network requests from there, so the machine needs the [network access that Claude Code requires](https://code.claude.com/docs/en/network-config.md#network-access-requirements). If the machine can't download Claude Code, Desktop downloads it on your computer and uploads it. Claude Code's other requests still go out from the remote machine. On a Linux remote machine, if those requests need a proxy, [set it for SSH sessions](#set-a-proxy-or-a-ca-certificate-for-ssh-sessions).
 
+#### Check a remote machine's host key
+
+A host key is the key that a remote machine presents to prove which machine it is, and a fingerprint is a short form of that key. When you trust a key, your computer saves it and connects to whatever presents it, without asking again. Check a key before you trust it, because something may be intercepting the connection.
+
+First find which machine the key belongs to, from where you see the fingerprint:
+
+* **Desktop asks `Connect to <host> for the first time?`, or you selected Review new key**: the machine that Desktop names, `<host>`
+* **Desktop asks `Connect through <jump host> for the first time?`**: the jump host, which is the machine that your connection passes through, not the machine that you want to reach
+* **`ssh` asks or warns in a terminal**: the machine that its message names, which may not be the one that you typed
+
+Get that machine's own fingerprint from the machine, not over the connection that you're checking:
+
+* **Someone else manages the machine**: ask them for its host key fingerprint
+* **You manage it, and it runs Linux or macOS**: run `ssh-keygen -lf /etc/ssh/ssh_host_<type>_key.pub` on it, at its console or over a connection that you already trust. For `<type>`, use the key type that Desktop or `ssh` shows beside the fingerprint, in lowercase: `ed25519` for `ED25519` or `ssh-ed25519`.
+
+Then compare the machine's own fingerprint with the one that you were shown:
+
+* **They match**: trust the key. Select **Trust and connect** or **Trust new key** in Desktop, or answer `yes` in the terminal.
+* **They differ, or you can't check**: don't connect. Select **Cancel** in Desktop, or answer `no` in the terminal. If someone else manages the machine, tell them which fingerprint you were shown.
+
+If a troubleshooting step sent you here, go back to that step after either result.
+
 #### Set a proxy or a CA certificate for SSH sessions
 
 If a Linux remote machine reaches the internet through a proxy or needs a CA certificate, add the [proxy and CA variables](https://code.claude.com/docs/en/network-config.md) under `env` in `~/.claude/settings.json` there. Add them even if you already export them in `~/.profile`, `~/.bash_profile`, `~/.zprofile`, or `~/.zshrc` on that machine.
@@ -2134,6 +2156,48 @@ If you see "Git LFS is required by this repository but is not installed," instal
 ### MCP servers not working on Windows
 
 If MCP server toggles don't respond or servers fail to connect on Windows, check that the server is properly configured in your settings, restart the app, verify the server process is running in Task Manager, and review server logs for connection errors.
+
+### SSH host key verification failed
+
+Each of these messages means that Desktop refused a [host key](#check-a-remote-machines-host-key):
+
+* `SSH host key verification failed` or `Host denied (verification failed)` under **View details** on a `Couldn't connect to <host>` card
+* `Connection failed: Host key changed or not trusted` by the prompt box or after **Test connection**
+* `<host>'s host key is not trusted` or `<host>'s host key has changed` on a disconnected session
+
+Desktop usually refuses a key because it differs from the one saved on your computer, or because no key is saved for that machine. A machine that was rebuilt or reinstalled usually presents a new key, and so does something that intercepts the connection. Check the key before you connect again, starting from what Desktop shows with the message:
+
+* **You're on Windows, and Desktop says `Connection failed: Host key changed or not trusted`**: first rule out a [missing OpenSSH client](#ssh-host-key-refused-on-windows-without-an-openssh-client)
+* **Desktop tells you to set `UserKnownHostsFile`**: in `~/.ssh/config`, set it to `~/.ssh/known_hosts`, then [check the key from a terminal](#check-the-host-key-from-a-terminal)
+* **You see a Review new key button**: select it, and [compare](#check-a-remote-machines-host-key) the fingerprint that Desktop shows with the machine's own. If they match, select **Trust new key** to replace the saved key. Otherwise select **Cancel**.
+* **You see no Review new key button, Desktop shows `Couldn't show the new key`, or Desktop refuses the key again after Trust new key**: [check the key from a terminal](#check-the-host-key-from-a-terminal)
+
+#### Check the host key from a terminal
+
+Run `ssh <SSH host>` on your computer, with the **SSH host** value of your [SSH connection](#ssh-sessions) in Desktop. Add `-p <SSH port>` if the connection has an **SSH port** value. On Windows, use PowerShell, because Desktop doesn't connect with the `ssh` in Git Bash or WSL. If PowerShell finds no `ssh`, [install Microsoft's OpenSSH client](#ssh-host-key-refused-on-windows-without-an-openssh-client).
+
+Note which machine `ssh` names in its message, which can be a jump host and not `<SSH host>`, then follow the case that fits:
+
+* **`ssh` asks whether to continue connecting**: [compare](#check-a-remote-machines-host-key) the fingerprint that it shows with that machine's own. Answer `yes` only if they match.
+* **`ssh` warns that the host key has changed**: [compare](#check-a-remote-machines-host-key) the warning's fingerprint with that machine's own. Only if they match, delete the line that `Offending <type> key in <file>:<line>` names and rerun `ssh`. If `ssh` warns again about another line, compare, delete and rerun as before.
+* **`ssh` refuses a key that it doesn't know, without asking**: get that machine's `known_hosts` line from whoever manages it, not over the connection that you're checking. Add the line to your `known_hosts` file, with the name from `ssh`'s message as its host name, and rerun `ssh`.
+* **`ssh` goes on to sign in without asking you about the host key**: don't type a password yet. [Check the keys that `ssh` already trusts](#check-the-keys-that-ssh-already-trusts).
+
+Once `ssh` accepts a key that you checked or added, retry in Desktop. If Desktop refuses the key again, see [Get Desktop's logs for an SSH problem](#get-desktops-logs-for-an-ssh-problem).
+
+##### Check the keys that `ssh` already trusts
+
+Rerun the same `ssh` command with `-v -S none` added. In its output, a `Server host key:` line shows a fingerprint, and the next `Host '<name>' is known` line names the machine that it belongs to. [Compare](#check-a-remote-machines-host-key) each fingerprint that you find with that machine's own.
+
+* **A jump host has no `Server host key:` line**: run `ssh -v -S none <jump host>` too, and compare that fingerprint in the same way.
+* **A fingerprint doesn't match, or you can't check it**: don't connect again. Remove the saved key: under `Host '<name>' is known`, the line `Found key in <file>:<line>` names the file that holds it. Run `ssh-keygen -R "<name>" -f <file>`. If you keep host keys in more than one file, remove the key from each. If you can't change a file, tell whoever manages your computer.
+* **Every fingerprint matches**: retry in Desktop. If Desktop refuses the key again, see [Get Desktop's logs for an SSH problem](#get-desktops-logs-for-an-ssh-problem).
+
+### SSH host key refused on Windows without an OpenSSH client
+
+On Windows without an OpenSSH client, Desktop refuses even a correct host key, with `Connection failed: Host key changed or not trusted`. It needs the client to look up saved keys. To see whether you have one, run `ssh` in PowerShell. If PowerShell doesn't recognize `ssh`, install [Microsoft's OpenSSH client](https://learn.microsoft.com/windows-server/administration/openssh/openssh_install_firstuse) and restart Desktop.
+
+Then connect again. If Desktop asks whether to connect for the first time, [check the machine's host key](#check-a-remote-machines-host-key) before you trust it. If Desktop still refuses the key, follow the other cases under [SSH host key verification failed](#ssh-host-key-verification-failed).
 
 ### SSH connection fails after you log in
 
