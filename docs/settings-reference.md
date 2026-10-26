@@ -2037,13 +2037,13 @@ List additional XPC and Mach service names the macOS sandbox may look up. Tools 
 * **Type**: array of strings, each a service name; a single trailing `*` matches a prefix, and `"*"` alone matches every service
 * **Default**: unset
 
-This allows every service under the `com.apple.coresimulator.` prefix:
+This allows every service under the `com.apple.CoreSimulator.` prefix:
 
 ```json settings.json theme={null}
 {
   "sandbox": {
     "network": {
-      "allowMachLookup": ["com.apple.coresimulator.*"]
+      "allowMachLookup": ["com.apple.CoreSimulator.*"]
     }
   }
 }
@@ -4729,12 +4729,12 @@ Check out only the listed directories in each worktree through git sparse-checko
 * **Type**: array of strings, directory paths relative to the repository root
 * **Default**: unset, so each worktree checks out the whole tree
 
-This example checks out only `packages/my-app` and `shared/utils`, plus root-level files, in each worktree:
+Include `.claude` in the list so that each worktree also has the repository's `.claude/settings.json` and `.claude/rules/`. This example checks out only `.claude`, `packages/my-app`, and `shared/utils`, plus root-level files, in each worktree:
 
 ```json settings.json theme={null}
 {
   "worktree": {
-    "sparsePaths": ["packages/my-app", "shared/utils"]
+    "sparsePaths": [".claude", "packages/my-app", "shared/utils"]
   }
 }
 ```
@@ -5525,7 +5525,10 @@ Reject the `--plugin-dir`, `--plugin-url`, `--agents`, and `--mcp-config` CLI fl
 
 Claude Code still accepts a `--mcp-config` whose servers are all in-process `type: "sdk"` entries, so the Agent SDK and VS Code extension keep working. Users can still add servers with `claude mcp add` or a `.mcp.json` file; for per-server control, set [`allowedMcpServers`](https://code.claude.com/docs/en/managed-mcp) as well. Requires Claude Code v2.1.193 or later.
 
-The same check covers plugin folders named in the [`CLAUDE_CODE_PLUGIN_DIRS`](https://code.claude.com/docs/en/env-vars#variables) environment variable, which requires Claude Code v2.1.280 or later. When the variable names a folder, Claude Code exits with the same error, and the error says to unset the variable.
+`disableSideloadFlags` also rejects plugin folders from these sources:
+
+* **The [`CLAUDE_CODE_PLUGIN_DIRS`](https://code.claude.com/docs/en/env-vars#variables) environment variable**: when the variable names a plugin folder, Claude Code exits at startup with an error that names the variable and says to unset it. Requires Claude Code v2.1.280 or later
+* **The Agent SDK [`addPlugins`](https://code.claude.com/docs/en/agent-sdk/typescript#load-more-plugin-folders-with-addplugins) option**: when an application passes plugin folders to `reloadPlugins()` in `addPlugins`, that call fails with an error. The session keeps running with the plugins it already had. Requires Claude Code v2.1.301 or later
 
 In cloud sessions, Claude Code also ignores server-delivered mid-session MCP updates, the path behind cloud session configuration and SDK `setMcpServers()` calls that reach those sessions. In-process `type: "sdk"` entries and a Claude Tag session's Slack tools stay exempt there too. Before v2.1.268, both this drop and the startup drop also removed a Claude Tag session's Slack tools. Before v2.1.239, a server-delivered `--mcp-config` blocked a cloud session from starting.
 

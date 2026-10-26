@@ -312,14 +312,14 @@ The handle that `$.ui.mount` returns has these methods, which address elements b
 | Method | What it does |
 | :- | :- |
 | `press({ key: 'more' })` | Presses the `Button` with that key |
-| `input({ key: 'new-note', text: 'buy milk' })` | Types the text into the `Input` with that key and presses Enter. Add `kind: 'change'` to type without submitting. |
+| `input({ key: 'new-note', text: 'buy milk' })` | Types the text into the `Input` with that key and presses Enter. Add `kind: 'change'` to type without submitting. For a field with `rows`, the text can hold `\n`. |
 | `select({ key: 'size', value: 'large' })` | Picks the option with that value in the `Select` with that key |
 | `find({ key: 'more' })` or `find({ type: 'Text', text: 'Count: 2' })` | Returns the first matching element as `{ type, props, children }`, or `undefined`. `text` can be a string or a regular expression. |
 | `unmount()` | Removes the drawing |
 
 Each method resolves after your handler has finished, so you can check the result on the next line. Set `props` to what Claude Code would pass for that site. The [render sites table](https://code.claude.com/docs/en/plugins/mods/reference.md#render-sites) lists each site's props, and [the types for your build](https://code.claude.com/docs/en/plugins/mods/create.md#get-the-types-for-your-build) have their types.
 
-A drawing test checks the tree your hook returns and whether it's valid for that app. It doesn't check how the app paints it, so look at a new layout in a real session as well.
+To catch an [element tree](https://code.claude.com/docs/en/plugins/mods/interface.md#build-a-tree-from-elements) that isn't valid for the app you named in `surface`, check with `find` for an element your hook adds. The test doesn't check how the app paints a tree, so look at a new layout in a real session too.
 
 ### Test a drawing after `/clear`
 

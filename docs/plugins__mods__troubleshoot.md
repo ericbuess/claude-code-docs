@@ -226,13 +226,31 @@ There is one band above the prompt, and every mod shares it. A mod that runs [be
 
 To find that mod, [write a debug log](#read-the-debug-log) and search it for `answered ui.render without next()`. A line such as `other-mod (user) answered ui.render without next()` names a mod that returned its tree without calling `next(e)`. It doesn't name the [render site](https://code.claude.com/docs/en/plugins/mods/reference.md#render-sites), so a pane-only mod can appear too. A mod that calls `next(e)` and drops the result gets no line, so check the hooks before yours too.
 
-After the change, you see nothing in the band if any of the mods returns a tree that doesn't validate. To read the reason, look for a `ui.render (AbovePrompt) refused:` line in the transcript of a `--plugin-dir` session, or search the debug log for `does not validate`. With several mods in the band, neither line names a mod, so check each mod's tree.
+A mod's band is also missing when the tree its own hook returned doesn't validate, and the other mods' bands stay. To find which mod and why, [write a debug log](#read-the-debug-log) and search it for [`ui.render hook skipped`](#a-pane-or-band-is-empty).
 
 ### A pane or band is empty or shows Claude Code's usual content
 
-The [tree](https://code.claude.com/docs/en/plugins/mods/interface.md#build-a-tree-from-elements) your hook returned didn't validate. With `--plugin-dir`, the transcript says `ui.render (Pane) refused:` with the reason, as in `first-mod: ui.render (Pane) refused: Box prop "flexDirection" must be one of row, column, row-reverse, column-reverse; the engine drew its own`. The debug log has `a hook returned a tree that does not validate` with the same reason.
+The [tree](https://code.claude.com/docs/en/plugins/mods/interface.md#build-a-tree-from-elements) your hook returned didn't validate. A [`hook skipped`](#hook-skipped) line [in the transcript or the debug log](#find-out-why-a-mod-does-nothing) names your mod and the reason, as in this one for a `Box` in a pane:
 
-Read the reason on that line. Common causes are a prop the element doesn't take and an element the app doesn't have.
+```text theme={null}
+first-mod: ui.render hook skipped: returned the wrong shape (a tree Pane refuses: Box prop "flexDirection" must be one of row, column, row-reverse, column-reverse)
+```
+
+Fix what the reason names. If the reason is cut short, [write a debug log](#read-the-debug-log) and search it for `a hook returned a tree that does not validate` to read the rest.
+
+If the line instead says `refused:` right after the site's name, as in `ui.render (Pane) refused:`, see [A `ui.render` line says `refused`](#ui-render-refused).
+
+### A `ui.render` line says `refused`
+
+`ui.render (<site>) refused:`, or `ui.render (<site>): the chain settled on a tree that does not validate` in the [debug log](#read-the-debug-log), means the [tree](https://code.claude.com/docs/en/plugins/mods/interface.md#build-a-tree-from-elements) at that site exceeds a [size limit](https://code.claude.com/docs/en/plugins/mods/reference.md#limits). Either line names the [render site](https://code.claude.com/docs/en/plugins/mods/reference.md#render-sites) and then the reason, and the reason names the limit.
+
+Change the mods that draw at that site so their [`ui.render`](https://code.claude.com/docs/en/plugins/mods/reference#interface) hooks return smaller trees, or ask their authors to. If the transcript line starts with `hooks`, more than one loaded mod has a `ui.render` hook for that site, so check each of those mods' trees. For several mods whose bands above the prompt nest into a tree more than 32 levels deep, the line reads:
+
+```text theme={null}
+hooks: ui.render (AbovePrompt) refused: deeper than 32; nothing was drawn
+```
+
+Before v2.1.307, a `refused:` line for any site reported any tree that didn't validate, and for `Pane` and `AbovePrompt` it ended `; the engine drew its own`. On those releases, fix what the reason names.
 
 ### `needs a key`, `is drawn twice`, or `key each once`
 
@@ -383,7 +401,7 @@ A mod that loaded has a line that names it and lists the events it handles. A mo
 hooks module first-mod@inline loaded (worker, environment 2, tier user); events: session.start,tool.call,command.run,ui.render
 ```
 
-A drawing that didn't validate counts as a refused result and gets a line too. To write your own lines in the log, call [`$.ui.log`](https://code.claude.com/docs/en/plugins/mods/api#show-something-without-starting-a-turn) with a second argument, as in `$.ui.log('message', { to: 'debug' })`. Without the second argument, `$.ui.log` adds a dim line to the transcript.
+To write your own lines in the log, call [`$.ui.log`](https://code.claude.com/docs/en/plugins/mods/api#show-something-without-starting-a-turn) with a second argument, as in `$.ui.log('message', { to: 'debug' })`. Without the second argument, `$.ui.log` adds a dim line to the transcript.
 
 While you edit a mod loaded with `--plugin-dir`, the transcript shows a line for each reload that names the mod and lists its hooks. If a save breaks the module, the line says `reload failed, the previous version stays loaded:` with the reason, and the last working version keeps running until Claude Code next reloads plugins, such as when you run `/reload-plugins`.
 

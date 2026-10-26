@@ -377,7 +377,7 @@ On Claude Code's own read, if your hook returns a value outside the key's schema
 
 ### Handle the settings hook events
 
-Settings hooks are the command, HTTP, prompt, and agent hooks you configure in settings files. Each [settings hook event](https://code.claude.com/docs/en/hooks.md#hook-events), such as `Stop`, `SessionEnd`, or `PostToolUse`, is also an event named `classic.` followed by the settings hook event's name, such as `classic.Stop`. `e` is the JSON a settings hook receives on stdin, including `transcript_path`.
+Settings hooks are the command, HTTP, prompt, and agent hooks you configure in settings files. Each [settings hook event](https://code.claude.com/docs/en/hooks.md#hook-events), such as `Stop`, `SessionEnd`, or `PostToolUse`, is also an event named `classic.` followed by the settings hook event's name, such as `classic.Stop`. `e` is the JSON a settings hook receives on stdin, including `transcript_path`. Where the [built-in guard](https://code.claude.com/docs/en/plugins/mods/admin.md#know-what-happens-by-default) loads, [a hook on these events in a mod you install doesn't run](https://code.claude.com/docs/en/plugins/mods/admin.md#hooks-the-guard-passes-over).
 
 This hook uses `Stop`, which fires when Claude finishes responding, to log where the session's transcript is saved:
 
@@ -425,7 +425,7 @@ A hook that fails doesn't break the session, and you can decide what happens ins
 * **It failed before calling `next`**: Claude Code skips it, and the next handler runs in its place
 * **It failed after `next` resolved**: that result stands, and nothing runs a second time
 
-One line names the mod, the event, and the reason, such as `my-mod: tool.call hook skipped: threw Error: boom`. Where you read it depends on the session, as [Find out why a mod does nothing](https://code.claude.com/docs/en/plugins/mods/troubleshoot.md#find-out-why-a-mod-does-nothing) lists. A `ui.render` hook whose drawing doesn't validate is reported differently, as [Build a tree from elements](https://code.claude.com/docs/en/plugins/mods/interface.md#build-a-tree-from-elements) describes.
+One line names the mod, the event, and the reason, such as `my-mod: tool.call hook skipped: threw Error: boom`. Where you read it depends on the session, as [Find out why a mod does nothing](https://code.claude.com/docs/en/plugins/mods/troubleshoot.md#find-out-why-a-mod-does-nothing) lists. A `ui.render` hook whose [tree doesn't validate](https://code.claude.com/docs/en/plugins/mods/interface.md#build-a-tree-from-elements) counts as one that returned the wrong shape.
 
 To make a hook that blocks calls fail closed, add a `.catch` error handler that answers in its place. Here, `guard` is your hook function, and the handler tests [`next.called`](https://code.claude.com/docs/en/plugins/mods/reference#the-hook-function) to tell whether `guard` had already called `next` when it failed:
 

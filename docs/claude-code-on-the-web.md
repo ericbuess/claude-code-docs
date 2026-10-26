@@ -288,6 +288,28 @@ To change the auto-compact window instead, set [`CLAUDE_CODE_AUTO_COMPACT_WINDOW
 
 [Agent teams](https://code.claude.com/docs/en/agent-teams.md) are off by default but can be enabled by adding `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` to your [environment variables](https://code.claude.com/docs/en/cloud-environments.md#set-environment-variables).
 
+### Plugin suggestions in the conversation
+
+A card in the conversation that lists one or more [plugins](https://code.claude.com/docs/en/plugins/overview.md), with an **Add** button, means Claude is suggesting plugins for your task. Claude can make these suggestions without you asking. You don't have to respond, and Claude carries on with the task either way.
+
+#### Add or remove a suggested plugin
+
+Select **Add** on a plugin to turn it on for your claude.ai account, where it stays on after the session ends. To undo, open the added plugin from the card, select **Manage** to reach the plugin's page on claude.ai, and remove the plugin from that page.
+
+#### Turn off plugin suggestions
+
+To stop Claude from suggesting plugins, deny the `SearchPlugins` and `SuggestPluginInstall` tools with [permission rules](https://code.claude.com/docs/en/permissions.md#manage-permissions). In a session with one repository outside a [project](https://code.claude.com/docs/en/claude-projects.md), commit the rules to that repository's `.claude/settings.json`, listing both tool names under `permissions.deny`:
+
+```json theme={null}
+{
+  "permissions": {
+    "deny": ["SearchPlugins", "SuggestPluginInstall"]
+  }
+}
+```
+
+Claude Code ignores permission rules in the repository's `.claude/settings.json`, including these deny rules, when the [managed settings](https://code.claude.com/docs/en/managed-settings.md) that apply to the session set [`allowManagedPermissionRulesOnly`](https://code.claude.com/docs/en/settings-reference#allowmanagedpermissionrulesonly). In that case, put the rules in those managed settings instead. For other setups, such as a session with several repositories or a cloud thread in a project, see which [settings reach a cloud session](https://code.claude.com/docs/en/settings.md#settings-in-cloud-sessions).
+
 ### Take back a queued message
 
 If you send a message while Claude is working, the message queues until Claude reads it. To take a queued message back, click the ✕ on it. The text returns to the message box so you can edit it or send something else.

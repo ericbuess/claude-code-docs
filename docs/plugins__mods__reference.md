@@ -275,7 +275,7 @@ Elements are the building blocks of a tree a `ui.render` hook returns, and you g
 | [`Link`](https://code.claude.com/docs/en/plugins/mods/interface#link-in-the-desktop-app) | `href`, `label`. See [Limits](#limits). | ✓ | ✓ | ✓ |
 | [`Code`](https://code.claude.com/docs/en/plugins/mods/gallery#show-code-and-changes) | `source`, `language`, `path`, `startLine`, `format`, `wrap` | ✓ | ✓ | ✓ |
 | `Markdown` | `text`, `key`, `dimColor`, `onLinkPress`, `pressableLinks` | ✓ | ✓ | ✓ |
-| [`Input`](https://code.claude.com/docs/en/plugins/mods/interface#take-typed-input-and-draw-a-row-for-each-item) | `key`, `label`, `placeholder`, `value`, `submitLabel`, `onSubmit`, `onInput`, `autoFocus` | ✓ | ✓ | ✓ |
+| [`Input`](https://code.claude.com/docs/en/plugins/mods/interface#take-typed-input-and-draw-a-row-for-each-item) | `key`, `label`, `placeholder`, `value`, `submitLabel`, [`rows`](https://code.claude.com/docs/en/plugins/mods/gallery#input), `onSubmit`, `onInput`, `autoFocus` | ✓ | ✓ | ✓ |
 | `Select` | `key`, `label`, `options`, `value`, `onSelect`, `autoFocus` | ✓ | ✓ | ✓ |
 | `Svg` | a `source` of SVG markup up to 131,072 characters, `alt` text, `width`, `height`, and `isInteractive` | | ✓ | ✓ |
 | [`Client`](https://code.claude.com/docs/en/plugins/mods/interface#build-a-tree-from-elements) | `module`, `key`, `props`, `width`, `height`, `flexGrow` | ✓ | ✓ | |
@@ -333,7 +333,7 @@ The `Box` spacing props are `gap`, `columnGap`, `rowGap`, `padding`, `margin`, a
 
 If you set `gap`, `padding`, or `margin` to a step, the step applies across and down at once. For example, in the terminal and the VS Code extension, `padding: 'md'` is two cells at each side and one row above and below.
 
-Step names require Claude Code v2.1.299 or later. On an earlier release, Claude Code [draws its own version of the site](https://code.claude.com/docs/en/plugins/mods/interface.md#build-a-tree-from-elements) in place of a tree that uses a step name.
+Step names require Claude Code v2.1.299 or later. On an earlier release, a tree that uses a step name doesn't draw.
 
 ### `Text` typography props
 
@@ -346,17 +346,17 @@ Set `size`, `weight`, `mono`, or `tabular` on a `Text` to ask the app drawing yo
 | `mono` | `true` to ask for the app's monospaced typeface | Ignored: the terminal is always monospaced | Ignored, so text keeps the extension's own typeface |
 | `tabular` | `true` to ask for digits of equal width, so that a number that updates in place or a column of numbers stays aligned | Ignored: the terminal's digits are already one cell wide | Ignored |
 
-These four props require Claude Code v2.1.299 or later. On an earlier release, Claude Code [draws its own version of the site](https://code.claude.com/docs/en/plugins/mods/interface.md#build-a-tree-from-elements) in place of a tree that sets `size`, `weight`, `mono`, or `tabular`.
+These four props require Claude Code v2.1.299 or later. On an earlier release, a tree that sets `size`, `weight`, `mono`, or `tabular` doesn't draw.
 
 #### Replace `bold` with `weight`
 
 `bold` on a `Text` is deprecated in favor of `weight` and still works. To replace it on a `Text` with no `weight`, change `bold: true` to `weight: 'semibold'` for the same result on Claude Code v2.1.299 or later.
 
-On a release earlier than v2.1.299, a tree that sets `weight` doesn't draw, and Claude Code [draws its own version of the site](https://code.claude.com/docs/en/plugins/mods/interface.md#build-a-tree-from-elements) instead. If you set both `bold` and `weight` on a `Text`, `bold` has no effect.
+On a release earlier than v2.1.299, a tree that sets `weight` doesn't draw. If you set both `bold` and `weight` on a `Text`, `bold` has no effect.
 
 ## Limits
 
-Hooks and mods API calls run under time and size limits. Claude Code skips a hook that exceeds a time limit.
+Hooks and mods API calls run under time and size limits. Claude Code skips a hook that exceeds a time limit. A tree over the nesting, element, `Raster` cell, or `Image` byte limit [isn't drawn](https://code.claude.com/docs/en/plugins/mods/troubleshoot.md#a-pane-or-band-is-empty).
 
 | Limit | Value |
 | :- | :- |
@@ -372,8 +372,12 @@ Hooks and mods API calls run under time and size limits. Claude Code skips a hoo
 | Redirects one `$.http.fetch` call follows | 5 |
 | A hook's `drop` reason or `config.set` `deny` reason | 4,096 characters. The end of a longer reason is cut, and the drop or deny still applies. The cut requires Claude Code v2.1.292 or later, and on earlier versions the hook [fails](https://code.claude.com/docs/en/plugins/mods/events.md#handle-a-hook-that-fails) instead. |
 | Text in one tree | The first 100,000 characters are drawn |
-| A `Code`'s `language` or `path`, a `Select` option's `value`, or a `Client`'s `module` | 10,000 characters. If one is longer, Claude Code [draws its own version of the site](https://code.claude.com/docs/en/plugins/mods/interface.md#build-a-tree-from-elements). |
-| A `Link`'s `href` | 2,048 characters. A longer `href` keeps the whole tree from drawing. |
+| A `Code`'s `language` or `path`, a `Select` option's `value`, or a `Client`'s `module` | 10,000 characters. If one is longer, the `ui.render` hook that returned it [fails](https://code.claude.com/docs/en/plugins/mods/events.md#handle-a-hook-that-fails). |
+| A `Link`'s `href` | 2,048 characters. If it's longer, the `ui.render` hook that returned it [fails](https://code.claude.com/docs/en/plugins/mods/events.md#handle-a-hook-that-fails). |
+| Nesting depth of one tree | 32 levels below the root element |
+| Elements and text children in one tree | 20,000 |
+| `Raster` cells in one tree, each `Raster`'s `columns` times its `rows` | 262,144 |
+| PNG or RGBA bytes of all the `Image`s in one tree | 2 MiB |
 | `$.store` | 4 MiB of JSON in total |
 | `$.session.messages()` | The newest 4,096 entries |
 | `$.ui.invalidate('ui.render')` redraws | Throttled to 10 a second, or 30 in the terminal for the visible pane, the expanded band, and the hint line under the prompt. Calls that come sooner are coalesced. |

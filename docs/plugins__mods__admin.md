@@ -95,6 +95,43 @@ Mods don't replace the controls you already have:
 
 None of these controls sandboxes a mod. A mod you allow runs as the user, with the user's access to files, processes, and the network.
 
+### Know which hooks of a user's mod don't run
+
+Where the [built-in guard](#know-what-happens-by-default) loads, a hook that a user's mod registers on one of these events never runs, and `/plugin` tells that user so in a note. In the [`session.append`](https://code.claude.com/docs/en/plugins/mods/reference#session) rows, `door` is the kind of stored row the hook is filtered to.
+
+| Hook on | What the event is |
+| :- | :- |
+| [`classic.<Event>`](https://code.claude.com/docs/en/plugins/mods/events#hook-the-settings-hook-events), such as `classic.Stop` | A [settings hook event](https://code.claude.com/docs/en/hooks.md#hook-events) |
+| [`prompt.compose`](https://code.claude.com/docs/en/plugins/mods/reference#prompts-and-what-claude-reads) | The system prompt's list of sections |
+| `prompt.section` | One section of the system prompt |
+| `prompt.context` | The context sent with a conversation's first message |
+| `prompt.attachment` | A message Claude Code adds for Claude, such as a reminder |
+| `skill.prompt` | A skill's text as it's expanded for Claude |
+| `attribution.text` | Commit or pull request attribution text |
+| [`session.compact`](https://code.claude.com/docs/en/plugins/mods/reference#session) | A compaction of the conversation |
+| `settings.read` | A read of settings, such as a mod's `$.settings.read` call |
+| `session.append{door=attachment}` | The stored row for a message Claude Code adds for Claude |
+| `session.append{door=hook-context}` | The stored row for context from a settings hook |
+| `session.append{door=compaction}` | The stored rows for a compaction's summary and boundary |
+
+The guard also passes over a user's hooks in some other cases, such as the descriptions of your organization's tools, on [`tool.describe`](https://code.claude.com/docs/en/plugins/mods/reference#tools), and the stored row for a skill's text. `/plugin` shows no note for those. If a hook on another event does nothing, see [Find out why a mod does nothing](https://code.claude.com/docs/en/plugins/mods/troubleshoot.md#find-out-why-a-mod-does-nothing).
+
+The note appears in the plugin's details and in the **Errors** tab of `/plugin`. It requires Claude Code v2.1.299 or later. It names each hook from the table as the mod registered it, as in this example:
+
+```text theme={null}
+Its hooks on classic.Stop, prompt.section do not run here: where an organization manages Claude Code, these events pass over the plugins you install
+Only a plugin that counts as your organization's own runs hooks on these events. An administrator sets that up in managed settings
+```
+
+To let these hooks run, change managed settings in one of two ways:
+
+* **Run the mod as your organization's**: [install the mod so that it counts as yours](#install-your-organizations-mods). Its hooks on these events then run, and the guard stays loaded for every other mod. The mod turns on for everyone who receives these settings, and it has to sit in a directory you place on each machine. If you list it in `prependPlugins`, keep `sec-default@builtin` in the list.
+* **Remove the guard**: leave `sec-default@builtin` out of `prependPlugins`. An empty list, `"prependPlugins": []`, is enough. You lose the whole guard, not only these events. A user's mod can then do what [the guard otherwise stops it from doing](#know-what-happens-by-default), and [the guard's options](#set-options-on-the-built-in-guard) don't apply.
+
+If you deliver a list without the guard through [server-managed settings](https://code.claude.com/docs/en/server-managed-settings.md#fetch-and-caching-behavior), the guard stays loaded until the server confirms the settings for the session. To confirm either change on a machine that runs v2.1.299 or later, open `/plugin` in a session there and check that the note is gone.
+
+A `session.append` hook with no `door` filter still runs and gets no note, but the stored rows in the table don't reach it.
+
 ## Decide whether to leave mods on
 
 A mod can do more than the other parts of a plugin because it runs inside Claude Code. It sees every prompt and tool call, can change them, and can allow or deny a tool call before a permission prompt appears.
@@ -142,7 +179,7 @@ Look at the `calls:` line for these:
 | `$.prompt.submit` | Submits a prompt, and can send it as the user's own words |
 | `$.session.send` | Sends a message that another session's, subagent's, or [teammate's](https://code.claude.com/docs/en/agent-teams.md) Claude reads |
 
-In the `hooks:` line, [`tool.call`](https://code.claude.com/docs/en/plugins/mods/reference#tools) and [`prompt.submit`](https://code.claude.com/docs/en/plugins/mods/reference#prompts-and-what-claude-reads) mean the mod sees every tool call and every prompt, and can change them. [`session.append`](https://code.claude.com/docs/en/plugins/mods/reference#session) means the mod can rewrite each row of the conversation before it's stored. [`ui.render{component=AskUserQuestion}`](https://code.claude.com/docs/en/plugins/mods/interface#change-what-claude-code-already-draws) means the mod can redraw the dialog Claude uses to ask the user a question. `tool.check` means the mod can approve or deny a tool call before a permission prompt appears. [Know what happens by default](#know-what-happens-by-default) lists which of your rules and hooks take precedence over its answer.
+In the `hooks:` line, [`tool.call`](https://code.claude.com/docs/en/plugins/mods/reference#tools) and [`prompt.submit`](https://code.claude.com/docs/en/plugins/mods/reference#prompts-and-what-claude-reads) mean the mod sees every tool call and every prompt, and can change them. [`session.append`](https://code.claude.com/docs/en/plugins/mods/reference#session) means the mod can rewrite each row of the conversation before it's stored, apart from [the rows the guard passes over](#hooks-the-guard-passes-over). [`ui.render{component=AskUserQuestion}`](https://code.claude.com/docs/en/plugins/mods/interface#change-what-claude-code-already-draws) means the mod can redraw the dialog Claude uses to ask the user a question. `tool.check` means the mod can approve or deny a tool call before a permission prompt appears. [Know what happens by default](#know-what-happens-by-default) lists which of your rules and hooks take precedence over its answer.
 
 ## Choose how much to allow
 

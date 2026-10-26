@@ -6,7 +6,9 @@
 
 > Install the Claude Security plugin to scan your codebase for vulnerabilities in a Claude Code session and turn findings into patches you review and apply.
 
-The Claude Security plugin runs a multi-agent vulnerability scan of your codebase inside a Claude Code session. A team of Claude agents maps your architecture, builds a threat model, hunts for vulnerabilities, and independently reviews every finding before writing the report. Use the plugin to scan a whole repository or [only a set of changes](#scan-only-your-changes), such as a branch's diff, a pull request's diff, or a single commit, then turn the findings you choose into patches that you review and apply yourself.
+The Claude Security plugin runs a multi-agent vulnerability scan of your codebase inside a Claude Code session. [By default](#choose-a-scan-effort), when you scan a whole repository, Claude agents map your architecture, build a threat model, hunt for vulnerabilities, and independently review every finding before writing the report.
+
+Use the plugin to scan a whole repository or [only a set of changes](#scan-only-your-changes), such as a branch's diff, a pull request's diff, or a single commit, then turn the findings you choose into patches that you review and apply yourself.
 
 The plugin runs locally in your session, uses [whichever models you have access to in Claude Code](#models-and-providers), and each scan counts toward your [usage](https://code.claude.com/docs/en/costs.md). If you want a managed service that monitors your repositories, or want to run scans on [Claude Mythos](https://platform.claude.com/docs/en/about-claude/models/introducing-claude-fable-5-and-claude-mythos-5), see the [Claude Security](https://claude.com/product/claude-security) product, available on the Enterprise plan.
 
@@ -50,6 +52,10 @@ If the install fails, match the message Claude Code reports:
 Check the install summary. If it reports `Run /reload-plugins to apply.`, see [Apply plugin changes without restarting](https://code.claude.com/docs/en/plugins/cli-reference.md#reload-plugins) to activate the plugin in your current session.
 
 Once the plugin is active, you're ready to [scan and fix your codebase](#scan-and-fix-your-codebase).
+
+### Update the plugin
+
+To update the plugin yourself, see [Update plugins now](https://code.claude.com/docs/en/plugins/install.md#update-plugins-now). Claude Code also [updates the plugin automatically](https://code.claude.com/docs/en/plugins/install.md#keep-plugins-updated) unless auto-update is turned off.
 
 ### Uninstall the plugin
 
@@ -95,6 +101,18 @@ Change scans need a git repository; full scans of an unversioned directory still
 
 On a large repository, scan one area at a time instead of the whole tree. Pick one of the focused scopes the plugin offers, such as your API layer or your authentication code, and the run sizes itself to what you pick. The report's coverage section states what was and wasn't examined. Run another scan on a different area anytime.
 
+### Choose a scan effort
+
+Scan effort sets how deep a scan goes. Your findings go through the same independent verification at `low`, `medium`, and `high`.
+
+* **`low`**: a quick first look. It skips the architecture map and the threat model when you scan your codebase.
+* **`medium`**: the default.
+* **`high`**: what `medium` does, plus more hunting for vulnerabilities in the same code.
+
+Name the scan effort in your request at the Claude Code prompt, such as `/claude-security scan my public API code at high` or `/claude-security scan my branch at high`.
+
+If a scan of a large repository finds less than you expect, choose `high` scan effort, scan a second time, or do both. Each can report findings that one `medium` scan doesn't.
+
 ### Read the scan results
 
 Every scan writes its results into a timestamped `CLAUDE-SECURITY-<timestamp>/` directory in your repository:
@@ -102,7 +120,7 @@ Every scan writes its results into a timestamped `CLAUDE-SECURITY-<timestamp>/` 
 * **`CLAUDE-SECURITY-RESULTS.md`**: the report, with each finding's ID, such as `F1`, plus its impact, exploit scenario, severity, confidence, and recommendation
 * **`CLAUDE-SECURITY-RESULTS.jsonl`**: the same findings in machine-readable form, one JSON object per line
 * **`CLAUDE-SECURITY-RESULTS.sarif`**: the same findings as a [SARIF 2.1.0](https://docs.oasis-open.org/sarif/sarif/v2.1.0/sarif-v2.1.0.html) log for GitHub code scanning and any other tool that reads the standard. The scan classifies findings under their [CWE](https://cwe.mitre.org/) weakness categories
-* **`CLAUDE-SECURITY-REVISION-<commit>.json`**: the revision stamp, recording which commit was scanned, at what effort, whether uncommitted changes were part of the scanned tree, and how thoroughly the run was verified, so a report is always tied to the code it describes. A scan outside version control stamps `UNVERSIONED` in place of the commit
+* **`CLAUDE-SECURITY-REVISION-<commit>.json`**: the revision stamp, recording which commit was scanned, at what [scan effort](#choose-a-scan-effort), whether uncommitted changes were part of the scanned tree, and how thoroughly the run was verified, so a report is always tied to the code it describes. A scan outside version control stamps `UNVERSIONED` in place of the commit
 
 That directory is the only change a scan makes to your checkout, and it carries its own `.gitignore`, so a stray `git add` never sweeps a report into a commit. To keep a report in history for an audit trail, delete that one `.gitignore` file and commit the directory like any other.
 

@@ -1624,7 +1624,16 @@ To auto-respond to elicitation requests without showing a dialog, use the [`Elic
 
 If you're building an MCP server that uses elicitation, see the [MCP elicitation specification](https://modelcontextprotocol.io/docs/learn/client-concepts#elicitation) for protocol details and schema examples.
 
-On connections that use [protocol revision 2026-07-28](#mcp-client-runtimes), Claude Code declares `elicitation: {form: {}, url: {}}` in its client capabilities, so a server there can request either mode through the protocol's standard elicitation request.
+### Elicitation modes Claude Code declares
+
+If you build an MCP server, the client capabilities Claude Code sends when it connects tell your server which elicitation modes it can request. Claude Code declares `elicitation: {form: {}, url: {}}` on the following connections, so a server on any of them can request both modes:
+
+* Connections that use [protocol revision 2026-07-28](#mcp-client-runtimes)
+* Connections on the earlier protocol revisions, 2025-11-25 and older, to the stdio, `sse`, `http`, and `ws` servers in a user's Claude Code MCP configuration. Requires Claude Code v2.1.287 or later
+
+On its other connections on the earlier revisions, such as to [claude.ai connectors](#use-mcp-servers-from-claude-ai), Claude Code declares the bare `elicitation: {}`, which permits elicitation requests in form mode only.
+
+A server built on Java MCP SDK 0.17.0 or earlier can refuse a declaration that has `form` and `url` in it. See [MCP server rejected the elicitation capability](https://code.claude.com/docs/en/errors.md#mcp-server-rejected-the-elicitation-capability).
 
 ## Use MCP resources
 

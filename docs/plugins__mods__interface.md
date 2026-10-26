@@ -421,6 +421,8 @@ Input({
 Note: Type a note and press Enter
 ```
 
+Add `rows` to let the field hold several lines. Enter still submits, and a backslash before Enter starts a new line, as does Shift+Enter where [the terminal supports it](https://code.claude.com/docs/en/terminal-config.md#enter-multiline-prompts). The gallery shows [a field with `rows`](https://code.claude.com/docs/en/plugins/mods/gallery#input).
+
 The [interface gallery](https://code.claude.com/docs/en/plugins/mods/gallery.md) has samples and screenshots of most elements. This table lists every element:
 
 | Element | What it draws | Where |
@@ -436,9 +438,11 @@ The [interface gallery](https://code.claude.com/docs/en/plugins/mods/gallery.md)
 
 If your module is a `.tsx` or `.jsx` file, you can write the tree as JSX. Destructure the elements from `$.ui.resolve(e)` first.
 
-If a tree uses an element the app doesn't have, a prop an element doesn't take, or a child where none goes, Claude Code draws its own version of the site.
+If your drawing doesn't show up, check its tree for a prop an element doesn't take or a child where none goes. A hook that returns such a tree [fails](https://code.claude.com/docs/en/plugins/mods/events.md#handle-a-hook-that-fails), and a [`hook skipped` line](https://code.claude.com/docs/en/plugins/mods/troubleshoot#a-pane-or-band-is-empty) names your mod and the rule the tree broke. For a `Text` in a pane with a prop named `bogusProp`, that line reads:
 
-In a session started with `--plugin-dir`, a transcript line says so, such as `ui.render (Pane) refused: Text prop "bogusProp" is not allowed; the engine drew its own`. The [debug log](https://code.claude.com/docs/en/plugins/mods/troubleshoot.md#read-the-debug-log) records it as `ui.render (Pane): a hook returned a tree that does not validate` with the same reason. Nothing else appears in the session, so when a drawing doesn't show up, check that line or the log.
+```text theme={null}
+my-mod: ui.render hook skipped: returned the wrong shape (a tree Pane refuses: Text prop "bogusProp" is not allowed)
+```
 
 ### `Link` in the Desktop app and VS Code
 
@@ -542,7 +546,7 @@ This table lists what a key does while your pane or band has keyboard focus:
 | Key | What it does |
 | :- | :- |
 | Tab | Moves to the next control |
-| Up and Down | Move between controls while your drawing fits. When the pane or band has more rows than it can show, they scroll it. |
+| Up and Down | Move between controls while your drawing fits. When the pane or band has more rows than it can show, they scroll it. In an `Input`, they [move between the field's rows](https://code.claude.com/docs/en/plugins/mods/gallery.md#input) first. |
 | Enter | Presses the focused `Button`, submits the focused `Input`, or picks in a `Select` |
 | A button's hotkey | Presses that button. While an `Input` has the focus, every printable key goes to the field. |
 | Page Up, Page Down, Home, and End | Scroll your pane or band when it has more rows than it can show |

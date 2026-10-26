@@ -41,7 +41,7 @@ If you wrote a plugin and want other people to install it, see [Publish a plugin
 
 If a tutorial or an older set of instructions tells you to run `/plugin marketplace add anthropics/claude-code`, that adds the demo marketplace, named `claude-code-plugins`. It isn't the official marketplace.
 
-Most of the demo marketplace's plugins are also in the official marketplace under the same names. For example, `code-review`, `feature-dev`, `commit-commands`, and `security-guidance` are in both. Install those from `claude-plugins-official` so you don't have two copies installed.
+Most of the demo marketplace's plugins are also in the official marketplace under the same names. For example, `code-review`, `feature-dev`, and `commit-commands` are in both. Install those from `claude-plugins-official` so you don't have two copies installed.
 
 ## Find plugins in the official marketplace
 

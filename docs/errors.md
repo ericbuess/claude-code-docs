@@ -244,6 +244,7 @@ Match the message you see to a section below.
 | `MCP server "<name>" was not saved to` / `was not removed from` | [Command-line errors](#mcp-server-was-not-saved-or-removed) |
 | `MCP server "<name>" may not have been saved` / `may not have been removed` | [Command-line errors](#mcp-server-may-not-have-been-saved-or-removed) |
 | `Server rejected the Authorization header minted by the configured headersHelper` | [Command-line errors](#server-rejected-the-authorization-header-minted-by-the-configured-headershelper) |
+| `This server (Java MCP SDK 0.17.0 or older) rejected Claude Code's elicitation capability` | [Command-line errors](#mcp-server-rejected-the-elicitation-capability) |
 | `Error: MCP tool <name> (passed via --permission-prompt-tool) not found` | [Command-line errors](#mcp-permission-prompt-tool-not-found) |
 | `OAuth callback port <port> is already in use — another process may be holding it` | [Command-line errors](#oauth-callback-port-is-already-in-use) |
 | `No available ports for OAuth redirect` | [Command-line errors](#no-available-ports-for-oauth-redirect) |
@@ -3472,6 +3473,37 @@ Claude Code re-runs the helper on each connection attempt, so a retry after a tr
 * After fixing the helper or its credential source, select the server in `/mcp` and choose **Reconnect**
 
 Before v2.1.248, Claude Code ran OAuth discovery for a server whose helper supplied the `Authorization` header. That discovery could fail with `Incompatible auth server: does not support dynamic client registration` instead of reporting the rejected credential.
+
+### MCP server rejected the elicitation capability
+
+An MCP server built on Java MCP SDK 0.11.0 through 0.17.0 refused the connection. Those SDK versions can't parse the `form` and `url` [elicitation modes](https://code.claude.com/docs/en/mcp.md#elicitation-modes-claude-code-declares) that Claude Code declares in its handshake. `claude mcp list` shows the server as failed with this message in place of the server's own error:
+
+```text theme={null}
+This server (Java MCP SDK 0.17.0 or older) rejected Claude Code's elicitation capability. Set "bareElicitationCapability": true for it, or upgrade to Java MCP SDK 0.17.1+ (Spring AI 1.0.7+ or 1.1.6+).
+```
+
+**What to do:**
+
+* Upgrade the server to Java MCP SDK 0.17.1 or later, or to one of the Spring AI releases the message names
+* Or add `"bareElicitationCapability": true` to that server's entry in your MCP configuration, then restart Claude Code. The field is accepted on stdio, `sse`, `http`, and `ws` entries and requires Claude Code v2.1.281 or later
+
+This `.mcp.json` entry sets the field for one HTTP server:
+
+```json theme={null}
+{
+  "mcpServers": {
+    "inventory": {
+      "type": "http",
+      "url": "https://mcp.example.com/mcp",
+      "bareElicitationCapability": true
+    }
+  }
+}
+```
+
+After the restart, `/mcp` shows the server as connected. Claude Code declares form mode only to that server, so remove the field once you upgrade it.
+
+A server can also fail with its own error text, such as one containing `Unrecognized field "form"`. The same fixes apply.
 
 ### MCP permission prompt tool not found
 
