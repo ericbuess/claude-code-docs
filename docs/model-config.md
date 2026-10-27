@@ -542,7 +542,7 @@ When Claude Code switches your session to the fallback model, it keeps the effor
 A different level applies in cases such as these:
 
 * **Your own change**: once you choose an effort level, pick a model in `/model`, or resume the session later, the flagged request's level no longer carries over.
-* **Skill effort**: a level that a skill's `effort` frontmatter set for the flagged request applies to that turn, and later turns run at the level the [effort resolution order](#adjust-effort-level) gives the fallback model.
+* **Effort set for one turn**: if you raised the flagged turn with `ultrathink`, or a skill's `effort` frontmatter set its level, that level applies to that turn. Later turns run at the level the [effort resolution order](#adjust-effort-level) gives the fallback model.
 
 In the session, run `/effort status` to see the level in effect, or `/effort` to change it.
 
@@ -674,7 +674,13 @@ Opus 5.5 [defaults to `medium`](#adjust-effort-level), one level below Opus 5's 
 
 #### Use ultrathink for one-off deep reasoning
 
-Include `ultrathink` anywhere in your prompt to request deeper reasoning on that turn without changing your session effort setting. Claude Code recognizes the keyword and adds an in-context instruction. The effort level sent to the API is unchanged. Claude Code passes other phrases such as "think", "think hard", and "think more" through as ordinary prompt text and doesn't recognize them as keywords.
+Include `ultrathink` anywhere in your prompt to request deeper reasoning on that turn without changing your session effort setting. Claude Code recognizes the keyword and adds an in-context instruction. Claude Code passes other phrases such as "think", "think hard", and "think more" through as ordinary prompt text and doesn't recognize them as keywords.
+
+Typed in the terminal prompt, the word can also raise that turn to `xhigh` effort. When it can, the word shows in rainbow colors. Requires Claude Code v2.1.311 or later. If the word isn't rainbow when you start a new turn, try one of these:
+
+* Retype it outside anything such as quotes, brackets, a path, or a command, in a prompt that doesn't start with `/`
+* Unset `CLAUDE_CODE_EFFORT_LEVEL` if it's set below `xhigh`, raise your own [`maxEffortLevel`](https://code.claude.com/docs/en/settings-reference#maxeffortlevel) to `xhigh` or above, or ask an organization admin to raise your [organization's limit](#organization-effort-limits)
+* Run `/model` in your session to switch to an Opus 5.5, Sonnet 5.5, Haiku 5.5, or Fable 5.1 model. Where the word can't raise a turn, such as on Amazon Bedrock, [set the effort level](#set-the-effort-level) instead
 
 #### Set the effort level
 
