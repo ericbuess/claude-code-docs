@@ -262,7 +262,7 @@ When a task needs something only your computer has, such as a local database, a 
 
 On the computer that has the folder the task needs, make it available through Remote Control in one of two ways. Both need Claude Code v2.1.280 or later on that computer.
 
-* **In the Claude desktop app**: open **Settings > Claude Code**, turn on **Use this computer from your phone and claude.ai**, and add the folder to the list under that switch. Threads can run on this computer while the app is open.
+* **In the Claude desktop app**: open **Settings > Code** or **Settings > Claude Code** and turn on **Use this computer from your phone and claude.ai**. Add the folder to the list under that switch. Threads can run on this computer while the app is open.
 * **In a terminal**: run `claude remote-control` in the folder and leave it running. In a git repository, add `--spawn worktree` to give each thread there its own [worktree](https://code.claude.com/docs/en/worktrees.md) instead of the folder itself.
 
 **2. Ask for the task with Work locally**
@@ -275,7 +275,10 @@ Claude answers with an **Allow Claude to work in a folder on your device** card.
 
 The thread runs in [auto mode](https://code.claude.com/docs/en/permission-modes.md#eliminate-prompts-with-auto-mode), so Claude runs commands and edits files in that folder without asking you each time. If auto mode is unavailable or turned off in that computer's Claude Code, the thread runs without it, and any permission prompt it raises waits for your answer in the thread, as [Unblock a thread waiting on approval](#unblock-a-thread-waiting-on-approval) describes.
 
-While the thread runs, a laptop icon in its header shows whether your computer is connected. Click it to see which folder the thread is using or to turn the connection off. The thread pauses while that computer is asleep, and stops if the desktop app or `claude remote-control` quits. [Lost contact with your folder](#lost-contact-with-your-folder) covers getting it going again. In the desktop app, turn on **Keep this computer awake for Remote Control** under **Settings > Claude Code** to stop the computer from sleeping on its own.
+While the thread runs, a laptop icon in its header shows whether your computer is connected. Click it to see which folder the thread is using or to turn the connection off. The thread pauses while that computer is asleep, and stops if the desktop app or `claude remote-control` quits.
+
+* **To get the thread going again**: see [Lost contact with your folder](#lost-contact-with-your-folder)
+* **To keep the computer from sleeping on its own**: in the desktop app, turn on **Keep this computer awake for Remote Control** in **Settings > Code** or **Settings > Claude Code**
 
 A project can't run a thread on your computer while [**Require trusted devices**](https://code.claude.com/docs/en/remote-control.md#trusted-devices) is on for your account.
 
@@ -489,7 +492,10 @@ A thread or the project conversation made a request your plan covers only with u
 
 ### Lost contact with your folder
 
-A thread running on your computer shows this when the Claude Code session there stopped responding, usually because the computer went to sleep or the desktop app or `claude remote-control` quit. Wake the computer, and if the desktop app or `claude remote-control` is no longer running there, start it again: reopen the app and confirm **Use this computer from your phone and claude.ai** is still on under **Settings > Claude Code**, or run `claude remote-control` again in the same folder.
+A thread running on your computer shows this when the Claude Code session there stopped responding, usually because the computer went to sleep or the desktop app or `claude remote-control` quit. Wake the computer. If the desktop app or `claude remote-control` is no longer running there, start it again:
+
+* **Desktop app**: reopen the app and confirm **Use this computer from your phone and claude.ai** is still on under **Settings > Code** or **Settings > Claude Code**
+* **Terminal**: run `claude remote-control` again in the same folder
 
 ### Other messages
 

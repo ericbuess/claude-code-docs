@@ -71,7 +71,7 @@ Claude reports the findings as text in the reply in both of these runs:
 * In a terminal session, where `/code-review` runs the review as a [forked subagent](https://code.claude.com/docs/en/skills.md#run-skills-in-a-subagent)
 * In a `-p` run with text or JSON output
 
-In a host application that requests the findings list, such as the [desktop app](https://code.claude.com/docs/en/desktop.md#review-your-code), Claude reports the review's findings through the [`ReportFindings` tool](https://code.claude.com/docs/en/tools-reference) instead. The report appears as a findings list, and each entry shows the file location, a one-sentence summary, and a category tag such as `correctness` when the finding carries one. A host request applies at every effort level and requires Claude Code v2.1.218 or later.
+In a host application that requests the findings list, such as the [desktop app](https://code.claude.com/docs/en/desktop.md#review-your-code), Claude reports the review's findings through the [`ReportFindings` tool](https://code.claude.com/docs/en/tools-reference) instead. The report appears as a findings list, and each entry shows the file location, a one-sentence summary, and a category tag such as `correctness` when the finding carries one. A host request applies at every effort level.
 
 When Claude fixes reported findings later in the session, it reports them again. Claude Code then marks each finding in the updated findings list as fixed, skipped, or no change needed.
 
@@ -104,7 +104,7 @@ Pass the merge request as its URL or a `!123` reference. Claude Code treats a ba
 After the effort level and flags, Claude Code reads the rest of the line as the review target. The `ultra` argument changes that reading:
 
 * **With `ultra`**: Claude Code reads a single word as a base branch or PR number. Longer text that doesn't name a branch or PR becomes [a note attached to the review](https://code.claude.com/docs/en/ultrareview.md#pass-a-request-in-plain-words). `/code-review ultra check my auth changes` reviews your current branch, and Claude relates the findings to your note.
-* **Without `ultra`**: everything left is the review target, even when it starts with another command name. `/code-review /fix-issue 123` reviews with `/fix-issue 123` as target text instead of loading `/fix-issue` as a second [stacked skill](https://code.claude.com/docs/en/skills.md#stack-several-skills-in-one-message). Before v2.1.218, a command stacked after `/code-review` expanded as its own skill.
+* **Without `ultra`**: everything left is the review target, even when it starts with another command name. `/code-review /fix-issue 123` reviews with `/fix-issue 123` as target text instead of loading `/fix-issue` as a second [stacked skill](https://code.claude.com/docs/en/skills.md#stack-several-skills-in-one-message).
 
 ## Run in the foreground
 
@@ -113,8 +113,6 @@ To make the review run in the foreground, do one of these:
 * Run it in non-interactive mode, with the `-p` flag or the Agent SDK. Claude Code waits for the review and includes the findings in the response, except for `ultra`, which [doesn't wait for the cloud review](https://code.claude.com/docs/en/ultrareview.md#run-ultrareview-non-interactively).
 * Set [`CLAUDE_CODE_DISABLE_BACKGROUND_TASKS`](https://code.claude.com/docs/en/env-vars) to `1`, which also turns off other background task features
 * Run `/code-review` again while an earlier review is still in progress
-
-Before v2.1.218, the review ran inside your conversation.
 
 ## Let Claude start the review
 

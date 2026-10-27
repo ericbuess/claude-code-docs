@@ -320,6 +320,7 @@ Claude Code checks your entries against each Bash and Monitor call. A call is th
 * **Every command in the call has to match**: `npm ci && docker compose build` stays sandboxed unless another entry covers `npm ci`
 * **Claude Code matches the text of the call**: a script or `make` target that calls `docker` internally doesn't match, and neither does `/usr/local/bin/docker`
 * **Some calls stay sandboxed**: a redirect to a file, a `cd`, or a command substitution such as `$(...)` keeps the whole call sandboxed. The [reference entry](https://code.claude.com/docs/en/settings-reference.md#sandbox-excludedcommands) lists more calls that stay sandboxed
+* **A `git clone` needs relative paths**: your entry doesn't cover a clone that names an absolute path, a path starting with `~`, or one with a `..` segment. If the clone can go inside your working directory, ask Claude to use a relative path with no `..` segment, such as `vendor/lib`
 * **Where you save the entry can matter**: while the sandbox is [admin-required](#repository-settings-under-an-admin-required-sandbox), Claude Code ignores entries in `.claude/settings.json` and `.claude/settings.local.json`
 
 An excluded command goes through the regular permission flow:
@@ -354,7 +355,7 @@ Set `sandbox.filesystem.disabled` to `true` to skip filesystem isolation while k
 
 The sandbox has two independent layers: [filesystem isolation](#filesystem-isolation) controls which paths sandboxed commands can read and write, and [network isolation](#network-isolation) controls which domains they can reach. With the filesystem layer off, sandboxed commands get unrestricted read and write access to the host filesystem, while their network egress stays confined to your allowed domains. Turn the layer off when you sandbox to control where commands connect rather than what they write.
 
-`sandbox.filesystem.disabled` defaults to `false`. Requires Claude Code v2.1.216 or later.
+`sandbox.filesystem.disabled` defaults to `false`.
 
 > [!WARNING]
 >

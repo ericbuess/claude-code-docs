@@ -97,7 +97,7 @@ Pick a style with the command, a menu, or a settings file. The command and both 
   The command also works in [non-interactive mode](https://code.claude.com/docs/en/headless.md) and Agent SDK sessions, and from the mobile app or web via [Remote Control](https://code.claude.com/docs/en/remote-control.md#limitations), where you can list and select only [built-in styles](#built-in-output-styles). Requires Claude Code v2.1.269 or later.
 * **Terminal menu**: run `/config` and select **Output style** to pick a style from a menu.
 * **VS Code extension**: open the [command menu](https://code.claude.com/docs/en/vs-code.md#use-the-prompt-box) with `/` and select **Output styles** to pick a style, including your custom styles. Requires Claude Code v2.1.257 or later.
-* **Desktop app**: set the `outputStyle` field in a settings file, for example `.claude/settings.local.json`, the file the terminal menu writes. When you run `/config` there, Claude Code [opens **Settings > Claude Code**](https://code.claude.com/docs/en/desktop.md#what’s-not-available-in-desktop) rather than a menu.
+* **Desktop app**: set the `outputStyle` field in a settings file, for example `.claude/settings.local.json`, the file the terminal menu writes. When you run `/config` there, Claude Code [opens **Settings > Code** or **Settings > Claude Code**](https://code.claude.com/docs/en/desktop.md#what’s-not-available-in-desktop) rather than a menu.
 
 To set a style without the menu, edit the `outputStyle` field directly in a settings file:
 

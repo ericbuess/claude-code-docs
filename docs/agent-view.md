@@ -320,7 +320,7 @@ Completed sessions that don't fit on screen fold into a `… N more` row. The `C
 
 #### Bring back a past session
 
-To bring a session back on Claude Code v2.1.212 or later, type `/resume` in the [dispatch input](#dispatch-an-agent-from-agent-view). A picker opens with past sessions of the repository you opened agent view from, newest first, including sessions you deleted from the list. Sessions that already have a row aren't listed. Press `Enter` to resume the selected session as a background session, so it rejoins the list as a row.
+To bring a session back, type `/resume` in the [dispatch input](#dispatch-an-agent-from-agent-view). A picker opens with past sessions of the repository you opened agent view from, newest first, including sessions you deleted from the list. Sessions that already have a row aren't listed. Press `Enter` to resume the selected session as a background session, so it rejoins the list as a row.
 
 `/resume` fails with `isn't available in agent view` when:
 
@@ -410,7 +410,7 @@ A small set of commands run in agent view itself instead of dispatching:
 * `/logout` signs you out
 * `/model`, `/effort`, and `/fast` set [what the sessions you dispatch next start with](#set-the-model-effort-and-fast-mode). `/effort` and `/fast` require Claude Code v2.1.299 or later.
 * `/login` opens the sign-in dialog so you can sign in again without attaching to a session
-* A bare `/resume`, or its `/continue` alias, opens a picker of the repository's past sessions to [bring one back](#bring-back-a-past-session) as a background session. Requires Claude Code v2.1.212 or later
+* A bare `/resume`, or its `/continue` alias, opens a picker of the repository's past sessions to [bring one back](#bring-back-a-past-session) as a background session
 
 Skills, your own commands, and prompt-expanding built-ins such as `/init` are sent to a new background session as its first prompt. The hint `isn't available in agent view` means the built-in command you entered didn't run. To run it, [attach to a session](#attach-to-a-session) and enter it there. Everything you typed stays in the input next to the hint so you can edit it.
 
@@ -454,9 +454,13 @@ After the fork, the two conversations are independent: nothing the copy does ent
 
 When [agent view is turned off](#turn-off-agent-view), `/fork` starts a [forked subagent](https://code.claude.com/docs/en/sub-agents.md#fork-the-current-conversation) instead of copying the session.
 
+##### Prompt the copy and open its session
+
 Pass a prompt such as `/fork open a draft pull request with the work so far` and the copy starts working on it immediately. Without a prompt the copy waits for its first instruction: select its row in `claude agents` and press `Space` to send one, or run `claude attach <id>`. The selected row shows `space to send it a prompt` while it waits.
 
 The `/fork` confirmation is one line showing the copy's state, such as `session running`, the name of its agent-view row, and its session ID for `claude attach`. Click the name to switch into the copy: this session moves to the background, the same as pressing `←`, and agent view opens the copy's session.
+
+##### Where the copy runs
 
 Except when the copy [edits in place](#how-file-edits-are-isolated), Claude Code instructs it to create a worktree of its own before making code changes. Outside a git repository, only a copy moved out of a hook-created worktree gets the instruction; with no [`WorktreeCreate` hook](https://code.claude.com/docs/en/hooks#worktreecreate), the copy edits in place. A copy moved out of your worktree is also told never to edit, run commands in, or enter that worktree, whatever the isolation setting.
 
@@ -466,6 +470,8 @@ Where the copy starts depends on where the current session is running:
 * When your session moved into its linked [worktree](https://code.claude.com/docs/en/worktrees.md) after it started, the copy starts back where the session was before the move and, unless it [edits in place](#how-file-edits-are-isolated), makes its code changes in a worktree of its own there. When your worktree is checked out on a branch, that instruction also tells a copy whose task builds on your work to base its new branch on yours, since your branch stays checked out in your worktree. The confirmation ends with `runs in the origin tree`.
 * When you launched the session inside a linked worktree of a repository that has a main working tree, the copy starts in that main working tree, with the same worktree-of-its-own rule but no branch instruction. The confirmation ends with `runs in the origin tree` here too.
 * A session launched inside a worktree of a bare-repository layout has no main working tree to return to, so the copy stays where it is, and the confirmation ends with `edits this checkout`. The same note appears when worktree isolation is [turned off](#how-file-edits-are-isolated) in a session that isn't inside a linked worktree, because the copy then edits the files you have open.
+
+##### Sessions that can't be forked
 
 Sessions started with launch flags the copy wouldn't inherit, such as a replaced system prompt or a `--tools` allowlist, can't be forked; Claude Code says so instead of making a partial copy. A session dispatched from agent view forks normally: the copy is launched with the same [agent definition](https://code.claude.com/docs/en/sub-agents.md) and appended instructions as the session it came from.
 

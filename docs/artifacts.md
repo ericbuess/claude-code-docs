@@ -95,7 +95,7 @@ Run `/artifacts` in Claude Code to list the artifacts you own and the ones share
 
 Select an artifact, then press one of these keys:
 
-* **`Enter`**: opens it in your browser when it's already attached to the current session, and attaches it when it isn't. Before v2.1.216, `Enter` opened it in your browser
+* **`Enter`**: opens it in your browser when it's already attached to the current session, and attaches it when it isn't
 * **`o`**: opens it in your browser
 * **`c`**: copies its link
 * **`d`**: outside a [cloud session](https://code.claude.com/docs/en/claude-code-on-the-web.md), permanently deletes an artifact you own after you confirm. Its link stops working for everyone, including you
@@ -225,7 +225,7 @@ You can [share a connector-backed page](#share-an-artifact) within your organiza
 
 When a connector-backed page renders but its live sections stay empty for a viewer in your organization, work through these causes:
 
-* **The viewer hasn't connected the connector**: connectors are per-account, so each viewer needs their own connection to every connector the page calls. They can add one under **Settings > Connectors** on claude.ai, then reload the page.
+* **The viewer hasn't connected the connector**: connectors are per-account, so each viewer needs their own connection to every connector the page calls. They can add one under [**Customize > Connectors**](https://claude.ai/customize/connectors) on claude.ai, then reload the page.
 * **The viewer declined the permission ask**: a denial lasts for the rest of that page load. Reloading the page brings the permission ask back.
 * **Connector calls are turned off for the organization**: an Owner controls the [**Enable artifact connectors** toggle](#control-connector-calls-from-artifacts) in admin settings.
 * **The page calls tool names the connector doesn't expose**: the affected sections stay empty for everyone, including you. This can happen when a page names the individual tools behind a gateway-style connector that exposes only a few tools of its own. Ask Claude to fix the tool names the page calls and publish it again.

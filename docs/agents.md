@@ -32,7 +32,7 @@ A few other features run Claude without you driving each step, but they solve a 
 
 > [!NOTE]
 >
-> Running several sessions or subagents at once multiplies token usage. See [Costs](https://code.claude.com/docs/en/costs.md) for usage and rate-limit details.
+> Running several sessions or subagents at once multiplies token usage. See [Costs](https://code.claude.com/docs/en/costs.md) for usage and rate limit details.
 
 ## Choose an approach
 

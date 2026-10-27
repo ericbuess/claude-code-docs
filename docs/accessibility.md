@@ -79,9 +79,7 @@ Each message in the transcript starts with a label your screen reader announces,
 | `Permission Required:` | A permission prompt waiting for your answer |
 | `Cost:` | The session cost summary when Claude Code exits, if your account [shows costs](https://code.claude.com/docs/en/costs.md) |
 
-Claude Code keeps the terminal cursor on the input caret, so your screen reader's read-current-line command reads the prompt you're editing.
-
-As you type at the end of the input line, or press `Backspace` there, Claude Code writes only the characters that change. Your screen reader echoes only those characters.
+Claude Code keeps the terminal cursor on the input caret, so your screen reader's read-current-line command reads the prompt you're editing. As you type at the end of the input line, or press `Backspace` there, Claude Code writes only the characters that change. Your screen reader echoes only those characters.
 
 When you delete a word or a line with one of the [text editing shortcuts](https://code.claude.com/docs/en/interactive-mode.md#text-editing), Claude Code announces the deleted text:
 
