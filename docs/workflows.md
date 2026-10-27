@@ -155,7 +155,7 @@ Turning ultracode on already opts you in to large runs, so these checks don't ap
 * The session's [concurrent subagent limit](https://code.claude.com/docs/en/sub-agents.md#concurrent-subagent-limit) isn't enforced for the subagents Claude spawns with the Agent tool
 * In auto permission mode, you aren't asked to [approve the first workflow launch](#approve-the-plan-before-it-runs)
 
-`/effort ultracode` lasts for the current session; to have every session start with it, set the [`ultracode`](https://code.claude.com/docs/en/settings-reference#ultracode) setting. Turn it off with `/effort ultracode off` when you return to routine work. The `/effort` slider offers the toggle only [when ultracode is available](https://code.claude.com/docs/en/model-config.md#when-ultracode-is-available).
+`/effort ultracode` lasts for the current session; to have every session start with it, set the [`ultracode`](https://code.claude.com/docs/en/settings-reference#ultracode) setting. Turn it off with `/effort ultracode off` when you return to routine work. The `/effort` slider offers the toggle only [when ultracode is available](https://code.claude.com/docs/en/model-config.md#when-ultracode-is-available). Before v2.1.284, `/effort ultracode` set the session to `xhigh`, and `/effort ultracode off` failed with `Invalid argument`.
 
 ### Approve the plan before it runs
 

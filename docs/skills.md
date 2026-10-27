@@ -371,7 +371,7 @@ Deploy the application:
 3. Push to the deployment target
 ```
 
-Keep the body itself concise. Once a skill loads, its content [stays in context across turns](#skill-content-lifecycle), so every line is a recurring token cost. State what to do rather than narrating how or why, and apply the same conciseness test you would for [CLAUDE.md content](https://code.claude.com/docs/en/best-practices.md#write-an-effective-claude-md).
+Keep the body itself concise. Once a skill loads, its content [stays in context across turns](#skill-content-lifecycle), so every line is a recurring token cost. State what to do rather than narrating how or why, and apply the same conciseness test you would for [CLAUDE.md content](https://code.claude.com/docs/en/best-practices.md#keep-claude-md-short).
 
 ### Frontmatter reference
 

@@ -373,7 +373,7 @@ Learn more: [How Claude Code works](https://code.claude.com/docs/en/how-claude-c
 
 How a session knows the work is actually done instead of accepting a result that looks plausible. You give Claude a check it can run, such as a test suite, a build, or a screenshot comparison, and Claude iterates until the check passes instead of stopping after one attempt. A verification loop is the prerequisite for [`/goal`](https://code.claude.com/docs/en/goal), unattended runs, and [dynamic workflows](https://code.claude.com/docs/en/workflows.md): without one, the only thing deciding the agent is finished is the agent itself.
 
-Learn more: [Give Claude a way to verify its work](https://code.claude.com/docs/en/best-practices.md#give-claude-a-way-to-verify-its-work)
+Learn more: [Give Claude a check to run](https://code.claude.com/docs/en/best-practices.md#give-claude-a-check-to-run)
 
 ## W
 

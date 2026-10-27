@@ -224,7 +224,7 @@ These commands control what's in the context window without leaving the session:
 * **`/compact [instructions]`**: replace history with a summary, optionally focused on what you specify
 * **`/context`**: show what is currently consuming context
 
-For how compaction interacts with CLAUDE.md, skills, and rules, see the [context window guide](https://code.claude.com/docs/en/context-window.md). For strategies on when to clear versus compact, see [Best practices](https://code.claude.com/docs/en/best-practices.md#manage-your-session).
+For how compaction interacts with CLAUDE.md, skills, and rules, see the [context window guide](https://code.claude.com/docs/en/context-window.md). For strategies on when to clear versus compact, see [Best practices](https://code.claude.com/docs/en/best-practices.md#keep-cost-and-context-down).
 
 ## Export and locate session data
 
