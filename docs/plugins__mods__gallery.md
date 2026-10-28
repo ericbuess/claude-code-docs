@@ -246,7 +246,7 @@ A button that has the focus draws in inverse video. Here the user has pressed Ta
 
 ### `Input`
 
-An `Input` is a text field that runs `onSubmit` when the user presses Enter. It holds one line unless you give it `rows`:
+An `Input` is a text field that holds one line by default and runs `onSubmit` when the user presses Enter:
 
 ```javascript theme={null}
 Input({
@@ -271,7 +271,7 @@ Typing replaces the placeholder:
 
 ![The same field holding the typed letters Rel, followed by the return sign and the word save.](https://mintcdn.com/claude-code/EXkwf0kKMewZsyod/images/mods-el-input-typed-light.png?fit=max\&auto=format\&n=EXkwf0kKMewZsyod\&q=85\&s=4eb6d4443763a21415dad4e426bc747a)
 
-Add `rows` for a field that holds several lines, such as a note or a commit message:
+Set `rows` to 2 or more for a field that holds several lines, such as a note or a commit message:
 
 ```javascript theme={null}
 Input({
@@ -283,13 +283,13 @@ Input({
 })
 ```
 
-Whatever the field holds, it takes that many rows, up to the height of the pane or band it's drawn in. Longer text scrolls inside it.
+The terminal and the Desktop app draw the rows. In the VS Code extension, the field holds one line. `rows` requires Claude Code v2.1.301 or later. On earlier versions the field holds one line.
 
-* Enter still submits. In the terminal, the user starts a new line by typing a backslash and then pressing Enter, or by pressing Shift+Enter where [the terminal emulator supports it](https://code.claude.com/docs/en/terminal-config.md#enter-multiline-prompts). Those are the same keys as in the prompt.
-* Up and Down move between the field's rows. From its first and last row they move to the control before or after.
+The field takes up the number of rows you set, even when it's empty, up to the height of the pane or band it's drawn in. While the field has focus, longer text scrolls inside it.
+
+* In the terminal, Enter still submits. There, the user starts a new line by typing a backslash and then pressing Enter, or by pressing Shift+Enter where [the terminal emulator supports it](https://code.claude.com/docs/en/terminal-config.md#enter-multiline-prompts). Those are the same keys as in the prompt.
+* In the terminal, Up and Down move between the field's rows. From its first and last row they move to the control before or after.
 * `onSubmit` and `onInput` receive the whole text with its lines joined by `\n`.
-
-The terminal and the Desktop app draw the rows. In the VS Code extension, the field holds one line.
 
 ### `Select`
 

@@ -174,7 +174,11 @@ When a message arrives, Claude Code shows it in the conversation as a dim one-li
 Any of these shows you the full text:
 
 * Press `Ctrl+O` to open the [transcript viewer](https://code.claude.com/docs/en/interactive-mode.md#transcript-viewer) and read the full text under the sender's session name.
+
+  If Claude is busy and hasn't received the message yet, scroll to the end of the transcript, where the message is listed under `Waiting to be delivered`. Requires Claude Code v2.1.309 or later.
+
 * In [fullscreen rendering](https://code.claude.com/docs/en/fullscreen.md#use-the-mouse), click a preview line that leaves part of the message out to expand it in place.
+
 * In a session started with [`--verbose`](https://code.claude.com/docs/en/cli-reference#cli-flags), Claude Code shows the full text instead of the preview.
 
 The preview shortens only what you see. Whether or not you expand it, Claude reads the full message.

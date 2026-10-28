@@ -70,7 +70,7 @@ Here is how those parts connect, from you through the conversation to the thread
 You create and use projects at [claude.ai/code](https://claude.ai/code), in the Code tab of the desktop app, or in the Claude mobile app for [iOS](https://apps.apple.com/us/app/claude-by-anthropic/id6473753684) and [Android](https://play.google.com/store/apps/details?id=com.anthropic.claude). In the browser and the desktop app there are two ways to start a project:
 
 * **From scratch**, when you know the stream of work you want Claude to run: open the **New project** dialog and name it. [Start a new project from scratch](#start-a-new-project-from-scratch) walks through the dialog.
-* **From a cloud session that's already doing the work**: in that session's sidebar menu, choose **Move to project**, then **Continue as new project**. Claude proposes the project's setup from what the session was doing. See [Start from an existing cloud session](#start-from-an-existing-cloud-session).
+* **From a cloud session that's already doing the work**: in that session's sidebar menu, choose **Continue in project**, then **Continue as new project**. Claude proposes the project's setup from what the session was doing. See [Start from an existing cloud session](#start-from-an-existing-cloud-session).
 
 Either way, [check the prerequisites](#check-the-prerequisites) first.
 
@@ -113,7 +113,7 @@ The project is now listed under **Projects** in the sidebar, and its conversatio
 
 ### Start from an existing session
 
-If a cloud session you started yourself is doing work that belongs in a project, open its sidebar menu and choose **Move to project**, then pick from the submenu:
+If a cloud session you started yourself is doing work that belongs in a project, open its sidebar menu and choose **Continue in project**, then pick from the submenu:
 
 * Choose **Continue as new project** to create a new project from the session. The project opens, and Claude reads the session and posts **Setup recommendations** in the project conversation for you to confirm. The original session stays in your session list. If it was in the middle of a turn it keeps running, so stop it yourself if you don't want both working at once.
 * Choose one of your existing projects to bring the session's work into that project. That project opens, and a message sent on your behalf asks Claude to read the session and pick up where it left off. The original session stays in your session list, unchanged.
@@ -430,7 +430,7 @@ Open **Usage** in **Project settings** to see token use by thread and by model, 
 Several Claude Code features let more than one session work at the same time, so running work in parallel is not by itself what a project is for. In a project, Claude starts and tracks the sessions instead of you, and each one starts from the same instructions. This is how each neighboring feature connects to a project:
 
 * **Claude Tag**: [Claude Tag](https://claude.com/docs/claude-tag/overview) is Claude in your team's Slack channels, on Team and Enterprise plans. Anyone in a channel can give it work, everyone in the channel sees and steers it, and it uses connections an admin set up for that channel. A project is yours alone: you're the only one who sends it work or sees its threads, it uses your own GitHub access and connectors, and it's on Pro and Max. [How Claude Tag differs from Cowork and Claude Code](https://claude.com/docs/claude-tag/concepts/how-it-works#how-claude-tag-differs-from-cowork-and-claude-code) has the side-by-side.
-* **Cloud sessions**: every thread is a [cloud session](https://code.claude.com/docs/en/claude-code-on-the-web.md) unless you ask Claude to run it on your machine. Either way, Claude starts and tracks it instead of you. You can also bring the work of a cloud session you started yourself into a project: choose [**Move to project**](#start-from-an-existing-cloud-session) in that session's sidebar menu.
+* **Cloud sessions**: every thread is a [cloud session](https://code.claude.com/docs/en/claude-code-on-the-web.md) unless you ask Claude to run it on your machine. Either way, Claude starts and tracks it instead of you. You can also bring the work of a cloud session you started yourself into a project: choose [**Continue in project**](#start-from-an-existing-cloud-session) in that session's sidebar menu.
 * **Scheduled tasks**: when you ask for scheduled work in a project, Claude creates a [cloud scheduled task](https://code.claude.com/docs/en/routines.md) that runs as threads in that project and appears on its **Scheduled tasks** tab. Scheduled tasks you create outside a project keep working on their own.
 * **Remote Control**: [Remote Control](https://code.claude.com/docs/en/remote-control.md) connects claude.ai to a Claude Code session running on your machine. When you ask Claude in a project to run a thread on your computer, the project [uses Remote Control to do it](#run-a-thread-on-your-own-computer).
 * **Local sessions and agent view**: a session you start yourself in your terminal, IDE, or the desktop app's local environment stays outside your projects, though you can [bring its work into one](#start-from-an-existing-cloud-session). [Agent view](https://code.claude.com/docs/en/agent-view.md) is a screen for tracking several local sessions side by side, and you still start each one and give it its task yourself.
@@ -448,7 +448,7 @@ Several Claude Code features let more than one session work at the same time, so
 * You can't add a session you started yourself on your machine to a project, though you can [bring its work into one](#start-from-an-existing-cloud-session). A project reaches your machine by [running a thread there through Remote Control](#run-a-thread-on-your-own-computer), and that section lists what it needs.
 * A cloud thread's sandbox pauses between turns and resumes when the thread continues. If the sandbox can't be resumed, the thread continues from a fresh clone, so uncommitted changes can be lost. On long tasks, ask Claude to commit and push work in progress.
 * A project belongs to one user. You can't share a project or its threads with another user, and thread transcripts don't have the share option other cloud sessions have. There are no organization-level controls for projects during the beta.
-* A thread belongs to the one project that started it. You can't move or copy a thread to another project, or move it out to stand alone. [**Move to project**](#start-from-an-existing-cloud-session) goes the other way only: it brings a cloud session's work into a project. You can't merge two projects into one.
+* A thread belongs to the one project that started it. You can't move or copy a thread to another project, or move it out to stand alone. [**Continue in project**](#start-from-an-existing-cloud-session) goes the other way only: it brings a cloud session's work into a project. You can't merge two projects into one.
 
 ## Troubleshooting
 

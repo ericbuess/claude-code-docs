@@ -110,22 +110,18 @@ On `skill.prompt`, `e.source`, `e.pluginName`, `e.path`, `e.frontmatter`, and `e
 
 ### Commands and configuration
 
-Command and configuration events fire when a command runs or is listed, when a `/config` row is shown or changed, and on a settings read:
-
 | Event | Fires when | A hook can return |
 | :- | :- | :- |
 | [`command.run`](https://code.claude.com/docs/en/plugins/mods/api#add-a-command) | A command is about to run | `{ text }`, `{}`, or `next(e)` |
 | `command.describe` | Once for each command, for the command list | `{ description, argumentHint, isHidden }` |
 | `config.set` | A `/config` row is about to change | `next({ ...e, value })` or `{ deny: reason }` |
 | `config.describe` | Once for each `/config` row | `{ label, description, isHidden }` |
-| [`settings.read`](https://code.claude.com/docs/en/plugins/mods/events#settings-read-hook) | A mod calls [`$.settings.read`](https://code.claude.com/docs/en/plugins/mods/api#reach-files-processes-and-the-network), or Claude Code builds the session's merged settings | `next(e)`, `{ value }`, or `{ deny: reason }` |
+| [`settings.read`](https://code.claude.com/docs/en/plugins/mods/events#settings-read-hook) | A mod calls [`$.settings.read`](https://code.claude.com/docs/en/plugins/mods/api#reach-files-processes-and-the-network), or Claude Code builds the session's merged settings. Requires Claude Code v2.1.304 or later on Claude Code's own read and for `e.layers` | `next(e)`, `{ value }`, or `{ deny: reason }` |
 
 #### `e.layers` and `e.source` on `settings.read`
 
 * **`e.layers`**: one `{ source, settings }` object for each source in use that holds settings, lowest [precedence](https://code.claude.com/docs/en/settings.md#settings-precedence) first. See [What a `settings.read` hook receives](https://code.claude.com/docs/en/plugins/mods/events#settings-read-receives).
-* **`e.source`**: the one source a mod asked for, as in `$.settings.read({ source: 'policy' })`. Absent on Claude Code's own read and on any other read of the merged settings
-
-On `settings.read`, the event firing on Claude Code's own read and the `e.layers` field require Claude Code v2.1.304 or later. For when the hook runs and what the hook can return, with an example, see [Change or refuse a settings read](https://code.claude.com/docs/en/plugins/mods/events.md#settings-read-hook).
+* **`e.source`**: the one source a mod asked for, as in `$.settings.read({ source: 'policy' })`. Absent on Claude Code's own read and on a read of the merged settings
 
 ### Turns
 
@@ -271,7 +267,7 @@ Elements are the building blocks of a tree a `ui.render` hook returns, and you g
 | :- | :- | :-: | :-: | :-: |
 | [`Box`](https://code.claude.com/docs/en/plugins/mods/interface#build-a-tree-from-elements) | `key`, flex layout, [`gap`, `padding`, `margin`](#box-spacing-steps), `width`, `height`, `minWidth`, `minHeight`, [`borderStyle`](#box-border-styles), `borderColor`, `borderDimColor`, `backgroundColor`, `position`, `top`, `left`, `right`, `bottom`, `overflow`, `display`, `hover` | ✓ | ✓ | ✓ |
 | [`Text`](https://code.claude.com/docs/en/plugins/mods/interface#build-a-tree-from-elements) | `color`, `backgroundColor`, [`bold`](#text-bold), `italic`, `underline`, `strikethrough`, `dimColor`, `inverse`, `wrap`, [`size`, `weight`, `mono`, `tabular`](#text-typography), `hover` | ✓ | ✓ | ✓ |
-| [`Button`](https://code.claude.com/docs/en/plugins/mods/interface#respond-to-presses-and-typing) | `key`, `label`, `onPress`, `hotkey`, `plain`, `dimColor`, `autoFocus`, `action`, `hover` | ✓ | ✓ | ✓ |
+| [`Button`](https://code.claude.com/docs/en/plugins/mods/interface#respond-to-presses-and-typing) | `key`, `label`, `children`, `onPress`, `hotkey`, `plain`, `dimColor`, `autoFocus`, `action`, `variant`, `role`, `hover` | ✓ | ✓ | ✓ |
 | [`Link`](https://code.claude.com/docs/en/plugins/mods/interface#link-in-the-desktop-app) | `href`, `label`. See [Limits](#limits). | ✓ | ✓ | ✓ |
 | [`Code`](https://code.claude.com/docs/en/plugins/mods/gallery#show-code-and-changes) | `source`, `language`, `path`, `startLine`, `format`, `wrap` | ✓ | ✓ | ✓ |
 | `Markdown` | `text`, `key`, `dimColor`, `onLinkPress`, `pressableLinks` | ✓ | ✓ | ✓ |
@@ -288,6 +284,19 @@ More `Button` rules:
 * **Digit hotkeys on the band**: a digit `hotkey` on a button in the band also fires when the user types that digit alone into an empty prompt and pauses
 * **A collapsed band**: while the band is [collapsed](https://code.claude.com/docs/en/plugins/mods/interface.md#when-the-user-collapses-the-band), neither an `action` binding nor a hotkey presses a button in it
 * **Two buttons on one hotkey**: when two buttons in one drawing name the same `hotkey`, the later one gets it
+* **`variant`**: `primary` or `secondary`, and any other value throws. In the terminal, a `primary` button draws in the accent color unless it's `plain`.
+* **`role`**: `dismiss` marks a close button, and any other value throws. Do the closing in your `onPress`. In a band that holds text and a row of buttons, the Desktop app can draw the row's first `dismiss` button as its own close control. The terminal draws the button as it would without `role`.
+
+A `Button` can hold `children` in place of a `label`:
+
+* **What children can be**: strings and `Text` elements, such as a name followed by a dim detail or a colored chip. Claude Code refuses any other element inside a `Button`.
+* **Naming the button**: the `label` names the button and defaults to the text of its children. Give a button with children other than one string a `key` or a `label`.
+* **In the terminal**: the children draw where the label would be, and a press anywhere on them counts as one press, so you can make each row of a list a single button
+* **In the Desktop app and the VS Code extension**: the button draws its `label`
+
+> [!NOTE]
+>
+> A `Button` with children other than a single string requires Claude Code v2.1.295 or later.
 
 `autoFocus` accepts only `true` on any control, so omit the prop to leave it off.
 
@@ -295,9 +304,9 @@ The VS Code extension ignores some element props and draws the element as if you
 
 * **`Box`**: `position` with its `top`, `left`, `right`, and `bottom`, `alignSelf`, `borderDimColor`, and `hover`
 * **`Text`**: `size`, `mono`, `tabular`, and `hover`
-* **`Button`**: `hotkey`, `plain`, `autoFocus`, `action`, and `hover`, so the user presses a button there with a click, or with Enter once it has focus
+* **`Button`**: `hotkey`, `plain`, `autoFocus`, `action`, and `hover`, so the user presses a button there with a click, or with Enter once it has focus. The extension also ignores `variant` and `role`.
 * **`Code`**: `language`, `path`, `startLine`, `format`, and `wrap`, so code draws without colors or line numbers, and a `format: 'diff'` block shows the diff's raw text
-* **`Input` and `Select`**: `autoFocus`
+* **`Input` and `Select`**: `autoFocus`, and `rows` on an `Input`
 * **`Svg`**: `isInteractive`
 
 ### `Box` border styles
@@ -364,6 +373,7 @@ Hooks and mods API calls run under time and size limits. Claude Code skips a hoo
 | A `.catch` handler's execution time | 1 second |
 | All `session.end` hooks together | As long as the [SessionEnd hook budget](https://code.claude.com/docs/en/hooks.md#sessionend-input), 1.5 seconds unless you change it, counted from when your settings `SessionEnd` hooks finish |
 | `$.process.run` timeout | 30 seconds by default, 10 minutes at most |
+| `$.process.run` `stdout` and `stderr` | 4 MiB each. `isStdoutTruncated` or `isStderrTruncated` is `true` when one was cut. |
 | `$.model.complete` `maxTokens` | 1024 by default, up to 64,000 or the model's output limit |
 | `$.fs.read` and `$.fs.write` | 4 MiB for one file |
 | A `$.http.fetch` request body | 4 MiB, counted in characters. A call with a larger body rejects. |
@@ -381,8 +391,11 @@ Hooks and mods API calls run under time and size limits. Claude Code skips a hoo
 | `$.store` | 4 MiB of JSON in total |
 | `$.session.messages()` | The newest 4,096 entries |
 | `$.ui.invalidate('ui.render')` redraws | Throttled to 10 a second, or 30 in the terminal for the visible pane, the expanded band, and the hint line under the prompt. Calls that come sooner are coalesced. |
-| `$.ui.toast` | Shown for 4 seconds unless you pass `{ timeoutMs }` |
+| `$.ui.toast` | Shown for 4 seconds unless you pass `{ timeoutMs }`. In the [classic renderer](https://code.claude.com/docs/en/fullscreen.md#enable-fullscreen-rendering), a mod's newer toast can [take the place of its older one](https://code.claude.com/docs/en/plugins/mods/troubleshoot.md#a-toast-doesn’t-appear) that's showing or waiting to show. |
 | A pane opened without the user asking | Placed from 144 terminal columns, 110 after they've opened it once |
+| Nesting depth of a mods API call's arguments | 28,000 levels. Past that, the call rejects with a message ending `nesting deeper than 28000 levels is not supported`. Requires Claude Code v2.1.299 or later. |
+| Nesting depth of a changed event passed to `next`, outside [async generator hooks](#events) such as one on `turn.step` | 28,000 levels. Past that, `next` rejects with a message ending `nesting deeper than 28000 levels is not supported`. Requires Claude Code v2.1.299 or later. |
+| Nesting depth of a hook's return value, outside `ui.render`, `ui.resolve`, and async generator hooks | 28,000 levels. Past that, the hook's result is refused, and [the notice that reports it](https://code.claude.com/docs/en/plugins/mods/troubleshoot.md#find-out-why-a-mod-does-nothing) includes `nesting deeper than 28000 levels is not supported`. Requires Claude Code v2.1.299 or later. |
 | Scopes, such as functions, blocks, and loops, nested inside one another in one file of a hooks module | 2,000 |
 | Command, tool, subagent type, and pane names | Letters, digits, `_`, and `-`, up to 64 characters |
 | One `claude plugin test` test | 5 seconds unless the test sets `timeoutMs` |
