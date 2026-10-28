@@ -333,7 +333,7 @@ If any part of a conversation fails to download, an error appears and no copy is
 
 Run `/usage` to open the Account & usage dialog, which shows your signed-in account and your usage. The usage figures match how you signed in:
 
-* **claude.ai plan**: usage bars for your plan's limits, such as the current session and the week. Each bar shows how long until its limit resets.
+* **claude.ai plan**: usage bars for your plan's limits, such as the current session and the week.
 
   The dialog also breaks down what is contributing to your plan limits:
 
