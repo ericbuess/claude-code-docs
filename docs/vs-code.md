@@ -133,7 +133,7 @@ The prompt box supports several features:
   When the current model supports [effort levels](https://code.claude.com/docs/en/model-config.md#adjust-effort-level), the picker also shows an **Effort** row and the model name button shows the selected level. When you pick a level other than `max`, Claude Code saves it for the current model as your default, under [`modelSettings`](https://code.claude.com/docs/en/settings-reference#modelsettings) in your user settings; `max` applies to the current session only. The model name button and the **Effort** row require Claude Code v2.1.257 or later.
 
   When [dynamic workflows](https://code.claude.com/docs/en/workflows.md) are enabled and the current model supports it, an **Ultracode** switch appears under the **Effort** row. Turn it on to have Claude plan a [workflow](https://code.claude.com/docs/en/workflows.md#let-claude-decide-with-ultracode) for each substantive task in this session, at the selected effort level. While it's on, the model name button shows `· Ultracode` after the level. The switch requires Claude Code v2.1.284 or later.
-* **Command menu**: click `/` or type `/` to open the command menu. Options include attaching files, switching models, and toggling extended thinking.
+* **Command menu**: click `/` or type `/` to open the command menu. Options include attaching files and switching models.
 
   The Customize section includes entries such as MCP servers, commands, output styles, hooks, memory, instructions, permissions, and plugins. Items with a terminal icon open in the integrated terminal.
 
@@ -191,7 +191,11 @@ The prompt box supports several features:
   To open the map when no agent count is showing, such as when Claude has started a background shell but no subagents, type `/tasks` in the prompt box. Background tasks in the map and the typed `/tasks` require Claude Code v2.1.277 or later.
 
   With Claude Code v2.1.286 or later, when you click **Stop** or press `Esc`, the current turn ends. Background agents keep running until they finish or you stop them from the map.
-* **Extended thinking**: lets Claude spend more time reasoning through complex problems. Toggle it on via the command menu (`/`). Claude's reasoning appears in the conversation as collapsed blocks: click a block to read it, or press `Ctrl+O` to expand or collapse every thinking block in the session. See [Extended thinking](https://code.claude.com/docs/en/model-config.md#extended-thinking) for details.
+* **Extended thinking**: lets Claude spend more time reasoning through complex problems. To turn it off or back on, use the **Thinking** switch in the Model section of the command menu (`/`). On models where [thinking can't be turned off](https://code.claude.com/docs/en/model-config.md#extended-thinking), the menu has no **Thinking** switch and thinking stays on.
+
+  A thinking block that shows only a label, such as `Thought for 12s`, has no text and doesn't open when you click it. To see thinking summaries, set [`showThinkingSummaries`](https://code.claude.com/docs/en/settings-reference#showthinkingsummaries) to `true` in `~/.claude/settings.json`, then run **Developer: Reload Window** from the Command Palette.
+
+  Thinking blocks you already have stay empty. In responses after the reload, click a block or press `Ctrl+O` to expand them all.
 * **Multi-line input**: press `Shift+Enter` to add a new line without sending. This also works in the "Other" free-text input of question dialogs.
 
 ### Reference files and folders
@@ -580,6 +584,12 @@ summarize the changes I've made to the auth module
 
 When creating pull requests, Claude generates descriptions based on the actual code changes and can add context about testing or implementation decisions.
 
+### Reopen a conversation that moved into a worktree
+
+On a reopened conversation, the **This session is in worktree** banner means the conversation's working directory is the [worktree](https://code.claude.com/docs/en/worktrees.md) it names, not the folder this window has open. To open the worktree in a new VS Code window, click **Open worktree** on the banner.
+
+A conversation moves into a worktree when, for example, you [ask Claude to work in one](https://code.claude.com/docs/en/worktrees.md#ask-claude-to-create-a-worktree). When you reopen it, or the panel [reopens it after a window reload](#continue-conversations-after-a-reload), it resumes in the worktree if Claude Code created the worktree under `.claude/worktrees/` and it still exists. Before Claude Code v2.1.300, an empty conversation opened instead. On those versions, update the extension.
+
 ## Run work in the background
 
 Send a long-running command or subagent to the background, then check on it from the prompt box.
@@ -633,7 +643,7 @@ Some shortcuts depend on which panel is "focused" (receiving keyboard input). Wh
 | Insert @-Mention Reference | `Option+K` (Mac) / `Alt+K` (Windows/Linux) | Insert a reference to the current file and selection (requires editor to be focused) |
 | Accept Change at Cursor | - | Accept the change at the cursor while [reviewing a proposed edit](#get-started) one change at a time. Requires Claude Code v2.1.275 or later |
 | Reject Change at Cursor | - | Revert the change at the cursor while reviewing a proposed edit one change at a time. Requires Claude Code v2.1.275 or later |
-| Toggle Focus view | `Ctrl+Option+F` (Mac) / `Ctrl+Alt+F` (Windows/Linux) | Hide or show tool activity in the conversation. Works while a Claude panel or sidebar is visible. Requires Claude Code v2.1.221 or later |
+| Toggle Focus view | `Ctrl+Option+F` (Mac) / `Ctrl+Alt+F` (Windows/Linux) | Hide or show tool activity in the conversation. Works while a Claude panel or sidebar is visible. On Windows/Linux, `Ctrl+Alt+F` opens VS Code's Find instead while focus is in the Debug Console or a searchable list such as the Explorer. Focus an editor or the Claude panel and press it again. Requires Claude Code v2.1.221 or later |
 | Rename Session Tab | - | Rename the session in the active Claude tab. Requires Claude Code v2.1.257 or later |
 | Add Session Tab to Group | - | Add the session in the active Claude tab to a [session group](#organize-sessions-into-groups) you pick or create. Requires Claude Code v2.1.257 or later |
 | Mark Session as Unread | - | Mark the session in the active Claude tab as unread in the sessions list. Requires Claude Code v2.1.257 or later |
@@ -679,7 +689,7 @@ The handler accepts two optional query parameters:
 | Parameter | Description |
 | - | - |
 | `prompt` | Text to pre-fill in the prompt box. Must be URL-encoded. The prompt is pre-filled but not submitted automatically. |
-| `session` | A session ID to resume instead of starting a new conversation. The session must belong to the workspace currently open in VS Code. If the session isn't found, a fresh conversation starts instead. If the session is already open in a tab, that tab is focused. To capture a session ID programmatically, see [Continue conversations](https://code.claude.com/docs/en/headless.md#continue-conversations). |
+| `session` | ID of a session to resume, from the folder open in VS Code. With Claude Code v2.1.300 or later, a session from the main checkout or a [worktree](https://code.claude.com/docs/en/worktrees.md) of that folder's repository also resumes. If the session isn't found, a fresh conversation starts instead. If the session is already open in a tab, that tab is focused. To capture a session ID programmatically, see [Continue conversations](https://code.claude.com/docs/en/headless.md#continue-conversations). |
 
 For example, to open a tab pre-filled with "review my changes":
 
@@ -916,6 +926,7 @@ Sign-in, network, and launch errors have their own entries on the install troubl
 | `Claude Code process exited with code 1`, or another code | [Claude Code process exited with code N](https://code.claude.com/docs/en/errors.md#claude-code-process-exited-with-code-n) |
 | `Could not locate the Claude CLI on PATH` | [Could not locate the Claude CLI on PATH](https://code.claude.com/docs/en/errors.md#could-not-locate-the-claude-cli-on-path) |
 | `The connection to Claude Code ended before this message completed` | [The connection to Claude Code ended before this message completed](https://code.claude.com/docs/en/errors.md#the-connection-to-claude-code-ended-before-this-message-completed) |
+| `The Claude Code program for this computer, the <build> build, could not be found` | [The Claude Code program for this computer could not be found](https://code.claude.com/docs/en/errors.md#the-claude-code-program-for-this-computer-could-not-be-found) |
 | `claude` isn't found in VS Code's integrated terminal | [Run CLI in VS Code](#run-cli-in-vs-code) |
 
 ### Extension won't install

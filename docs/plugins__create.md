@@ -376,4 +376,4 @@ After you've confirmed the plugin works, delete the originals from `.claude/` an
 * [Plugin structure and testing](https://claude.com/docs/plugins/build): the same plugin folder installs on claude.ai and in Cowork. Some components are Claude Code-only, and the [component support table](https://claude.com/docs/plugins/platform-support#compare-component-support-by-app) lists which load on each surface
 * [Plugin manifest reference](https://code.claude.com/docs/en/plugins/manifest-reference.md): every `plugin.json` field, path rule, and directory
 * [Skills](https://code.claude.com/docs/en/skills.md): write the skills your plugin provides
-* [Anthropic's plugins in the claude-code repository](https://github.com/anthropics/claude-code/tree/main/plugins): complete worked examples of the layout on this page, such as `feature-dev` and `code-review`
+* [Anthropic's plugins in the claude-plugins-official repository](https://github.com/anthropics/claude-plugins-official/tree/main/plugins): complete worked examples of the layout on this page, such as `feature-dev` and `code-review`

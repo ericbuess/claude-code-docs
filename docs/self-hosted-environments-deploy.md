@@ -583,7 +583,14 @@ secrets:
 
 ## Shutdown timing
 
-After `SIGTERM`, a runner needs time to shut its sessions down cleanly before your orchestrator kills it. It logs how long at startup, in a line that contains `This runner needs up to 80s` at default settings. Set your orchestrator's stop timeout to at least that many seconds: `terminationGracePeriodSeconds` on Kubernetes, `stop_grace_period` on Docker Compose, or your platform's equivalent. Kubernetes defaults to 30 seconds, so without this setting it can stop the pod before the runner finishes.
+> [!NOTE]
+>
+> These timings apply to runners. The `claude self-hosted-runner orchestrator` process has its own: see [Size `--shutdown-drain-sec` and the orchestrator's stop timeout](https://code.claude.com/docs/en/self-hosted-environments-configuration#size-shutdown-drain-sec-and-the-supervisors-stop-timeout-for-the-orchestrator).
+
+At startup, each runner logs how long it can need after `SIGTERM` to shut its sessions down cleanly, such as `This runner needs up to 80s` at default settings. Your stop timeout is how long your process supervisor waits after `SIGTERM` before it kills the runner. Set it to at least the logged time:
+
+* **Kubernetes**: `terminationGracePeriodSeconds`. Kubernetes defaults to 30 seconds, so without this setting it can stop the pod before the runner finishes.
+* **Docker Compose**: `stop_grace_period`
 
 On `SIGTERM`, the runner stops accepting new sessions. It then begins a graceful shutdown, called a drain, unless you set [`--defer-shutdown-max-min`](#defer-the-drain-past-the-first-signal) to delay it. The drain has three steps:
 
@@ -744,11 +751,12 @@ Choose a local regular file, such as `/var/lib/claude-hold/hold-idle`, in a dire
 
 **2. Start the runner**
 
-From your shell, start the runner with `--hold-idle-file`, `--release-idle-session-min`, and [`--max-hold-min`](https://code.claude.com/docs/en/self-hosted-environments-reference#runner-cli-flags), the cap on a hold, counted from when a session goes idle. Without it, the cap is one day. Set it above `--release-idle-session-min`, or nothing is held. This example releases idle sessions after 30 minutes and releases a held session at most 4 hours after it went idle:
+From your shell, start the runner with `--hold-idle-file`, `--release-idle-session-min`, and [`--max-hold-min`](https://code.claude.com/docs/en/self-hosted-environments-reference#runner-cli-flags), the cap on a hold, counted from when a session goes idle. Without it, the cap is one day. Set it above `--release-idle-session-min`, or nothing is held. Replace `<writable-dir>` as the [quickstart](https://code.claude.com/docs/en/self-hosted-environments-quickstart.md#set-up-manually) describes. This example releases idle sessions after 30 minutes and releases a held session at most 4 hours after it went idle:
 
 ```bash theme={null}
 claude self-hosted-runner \
   --environment-secret-file /etc/claude/environment-secret \
+  --base-dir '<writable-dir>' \
   --release-idle-session-min 30 \
   --hold-idle-file /var/lib/claude-hold/hold-idle \
   --max-hold-min 240
@@ -816,6 +824,7 @@ Set the flag above your longest expected session, such as `--kill-session-after-
   * **Uncommitted changes are still lost**: to prompt Claude to commit and push when it finishes responding, see [Prompt sessions to push their work](https://code.claude.com/docs/en/self-hosted-environments-configuration.md#prompt-sessions-to-push-their-work)
 * **A command cut off by a lost runner can run again**: when the session resumes on another runner, Claude sees the interrupted tool call with a result saying its outcome is unknown.
 * **A repository added mid-session can fail to clone**: Claude clones it with `git clone` over HTTPS. On a runner without [`--use-anthropic-git-proxy`](#use-the-anthropic-git-proxy), the clone fails with a git authentication error if nothing on the host can read the repository. Where you can, select every repository the session needs when you create it.
+  * **When the session resumes**: a [`checkout` hook](https://code.claude.com/docs/en/self-hosted-environments-configuration#checkout) runs for the added repository too, with [`CLAUDE_RUNNER_REPO_REF`](https://code.claude.com/docs/en/self-hosted-environments-configuration#checkout) empty, so make your hook handle that.
 * **Some connectors don't appear in self-hosted sessions**: a connector you haven't yet connected in claude.ai Settings isn't listed in a self-hosted session, and the session won't prompt you to connect it. Connect it in Settings first, then start a fresh session. Adding a connector to an already-running session also doesn't make its tools available to Claude; start a fresh session to pick up a newly added connector.
 * **When someone archives or deletes a session, or releases its runner from the session's menu**: don't count on the [`--push-outcome-on-release`](https://code.claude.com/docs/en/self-hosted-environments-reference#runner-cli-flags) push. To save commits in those cases, push `HEAD` to a rescue branch from a [`post-session` hook](https://code.claude.com/docs/en/self-hosted-environments-configuration#post-session). If you start from the example there, make it push even when nothing is uncommitted, because it pushes only after a snapshot commit.
 
@@ -833,17 +842,17 @@ claude self-hosted-runner doctor
 
 Common issues:
 
-* **Runner doesn't appear in the environment**: confirm the host can reach `api.anthropic.com` over HTTPS, the environment secret is current, and the host clock is within five minutes of real time; larger skew causes authentication to fail. The runner logs `[runner:fatal]` with the rejection reason on auth failure.
+* **Runner doesn't appear in the environment**: confirm the host can reach `api.anthropic.com` over HTTPS and the environment secret is current. The runner logs `[runner:fatal]` with the rejection reason on auth failure.
 * **Runner exits at startup with `cannot create or write to base directory`**: the runner can't create or write to `--base-dir`, which defaults to `/workspace`. Fix the directory's ownership or point `--base-dir` at a writable path, as described in [Keep the base directory and capacity identical across runners](#keep-the-base-directory-and-capacity-identical-across-runners). If the runner instead logs `[runner:fatal]` saying the base directory check timed out, the directory is on a hung NFS or CSI mount. Check mount health rather than permissions. The runner prints both of these startup failures to stderr before it opens `--log-file`, so look for them in the terminal or your platform's container logs rather than the log file. Before v2.1.225, the runner didn't check the base directory at startup, and this misconfiguration failed sessions after pickup instead.
 * **Runner exits at startup with `RegisterRunner failed:` and a TLS certificate error**: the error can be `self signed certificate in certificate chain`, for example. The runner doesn't trust the certificate authority (CA) behind the certificate it received, as happens behind a TLS-inspecting proxy. Set [`NODE_EXTRA_CA_CERTS`](https://code.claude.com/docs/en/network-config#custom-ca-certificates) in the runner's environment to a PEM file with the proxy's root CA.
 
   You don't set it again for sessions, which inherit it. Git doesn't read it: for clones through that proxy, set [`GIT_SSL_CAINFO`](#trust-a-private-certificate-authority-with-anthropic-managed-git) too.
 * **Your start script prints a write error containing `Resource temporarily unavailable` and exits**: your script shares its stdout or stderr with the `claude self-hosted-runner` or [orchestrator](https://code.claude.com/docs/en/self-hosted-environments-configuration.md#on-demand-runners) process it starts, which has switched that shared pipe or socket to non-blocking mode. When the pipe is full, a write from your script fails with this operating-system error instead of waiting, and under `set -e` the script exits.
 
-  To stop the error, send the runner's or orchestrator's output to a file that your script's user can create. Append `>> "$HOME/claude-runner.log" 2>&1` to the command that starts it, ahead of any `&` that backgrounds it:
+  To stop the error, send the runner's or orchestrator's output to a file that your script's user can create. Append `>> "$HOME/claude-runner.log" 2>&1` to the command that starts it, ahead of any `&` that backgrounds it, and replace `<writable-dir>` as the [quickstart](https://code.claude.com/docs/en/self-hosted-environments-quickstart.md#set-up-manually) describes:
 
   ```bash theme={null}
-  claude self-hosted-runner --environment-secret-file /etc/claude/environment-secret >> "$HOME/claude-runner.log" 2>&1
+  claude self-hosted-runner --environment-secret-file /etc/claude/environment-secret --base-dir '<writable-dir>' >> "$HOME/claude-runner.log" 2>&1
   ```
 
   Your script's own output still goes where it went before, while what the runner writes to stdout and stderr, its startup errors included, goes to that file. Use this shell redirect rather than [`--log-file`](https://code.claude.com/docs/en/self-hosted-environments-reference#runner-cli-flags) alone, which mirrors the log to a file while the runner keeps writing to stdout and stderr. If you already pass `--log-file`, keep it as well, because the redirect doesn't change what that file receives.
@@ -901,6 +910,8 @@ Common issues:
   Before v2.1.274, the runner stopped retrying a failed fetch after a few attempts and waited for the next scheduled one. A failed turn didn't trigger a fetch, so every turn failed with a 401 until the next scheduled fetch.
 * **A turn fails in claude.ai/code with `This model needs a newer version of Claude Code`**: the Claude Code version that your runners start sessions with is older than the session's model requires, so the API [rejects the request](https://code.claude.com/docs/en/errors.md#claude-code-does-not-support-this-model). Upgrade the runners to the version the message asks for, or a later one, as described in [Pin the version](#pin-the-version). Until then, people can pick a different model in the session.
 * **Pod is killed mid-drain**: raise `terminationGracePeriodSeconds` to at least the value the runner logs at startup. See [Shutdown timing](#shutdown-timing).
+* **Runner logs a `[runner:log]` line ending `was paused or too slow`**: the runner kept running and needs no restart. Until the stdout or stderr stream named in the line was read again, the runner discarded all but that stream's newest 256 KiB of lines. If you passed [`--log-file`](https://code.claude.com/docs/en/self-hosted-environments-reference#runner-cli-flags), look there for the discarded lines.
+* **Runner logs `Nobody can read this process's stdout anymore`**: whatever read the runner's stdout is gone, so the runner stops writing there for the rest of its run and keeps running. While stderr is still open, this line and the runner's later status lines, `[runner:fatal]` lines included, go to stderr, so read them there.
 
 Once logging is initialized, the runner writes its lifecycle log, including `[runner:fatal]` lines, to stdout, and debug output to stderr, all as plain-text lines rather than JSON. The base directory failures described in the troubleshooting entries above print to stderr before that point. Capture both streams with `--log-file`, which also lets `self-hosted-runner doctor` tail them, or with your platform's log collection.
 

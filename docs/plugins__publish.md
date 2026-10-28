@@ -96,7 +96,7 @@ To publish from the plugin's own repository, save the marketplace file beside `p
 }
 ```
 
-In your shell, run `claude plugin validate .` in the repository before you push. For what the run checks, see [Validate a directory](https://code.claude.com/docs/en/plugins/cli-reference.md#validate-a-directory).
+Replace `your-marketplace` with a name that other authors are unlikely to pick, because a user [can't have two marketplaces with the same name](https://code.claude.com/docs/en/plugins/marketplace-reference.md#marketplace-file). In your shell, run `claude plugin validate .` in the repository before you push. For what the run checks, see [Validate a directory](https://code.claude.com/docs/en/plugins/cli-reference.md#validate-a-directory).
 
 [Create a marketplace](https://code.claude.com/docs/en/plugins/create-marketplace.md) covers the layout with several plugins in one repository.
 

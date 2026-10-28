@@ -18,10 +18,10 @@ A few hook environment variables on this page still use `pool`, such as `CLAUDE_
 
 Use a wrapper script when each session needs setup the runner can't do on its own: provisioning short-lived credentials scoped to the session creator, exporting environment-specific secrets, preparing language toolchains, or applying resource limits around the child process. The runner starts your wrapper in place of the Claude Code binary, once per session. End the wrapper by `exec`-ing into `$CLAUDE_RUNNER_CLAUDE_BIN`, the runner's own binary, so signals and exit codes propagate correctly.
 
-Point `--exec-path`, or `SELF_HOSTED_RUNNER_EXEC_PATH`, at the wrapper when you start the runner:
+Point `--exec-path`, or `SELF_HOSTED_RUNNER_EXEC_PATH`, at the wrapper when you start the runner, replacing `<writable-dir>` as the [quickstart](https://code.claude.com/docs/en/self-hosted-environments-quickstart.md#set-up-manually) describes:
 
 ```bash theme={null}
-claude self-hosted-runner --environment-secret-file /etc/claude/environment-secret --exec-path /etc/claude/session-wrapper.sh
+claude self-hosted-runner --environment-secret-file /etc/claude/environment-secret --base-dir '<writable-dir>' --exec-path /etc/claude/session-wrapper.sh
 ```
 
 The runner sets the following in the wrapper's environment:
@@ -456,6 +456,39 @@ These lines change how the rest of the hook behaves, so check it for each of the
   The orchestrator's log then shows that message. If the hook creates other objects, name each after the order ID, give it its own command, and treat its already-exists answer as success in the same way. For an object that holds a secret, print a fixed message in place of the command's output.
 
 To confirm the trap works, add a line directly below the `trap` line that calls a command that doesn't exist, such as `no-such-command`. Run the hook file from your shell and check that `echo $?` prints `1`, then remove the line.
+
+### Stop or restart the orchestrator
+
+To stop or restart the orchestrator without cutting off running `spawn-runner` hooks, start it with [`--shutdown-drain-sec`](https://code.claude.com/docs/en/self-hosted-environments-reference#orchestrator-cli-flags). On `SIGTERM` it then gives running hooks up to the number of seconds you set to finish. To choose the value and set up your process supervisor to match, see [Size `--shutdown-drain-sec` and the orchestrator's stop timeout](#size-shutdown-drain-sec-and-the-supervisors-stop-timeout-for-the-orchestrator).
+
+This start command allows 70 seconds:
+
+```bash theme={null}
+claude self-hosted-runner orchestrator \
+  --environment-secret-file /etc/claude/environment-secret \
+  --hooks-dir /etc/claude/hooks \
+  --shutdown-drain-sec 70
+```
+
+The orchestrator exits once the poll already sent and every hook have finished. When the `--shutdown-drain-sec` seconds are up, hooks still running get `SIGTERM` and the orchestrator exits. A second `SIGTERM` or any `SIGINT` does the same without waiting. The log line containing `[runner:orchestrator] stop summary:` counts hooks and spawn requests by how each one ended.
+
+Without `--shutdown-drain-sec`, the orchestrator stops immediately on `SIGTERM` or `SIGINT`. Each running hook gets `SIGTERM`, and Anthropic is told nothing. A session whose runner never got started can then sit in the queue until Anthropic [re-requests it](#the-spawn-runner-hook), which happens once `--expected-spawn-seconds` has passed, 120 seconds by default.
+
+> [!NOTE]
+>
+> `--shutdown-drain-sec` requires Claude Code v2.1.299 or later. An older version exits at startup with `error: unknown flag --shutdown-drain-sec`.
+
+#### Size `--shutdown-drain-sec` and the orchestrator's stop timeout
+
+At default settings, use [`--shutdown-drain-sec 70`](https://code.claude.com/docs/en/self-hosted-environments-reference#orchestrator-cli-flags) with a stop timeout of 85 seconds, meaning `terminationGracePeriodSeconds: 85` on Kubernetes or `TimeoutStopSec=85` under systemd. If you changed `--hook-timeout`, scale both:
+
+* **`--shutdown-drain-sec`**: at least `--hook-timeout` plus 10 seconds, so a hook that started right before `SIGTERM` can still finish
+* **Stop timeout**: at least `--shutdown-drain-sec` plus 15 seconds. The orchestrator logs this figure at startup: look for the line that contains `shutdown drain:`.
+
+Have your process supervisor send a single `SIGTERM`, to the orchestrator process alone, because a second one cuts the `--shutdown-drain-sec` wait short. If you leave systemd's default [`KillMode=control-group`](https://code.claude.com/docs/en/self-hosted-environments-deploy#what-reaches-a-running-post-session-hook) in place, the hooks get `SIGTERM` too, and a hook can die before it submits its workload. Before you change `KillMode`, check how your `spawn-runner` hook starts runners:
+
+* **If your hook submits its workload to a platform and exits**: run the orchestrator as the unit's main process and set `KillMode=mixed`, which sends `SIGTERM` to that process alone.
+* **If your hook starts runners as processes in the orchestrator's own unit**: `KillMode=mixed` sends those runners no `SIGTERM`. Instead systemd later sends them `SIGKILL`, so they exit without draining their sessions or running their `post-session` hook.
 
 ## Send model requests to Bedrock or Agent Platform
 

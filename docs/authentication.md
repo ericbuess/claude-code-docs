@@ -17,7 +17,7 @@ After [installing Claude Code](https://code.claude.com/docs/en/setup.md#install-
 
 If the browser doesn't open automatically, press `c` to copy the login URL to your clipboard, then paste it into your browser.
 
-If your browser shows a login code instead of redirecting back after you sign in, paste it into the terminal at the `Paste code here if prompted` prompt. This happens when the browser can't reach Claude Code's local callback server, which is common in WSL2, SSH sessions, and containers.
+If your browser shows a login code instead of redirecting back after you sign in, paste it into the terminal at the `Paste code here if prompted` prompt.
 
 When login completes, the terminal shows `Login successful` and prompts you to press `Enter` to continue.
 
@@ -183,7 +183,7 @@ The paths differ on `forceLoginOrgUUID`:
 * **`claude setup-token` and `/install-github-app`**: enforce only `forceLoginMethod`, so they can mint a token in a different organization
 * **[Gateway](https://code.claude.com/docs/en/claude-apps-gateway) sign-in**: selected by `forceLoginMethod: "gateway"` rather than restricted by it, and doesn't authenticate against an Anthropic organization, so `forceLoginOrgUUID` doesn't apply; use your gateway identity provider to restrict access
 
-Deploy the keys through your device management tooling. [Server-managed settings](https://code.claude.com/docs/en/server-managed-settings.md) reach only accounts that are already authenticated into your organization, so they can't redirect a developer's first login. If your organization distributes server-managed settings as well, set the keys in both places: managed-settings sources [don't merge](https://code.claude.com/docs/en/server-managed-settings.md#settings-precedence), and cached server-managed settings replace the device-managed file apart from a few [per-key exceptions](https://code.claude.com/docs/en/server-managed-settings.md#per-key-exceptions-across-managed-sources). `forceLoginOrgUUID` and the `"claudeai"` and `"console"` values of `forceLoginMethod` aren't among those exceptions, so keep them in both places.
+Deploy `forceLoginMethod` and `forceLoginOrgUUID` through your device management tooling. A developer receives [server-managed settings](https://code.claude.com/docs/en/server-managed-settings.md) only after authenticating into your organization, so you can't redirect a first login with those settings. If you also distribute server-managed settings from claude.ai, set both keys there too until every client runs v2.1.299 or later. For where to set the keys afterward, and which source's value applies, see [Which managed source supplies login keys](https://code.claude.com/docs/en/managed-settings.md#which-managed-source-supplies-login-keys).
 
 In a [gateway](https://code.claude.com/docs/en/claude-apps-gateway) deployment, also keep `forceLoginMethod` and `forceLoginOrgUUID` out of the [settings the gateway serves](https://code.claude.com/docs/en/claude-apps-gateway-config.md#managed).
 

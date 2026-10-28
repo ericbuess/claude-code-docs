@@ -242,7 +242,7 @@ claude mcp remove notion
 /mcp
 ```
 
-When you remove a remote server, Claude Code also deletes the OAuth tokens and client registration it stored for that server.
+When you remove a remote server, Claude Code also deletes the OAuth tokens and client registration it stored for that server. Claude Code doesn't revoke the tokens at the authorization server that issued them. To revoke the tokens where the authorization server supports revocation, run [`claude mcp logout <name>`](#authenticate-from-the-command-line) in your shell before `claude mcp remove <name>`.
 
 #### Server status
 
@@ -255,6 +255,7 @@ The statuses in this list report a configuration decision rather than a connecti
 * ``⏸ Pending approval (run `claude` to approve)``: a project-scoped server from `.mcp.json` that you haven't approved yet. Claude Code shows it in both `claude mcp list` and `claude mcp get <name>`. Run `claude` interactively to review and approve it.
 * `✘ Rejected (see disabledMcpjsonServers in settings)`: a `.mcp.json` server that a [`disabledMcpjsonServers`](https://code.claude.com/docs/en/settings-reference#disabledmcpjsonservers) entry rejects. Claude Code shows it only in `claude mcp get <name>`.
 * `⊘ Disabled for this project (re-enable via /mcp)`: a server that the project's [`disabledMcpServers`](#disable-a-server-without-removing-it) list names. Claude Code shows it in both `claude mcp list` and `claude mcp get <name>`. Turn the server back on from the `/mcp` panel.
+* `✘ Blocked by enterprise managed policy`: a server that one of your organization's policies refuses. Claude Code shows it in both `claude mcp list` and `claude mcp get <name>`. A server blocked by an allowlist, a denylist, or another restriction in [managed MCP configuration](https://code.claude.com/docs/en/managed-mcp.md#how-restrictions-appear-to-users) is hidden from both commands rather than shown with this status. Ask your administrator which policy blocks the server.
 
 #### Project server approvals and workspace trust
 
@@ -471,7 +472,7 @@ The per-call limits still apply while the call runs in the background: the wall-
 To change or turn off automatic backgrounding:
 
 * Set the [`CLAUDE_CODE_MCP_AUTO_BACKGROUND_MS`](https://code.claude.com/docs/en/env-vars) environment variable in milliseconds to change the threshold, or set it to `0` to turn automatic backgrounding off. With `0`, Claude also [waits for MCP tasks](#make-claude-wait-for-the-result-of-an-mcp-task) in an interactive session
-* Set [`CLAUDE_CODE_DISABLE_BACKGROUND_TASKS`](https://code.claude.com/docs/en/env-vars) to `1`, which turns it off together with background commands and background subagents
+* Set [`CLAUDE_CODE_DISABLE_BACKGROUND_TASKS`](https://code.claude.com/docs/en/env-vars) to `1` to turn off automatic backgrounding and [background commands](https://code.claude.com/docs/en/tools-reference.md#background-commands)
 
 Some calls never move to the background:
 
@@ -828,22 +829,14 @@ If you open a local session in the [Desktop app's Code tab](https://code.claude.
 
 Claude Code supports environment variable expansion in `.mcp.json` files, allowing teams to share configurations while maintaining flexibility for machine-specific paths and sensitive values like API keys.
 
-#### Supported syntax
+You can reference an environment variable in a server's `command`, `args`, `env`, `url`, or `headers` value, in either of two forms:
 
 * `${VAR}`: expands to the value of environment variable `VAR`
-* `${VAR:-default}`: expands to `VAR` if set, otherwise uses `default`
-
-#### Expansion locations
-
-Environment variables can be expanded in:
-
-* `command`: the server executable path
-* `args`: command-line arguments
-* `env`: environment variables passed to the server
-* `url`: for HTTP server types
-* `headers`: for HTTP server authentication
+* `${VAR:-default}`: expands to the value of `VAR` if `VAR` is set, or to `default` if it is unset
 
 #### Example with variable expansion
+
+In this server entry, the URL is the value of `API_BASE_URL` followed by `/mcp`, with `https://api.example.com` as the default, and the API key comes from `API_KEY`:
 
 ```json theme={null}
 {
@@ -862,6 +855,10 @@ Environment variables can be expanded in:
 #### Unset variables without a default
 
 If a referenced environment variable isn't set and has no default value, the config still loads: Claude Code reports a missing-variable warning for that server in `claude mcp list` output and uses the unexpanded `${VAR}` text as-is. Set the variable or add a `:-default` fallback so the server starts with the value you intend. In a remote server's `url` and `headers`, some credential variables [read as empty](#credential-variables-that-read-as-empty) instead, with no warning.
+
+#### Variables set to an empty string
+
+If you set a variable to an empty string, it counts as set, so a `${VAR:-default}` reference expands to the empty string rather than to `default`. With the [example server](#example-with-variable-expansion), if you set `API_BASE_URL` to an empty string, its `url` becomes `/mcp` and `claude mcp list` reports `'url' is not a valid URL`. To use the default, unset the variable rather than setting it to an empty string.
 
 #### Credential variables that read as empty
 
@@ -1146,9 +1143,16 @@ If the server later returns a 403 `insufficient_scope` for a tool call, the call
 
 If that scope isn't in your pinned `oauth.scopes`, add it, then run `/mcp` and authenticate the server again. Claude Code requests the pinned scopes rather than the scope the server named, so if you authenticate again without adding it, the token you get still lacks it.
 
+### Use OAuth with a server behind an authenticating proxy
+
+If your MCP server uses OAuth behind a proxy or gateway that checks a header of its own, sign-in fails when the OAuth requests arrive without that header. Signing in through the proxy requires Claude Code v2.1.299 or later, with the header and the sign-in both configured:
+
+* **The proxy's header**: pass it with [`--header`](#option-1-add-a-remote-http-server), the `headers` field, or a [`headersHelper`](#use-dynamic-headers-for-custom-authentication), under the name the proxy reads
+* **The OAuth sign-in**: keep `Authorization` out of the configured headers, then sign in with `claude mcp login <name>` in your shell. If you configure an `Authorization` header, Claude Code uses it as the server's credential and doesn't fall back to OAuth for that server.
+
 ### Use dynamic headers for custom authentication
 
-If your MCP server uses an authentication scheme other than OAuth, such as Kerberos, short-lived tokens, or an internal SSO, use `headersHelper` to generate request headers at connection time. Claude Code runs the command and merges its output into the connection headers.
+When authentication such as Kerberos, short-lived tokens, or internal SSO needs headers generated at connection time, set the server's `headersHelper` to a command. Claude Code runs it when connecting and merges its output into the headers it sends. This example uses a script:
 
 ```json theme={null}
 {
@@ -1552,16 +1556,35 @@ When Claude Code can't produce a schema the API accepts, or on a deployment that
 
 ## Tools with invalid input schemas
 
-The Claude API checks every tool's input schema in a request and rejects the whole request when any one schema fails, so a single MCP tool with a malformed schema would make every request that includes it fail with a 400 error. Claude Code runs two of the API's checks itself when it loads a server's tools and excludes each tool that would fail them, so the server's other tools keep working:
+> [!NOTE]
+>
+> If your session fails with a 400 error that names a tool by its position, follow the steps in [Tool input schema is invalid](https://code.claude.com/docs/en/errors.md#tool-input-schema-is-invalid).
+
+If one of your MCP server's tools has an input schema that breaks either of two rules the API enforces, Claude Code excludes that tool. The server's other tools are unaffected. Claude Code checks both rules as it loads the server's tools:
 
 * Top-level property names must be 1 to 64 characters long and use only ASCII letters and digits, `_`, `.`, and `-`
 * The schema must be valid against the JSON Schema draft 2020-12 meta-schema. Claude Code applies this check to schemas that declare no `$schema` and schemas that declare draft 2020-12. A schema that declares any other dialect skips this check, though the property-name check above still applies
 
 When Claude Code excludes a tool, it records the reason in the server's log and tells Claude which tools it excluded and why, so you can ask Claude why a tool is missing. If you fix the schema on the server, the tool comes back the next time Claude Code loads the server's tools.
 
-Claude Code turns the exclusion on through a feature flag it fetches from Anthropic. On a [deployment where flag fetching is off](https://code.claude.com/docs/en/env-vars.md#features-that-need-feature-flag-fetching), or on a machine whose flags have never arrived, such as an air-gapped machine, Claude Code still runs the checks and records in the server's log which tool would be rejected, but sends the tool's schema to the API anyway. The API rejects a request that includes that schema with [a 400 error naming the tool by its position](https://code.claude.com/docs/en/errors.md#tool-input-schema-is-invalid). Before v2.1.216, no deployment ran these checks.
+When [feature flag fetching](https://code.claude.com/docs/en/env-vars.md#features-that-need-feature-flag-fetching) is off or the flags have never arrived, as on an air-gapped machine, a tool that breaks a rule isn't excluded:
+
+* Claude gets the tool unchanged, and the server's log records `input schema would be rejected by the Anthropic API` for it
+* If the API then rejects the schema, see [Tools whose input schema the API refuses](#tools-whose-input-schema-the-api-refuses)
+
+Before v2.1.216, no deployment ran these checks.
 
 The [root-level combinator handling](#tool-input-schemas-with-a-root-level-combinator) is separate and keeps its own behavior when flag fetching is off or the flags have never arrived.
+
+### Tools whose input schema the API refuses
+
+If a line in the debug log contains `the API refused this tool's input schema`, it names a tool whose schema the API rejected in a request. Claude Code resends that request with the tool declared without parameters.
+
+* **If your session fails with a 400 error that names a tool by its position**: follow the steps in [Tool input schema is invalid](https://code.claude.com/docs/en/errors.md#tool-input-schema-is-invalid)
+* **If you use the server**: you don't need to do anything. Claude can still call the tool, but doesn't see its parameters
+* **If you maintain the server**: fix the tool's input schema on the server. The log line ends with `The API said:` and the API's reason for rejecting the schema. Validate the arguments the server receives, because Claude calls the tool without seeing its parameters
+
+Before v2.1.300, every turn that included the refused schema failed with [a 400 error naming the tool by its position](https://code.claude.com/docs/en/errors.md#tool-input-schema-is-invalid).
 
 ## Tools with names longer than 128 characters
 
@@ -1709,7 +1732,11 @@ Keep descriptions and instructions concise, and put critical details near the st
 
 Before v2.1.296, the shorter limit was 2,048 characters, and before v2.1.295 it applied to every tool description, including one loaded through tool search.
 
-Descriptions and instructions from some of the MCP servers that Anthropic hosts at `api.anthropic.com` reach Claude in full. To change the limits for the other MCP servers in your session, set [`CLAUDE_CODE_MAX_MCP_DESCRIPTION_LENGTH`](https://code.claude.com/docs/en/env-vars#variables) to a number of characters. The number you set replaces both limits: `8192`, for example, raises the shorter limit and lowers the longer one. This variable requires Claude Code v2.1.280 or later.
+#### Change the description length limits
+
+To change the [default limits](#for-mcp-server-authors) of 4,096 and 16,384 characters for the MCP servers in your session, set [`CLAUDE_CODE_MAX_MCP_DESCRIPTION_LENGTH`](https://code.claude.com/docs/en/env-vars#variables) to a number of characters. Claude Code uses that number for both limits. With `8192`, for example, you raise the 4,096-character limit on server instructions and tool descriptions loaded upfront, and lower the 16,384-character limit on tool descriptions loaded through tool search. This variable requires Claude Code v2.1.280 or later.
+
+Descriptions and instructions from some of the MCP servers that Anthropic hosts at `api.anthropic.com` reach Claude in full, and setting this variable doesn't cut them.
 
 #### Mark a tool to load upfront or stay deferred
 

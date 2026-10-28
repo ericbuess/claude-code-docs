@@ -689,7 +689,7 @@ You can change effort through any of the following:
 * **`/effort`**: run `/effort` with no arguments to open an interactive slider, `/effort` followed by a level name to set it directly, or `/effort auto` to clear your saved level for the active model
 * **In `/model`**: use left/right arrow keys to adjust the effort slider when selecting a model
 * **`--effort` flag**: pass a level name to set it for a single session when launching Claude Code
-* **Environment variable**: set `CLAUDE_CODE_EFFORT_LEVEL` to a level name or `auto`
+* **Environment variable**: set `CLAUDE_CODE_EFFORT_LEVEL` to a level name. To have Claude Code [send no effort level](#send-no-effort-level), set it to `auto` or `unset` instead
 * **Settings**: set a per-model level in [`modelSettings`](https://code.claude.com/docs/en/settings-reference#modelsettings), or set [`effortLevel`](https://code.claude.com/docs/en/settings-reference#effortlevel) to `low`, `medium`, `high`, or `xhigh` as the default for models without one. `max` isn't accepted as a level in either key, and `ultracode` has its own [`ultracode`](https://code.claude.com/docs/en/settings-reference#ultracode) key
 * **From a connected device**: in a [Remote Control](https://code.claude.com/docs/en/remote-control.md#what-connected-devices-see) session, pick a level from the effort control on your phone or in your browser. The level applies to the current session only. Requires Claude Code v2.1.234 or later
 * **Skill and subagent frontmatter**: set `effort` in a [skill](https://code.claude.com/docs/en/skills.md#frontmatter-reference) or [subagent](https://code.claude.com/docs/en/sub-agents.md#supported-frontmatter-fields) markdown file to override the effort level when that skill or subagent runs
@@ -710,6 +710,23 @@ In a terminal session, once `/effort` confirms the new level, the next message y
 * **While Claude is still working**: type a message, such as `keep going`, and press `Enter` to queue it without interrupting the turn. Claude gets it when its current tool calls finish, or when the turn ends at the latest, and works at the new level from then on.
 
 Before v2.1.242, Claude Code could queue `/effort` itself until the turn finished, and always did in a session that doesn't [fetch feature flags](https://code.claude.com/docs/en/env-vars.md#features-that-need-feature-flag-fetching), such as on a [third-party provider](https://code.claude.com/docs/en/third-party-integrations.md).
+
+#### Send no effort level
+
+When Claude Code sends no effort level to a [supported model](#adjust-effort-level), the [API's default](https://platform.claude.com/docs/en/build-with-claude/effort) applies instead of Claude Code's. To have Claude Code send none, start `claude` from a shell that exports `CLAUDE_CODE_EFFORT_LEVEL` with the value `auto` or the value `unset`, which do the same thing:
+
+```bash theme={null}
+export CLAUDE_CODE_EFFORT_LEVEL=auto
+```
+
+The session header and footer show no effort level while none is sent. To confirm that none is sent, run `/effort status` at the Claude Code prompt:
+
+* **`Effort level: auto`**: no effort level is sent.
+* **`Effort level: auto (currently <level>)`**: a level is still sent. If a [`maxEffortLevel`](https://code.claude.com/docs/en/settings-reference#maxeffortlevel) setting below `max` applies to the active model, Claude Code sends its own default for the model, lowered to that cap. Remove the setting or set it to `max`.
+
+> [!NOTE]
+>
+> Before v2.1.304, `/effort status` printed `Effort level: auto (currently high)` even while no level was sent.
 
 #### Adaptive reasoning and fixed thinking budgets
 

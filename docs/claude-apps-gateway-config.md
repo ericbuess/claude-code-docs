@@ -631,7 +631,10 @@ Every request starts at the first upstream. A request reaches a later upstream o
 
 The gateway keeps no record of failed upstreams, so while an upstream is down, every request that reaches it still tries it and waits for it to fail before moving on.
 
-For an Anthropic API upstream, [`timeouts.upstream_ttfb_ms`](#http-tuning) bounds the wait on a down upstream. That setting doesn't apply to the other providers, where the gateway waits up to one hour for an upstream to start responding.
+The gateway waits this long for a response to start:
+
+* **`provider: anthropic` upstreams**: [`timeouts.upstream_ttfb_ms`](#http-tuning), 120 seconds by default
+* **Other providers**: up to one hour. To shorten that wait for streaming requests, set `timeouts.upstream_ttfb_ms` on gateway v2.1.295 or later. Non-streaming model requests wait up to one hour either way
 
 `404` is per-upstream model availability, so an upstream that hasn't enabled a model doesn't block a later upstream that serves it. An upstream that can't resolve the requested model is skipped without a network round-trip.
 
@@ -1150,6 +1153,10 @@ The gateway validates a `desktop` block against the schema bundled with its inst
 
 `blockReadsOutsideWorkingDirectories`, `disableBypassPermissionsMode`, `configRecheckIntervalMinutes`, and `sshClientPath` need Claude Code v2.1.281 or later on the gateway server. So do the `required` value of `microsoftAuthBroker` and the `continuousAccessEvaluation` field of a Microsoft 365 `managedMcpServers` entry. Claude Desktop releases that predate the `required` value read it as `disabled`, so set `required` only after every member's Claude Desktop supports it. Claude Desktop's [managed configuration reference](https://claude.com/docs/third-party/claude-desktop/configuration) lists the release that first reads each key.
 
+> [!NOTE]
+>
+> [`sshTransport`](https://claude.com/docs/third-party/claude-desktop/configuration#sshtransport) needs Claude Code v2.1.293 or later on the gateway server.
+
 If you set `orgPluginSettings` in a policy's `desktop` block, the gateway serves it in the array form that Claude Desktop 1.15200.0 and later reads. Older desktops ignore the array and enforce no plugin tool policy, so update members to 1.15200.0 or later before you rely on it.
 
 ##### How a role policy inherits the base `desktop` block
@@ -1400,7 +1407,7 @@ Four optional top-level blocks, `access_control`, `limits`, `timeouts`, and `rat
 | `limits` | `max_request_bytes` | 32 MiB | Max inbound request body; oversize requests get `413` before the body is buffered. Raise for large file or image requests. |
 | `limits` | `max_request_header_bytes` | unset | Lowers the gateway's 256 KiB limit on a request's total headers. A request over the limit returns `431`, and a value above 256 KiB has no effect. If developers get `431` after signing in, see [Request headers too large after sign-in](https://code.claude.com/docs/en/claude-apps-gateway-deploy.md#request-headers-too-large-after-sign-in). |
 | `limits` | `max_url_length` | unset | When set, an over-long URL returns `414` |
-| `timeouts` | `upstream_ttfb_ms` | 120000 | Max wait for the upstream's response headers (time to first byte). The response body then streams with no wall-clock cap. Applies to the direct Anthropic upstream path; on every other provider the gateway waits up to one hour for the response to start. |
+| `timeouts` | `upstream_ttfb_ms` | 120000 | Max wait for the upstream's response headers (time to first byte). The response body then streams with no wall-clock cap. If the key is unset, the default applies to `provider: anthropic` upstreams, and on every other provider the gateway waits up to one hour for the response to start. To shorten that wait, see [Multiple upstreams](#multiple-upstreams). |
 | `rate_limits` | `device_authorization.max` / `.window_seconds` | 30 / 600 | Per-IP rate limit on the unauthenticated device-authorization endpoint. Raise for a large org behind a shared egress IP or NAT. [Large rollouts](https://code.claude.com/docs/en/claude-apps-gateway-deploy.md#large-rollouts) shows how to size it. These limits apply only to the device-grant sign-in flow, not to `/v1/messages` inference. See [User-code brute-force resistance](https://code.claude.com/docs/en/claude-apps-gateway-deploy.md#user-code-brute-force-resistance). |
 | `rate_limits` | `device_verify.max` / `.window_seconds` | 10 / 600 | Per-IP rate limit on `user_code` submissions at `/device`. It is what stops someone from guessing another developer's code. [Large rollouts](https://code.claude.com/docs/en/claude-apps-gateway-deploy.md#large-rollouts) shows how far to raise it. |
 

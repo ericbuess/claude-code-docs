@@ -43,7 +43,7 @@ For [scheduled recurring work](https://code.claude.com/docs/en/desktop-scheduled
 Before you send your first message, choose the environment, project folder, permission mode, and model in the row under the prompt box:
 
 * **Environment**: use the environment selector, the first control in the row, to choose where Claude runs. See [environment configuration](#environment-configuration).
-  * If a new session has no environment selector under the prompt box, follow the [earlier layout's steps](#check-which-layout-you-have).
+  * If a new session shows no environment under the prompt box, follow the [earlier layout's steps](#check-which-layout-you-have).
 * **Project folder**: click the project folder control, next to the environment selector, to choose the folder Claude works in.
   * **Cloud session**: select [repositories](#run-long-running-tasks-in-the-cloud) instead of a folder
   * **[Saved local or SSH environment](#create-a-saved-environment)**: the environment already holds its folders, so the row shows no project folder control. To change the folders, [edit the environment](#use-edit-or-remove-a-saved-environment).
@@ -861,7 +861,7 @@ Add the variables to a saved local environment and start your sessions from it. 
 
 > [!NOTE]
 >
-> If your environment selector is above the prompt box, you have the [earlier layout](#check-which-layout-you-have), which has no saved local environments. Use the [local environment editor](#use-the-local-environment-editor) instead.
+> If a new session shows no environment under the prompt box, you have the [earlier layout](#check-which-layout-you-have), which has no saved local environments. Use the [local environment editor](#use-the-local-environment-editor) instead.
 
 **1. Open a local environment's form**
 
@@ -963,7 +963,7 @@ SSH sessions let you run Claude Code on a remote machine while using the desktop
 >
 > If you use Desktop with a [third-party provider](https://code.claude.com/docs/en/third-party-integrations.md), SSH sessions need their own setup. See [SSH remote sessions in Claude Desktop on 3P](https://claude.com/docs/third-party/claude-desktop/ssh-remote-sessions).
 
-Add an SSH connection in the [**New environment** dialog](#create-a-saved-environment), then start a session on that connection. If a new session has no environment selector under the prompt box, you have the earlier layout. See [Check which layout you have](#check-which-layout-you-have).
+Add an SSH connection in the [**New environment** dialog](#create-a-saved-environment), then start a session on that connection. If a new session shows no environment under the prompt box, you have the earlier layout. See [Check which layout you have](#check-which-layout-you-have).
 
 **1. Open the New environment dialog**
 
@@ -2122,13 +2122,13 @@ In a local session, the **Code** tab runs its own copy of Claude Code, which has
 
 ### Check which layout you have
 
-If a new session has no [environment selector](#start-a-session) under the prompt box, you have the earlier layout:
+If a new session shows the [environment](#start-a-session) above the prompt box instead of under it, you have the earlier layout:
 
 * **[Desktop older than v2.37337.0](#check-your-version)**: update to get the current layout. Select **Claude > Check for Updates…** on macOS or **Help > Check for Updates…** on Windows.
 * **[Third-party provider](https://code.claude.com/docs/en/third-party-integrations.md) with sessions on your computer**: the current layout requires Claude Desktop v3.1623.0 or later, so [check your version](#check-your-version). To update, select **Claude > Check for Updates…** on macOS or **Help > Check for Updates…** on Windows. If your organization [turns off auto-updates](#device-management-policies), **Check for Updates…** is hidden, so ask your administrator for v3.1623.0 or later.
-* **Third-party provider with sessions on your organization's infrastructure**: when your organization runs sessions on its own infrastructure rather than on your computer, Desktop keeps the earlier layout, and updating doesn't change the layout. If you don't know where your sessions run, ask your administrator.
+* **Third-party provider with sessions on your organization's infrastructure**: the current layout requires Claude Desktop v4.29.0 or later, so [check your version](#check-your-version). If you're on an older version, ask your administrator for v4.29.0 or later. If you don't know where your sessions run, ask your administrator.
 
-In the earlier layout, choose the environment and project folder above the prompt box, and the permission mode and model in the row under it. The earlier layout lacks the [session details panel](#see-session-details) and [saved local and SSH environments](#create-a-saved-environment).
+In the earlier layout, choose the environment and any project folder or repository above the prompt box, and the permission mode and model in the row under it. The earlier layout lacks the [session details panel](#see-session-details) and [saved local and SSH environments](#create-a-saved-environment).
 
 ### 403 or authentication errors in the Code tab
 

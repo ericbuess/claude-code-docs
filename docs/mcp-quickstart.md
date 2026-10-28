@@ -65,6 +65,7 @@ The server appears with a status indicator:
 | `✘ Connection error` | The connection attempt threw an error. See [Troubleshooting](#troubleshooting) |
 | ``⏸ Pending approval (run `claude` to approve)`` | A project-scoped server you haven't approved yet. See [Edit .mcp.json directly](#edit-mcp-json-directly) |
 | `⊘ Disabled for this project (re-enable via /mcp)` | A server turned off for this project by the project's `disabledMcpServers` list. See [Disable a server without removing it](https://code.claude.com/docs/en/mcp.md#disable-a-server-without-removing-it) |
+| `✘ Blocked by enterprise managed policy` | One of your organization's policies blocks this server, so Claude Code won't connect. Ask your administrator which policy. See [Server status](https://code.claude.com/docs/en/mcp.md#server-status) |
 
 Some legacy Windows consoles, such as the default console on Windows 10, don't support these Unicode glyphs and show `√` and `×` in place of `✔` and `✘`.
 

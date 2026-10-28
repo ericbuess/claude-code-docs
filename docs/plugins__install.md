@@ -193,7 +193,7 @@ In a Claude Code session, run `/plugin marketplace add` followed by the marketpl
 
 | Source | What you type | Example |
 | :- | :- | :- |
-| GitHub repository | `owner/repo`. Add `#ref` to pin a branch or tag. | `/plugin marketplace add anthropics/claude-code`, or `/plugin marketplace add your-org/plugins#v1.2.0` to pin the `v1.2.0` tag |
+| GitHub repository | `owner/repo`. Add `#ref` to pin a branch or tag. | `/plugin marketplace add anthropics/claude-plugins-official`, or `/plugin marketplace add your-org/plugins#v1.2.0` to pin the `v1.2.0` tag |
 | Git repository on any host | The full clone URL. Add `#ref` to pin a branch or tag. | `/plugin marketplace add https://gitlab.example.com/your-group/your-marketplace.git#v1.0.0` |
 | Local directory or file | A relative or absolute path to a directory that holds `.claude-plugin/marketplace.json`, or to the JSON file itself. Start a relative path with `./` or `../`, because Claude Code reads a bare `name/name` as a GitHub repository. | `/plugin marketplace add ./my-marketplace` |
 | Hosted `marketplace.json` | Its `https://` URL | `/plugin marketplace add https://example.com/marketplace.json` |
@@ -383,7 +383,7 @@ When you remove a marketplace, Claude Code uninstalls every plugin you installed
 
 ## Next steps
 
-* [Anthropic's marketplaces](https://code.claude.com/docs/en/plugins/anthropic-marketplaces.md): how the official, community, and demo marketplaces differ and where to browse each one
+* [Anthropic's marketplaces](https://code.claude.com/docs/en/plugins/anthropic-marketplaces.md): how the official and community marketplaces differ and where to browse each one
 * [Plugin loading reference](https://code.claude.com/docs/en/plugins/loading.md): why a plugin loaded, didn't load, or didn't change after an update
 * [Plugin security and trust](https://code.claude.com/docs/en/plugins/security.md): what to review before you install a plugin from a marketplace you don't know
 * [Troubleshoot plugins](https://code.claude.com/docs/en/plugins/troubleshooting.md): install and marketplace error messages with their fixes

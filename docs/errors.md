@@ -219,6 +219,7 @@ Match the message you see to a section below.
 | `Cloud sessions use your claude.ai login`, at the end of a policy denial that names a credential | [Command-line errors](#cloud-sessions-use-your-claude-ai-login) |
 | `Couldn't verify your organization's policy for cloud sessions` | [Command-line errors](#couldnt-verify-your-organizations-policy-for-cloud-sessions) |
 | `Cloud sessions aren't available:` followed by why your organization's policy couldn't be loaded | [Command-line errors](#couldnt-verify-your-organizations-policy-for-cloud-sessions) |
+| `Cloud sessions aren't available with this Console sign-in. They need a claude.ai sign-in.` | [Unable to get organization UUID](https://code.claude.com/docs/en/claude-code-on-the-web.md#unable-to-get-organization-uuid) |
 | `Cloud sessions need a claude.ai sign-in` | [Unable to get organization UUID](https://code.claude.com/docs/en/claude-code-on-the-web.md#unable-to-get-organization-uuid) |
 | `Nothing was stashed: "<path>" is now a folder in place of a tracked file or link` / `are now folders in place of tracked files or links` | [Command-line errors](#nothing-was-stashed-because-a-folder-replaced-a-tracked-file) |
 | `Error: --json-schema is not a valid JSON Schema` | [Command-line errors](#the-json-schema-value-is-not-a-valid-json-schema) |
@@ -325,6 +326,7 @@ Match the message you see to a section below.
 | `File is covered by a Read deny rule in your permission settings` | [Tool errors](#file-is-covered-by-a-read-deny-rule) |
 | `cannot contain null bytes (\0)` | [Tool errors](#path-cannot-contain-null-bytes) |
 | `Path contains null bytes` | [Tool errors](#path-cannot-contain-null-bytes) |
+| `command contains the invisible character U+FEFF (byte order mark) or U+180E (Mongolian vowel separator), and was not run` | [Tool errors](#command-contains-an-invisible-character) |
 | `File is too large to read as an image (the limit is 128MB)` | [Tool errors](#file-is-too-large-to-read-as-an-image) |
 | `Cannot read this as an image: <path> is a pipe or a device` | [Tool errors](#file-is-too-large-to-read-as-an-image) |
 | `subagent_type is required: the general-purpose agent is not available in this session` | [Tool errors](#subagent-type-is-required) |
@@ -397,6 +399,7 @@ Match the message you see to a section below.
 | `Claude Code process exited with code N` | [Wrapper and IDE errors](#claude-code-process-exited-with-code-n) |
 | `The connection to Claude Code ended before this message completed` | [Wrapper and IDE errors](#the-connection-to-claude-code-ended-before-this-message-completed) |
 | `Could not locate the Claude CLI on PATH` | [Wrapper and IDE errors](#could-not-locate-the-claude-cli-on-path) |
+| `The Claude Code program for this computer, the <build> build, could not be found` | [Wrapper and IDE errors](#the-claude-code-program-for-this-computer-could-not-be-found) |
 | `Restored the code, but skipped N files` | [Rewind warnings and errors](#restored-the-code-but-skipped-files) |
 | `No files were restored: N files failed (backup missing, or the file could not be updated)` | [Rewind warnings and errors](#no-files-were-restored) |
 | `Transcript writes are failing (...)` | [Session saving warnings](#transcript-writes-are-failing) |
@@ -2495,7 +2498,7 @@ Before v2.1.216, no deployment ran the exclusion checks.
 
 **What to do:**
 
-* If your Claude Code version is earlier than v2.1.216, run `claude update`.
+* If your Claude Code version is earlier than v2.1.300, run [`claude update`](https://code.claude.com/docs/en/setup#update-claude-code) in your shell. Before v2.1.300, Claude Code didn't [retry the request without the rejected tool's parameters](https://code.claude.com/docs/en/mcp.md#tools-whose-input-schema-the-api-refuses), so this error repeated on every request that included the tool.
 * Remove or [disable](https://code.claude.com/docs/en/mcp.md#disable-a-server-without-removing-it) the MCP server that declares the invalid schema. The error names the tool only by position. On v2.1.216 or later, check each server's log for a line naming a tool whose input schema would be rejected. If no log names one, disable servers one at a time.
 * If you maintain the server, fix the tool's `input_schema`. The schema must be valid JSON Schema, and top-level property names must be 1 to 64 characters long and use only ASCII letters and digits, `_`, `.`, and `-`. See [Tools with invalid input schemas](https://code.claude.com/docs/en/mcp.md#tools-with-invalid-input-schemas).
 
@@ -3589,7 +3592,6 @@ Sibling strings fire before the command runs at all:
 
 * `Shell command permission check failed for pattern "..."`: the command's permission check didn't allow it. [Permission checks on injected commands](https://code.claude.com/docs/en/skills.md#permission-checks-on-injected-commands) covers which results abort in each permission mode and how to pre-approve a command with `allowed-tools`
 * ``Skill <name> requires bash (`shell: bash` in frontmatter) but Git Bash was not found``: the skill's frontmatter demands bash on a machine without it. Install Git for Windows or change the frontmatter to `shell: powershell`. See [How injected commands run](https://code.claude.com/docs/en/skills.md#how-injected-commands-run)
-* `No shell command in <name> was run`: one of the file's `!` commands contains a raw control character other than tab or newline, so none of them runs. See [how to find and remove the character](#no-shell-command-was-run)
 
 **What to do:**
 
@@ -3599,9 +3601,12 @@ Sibling strings fire before the command runs at all:
 
 ### No shell command in a skill or command was run
 
-One of the `` !`<command>` `` [dynamic context commands](https://code.claude.com/docs/en/skills.md#inject-dynamic-context) in a skill or custom command file contains a raw control character other than tab or newline. Claude Code refuses the whole invocation before any of the file's commands runs.
+`No shell command in <name> was run` means a `` !`<command>` `` [dynamic context command](https://code.claude.com/docs/en/skills.md#inject-dynamic-context) in that skill or command file contains a character that the Bash or PowerShell tool refuses:
 
-The message names the shell tool that would have run the commands, Bash or PowerShell, and ends with the refused command. Each such character is replaced by `�` so you can see where it is:
+* **Either tool**: a raw control character other than a tab or newline
+* **PowerShell tool**: also U+FEFF or U+180E
+
+The message ends with the refused command, showing each refused character as `�`, as in this Bash tool example:
 
 ```text theme={null}
 No shell command in /my-skill was run, because the Bash tool does not accept one of them: command contains control characters that would be hidden in the approval dialog. Unprintable characters are shown as � below: remove them from the skill or command file, or from the arguments or options substituted into it.
@@ -3610,7 +3615,7 @@ build.sh --target�dist
 
 **What to do:**
 
-* Find each `�` in the command quoted at the end of the message. Remove the character it stands for from the skill or command file, or from the arguments or options substituted into the file.
+* Find each `�` in the command quoted at the end of the message. Remove the character it stands for from the [skill or command file](https://code.claude.com/docs/en/skills.md#where-skills-live), or from the arguments or [options](https://code.claude.com/docs/en/plugins/manifest-reference.md#user-configuration) substituted into the file.
 
 ### Input must be provided when using `--print`
 
@@ -4568,6 +4573,19 @@ The tool call fails, Claude sees the error, and the turn continues.
 
 Before v2.1.281, a null byte in a Read, Write, Edit, or NotebookEdit path ended the whole turn with an error naming `Path contains null bytes`, and the tool never ran.
 
+### Command contains an invisible character
+
+The [PowerShell tool](https://code.claude.com/docs/en/tools-reference.md#powershell-tool) refused to run a command that contains U+FEFF or U+180E:
+
+```text theme={null}
+Error: command contains the invisible character U+FEFF (byte order mark) or U+180E (Mongolian vowel separator), and was not run. Remove the character, keep the text that needs it in a file that the command reads, or write it as $([char]0xFEFF) or $([char]0x180E) inside a double-quoted string
+```
+
+**What to do:**
+
+* **For a command Claude wrote**: you have nothing to fix. The message tells Claude how to rewrite the command.
+* **For a skill or command file**: the message follows `No shell command in <name> was run`. See [where to find the character and remove it](#no-shell-command-was-run).
+
 ### File is too large to read as an image
 
 Claude tried to read a file as an image with the [Read tool](https://code.claude.com/docs/en/tools-reference.md#read-tool-behavior), and the file is larger than 128 MB, the most Read loads from an image file. Nothing was read, and Claude receives this error as the tool result:
@@ -5430,6 +5448,22 @@ Failed to run Claude Code: Error: Could not locate the Claude CLI on PATH. Launc
 * Open a new PowerShell window outside VS Code and run `where.exe claude`. If it doesn't print a path, the CLI isn't on your PATH: add its install directory by following [Verify your PATH](https://code.claude.com/docs/en/troubleshoot-install.md#verify-your-path). If it prints a path, the entry comes from your PowerShell profile or from a PATH change VS Code hasn't picked up yet; the next two steps cover those cases.
 * Set the PATH entry as a user or system environment variable, not in your PowerShell profile. The extension doesn't run your profile, so a PATH edit that lives only there never reaches it.
 * Restart VS Code after changing PATH. The extension checks the PATH that VS Code captured at startup, so a PATH change takes effect only after a restart.
+
+### The Claude Code program for this computer could not be found
+
+The [VS Code extension](https://code.claude.com/docs/en/vs-code.md) looked for the copy of Claude Code bundled inside it and found none built for your computer. The message names the build your computer needs:
+
+```text theme={null}
+The Claude Code program for this computer, the Linux (linux-x64) build, could not be found.
+```
+
+**What to do:**
+
+* If the message says which build the extension holds, you have the extension package for another platform: install the package made for the build the message names
+* If the message doesn't say which build the extension holds, reinstall the Claude Code extension from your editor's Extensions view
+* Or, in either case, set [`claudeCode.claudeProcessWrapper`](https://code.claude.com/docs/en/vs-code#extension-settings) to a separately installed `claude` binary
+
+Before v2.1.290, this appeared as `Unsupported platform: <platform>-<arch>. No compatible Claude Code binary found.`
 
 ### The connection to Claude Code ended before this message completed
 

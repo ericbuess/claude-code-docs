@@ -228,7 +228,7 @@ When teleport fetches the session's branch, the fetch never waits for input in y
 
 Teleport requires claude.ai subscription authentication. Find the case that matches yours:
 
-* **You're authenticated via API key**: run `/login` to sign in with your claude.ai account instead
+* **You're signed in with an API key or Console account**: run `claude auth login` in your shell, then sign in with claude.ai
 * **The error names your provider**: cloud sessions aren't available through third-party providers. See the [error table](#errors-when-sending-to-a-cloud-session)
 * **You're already signed in via claude.ai**: your organization may have disabled cloud sessions
 
@@ -437,10 +437,11 @@ Your prompt is back in the box you sent it from.
 
 ### Unable to get organization UUID
 
-`claude --cloud` and `claude --teleport` require sign-in with a claude.ai account. If you authenticate with an API key, or your stored account details are stale, you see one of these:
+`claude --cloud` and `claude --teleport` require sign-in with a claude.ai account. If you authenticate with an API key or a Console sign-in instead, or your stored account details are stale, you see a message such as:
 
 * `Unable to get organization UUID`
 * ``Cloud sessions need a claude.ai sign-in. Run `claude auth login` (or /login in a local session), then try again.``
+* ``Cloud sessions aren't available with this Console sign-in. They need a claude.ai sign-in. Run `claude auth login` (or /login in a local session), then try again.``
 * `Error loading Claude Code sessions` in the session picker, when you run `claude --teleport` without a session ID
 
 Run [`claude auth login`](https://code.claude.com/docs/en/cli-reference#cli-commands) in your shell to sign in with your claude.ai account, then retry the command. Inside a running session, `/login` does the same. If the error names your provider instead, see the [error table](#errors-when-sending-to-a-cloud-session): cloud sessions aren't available through third-party providers.

@@ -4,11 +4,11 @@
 
 # Anthropic's marketplaces
 
-> Anthropic's official, community, and demo plugin marketplaces for Claude Code: their names, repositories, how you add each, and where to browse their plugins.
+> Anthropic's official and community plugin marketplaces for Claude Code: their names, repositories, how you add each, and where to browse their plugins.
 
-Anthropic publishes three general-purpose plugin marketplaces for Claude Code: [official](https://github.com/anthropics/claude-plugins-official), [community](https://github.com/anthropics/claude-plugins-community), and [demo](https://github.com/anthropics/claude-code). Each is a catalog of plugins in its own GitHub repository. When you install a plugin from one of them in a Claude Code session, you type the marketplace's name after `@`, as in `/plugin install commit-commands@claude-plugins-official`.
+Anthropic publishes two general-purpose plugin marketplaces for Claude Code: [official](https://github.com/anthropics/claude-plugins-official) and [community](https://github.com/anthropics/claude-plugins-community). Each is a catalog of plugins in its own GitHub repository. When you install a plugin from one of them in a Claude Code session, you type the marketplace's name after `@`, as in `/plugin install commit-commands@claude-plugins-official`.
 
-Use this page to distinguish the three marketplaces and to find where to check whether the official one holds a given plugin.
+Use this page to distinguish the two marketplaces and to find where to check whether the official one holds a given plugin.
 
 > [!NOTE]
 >
@@ -19,29 +19,36 @@ Use this page to distinguish the three marketplaces and to find where to check w
 
 Go to the part of the page you need:
 
-* To distinguish the three marketplaces by repository, marketplace name, and how you get each one, see [Anthropic's marketplaces](#anthropic’s-marketplaces).
+* To distinguish the two marketplaces by repository, marketplace name, and how you get each one, see [Anthropic's marketplaces](#anthropic’s-marketplaces).
 * To find a plugin in the official marketplace, see [Find plugins in the official marketplace](#find-plugins-in-the-official-marketplace).
 
 ## Anthropic's marketplaces
 
-A marketplace is a catalog of plugins that a repository defines in its `.claude-plugin/marketplace.json` file. The official, community, and demo marketplaces each come from their own GitHub repository. Anthropic also publishes topic-specific marketplaces, such as `anthropics/skills` and `anthropics/knowledge-work-plugins`, which you add in a Claude Code session with `/plugin marketplace add <owner>/<repo>`.
+A marketplace is a catalog of plugins that a repository defines in its `.claude-plugin/marketplace.json` file. The official and community marketplaces each come from their own GitHub repository. Anthropic also publishes topic-specific marketplaces, such as `anthropics/skills` and `anthropics/knowledge-work-plugins`, which you add in a Claude Code session with `/plugin marketplace add <owner>/<repo>`.
 
 This table gives each marketplace's repository and marketplace name, which is what you type after `@` when you install a plugin from that marketplace. The community marketplace's name is `claude-community`, not its repository name.
 
-| | Official | Community | Demo |
-| :- | :- | :- | :- |
-| Repository | [`anthropics/claude-plugins-official`](https://github.com/anthropics/claude-plugins-official) | [`anthropics/claude-plugins-community`](https://github.com/anthropics/claude-plugins-community) | [`anthropics/claude-code`](https://github.com/anthropics/claude-code/tree/main/plugins) |
-| Marketplace name | `claude-plugins-official` | `claude-community` | `claude-code-plugins` |
-| What's in it | Plugins Anthropic maintains, plus plugins from partners and other authors | Third-party plugins that their authors submitted to Anthropic | A small set of example plugins that show what a plugin can contain |
-| How you get it | Claude Code adds it the first time you start an interactive terminal session, unless a [managed policy](https://code.claude.com/docs/en/plugins/org.md#allow-the-official-marketplace-and-your-own) or `CLAUDE_CODE_DISABLE_OFFICIAL_MARKETPLACE_AUTOINSTALL` blocks it. See [Marketplace `claude-plugins-official` not found](https://code.claude.com/docs/en/plugins/troubleshooting#marketplace-claude-plugins-official-not-found) if it's missing | You add it in a Claude Code session with `/plugin marketplace add anthropics/claude-plugins-community` | You add it in a Claude Code session with `/plugin marketplace add anthropics/claude-code` |
+| | Official | Community |
+| :- | :- | :- |
+| Repository | [`anthropics/claude-plugins-official`](https://github.com/anthropics/claude-plugins-official) | [`anthropics/claude-plugins-community`](https://github.com/anthropics/claude-plugins-community) |
+| Marketplace name | `claude-plugins-official` | `claude-community` |
+| What's in it | Plugins Anthropic maintains, plus plugins from partners and other authors | Third-party plugins that their authors submitted to Anthropic |
+| How you get it | Claude Code adds it the first time you start an interactive terminal session, unless a [managed policy](https://code.claude.com/docs/en/plugins/org.md#allow-the-official-marketplace-and-your-own) or `CLAUDE_CODE_DISABLE_OFFICIAL_MARKETPLACE_AUTOINSTALL` blocks it. See [Marketplace `claude-plugins-official` not found](https://code.claude.com/docs/en/plugins/troubleshooting#marketplace-claude-plugins-official-not-found) if it's missing | You add it in a Claude Code session with `/plugin marketplace add anthropics/claude-plugins-community` |
 
 If you wrote a plugin and want other people to install it, see [Publish a plugin](https://code.claude.com/docs/en/plugins/publish.md), which covers your own marketplace and submitting to Anthropic's directory.
 
-### The demo marketplace in `anthropics/claude-code`
+### Deprecated `claude-code-plugins` marketplace
 
-If a tutorial or an older set of instructions tells you to run `/plugin marketplace add anthropics/claude-code`, that adds the demo marketplace, named `claude-code-plugins`. It isn't the official marketplace.
+> [!WARNING]
+>
+> The `claude-code-plugins` marketplace in `anthropics/claude-code` is deprecated. To add a plugin, run `claude plugin install <plugin>@claude-plugins-official` in your shell, and skip any tutorial step that runs `/plugin marketplace add anthropics/claude-code`.
 
-Most of the demo marketplace's plugins are also in the official marketplace under the same names. For example, `code-review`, `feature-dev`, and `commit-commands` are in both. Install those from `claude-plugins-official` so you don't have two copies installed.
+Unless you have one of the two plugins below, you can leave your `claude-code-plugins` plugins and the marketplace as they are. They update from the `claude-plugins-official` repository.
+
+* **`ralph-wiggum`**: this plugin is now `ralph-loop`, and its commands start with `/ralph-loop:`. If those commands aren't available, run `claude plugin install ralph-loop@claude-plugins-official` in your shell.
+* **`claude-opus-4-5-migration`**: this plugin is retired, so remove it by running `claude plugin uninstall claude-opus-4-5-migration@claude-code-plugins` in your shell.
+
+If any other plugin stopped working, see [Plugin installed but not working](https://code.claude.com/docs/en/plugins/troubleshooting.md#plugin-installed-but-not-working).
 
 ## Find plugins in the official marketplace
 
@@ -62,12 +69,9 @@ Anthropic's directory is separate from these marketplaces. The directory is the 
 
 To install from the desktop app or from a script, or to see what a cloud session loads, see [Install plugins](https://code.claude.com/docs/en/plugins/install.md).
 
-### Add the community or demo marketplace
+### Add the community marketplace
 
-The community and demo marketplaces aren't registered until you add them in a Claude Code session:
-
-* **Community**: run `/plugin marketplace add anthropics/claude-plugins-community`, then install with the `@claude-community` suffix.
-* **Demo**: run `/plugin marketplace add anthropics/claude-code`, then install with the `@claude-code-plugins` suffix.
+The community marketplace isn't registered until you add it. In a Claude Code session, run `/plugin marketplace add anthropics/claude-plugins-community`, then install with the `@claude-community` suffix.
 
 If `claude-plugins-official` isn't on the **Marketplaces** tab of `/plugin`, add it the same way with `/plugin marketplace add anthropics/claude-plugins-official`.
 

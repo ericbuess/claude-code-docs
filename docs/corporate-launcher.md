@@ -36,7 +36,7 @@ On Windows, the variable is ignored: the launcher contract depends on `exec`, wh
 The following processes don't start through the launcher:
 
 * A session you start yourself in a terminal, which runs however you invoked it. To cover these sessions, put a script named `claude` in a directory earlier on `PATH` that runs your launcher with the real binary; don't replace the managed symlink. The background service and its sessions start without a `PATH` lookup, so the two launchers don't stack there.
-* The first process of a `claude-cli://` deep link, which the operating system's protocol handler starts directly. Everything that session starts in the background afterward runs through the launcher. To close this path entirely, [prevent handler registration](https://code.claude.com/docs/en/deep-links.md#registration-and-supported-platforms) with the `disableDeepLinkRegistration` setting.
+* A session opened from a `claude-cli://` deep link, which starts in a new terminal without your launcher. To prevent deep links from opening sessions for a new user, set [`disableDeepLinkRegistration`](https://code.claude.com/docs/en/settings-reference#disabledeeplinkregistration) to `"disable"` before that user first runs Claude Code. For a user who already has a [registered handler](https://code.claude.com/docs/en/deep-links.md#registration-and-supported-platforms), deep links keep opening sessions, because the setting doesn't remove the handler.
 * The relaunch that `--worktree` combined with `--tmux` performs: the terminal multiplexer starts that pane, not Claude Code's binary.
 * The native-messaging host that [Claude in Chrome](https://code.claude.com/docs/en/chrome.md) registers: the browser starts it, not Claude Code's binary.
 
