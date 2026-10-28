@@ -127,7 +127,8 @@ In practice, the profile stores an OAuth login while an API key is a static cred
 You don't get the choice on every machine. Claude Code creates an API key without asking in these cases:
 
 * You run against a cloud provider, such as [Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry](https://code.claude.com/docs/en/third-party-integrations.md) or [Claude Platform on AWS](https://code.claude.com/docs/en/claude-platform-on-aws.md)
-* Any settings file sets [`forceLoginOrgUUID`](#restrict-login-to-your-organization), or sets `forceLoginMethod` to `"claudeai"` or `"console"`
+* Any settings file sets [`forceLoginOrgUUID`](#restrict-login-to-your-organization), or sets `forceLoginMethod` to `"claudeai"`
+* `forceLoginMethod` is `"console"` and no settings file sets `forceLoginOrgUUID`, until you retry from the error screen after a failed sign-in
 * A managed settings source on your machine, such as the managed settings file, an MDM profile, or the cached server-managed settings, exists but Claude Code [can't read it](https://code.claude.com/docs/en/managed-settings.md#invalid-entries-in-managed-settings) and no other managed source supplies a policy
 
 Unset `ANTHROPIC_API_KEY` before you sign in without a key.
@@ -139,6 +140,16 @@ After you sign in without a key, you have a profile instead of a stored API key:
 * **How to undo it**: run `/logout`, which removes and revokes the credential this sign-in wrote
 
 Everything else about profiles applies to this sign-in, including where it ranks against your other credentials, the `Profile` row you get in `/status`, and the features that need a claude.ai login. See [Anthropic profiles and federation credentials](#anthropic-profiles-and-federation-credentials).
+
+#### Stop offering the keyless sign-in on managed machines
+
+To stop Claude Code offering the [keyless sign-in](#sign-in-without-an-api-key), use your device management tooling to deploy [`forceLoginOrgUUID`](https://code.claude.com/docs/en/settings-reference#forceloginorguuid) in [managed settings](https://code.claude.com/docs/en/managed-settings.md) to each developer's machine. Set it to your [Console organization ID](https://platform.claude.com/settings/organization). Before you deploy it, make sure each developer has a [role that can create API keys](#claude-console-authentication). Once you deploy it, a developer without that role can't sign in to Console at `/login`.
+
+With only `forceLoginMethod` set to `"console"`, developers can retry a failed sign-in and choose the keyless option. Once `forceLoginOrgUUID` is deployed, the login screen drops that option, but developers can still use an [Anthropic profile](#anthropic-profiles-and-federation-credentials) they have or create with [`ant auth login`](https://platform.claude.com/docs/en/cli-sdks-libraries/cli/authentication). After you deploy it, handle these credentials and logins on each machine:
+
+* **Keyless sign-ins**: to move a developer to an API key, have them log out and then log in to Console again, which creates the key. For a keyless sign-in, they run `claude auth logout` in their shell. For an `ant auth login` profile, they run `ant auth logout`. Claude Code refuses the session if a profile and an API key are both on the machine, so they log out first.
+* **Environment and helper credentials**: Claude Code refuses sessions that authenticate with `ANTHROPIC_API_KEY`, `ANTHROPIC_AUTH_TOKEN`, or `apiKeyHelper`, even when managed settings supply them. Remove those credentials, then have developers run `/login` to create a saved API key.
+* **claude.ai logins**: Claude Code [refuses a login](#restrict-login-to-your-organization) to an organization you haven't listed, including one already in use on the machine. To keep one, add it to a `forceLoginOrgUUID` array.
 
 ### Cloud provider authentication
 

@@ -421,7 +421,7 @@ This example gives one model a custom id that only the isolated upstream serves:
 
 ```yaml theme={null}
 models:
-  - id: claude-opus-restricted          # a custom id, not a built-in model name
+  - id: restricted-claude-opus-4-8      # a custom id, not a built-in model name
     upstream_model:
       bedrock-isolated: us.anthropic.claude-opus-4-8   # the only upstream that serves it
 ```
@@ -875,9 +875,11 @@ managed:
   policies:
     - match: { groups: [restricted-projects] }
       cli:
-        availableModels: [claude-opus-restricted]
+        availableModels: [restricted-claude-opus-4-8]
         enforceAvailableModels: true
-        model: claude-opus-restricted
+        model: restricted-claude-opus-4-8
+        env:
+          ANTHROPIC_DEFAULT_OPUS_MODEL: restricted-claude-opus-4-8   # opus and Default resolve to the ID too
 ```
 
 #### Matcher values that stop the gateway at boot

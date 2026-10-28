@@ -485,15 +485,15 @@ While retrying, the spinner shows a `Retrying in Ns · attempt x/y` countdown af
 
 As of v2.1.198, the usual spinner tip is suppressed during retries. Once the error reason is revealed, if the failure is a 529 overload the line below the countdown also names where to check service status: `status.claude.com` on the Anthropic API, or the provider or gateway host named in the message on other configurations.
 
-If no data arrives on the response stream for 20 seconds while a request is still pending, the spinner shows `Waiting for API response · will retry in … · check your network` before any retry has started. The request hasn't failed yet: the countdown runs to the point where Claude Code aborts the stalled connection. After the abort, what you see depends on how far the response had got:
+#### Waiting for API response
+
+The `Waiting for API response · will retry in … · check your network` banner means that Claude Code has waited at least 20 seconds without receiving any data for a request. The request hasn't failed yet: the countdown runs to the point where Claude Code aborts the stalled connection. If the abort happens:
 
 * Before Claude has completed a block of text or a tool call, or started one after finishing its thinking, Claude Code retries the request or ends the turn with an error. [Automatic retries](#automatic-retries) says which stalls it retries and how many times.
 * After Claude has completed a block of text or a tool call, or started one after finishing its thinking, but before Claude has finished the response, Claude Code keeps what Claude completed, continues the turn from any tool calls Claude finished, and shows [The response above may be incomplete](#the-response-above-may-be-incomplete). In a non-interactive session, and for a subagent's response in any session, Claude Code may first prompt Claude to continue the response; that entry says when it does and when you still see the notice there.
 * After Claude finished the response, Claude Code ends the turn normally.
 
-The banner clears on its own once data resumes or a retry succeeds. If it reappears on every attempt, treat it as a [network issue](#unable-to-connect-to-api). Before v2.1.185, the banner appeared after 10 seconds with different wording.
-
-While Claude is consulting the [advisor](https://code.claude.com/docs/en/advisor.md), the banner appears after 90 seconds without data instead of 20, because a long advisor review can send nothing for well over 20 seconds. Before v2.1.214, the 20-second threshold applied during advisor calls too, so the banner appeared during advisor reviews even when nothing was wrong.
+The banner clears on its own once data resumes or a retry succeeds. If it reappears on every attempt, treat it as a [network issue](#unable-to-connect-to-api). If you connect through a gateway, see [The waiting banner comes and goes behind a gateway](#waiting-banner-behind-a-gateway). Before v2.1.185, the banner appeared after 10 seconds with different wording.
 
 #### The waiting banner comes and goes behind a gateway
 
