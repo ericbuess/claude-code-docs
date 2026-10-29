@@ -352,8 +352,8 @@
     "claude-directory.md": {
       "original_url": "https://code.claude.com/docs/en/claude-directory",
       "original_md_url": "https://code.claude.com/docs/en/claude-directory.md",
-      "hash": "cff57d17260dfa4d534f10a957de9917a89404c24c9e8a7db8d2bc88707a75cf",
-      "last_updated": "2026-10-26T22:01:01.169190"
+      "hash": "a63249a82acb6bf9400441b34b12cc2f4b690fa633c6c34655902fb6884bae01",
+      "last_updated": "2026-10-29T03:15:39.385299"
     },
     "claude-platform-on-aws.md": {
       "original_url": "https://code.claude.com/docs/en/claude-platform-on-aws",
@@ -1365,8 +1365,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-10-28T22:01:46.362232",
-    "fetch_duration_seconds": 235.669426,
+    "last_fetch_completed": "2026-10-29T03:17:12.568215",
+    "fetch_duration_seconds": 126.032842,
     "total_pages_discovered": 227,
     "pages_fetched_successfully": 228,
     "pages_failed": 0,
@@ -1376,7 +1376,7 @@
     "total_files": 227,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-10-28T22:01:46.362261",
+  "last_updated": "2026-10-29T03:17:12.568253",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",
