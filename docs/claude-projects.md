@@ -411,7 +411,7 @@ Work goes past your plan's limits only if you have turned on [usage credits](htt
 
 A project uses your limits faster than a single session does, and on a Pro plan in particular you should expect to reach your limit sooner on days you run one. These are the parts of a project that use your plan:
 
-* **Running threads**: each is a full session, and several can run at once. There's no fixed number; Claude starts as many as the work calls for, and a limit you [ask for](#tune-how-claude-runs-a-project) is a preference rather than a cap. The enforced limit is 200 new threads per day across your projects.
+* **Running threads**: each is a full session, and several can run at once. There's no fixed number; Claude starts as many as the work calls for, and a limit you [ask for](#tune-how-claude-runs-a-project) is a preference rather than a cap. The enforced limit is 500 new threads per day across your projects.
 * **The conversation**: Claude uses tokens of its own reading what threads report and deciding what to do next.
 * **Threads watching a pull request**: an idle thread wakes up and uses your plan again when CI fails or a review comment arrives on its pull request. To stop that, ask in the thread for it to stop watching the pull request.
 

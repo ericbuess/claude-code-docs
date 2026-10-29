@@ -92,7 +92,7 @@ On the Anthropic API, a Fable model appears in the `/model` picker unless [`avai
 
 Depending on your plan and seat tier, Fable usage can bill to [usage credits](https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans) instead of drawing on your plan's included limits. When it does, the `/model` picker shows "Requires usage credits" on the Fable row. To manage usage credits, see [Add usage credits to your subscription](https://code.claude.com/docs/en/costs.md#add-usage-credits-to-your-subscription).
 
-In interactive sessions, Claude Code shows a consent prompt before a Fable request bills usage credits. Members of Enterprise plans with organization billing don't see the prompt. You can continue on Fable using usage credits or switch to your default model. You can also dismiss the prompt:
+In interactive sessions, Claude Code can show a Fable usage-credits consent prompt. Members of Enterprise plans with organization billing don't see the prompt. You can continue on Fable using usage credits or switch to your default model. You can also dismiss the prompt:
 
 * When you select a Fable model with `/model`, you keep your current model.
 * Mid-session, Claude Code continues the turn on your default model.
@@ -544,7 +544,7 @@ A different level applies in cases such as these:
 * **Your own change**: once you choose an effort level, pick a model in `/model`, or resume the session later, the flagged request's level no longer carries over.
 * **Effort set for one turn**: if you raised the flagged turn with `ultrathink`, or a skill's `effort` frontmatter set its level, that level applies to that turn. Later turns run at the level the [effort resolution order](#adjust-effort-level) gives the fallback model.
 
-In the session, run `/effort status` to see the level in effect, or `/effort` to change it.
+To see the level set for your session after a fallback, run `/effort status`. To change it, run `/effort`.
 
 #### Check what triggered fallback
 
@@ -607,9 +607,11 @@ If you set a level the active model does not support, Claude Code falls back to 
 
 Claude Code resolves the session's effort level in this order, taking the first that applies:
 
-1. An explicit choice: the [`CLAUDE_CODE_EFFORT_LEVEL`](https://code.claude.com/docs/en/env-vars#variables) environment variable, launching with `--effort`, or `/effort` in the session ([a non-interactive `/effort` has narrower effect](#non-interactive-effort))
-2. Your settings: the level you saved for the model or an [`effortLevel`](https://code.claude.com/docs/en/settings-reference#effortlevel) key, with the precedence between them and across settings files stated at [`modelSettings`](https://code.claude.com/docs/en/settings-reference#modelsettings)
-3. The model's default effort: `high` on every model that supports effort, except that Opus 5.5, Sonnet 5.5, and Haiku 5.5 default to `medium`, Opus 4.7 defaults to `xhigh`, and, when your organization sets a default effort level for its [organization default model](#organization-default-model), that level is the default when you run that model
+1. The [`CLAUDE_CODE_EFFORT_LEVEL`](https://code.claude.com/docs/en/env-vars#variables) environment variable
+2. A level you pick in the session, such as with `/effort`, the `/model` picker, or [`applyFlagSettings()`](https://code.claude.com/docs/en/agent-sdk/typescript#applyflagsettings)
+3. Launching with `--effort`
+4. Your settings: the level you saved for the model or an [`effortLevel`](https://code.claude.com/docs/en/settings-reference#effortlevel) key, with the precedence between them and across settings files stated at [`modelSettings`](https://code.claude.com/docs/en/settings-reference#modelsettings)
+5. The model's default effort: `high` on every model that supports effort, except that Opus 5.5, Sonnet 5.5, and Haiku 5.5 default to `medium` and Opus 4.7 defaults to `xhigh`. If your organization sets a default effort level for its [organization default model](#organization-default-model), that level is the default when you run that model.
 
 After an automatic model fallback, see [Effort level after a fallback](#effort-level-after-a-fallback) for the level that applies.
 
@@ -687,20 +689,20 @@ Typed in the terminal prompt, the word can also raise that turn to `xhigh` effor
 You can change effort through any of the following:
 
 * **`/effort`**: run `/effort` with no arguments to open an interactive slider, `/effort` followed by a level name to set it directly, or `/effort auto` to clear your saved level for the active model
-* **In `/model`**: use left/right arrow keys to adjust the effort slider when selecting a model
+* **In `/model`**: use left/right arrow keys to adjust the effort slider when selecting a model. The new level starts with your next message at the latest. Until then, Claude can keep working at the old level, even on a new model. While a [source that outranks your pick](#adjust-effort-level) applies, such as `CLAUDE_CODE_EFFORT_LEVEL`, Claude works at that source's level instead.
 * **`--effort` flag**: pass a level name to set it for a single session when launching Claude Code
 * **Environment variable**: set `CLAUDE_CODE_EFFORT_LEVEL` to a level name. To have Claude Code [send no effort level](#send-no-effort-level), set it to `auto` or `unset` instead
 * **Settings**: set a per-model level in [`modelSettings`](https://code.claude.com/docs/en/settings-reference#modelsettings), or set [`effortLevel`](https://code.claude.com/docs/en/settings-reference#effortlevel) to `low`, `medium`, `high`, or `xhigh` as the default for models without one. `max` isn't accepted as a level in either key, and `ultracode` has its own [`ultracode`](https://code.claude.com/docs/en/settings-reference#ultracode) key
 * **From a connected device**: in a [Remote Control](https://code.claude.com/docs/en/remote-control.md#what-connected-devices-see) session, pick a level from the effort control on your phone or in your browser. The level applies to the current session only. Requires Claude Code v2.1.234 or later
 * **Skill and subagent frontmatter**: set `effort` in a [skill](https://code.claude.com/docs/en/skills.md#frontmatter-reference) or [subagent](https://code.claude.com/docs/en/sub-agents.md#supported-frontmatter-fields) markdown file to override the effort level when that skill or subagent runs
 
-Frontmatter effort applies when that skill or subagent is active, overriding the session level but not the environment variable. A [`maxEffortLevel`](https://code.claude.com/docs/en/settings-reference#maxeffortlevel) or [organization effort cap](#organization-effort-limits) still limits the level the skill or subagent runs at.
+A skill's `effort` applies until the end of the turn it runs in, or for the forked subagent's run with `context: fork`. A subagent's `effort` applies while the subagent runs, unless [its invocation overrides it](https://code.claude.com/docs/en/sub-agents.md#choose-an-effort-level). While either one applies, the skill or subagent runs at its level, whatever level you launch with, save, or pick. If `CLAUDE_CODE_EFFORT_LEVEL` is set, that level applies instead.
 
-If you set `effortLevel` in [managed settings](https://code.claude.com/docs/en/managed-settings.md), Claude Code applies it at the settings step of the [effort resolution order](#adjust-effort-level), and users can still change the level with `/effort` or `--effort`. To keep users at or below a level, set [`maxEffortLevel`](https://code.claude.com/docs/en/settings-reference#maxeffortlevel).
+A [`maxEffortLevel`](https://code.claude.com/docs/en/settings-reference#maxeffortlevel) or [organization effort cap](#organization-effort-limits) still limits the level the skill or subagent runs at. If you set `effortLevel` in [managed settings](https://code.claude.com/docs/en/managed-settings.md), Claude Code applies it at the settings step of the [effort resolution order](#adjust-effort-level), and users can still change the level with `/effort` or `--effort`. To keep users at or below a level, set [`maxEffortLevel`](https://code.claude.com/docs/en/settings-reference#maxeffortlevel).
 
 #### Check the effort level you set
 
-The effort slider appears in `/model` when a supported model is selected. A level in the session header, for example "with low effort", comes from your effort setting, even if Claude is [still working at the old level](#when-a-new-effort-level-starts). The footer also briefly shows the effort level at startup and when it changes.
+The effort slider appears in `/model` when a supported model is selected. A level in the session header, for example "with low effort", comes from your effort setting, even if Claude is [still working at the old level](#when-a-new-effort-level-starts). At startup and when you change it, the footer also briefly shows the level set for your session.
 
 #### When a new effort level starts
 

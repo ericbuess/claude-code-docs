@@ -375,12 +375,7 @@ For longer or more complex work, these habits help avoid wasted tokens from goin
 
 ## Background token usage
 
-Claude Code uses tokens for some background functionality even when idle:
-
-* **Conversation summarization**: Background jobs that summarize previous conversations for the `claude --resume` feature
-* **Command processing**: Some commands like `/usage` may generate requests to check status
-
-These background processes consume a small amount of tokens (typically under \$0.04 per session) even without active interaction.
+Session recap and idle compaction can use tokens while you're idle. See [session recap](https://code.claude.com/docs/en/interactive-mode.md#session-recap) and [idle compaction](https://code.claude.com/docs/en/settings-reference.md#idlecompaction) for when each runs and how to turn it off.
 
 When prompt suggestions are on, Claude Code also sends a short request to the model your session is using after Claude responds, to [suggest your next prompt](https://code.claude.com/docs/en/interactive-mode.md#prompt-suggestions). That request reuses the conversation's prompt cache, so it is mostly cache reads plus a few output tokens. Claude Code [skips it while your account is close to or at its usage limit](https://code.claude.com/docs/en/interactive-mode.md#when-claude-code-skips-suggestions). To stop these requests, [turn prompt suggestions off](https://code.claude.com/docs/en/interactive-mode.md#turn-prompt-suggestions-off).
 

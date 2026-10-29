@@ -995,7 +995,7 @@ Then run `source ~/.bashrc` and retry `claude`.
 
 ### npm install errors in WSL
 
-These issues apply if you installed Claude Code with `npm install -g` inside WSL. If you used the [native installer](https://code.claude.com/docs/en/setup.md), skip this section.
+These issues apply if you installed Claude Code with `npm install -g` inside WSL. If you used the [native installer](https://code.claude.com/docs/en/setup.md), skip this section. On npm 12, install as [Fix an npm 12 install](#fix-an-npm-12-install) describes.
 
 **OS or platform detection issues.** If npm reports a platform mismatch during install, WSL is likely picking up the Windows `npm`. Run `npm config set os linux` first, then install with `npm install -g @anthropic-ai/claude-code --force`. Do not use `sudo`.
 
@@ -1037,7 +1037,7 @@ curl -fsSL https://claude.ai/install.sh | bash
 
 ### Native binary not found after npm install
 
-The `@anthropic-ai/claude-code` npm package downloads the native binary as a per-platform optional dependency, such as `@anthropic-ai/claude-code-darwin-arm64`. npm then runs the package's postinstall script, which copies that binary into place as the `claude` command; until it runs, `claude` is a placeholder script. If either the download or the postinstall step is skipped, the placeholder stays in place, and running `claude` on macOS and Linux prints:
+The `@anthropic-ai/claude-code` npm package downloads the native binary as a per-platform optional dependency, such as `@anthropic-ai/claude-code-darwin-arm64`. `claude` is a placeholder script until the `@anthropic-ai/claude-code` package's postinstall step runs and replaces the placeholder with that binary. If either the download or the postinstall step is skipped, the placeholder stays in place, and running `claude` on macOS and Linux prints:
 
 ```text theme={null}
 Error: claude native binary not installed.
@@ -1056,10 +1056,42 @@ On Windows, `bin/claude.exe` is that same shell-script placeholder rather than a
 
 Check the following causes:
 
+* **npm 12 skips the postinstall step by default.** When you install or update Claude Code with npm 12, npm still finishes the install without running the step. See [Fix an npm 12 install](#fix-an-npm-12-install).
 * **Optional dependencies are disabled.** Remove `--omit=optional` from your npm install command, `--no-optional` from pnpm, or `--ignore-optional` from yarn, and check that `.npmrc` does not set `optional=false`. Then reinstall. The native binary is delivered only as an optional dependency, so there is no JavaScript fallback if it is skipped, and running `install.cjs` again can't place a binary that was never downloaded.
 * **Install scripts are disabled.** `--ignore-scripts` and some pnpm configurations skip the postinstall step but still download the platform package. Run `node node_modules/@anthropic-ai/claude-code/install.cjs` as the message suggests, or reinstall without the flag. If postinstall can't run in your environment at all, `node node_modules/@anthropic-ai/claude-code/cli-wrapper.cjs` finds the downloaded package and launches it, at the cost of an extra Node process on each start. If the wrapper prints `Could not find native binary package` instead, the platform package was never downloaded, so fix the optional-dependencies cause above first.
 * **Unsupported platform.** Prebuilt binaries are published for `darwin-arm64`, `darwin-x64`, `linux-x64`, `linux-arm64`, `linux-x64-musl`, `linux-arm64-musl`, `win32-x64`, and `win32-arm64`. Claude Code does not ship a binary for other platforms; see the [system requirements](https://code.claude.com/docs/en/setup.md#system-requirements). On FreeBSD, the installer reports the platform as unsupported. Before v2.1.205, it treated FreeBSD as Linux and downloaded a binary that couldn't run.
 * **Corporate npm mirror is missing the platform packages.** Ensure your registry mirrors all eight `@anthropic-ai/claude-code-*` platform packages in addition to the meta package.
+
+#### Fix an npm 12 install
+
+If `claude` prints `Error: claude native binary not installed.` after an npm install or update, or on Windows the shell can't run it, run `npm --version`. A version starting with `12` means that, unless your npm config allows it, npm skipped Claude Code's postinstall step, which puts the binary in place. For any other version, check the [other causes](#native-binary-not-found-after-npm-install).
+
+To fix an npm 12 install, switch to the native installer or allow the step:
+
+* **Switch to the native installer**: [install with the native installer](https://code.claude.com/docs/en/setup.md#install-claude-code), then [uninstall the npm package](https://code.claude.com/docs/en/setup.md#uninstall-with-npm). Updates then don't use npm, so the error doesn't come back.
+* **Stay on npm**: for a global npm install, add Claude Code to `allow-scripts` in your user npm config. npm then runs Claude Code's install scripts on every later install and update, and in project installs whose `package.json` sets no `allowScripts`.
+
+  Use the native installer for a local install in `~/.claude/local`. Also use it if your `package.json` scripts call `npm install` and you run them with pnpm 9, pnpm 10, Yarn 1 or another tool that passes them this setting. On npm 12.1 and later, those installs can fail with `EALLOWSCRIPTS` once the setting is saved.
+
+  1. If `npm --version` printed 12.0.x, update npm to 12.1 or later, for example with `npm install -g npm@latest`. On 12.0.x, project installs that an `npx` tool or an `npm run` script starts can fail with `EALLOWSCRIPTS` once the setting is saved.
+
+  2. Run `npm config get allow-scripts` and note any packages it lists, because the next command replaces the whole value. Save the setting with those packages inside the quotes, as in `"allow-scripts=@anthropic-ai/claude-code,<package>"`:
+
+     ```bash theme={null}
+     npm config set "allow-scripts=@anthropic-ai/claude-code" --location=user
+     ```
+
+  3. Reinstall:
+
+     ```bash theme={null}
+     npm install -g @anthropic-ai/claude-code
+     ```
+
+     If this or step 1 fails with `EACCES`, switch to the native installer instead of rerunning it with `sudo`. Claude Code runs npm without `sudo` when it updates itself, so automatic updates would fail the same way.
+
+  4. If `claude --version` doesn't print a version number, check the [other causes](#native-binary-not-found-after-npm-install).
+
+  To undo, set the list again without `@anthropic-ai/claude-code`, or remove the whole list with `npm config delete allow-scripts --location=user`. On npm 12, the error then returns after your next update.
 
 ### npm `ENOTEMPTY` error during update or reinstall
 
@@ -1094,7 +1126,7 @@ rm -rf "$(npm root -g)/@anthropic-ai/.claude-code-"*
 Remove-Item -Recurse -Force "$(npm root -g)/@anthropic-ai/claude-code", "$(npm root -g)/@anthropic-ai/.claude-code-*"
 ```
 
-Then reinstall:
+Then reinstall. On npm 12, follow [Fix an npm 12 install](#fix-an-npm-12-install). Otherwise, run:
 
 ```bash theme={null}
 npm install -g @anthropic-ai/claude-code

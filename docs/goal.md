@@ -168,7 +168,7 @@ To evaluate on a different model, set [`ANTHROPIC_DEFAULT_HAIKU_MODEL`](https://
 
 > [!WARNING]
 >
-> Claude Code reads `ANTHROPIC_DEFAULT_HAIKU_MODEL` everywhere it uses the small fast model, not only for `/goal` evaluation. When you set it, Claude Code also resolves the [`haiku` alias](https://code.claude.com/docs/en/model-config#model-aliases) to that model and runs [background functionality](https://code.claude.com/docs/en/costs.md#background-token-usage), such as conversation summarization, on it.
+> Claude Code reads `ANTHROPIC_DEFAULT_HAIKU_MODEL` everywhere it uses the small fast model, not only for `/goal` evaluation. When you set it, Claude Code also resolves the [`haiku` alias](https://code.claude.com/docs/en/model-config#model-aliases) to that model and runs session title generation and some other background tasks on it.
 
 The evaluator runs on whichever provider your session is configured for. It does not call tools, so it can only judge what Claude has already surfaced in the conversation.
 

@@ -64,6 +64,7 @@ Go to [claude.ai/analytics/code-review](https://claude.ai/analytics/code-review)
 | PRs reviewed | Daily count of pull requests reviewed over the selected time range |
 | Code Review cost | Code Review spend so far this month |
 | Feedback | Count of review comments that were auto-resolved because a developer addressed the issue |
+| Code Review findings | Daily count of [findings by severity level](https://code.claude.com/docs/en/code-review-pull-requests.md#severity-levels), from reviews Claude posted over the selected time range |
 | Repository breakdown | Per-repo counts of PRs reviewed, comments resolved, and review runs, with estimated cost and a per-PR view |
 
 The Code Review cost card shows an amount only when the current month is selected. Cost figures in analytics can differ from your invoice. Repository breakdown costs are estimated at list price, before any discounts or credits, and cover only reviews that Claude posted on a pull request. For invoice-accurate spend, refer to your Anthropic bill.

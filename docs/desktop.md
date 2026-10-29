@@ -1930,6 +1930,24 @@ IT teams can manage the desktop app through MDM on macOS, group policy on Window
 * **Windows**: configure via registry at `SOFTWARE\Policies\Claude`
 * **Linux**: configure via a root-owned file at `/etc/claude-desktop/managed-settings.json`, which holds the policy keys as a JSON object. Desktop refuses the file if anyone but root can write to it or to its folder. It's a different file from Claude Code's [managed settings file](https://code.claude.com/docs/en/managed-settings.md).
 
+#### Restrict sign-in to your organization
+
+To restrict which claude.ai organizations can sign in to Claude Desktop, set `forceLoginOrgUUID` in the Claude Desktop policy.
+
+The key requires Claude Desktop v1.2581.0 or later.
+
+On Linux, a policy file that sets only this key reads:
+
+```json /etc/claude-desktop/managed-settings.json theme={null}
+{
+  "forceLoginOrgUUID": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+}
+```
+
+Replace the placeholder with your claude.ai organization ID, shown in [claude.ai admin settings](https://claude.ai/admin-settings/organization). It's the same ID that Claude Code's [`forceLoginOrgUUID`](https://code.claude.com/docs/en/settings-reference#forceloginorguuid) setting takes. For macOS and Windows samples that set this key, see [Deploy the Claude Desktop policy](https://claude.com/docs/cowork/hipaa-setup#deploy-the-claude-desktop-policy) in the Cowork guide for HIPAA-ready organizations.
+
+If you set `forceLoginMethod` and `forceLoginOrgUUID` in Claude Code's [managed settings](https://code.claude.com/docs/en/managed-settings.md), you don't change the Claude Desktop sign-in screen.
+
 ### Network access requirements
 
 Desktop loads its application code and user content from Anthropic CDN hosts.

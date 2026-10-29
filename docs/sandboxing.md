@@ -565,6 +565,8 @@ A newer `objects` or `refs` folder with contents is deleted too, with its conten
 
 On macOS, when a denied path passes through a symlink, such as a `~/.claude` that is a link into a dotfiles repository, the sandbox also denies the path's real location. This covers the sandbox's own denials and your literal `denyWrite` and `denyRead` entries.
 
+A `denyWrite` entry that contains `*`, `?`, or `[` is also covered when a folder before the first of those characters is a symlink. For example, `~/.claude/*.json` is also denied under the real location of `~/.claude`.
+
 ### Network isolation
 
 A sandboxed command has no direct route to the network:

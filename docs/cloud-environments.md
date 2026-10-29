@@ -25,7 +25,7 @@ Each of these surfaces can also route to a [self-hosted environment](https://cod
 
 > [!NOTE]
 >
-> [Remote Control](https://code.claude.com/docs/en/remote-control.md) sessions connect the web and mobile interfaces to a session on your own machine, which uses your machine's network and files, not a cloud environment. Claude Tag channel sessions use organization-level environments only, either [shared environments](#organization-shared-environments) or [self-hosted environments](https://code.claude.com/docs/en/self-hosted-environments).
+> [Remote Control](https://code.claude.com/docs/en/remote-control.md) sessions connect the web and mobile interfaces to a session on your own machine, which uses your machine's network and files, not a cloud environment. To choose the environment a Claude Tag channel uses, see [Set the environment a Claude Tag channel uses](#set-the-environment-a-claude-tag-channel-uses).
 
 ## The Default environment
 

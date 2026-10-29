@@ -108,7 +108,7 @@ To use this in your own runbook, replace `acme/web-gateway` with your service's 
 
 ### Open a link from the shell
 
-You can also open a deep link from a shell script, alias, or automation rather than by clicking it. Call your operating system's URL-opening command with the link as the argument. These commands rely on the handler that Claude Code [registers when you send your first prompt of an interactive session](#registration-and-supported-platforms) on the machine.
+You can also open a deep link from a shell script, alias, or automation rather than by clicking it. Call your operating system's URL-opening command with the link as the argument. These commands rely on the handler that Claude Code [registers](#registration-and-supported-platforms) on the machine.
 
 **macOS**
 
@@ -148,7 +148,12 @@ On success, a new terminal window opens with Claude Code running and the prompt 
 
 ## Registration and supported platforms
 
-Claude Code registers the `claude-cli://` handler with your operating system on macOS, Linux, and Windows when you send your first prompt of an interactive session. Starting `claude` and exiting without sending a prompt doesn't register the handler. You don't run a separate install command. Registration writes to user-level locations only:
+Claude Code registers the `claude-cli://` handler with your operating system on macOS, Linux, and Windows when you do either of these:
+
+* Send anything to an interactive `claude` session, such as a message or `/help`. Starting one and sending nothing doesn't register the handler.
+* Start Claude Code in [agent view](https://code.claude.com/docs/en/agent-view.md), such as with `claude agents`, in a folder you've [trusted](https://code.claude.com/docs/en/permissions.md#project-allow-rules-and-workspace-trust)
+
+You don't run a separate install command. Registration writes to user-level locations only:
 
 | Platform | Handler location |
 | - | - |
@@ -172,7 +177,7 @@ Claude Desktop handles its own `claude://` links. To open a Desktop session on a
 
 ### Clicking the link does nothing
 
-The handler likely isn't registered yet. Registration happens when you send your first prompt of an interactive session, not when the session starts. Start an interactive `claude` session on that machine, send any prompt, exit, and try the link again. If you are on Linux without a desktop environment, `xdg-open` may have nothing to dispatch to.
+The handler likely isn't registered yet. In an interactive session, registration happens when you send something, not when the session starts. Start an interactive `claude` session on that machine, send any prompt, exit, and try the link again. If you are on Linux without a desktop environment, `xdg-open` may have nothing to dispatch to.
 
 ### xdg-open is not found on Linux
 

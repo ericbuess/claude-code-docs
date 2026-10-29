@@ -39,7 +39,7 @@ To install Claude Code, open a terminal and run the command for your system. If 
 
 **macOS, Linux, WSL:**
 
-```bash theme={null}
+```bash theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null}
 curl -fsSL https://claude.ai/install.sh | bash
 ```
 
@@ -47,13 +47,13 @@ On Windows, your prompt shows `PS C:\` when you're in PowerShell and `C:\` witho
 
 **Windows PowerShell:**
 
-```powershell theme={null}
+```powershell theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null}
 irm https://claude.ai/install.ps1 | iex
 ```
 
 **Windows CMD:**
 
-```batch theme={null}
+```batch theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null}
 curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd && del install.cmd
 ```
 
@@ -71,7 +71,7 @@ If the install command fails with `syntax error near unexpected token '<'`, a `4
 
 **Homebrew**
 
-```bash theme={null}
+```bash theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null}
 brew install --cask claude-code
 ```
 
@@ -83,7 +83,7 @@ Homebrew offers two casks. `claude-code` tracks the stable release channel, whic
 
 **WinGet**
 
-```powershell theme={null}
+```powershell theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null}
 winget install Anthropic.ClaudeCode
 ```
 
@@ -457,6 +457,10 @@ Verify the downloaded key with `sha256sum /etc/apk/keys/claude-code.rsa.pub`, wh
 To upgrade later, run `apk update && apk upgrade claude-code`.
 
 ### Install with npm
+
+> [!NOTE]
+>
+> If `npm --version` prints a version starting with `12` in your shell, follow [Fix an npm 12 install](https://code.claude.com/docs/en/troubleshoot-install.md#fix-an-npm-12-install) instead. Don't install with `sudo`. Claude Code runs npm without `sudo` when it updates itself, so an install that needs `sudo` can't update automatically.
 
 You can also install Claude Code as a global npm package. The npm package requires [Node.js 22 or later](https://nodejs.org/en/download). On an older Node.js version, npm prints an `EBADENGINE` warning during install rather than failing; the install completes and `claude` still runs, since the package downloads a native binary that doesn't use your Node.js at runtime.
 

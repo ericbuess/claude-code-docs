@@ -201,15 +201,19 @@ If the send fails, see [Errors when sending to a cloud session](#errors-when-sen
 
 Pull a cloud session into your terminal using any of these:
 
-* **Using `--teleport`**: from the command line, run `claude --teleport` for an interactive session picker, or `claude --teleport <session-id>` to resume a specific session directly. If you have uncommitted changes, you'll be prompted to stash them first.
+* **Using `--teleport`**: from the command line, run `claude --teleport` for an interactive session picker, or `claude --teleport <session-id>` to resume a specific session directly. If you have uncommitted changes, you'll be prompted to stash them first. [`--resume`](https://code.claude.com/docs/en/sessions#resume-a-session) reopens a conversation from this machine's local history and doesn't list cloud sessions.
 * **Using `/teleport`**: inside an existing CLI session, run `/teleport` or `/tp` to open the same session picker without restarting Claude Code.
 * **From `/tasks`**: run `/tasks` to see your background sessions, then press `t` to teleport into one.
 * **From claude.ai/code**: select **Open in > Terminal** from the session menu to copy a command you can paste into your terminal.
 * **From inside the cloud session**: type `/teleport` and Claude Code replies with the exact `claude --teleport <session-id>` command for that session, ready to run from a checkout of the repository. Requires Claude Code v2.1.223 or later in the session's environment.
 
-When you teleport a session, Claude verifies you're in the correct repository, fetches and checks out the branch from the cloud session, and loads the full conversation history into your terminal. The terminal gets its own copy of the session: new work there stays local and doesn't appear in the cloud session on claude.ai or the Claude mobile app. To keep steering from your phone after teleporting, start [`/remote-control`](https://code.claude.com/docs/en/remote-control) in the local session.
+When you teleport a session, Claude verifies you're in the correct repository, fetches and checks out the branch from the cloud session, and loads the conversation into your terminal.
 
-`--teleport` is distinct from `--resume`. `--resume` reopens a conversation from this machine's local history and doesn't list cloud sessions; `--teleport` pulls a cloud session and its branch.
+> [!NOTE]
+>
+> If Claude Code has [compacted](https://code.claude.com/docs/en/context-window.md#what-survives-compaction) the cloud session, which it does automatically in a long session, the earlier messages it summarized aren't copied to your terminal. Claude continues from the summary. To read the original messages, scroll up in the cloud session on claude.ai or in the Claude mobile app.
+
+The terminal gets its own copy of the session: new work there stays local and doesn't appear in the cloud session on claude.ai or the Claude mobile app. To keep steering from your phone after teleporting, start [`/remote-control`](https://code.claude.com/docs/en/remote-control) in the local session.
 
 #### Teleport requirements
 
@@ -495,7 +499,8 @@ Before relying on cloud sessions for a workflow, account for these constraints:
 * **Rate limits**: cloud sessions share rate limits with all other Claude and Claude Code usage within your account. Running multiple tasks in parallel consumes more rate limits proportionately.
 * **Time limits**: commands Claude runs and SessionStart hooks have default timeouts you can change, and a setup script is cached only when it finishes in roughly five minutes. See [Time limits](https://code.claude.com/docs/en/cloud-environments.md#time-limits)
 * **Repository authentication**: you can only pull a cloud session into your terminal when you are authenticated to the same account
-* **Platform restrictions**: repository cloning and pull request creation require GitHub. Self-hosted [GitHub Enterprise Server](https://code.claude.com/docs/en/github-enterprise-server.md) instances are supported for Team and Enterprise plans. You can send a GitLab, Bitbucket, or other non-GitHub repository to a cloud session as a [local bundle](#send-local-repositories-without-github) by setting `CCR_FORCE_BUNDLE=1`, but the session can't push results back to that remote
+* **Platform restrictions**: repository cloning in Anthropic-hosted environments and pull request creation require GitHub. Self-hosted [GitHub Enterprise Server](https://code.claude.com/docs/en/github-enterprise-server.md) instances are supported for Team and Enterprise plans. You can send a GitLab, Bitbucket, or other non-GitHub repository to a cloud session as a [local bundle](#send-local-repositories-without-github) by setting `CCR_FORCE_BUNDLE=1`, but the session can't push results back to that remote
+  * **Self-hosted environments**: for a repository on another git host, see the [requirements for starting a session with `--environment`](https://code.claude.com/docs/en/self-hosted-environments-deploy#start-a-session-on-a-repository-outside-github).
 * **Organization IP allowlist**: cloud sessions call the Anthropic API from Anthropic-managed infrastructure, not your network, while sessions in a [self-hosted environment](https://code.claude.com/docs/en/self-hosted-environments) call it from your own network. If your organization has [IP allowlisting](https://support.claude.com/en/articles/13200993-restrict-access-to-claude-with-ip-allowlisting) enabled, every Anthropic-hosted cloud session fails with an authentication error.
   * **Code Review and scheduled tasks**: the same applies to [Code Review](https://code.claude.com/docs/en/code-review.md) and to [cloud scheduled tasks](https://code.claude.com/docs/en/routines.md) that run on Anthropic-hosted environments. A scheduled task routed to a self-hosted environment calls the API from your own network.
   * **Getting an exemption**: contact [Anthropic support](https://support.claude.com/) to exempt Anthropic-hosted services from your organization's IP allowlist.
