@@ -338,6 +338,7 @@ After the user stops a running turn, for example with Esc, some work your mod ha
 | A recurring job scheduled with a tool such as CronCreate that comes due before the user's next input | Starts no turn then. The job loses that run and keeps its schedule. | Nothing needed |
 | An event from a monitor your mod started | The monitor keeps running. An event the monitor raises before the user's next input is dropped, except the notice that the monitor ended, which arrives after that input. | Nothing can be done |
 | A subagent your mod spawned and later resumed with `$.session.send` that finishes before the user's next input | Its finish notice waits, and reaches the conversation after that input | Nothing needed |
+| A foreground Bash or PowerShell command from `$.tool.call` that was already running when the user stopped the turn and reaches its timeout before their next input | Stopped at its timeout instead of [moving to the background](https://code.claude.com/docs/en/tools-reference.md#foreground-commands-that-move-to-the-background). The call resolves with `isError` set, and the output includes the line `Ended instead of moving to the background: plugins' input is held, by a Stop or by the host's limits.` | Run it again after the user's next input, as [Retry a refused or dropped call](#retry-a-refused-or-dropped-call) shows |
 
 When a scheduled job comes due or a monitor raises an event before the user's next input, the user can see the [`Stopped:` toast](https://code.claude.com/docs/en/plugins/mods/troubleshoot#stopped-type-a-message-to-continue).
 
