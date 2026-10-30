@@ -39,7 +39,7 @@ Before using Claude Code with Chrome, you need:
 * [Google Chrome](https://www.google.com/chrome/), [Microsoft Edge](https://www.microsoft.com/edge), or another Chromium-based browser such as Brave, Arc, Vivaldi, or Opera
 * [Claude in Chrome extension](https://chromewebstore.google.com/detail/claude/fcoeoabgfenejglbffodgkkbkcdhcgfn) version 1.0.36 or later, available in the Chrome Web Store
 * [Claude Code](https://code.claude.com/docs/en/quickstart.md#step-1-install-claude-code)
-* A direct Anthropic plan (Pro, Max, Team, or Enterprise)
+* A direct Anthropic plan (Pro, Max, Ultra, Team, or Enterprise)
 
 In Enterprise organizations that have HIPAA enabled, Claude in Chrome is off by default, and an [Owner](https://code.claude.com/docs/en/server-managed-settings.md#access-control) can turn it on in [**Organization settings > Claude in Chrome**](https://claude.ai/admin-settings/browser-extension). Your Business Associate Agreement (BAA) with Anthropic doesn't cover data sent to third-party sites through Claude in Chrome. See the [Implementation Guide](https://trust.anthropic.com/resources?s=l1wrssd9hsbi4gak0tp5a6\&name=%5Banthropic%5D-hipaa-ready-offering-implementation-guide) for a list of Eligible Services.
 

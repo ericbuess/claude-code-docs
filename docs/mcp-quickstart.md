@@ -286,7 +286,7 @@ This guide uses the `claude mcp` CLI commands, but every Claude Code surface can
 
 If a server doesn't connect, check its status with `/mcp` inside a session or `claude mcp list` from your shell, then match the symptom below. The `/mcp` panel also lets you reconnect or authenticate without leaving the session.
 
-> **/mcp shows No MCP servers configured**
+> [accordion] /mcp shows No MCP servers configured
 >
 > Claude Code didn't find any servers for the current directory. The most common causes:
 >
@@ -294,7 +294,7 @@ If a server doesn't connect, check its status with `/mcp` inside a session or `c
 > * You edited a configuration file at the wrong path. The correct files are `~/.claude.json` and `<project>/.mcp.json`. Claude Code doesn't read paths such as `~/.claude/.mcp.json`, `~/.claude/config/mcp.json`, `~/.claude/mcp.json`, or `%APPDATA%\Claude\mcp.json`. For user-scoped servers, run `claude mcp add --scope user`, which writes to the `mcpServers` key in `~/.claude.json`; for project-scoped servers, edit `.mcp.json` at the project root.
 > * You wrote a malformed entry in `.mcp.json`. Claude Code skips that entry and still loads the others. Run `claude mcp list` from your shell and look for the parse warning, which names the offending field.
 
-> **Status shows Failed to connect or Connection error**
+> [accordion] Status shows Failed to connect or Connection error
 >
 > Both statuses mean the server didn't start or the URL didn't respond. They can also appear for HTTP servers that reject the token you configured in `headers.Authorization`; a server that wants a token you haven't configured shows `! Needs authentication` instead, covered in [Connect a server that requires sign-in](#connect-a-server-that-requires-sign-in).
 >
@@ -334,7 +334,7 @@ If a server doesn't connect, check its status with `/mcp` inside a session or `c
 >   Run `claude mcp get <name>` and confirm the command shown there matches what you just ran. If the command shown differs from what you typed, you likely omitted the `--` separator before the server command. Remove the server and re-add it with `--` in place. If you wrote `.mcp.json` by hand, check its syntax and location. Before v2.1.285, `claude mcp get` printed no `Command` line for a stdio entry saved without a `type` field, such as a hand-written `.mcp.json` entry. On those versions, run `claude mcp list` instead, which prints the command line either way.
 > * The command errors: the message names what's missing, such as Node.js or a browser.
 
-> **Connection timed out at startup**
+> [accordion] Connection timed out at startup
 >
 > The server took longer than the default 30-second startup timeout. A stdio server's first run can be slow while `npx` downloads the package. Increase the limit with the [`MCP_TIMEOUT`](https://code.claude.com/docs/en/env-vars) environment variable, in milliseconds:
 >
@@ -350,7 +350,7 @@ If a server doesn't connect, check its status with `/mcp` inside a session or `c
 >
 > Before v2.1.299, some connections to HTTP servers that were up timed out at startup regardless of `MCP_TIMEOUT`. If you use one of those versions and an HTTP server that is up still times out after you raise the limit, [update Claude Code](https://code.claude.com/docs/en/setup.md#update-claude-code).
 
-> **Server already exists**
+> [accordion] Server already exists
 >
 > You've already added a server with that name at the same scope. Either remove the existing entry first or choose a different name:
 >
@@ -360,7 +360,7 @@ If a server doesn't connect, check its status with `/mcp` inside a session or `c
 >
 > If the name exists at more than one scope, `remove` reports `exists in multiple scopes`. Pass `--scope` to choose which copy to delete, for example `claude mcp remove claude-code-docs --scope local`.
 
-> **Server connects but no tools appear**
+> [accordion] Server connects but no tools appear
 >
 > Run `/mcp` inside a session and select the server to see its tool list. If the list is empty, the server started but didn't register any tools, which usually means it's missing a required environment variable such as an API key.
 >
@@ -368,7 +368,7 @@ If a server doesn't connect, check its status with `/mcp` inside a session or `c
 >
 > Before v2.1.302, `/mcp` showed the status `tools fetch failed` for a server using [protocol revision 2026-07-28](https://code.claude.com/docs/en/mcp.md#mcp-client-runtimes) that left `resultType`, `ttlMs`, or `cacheScope` out of its replies. If you use one of those versions and a server shows that status, [update Claude Code](https://code.claude.com/docs/en/setup.md#update-claude-code).
 
-> **Changes to .mcp.json don't take effect**
+> [accordion] Changes to .mcp.json don't take effect
 >
 > Claude Code reads `.mcp.json` at session start. Exit and restart the session after editing the file.
 >
@@ -380,7 +380,7 @@ If a server doesn't connect, check its status with `/mcp` inside a session or `c
 > claude mcp reset-project-choices
 > ```
 
-> **OAuth sign-in fails or browser doesn't open**
+> [accordion] OAuth sign-in fails or browser doesn't open
 >
 > Run `/mcp`, select the server, and choose `Authenticate` again. If the browser doesn't open automatically, copy the URL shown in the terminal and open it manually. See [Authenticate with remote MCP servers](https://code.claude.com/docs/en/mcp.md#authenticate-with-remote-mcp-servers) for fixed callback ports and pre-configured credentials.
 

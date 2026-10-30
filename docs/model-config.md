@@ -455,11 +455,11 @@ Effort limits are delivered together with [organization model restrictions](#org
 
 The behavior of `default` depends on your account type:
 
-* **Pro, Max, Team, Enterprise, and Anthropic API**: defaults to Opus 5.5
+* **Pro, Max, Ultra, Team, Enterprise, and Anthropic API**: defaults to Opus 5.5
 * **Claude Platform on AWS, Amazon Bedrock, and Google Cloud's Agent Platform**: defaults to Opus 5.5
 * **Microsoft Foundry**: defaults to Sonnet 4.5
 
-Before v2.1.280, `default` resolved to Sonnet 5 on Pro and Team Standard, and to Opus 5 on Max, Team Premium, Enterprise, the Anthropic API, Claude Platform on AWS, Amazon Bedrock, and Google Cloud's Agent Platform from v2.1.219. Before v2.1.219, `default` resolved to Opus 4.8 on the Anthropic API, Max, Team Premium, and Enterprise pay-as-you-go from v2.1.154, and on Claude Platform on AWS, Amazon Bedrock, and Google Cloud's Agent Platform from v2.1.207. Before v2.1.207, `default` resolved to Opus 4.7 on Claude Platform on AWS and to Sonnet 4.5 on Amazon Bedrock and Google Cloud's Agent Platform.
+Before v2.1.280, `default` resolved to Sonnet 5 on Pro and Team Standard, and to Opus 5 on Max, Ultra, Team Premium, Enterprise, the Anthropic API, Claude Platform on AWS, Amazon Bedrock, and Google Cloud's Agent Platform from v2.1.219. Before v2.1.219, `default` resolved to Opus 4.8 on the Anthropic API, Max, Ultra, Team Premium, and Enterprise pay-as-you-go from v2.1.154, and on Claude Platform on AWS, Amazon Bedrock, and Google Cloud's Agent Platform from v2.1.207. Before v2.1.207, `default` resolved to Opus 4.7 on Claude Platform on AWS and to Sonnet 4.5 on Amazon Bedrock and Google Cloud's Agent Platform.
 
 When an admin has set an [organization default model](#organization-default-model), `default` resolves to that model instead of the account-type default above. Requires Claude Code v2.1.196 or later. `default` can also resolve to the model you set with [`ANTHROPIC_DEFAULT_MODEL`](#set-a-default-model-for-new-sessions), under the conditions listed in its section, or to the model [recorded on your account](#setting-your-model).
 
@@ -758,11 +758,11 @@ Fable 5.1, Fable 5, Sonnet 5 and later, Haiku 5.5, Opus 4.6 and later, and Sonne
 
 Fable 5.1, Fable 5, Sonnet 5 and later, Haiku 5.5, and Opus 4.7 and later run with the 1M window by default, with no `[1m]` suffix needed. That includes sessions on Amazon Bedrock, Google Cloud's Agent Platform, and Microsoft Foundry, and [Claude apps gateway](https://code.claude.com/docs/en/claude-apps-gateway) sessions. To run them with a 200K window instead, see [Turn off 1M context](#turn-off-1m-context).
 
-Opus 4.6 and Sonnet 4.6 reach 1M only through their `[1m]` variant, and access to that variant depends on your plan. On Max, Team, and Enterprise plans, including both Team Standard and Team Premium seats, Opus 4.6 with 1M context is included with your subscription. Sonnet 4.6 with 1M context requires [usage credits](https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans) on every subscription plan, including Max.
+Opus 4.6 and Sonnet 4.6 reach 1M only through their `[1m]` variant, and access to that variant depends on your plan. On Max, Ultra, Team, and Enterprise plans, including both Team Standard and Team Premium seats, Opus 4.6 with 1M context is included with your subscription. Sonnet 4.6 with 1M context requires [usage credits](https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans) on every subscription plan, including Max and Ultra.
 
 | Plan | Opus 4.6 with 1M context | Sonnet 4.6 with 1M context |
 | - | - | - |
-| Max, Team, and Enterprise | Included with subscription | Requires [usage credits](https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans) |
+| Max, Ultra, Team, and Enterprise | Included with subscription | Requires [usage credits](https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans) |
 | Pro | Requires [usage credits](https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans) | Requires [usage credits](https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans) |
 | API and pay-as-you-go | Full access | Full access |
 

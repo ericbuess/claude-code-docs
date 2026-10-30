@@ -90,84 +90,84 @@ See the [claims reference](#claims-reference) for the full structure and the fla
 
 The checks map directly onto standard JWT libraries. The examples below implement the full sequence in Node.js with [`jose`](https://www.npmjs.com/package/jose), which handles JWKS fetching, caching, and `kid` selection, and in Python with [`PyJWT`](https://pyjwt.readthedocs.io/) and its built-in JWKS client.
 
-**Node.js (jose)**
+> [tab] Node.js (jose)
+>
+> ```typescript theme={null}
+> import { createRemoteJWKSet, jwtVerify } from "jose";
+>
+> const JWKS = createRemoteJWKSet(
+>   new URL("https://api.anthropic.com/v1/code/.well-known/jwks.json")
+> );
+>
+> const PREFIX = "sk-ant-cc-";
+> const EXPECTED_POOL_ID = "ccpool_...";
+>
+> export async function verifySessionToken(raw: string) {
+>   if (!raw.startsWith(PREFIX)) {
+>     throw new Error("not a self-hosted runner session token");
+>   }
+>   const jwt = raw.slice(PREFIX.length);
+>
+>   const { payload } = await jwtVerify(jwt, JWKS, {
+>     issuer: "ccr",
+>     audience: EXPECTED_POOL_ID,
+>     algorithms: ["ES256"],
+>   });
+>
+>   if (payload["ccr:role"] !== "session_worker") {
+>     throw new Error("token is not a session_worker token");
+>   }
+>
+>   const act = payload.act as { email?: string; sub?: string };
+>   return {
+>     sessionId: payload["ccr:session_id"] as string,
+>     poolId: payload["ccr:pool_id"] as string,
+>     orgId: payload["ccr:org_id"] as string,
+>     creatorEmail: act?.email,
+>     creatorSub: act?.sub,
+>   };
+> }
+> ```
 
-```typescript theme={null}
-import { createRemoteJWKSet, jwtVerify } from "jose";
-
-const JWKS = createRemoteJWKSet(
-  new URL("https://api.anthropic.com/v1/code/.well-known/jwks.json")
-);
-
-const PREFIX = "sk-ant-cc-";
-const EXPECTED_POOL_ID = "ccpool_...";
-
-export async function verifySessionToken(raw: string) {
-  if (!raw.startsWith(PREFIX)) {
-    throw new Error("not a self-hosted runner session token");
-  }
-  const jwt = raw.slice(PREFIX.length);
-
-  const { payload } = await jwtVerify(jwt, JWKS, {
-    issuer: "ccr",
-    audience: EXPECTED_POOL_ID,
-    algorithms: ["ES256"],
-  });
-
-  if (payload["ccr:role"] !== "session_worker") {
-    throw new Error("token is not a session_worker token");
-  }
-
-  const act = payload.act as { email?: string; sub?: string };
-  return {
-    sessionId: payload["ccr:session_id"] as string,
-    poolId: payload["ccr:pool_id"] as string,
-    orgId: payload["ccr:org_id"] as string,
-    creatorEmail: act?.email,
-    creatorSub: act?.sub,
-  };
-}
-```
-
-**Python (PyJWT)**
-
-```python theme={null}
-import jwt
-from jwt import PyJWKClient
-
-JWKS_URL = "https://api.anthropic.com/v1/code/.well-known/jwks.json"
-PREFIX = "sk-ant-cc-"
-EXPECTED_POOL_ID = "ccpool_..."
-
-jwks = PyJWKClient(JWKS_URL)
-
-
-def verify_session_token(raw: str) -> dict:
-    if not raw.startswith(PREFIX):
-        raise ValueError("not a self-hosted runner session token")
-    token = raw.removeprefix(PREFIX)
-
-    signing_key = jwks.get_signing_key_from_jwt(token)
-    payload = jwt.decode(
-        token,
-        signing_key.key,
-        algorithms=["ES256"],
-        issuer="ccr",
-        audience=EXPECTED_POOL_ID,
-    )
-
-    if payload.get("ccr:role") != "session_worker":
-        raise ValueError("token is not a session_worker token")
-
-    act = payload.get("act") or {}
-    return {
-        "session_id": payload["ccr:session_id"],
-        "pool_id": payload["ccr:pool_id"],
-        "org_id": payload["ccr:org_id"],
-        "creator_email": act.get("email"),
-        "creator_sub": act.get("sub"),
-    }
-```
+> [tab] Python (PyJWT)
+>
+> ```python theme={null}
+> import jwt
+> from jwt import PyJWKClient
+>
+> JWKS_URL = "https://api.anthropic.com/v1/code/.well-known/jwks.json"
+> PREFIX = "sk-ant-cc-"
+> EXPECTED_POOL_ID = "ccpool_..."
+>
+> jwks = PyJWKClient(JWKS_URL)
+>
+>
+> def verify_session_token(raw: str) -> dict:
+>     if not raw.startswith(PREFIX):
+>         raise ValueError("not a self-hosted runner session token")
+>     token = raw.removeprefix(PREFIX)
+>
+>     signing_key = jwks.get_signing_key_from_jwt(token)
+>     payload = jwt.decode(
+>         token,
+>         signing_key.key,
+>         algorithms=["ES256"],
+>         issuer="ccr",
+>         audience=EXPECTED_POOL_ID,
+>     )
+>
+>     if payload.get("ccr:role") != "session_worker":
+>         raise ValueError("token is not a session_worker token")
+>
+>     act = payload.get("act") or {}
+>     return {
+>         "session_id": payload["ccr:session_id"],
+>         "pool_id": payload["ccr:pool_id"],
+>         "org_id": payload["ccr:org_id"],
+>         "creator_email": act.get("email"),
+>         "creator_sub": act.get("sub"),
+>     }
+> ```
 
 ### Verify the token inside the session
 

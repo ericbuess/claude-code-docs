@@ -158,59 +158,59 @@ Claude locates the bug, implements a fix, and updates the branch or opens a new 
 
 For enterprise environments, you can run Claude Code entirely on your cloud infrastructure with the same developer experience.
 
-**Amazon Bedrock**
+> [tab] Amazon Bedrock
+>
+> ### Prerequisites
+>
+> Before setting up Claude Code with Amazon Bedrock, you need:
+>
+> 1. An AWS account with Amazon Bedrock access to the desired Claude models
+> 2. GitLab configured as an OIDC identity provider in AWS IAM
+> 3. An IAM role with Amazon Bedrock permissions and a trust policy restricted to your GitLab project/refs
+> 4. GitLab CI/CD variables for role assumption:
+>    * `AWS_ROLE_TO_ASSUME` (role ARN)
+>    * `AWS_REGION` (Amazon Bedrock region)
+>
+> ### Setup instructions
+>
+> Configure AWS to allow GitLab CI jobs to assume an IAM role via OIDC (no static keys).
+>
+> **Required setup:**
+>
+> 1. Enable Amazon Bedrock and request access to your target Claude models
+> 2. Create an IAM OIDC provider for GitLab if not already present
+> 3. Create an IAM role trusted by the GitLab OIDC provider, restricted to your project and protected refs
+> 4. Attach least-privilege permissions for Amazon Bedrock invoke APIs
+>
+> Use the [Amazon Bedrock job example](#configuration-examples) to exchange the job's OIDC token for temporary AWS credentials at runtime.
 
-### Prerequisites
-
-Before setting up Claude Code with Amazon Bedrock, you need:
-
-1. An AWS account with Amazon Bedrock access to the desired Claude models
-2. GitLab configured as an OIDC identity provider in AWS IAM
-3. An IAM role with Amazon Bedrock permissions and a trust policy restricted to your GitLab project/refs
-4. GitLab CI/CD variables for role assumption:
-   * `AWS_ROLE_TO_ASSUME` (role ARN)
-   * `AWS_REGION` (Amazon Bedrock region)
-
-### Setup instructions
-
-Configure AWS to allow GitLab CI jobs to assume an IAM role via OIDC (no static keys).
-
-**Required setup:**
-
-1. Enable Amazon Bedrock and request access to your target Claude models
-2. Create an IAM OIDC provider for GitLab if not already present
-3. Create an IAM role trusted by the GitLab OIDC provider, restricted to your project and protected refs
-4. Attach least-privilege permissions for Amazon Bedrock invoke APIs
-
-Use the [Amazon Bedrock job example](#configuration-examples) to exchange the job's OIDC token for temporary AWS credentials at runtime.
-
-**Google Cloud's Agent Platform**
-
-### Prerequisites
-
-Before setting up Claude Code with Google Cloud's Agent Platform, you need:
-
-1. A Google Cloud project with:
-   * Google Cloud's Agent Platform API enabled
-   * Workload Identity Federation configured to trust GitLab OIDC
-2. A dedicated service account with only the required Google Cloud's Agent Platform roles
-3. GitLab CI/CD variables:
-   * `GCP_WORKLOAD_IDENTITY_PROVIDER` (provider resource name without the `//iam.googleapis.com/` prefix, such as `projects/123456789/locations/global/workloadIdentityPools/my-pool/providers/my-provider`)
-   * `GCP_SERVICE_ACCOUNT` (service account email)
-   * `GCP_PROJECT_ID` (Google Cloud project ID)
-
-### Setup instructions
-
-Configure Google Cloud to allow GitLab CI jobs to impersonate a service account via Workload Identity Federation.
-
-**Required setup:**
-
-1. Enable IAM Credentials API, STS API, and Google Cloud's Agent Platform API
-2. Create a Workload Identity Pool and provider for GitLab OIDC
-3. Create a dedicated service account with Google Cloud's Agent Platform roles
-4. Grant the WIF principal permission to impersonate the service account
-
-Use the [Agent Platform job example](#configuration-examples) to authenticate without storing keys.
+> [tab] Google Cloud's Agent Platform
+>
+> ### Prerequisites
+>
+> Before setting up Claude Code with Google Cloud's Agent Platform, you need:
+>
+> 1. A Google Cloud project with:
+>    * Google Cloud's Agent Platform API enabled
+>    * Workload Identity Federation configured to trust GitLab OIDC
+> 2. A dedicated service account with only the required Google Cloud's Agent Platform roles
+> 3. GitLab CI/CD variables:
+>    * `GCP_WORKLOAD_IDENTITY_PROVIDER` (provider resource name without the `//iam.googleapis.com/` prefix, such as `projects/123456789/locations/global/workloadIdentityPools/my-pool/providers/my-provider`)
+>    * `GCP_SERVICE_ACCOUNT` (service account email)
+>    * `GCP_PROJECT_ID` (Google Cloud project ID)
+>
+> ### Setup instructions
+>
+> Configure Google Cloud to allow GitLab CI jobs to impersonate a service account via Workload Identity Federation.
+>
+> **Required setup:**
+>
+> 1. Enable IAM Credentials API, STS API, and Google Cloud's Agent Platform API
+> 2. Create a Workload Identity Pool and provider for GitLab OIDC
+> 3. Create a dedicated service account with Google Cloud's Agent Platform roles
+> 4. Grant the WIF principal permission to impersonate the service account
+>
+> Use the [Agent Platform job example](#configuration-examples) to authenticate without storing keys.
 
 ## Configuration examples
 

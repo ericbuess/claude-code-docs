@@ -8,7 +8,7 @@
 
 > [!NOTE]
 >
-> Cloud sessions are available on Pro, Max, and Team plans, and for Enterprise users with premium seats or Chat + Claude Code seats. If [custom roles](https://support.claude.com/en/articles/13930452) govern your access, you also need a role with the cloud sessions permission to start sessions on Anthropic's infrastructure from the browser, apps, or terminal. Ask an Owner to add it to one of your roles at [**Organization settings > Roles**](https://claude.ai/admin-settings/roles).
+> Cloud sessions are available on Pro, Max, Ultra, and Team plans, and for Enterprise users with premium seats or Chat + Claude Code seats. If [custom roles](https://support.claude.com/en/articles/13930452) govern your access, you also need a role with the cloud sessions permission to start sessions on Anthropic's infrastructure from the browser, apps, or terminal. Ask an Owner to add it to one of your roles at [**Organization settings > Roles**](https://claude.ai/admin-settings/roles).
 
 A cloud session is a Claude Code session that runs on cloud infrastructure instead of on your machine. By default it runs on infrastructure Anthropic manages, or on your organization's [self-hosted environment](https://code.claude.com/docs/en/self-hosted-environments) when routed there. The session keeps running after you close your laptop, and you can check on it or steer it from any device. It counts toward your plan's usage limits alongside the rest of your Claude and Claude Code usage, and there's no separate charge for the cloud VM.
 
@@ -342,9 +342,7 @@ Sharing works as follows for Enterprise and Team accounts:
 * **Your name**: your account's display name is visible to all recipients with access
 * **Slack sessions**: [Claude in Slack](https://code.claude.com/docs/en/slack.md) sessions are automatically shared with Team visibility
 
-#### Share from a Max or Pro account
-
-Sharing works as follows for Max and Pro accounts:
+#### Share from a Max, Ultra, or Pro account
 
 * **Visibility options**: **Private** and **Public**. Public visibility makes the session visible to any user logged into claude.ai
 * **Repository access**: verification isn't enabled by default

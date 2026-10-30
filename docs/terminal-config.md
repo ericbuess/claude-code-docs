@@ -48,23 +48,23 @@ To bind newline to a different key, or to swap behavior so Enter inserts a newli
 
 Some Claude Code shortcuts use the Option key, such as Option+Enter for a newline or Option+P to switch models. On macOS, most terminals do not send Option as a modifier by default, so these shortcuts do nothing until you enable it. The terminal setting for this is usually labeled "Use Option as Meta Key"; Meta is the historical Unix name for the key now labeled Option or Alt.
 
-**Apple Terminal**
+> [tab] Apple Terminal
+>
+> Open Settings → Profiles → Keyboard and check "Use Option as Meta Key".
+>
+> If you accepted Claude Code's first-run terminal setup prompt, this is already done. That prompt runs `/terminal-setup` for you, which enables Option as Meta and turns off the audible bell in your Apple Terminal profile.
+>
+> In [screen reader mode](https://code.claude.com/docs/en/accessibility.md), `/terminal-setup` leaves the bell setting unchanged so the terminal bell stays audible. If an earlier run turned the bell off, turn it back on under Settings → Profiles → Advanced → "Audible bell".
 
-Open Settings → Profiles → Keyboard and check "Use Option as Meta Key".
+> [tab] iTerm2
+>
+> Open Settings → Profiles → Keys → General and set Left Option key and Right Option key to "Esc+".
+>
+> Running `/terminal-setup` in iTerm2 enables "Applications in terminal may access clipboard" under Settings → General → Selection so the `/copy` command can write to your system clipboard. The command detects iTerm2 even when run from inside tmux. Restart iTerm2 for the change to take effect.
 
-If you accepted Claude Code's first-run terminal setup prompt, this is already done. That prompt runs `/terminal-setup` for you, which enables Option as Meta and turns off the audible bell in your Apple Terminal profile.
-
-In [screen reader mode](https://code.claude.com/docs/en/accessibility.md), `/terminal-setup` leaves the bell setting unchanged so the terminal bell stays audible. If an earlier run turned the bell off, turn it back on under Settings → Profiles → Advanced → "Audible bell".
-
-**iTerm2**
-
-Open Settings → Profiles → Keys → General and set Left Option key and Right Option key to "Esc+".
-
-Running `/terminal-setup` in iTerm2 enables "Applications in terminal may access clipboard" under Settings → General → Selection so the `/copy` command can write to your system clipboard. The command detects iTerm2 even when run from inside tmux. Restart iTerm2 for the change to take effect.
-
-**VS Code**
-
-Add `"terminal.integrated.macOptionIsMeta": true` to your VS Code settings.
+> [tab] VS Code
+>
+> Add `"terminal.integrated.macOptionIsMeta": true` to your VS Code settings.
 
 For Ghostty, Kitty, and other terminals, look for an Option-as-Alt or Option-as-Meta setting in the terminal's configuration file.
 
@@ -188,7 +188,7 @@ Claude Code watches `~/.claude/themes/` and reloads when a file is added or chan
 
 The reference below covers the tokens you can set in `overrides`. The interactive editor in `/theme` shows the same tokens with a live preview, plus a few single-purpose accents such as onboarding screen colors that are omitted here.
 
-> **Color token reference**
+> [accordion] Color token reference
 >
 > The following example combines tokens from several of the groups below: the brand accent, the plan mode border, the diff backgrounds, and the message background.
 >

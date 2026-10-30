@@ -110,41 +110,41 @@ To use this in your own runbook, replace `acme/web-gateway` with your service's 
 
 You can also open a deep link from a shell script, alias, or automation rather than by clicking it. Call your operating system's URL-opening command with the link as the argument. These commands rely on the handler that Claude Code [registers](#registration-and-supported-platforms) on the machine.
 
-**macOS**
+> [tab] macOS
+>
+> The built-in `open` command passes the URL to the registered `claude-cli://` handler:
+>
+> ```bash theme={null}
+> open "claude-cli://open?repo=acme/payments&q=review%20open%20PRs"
+> ```
+>
+> On success, a new terminal window opens with Claude Code running and the prompt pre-filled.
 
-The built-in `open` command passes the URL to the registered `claude-cli://` handler:
+> [tab] Linux
+>
+> Most desktop environments provide `xdg-open`, which passes the URL to the registered handler:
+>
+> ```bash theme={null}
+> xdg-open "claude-cli://open?repo=acme/payments&q=review%20open%20PRs"
+> ```
+>
+> On success, a new terminal window opens with Claude Code running and the prompt pre-filled. If the shell reports that `xdg-open` isn't found, see [Troubleshooting](#xdg-open-is-not-found-on-linux).
 
-```bash theme={null}
-open "claude-cli://open?repo=acme/payments&q=review%20open%20PRs"
-```
-
-On success, a new terminal window opens with Claude Code running and the prompt pre-filled.
-
-**Linux**
-
-Most desktop environments provide `xdg-open`, which passes the URL to the registered handler:
-
-```bash theme={null}
-xdg-open "claude-cli://open?repo=acme/payments&q=review%20open%20PRs"
-```
-
-On success, a new terminal window opens with Claude Code running and the prompt pre-filled. If the shell reports that `xdg-open` isn't found, see [Troubleshooting](#xdg-open-is-not-found-on-linux).
-
-**Windows**
-
-In PowerShell, `Start-Process` passes the URL to the registered handler:
-
-```powershell theme={null}
-Start-Process "claude-cli://open?repo=acme/payments&q=review%20open%20PRs"
-```
-
-In `cmd.exe`, `start` treats its first quoted argument as a window title, so pass an empty title before the URL:
-
-```cmd theme={null}
-start "" "claude-cli://open?repo=acme/payments&q=review%20open%20PRs"
-```
-
-On success, a new terminal window opens with Claude Code running and the prompt pre-filled.
+> [tab] Windows
+>
+> In PowerShell, `Start-Process` passes the URL to the registered handler:
+>
+> ```powershell theme={null}
+> Start-Process "claude-cli://open?repo=acme/payments&q=review%20open%20PRs"
+> ```
+>
+> In `cmd.exe`, `start` treats its first quoted argument as a window title, so pass an empty title before the URL:
+>
+> ```cmd theme={null}
+> start "" "claude-cli://open?repo=acme/payments&q=review%20open%20PRs"
+> ```
+>
+> On success, a new terminal window opens with Claude Code running and the prompt pre-filled.
 
 ## Registration and supported platforms
 

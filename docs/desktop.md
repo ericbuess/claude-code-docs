@@ -8,15 +8,15 @@
 
 In the Claude Desktop app, Claude Code is the **Code** tab. The app also has chat and [Cowork](https://claude.com/product/cowork), which handles Dispatch and longer agentic work. This page is the reference for the Code tab.
 
-> **[Download for macOS](https://claude.ai/api/desktop/darwin/universal/dmg/latest/redirect?utm_source=claude_code\&utm_medium=docs)**
+> [card] [Download for macOS](https://claude.ai/api/desktop/darwin/universal/dmg/latest/redirect?utm_source=claude_code\&utm_medium=docs)
 >
 > Universal build for Intel and Apple Silicon
 
-> **[Download for Windows](https://claude.ai/api/desktop/win32/x64/setup/latest/redirect?utm_source=claude_code\&utm_medium=docs)**
+> [card] [Download for Windows](https://claude.ai/api/desktop/win32/x64/setup/latest/redirect?utm_source=claude_code\&utm_medium=docs)
 >
 > For x64 processors
 
-> **[Get Claude for Linux (beta)](https://code.claude.com/docs/en/desktop-linux.md)**
+> [card] [Get Claude for Linux (beta)](https://code.claude.com/docs/en/desktop-linux.md)
 >
 > apt or .deb for Ubuntu and Debian
 
@@ -92,7 +92,7 @@ To set a default mode for new local sessions, add `permissions.defaultMode` to y
 | **Accept edits** | `acceptEdits` | Claude auto-accepts file edits and common filesystem commands like `mkdir`, `touch`, and `mv`, but still asks before running other terminal commands. Use this when you trust file changes and want faster iteration. |
 | **Plan** | `plan` | Claude reads files and runs commands to explore, then proposes a plan without editing your source code. Good for complex tasks where you want to review the approach first. |
 | **Auto** | `auto` | Claude runs without routine prompts; before actions such as shell commands and network requests run, a background classifier checks that they align with your request. Appears when [auto mode is available](#auto-mode-availability); there is no separate Settings toggle for it. |
-| **Bypass permissions** | `bypassPermissions` | Claude runs without permission prompts, except for the [actions no mode auto-approves](https://code.claude.com/docs/en/permission-modes.md#actions-no-mode-auto-approves), safety classifiers when Claude [acts on external sites](#browse-external-sites), or desktop actions such as deleting a session, though not [archiving one](#work-across-sessions). Equivalent to `--dangerously-skip-permissions` in the CLI. On Pro and Max plans, enable "Allow bypass permissions mode" in **Settings > Code** or **Settings > Claude Code**. On Team and Enterprise plans there is no Settings toggle, and organization policy controls it instead. Only use this in sandboxed containers or VMs. |
+| **Bypass permissions** | `bypassPermissions` | Claude runs without permission prompts, except for the [actions no mode auto-approves](https://code.claude.com/docs/en/permission-modes.md#actions-no-mode-auto-approves), safety classifiers when Claude [acts on external sites](#browse-external-sites), or desktop actions such as deleting a session, though not [archiving one](#work-across-sessions). Equivalent to `--dangerously-skip-permissions` in the CLI. On Pro, Max, and Ultra plans, enable "Allow bypass permissions mode" in **Settings > Code** or **Settings > Claude Code**. On Team and Enterprise plans there is no Settings toggle, and organization policy controls it instead. Only use this in sandboxed containers or VMs. |
 
 Earlier versions of the Code tab labeled these modes Ask permissions, Auto accept edits, and Plan mode.
 
@@ -320,7 +320,7 @@ Computer use lets Claude open your apps, control your screen, and work directly 
 
 > [!NOTE]
 >
-> Computer use is a research preview on macOS and Windows that requires a Pro or Max plan. It is not available on Team or Enterprise plans. The Claude Desktop app must be running. On macOS, computer use requires macOS 14 or later.
+> Computer use is a research preview on macOS and Windows that requires a Pro, Max, or Ultra plan. It is not available on Team or Enterprise plans. The Claude Desktop app must be running. On macOS, computer use requires macOS 14 or later.
 
 Computer use is off by default. [Enable it in Settings](#enable-computer-use) before Claude can control your screen. On macOS, you also need to grant Accessibility and Screen Recording permissions.
 
@@ -362,7 +362,7 @@ Under **Computer use**, turn on **Enable computer use**:
 * **Windows**: the toggle takes effect immediately and setup is complete
 * **macOS**: continue to the next step
 
-If you don't see the toggle, confirm you're on macOS or Windows with a Pro or Max plan, then update and restart the app.
+If you don't see the toggle, confirm you're on macOS or Windows with a Pro, Max, or Ultra plan, then update and restart the app.
 
 **3. Grant macOS permissions**
 
@@ -562,7 +562,8 @@ If you have [computer use](#let-claude-use-your-computer) enabled, Dispatch-spaw
 
 #### Set up Dispatch
 
-For setup, pairing, and Dispatch settings, see the [Dispatch help article](https://support.claude.com/en/articles/13947068). Dispatch requires a Pro or Max plan and is not available on Team or Enterprise plans.
+* **Plans**: Dispatch requires a Pro, Max, or Ultra plan and is not available on Team or Enterprise plans
+* **Setup, pairing, and Dispatch settings**: see the [Dispatch help article](https://support.claude.com/en/articles/13947068)
 
 Dispatch is one of several ways to work with Claude when you're away from your terminal. For a comparison with the other options, see [Platforms and integrations](https://code.claude.com/docs/en/platforms.md#work-when-you-are-away-from-your-terminal).
 
@@ -738,70 +739,70 @@ Have your server read its port from the `PORT` environment variable, which carri
 
 These configurations show common setups for different project types:
 
-**Next.js**
+> [tab] Next.js
+>
+> This configuration runs a Next.js app using Yarn on port 3000:
+>
+> ```json theme={null}
+> {
+>   "version": "0.0.1",
+>   "configurations": [
+>     {
+>       "name": "web",
+>       "runtimeExecutable": "yarn",
+>       "runtimeArgs": ["dev"],
+>       "port": 3000
+>     }
+>   ]
+> }
+> ```
 
-This configuration runs a Next.js app using Yarn on port 3000:
+> [tab] Multiple servers
+>
+> For a monorepo with a frontend and an API server, define multiple configurations. The frontend uses `autoPort: true` so it picks a free port if 3000 is taken, while the API server requires port 8080 exactly:
+>
+> ```json theme={null}
+> {
+>   "version": "0.0.1",
+>   "configurations": [
+>     {
+>       "name": "frontend",
+>       "runtimeExecutable": "npm",
+>       "runtimeArgs": ["run", "dev"],
+>       "cwd": "apps/web",
+>       "port": 3000,
+>       "autoPort": true
+>     },
+>     {
+>       "name": "api",
+>       "runtimeExecutable": "npm",
+>       "runtimeArgs": ["run", "start"],
+>       "cwd": "server",
+>       "port": 8080,
+>       "env": { "NODE_ENV": "development" },
+>       "autoPort": false
+>     }
+>   ]
+> }
+> ```
 
-```json theme={null}
-{
-  "version": "0.0.1",
-  "configurations": [
-    {
-      "name": "web",
-      "runtimeExecutable": "yarn",
-      "runtimeArgs": ["dev"],
-      "port": 3000
-    }
-  ]
-}
-```
-
-**Multiple servers**
-
-For a monorepo with a frontend and an API server, define multiple configurations. The frontend uses `autoPort: true` so it picks a free port if 3000 is taken, while the API server requires port 8080 exactly:
-
-```json theme={null}
-{
-  "version": "0.0.1",
-  "configurations": [
-    {
-      "name": "frontend",
-      "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev"],
-      "cwd": "apps/web",
-      "port": 3000,
-      "autoPort": true
-    },
-    {
-      "name": "api",
-      "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "start"],
-      "cwd": "server",
-      "port": 8080,
-      "env": { "NODE_ENV": "development" },
-      "autoPort": false
-    }
-  ]
-}
-```
-
-**Node.js script**
-
-To run a Node.js script directly instead of using a package manager command, use the `program` field:
-
-```json theme={null}
-{
-  "version": "0.0.1",
-  "configurations": [
-    {
-      "name": "server",
-      "program": "server.js",
-      "args": ["--verbose"],
-      "port": 4000
-    }
-  ]
-}
-```
+> [tab] Node.js script
+>
+> To run a Node.js script directly instead of using a package manager command, use the `program` field:
+>
+> ```json theme={null}
+> {
+>   "version": "0.0.1",
+>   "configurations": [
+>     {
+>       "name": "server",
+>       "program": "server.js",
+>       "args": ["--verbose"],
+>       "port": 4000
+>     }
+>   ]
+> }
+> ```
 
 ## Environment configuration
 
@@ -1327,7 +1328,7 @@ File edits and some tools can fail while Desktop is disconnected. If the task ne
 * **Workflows**: Desktop checks each new [workflow](https://code.claude.com/docs/en/workflows.md) before it starts, so while Desktop is disconnected a new one waits up to 10 minutes and then fails
 * **MCP servers**: MCP servers that Claude Code starts on the remote machine don't run through Desktop, so Claude can still call their tools. Servers from `claude_desktop_config.json` are among them only if Desktop doesn't use its [built-in SSH client](#worktree-edits-while-disconnected). Otherwise, and on [some Windows remote machines](#windows-remote-machines), Claude can't call their tools while Desktop is disconnected.
 
-> **When edits in a worktree keep working**
+> [accordion] When edits in a worktree keep working
 >
 > On a Linux or macOS remote machine, the check doesn't go through Desktop, so edits inside the worktree keep working while Desktop is disconnected. Before Claude Desktop v2.37337.0, this holds on a Linux remote machine only.
 >
@@ -1368,7 +1369,7 @@ If Desktop hasn't reconnected when you come back, send a message in the session.
 * **Remembered password**: a password that you let Desktop remember also works without a prompt, but for a long absence prefer a key that your SSH agent holds. If sign-ins with that password break off or hang, Desktop can stop reconnecting and wait for you.
 * **Any other prompt**: if the remote machine prompts for anything else, such as a one-time code, you can get a notification on your computer. Click the notification, or send a message in the session, and Desktop shows the prompt.
 
-> **If a jump host asks for a sign-in, the outage is long, output is missing, or the process is gone**
+> [accordion] If a jump host asks for a sign-in, the outage is long, output is missing, or the process is gone
 >
 > * **Jump host, pushes stop while you're away**: this can happen with Desktop on macOS or Linux when nobody answers a jump host's sign-in, for example a push to a phone. Desktop then stops reconnecting while nobody is at your computer. When you unlock or use the computer, you can get another push, because Desktop can try again. After three unanswered attempts it waits until you retry or send a message.
 > * **Jump host, pushes keep coming**: where Desktop can't tell that nobody answers, as with Desktop on Windows, it keeps trying while it has a process to rejoin, whether or not that process still runs. You can get another push with each attempt. To end the attempts, quit Desktop, which [can cost you the running task](#reopen-a-session-after-you-quit-desktop).
@@ -2055,7 +2056,7 @@ This table shows the desktop app equivalent for common CLI flags. Flags not list
 | `--model sonnet` | Model picker in the row under the prompt box |
 | `--resume`, `--continue` | Click a session in the sidebar, or type `/resume` in the prompt box to pick up a session you started from the CLI |
 | `--permission-mode` | Mode selector in the row under the prompt box |
-| `--dangerously-skip-permissions` | Bypass permissions mode. On Pro and Max plans, enable "Allow bypass permissions mode" in **Settings > Code** or **Settings > Claude Code**; on Team and Enterprise plans, organization policy controls it |
+| `--dangerously-skip-permissions` | Bypass permissions mode. On Pro, Max, and Ultra plans, enable "Allow bypass permissions mode" in **Settings > Code** or **Settings > Claude Code**; on Team and Enterprise plans, organization policy controls it |
 | `--add-dir` | [Add folders to a session](#add-folders-to-a-session) in local and SSH sessions, or select [several repositories](#run-long-running-tasks-in-the-cloud) in a cloud session |
 | `--allowedTools`, `--disallowedTools` | No per-session equivalent. Permission rules in [settings files](https://code.claude.com/docs/en/settings.md) still apply. |
 | `--verbose` | [Verbose view mode](#switch-view-modes) |
@@ -2091,7 +2092,7 @@ This table compares core capabilities between the CLI and Desktop. For a full li
 
 | Feature | CLI | Desktop |
 | - | - | - |
-| Permission modes | All modes including `dontAsk` | Manual, Accept edits, Plan, and Auto. Bypass permissions appears in the mode selector once enabled: through the Settings toggle on Pro and Max plans, or through organization policy on Team and Enterprise plans |
+| Permission modes | All modes including `dontAsk` | Manual, Accept edits, Plan, and Auto. Bypass permissions appears in the mode selector once enabled: through the Settings toggle on Pro, Max, and Ultra plans, or through organization policy on Team and Enterprise plans |
 | [Third-party providers](https://code.claude.com/docs/en/third-party-integrations.md) | Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry | Anthropic's API by default. For gateway routing, see [connect the desktop app to a gateway](https://code.claude.com/docs/en/llm-gateway-connect.md#desktop-app). To run the Code tab on Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry, or a self-hosted LLM gateway, see [Claude Desktop on 3P](https://claude.com/docs/third-party/claude-desktop/overview). |
 | [MCP servers](https://code.claude.com/docs/en/mcp.md) | Configure in settings files | Connectors UI for local and SSH sessions, or settings files |
 | [Plugins](https://code.claude.com/docs/en/plugins/overview.md) | `/plugin` command | Plugin manager UI |
@@ -2153,7 +2154,7 @@ In the earlier layout, choose the environment and any project folder or reposito
 If you see `Error 403: Forbidden` or other authentication failures when using the Code tab:
 
 1. Sign out and back in from the app menu. This is the most common fix.
-2. Verify you have an active paid subscription: Pro, Max, Team, or Enterprise.
+2. Verify you have an active paid subscription: Pro, Max, Ultra, Team, or Enterprise.
 3. If the CLI works but Desktop does not, quit the desktop app completely, not just close the window, then reopen and sign in again.
 4. Check your internet connection and proxy settings.
 

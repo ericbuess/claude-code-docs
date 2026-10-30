@@ -325,146 +325,146 @@ docker push "${ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/claude-gateway:<v
 
 **7. Deploy**
 
-**ECS Fargate**
+> [tab] ECS Fargate
+>
+> Create the cluster and a log group for the gateway's stderr, which carries both its audit events and operational logs. Retention is a separate call, and without one CloudWatch keeps the logs forever; align the 90 days with your audit retention policy:
+>
+> ```bash theme={null}
+> aws ecs create-cluster --cluster-name claude-gateway
+> aws logs create-log-group --log-group-name /ecs/claude-gateway
+> aws logs put-retention-policy --log-group-name /ecs/claude-gateway \
+>   --retention-in-days 90
+> ```
+>
+> Write the task definition. The task role carries the Bedrock permission and the execution role injects the secrets; use the secret ARNs from the Secrets Manager step:
+>
+> ```json claude-gateway-task.json theme={null}
+> {
+>   "family": "claude-gateway",
+>   "networkMode": "awsvpc",
+>   "requiresCompatibilities": ["FARGATE"],
+>   "cpu": "1024",
+>   "memory": "2048",
+>   "runtimePlatform": { "cpuArchitecture": "X86_64", "operatingSystemFamily": "LINUX" },
+>   "executionRoleArn": "arn:aws:iam::<account-id>:role/claude-gateway-execution",
+>   "taskRoleArn": "arn:aws:iam::<account-id>:role/claude-gateway-task",
+>   "containerDefinitions": [
+>     {
+>       "name": "gateway",
+>       "image": "<account-id>.dkr.ecr.<region>.amazonaws.com/claude-gateway:<version>",
+>       "portMappings": [{ "containerPort": 8080 }],
+>       "secrets": [
+>         { "name": "GATEWAY_JWT_SECRET",   "valueFrom": "<gateway-jwt-secret ARN>" },
+>         { "name": "OIDC_CLIENT_SECRET",   "valueFrom": "<gateway-oidc-client-secret ARN>" },
+>         { "name": "GATEWAY_POSTGRES_URL", "valueFrom": "<gateway-postgres-url ARN>" }
+>       ],
+>       "logConfiguration": {
+>         "logDriver": "awslogs",
+>         "options": {
+>           "awslogs-group": "/ecs/claude-gateway",
+>           "awslogs-region": "<region>",
+>           "awslogs-stream-prefix": "gateway"
+>         }
+>       }
+>     }
+>   ]
+> }
+> ```
+>
+> Register it:
+>
+> ```bash theme={null}
+> aws ecs register-task-definition --cli-input-json file://claude-gateway-task.json
+> ```
+>
+> Put an internal ALB in front with a target group that health-checks the gateway. `--ip-address-type ipv4` matters: an internal dual-stack ALB publishes public-range AAAA records, which the `/login` private-network check rejects:
+>
+> ```bash theme={null}
+> ALB_ARN="$(aws elbv2 create-load-balancer --name claude-gateway \
+>   --scheme internal --type application --ip-address-type ipv4 \
+>   --subnets $PRIVATE_SUBNETS --security-groups "$ALB_SG" \
+>   --query 'LoadBalancers[0].LoadBalancerArn' --output text)"
+>
+> TG_ARN="$(aws elbv2 create-target-group --name claude-gateway \
+>   --protocol HTTP --port 8080 --vpc-id "$VPC_ID" --target-type ip \
+>   --health-check-path /readyz \
+>   --query 'TargetGroups[0].TargetGroupArn' --output text)"
+> ```
+>
+> Add the HTTPS listener. `--ssl-policy` pins a modern TLS floor, since omitting it falls back to the legacy `ELBSecurityPolicy-2016-08` default, which still accepts TLS 1.0/1.1.
+>
+> The ALB closes a connection after 60 seconds with no data by default. The gateway's keepalive pings keep streams inside that default, so raising the timeout adds margin above the ping cadence; the [Troubleshooting](#troubleshooting) row on dropped streams covers the mechanism and older gateways. The commands below add the listener and raise the timeout:
+>
+> ```bash theme={null}
+> aws elbv2 create-listener --load-balancer-arn "$ALB_ARN" \
+>   --protocol HTTPS --port 443 \
+>   --ssl-policy ELBSecurityPolicy-TLS13-1-2-2021-06 \
+>   --certificates CertificateArn=<your-acm-certificate-arn> \
+>   --default-actions Type=forward,TargetGroupArn="$TG_ARN"
+>
+> aws elbv2 modify-load-balancer-attributes --load-balancer-arn "$ALB_ARN" \
+>   --attributes Key=idle_timeout.timeout_seconds,Value=3600
+> ```
+>
+> Create the service. The deployment circuit breaker rolls a deployment whose tasks keep failing, from a bad image or an unbootable config, back to the last steady state instead of relaunching failing tasks forever:
+>
+> ```bash theme={null}
+> aws ecs create-service --cluster claude-gateway --service-name claude-gateway \
+>   --task-definition claude-gateway --desired-count 1 --launch-type FARGATE \
+>   --deployment-configuration "deploymentCircuitBreaker={enable=true,rollback=true}" \
+>   --health-check-grace-period-seconds 60 \
+>   --network-configuration "awsvpcConfiguration={subnets=[$(echo $PRIVATE_SUBNETS | tr ' ' ',')],securityGroups=[$GW_SG],assignPublicIp=DISABLED}" \
+>   --load-balancers "targetGroupArn=$TG_ARN,containerName=gateway,containerPort=8080"
+> ```
+>
+> The 60-second grace period gives a cold task time to pull the image, connect to the store, and answer its first health check before ECS starts counting failures against the deployment.
+>
+> The target group's health check on `GET /readyz` verifies the store is reachable, so a task that can't reach Postgres never enters rotation. To keep tasks passing the check through a short database outage such as an RDS failover, set `store.readiness_grace_seconds` as described in [Outage behavior](https://code.claude.com/docs/en/claude-apps-gateway-deploy.md#outage-behavior), which also covers the `/healthz` alternative.
+>
+> The tasks run in private subnets with no public IP, so all egress (to Bedrock, your IdP, Secrets Manager, ECR, and CloudWatch Logs) goes through the NAT gateway. To keep Bedrock traffic off the public path, create a `bedrock-runtime` interface VPC endpoint and point the upstream's `base_url` at it, as shown in the [Bedrock upstream reference](https://code.claude.com/docs/en/claude-apps-gateway-config.md#amazon-bedrock); the IdP still needs internet egress.
+>
+> Finish by giving developers a privately resolvable hostname: in a Route 53 private hosted zone, alias the gateway's internal DNS name to the ALB, and set `listen.public_url` to that hostname. The ALB's own `*.elb.amazonaws.com` name resolves to private addresses on an internal ALB, but it can't carry your ACM certificate, so use your own name.
+>
+> Update the OAuth client's authorized redirect URI to `<public_url>/oauth/callback` before the first sign-in. After changing `public_url`, rebuild and push the image under a new tag, register a new task definition revision, and redeploy. On ECS the setting lives in the image's embedded `gateway.yaml`, and the gateway builds its public origin only from that setting, ignoring `X-Forwarded-Host` and `X-Forwarded-Proto`. `X-Forwarded-For` is honored for client IPs only when `listen.trusted_proxies` is set.
 
-Create the cluster and a log group for the gateway's stderr, which carries both its audit events and operational logs. Retention is a separate call, and without one CloudWatch keeps the logs forever; align the 90 days with your audit retention policy:
-
-```bash theme={null}
-aws ecs create-cluster --cluster-name claude-gateway
-aws logs create-log-group --log-group-name /ecs/claude-gateway
-aws logs put-retention-policy --log-group-name /ecs/claude-gateway \
-  --retention-in-days 90
-```
-
-Write the task definition. The task role carries the Bedrock permission and the execution role injects the secrets; use the secret ARNs from the Secrets Manager step:
-
-```json claude-gateway-task.json theme={null}
-{
-  "family": "claude-gateway",
-  "networkMode": "awsvpc",
-  "requiresCompatibilities": ["FARGATE"],
-  "cpu": "1024",
-  "memory": "2048",
-  "runtimePlatform": { "cpuArchitecture": "X86_64", "operatingSystemFamily": "LINUX" },
-  "executionRoleArn": "arn:aws:iam::<account-id>:role/claude-gateway-execution",
-  "taskRoleArn": "arn:aws:iam::<account-id>:role/claude-gateway-task",
-  "containerDefinitions": [
-    {
-      "name": "gateway",
-      "image": "<account-id>.dkr.ecr.<region>.amazonaws.com/claude-gateway:<version>",
-      "portMappings": [{ "containerPort": 8080 }],
-      "secrets": [
-        { "name": "GATEWAY_JWT_SECRET",   "valueFrom": "<gateway-jwt-secret ARN>" },
-        { "name": "OIDC_CLIENT_SECRET",   "valueFrom": "<gateway-oidc-client-secret ARN>" },
-        { "name": "GATEWAY_POSTGRES_URL", "valueFrom": "<gateway-postgres-url ARN>" }
-      ],
-      "logConfiguration": {
-        "logDriver": "awslogs",
-        "options": {
-          "awslogs-group": "/ecs/claude-gateway",
-          "awslogs-region": "<region>",
-          "awslogs-stream-prefix": "gateway"
-        }
-      }
-    }
-  ]
-}
-```
-
-Register it:
-
-```bash theme={null}
-aws ecs register-task-definition --cli-input-json file://claude-gateway-task.json
-```
-
-Put an internal ALB in front with a target group that health-checks the gateway. `--ip-address-type ipv4` matters: an internal dual-stack ALB publishes public-range AAAA records, which the `/login` private-network check rejects:
-
-```bash theme={null}
-ALB_ARN="$(aws elbv2 create-load-balancer --name claude-gateway \
-  --scheme internal --type application --ip-address-type ipv4 \
-  --subnets $PRIVATE_SUBNETS --security-groups "$ALB_SG" \
-  --query 'LoadBalancers[0].LoadBalancerArn' --output text)"
-
-TG_ARN="$(aws elbv2 create-target-group --name claude-gateway \
-  --protocol HTTP --port 8080 --vpc-id "$VPC_ID" --target-type ip \
-  --health-check-path /readyz \
-  --query 'TargetGroups[0].TargetGroupArn' --output text)"
-```
-
-Add the HTTPS listener. `--ssl-policy` pins a modern TLS floor, since omitting it falls back to the legacy `ELBSecurityPolicy-2016-08` default, which still accepts TLS 1.0/1.1.
-
-The ALB closes a connection after 60 seconds with no data by default. The gateway's keepalive pings keep streams inside that default, so raising the timeout adds margin above the ping cadence; the [Troubleshooting](#troubleshooting) row on dropped streams covers the mechanism and older gateways. The commands below add the listener and raise the timeout:
-
-```bash theme={null}
-aws elbv2 create-listener --load-balancer-arn "$ALB_ARN" \
-  --protocol HTTPS --port 443 \
-  --ssl-policy ELBSecurityPolicy-TLS13-1-2-2021-06 \
-  --certificates CertificateArn=<your-acm-certificate-arn> \
-  --default-actions Type=forward,TargetGroupArn="$TG_ARN"
-
-aws elbv2 modify-load-balancer-attributes --load-balancer-arn "$ALB_ARN" \
-  --attributes Key=idle_timeout.timeout_seconds,Value=3600
-```
-
-Create the service. The deployment circuit breaker rolls a deployment whose tasks keep failing, from a bad image or an unbootable config, back to the last steady state instead of relaunching failing tasks forever:
-
-```bash theme={null}
-aws ecs create-service --cluster claude-gateway --service-name claude-gateway \
-  --task-definition claude-gateway --desired-count 1 --launch-type FARGATE \
-  --deployment-configuration "deploymentCircuitBreaker={enable=true,rollback=true}" \
-  --health-check-grace-period-seconds 60 \
-  --network-configuration "awsvpcConfiguration={subnets=[$(echo $PRIVATE_SUBNETS | tr ' ' ',')],securityGroups=[$GW_SG],assignPublicIp=DISABLED}" \
-  --load-balancers "targetGroupArn=$TG_ARN,containerName=gateway,containerPort=8080"
-```
-
-The 60-second grace period gives a cold task time to pull the image, connect to the store, and answer its first health check before ECS starts counting failures against the deployment.
-
-The target group's health check on `GET /readyz` verifies the store is reachable, so a task that can't reach Postgres never enters rotation. To keep tasks passing the check through a short database outage such as an RDS failover, set `store.readiness_grace_seconds` as described in [Outage behavior](https://code.claude.com/docs/en/claude-apps-gateway-deploy.md#outage-behavior), which also covers the `/healthz` alternative.
-
-The tasks run in private subnets with no public IP, so all egress (to Bedrock, your IdP, Secrets Manager, ECR, and CloudWatch Logs) goes through the NAT gateway. To keep Bedrock traffic off the public path, create a `bedrock-runtime` interface VPC endpoint and point the upstream's `base_url` at it, as shown in the [Bedrock upstream reference](https://code.claude.com/docs/en/claude-apps-gateway-config.md#amazon-bedrock); the IdP still needs internet egress.
-
-Finish by giving developers a privately resolvable hostname: in a Route 53 private hosted zone, alias the gateway's internal DNS name to the ALB, and set `listen.public_url` to that hostname. The ALB's own `*.elb.amazonaws.com` name resolves to private addresses on an internal ALB, but it can't carry your ACM certificate, so use your own name.
-
-Update the OAuth client's authorized redirect URI to `<public_url>/oauth/callback` before the first sign-in. After changing `public_url`, rebuild and push the image under a new tag, register a new task definition revision, and redeploy. On ECS the setting lives in the image's embedded `gateway.yaml`, and the gateway builds its public origin only from that setting, ignoring `X-Forwarded-Host` and `X-Forwarded-Proto`. `X-Forwarded-For` is honored for client IPs only when `listen.trusted_proxies` is set.
-
-**EKS**
-
-This track needs `kubectl` and `eksctl` installed locally, and an existing EKS cluster with an IAM OIDC provider and the AWS Load Balancer Controller installed. The cluster must be on `$VPC_ID` so pods can reach the RDS private endpoint, and the `claude-gateway-db` security group must admit the cluster's pod or node security group in place of `$GW_SG`.
-
-On EKS the gateway gets its Bedrock credentials through IRSA rather than the ECS roles. The `ecs-tasks.amazonaws.com` trust policy from the IAM step does not apply here; IRSA needs a role whose trust policy federates on the cluster's OIDC provider, scoped to `system:serviceaccount:claude-gateway:gateway`. `eksctl create iamserviceaccount` creates that role, attaches the policies, and annotates the Kubernetes service account with the role ARN in one step. Turn the two policy documents from the IAM step into managed policies it can attach:
-
-```bash theme={null}
-BEDROCK_POLICY_ARN="$(aws iam create-policy --policy-name claude-gateway-bedrock-invoke \
-  --policy-document file://bedrock-invoke.json --query Policy.Arn --output text)"
-SECRETS_POLICY_ARN="$(aws iam create-policy --policy-name claude-gateway-secrets-read \
-  --policy-document file://secrets-read.json --query Policy.Arn --output text)"
-
-kubectl create namespace claude-gateway
-eksctl create iamserviceaccount --cluster <your-cluster> --region "$AWS_REGION" \
-  --namespace claude-gateway --name gateway --role-name claude-gateway \
-  --attach-policy-arn "$BEDROCK_POLICY_ARN" \
-  --attach-policy-arn "$SECRETS_POLICY_ARN" \
-  --approve
-```
-
-The secrets policy is needed only when the pods read Secrets Manager themselves, as the Secrets Store CSI driver's AWS provider does using the mounting pod's service account; drop it if you create the Kubernetes Secrets another way. The provider needs both of the policy's actions: it calls `DescribeSecret` when it reconciles rotated secrets, so a `GetSecretValue`-only grant mounts on the first deploy but stops picking up rotations.
-
-Deploy the gateway as a standard Deployment plus a Service and an Ingress, as described in [Kubernetes deployment](https://code.claude.com/docs/en/claude-apps-gateway-deploy.md#kubernetes), with:
-
-* `serviceAccountName: gateway`
-* `gateway.yaml` mounted from a ConfigMap and the secrets mounted at `/secrets`
-* the readiness probe pointed at `GET /readyz`
-
-For the front end, an Ingress managed by the AWS Load Balancer Controller provisions the internal ALB. Annotate it with:
-
-* `alb.ingress.kubernetes.io/scheme: internal` and `alb.ingress.kubernetes.io/target-type: ip`
-* `alb.ingress.kubernetes.io/ip-address-type: ipv4`, so no public-range AAAA records are published for the `/login` [private-network check](https://code.claude.com/docs/en/claude-apps-gateway#prerequisites) to reject
-* `alb.ingress.kubernetes.io/inbound-cidrs: <your-corporate-cidr>`, so the controller-managed frontend security group admits only your corporate network in place of its `0.0.0.0/0` default
-* `alb.ingress.kubernetes.io/certificate-arn` with the ACM certificate
-* `alb.ingress.kubernetes.io/ssl-policy: ELBSecurityPolicy-TLS13-1-2-2021-06`, so the listener doesn't fall back to the legacy default policy that accepts TLS 1.0 and 1.1
-* `alb.ingress.kubernetes.io/load-balancer-attributes: idle_timeout.timeout_seconds=3600`, a margin above the gateway's streaming keepalive; see [Troubleshooting](#troubleshooting)
-
-With IRSA, the AWS SDK reads a projected service-account token and exchanges it with AWS STS, so the pod never needs the EC2 instance metadata service; an egress NetworkPolicy may block `169.254.169.254` for gateway pods. The node hop-limit problem in [Troubleshooting](#troubleshooting) below applies only to clusters that skip IRSA and rely on node instance roles.
+> [tab] EKS
+>
+> This track needs `kubectl` and `eksctl` installed locally, and an existing EKS cluster with an IAM OIDC provider and the AWS Load Balancer Controller installed. The cluster must be on `$VPC_ID` so pods can reach the RDS private endpoint, and the `claude-gateway-db` security group must admit the cluster's pod or node security group in place of `$GW_SG`.
+>
+> On EKS the gateway gets its Bedrock credentials through IRSA rather than the ECS roles. The `ecs-tasks.amazonaws.com` trust policy from the IAM step does not apply here; IRSA needs a role whose trust policy federates on the cluster's OIDC provider, scoped to `system:serviceaccount:claude-gateway:gateway`. `eksctl create iamserviceaccount` creates that role, attaches the policies, and annotates the Kubernetes service account with the role ARN in one step. Turn the two policy documents from the IAM step into managed policies it can attach:
+>
+> ```bash theme={null}
+> BEDROCK_POLICY_ARN="$(aws iam create-policy --policy-name claude-gateway-bedrock-invoke \
+>   --policy-document file://bedrock-invoke.json --query Policy.Arn --output text)"
+> SECRETS_POLICY_ARN="$(aws iam create-policy --policy-name claude-gateway-secrets-read \
+>   --policy-document file://secrets-read.json --query Policy.Arn --output text)"
+>
+> kubectl create namespace claude-gateway
+> eksctl create iamserviceaccount --cluster <your-cluster> --region "$AWS_REGION" \
+>   --namespace claude-gateway --name gateway --role-name claude-gateway \
+>   --attach-policy-arn "$BEDROCK_POLICY_ARN" \
+>   --attach-policy-arn "$SECRETS_POLICY_ARN" \
+>   --approve
+> ```
+>
+> The secrets policy is needed only when the pods read Secrets Manager themselves, as the Secrets Store CSI driver's AWS provider does using the mounting pod's service account; drop it if you create the Kubernetes Secrets another way. The provider needs both of the policy's actions: it calls `DescribeSecret` when it reconciles rotated secrets, so a `GetSecretValue`-only grant mounts on the first deploy but stops picking up rotations.
+>
+> Deploy the gateway as a standard Deployment plus a Service and an Ingress, as described in [Kubernetes deployment](https://code.claude.com/docs/en/claude-apps-gateway-deploy.md#kubernetes), with:
+>
+> * `serviceAccountName: gateway`
+> * `gateway.yaml` mounted from a ConfigMap and the secrets mounted at `/secrets`
+> * the readiness probe pointed at `GET /readyz`
+>
+> For the front end, an Ingress managed by the AWS Load Balancer Controller provisions the internal ALB. Annotate it with:
+>
+> * `alb.ingress.kubernetes.io/scheme: internal` and `alb.ingress.kubernetes.io/target-type: ip`
+> * `alb.ingress.kubernetes.io/ip-address-type: ipv4`, so no public-range AAAA records are published for the `/login` [private-network check](https://code.claude.com/docs/en/claude-apps-gateway#prerequisites) to reject
+> * `alb.ingress.kubernetes.io/inbound-cidrs: <your-corporate-cidr>`, so the controller-managed frontend security group admits only your corporate network in place of its `0.0.0.0/0` default
+> * `alb.ingress.kubernetes.io/certificate-arn` with the ACM certificate
+> * `alb.ingress.kubernetes.io/ssl-policy: ELBSecurityPolicy-TLS13-1-2-2021-06`, so the listener doesn't fall back to the legacy default policy that accepts TLS 1.0 and 1.1
+> * `alb.ingress.kubernetes.io/load-balancer-attributes: idle_timeout.timeout_seconds=3600`, a margin above the gateway's streaming keepalive; see [Troubleshooting](#troubleshooting)
+>
+> With IRSA, the AWS SDK reads a projected service-account token and exchanges it with AWS STS, so the pod never needs the EC2 instance metadata service; an egress NetworkPolicy may block `169.254.169.254` for gateway pods. The node hop-limit problem in [Troubleshooting](#troubleshooting) below applies only to clusters that skip IRSA and rely on node instance roles.
 
 **8. Push the gateway URL to developer machines**
 

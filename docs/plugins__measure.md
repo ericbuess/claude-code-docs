@@ -116,7 +116,7 @@ The `/doctor` checkup lists each user-installed skill, MCP server, and plugin, a
 
 ### Usage share in `/usage`
 
-On a Pro, Max, Team, or Enterprise plan, the `/usage` breakdown attributes recent usage to skills, subagents, plugins, and MCP servers as a share of the total. See [Using the `/usage` command](https://code.claude.com/docs/en/costs#using-the-/usage-command).
+On a Pro, Max, Ultra, Team, or Enterprise plan, the `/usage` breakdown attributes recent usage to skills, subagents, plugins, and MCP servers as a share of the total. See [Using the `/usage` command](https://code.claude.com/docs/en/costs#using-the-/usage-command).
 
 ## Measure across a fleet
 

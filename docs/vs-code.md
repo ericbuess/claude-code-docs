@@ -23,7 +23,7 @@ With the extension, you can:
 Before installing, make sure you have:
 
 * VS Code 1.94.0 or later
-* An Anthropic account: any paid Claude subscription (Pro, Max, Team, or Enterprise) or a Claude Console account works, and no API key is required. You'll [sign in](https://code.claude.com/docs/en/authentication.md#log-in-to-claude-code) with this account when you first open the extension. If you access Claude through a third-party provider like Amazon Bedrock or Google Cloud's Agent Platform, see [Use third-party providers](#use-third-party-providers) for setup instructions.
+* An Anthropic account: any paid Claude subscription (Pro, Max, Ultra, Team, or Enterprise) or a Claude Console account works, and no API key is required. You'll [sign in](https://code.claude.com/docs/en/authentication.md#log-in-to-claude-code) with this account when you first open the extension. If you access Claude through a third-party provider like Amazon Bedrock or Google Cloud's Agent Platform, see [Use third-party providers](#use-third-party-providers) for setup instructions.
 
 > [!TIP]
 >
@@ -38,11 +38,15 @@ Click the link for your IDE to install directly:
 
 Or in VS Code, press `Cmd+Shift+X` (Mac) or `Ctrl+Shift+X` (Windows/Linux) to open the Extensions view, search for "Claude Code", and click **Install**.
 
+> [!NOTE]
+>
+> Extension marketplaces are third-party software, which Anthropic doesn't endorse, maintain, or audit. Anthropic submits extensions for publication to the Visual Studio Marketplace and Open VSX Registry.
+
 The extension's version number is the Claude Code version it bundles. For example, a feature that requires Claude Code v2.1.286 or later needs version 2.1.286 or later of the extension, which the Extensions view shows.
 
 Claude Code also runs in other editors and containers:
 
-* **Other VS Code forks**: the extension also installs in forks like Devin Desktop or Kiro. Search for "Claude Code" in the editor's Extensions view, or install from the [Open VSX registry](https://open-vsx.org/extension/Anthropic/claude-code).
+* **Other VS Code forks**: the extension also installs in forks like Devin Desktop or Kiro. Search for "Claude Code" in the editor's Extensions view, or install from the [Open VSX Registry](https://open-vsx.org/extension/Anthropic/claude-code).
 * **Editors that can't install the extension**: [install the CLI](https://code.claude.com/docs/en/quickstart.md) and run `claude` in the editor's integrated terminal instead. The CLI works in any terminal.
 * **Dev containers**: to run Claude Code inside a dev container, see [Development containers](https://code.claude.com/docs/en/devcontainer.md).
 
@@ -117,7 +121,7 @@ For more ideas on what you can do with Claude Code, see [Common workflows](https
 
 The prompt box supports several features:
 
-* **Permission modes**: click the mode indicator at the bottom of the prompt box to switch permission modes. With Claude Code v2.1.283 or later, Auto is the built-in starting permission mode, and on earlier versions only on Pro, Max, and Team plans. See [how the extension chooses the starting permission mode](https://code.claude.com/docs/en/permission-modes.md#switch-permission-modes) for what changes that, and every permission mode the indicator offers.
+* **Permission modes**: click the mode indicator at the bottom of the prompt box to switch permission modes. With Claude Code v2.1.283 or later, Auto is the built-in starting permission mode, and on earlier versions only on Pro, Max, Ultra, and Team plans. See [how the extension chooses the starting permission mode](https://code.claude.com/docs/en/permission-modes.md#switch-permission-modes) for what changes that, and every permission mode the indicator offers.
   * **Auto**: a classifier reviews most actions instead of asking you. See [auto mode](https://code.claude.com/docs/en/permission-modes.md#eliminate-prompts-with-auto-mode) for what it reviews and blocks.
   * **Manual**: Claude asks permission before file edits and most shell commands.
   * **Plan**: Claude describes what it will do and waits for approval before making changes. VS Code automatically opens the plan as a full Markdown document where you can add inline comments to give feedback before Claude begins.
@@ -656,33 +660,33 @@ The extension registers a URI handler at `vscode://anthropic.claude-code/open`. 
 
 Invoke the handler with your operating system's URL opener.
 
-**macOS**
+> [tab] macOS
+>
+> ```bash theme={null}
+> open "vscode://anthropic.claude-code/open"
+> ```
 
-```bash theme={null}
-open "vscode://anthropic.claude-code/open"
-```
+> [tab] Linux
+>
+> ```bash theme={null}
+> xdg-open "vscode://anthropic.claude-code/open"
+> ```
+>
+> The `xdg-open` command comes from the `xdg-utils` package. If the shell reports it isn't found, see [xdg-open is not found on Linux](https://code.claude.com/docs/en/deep-links.md#xdg-open-is-not-found-on-linux).
 
-**Linux**
-
-```bash theme={null}
-xdg-open "vscode://anthropic.claude-code/open"
-```
-
-The `xdg-open` command comes from the `xdg-utils` package. If the shell reports it isn't found, see [xdg-open is not found on Linux](https://code.claude.com/docs/en/deep-links.md#xdg-open-is-not-found-on-linux).
-
-**Windows**
-
-In PowerShell:
-
-```powershell theme={null}
-Start-Process "vscode://anthropic.claude-code/open"
-```
-
-In `cmd.exe`, `start` treats its first quoted argument as a window title, so pass an empty title before the URL:
-
-```cmd theme={null}
-start "" "vscode://anthropic.claude-code/open"
-```
+> [tab] Windows
+>
+> In PowerShell:
+>
+> ```powershell theme={null}
+> Start-Process "vscode://anthropic.claude-code/open"
+> ```
+>
+> In `cmd.exe`, `start` treats its first quoted argument as a window title, so pass an empty title before the URL:
+>
+> ```cmd theme={null}
+> start "" "vscode://anthropic.claude-code/open"
+> ```
 
 The handler accepts two optional query parameters:
 
@@ -704,7 +708,7 @@ The extension also handles `vscode://anthropic.claude-code/install-plugin`, whic
 You configure the extension in two places, VS Code's extension settings and the Claude Code settings file:
 
 * **Extension settings** in VS Code: control the extension's behavior within VS Code. Open with `Cmd+,` (Mac) or `Ctrl+,` (Windows/Linux), then go to **Extensions > Claude Code**. You can also type `/` and select **General config…** to open settings.
-* **Claude Code settings** in `~/.claude/settings.json`: shared between the extension and CLI. Use it for allowed commands, environment variables, hooks, and MCP servers. With Claude Code v2.1.283 or later, it's also one input to the permission mode conversations start in, and on earlier versions only on Pro, Max, and Team plans. [Switch permission modes](https://code.claude.com/docs/en/permission-modes.md#switch-permission-modes) lists the order. See [Settings](https://code.claude.com/docs/en/settings.md) for details.
+* **Claude Code settings** in `~/.claude/settings.json`: shared between the extension and CLI. Use it for allowed commands, environment variables, hooks, and MCP servers. With Claude Code v2.1.283 or later, you can also use it as one input to the permission mode conversations start in. On earlier versions, you can do this only on Pro, Max, Ultra, and Team plans. [Switch permission modes](https://code.claude.com/docs/en/permission-modes.md#switch-permission-modes) lists the order. See [Settings](https://code.claude.com/docs/en/settings.md) for details.
 
 > [!TIP]
 >
@@ -933,7 +937,7 @@ Sign-in, network, and launch errors have their own entries on the install troubl
 
 * Ensure you have a compatible version of VS Code (1.94.0 or later)
 * Check that VS Code has permission to install extensions
-* Try installing directly from the [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=anthropic.claude-code)
+* Try installing directly from the [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=anthropic.claude-code)
 
 ### Spark icon not visible
 

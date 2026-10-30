@@ -181,21 +181,21 @@ A `ui.render` hook runs for every render site unless you narrow it to the one yo
 
 The pane and the band are empty until a mod fills them. Select a tab to see what each one is and how to draw in it:
 
-**Pane**
+> [tab] Pane
+>
+> A pane is a sidebar beside the transcript in a wide fullscreen terminal, or a framed region above the prompt otherwise. With several panes open, each gets a tab that shows its title.
+>
+> A pane appears when your mod calls `$.ui.open` with an `id` you choose, as in `$.ui.open({ id: 'hello-tabs' })`. [Open a pane at the right time](#open-a-pane-at-the-right-time) covers the other fields and when a pane waits for a wider terminal.
+>
+> To draw in your pane, filter on `{ component: 'Pane' }` and check that `e.requestId` is your `id`.
 
-A pane is a sidebar beside the transcript in a wide fullscreen terminal, or a framed region above the prompt otherwise. With several panes open, each gets a tab that shows its title.
-
-A pane appears when your mod calls `$.ui.open` with an `id` you choose, as in `$.ui.open({ id: 'hello-tabs' })`. [Open a pane at the right time](#open-a-pane-at-the-right-time) covers the other fields and when a pane waits for a wider terminal.
-
-To draw in your pane, filter on `{ component: 'Pane' }` and check that `e.requestId` is your `id`.
-
-**Band above the prompt**
-
-The band is a strip directly above the prompt input. It's always there, and every mod shares it.
-
-Your hook returns a tree to show something in the band, or `next(e)` to show nothing. A tree replaces what the mods [after yours](https://code.claude.com/docs/en/plugins/mods/events.md#the-order-mods-run-in) draw there. To keep theirs, put the result of `await next(e)` among the children of a [`Box`](#build-a-tree-from-elements) in your tree.
-
-To draw in the band, filter on `{ component: 'AbovePrompt' }`.
+> [tab] Band above the prompt
+>
+> The band is a strip directly above the prompt input. It's always there, and every mod shares it.
+>
+> Your hook returns a tree to show something in the band, or `next(e)` to show nothing. A tree replaces what the mods [after yours](https://code.claude.com/docs/en/plugins/mods/events.md#the-order-mods-run-in) draw there. To keep theirs, put the result of `await next(e)` among the children of a [`Box`](#build-a-tree-from-elements) in your tree.
+>
+> To draw in the band, filter on `{ component: 'AbovePrompt' }`.
 
 ### Change what Claude Code already draws
 
@@ -214,58 +214,58 @@ Claude Code draws most of its interface itself: messages, tool call rows, the sp
 
 At a site Claude Code already draws, your hook can change a detail, replace the drawing, or leave it alone. Select a tab to see each one applied to the spinner. The examples read a `calls` variable that another hook counts, as in the [tutorial mod](https://code.claude.com/docs/en/plugins/mods/create.md#write-a-mod-yourself).
 
-**Change a detail**
+> [tab] Change a detail
+>
+> To keep Claude Code's drawing and change one part of it, pass `next` a copy of the event with changed `props`. This hook changes the text after the spinner's word:
+>
+> ```javascript theme={null}
+> on('ui.render', { component: 'Spinner' }, async ($, e, next) => {
+>   // Keep Claude Code's spinner, and change the text after its word
+>   return next({ ...e, props: { ...e.props, suffix: ' · tool calls: ' + calls + '…' } })
+> })
+> ```
+>
+> The spinner keeps its animation and its word, and your text follows the word:
+>
+> ```text theme={null}
+> Thinking · tool calls: 2…
+> ```
 
-To keep Claude Code's drawing and change one part of it, pass `next` a copy of the event with changed `props`. This hook changes the text after the spinner's word:
+> [tab] Replace the drawing
+>
+> To draw something of your own in the site's place, return a tree and don't call `next`. This hook draws one line of text where the spinner would be:
+>
+> ```javascript theme={null}
+> on('ui.render', { component: 'Spinner' }, async ($, e) => {
+>   const { Text } = $.ui.resolve(e)
+>   // No call to next, so this line is drawn in the spinner's place
+>   return Text({ children: ['Claude has made ' + calls + ' tool calls'] })
+> })
+> ```
+>
+> While Claude works, your line shows and Claude Code's spinner doesn't:
+>
+> ```text theme={null}
+> Claude has made 2 tool calls
+> ```
 
-```javascript theme={null}
-on('ui.render', { component: 'Spinner' }, async ($, e, next) => {
-  // Keep Claude Code's spinner, and change the text after its word
-  return next({ ...e, props: { ...e.props, suffix: ' · tool calls: ' + calls + '…' } })
-})
-```
-
-The spinner keeps its animation and its word, and your text follows the word:
-
-```text theme={null}
-Thinking · tool calls: 2…
-```
-
-**Replace the drawing**
-
-To draw something of your own in the site's place, return a tree and don't call `next`. This hook draws one line of text where the spinner would be:
-
-```javascript theme={null}
-on('ui.render', { component: 'Spinner' }, async ($, e) => {
-  const { Text } = $.ui.resolve(e)
-  // No call to next, so this line is drawn in the spinner's place
-  return Text({ children: ['Claude has made ' + calls + ' tool calls'] })
-})
-```
-
-While Claude works, your line shows and Claude Code's spinner doesn't:
-
-```text theme={null}
-Claude has made 2 tool calls
-```
-
-**Leave it alone**
-
-To leave the site as Claude Code draws it, return `next(e)`. A hook often does that for some events and not others. This hook leaves the spinner alone until there's a call to count:
-
-```javascript theme={null}
-on('ui.render', { component: 'Spinner' }, async ($, e, next) => {
-  // Nothing to show yet, so pass the event on unchanged
-  if (calls === 0) return next(e)
-  return next({ ...e, props: { ...e.props, suffix: ' · tool calls: ' + calls + '…' } })
-})
-```
-
-Before the first tool call, the spinner looks the way it does without the mod:
-
-```text theme={null}
-Thinking…
-```
+> [tab] Leave it alone
+>
+> To leave the site as Claude Code draws it, return `next(e)`. A hook often does that for some events and not others. This hook leaves the spinner alone until there's a call to count:
+>
+> ```javascript theme={null}
+> on('ui.render', { component: 'Spinner' }, async ($, e, next) => {
+>   // Nothing to show yet, so pass the event on unchanged
+>   if (calls === 0) return next(e)
+>   return next({ ...e, props: { ...e.props, suffix: ' · tool calls: ' + calls + '…' } })
+> })
+> ```
+>
+> Before the first tool call, the spinner looks the way it does without the mod:
+>
+> ```text theme={null}
+> Thinking…
+> ```
 
 At these sites, `next(e)` returns a reference to Claude Code's drawing, `{ type: 'engine', ref }`, unless a mod that runs after yours returned a tree of its own. To change what's in that drawing, pass `next` a copy of the event with different props, as the **Change a detail** tab does. You can return the reference as it is, or place it in a `Box` beside elements of your own:
 
@@ -357,71 +357,71 @@ To get the elements, call `$.ui.resolve(e)` in your hook, as in `const { Box, Te
 
 Select a tab to see each of the most common elements and how the terminal draws it:
 
-**Text**
+> [tab] Text
+>
+> `Text` draws a string, with optional styling such as `bold` and `color`:
+>
+> ```javascript theme={null}
+> Text({ children: ['This is the first tab.'] })
+> ```
+>
+> ```text theme={null}
+> This is the first tab.
+> ```
 
-`Text` draws a string, with optional styling such as `bold` and `color`:
+> [tab] Box
+>
+> `Box` arranges what's inside it, in a row or a column. This one puts a button and a line of text side by side, two columns apart:
+>
+> ```javascript theme={null}
+> Box({
+>   flexDirection: 'row',
+>   columnGap: 2,
+>   children: [
+>     Button({ key: 'more', label: 'Add one', onPress: addOne }),
+>     Text({ children: ['Count: 0'] }),
+>   ],
+> })
+> ```
+>
+> ```text theme={null}
+> [ Add one ]  Count: 0
+> ```
 
-```javascript theme={null}
-Text({ children: ['This is the first tab.'] })
-```
+> [tab] Button
+>
+> `Button` is a control the user can press. It runs your `onPress` callback. With `plain: true` it has no brackets and shows its hotkey:
+>
+> ```javascript theme={null}
+> Button({ key: 'more', label: 'Add one', onPress: addOne })
+> Button({ key: 'tab-one', label: 'One', hotkey: '1', plain: true, onPress: showTabOne })
+> ```
+>
+> ```text theme={null}
+> [ Add one ]
+> 1: One
+> ```
 
-```text theme={null}
-This is the first tab.
-```
-
-**Box**
-
-`Box` arranges what's inside it, in a row or a column. This one puts a button and a line of text side by side, two columns apart:
-
-```javascript theme={null}
-Box({
-  flexDirection: 'row',
-  columnGap: 2,
-  children: [
-    Button({ key: 'more', label: 'Add one', onPress: addOne }),
-    Text({ children: ['Count: 0'] }),
-  ],
-})
-```
-
-```text theme={null}
-[ Add one ]  Count: 0
-```
-
-**Button**
-
-`Button` is a control the user can press. It runs your `onPress` callback. With `plain: true` it has no brackets and shows its hotkey:
-
-```javascript theme={null}
-Button({ key: 'more', label: 'Add one', onPress: addOne })
-Button({ key: 'tab-one', label: 'One', hotkey: '1', plain: true, onPress: showTabOne })
-```
-
-```text theme={null}
-[ Add one ]
-1: One
-```
-
-**Input**
-
-`Input` is a text field. It runs your `onSubmit` callback with the text when the user presses Enter:
-
-```javascript theme={null}
-Input({
-  key: 'new-note',
-  label: 'Note',
-  placeholder: 'Type a note and press Enter',
-  value: '',
-  submitLabel: 'add',
-  onSubmit: addNote,
-})
-```
-
-```text theme={null}
-Note: Type a note and press Enter
-```
-
-Set `rows` to 2 or more for [a field that holds several lines](https://code.claude.com/docs/en/plugins/mods/gallery.md#input).
+> [tab] Input
+>
+> `Input` is a text field. It runs your `onSubmit` callback with the text when the user presses Enter:
+>
+> ```javascript theme={null}
+> Input({
+>   key: 'new-note',
+>   label: 'Note',
+>   placeholder: 'Type a note and press Enter',
+>   value: '',
+>   submitLabel: 'add',
+>   onSubmit: addNote,
+> })
+> ```
+>
+> ```text theme={null}
+> Note: Type a note and press Enter
+> ```
+>
+> Set `rows` to 2 or more for [a field that holds several lines](https://code.claude.com/docs/en/plugins/mods/gallery.md#input).
 
 The [interface gallery](https://code.claude.com/docs/en/plugins/mods/gallery.md) has samples and screenshots of most elements. This table lists every element:
 

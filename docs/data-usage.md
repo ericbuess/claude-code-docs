@@ -10,8 +10,8 @@
 
 ### Data training policy
 
-**Consumer users (Free, Pro, and Max plans)**:
-We give you the choice to allow your data to be used to improve future Claude models. We will train new models using data from Free, Pro, and Max accounts when this setting is on (including when you use Claude Code from these accounts).
+**Consumer users (Free, Pro, Max, and Ultra plans)**:
+We give you the choice to allow your data to be used to improve future Claude models. We will train new models using data from Free, Pro, Max, and Ultra accounts when this setting is on (including when you use Claude Code from these accounts).
 
 **Commercial users**: (Team and Enterprise plans, API, 3rd-party platforms, and Claude Gov) maintain existing policies: Anthropic does not train generative models using code or prompts sent to Claude Code under commercial terms, unless the customer has chosen to provide their data to us for model improvement (for example, the [Developer Partner Program](https://support.claude.com/en/articles/11174108-about-the-development-partner-program)).
 
@@ -43,7 +43,7 @@ To disable these surveys, set `CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1`. The surve
 
 Anthropic retains Claude Code data based on your account type and preferences.
 
-**Consumer users (Free, Pro, and Max plans)**:
+**Consumer users (Free, Pro, Max, and Ultra plans)**:
 
 * Users who allow data use for model improvement: 5-year retention period to support model development and safety improvements
 * Users who don't allow data use for model improvement: 30-day retention period
@@ -61,7 +61,7 @@ You can delete individual cloud sessions at any time. Deleting a session permane
 
 Learn more about data retention practices in our [Privacy Center](https://privacy.anthropic.com/).
 
-For full details, please review our [Commercial Terms of Service](https://www.anthropic.com/legal/commercial-terms) (for Team, Enterprise, and API users) or [Consumer Terms](https://www.anthropic.com/legal/consumer-terms) (for Free, Pro, and Max users) and [Privacy Policy](https://www.anthropic.com/legal/privacy).
+For full details, please review our [Commercial Terms of Service](https://www.anthropic.com/legal/commercial-terms) (for Team, Enterprise, and API users) or [Consumer Terms](https://www.anthropic.com/legal/consumer-terms) (for Free, Pro, Max, and Ultra users) and [Privacy Policy](https://www.anthropic.com/legal/privacy).
 
 ## Data access
 
@@ -107,7 +107,7 @@ Claude Code sends two kinds of operational telemetry: usage metrics and error re
 
 Error reporting is on only when all of these apply:
 
-* you sign in with a Claude Pro or Max subscription
+* you sign in with a Claude Pro, Max, or Ultra subscription
 * you're running Claude Code v2.1.198 or later
 * you're connecting directly to the Claude API
 * your organization doesn't have a zero data retention or HIPAA agreement
@@ -123,7 +123,7 @@ By default, error reporting, telemetry, and bug reporting are disabled when usin
 | Service | Claude API | Google Cloud's Agent Platform API | Amazon Bedrock API | Microsoft Foundry API | Claude Platform on AWS |
 | - | - | - | - | - | - |
 | **Metrics** | Default on. `DISABLE_TELEMETRY=1` to disable. | Default off. `CLAUDE_CODE_USE_VERTEX` must be 1. | Default off. `CLAUDE_CODE_USE_BEDROCK` must be 1. | Default off. `CLAUDE_CODE_USE_FOUNDRY` must be 1. | Default off. `CLAUDE_CODE_USE_ANTHROPIC_AWS` must be 1. |
-| **Error reports** | On for Pro and Max sign-ins on v2.1.198+, otherwise off. `DISABLE_ERROR_REPORTING=1` to disable. | Default off. `CLAUDE_CODE_USE_VERTEX` must be 1. | Default off. `CLAUDE_CODE_USE_BEDROCK` must be 1. | Default off. `CLAUDE_CODE_USE_FOUNDRY` must be 1. | Default off. `CLAUDE_CODE_USE_ANTHROPIC_AWS` must be 1. |
+| **Error reports** | On for Pro, Max, and Ultra sign-ins on v2.1.198+, otherwise off. `DISABLE_ERROR_REPORTING=1` to disable. | Default off. `CLAUDE_CODE_USE_VERTEX` must be 1. | Default off. `CLAUDE_CODE_USE_BEDROCK` must be 1. | Default off. `CLAUDE_CODE_USE_FOUNDRY` must be 1. | Default off. `CLAUDE_CODE_USE_ANTHROPIC_AWS` must be 1. |
 | **Claude API (`/feedback` reports)** | Default on. `DISABLE_FEEDBACK_COMMAND=1` to disable. | Default off. `CLAUDE_CODE_USE_VERTEX` must be 1. | Default off. `CLAUDE_CODE_USE_BEDROCK` must be 1. | Default off. `CLAUDE_CODE_USE_FOUNDRY` must be 1. | Default off. `CLAUDE_CODE_USE_ANTHROPIC_AWS` must be 1. |
 | **Session quality surveys** | Default on. `CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1` to disable. | Default on. `CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1` to disable. | Default on. `CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1` to disable. | Default on. `CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1` to disable. | Default on. `CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1` to disable. |
 | **WebFetch domain safety check** | Default on. `skipWebFetchPreflight: true` in [settings](https://code.claude.com/docs/en/settings.md) to disable. | Default on. `skipWebFetchPreflight: true` in [settings](https://code.claude.com/docs/en/settings.md) to disable. | Default on. `skipWebFetchPreflight: true` in [settings](https://code.claude.com/docs/en/settings.md) to disable. | Default on. `skipWebFetchPreflight: true` in [settings](https://code.claude.com/docs/en/settings.md) to disable. | Default on. `skipWebFetchPreflight: true` in [settings](https://code.claude.com/docs/en/settings.md) to disable. |

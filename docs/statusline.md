@@ -212,7 +212,7 @@ Claude Code sends the following JSON fields to your script via stdin:
 | `worktree.original_cwd` | The directory Claude was in before entering the worktree |
 | `worktree.original_branch` | Git branch checked out before entering the worktree. Absent for hook-based worktrees |
 
-> **Full JSON schema**
+> [accordion] Full JSON schema
 >
 > Your status line command receives this JSON structure via stdin:
 >
@@ -341,7 +341,7 @@ Claude Code sends the following JSON fields to your script via stdin:
 > * `agent`: appears only when running with the `--agent` flag or agent settings configured
 > * `pr`: appears only while an open PR or GitLab merge request is found for the current branch, and is removed once it merges or closes. `pr.review_state` and `pr.kind` may be independently absent
 > * `worktree`: appears only while the session is in a [worktree session](https://code.claude.com/docs/en/worktrees.md). When present, `branch` and `original_branch` may also be absent for hook-based worktrees
-> * `rate_limits`: appears only for claude.ai Pro and Max subscribers, or behind a Claude apps gateway that sets a spend limit for you, and only after the first API response in the session. Each window (`five_hour`, `seven_day`, `spend_limit`) may be independently absent, and Claude Code drops a window once its `resets_at` time passes. Use `jq -r '.rate_limits.five_hour.used_percentage // empty'` to handle absence gracefully.
+> * `rate_limits`: appears only for claude.ai Pro, Max, and Ultra subscribers, or behind a Claude apps gateway that sets a spend limit for you. Even then, it appears only after the first API response in the session. Each window (`five_hour`, `seven_day`, `spend_limit`) may be independently absent, and Claude Code drops a window once its `resets_at` time passes. Use `jq -r '.rate_limits.five_hour.used_percentage // empty'` to handle absence gracefully.
 > * `prompt_cache`: appears after the main conversation's first API response. See [prompt cache fields](#prompt-cache-fields)
 >
 > **Fields that may be `null`**:
@@ -819,9 +819,9 @@ process.stdin.on('end', () => {
 
 ### Rate limit usage
 
-Display claude.ai subscription rate limit usage, or your spend against a Claude apps gateway spend limit, in the status line. For subscribers, the `rate_limits` object contains a rolling `five_hour` window and a weekly `seven_day` window. Each window provides `used_percentage`, from 0 to 100, and `resets_at`, the Unix epoch seconds when the window resets. Behind a gateway, read the `spend_limit` object, described under [spend limit fields](#spend-limit-fields).
+Display claude.ai subscription rate limit usage, or your spend against a Claude apps gateway spend limit, in the status line. For subscribers, the `rate_limits` object can contain a rolling `five_hour` window and a weekly `seven_day` window. Each window provides `used_percentage`, from 0 to 100, and `resets_at`, the Unix epoch seconds when the window resets. Behind a gateway, read the `spend_limit` object, described under [spend limit fields](#spend-limit-fields).
 
-The `rate_limits` object is only present for claude.ai Pro and Max subscribers, or behind a Claude apps gateway with spend limits, and only after the first API response. Each script handles the absent fields gracefully, and behind a gateway prints `spend: $314.12 / $500`, or `spend: 63%` while the dollar fields are absent:
+The `rate_limits` object is only present for claude.ai Pro, Max, and Ultra subscribers, or behind a Claude apps gateway with spend limits, and only after the first API response. Each script handles the absent fields gracefully, and behind a gateway prints `spend: $314.12 / $500`, or `spend: 63%` while the dollar fields are absent:
 
 ```bash Bash theme={null}
 #!/bin/bash

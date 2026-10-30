@@ -35,61 +35,61 @@ Claude Code runs on the following platforms and configurations:
 
 To install Claude Code, open a terminal and run the command for your system. If you haven't used a terminal before, the [terminal guide](https://code.claude.com/docs/en/terminal-guide) shows how to open one and paste the command.
 
-**Native Install (Recommended)**
-
-**macOS, Linux, WSL:**
-
-```bash theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null}
-curl -fsSL https://claude.ai/install.sh | bash
-```
-
-On Windows, your prompt shows `PS C:\` when you're in PowerShell and `C:\` without the `PS` when you're in CMD.
-
-**Windows PowerShell:**
-
-```powershell theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null}
-irm https://claude.ai/install.ps1 | iex
-```
-
-**Windows CMD:**
-
-```batch theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null}
-curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd && del install.cmd
-```
-
-The install command shows no progress while it downloads Claude Code. When the installer finishes, open a new terminal window and run `claude --version`. A working installation prints a version number. If your shell says `claude` isn't found or isn't recognized, the install directory isn't on your PATH yet: see [Fix your PATH](https://code.claude.com/docs/en/troubleshoot-install.md#command-not-found-claude-after-installation).
-
-If you see `The token '&&' is not a valid statement separator`, you're in PowerShell, not CMD. If you see `'irm' is not recognized as an internal or external command`, you're in CMD, not PowerShell.
-
-If the install command fails with `syntax error near unexpected token '<'`, a `403`, or any other error, see [Troubleshoot installation](https://code.claude.com/docs/en/troubleshoot-install.md#find-your-error) to match the error to a fix and for alternative install methods.
-
-[Git for Windows](https://git-scm.com/downloads/win) is recommended on native Windows so Claude Code can use the Bash tool. If Git for Windows is not installed, Claude Code uses PowerShell as the shell tool instead. WSL setups do not need Git for Windows.
-
-> [!NOTE]
+> [tab] Native Install (Recommended)
 >
-> Native installations automatically update in the background to keep you on the latest version.
-
-**Homebrew**
-
-```bash theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null}
-brew install --cask claude-code
-```
-
-Homebrew offers two casks. `claude-code` tracks the stable release channel, which is typically about a week behind and skips releases with major regressions. `claude-code@latest` tracks the latest channel and receives new versions as soon as they ship.
-
-> [!NOTE]
+> **macOS, Linux, WSL:**
 >
-> Homebrew installations do not auto-update. Run `brew upgrade claude-code` or `brew upgrade claude-code@latest`, depending on which cask you installed, to get the latest features and security fixes.
-
-**WinGet**
-
-```powershell theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null}
-winget install Anthropic.ClaudeCode
-```
-
-> [!NOTE]
+> ```bash theme={null}
+> curl -fsSL https://claude.ai/install.sh | bash
+> ```
 >
-> WinGet installations do not auto-update. Run `winget upgrade Anthropic.ClaudeCode` periodically to get the latest features and security fixes.
+> On Windows, your prompt shows `PS C:\` when you're in PowerShell and `C:\` without the `PS` when you're in CMD.
+>
+> **Windows PowerShell:**
+>
+> ```powershell theme={null}
+> irm https://claude.ai/install.ps1 | iex
+> ```
+>
+> **Windows CMD:**
+>
+> ```batch theme={null}
+> curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd && del install.cmd
+> ```
+>
+> The install command shows no progress while it downloads Claude Code. When the installer finishes, open a new terminal window and run `claude --version`. A working installation prints a version number. If your shell says `claude` isn't found or isn't recognized, the install directory isn't on your PATH yet: see [Fix your PATH](https://code.claude.com/docs/en/troubleshoot-install.md#command-not-found-claude-after-installation).
+>
+> If you see `The token '&&' is not a valid statement separator`, you're in PowerShell, not CMD. If you see `'irm' is not recognized as an internal or external command`, you're in CMD, not PowerShell.
+>
+> If the install command fails with `syntax error near unexpected token '<'`, a `403`, or any other error, see [Troubleshoot installation](https://code.claude.com/docs/en/troubleshoot-install.md#find-your-error) to match the error to a fix and for alternative install methods.
+>
+> [Git for Windows](https://git-scm.com/downloads/win) is recommended on native Windows so Claude Code can use the Bash tool. If Git for Windows is not installed, Claude Code uses PowerShell as the shell tool instead. WSL setups do not need Git for Windows.
+>
+> > [!NOTE]
+> >
+> > Native installations automatically update in the background to keep you on the latest version.
+
+> [tab] Homebrew
+>
+> ```bash theme={null}
+> brew install --cask claude-code
+> ```
+>
+> Homebrew offers two casks. `claude-code` tracks the stable release channel, which is typically about a week behind and skips releases with major regressions. `claude-code@latest` tracks the latest channel and receives new versions as soon as they ship.
+>
+> > [!NOTE]
+> >
+> > Homebrew installations do not auto-update. Run `brew upgrade claude-code` or `brew upgrade claude-code@latest`, depending on which cask you installed, to get the latest features and security fixes.
+
+> [tab] WinGet
+>
+> ```powershell theme={null}
+> winget install Anthropic.ClaudeCode
+> ```
+>
+> > [!NOTE]
+> >
+> > WinGet installations do not auto-update. Run `winget upgrade Anthropic.ClaudeCode` periodically to get the latest features and security fixes.
 
 You can also install with [apt, dnf, or apk](https://code.claude.com/docs/en/setup.md#install-with-linux-package-managers) on Debian, Fedora, RHEL, and Alpine.
 
@@ -188,7 +188,7 @@ claude doctor
 
 ## Authenticate
 
-Claude Code requires a Pro, Max, Team, Enterprise, or Console account. The free claude.ai plan does not include Claude Code access. You can also use Claude Code with a third-party API provider like [Amazon Bedrock](https://code.claude.com/docs/en/amazon-bedrock.md), [Google Cloud's Agent Platform](https://code.claude.com/docs/en/google-vertex-ai.md), or [Microsoft Foundry](https://code.claude.com/docs/en/microsoft-foundry.md).
+Claude Code requires a Pro, Max, Ultra, Team, Enterprise, or Console account. The free claude.ai plan does not include Claude Code access. You can also use Claude Code with a third-party API provider like [Amazon Bedrock](https://code.claude.com/docs/en/amazon-bedrock.md), [Google Cloud's Agent Platform](https://code.claude.com/docs/en/google-vertex-ai.md), or [Microsoft Foundry](https://code.claude.com/docs/en/microsoft-foundry.md).
 
 After installing, log in by running `claude` and following the browser prompts. If you've set the `ANTHROPIC_API_KEY` environment variable and you approve the key when Claude Code asks whether to use it, Claude Code skips the login prompt. See [Authentication](https://code.claude.com/docs/en/authentication.md) for all account types and team setup options.
 
@@ -300,63 +300,63 @@ The native installer accepts either a specific version number or a release chann
 
 To install the latest version (default):
 
-**macOS, Linux, WSL**
+> [tab] macOS, Linux, WSL
+>
+> ```bash theme={null}
+> curl -fsSL https://claude.ai/install.sh | bash
+> ```
 
-```bash theme={null}
-curl -fsSL https://claude.ai/install.sh | bash
-```
+> [tab] Windows PowerShell
+>
+> ```powershell theme={null}
+> irm https://claude.ai/install.ps1 | iex
+> ```
 
-**Windows PowerShell**
-
-```powershell theme={null}
-irm https://claude.ai/install.ps1 | iex
-```
-
-**Windows CMD**
-
-```batch theme={null}
-curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd && del install.cmd
-```
+> [tab] Windows CMD
+>
+> ```batch theme={null}
+> curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd && del install.cmd
+> ```
 
 To install the stable version:
 
-**macOS, Linux, WSL**
+> [tab] macOS, Linux, WSL
+>
+> ```bash theme={null}
+> curl -fsSL https://claude.ai/install.sh | bash -s stable
+> ```
 
-```bash theme={null}
-curl -fsSL https://claude.ai/install.sh | bash -s stable
-```
+> [tab] Windows PowerShell
+>
+> ```powershell theme={null}
+> & ([scriptblock]::Create((irm https://claude.ai/install.ps1))) stable
+> ```
 
-**Windows PowerShell**
-
-```powershell theme={null}
-& ([scriptblock]::Create((irm https://claude.ai/install.ps1))) stable
-```
-
-**Windows CMD**
-
-```batch theme={null}
-curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd stable && del install.cmd
-```
+> [tab] Windows CMD
+>
+> ```batch theme={null}
+> curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd stable && del install.cmd
+> ```
 
 To install a specific version number:
 
-**macOS, Linux, WSL**
+> [tab] macOS, Linux, WSL
+>
+> ```bash theme={null}
+> curl -fsSL https://claude.ai/install.sh | bash -s 2.1.89
+> ```
 
-```bash theme={null}
-curl -fsSL https://claude.ai/install.sh | bash -s 2.1.89
-```
+> [tab] Windows PowerShell
+>
+> ```powershell theme={null}
+> & ([scriptblock]::Create((irm https://claude.ai/install.ps1))) 2.1.89
+> ```
 
-**Windows PowerShell**
-
-```powershell theme={null}
-& ([scriptblock]::Create((irm https://claude.ai/install.ps1))) 2.1.89
-```
-
-**Windows CMD**
-
-```batch theme={null}
-curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd 2.1.89 && del install.cmd
-```
+> [tab] Windows CMD
+>
+> ```batch theme={null}
+> curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd 2.1.89 && del install.cmd
+> ```
 
 To confirm which version installed, run `claude --version`: the command prints the exact version you passed, such as `2.1.89 (Claude Code)`.
 
@@ -366,95 +366,95 @@ Claude Code publishes signed apt, dnf, and apk repositories. Each repository off
 
 All repositories are signed with the [Claude Code release signing key](#binary-integrity-and-code-signing). Before trusting the key, verify it as described in each tab.
 
-**apt**
+> [tab] apt
+>
+> For Debian and Ubuntu. The install commands below download the signing key with `curl` and verify it with `gpg`, which fresh Debian and Ubuntu installations may not include. If either command reports `command not found`, install both first:
+>
+> ```bash theme={null}
+> sudo apt install curl gnupg
+> ```
+>
+> Download the signing key:
+>
+> ```bash theme={null}
+> sudo install -d -m 0755 /etc/apt/keyrings
+> sudo curl -fsSL https://downloads.claude.ai/keys/claude-code.asc \
+>   -o /etc/apt/keyrings/claude-code.asc
+> ```
+>
+> If this download fails, `apt update` later fails with `NO_PUBKEY BAA929FF1A7ECACE`. Confirm the key downloaded and belongs to Anthropic before continuing:
+>
+> ```bash theme={null}
+> gpg --show-keys /etc/apt/keyrings/claude-code.asc
+> ```
+>
+> The fingerprint gpg prints should be `31DDDE24DDFAB679F42D7BD2BAA929FF1A7ECACE`. If gpg reports that the file can't be opened or contains no valid OpenPGP data, the download failed or returned the wrong content: confirm your network can reach `downloads.claude.ai`, then rerun the download command.
+>
+> Register the repository on the `stable` channel and install:
+>
+> ```bash theme={null}
+> echo "deb [signed-by=/etc/apt/keyrings/claude-code.asc] https://downloads.claude.ai/claude-code/apt/stable stable main" \
+>   | sudo tee /etc/apt/sources.list.d/claude-code.list
+> sudo apt update
+> sudo apt install claude-code
+> ```
+>
+> To use the `latest` channel instead, both the URL path and the suite name change. Use this `deb` line:
+>
+> ```bash theme={null}
+> echo "deb [signed-by=/etc/apt/keyrings/claude-code.asc] https://downloads.claude.ai/claude-code/apt/latest latest main" \
+>   | sudo tee /etc/apt/sources.list.d/claude-code.list
+> ```
+>
+> To upgrade later, run `sudo apt update && sudo apt upgrade claude-code`.
 
-For Debian and Ubuntu. The install commands below download the signing key with `curl` and verify it with `gpg`, which fresh Debian and Ubuntu installations may not include. If either command reports `command not found`, install both first:
+> [tab] dnf
+>
+> For Fedora and RHEL. The following commands configure the `stable` channel:
+>
+> ```bash theme={null}
+> sudo tee /etc/yum.repos.d/claude-code.repo <<'EOF'
+> [claude-code]
+> name=Claude Code
+> baseurl=https://downloads.claude.ai/claude-code/rpm/stable
+> enabled=1
+> gpgcheck=1
+> gpgkey=https://downloads.claude.ai/keys/claude-code.asc
+> EOF
+> sudo dnf install claude-code
+> ```
+>
+> To use the `latest` channel instead, set `baseurl` to the `latest` repository:
+>
+> ```ini theme={null}
+> baseurl=https://downloads.claude.ai/claude-code/rpm/latest
+> ```
+>
+> dnf downloads the key on first install and prompts you to confirm the fingerprint. Verify it matches `31DD DE24 DDFA B679 F42D 7BD2 BAA9 29FF 1A7E CACE` before accepting.
+>
+> To upgrade later, run `sudo dnf upgrade claude-code`.
 
-```bash theme={null}
-sudo apt install curl gnupg
-```
-
-Download the signing key:
-
-```bash theme={null}
-sudo install -d -m 0755 /etc/apt/keyrings
-sudo curl -fsSL https://downloads.claude.ai/keys/claude-code.asc \
-  -o /etc/apt/keyrings/claude-code.asc
-```
-
-If this download fails, `apt update` later fails with `NO_PUBKEY BAA929FF1A7ECACE`. Confirm the key downloaded and belongs to Anthropic before continuing:
-
-```bash theme={null}
-gpg --show-keys /etc/apt/keyrings/claude-code.asc
-```
-
-The fingerprint gpg prints should be `31DDDE24DDFAB679F42D7BD2BAA929FF1A7ECACE`. If gpg reports that the file can't be opened or contains no valid OpenPGP data, the download failed or returned the wrong content: confirm your network can reach `downloads.claude.ai`, then rerun the download command.
-
-Register the repository on the `stable` channel and install:
-
-```bash theme={null}
-echo "deb [signed-by=/etc/apt/keyrings/claude-code.asc] https://downloads.claude.ai/claude-code/apt/stable stable main" \
-  | sudo tee /etc/apt/sources.list.d/claude-code.list
-sudo apt update
-sudo apt install claude-code
-```
-
-To use the `latest` channel instead, both the URL path and the suite name change. Use this `deb` line:
-
-```bash theme={null}
-echo "deb [signed-by=/etc/apt/keyrings/claude-code.asc] https://downloads.claude.ai/claude-code/apt/latest latest main" \
-  | sudo tee /etc/apt/sources.list.d/claude-code.list
-```
-
-To upgrade later, run `sudo apt update && sudo apt upgrade claude-code`.
-
-**dnf**
-
-For Fedora and RHEL. The following commands configure the `stable` channel:
-
-```bash theme={null}
-sudo tee /etc/yum.repos.d/claude-code.repo <<'EOF'
-[claude-code]
-name=Claude Code
-baseurl=https://downloads.claude.ai/claude-code/rpm/stable
-enabled=1
-gpgcheck=1
-gpgkey=https://downloads.claude.ai/keys/claude-code.asc
-EOF
-sudo dnf install claude-code
-```
-
-To use the `latest` channel instead, set `baseurl` to the `latest` repository:
-
-```ini theme={null}
-baseurl=https://downloads.claude.ai/claude-code/rpm/latest
-```
-
-dnf downloads the key on first install and prompts you to confirm the fingerprint. Verify it matches `31DD DE24 DDFA B679 F42D 7BD2 BAA9 29FF 1A7E CACE` before accepting.
-
-To upgrade later, run `sudo dnf upgrade claude-code`.
-
-**apk**
-
-For Alpine Linux. The following commands configure the `stable` channel:
-
-```sh theme={null}
-wget -O /etc/apk/keys/claude-code.rsa.pub \
-  https://downloads.claude.ai/keys/claude-code.rsa.pub
-echo "https://downloads.claude.ai/claude-code/apk/stable" >> /etc/apk/repositories
-apk add claude-code
-```
-
-To switch to the `latest` channel, remove the `stable` repository line and add the `latest` repository:
-
-```sh theme={null}
-sed -i '\|downloads.claude.ai/claude-code/apk/stable|d' /etc/apk/repositories
-echo "https://downloads.claude.ai/claude-code/apk/latest" >> /etc/apk/repositories
-```
-
-Verify the downloaded key with `sha256sum /etc/apk/keys/claude-code.rsa.pub`, which should report `395759c1f7449ef4cdef305a42e820f3c766d6090d142634ebdb049f113168b6`.
-
-To upgrade later, run `apk update && apk upgrade claude-code`.
+> [tab] apk
+>
+> For Alpine Linux. The following commands configure the `stable` channel:
+>
+> ```sh theme={null}
+> wget -O /etc/apk/keys/claude-code.rsa.pub \
+>   https://downloads.claude.ai/keys/claude-code.rsa.pub
+> echo "https://downloads.claude.ai/claude-code/apk/stable" >> /etc/apk/repositories
+> apk add claude-code
+> ```
+>
+> To switch to the `latest` channel, remove the `stable` repository line and add the `latest` repository:
+>
+> ```sh theme={null}
+> sed -i '\|downloads.claude.ai/claude-code/apk/stable|d' /etc/apk/repositories
+> echo "https://downloads.claude.ai/claude-code/apk/latest" >> /etc/apk/repositories
+> ```
+>
+> Verify the downloaded key with `sha256sum /etc/apk/keys/claude-code.rsa.pub`, which should report `395759c1f7449ef4cdef305a42e820f3c766d6090d142634ebdb049f113168b6`.
+>
+> To upgrade later, run `apk update && apk upgrade claude-code`.
 
 ### Install with npm
 
@@ -546,23 +546,23 @@ A valid result reports `Good signature from "Anthropic Claude Code Release Signi
 
 Compare the SHA256 checksum of the binary with the value listed under `platforms.<platform>.checksum` in `manifest.json`. The commands below assume a `claude` binary in the current directory. To verify an installed native binary instead, run the command against `~/.local/share/claude/versions/VERSION`, replacing VERSION with the release you set in Step 2.
 
-**Linux**
+> [tab] Linux
+>
+> ```bash theme={null}
+> sha256sum claude
+> ```
 
-```bash theme={null}
-sha256sum claude
-```
+> [tab] macOS
+>
+> ```bash theme={null}
+> shasum -a 256 claude
+> ```
 
-**macOS**
-
-```bash theme={null}
-shasum -a 256 claude
-```
-
-**Windows PowerShell**
-
-```powershell theme={null}
-(Get-FileHash claude.exe -Algorithm SHA256).Hash.ToLower()
-```
+> [tab] Windows PowerShell
+>
+> ```powershell theme={null}
+> (Get-FileHash claude.exe -Algorithm SHA256).Hash.ToLower()
+> ```
 
 > [!NOTE]
 >
@@ -584,19 +584,19 @@ To remove Claude Code, follow the instructions for your installation method. If 
 
 Remove the Claude Code binary and version files:
 
-**macOS, Linux, WSL**
+> [tab] macOS, Linux, WSL
+>
+> ```bash theme={null}
+> rm -f ~/.local/bin/claude
+> rm -rf ~/.local/share/claude
+> ```
 
-```bash theme={null}
-rm -f ~/.local/bin/claude
-rm -rf ~/.local/share/claude
-```
-
-**Windows PowerShell**
-
-```powershell theme={null}
-Remove-Item -Path "$env:USERPROFILE\.local\bin\claude.exe" -Force
-Remove-Item -Path "$env:USERPROFILE\.local\share\claude" -Recurse -Force
-```
+> [tab] Windows PowerShell
+>
+> ```powershell theme={null}
+> Remove-Item -Path "$env:USERPROFILE\.local\bin\claude.exe" -Force
+> Remove-Item -Path "$env:USERPROFILE\.local\share\claude" -Recurse -Force
+> ```
 
 ### Uninstall with Homebrew
 
@@ -624,27 +624,27 @@ winget uninstall Anthropic.ClaudeCode
 
 Remove the package and the repository configuration:
 
-**apt**
+> [tab] apt
+>
+> ```bash theme={null}
+> sudo apt remove claude-code
+> sudo rm /etc/apt/sources.list.d/claude-code.list /etc/apt/keyrings/claude-code.asc
+> ```
 
-```bash theme={null}
-sudo apt remove claude-code
-sudo rm /etc/apt/sources.list.d/claude-code.list /etc/apt/keyrings/claude-code.asc
-```
+> [tab] dnf
+>
+> ```bash theme={null}
+> sudo dnf remove claude-code
+> sudo rm /etc/yum.repos.d/claude-code.repo
+> ```
 
-**dnf**
-
-```bash theme={null}
-sudo dnf remove claude-code
-sudo rm /etc/yum.repos.d/claude-code.repo
-```
-
-**apk**
-
-```sh theme={null}
-apk del claude-code
-sed -i '\|downloads.claude.ai/claude-code/apk|d' /etc/apk/repositories
-rm /etc/apk/keys/claude-code.rsa.pub
-```
+> [tab] apk
+>
+> ```sh theme={null}
+> apk del claude-code
+> sed -i '\|downloads.claude.ai/claude-code/apk|d' /etc/apk/repositories
+> rm /etc/apk/keys/claude-code.rsa.pub
+> ```
 
 ### Uninstall with npm
 
@@ -664,26 +664,26 @@ The VS Code extension, the JetBrains plugin, and the Desktop app also write to `
 
 To remove Claude Code settings and cached data:
 
-**macOS, Linux, WSL**
+> [tab] macOS, Linux, WSL
+>
+> ```bash theme={null}
+> # Remove user settings and state
+> rm -rf ~/.claude
+> rm ~/.claude.json
+>
+> # Remove project-specific settings (run from your project directory)
+> rm -rf .claude
+> rm -f .mcp.json
+> ```
 
-```bash theme={null}
-# Remove user settings and state
-rm -rf ~/.claude
-rm ~/.claude.json
-
-# Remove project-specific settings (run from your project directory)
-rm -rf .claude
-rm -f .mcp.json
-```
-
-**Windows PowerShell**
-
-```powershell theme={null}
-# Remove user settings and state
-Remove-Item -Path "$env:USERPROFILE\.claude" -Recurse -Force
-Remove-Item -Path "$env:USERPROFILE\.claude.json" -Force
-
-# Remove project-specific settings (run from your project directory)
-Remove-Item -Path ".claude" -Recurse -Force
-Remove-Item -Path ".mcp.json" -Force
-```
+> [tab] Windows PowerShell
+>
+> ```powershell theme={null}
+> # Remove user settings and state
+> Remove-Item -Path "$env:USERPROFILE\.claude" -Recurse -Force
+> Remove-Item -Path "$env:USERPROFILE\.claude.json" -Force
+>
+> # Remove project-specific settings (run from your project directory)
+> Remove-Item -Path ".claude" -Recurse -Force
+> Remove-Item -Path ".mcp.json" -Force
+> ```

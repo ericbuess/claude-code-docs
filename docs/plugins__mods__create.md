@@ -92,17 +92,17 @@ first-mod/
 
 Create the two directories that hold the files:
 
-**Bash or Zsh**
+> [tab] Bash or Zsh
+>
+> ```bash theme={null}
+> mkdir -p first-mod/.claude-plugin first-mod/hooks
+> ```
 
-```bash theme={null}
-mkdir -p first-mod/.claude-plugin first-mod/hooks
-```
-
-**PowerShell**
-
-```powershell theme={null}
-New-Item -ItemType Directory -Force first-mod\.claude-plugin, first-mod\hooks
-```
+> [tab] PowerShell
+>
+> ```powershell theme={null}
+> New-Item -ItemType Directory -Force first-mod\.claude-plugin, first-mod\hooks
+> ```
 
 **2. Write the manifest**
 

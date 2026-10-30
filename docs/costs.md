@@ -6,7 +6,7 @@
 
 > Track token usage, set team spend limits, and reduce Claude Code costs with context management, model selection, extended thinking settings, and preprocessing hooks.
 
-Claude Code charges by API token consumption. For subscription plan pricing (Pro, Max, Team, Enterprise), see [claude.com/pricing](https://claude.com/pricing). Per-developer costs vary widely based on model selection, codebase size, and usage patterns such as running multiple instances or automation.
+Claude Code charges by API token consumption. For subscription plan pricing (Pro, Max, Ultra, Team, Enterprise), see [claude.com/pricing](https://claude.com/pricing). Per-developer costs vary widely based on model selection, codebase size, and usage patterns such as running multiple instances or automation.
 
 Across enterprise deployments, the average cost is around \$13 per developer per active day and \$150-250 per developer per month, with costs remaining below \$30 per active day for 90% of users. To estimate spend for your own team, start with a small pilot group and use the tracking tools below to establish a baseline before wider rollout.
 
@@ -18,7 +18,7 @@ This page covers Claude Code usage only: how to [track your costs](#track-your-c
 
 > [!NOTE]
 >
-> The Session block in `/usage` shows API token usage and is intended for API users. Claude Max and Pro subscribers have usage included in their subscription, so the session cost figure isn't relevant for billing purposes. Subscribers see plan usage bars, activity stats, and a usage breakdown on the same screen.
+> The Session block in `/usage` shows API token usage and is intended for API users. Claude Pro, Max, and Ultra subscribers have usage included in their subscription, so the session cost figure isn't relevant for billing purposes. Subscribers see plan usage bars, activity stats, and a usage breakdown on the same screen.
 
 The Session block at the top of `/usage` shows detailed token usage statistics for your current session. Claude Code computes the dollar figure locally from token counts at list price, unless a [`modelPricing`](https://code.claude.com/docs/en/settings-reference#modelpricing) table is in effect. An administrator sets one in your organization's managed settings so the figure uses your contracted rates, and while a table is in effect the `Total cost` line carries the note `at your organization's configured rates`. The figure is an estimate, so for authoritative billing see the Usage page in the [Claude Console](https://platform.claude.com/usage).
 
@@ -55,7 +55,7 @@ Status line scripts can read the same numbers from the [`prompt_cache` object](h
 
 #### Plan usage breakdown
 
-On a Pro, Max, Team, or Enterprise plan, `/usage` also shows a breakdown of what counts against your plan limits, with recommendations:
+On a Pro, Max, Ultra, Team, or Enterprise plan, `/usage` also shows a breakdown of what counts against your plan limits, with recommendations:
 
 * **Attribution**: recent usage attributed to skills, subagents, plugins, and individual MCP servers, each shown as a percentage of the total. An MCP server's share counts only the requests that consumed one of its tool results. Before v2.1.222, after one call to an MCP server, Claude Code attributed every subsequent request to that server, overstating its share.
 * **Recommendations**: suggested changes, one per row. Each row starts with a share of your recent usage, at least 10%, as in `25%  Trim ~/code/api/CLAUDE.md · 49k tokens per request`.
@@ -92,10 +92,10 @@ While [Remote Control](https://code.claude.com/docs/en/remote-control.md) is con
 
 `/usage` also shows a usage-credits row while [usage credits](#add-usage-credits-to-your-subscription) are on. What the row shows depends on your plan:
 
-* **Pro and Max**: your spend for the current month, measured against your monthly spend limit when you have set one. When you haven't set a limit, the row shows `Unlimited` and no spend figure.
+* **Pro, Max, and Ultra**: your spend for the current month, measured against your monthly spend limit when you have set one. When you haven't set a limit, the row shows `Unlimited` and no spend figure.
 * **Team and Enterprise**: your own spend for the current month, measured against any [limit your organization set](#claude-for-teams-and-enterprise) that applies to you. A limit that covers the whole organization doesn't appear in the row. When you have no limit of your own, the row shows your spend with no limit beside it. While usage credits are off for you, `/usage` shows no usage-credits row.
 
-When you have a spend limit, the row appears as soon as usage credits are on and shows 0% until you first spend usage credits. Before v2.1.236, `/usage` showed the row only on Pro and Max plans, and a row with a spend limit stayed hidden until you had spent something.
+When you have a spend limit, the row appears as soon as usage credits are on and shows 0% until you first spend usage credits. Before v2.1.236, `/usage` showed the row only on Pro, Max, and Ultra plans, and a row with a spend limit stayed hidden until you had spent something.
 
 #### When the usage request fails
 
@@ -130,7 +130,7 @@ You can run `/insights` on any plan and with any provider. The analysis runs thr
 
 | Your role | What `/usage-credits` does |
 | :- | :- |
-| Pro or Max subscriber | Opens [**Settings > Usage**](https://claude.ai/settings/usage) on claude.ai in the browser. In its **Usage credits** section you can turn usage credits on or off and check your credit balance, this month's spend, and your monthly spend limit |
+| Pro, Max, or Ultra subscriber | Opens [**Settings > Usage**](https://claude.ai/settings/usage) on claude.ai in the browser. In its **Usage credits** section you can turn usage credits on or off and check your credit balance, this month's spend, and your monthly spend limit |
 | Team or Enterprise member with billing access | Opens your organization's usage settings, [**Organization settings > Usage**](https://claude.ai/admin-settings/usage), in the browser |
 | Team or Enterprise member without billing access | Asks you to confirm, then sends a request to your organization's admins. Before v2.1.211, Claude Code sent the request without a confirmation step |
 
@@ -144,7 +144,7 @@ On Pro and Max plans, when you reach your spend limit with usage credits still a
 
 Which controls you have depends on how your organization accesses Claude Code: a Claude for Teams or Enterprise plan, the Claude Console, or a cloud provider. On Teams and Enterprise plans, usage draws from each member's seat allowance. On the Console and on cloud providers, usage is billed per token to your organization. If your organization mixes sign-in methods, each developer is metered according to the one they authenticated with.
 
-The table maps each setup to where you see spend, where you cap it, and how you pull per-user numbers. On an individual Pro or Max plan you have no organization to manage, so track your own usage-credit spend, including [fast mode](https://code.claude.com/docs/en/fast-mode.md#see-where-fast-mode-spend-appears), under [Add usage credits to your subscription](#add-usage-credits-to-your-subscription).
+The table maps each setup to where you see spend, where you cap it, and how you pull per-user numbers. On an individual Pro, Max, or Ultra plan you have no organization to manage, so track your own usage-credit spend, including [fast mode](https://code.claude.com/docs/en/fast-mode.md#see-where-fast-mode-spend-appears), under [Add usage credits to your subscription](#add-usage-credits-to-your-subscription).
 
 | Your setup | See spend | Cap spend | Per-user reporting |
 | :- | :- | :- | :- |
@@ -294,47 +294,47 @@ A [skill](https://code.claude.com/docs/en/skills.md) can give Claude domain know
 
 For example, this PreToolUse hook filters test output to show only failures:
 
-**settings.json**
+> [tab] settings.json
+>
+> Add this to your [settings.json](https://code.claude.com/docs/en/settings.md#where-settings-live) to run the hook before every Bash command:
+>
+> ```json theme={null}
+> {
+>   "hooks": {
+>     "PreToolUse": [
+>       {
+>         "matcher": "Bash",
+>         "hooks": [
+>           {
+>             "type": "command",
+>             "command": "~/.claude/hooks/filter-test-output.sh"
+>           }
+>         ]
+>       }
+>     ]
+>   }
+> }
+> ```
 
-Add this to your [settings.json](https://code.claude.com/docs/en/settings.md#where-settings-live) to run the hook before every Bash command:
-
-```json theme={null}
-{
-  "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "~/.claude/hooks/filter-test-output.sh"
-          }
-        ]
-      }
-    ]
-  }
-}
-```
-
-**filter-test-output.sh**
-
-The hook calls this script. Create the folder with `mkdir -p ~/.claude/hooks`, save the script below as `~/.claude/hooks/filter-test-output.sh`, and make it executable with `chmod +x ~/.claude/hooks/filter-test-output.sh`. It checks if the command is a test runner and modifies it to show only failures:
-
-```bash theme={null}
-#!/bin/bash
-input=$(cat)
-cmd=$(echo "$input" | jq -r '.tool_input.command')
-
-# If running tests, filter to show only failures
-pattern='^(npm test|pytest|go test)( [^;&|<>`$#\\[:cntrl:]]*)?$'
-if [[ "$cmd" =~ $pattern ]]; then
-  filtered_cmd="$cmd 2>&1 | grep -A 5 -E '(FAIL|ERROR|error:)' | head -100"
-  echo "$input" | jq --arg filtered "$filtered_cmd" \
-    '{hookSpecificOutput: {hookEventName: "PreToolUse", updatedInput: (.tool_input + {command: $filtered})}}'
-else
-  echo "{}"
-fi
-```
+> [tab] filter-test-output.sh
+>
+> The hook calls this script. Create the folder with `mkdir -p ~/.claude/hooks`, save the script below as `~/.claude/hooks/filter-test-output.sh`, and make it executable with `chmod +x ~/.claude/hooks/filter-test-output.sh`. It checks if the command is a test runner and modifies it to show only failures:
+>
+> ```bash theme={null}
+> #!/bin/bash
+> input=$(cat)
+> cmd=$(echo "$input" | jq -r '.tool_input.command')
+>
+> # If running tests, filter to show only failures
+> pattern='^(npm test|pytest|go test)( [^;&|<>`$#\\[:cntrl:]]*)?$'
+> if [[ "$cmd" =~ $pattern ]]; then
+>   filtered_cmd="$cmd 2>&1 | grep -A 5 -E '(FAIL|ERROR|error:)' | head -100"
+>   echo "$input" | jq --arg filtered "$filtered_cmd" \
+>     '{hookSpecificOutput: {hookEventName: "PreToolUse", updatedInput: (.tool_input + {command: $filtered})}}'
+> else
+>   echo "{}"
+> fi
+> ```
 
 To verify the setup, run `/hooks` and check that the hook appears under PreToolUse. You can also start Claude Code with `claude --debug-file ./claude-debug.txt` and ask Claude to run `npm test`. When the hook rewrites the command, that log file contains a `modified tool input keys` line listing `command` and the other Bash input fields.
 
@@ -392,7 +392,7 @@ A session that has been open for hours can use far more of your plan limits than
 * **Agent teammates**: each active [teammate](#agent-team-token-costs) keeps consuming tokens until it exits
 * **Compaction**: `/compact` reads the conversation it summarizes, so [compacting a large context](https://code.claude.com/docs/en/prompt-caching.md#compacting-the-conversation) is itself a large request. When you want a fresh start instead of continuity, `/clear` costs nothing
 
-On a Pro, Max, Team, or Enterprise plan, the [`/usage` breakdown](#plan-usage-breakdown) recommends a change for behaviors behind 10% or more of your recent usage, such as long context or cache misses.
+To see what to change on a Pro, Max, Ultra, Team, or Enterprise plan, run [`/usage`](#plan-usage-breakdown) at the Claude Code prompt. Its breakdown recommends a change for behaviors behind 10% or more of your recent usage. Those behaviors include long context and cache misses.
 
 ## Understanding changes in Claude Code behavior
 
@@ -400,7 +400,7 @@ Claude Code regularly receives updates that may change how features work, includ
 
 For billing questions about your specific account, contact Anthropic support through the in-product messenger:
 
-* **Subscription plans** (Pro, Max, Team, Enterprise): sign in at [claude.ai](https://claude.ai), click your initials in the lower left, and select **Get help**
+* **Subscription plans** (Pro, Max, Ultra, Team, Enterprise): sign in at [claude.ai](https://claude.ai), click your initials in the lower left, and select **Get help**
 * **Console (API) billing**: sign in at [platform.claude.com](https://platform.claude.com), click your initials, and select **Get help**
 
 See [How to get support](https://support.claude.com/en/articles/9015913-how-to-get-support) for the full flow, including who can reach a human agent on each plan.

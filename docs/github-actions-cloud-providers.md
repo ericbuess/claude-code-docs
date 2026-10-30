@@ -59,34 +59,34 @@ After registering the app, generate a private key and keep the downloaded `.pem`
 
 Configure your cloud to trust the OIDC token that GitHub issues to the workflow, so each workflow run gets short-lived cloud credentials. The bullets in each tab summarize what to create, and each tab links the cloud vendor's own guide for the console-level steps.
 
-**Amazon Bedrock**
+> [tab] Amazon Bedrock
+>
+> Create the trust configuration in your AWS account, following the [AWS guide to creating OIDC identity providers](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_providers_create_oidc.html):
+>
+> * Add a GitHub OIDC identity provider with provider URL `https://token.actions.githubusercontent.com` and audience `sts.amazonaws.com`
+> * Create an IAM role trusted by that provider as a web identity, and attach the scoped invocation policy from [IAM configuration](https://code.claude.com/docs/en/amazon-bedrock.md#iam-configuration), which grants `bedrock:InvokeModel`, `bedrock:InvokeModelWithResponseStream`, `bedrock:ListInferenceProfiles`, and `bedrock:GetInferenceProfile`, along with two `aws-marketplace` subscription actions
+> * Limit the role's trust policy to your repository with a subject condition such as `repo:your-org/your-repo:*`. See [GitHub's OIDC hardening guide](https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/about-security-hardening-with-openid-connect) for the claim format
+>
+> Note the role's ARN. You add it as a secret in the next step.
 
-Create the trust configuration in your AWS account, following the [AWS guide to creating OIDC identity providers](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_providers_create_oidc.html):
+> [tab] Google Cloud's Agent Platform
+>
+> Create the federation resources in your Google Cloud project, following the [Workload Identity Federation documentation](https://cloud.google.com/iam/docs/workload-identity-federation):
+>
+> * Enable three APIs: IAM Credentials, Security Token Service (STS), and the Agent Platform API, whose service name is `aiplatform.googleapis.com`
+> * Create a Workload Identity Pool with a GitHub OIDC provider whose issuer is `https://token.actions.githubusercontent.com`, and add an attribute condition that limits the pool to your repository
+> * Create a dedicated service account with only the `Vertex AI User` role, which is `roles/aiplatform.user`, and allow the pool to impersonate it
+>
+> Note the provider's full resource name and the service account's email address. You add them as secrets in the next step.
 
-* Add a GitHub OIDC identity provider with provider URL `https://token.actions.githubusercontent.com` and audience `sts.amazonaws.com`
-* Create an IAM role trusted by that provider as a web identity, and attach the scoped invocation policy from [IAM configuration](https://code.claude.com/docs/en/amazon-bedrock.md#iam-configuration), which grants `bedrock:InvokeModel`, `bedrock:InvokeModelWithResponseStream`, `bedrock:ListInferenceProfiles`, and `bedrock:GetInferenceProfile`, along with two `aws-marketplace` subscription actions
-* Limit the role's trust policy to your repository with a subject condition such as `repo:your-org/your-repo:*`. See [GitHub's OIDC hardening guide](https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/about-security-hardening-with-openid-connect) for the claim format
-
-Note the role's ARN. You add it as a secret in the next step.
-
-**Google Cloud's Agent Platform**
-
-Create the federation resources in your Google Cloud project, following the [Workload Identity Federation documentation](https://cloud.google.com/iam/docs/workload-identity-federation):
-
-* Enable three APIs: IAM Credentials, Security Token Service (STS), and the Agent Platform API, whose service name is `aiplatform.googleapis.com`
-* Create a Workload Identity Pool with a GitHub OIDC provider whose issuer is `https://token.actions.githubusercontent.com`, and add an attribute condition that limits the pool to your repository
-* Create a dedicated service account with only the `Vertex AI User` role, which is `roles/aiplatform.user`, and allow the pool to impersonate it
-
-Note the provider's full resource name and the service account's email address. You add them as secrets in the next step.
-
-**Microsoft Foundry**
-
-Create a Microsoft Entra application with a federated credential for your repository, following [Microsoft's guide to authenticating from GitHub Actions](https://learn.microsoft.com/en-us/azure/developer/github/connect-from-azure-openid-connect):
-
-* Register a Microsoft Entra application and add a federated identity credential that trusts tokens GitHub issues to your repository. A user-assigned managed identity works in place of an application. Both have the client ID you note below
-* Assign the application the `Azure AI User` role on your Foundry resource. See [Azure RBAC configuration](https://code.claude.com/docs/en/microsoft-foundry.md#azure-rbac-configuration) for a narrower custom role
-
-Note the application's client ID, your tenant ID, and your subscription ID. You add them as secrets in the next step.
+> [tab] Microsoft Foundry
+>
+> Create a Microsoft Entra application with a federated credential for your repository, following [Microsoft's guide to authenticating from GitHub Actions](https://learn.microsoft.com/en-us/azure/developer/github/connect-from-azure-openid-connect):
+>
+> * Register a Microsoft Entra application and add a federated identity credential that trusts tokens GitHub issues to your repository. A user-assigned managed identity works in place of an application. Both have the client ID you note below
+> * Assign the application the `Azure AI User` role on your Foundry resource. See [Azure RBAC configuration](https://code.claude.com/docs/en/microsoft-foundry.md#azure-rbac-configuration) for a narrower custom role
+>
+> Note the application's client ID, your tenant ID, and your subscription ID. You add them as secrets in the next step.
 
 **3. Add repository secrets**
 
@@ -116,176 +116,176 @@ If you chose a different GitHub identity in the first step, adjust the example:
 >
 > On public repositories, a comment containing the trigger phrase from any user starts this workflow. The credential steps run before the Claude Code GitHub Action checks the commenter's write access, so the action rejects unauthorized users only after the workflow has generated an App token and signed in to your cloud provider, which leaves audit-log entries and consumes Actions minutes. To avoid those runs, add a step that verifies the commenter's write access before the credential steps.
 
-**Amazon Bedrock**
-
-Replace the `aws-region` value with your own. The credentials step exports it as `AWS_REGION` for the rest of the job.
-
-```yaml theme={null}
-name: Claude PR Action
-
-permissions:
-  contents: write
-  pull-requests: write
-  issues: write
-  id-token: write
-
-on:
-  issue_comment:
-    types: [created]
-  pull_request_review_comment:
-    types: [created]
-  issues:
-    types: [opened]
-
-jobs:
-  claude-pr:
-    if: |
-      (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@claude')) ||
-      (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, '@claude')) ||
-      (github.event_name == 'issues' && (contains(github.event.issue.body, '@claude') || contains(github.event.issue.title, '@claude')))
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v6
-
-      - name: Generate GitHub App token
-        id: app-token
-        uses: actions/create-github-app-token@v2
-        with:
-          app-id: ${{ secrets.APP_ID }}
-          private-key: ${{ secrets.APP_PRIVATE_KEY }}
-
-      - name: Configure AWS Credentials (OIDC)
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
-          aws-region: us-west-2
-
-      - uses: anthropics/claude-code-action@v1
-        with:
-          github_token: ${{ steps.app-token.outputs.token }}
-          use_bedrock: "true"
-          claude_args: '--model us.anthropic.claude-sonnet-4-6'
-```
-
-> [!TIP]
+> [tab] Amazon Bedrock
 >
-> Bedrock model IDs include a cross-region inference profile prefix such as `us.`. Use the prefix for the region group where you granted model access.
-
-**Google Cloud's Agent Platform**
-
-Replace the `CLOUD_ML_REGION` value with your own. You don't need to hardcode the project ID, because the workflow reads it from the `auth` step's output.
-
-```yaml theme={null}
-name: Claude PR Action
-
-permissions:
-  contents: write
-  pull-requests: write
-  issues: write
-  id-token: write
-
-on:
-  issue_comment:
-    types: [created]
-  pull_request_review_comment:
-    types: [created]
-  issues:
-    types: [opened]
-
-jobs:
-  claude-pr:
-    if: |
-      (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@claude')) ||
-      (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, '@claude')) ||
-      (github.event_name == 'issues' && (contains(github.event.issue.body, '@claude') || contains(github.event.issue.title, '@claude')))
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v6
-
-      - name: Generate GitHub App token
-        id: app-token
-        uses: actions/create-github-app-token@v2
-        with:
-          app-id: ${{ secrets.APP_ID }}
-          private-key: ${{ secrets.APP_PRIVATE_KEY }}
-
-      - name: Authenticate to Google Cloud
-        id: auth
-        uses: google-github-actions/auth@v2
-        with:
-          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
-          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
-
-      - uses: anthropics/claude-code-action@v1
-        with:
-          github_token: ${{ steps.app-token.outputs.token }}
-          use_vertex: "true"
-          claude_args: '--model claude-sonnet-5'
-        env:
-          ANTHROPIC_VERTEX_PROJECT_ID: ${{ steps.auth.outputs.project_id }}
-          CLOUD_ML_REGION: us-east5
-```
-
-**Microsoft Foundry**
-
-Replace `your-resource-name` with your Foundry resource name. Claude Code builds the endpoint URL from it. The `azure/login` step signs in with the workflow's OIDC token, and Claude Code picks up the credentials through the Azure [default credential chain](https://learn.microsoft.com/en-us/azure/developer/javascript/sdk/authentication/credential-chains#defaultazurecredential-overview).
-
-```yaml theme={null}
-name: Claude PR Action
-
-permissions:
-  contents: write
-  pull-requests: write
-  issues: write
-  id-token: write
-
-on:
-  issue_comment:
-    types: [created]
-  pull_request_review_comment:
-    types: [created]
-  issues:
-    types: [opened]
-
-jobs:
-  claude-pr:
-    if: |
-      (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@claude')) ||
-      (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, '@claude')) ||
-      (github.event_name == 'issues' && (contains(github.event.issue.body, '@claude') || contains(github.event.issue.title, '@claude')))
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v6
-
-      - name: Generate GitHub App token
-        id: app-token
-        uses: actions/create-github-app-token@v2
-        with:
-          app-id: ${{ secrets.APP_ID }}
-          private-key: ${{ secrets.APP_PRIVATE_KEY }}
-
-      - name: Authenticate to Azure
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-
-      - uses: anthropics/claude-code-action@v1
-        with:
-          github_token: ${{ steps.app-token.outputs.token }}
-          use_foundry: "true"
-          claude_args: '--model claude-sonnet-5'
-        env:
-          ANTHROPIC_FOUNDRY_RESOURCE: your-resource-name
-```
-
-> [!TIP]
+> Replace the `aws-region` value with your own. The credentials step exports it as `AWS_REGION` for the rest of the job.
 >
-> Use a model ID that matches a Claude deployment in your Foundry resource. See [Claude Code on Microsoft Foundry](https://code.claude.com/docs/en/microsoft-foundry.md) for model configuration and version pinning.
+> ```yaml theme={null}
+> name: Claude PR Action
+>
+> permissions:
+>   contents: write
+>   pull-requests: write
+>   issues: write
+>   id-token: write
+>
+> on:
+>   issue_comment:
+>     types: [created]
+>   pull_request_review_comment:
+>     types: [created]
+>   issues:
+>     types: [opened]
+>
+> jobs:
+>   claude-pr:
+>     if: |
+>       (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@claude')) ||
+>       (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, '@claude')) ||
+>       (github.event_name == 'issues' && (contains(github.event.issue.body, '@claude') || contains(github.event.issue.title, '@claude')))
+>     runs-on: ubuntu-latest
+>     steps:
+>       - name: Checkout repository
+>         uses: actions/checkout@v6
+>
+>       - name: Generate GitHub App token
+>         id: app-token
+>         uses: actions/create-github-app-token@v2
+>         with:
+>           app-id: ${{ secrets.APP_ID }}
+>           private-key: ${{ secrets.APP_PRIVATE_KEY }}
+>
+>       - name: Configure AWS Credentials (OIDC)
+>         uses: aws-actions/configure-aws-credentials@v4
+>         with:
+>           role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+>           aws-region: us-west-2
+>
+>       - uses: anthropics/claude-code-action@v1
+>         with:
+>           github_token: ${{ steps.app-token.outputs.token }}
+>           use_bedrock: "true"
+>           claude_args: '--model us.anthropic.claude-sonnet-4-6'
+> ```
+>
+> > [!TIP]
+> >
+> > Bedrock model IDs include a cross-region inference profile prefix such as `us.`. Use the prefix for the region group where you granted model access.
+
+> [tab] Google Cloud's Agent Platform
+>
+> Replace the `CLOUD_ML_REGION` value with your own. You don't need to hardcode the project ID, because the workflow reads it from the `auth` step's output.
+>
+> ```yaml theme={null}
+> name: Claude PR Action
+>
+> permissions:
+>   contents: write
+>   pull-requests: write
+>   issues: write
+>   id-token: write
+>
+> on:
+>   issue_comment:
+>     types: [created]
+>   pull_request_review_comment:
+>     types: [created]
+>   issues:
+>     types: [opened]
+>
+> jobs:
+>   claude-pr:
+>     if: |
+>       (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@claude')) ||
+>       (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, '@claude')) ||
+>       (github.event_name == 'issues' && (contains(github.event.issue.body, '@claude') || contains(github.event.issue.title, '@claude')))
+>     runs-on: ubuntu-latest
+>     steps:
+>       - name: Checkout repository
+>         uses: actions/checkout@v6
+>
+>       - name: Generate GitHub App token
+>         id: app-token
+>         uses: actions/create-github-app-token@v2
+>         with:
+>           app-id: ${{ secrets.APP_ID }}
+>           private-key: ${{ secrets.APP_PRIVATE_KEY }}
+>
+>       - name: Authenticate to Google Cloud
+>         id: auth
+>         uses: google-github-actions/auth@v2
+>         with:
+>           workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+>           service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+>
+>       - uses: anthropics/claude-code-action@v1
+>         with:
+>           github_token: ${{ steps.app-token.outputs.token }}
+>           use_vertex: "true"
+>           claude_args: '--model claude-sonnet-5'
+>         env:
+>           ANTHROPIC_VERTEX_PROJECT_ID: ${{ steps.auth.outputs.project_id }}
+>           CLOUD_ML_REGION: us-east5
+> ```
+
+> [tab] Microsoft Foundry
+>
+> Replace `your-resource-name` with your Foundry resource name. Claude Code builds the endpoint URL from it. The `azure/login` step signs in with the workflow's OIDC token, and Claude Code picks up the credentials through the Azure [default credential chain](https://learn.microsoft.com/en-us/azure/developer/javascript/sdk/authentication/credential-chains#defaultazurecredential-overview).
+>
+> ```yaml theme={null}
+> name: Claude PR Action
+>
+> permissions:
+>   contents: write
+>   pull-requests: write
+>   issues: write
+>   id-token: write
+>
+> on:
+>   issue_comment:
+>     types: [created]
+>   pull_request_review_comment:
+>     types: [created]
+>   issues:
+>     types: [opened]
+>
+> jobs:
+>   claude-pr:
+>     if: |
+>       (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@claude')) ||
+>       (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, '@claude')) ||
+>       (github.event_name == 'issues' && (contains(github.event.issue.body, '@claude') || contains(github.event.issue.title, '@claude')))
+>     runs-on: ubuntu-latest
+>     steps:
+>       - name: Checkout repository
+>         uses: actions/checkout@v6
+>
+>       - name: Generate GitHub App token
+>         id: app-token
+>         uses: actions/create-github-app-token@v2
+>         with:
+>           app-id: ${{ secrets.APP_ID }}
+>           private-key: ${{ secrets.APP_PRIVATE_KEY }}
+>
+>       - name: Authenticate to Azure
+>         uses: azure/login@v2
+>         with:
+>           client-id: ${{ secrets.AZURE_CLIENT_ID }}
+>           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+>           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+>
+>       - uses: anthropics/claude-code-action@v1
+>         with:
+>           github_token: ${{ steps.app-token.outputs.token }}
+>           use_foundry: "true"
+>           claude_args: '--model claude-sonnet-5'
+>         env:
+>           ANTHROPIC_FOUNDRY_RESOURCE: your-resource-name
+> ```
+>
+> > [!TIP]
+> >
+> > Use a model ID that matches a Claude deployment in your Foundry resource. See [Claude Code on Microsoft Foundry](https://code.claude.com/docs/en/microsoft-foundry.md) for model configuration and version pinning.
 
 With any provider, you can bound run length and cost by adding `--max-turns` to `claude_args`. See [Manage costs](https://code.claude.com/docs/en/github-actions.md#manage-costs).
 

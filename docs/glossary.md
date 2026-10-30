@@ -54,7 +54,10 @@ Learn more: [Auto memory](https://code.claude.com/docs/en/memory.md#auto-memory)
 
 ### Auto mode
 
-A [permission mode](#permission-mode) where a separate classifier model reviews actions instead of you, so Claude Code runs most of them without asking you. Claude Code still asks you before actions your explicit ask rules match. With Claude Code v2.1.283 or later, auto mode is the [built-in starting permission mode](https://code.claude.com/docs/en/permission-modes.md#which-mode-a-session-starts-in) for interactive terminal and VS Code sessions, and on earlier versions only on Pro, Max, and Team plans. The classifier blocks scope escalation, untrusted infrastructure, and [prompt injection](#prompt-injection). Tool results are stripped from what it sees, so hostile content in a file or web page can't manipulate it directly.
+A [permission mode](#permission-mode) where a separate classifier model reviews actions instead of you, so Claude Code runs most of them without asking you. Claude Code still asks you before actions your explicit ask rules match. The classifier blocks scope escalation, untrusted infrastructure, and [prompt injection](#prompt-injection). Tool results are stripped from what it sees, so hostile content in a file or web page can't manipulate it directly.
+
+* **Claude Code v2.1.283 or later**: auto mode is the [built-in starting permission mode](https://code.claude.com/docs/en/permission-modes.md#which-mode-a-session-starts-in) for interactive terminal and VS Code sessions
+* **Earlier versions**: auto mode is the built-in starting permission mode only on Pro, Max, Ultra, and Team plans
 
 Learn more: [Eliminate prompts with auto mode](https://code.claude.com/docs/en/permission-modes.md#eliminate-prompts-with-auto-mode)
 
@@ -140,7 +143,7 @@ Learn more: [Explore the context window](https://code.claude.com/docs/en/context
 
 ### Dispatch
 
-A phone-initiated task router that spawns a Claude Code session in the Desktop app when you send a coding task from the Claude mobile app. Your prompt routes to the right tool automatically. Available on Pro and Max plans.
+A phone-initiated task router that spawns a Claude Code session in the Desktop app when you send a coding task from the Claude mobile app. Your prompt routes to the right tool automatically. Available on Pro, Max, and Ultra plans.
 
 Learn more: [Sessions from Dispatch](https://code.claude.com/docs/en/desktop.md#sessions-from-dispatch)
 

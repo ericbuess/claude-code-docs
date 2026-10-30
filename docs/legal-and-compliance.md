@@ -13,7 +13,7 @@
 Your use of Claude Code is subject to:
 
 * [Commercial Terms of Service](https://www.anthropic.com/legal/commercial-terms) - for Team, Enterprise, and Claude API users
-* [Consumer Terms of Service](https://www.anthropic.com/legal/consumer-terms) - for Free, Pro, and Max users
+* [Consumer Terms of Service](https://www.anthropic.com/legal/consumer-terms) - for Free, Pro, Max, and Ultra users
 
 ### Commercial agreements
 
@@ -45,14 +45,14 @@ Under the HIPAA configuration, cloud sessions, Remote Control, Claude Code in th
 
 ### Acceptable use
 
-Claude Code usage is subject to the [Anthropic Usage Policy](https://www.anthropic.com/legal/aup). Advertised usage limits for Pro and Max plans assume ordinary, individual usage of Claude Code and the Agent SDK.
+Claude Code usage is subject to the [Anthropic Usage Policy](https://www.anthropic.com/legal/aup). Advertised usage limits for Pro, Max, and Ultra plans assume ordinary, individual usage of Claude Code and the Agent SDK.
 
 ### Authentication and credential use
 
 Claude Code authenticates with Anthropic's servers using OAuth tokens or API keys. These authentication methods serve different purposes:
 
-* **OAuth authentication** is intended exclusively for purchasers of Claude Free, Pro, Max, Team, and Enterprise subscription plans and is designed to support ordinary use of Claude Code and other native Anthropic applications. For the sign-in steps, see [Logging in to your Claude account](https://support.claude.com/en/articles/13189465-logging-in-to-your-claude-account); for how Claude Code performs OAuth authentication, see [Authentication](https://code.claude.com/docs/en/authentication.md).
-* **Developers** building products or services that interact with Claude's capabilities, including those using the [Agent SDK](https://code.claude.com/docs/en/agent-sdk/overview.md), should use API key authentication through [Claude Console](https://platform.claude.com/) or a supported cloud provider. Anthropic does not permit third-party developers to offer Claude.ai login into their own applications, or to route requests through Free, Pro, or Max plan credentials on behalf of their users. Moreover, developers may not collect, store, or intermediate Claude.ai credentials or session tokens — sign-in to a Claude account must complete through Anthropic's own flow.
+* **OAuth authentication** is intended exclusively for purchasers of Claude Free, Pro, Max, Ultra, Team, and Enterprise subscription plans and is designed to support ordinary use of Claude Code and other native Anthropic applications. For the sign-in steps, see [Logging in to your Claude account](https://support.claude.com/en/articles/13189465-logging-in-to-your-claude-account); for how Claude Code performs OAuth authentication, see [Authentication](https://code.claude.com/docs/en/authentication.md).
+* **Developers** building products or services that interact with Claude's capabilities, including those using the [Agent SDK](https://code.claude.com/docs/en/agent-sdk/overview.md), should use API key authentication through [Claude Console](https://platform.claude.com/) or a supported cloud provider. Anthropic does not permit third-party developers to offer Claude.ai login into their own applications, or to route requests through Free, Pro, Max, or Ultra plan credentials on behalf of their users. Moreover, developers may not collect, store, or intermediate Claude.ai credentials or session tokens — sign-in to a Claude account must complete through Anthropic's own flow.
 
 This does not restrict how customers provision and manage their own API keys or third-party inference provider credentials — for example, configuring an API key in a development environment, secrets manager, or machine image for use by the customer's own authorized users — provided the resulting usage is billed to the key owner under their agreement with Anthropic (or the applicable provider) and is not resold or intermediated as described above. Nor does it prevent an end user from signing in to the unmodified Claude Code binary with their own Claude subscription, including where a platform hosts Claude Code as described under *Can customers offer Claude Code in their products?* above.
 

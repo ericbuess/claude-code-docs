@@ -403,7 +403,7 @@ A `serverName` entry in this allowlist would never match anything, since both tr
 
 The accordions below walk through how a server is evaluated against other allowlist and denylist combinations.
 
-> **URL-only allowlist**
+> [accordion] URL-only allowlist
 >
 > ```json theme={null}
 > {
@@ -421,7 +421,7 @@ The accordions below walk through how a server is evaluated against other allowl
 > | HTTP server at `https://external.example.com/mcp` | Blocked: doesn't match any URL pattern |
 > | Stdio server with any command | Blocked: no name or command entries to match |
 
-> **Command-only allowlist**
+> [accordion] Command-only allowlist
 >
 > ```json theme={null}
 > {
@@ -437,7 +437,7 @@ The accordions below walk through how a server is evaluated against other allowl
 > | Stdio server with `["node", "server.js"]` | Blocked: doesn't match command |
 > | HTTP server named `my-api` | Blocked: no name entries to match |
 
-> **Mixed name and command allowlist**
+> [accordion] Mixed name and command allowlist
 >
 > ```json theme={null}
 > {
@@ -456,7 +456,7 @@ The accordions below walk through how a server is evaluated against other allowl
 > | HTTP server named `github` | Allowed: matches name |
 > | HTTP server named `other-api` | Blocked: name doesn't match |
 
-> **Name-only allowlist**
+> [accordion] Name-only allowlist
 >
 > ```json theme={null}
 > {
@@ -474,7 +474,7 @@ The accordions below walk through how a server is evaluated against other allowl
 > | HTTP server named `github` | Allowed: matches name |
 > | Any server named `other` | Blocked: name doesn't match |
 
-> **Allowlist with denylist override**
+> [accordion] Allowlist with denylist override
 >
 > ```json theme={null}
 > {

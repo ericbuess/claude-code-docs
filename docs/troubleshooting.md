@@ -134,37 +134,37 @@ To get the text without OSC 52:
 
 If the Search tool, `@file` mentions, custom agents, or custom skills aren't finding files, the bundled `ripgrep` binary may not run on your system. Install your platform's `ripgrep` package and tell Claude Code to use it instead:
 
-**macOS**
+> [tab] macOS
+>
+> ```bash theme={null}
+> brew install ripgrep
+> ```
 
-```bash theme={null}
-brew install ripgrep
-```
+> [tab] Ubuntu/Debian
+>
+> ```bash theme={null}
+> sudo apt install ripgrep
+> ```
 
-**Ubuntu/Debian**
+> [tab] Alpine
+>
+> ```bash theme={null}
+> apk add ripgrep
+> ```
+>
+> `ripgrep` is in Alpine's community repository. If `apk` reports that the package is missing, see [Alpine Linux setup](https://code.claude.com/docs/en/setup.md#alpine-linux-and-musl-based-distributions).
 
-```bash theme={null}
-sudo apt install ripgrep
-```
+> [tab] Arch
+>
+> ```bash theme={null}
+> pacman -S ripgrep
+> ```
 
-**Alpine**
-
-```bash theme={null}
-apk add ripgrep
-```
-
-`ripgrep` is in Alpine's community repository. If `apk` reports that the package is missing, see [Alpine Linux setup](https://code.claude.com/docs/en/setup.md#alpine-linux-and-musl-based-distributions).
-
-**Arch**
-
-```bash theme={null}
-pacman -S ripgrep
-```
-
-**Windows**
-
-```powershell theme={null}
-winget install BurntSushi.ripgrep.MSVC
-```
+> [tab] Windows
+>
+> ```powershell theme={null}
+> winget install BurntSushi.ripgrep.MSVC
+> ```
 
 Then set `USE_BUILTIN_RIPGREP` to `0`, either in your shell [environment](https://code.claude.com/docs/en/env-vars.md) or in the `env` block of your [`settings.json`](https://code.claude.com/docs/en/settings-reference#all-settings):
 

@@ -14,7 +14,11 @@ A self-hosted environment executes Claude Code cloud sessions on infrastructure 
 
 In a self-hosted environment, those same sessions execute inside your network. The developer experience is otherwise the same apart from the differences in [Availability and limitations](#availability-and-limitations) and the deploy page's [known issues](https://code.claude.com/docs/en/self-hosted-environments-deploy.md#known-issues-and-limitations).
 
-If your team doesn't use cloud sessions, there's nothing here to configure: sessions in a terminal or IDE always run on the developer's own machine. If you want to run Claude Code on your own always-on machine and drive it from other devices, use [Remote Control](https://code.claude.com/docs/en/remote-control.md), which is also available on Pro and Max plans. When you're ready to set up, go straight to the [quickstart](https://code.claude.com/docs/en/self-hosted-environments-quickstart.md); to review the security posture first, start with [Deploy to production](https://code.claude.com/docs/en/self-hosted-environments-deploy.md). The rest of this page explains how self-hosting works and when to choose it.
+* If your team doesn't use cloud sessions, there's nothing here to configure: sessions in a terminal or IDE always run on the developer's own machine
+* To run Claude Code on your own always-on machine and drive it from other devices, use [Remote Control](https://code.claude.com/docs/en/remote-control.md), which is also available on Pro, Max, and Ultra plans
+* When you're ready to set up, go straight to the [quickstart](https://code.claude.com/docs/en/self-hosted-environments-quickstart.md); to review the security posture first, start with [Deploy to production](https://code.claude.com/docs/en/self-hosted-environments-deploy.md)
+
+To learn how self-hosting works and when to choose it, read [How self-hosted environments work](#how-self-hosted-environments-work) and [Why self-host](#why-self-host).
 
 ## How self-hosted environments work
 

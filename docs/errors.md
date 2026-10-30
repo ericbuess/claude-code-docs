@@ -830,7 +830,7 @@ Usage counts against the session and weekly allowances at the same time. A singl
 * In the Code tab of the [Desktop app](https://code.claude.com/docs/en/desktop.md), the session-limit card offers an **Auto-continue when limits reset** checkbox. The weekly-limit card doesn't. When it's checked, the Desktop app retries the interrupted turn after the reset and shows the retry time on the card. The Desktop checkbox and the CLI's **Continue automatically at usage limit** setting in `/config` are separate, so turn each off on its own.
 * For the Opus or Sonnet limit, run `/model` and switch to a model outside that family to keep working. Each model has its own prompt cache, so the next request re-reads the whole conversation with no cache hits; see [Switching models](https://code.claude.com/docs/en/prompt-caching.md#switching-models)
 * Run `/usage` to see your plan limits and when they reset
-* Run `/usage-credits` to buy additional usage on Pro and Max, or to request it from your admin on Team and Enterprise. See [usage credits for paid plans](https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans) for how this is billed.
+* Run `/usage-credits` to buy additional usage on Pro, Max, and Ultra, or to request it from your admin on Team and Enterprise. See [usage credits for paid plans](https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans) for how this is billed.
 * To upgrade your plan for higher base limits, see [claude.com/pricing](https://claude.com/pricing)
 
 Before a window runs out, Claude Code can warn you that you've used most of it, with a message such as `You've used 85% of your session limit · resets 3:45pm`. To watch your remaining allowance continuously, add the `rate_limits` fields to a [custom status line](https://code.claude.com/docs/en/statusline.md#rate-limit-usage), or in the Desktop app click the [usage ring](https://code.claude.com/docs/en/desktop.md#check-usage) next to the model picker.
@@ -852,7 +852,7 @@ When this error appears mid-conversation because the context grew past 200K toke
 **What to do:**
 
 * Run `/model` and select the variant without the `[1m]` suffix to fall back to the standard context window
-* Where the message names `/usage-credits`, run it to turn on metered billing for the 1M variant on Pro and Max, or to request usage credits from your admin on Team and Enterprise. Once usage credits are on, restart Claude Code or start a new session, whichever the message says. Until then, the session stays at the standard context limit.
+* Where the message names `/usage-credits`, run it to turn on metered billing for the 1M variant on Pro, Max, and Ultra, or to request usage credits from your admin on Team and Enterprise. Once usage credits are on, restart Claude Code or start a new session, whichever the message says. Until then, the session stays at the standard context limit.
 * If the error persists after `/model`, a 1M model ID may be set elsewhere. See [Setting your model](https://code.claude.com/docs/en/model-config.md#setting-your-model) for the configuration locations to check in priority order.
 * To remove 1M variants from the model picker entirely, set [`CLAUDE_CODE_DISABLE_1M_CONTEXT=1`](https://code.claude.com/docs/en/env-vars)
 
@@ -933,7 +933,7 @@ If you connect through a Claude apps gateway and see lowercase `spend limit reac
 
 **What to do:**
 
-* On Pro and Max, increase your monthly spend limit in [**Settings > Usage**](https://claude.ai/settings/usage) on claude.ai, or run `/usage-credits`
+* On Pro, Max, and Ultra, increase your monthly spend limit in [**Settings > Usage**](https://claude.ai/settings/usage) on claude.ai, or run `/usage-credits`
 * On Team and Enterprise, increase the limit in [**Organization settings > Usage**](https://claude.ai/admin-settings/usage) if you manage billing, or ask an admin to. `/usage-credits` sends that request to your admin for you
 * For a channel's limit, ask an org owner or the channel's manager to raise it on claude.ai. See [Per-channel limits](https://claude.com/docs/claude-tag/admins/set-spend-limit#per-channel-limits) in the Claude Tag documentation
 * If the message names a reset time for your plan's window, you can wait for it instead
@@ -966,7 +966,7 @@ Credit balance is too low
 
 **What to do:**
 
-* If you have a Pro, Max, Team, or Enterprise plan and see this, run `/status` and check the `API key` row. An approved `ANTHROPIC_API_KEY` in your environment routes requests through that key instead of your subscription. Unset it in the current shell and remove it from your shell profile, then relaunch `claude`. Run `/login` if you haven't signed in with your subscription yet.
+* If you have a Pro, Max, Ultra, Team, or Enterprise plan and see this, run `/status` and check the `API key` row. An approved `ANTHROPIC_API_KEY` in your environment routes requests through that key instead of your subscription. Unset it in the current shell and remove it from your shell profile, then relaunch `claude`. Run `/login` if you haven't signed in with your subscription yet.
 * Add credits at [platform.claude.com/settings/billing](https://platform.claude.com/settings/billing), and consider enabling auto-reload there so the balance refills before it hits zero
 * Set per-workspace spend caps in the Console to prevent a single project from draining the org balance. See [Manage costs effectively](https://code.claude.com/docs/en/costs.md).
 
@@ -1120,7 +1120,7 @@ API Error: 400 ... This organization has been disabled.
 
 The hint after the `·` depends on your saved credentials: the first form appears when a stored `/login` can take over after you unset the key, and the second when the key is your only credential.
 
-Environment variables take precedence over `/login`, so a key exported in your shell profile or loaded from a `.env` file is used even when you have a working Pro or Max subscription. In non-interactive mode (`-p`), the key is always used when present.
+If you export a key in your shell profile or load one from `.env`, Claude Code uses it instead of `/login`, even with a working Pro, Max, or Ultra subscription. In non-interactive mode (`-p`), the key is always used when present.
 
 **What to do:**
 

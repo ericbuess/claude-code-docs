@@ -8,7 +8,7 @@
 
 > [!NOTE]
 >
-> The iOS Simulator pane is in public beta in Claude Code Desktop on macOS. It's available on Pro, Max, Team, and Enterprise plans, except in Enterprise organizations that have a HIPAA configuration enabled.
+> The iOS Simulator pane is in public beta in Claude Code Desktop on macOS. It's available on Pro, Max, Ultra, Team, and Enterprise plans, except in Enterprise organizations that have a HIPAA configuration enabled.
 
 The iOS Simulator pane shows your app running in Apple's iOS Simulator next to your conversation in Claude Code Desktop. When Claude builds, installs, launches, or checks your app in a simulator, the pane opens automatically and streams the device screen live. Use it to watch Claude run and test your app, or to tap through the app yourself while Claude keeps working.
 
