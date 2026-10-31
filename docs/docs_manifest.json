@@ -279,8 +279,8 @@
     "changelog.md": {
       "original_url": "https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md",
       "original_raw_url": "https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md",
-      "hash": "5db4c652652637b95806d6bd00515ed10156c08dc54351eedb59d3e6b94fc393",
-      "last_updated": "2026-10-30T03:20:03.917370",
+      "hash": "6ed2aabf5746cf181e2baaf04fd159181fcef0de0f7f8943b5000442dc7b1d1d",
+      "last_updated": "2026-10-31T03:03:04.712017",
       "source": "claude-code-repository"
     },
     "channels.md": {
@@ -496,8 +496,8 @@
     "desktop.md": {
       "original_url": "https://code.claude.com/docs/en/desktop",
       "original_md_url": "https://code.claude.com/docs/en/desktop.md",
-      "hash": "9b3269d46f57b86db6b03abe652f458c9c4ab298bc3b4e5b8ddbeca0614637e3",
-      "last_updated": "2026-10-30T21:45:54.520901"
+      "hash": "0b9c66683c20346bccce5edf45162f1945d19b7db29ee115626819e17dfdfe67",
+      "last_updated": "2026-10-31T03:01:44.597400"
     },
     "desktop-ios-simulator.md": {
       "original_url": "https://code.claude.com/docs/en/desktop-ios-simulator",
@@ -1365,8 +1365,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-10-30T21:47:14.651404",
-    "fetch_duration_seconds": 126.010033,
+    "last_fetch_completed": "2026-10-31T03:03:04.712065",
+    "fetch_duration_seconds": 126.064278,
     "total_pages_discovered": 227,
     "pages_fetched_successfully": 228,
     "pages_failed": 0,
@@ -1376,7 +1376,7 @@
     "total_files": 227,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-10-30T21:47:14.651428",
+  "last_updated": "2026-10-31T03:03:04.712087",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",
