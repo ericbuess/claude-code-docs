@@ -120,7 +120,7 @@ In a local session, click an HTML, PDF, or video path in the chat to open it in 
 
 > [!NOTE]
 >
-> In an [SSH session](#ssh-sessions), Claude can't open your app in the Browser pane, because it doesn't have the pane's tools there. To look at the app yourself, [forward its port to your computer](#reach-a-port-on-the-remote-machine).
+> In an [SSH session](#ssh-sessions), Claude doesn't have the Browser pane's tools, so it can't open your app in the pane or [auto-verify](#auto-verify-changes) its changes. The pane's **Dev servers** menu and your [configured preview servers](#configure-preview-servers) aren't available either. To look at the app yourself, start its server on the remote machine, then [forward its port to your computer](#reach-a-port-on-the-remote-machine).
 
 If the Browser pane isn't open after Claude starts a server in a local session, click **Open** on the server's card in the chat.
 
@@ -1002,7 +1002,7 @@ A Linux or macOS remote machine needs a supported processor, an SSH server with 
 * **One-time codes with `MaxSessions 1`**: if every login prompts you, as with one-time codes, `!` commands fail. Run those commands in a terminal tab instead, which prompts in its own pane.
 * **Install folder**: Desktop installs a helper program and Claude Code under `~/.claude/remote/` in your home directory. It runs them from there, so that folder can't be on a file system mounted `noexec`. Allow about 1 GB of disk space in the home directory of each user who connects. For what that folder holds, see [Files and processes on the remote machine](#files-and-processes-on-the-remote-machine).
 * **Shell**: the shell set for your account on the remote machine has to run commands sent over SSH, as Bash, Zsh, and `sh` do
-* **Network**: Claude Code runs on the remote machine and makes its network requests from there, so the machine needs the [network access that Claude Code requires](https://code.claude.com/docs/en/network-config.md#network-access-requirements). If the machine can't download Claude Code, Desktop downloads it on your computer and uploads it. Claude Code's other requests still go out from the remote machine. On a Linux remote machine, if those requests need a proxy, [set it for SSH sessions](#set-a-proxy-or-a-ca-certificate-for-ssh-sessions).
+* **Network**: Claude Code runs on the remote machine and makes its network requests from there, so the machine needs the [network access that Claude Code requires](https://code.claude.com/docs/en/network-config.md#network-access-requirements). If the machine can't download Claude Code, Desktop downloads it on your computer and uploads it. Claude Code's other requests still go out from the remote machine. If a Linux remote machine needs a proxy or a CA certificate, [set it for SSH sessions](#set-a-proxy-or-a-ca-certificate-for-ssh-sessions).
 
 #### Check a remote machine's host key
 
@@ -1030,7 +1030,7 @@ If a troubleshooting step sent you here, go back to that step after either resul
 
 If a Linux remote machine reaches the internet through a proxy or needs a CA certificate, add the [proxy and CA variables](https://code.claude.com/docs/en/network-config.md) under `env` in `~/.claude/settings.json` there. Add them even if you already export them in `~/.profile`, `~/.bash_profile`, `~/.zprofile`, or `~/.zshrc` on that machine.
 
-In an SSH session, Claude Code doesn't get the variables from those files, even when `claude` in a terminal on that machine does. The session can then hang, or show **The connection from … to the API failed** or **Authentication failed**, and signing in again doesn't help.
+In an SSH session, Claude Code doesn't get the variables from those files, even when `claude` in a terminal on that machine does. The session can then hang, or show **The connection from … to the API failed**, **Authentication failed**, or **Claude Code on … couldn’t verify the API connection’s certificate**. Signing in again doesn't help.
 
 **1. Add the variables**
 
@@ -1948,6 +1948,28 @@ In local and SSH sessions, the desktop app delivers each user's connected claude
 
 For the permission, plugin, and delivery keys only a managed source can set, see [Keys only managed settings can set](https://code.claude.com/docs/en/managed-settings.md#managed-only-settings).
 
+#### Claude Code settings that behave differently in the Code tab
+
+In a local session, these keys, among others, have a different effect or no visible one, because the Code tab replaces the terminal interface. They still apply in the terminal, so you can leave them set.
+
+| Key | In a local session |
+| - | - |
+| `askUserQuestionTimeout` | the timeout doesn't apply, so a question from Claude stays open for a user to answer |
+| `awaySummaryEnabled` | the key has no effect |
+| `bashEditDiffEnabled` | the Code tab doesn't show the list of files that a Bash command changed |
+| `companyAnnouncements` | the Code tab doesn't show announcements |
+| `defaultShell` | commands that users type after `!` run in a shell that the app chooses: their login shell on macOS and Linux, PowerShell on Windows |
+| `fileSuggestion` | the `@` file picker builds its own file list and doesn't run the command you set |
+| `modelPicker` | the model picker lists the models available to each user's account. To limit them, set [`availableModels`](https://code.claude.com/docs/en/model-config#restrict-model-selection). |
+| `pluginTrustMessage` | the warning that users see when they install a plugin doesn't include the message you set |
+| `prUrlTemplate` | pull request links use the pull request's own URL, not the template |
+| `respectGitignore` | the `@` file picker builds its own file list and doesn't read this key |
+| `respondToBashCommands` | Claude responds to the output of commands that users run with `!`, whatever the value |
+| `showClearContextOnPlanAccept` | users get no clear-context option when they approve a plan |
+| `skipDangerousModePermissionPrompt` | the Code tab has its own confirmation for [Bypass permissions mode](#choose-a-permission-mode), and this key doesn't skip it |
+| `verbose`, `viewMode` | each user chooses the view under [**Transcript view** in the session menu](#switch-view-modes) |
+| `worktree.baseRef`, `worktree.sparsePaths`, `worktree.symlinkDirectories` | not used for the worktree that the Code tab creates for a session |
+
 ### Device management policies
 
 IT teams can manage the desktop app through MDM on macOS, group policy on Windows, or a policy file on Linux. Available policies include enabling or disabling the Claude Code feature, controlling auto-updates on macOS and Windows, and setting a custom deployment URL.
@@ -2100,7 +2122,7 @@ Desktop and CLI read the same configuration files, so your setup carries over:
 * **[CLAUDE.md](https://code.claude.com/docs/en/memory.md)** and `CLAUDE.local.md` files in your project are used by both
 * **[MCP servers](https://code.claude.com/docs/en/mcp.md)** configured in `~/.claude.json` or `.mcp.json` work in both
 * **[Hooks](https://code.claude.com/docs/en/hooks.md)** and **[skills](https://code.claude.com/docs/en/skills.md)** defined in settings apply to both
-* **[Settings](https://code.claude.com/docs/en/settings.md)** in `~/.claude.json` and `~/.claude/settings.json` are shared. Permission rules, allowed tools, and other settings in `settings.json` apply to Desktop sessions.
+* **[Settings](https://code.claude.com/docs/en/settings.md)** in `~/.claude.json` and `~/.claude/settings.json` are shared. Permission rules, allowed tools, and other settings in `settings.json` apply to Desktop sessions. Some keys [behave differently in the Code tab](#claude-code-settings-that-behave-differently-in-the-code-tab).
 * **Models**: the same [models](https://code.claude.com/docs/en/model-config.md#available-models) are available in both. In Desktop, select the model from the model picker in the row under the prompt box. You can change the model mid-session from the same picker.
 
 #### MCP servers from the Claude Desktop chat app
@@ -2281,7 +2303,12 @@ You get `ssh.log`, Desktop's record of its SSH connections, in a zip file of Des
 
 Look through the files before you send them, because they can include names and other details from your environment. `<host>` and `<user>` stand for names that Desktop replaced. Desktop doesn't replace every name, and an SSH host or user name can still appear as written. If you send the zip file to someone, tell them which host failed and when, because the logs may not name it.
 
-The zip file doesn't hold the log of the helper program that Desktop installs on the remote machine. To get that log as well, copy `remote-server.log` from the helper's folder under [`~/.claude/remote/run/`](#files-and-processes-on-the-remote-machine) in the home directory of the user who connected. Look through that file too before you send it.
+The zip file doesn't hold the log of the helper program that Desktop installs on the remote machine. To get that log as well, copy these files from the helper's folder under [`~/.claude/remote/run/`](#files-and-processes-on-the-remote-machine) in the home directory of the user who connected:
+
+* **`remote-server.log`**: the log of the helper's latest run.
+* **`remote-server.log.old`**, if it is there: the log of the run before that. Copy it as soon as you can, because you lose it the next time Desktop connects and has to start the helper again.
+
+Look through those files too before you send them.
 
 ### App won't quit
 
