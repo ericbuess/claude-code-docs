@@ -51,7 +51,7 @@ You can start a Remote Control session from the CLI, the [Claude Desktop app](ht
 >
 > Until you accept Remote Control's one-time confirmation, `claude remote-control` explains what it does and asks `Enable Remote Control? (y/n)` before starting the server. Answer `y` to accept and start the server. If you decline, Claude Code exits without starting the server and asks again the next time you run the command.
 >
-> The process stays running in your terminal in server mode, waiting for remote connections. It displays a session URL you can use to [connect from another device](#connect-from-another-device), and you can press spacebar to show a QR code for quick access from your phone. While a remote session is active, the terminal shows connection status and tool activity.
+> The process stays running in your terminal in server mode, waiting for remote connections. It displays a URL you can use to [connect from another device](#connect-from-another-device), and you can press spacebar to show a QR code for quick access from your phone. While a remote session is active, the terminal shows connection status and tool activity.
 >
 > Pass any of these flags after `remote-control`:
 >
@@ -151,8 +151,8 @@ If the connection fails in an interactive session, the indicator changes to show
 
 Once a Remote Control session is active, you have a few ways to connect from another device:
 
-* **Open the session URL** in any browser to go directly to the session on [claude.ai/code](https://claude.ai/code).
-* **Scan the QR code** shown alongside the session URL to open it directly in the Claude app. With `claude remote-control`, press spacebar to toggle the QR code display.
+* **Open the URL Claude Code displays** in any browser to go to [claude.ai/code](https://claude.ai/code).
+* **Scan the QR code** shown alongside the URL to open it in the Claude app. With `claude remote-control`, press spacebar to toggle the QR code display.
 * **Open [claude.ai/code](https://claude.ai/code) or the Claude app** and find the session by name in the session list. In the Claude mobile app, tap **Code** in the navigation to reach the session list. Remote Control sessions show a computer icon with a green status dot when online.
 
 When you connect, the device shows any subagents and workflows the session already has running in the background. Stop one of them from the device, and Claude Code stops that task on your machine.

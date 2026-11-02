@@ -397,7 +397,7 @@ Both ends of the permission range have a cost:
 * Sensitive data sent to external endpoints
 * Actions that look driven by content Claude read rather than by you
 
-When it does block something, you get a notification and the action shows up under **Recently denied** in `/permissions`, where you can retry it with a manual approval. After [three blocks in a row](https://code.claude.com/docs/en/permission-modes.md#when-auto-mode-falls-back) (or twenty in total), auto mode pauses and goes back to asking you.
+When auto mode blocks an action, you get a notification and the action shows up under **Recently blocked** in `/permissions`, where you can [approve the action so Claude may retry](https://code.claude.com/docs/en/auto-mode-config.md#review-denials). After [three blocks in a row](https://code.claude.com/docs/en/permission-modes.md#when-auto-mode-falls-back) (or twenty in total), auto mode pauses and goes back to asking you.
 
 None of this replaces your deterministic controls, because it runs *after* them. Deny and ask rules and `PreToolUse` hooks apply before the classifier sees anything, so a deny rule blocks in auto mode exactly like it does everywhere else. The sandbox still confines the [shell commands it wraps](https://code.claude.com/docs/en/sandboxing.md#what-runs-outside-the-sandbox).
 

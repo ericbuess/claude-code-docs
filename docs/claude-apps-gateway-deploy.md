@@ -169,6 +169,7 @@ The gateway writes two streams to stderr, both JSON-friendly:
   * `access.public_client` carries the client IP of the first request per process to arrive from a public address while `access_control.allow_cidrs` is empty. The gateway serves the request as usual; the event signals that the gateway may be reachable from the public internet. See the [`access_control` reference](https://code.claude.com/docs/en/claude-apps-gateway-config#http-tuning) for what counts as public and for the recommended allow list.
   * `inference` records which upstream served the request and the response status
   * `desktop_bootstrap.denied` records a rejected Claude Desktop bootstrap fetch with the reason (`not_configured`, `policy_not_opted_in`, or `no_policy_matched`) and the user's identity
+  * `guardrail.trace` records [which filter fired](https://code.claude.com/docs/en/claude-apps-gateway-config.md#log-which-guardrail-filter-fired), without the matched text
   * `admin.denied` records a rejected admin-API auth attempt with the client IP, method, path, and a reason, without the presented key material: `invalid_key` when an `x-api-key` was presented but matched no configured key, `bearer_rejected` when only an `Authorization` header was presented and it didn't verify as a gateway session in `admin.admin_groups`, or `no_credentials` when neither header was presented
 * **Operational logs**: human-readable `[gateway]`-prefixed lines for boot, warnings, and upstream errors. The `CLAUDE_GATEWAY_LOG_LEVEL` environment variable controls verbosity and accepts `debug`, `info`, `warn`, or `error`, with `info` as the default. At `debug`, each sign-in and refresh also logs the names, not the values, of the claims in the id\_token, plus the names of the userinfo claims when `userinfo_fallback` supplied any, so you can diagnose `email_claim` and `groups_claim` settings without logging PII. It doesn't affect audit events, which are always emitted.
 
@@ -311,6 +312,10 @@ When the drain window ends with requests still open, the gateway logs a warning 
 
 Migrations are append-only, so rolling back to a prior binary that knows fewer migrations is safe; it ignores the extra rows. Rollback also re-validates the YAML against the older binary's schema, so a config that adopted a key introduced by the newer release fails boot on the older one. Remove the new key before rolling back.
 
+> [!WARNING]
+>
+> Removing only the `groups` key from an upstream leaves it open to every developer. See [what to remove before you roll back](https://code.claude.com/docs/en/claude-apps-gateway-config.md#roll-back-a-gateway-that-uses-groups).
+
 Because you pin the gateway's version in your own image, fixes in new Claude Code releases, including security fixes, reach your deployment only when you update the pin and redeploy. Include the gateway in the same patching cadence you use for other services that hold production credentials.
 
 ## Security
@@ -422,6 +427,7 @@ The gateway's stderr includes the audit event stream, the audit log records deve
 | At peak load, responses are slow to start or appear to hang, or fail with a 502 `all upstreams failed` while the upstream is healthy | A replica has more requests open than it sends upstream at once, so the extra requests wait inside the gateway. On a `provider: anthropic` upstream, a request that waits longer than `timeouts.upstream_ttfb_ms` gives up on that upstream, which produces the 502 when no later upstream serves it. The log shows a warning that contains `client requests are open`. | Add replicas, or raise the limit on each replica. See [Concurrent upstream requests](#concurrent-upstream-requests). |
 | On an upstream other than `provider: anthropic`, a turn with a long thinking pause fails. The proxy in front of the gateway logs one request that stays open for about 12.5 minutes, then a run of `504` errors | Claude Code ended a stream that had delivered its first response event and then carried only keepalive pings. It re-sent the request without streaming, and each reply takes longer than the proxy's timeout. | Raise `CLAUDE_STREAM_IDLE_TIMEOUT_MS` for your developers. See [Long thinking ends in proxy timeouts](#long-thinking-ends-in-proxy-timeouts). |
 | On `provider: anthropic`, a turn with a long thinking pause fails. The proxy logs one request open for about 20 minutes, then `502` or `504` errors | Claude Code ended a stream that had delivered its first response event and then carried only keepalive pings. It re-sent the request without streaming, and each reply takes longer than the gateway's wait on the upstream, `timeouts.upstream_ttfb_ms`, or the proxy's timeout. | Raise `CLAUDE_STREAM_IDLE_TIMEOUT_MS` for your developers. See [Long thinking on an Anthropic API upstream](#long-thinking-on-an-anthropic-api-upstream). |
+| A developer's requests fail with `API Error: 400 you aren't in a group that can use this gateway. Ask your administrator to add you to one` | Every upstream has a [`groups` list](https://code.claude.com/docs/en/claude-apps-gateway-config#what-happens-when-a-developer-is-in-no-listed-group), and the developer's session carries none of the listed groups. | Add the developer to a listed group in your IdP, or list an upstream with no `groups` last to serve everyone else. The gateway reads groups again at the developer's next token refresh. If the IdP left groups out and its userinfo endpoint returns them, set [`oidc.userinfo_fallback: true`](https://code.claude.com/docs/en/claude-apps-gateway-config#oidc). |
 | IdP error: unknown or unsupported scope | The IdP rejects scopes it doesn't recognize | Set `oidc.scopes` to exactly the list your IdP accepts; it must include `openid`. The default is `openid profile email offline_access`. |
 | Sessions don't silently renew after setting `oidc.scopes` | `offline_access` was dropped from the override | Add `offline_access` back if your IdP supports it. Without a refresh token, developers re-run the browser login every `session.ttl_hours`. |
 | Browser shows "This request came from another site and was blocked" | Cross-site form POST, blocked as CSRF protection. Expected for embedded or proxied pages | Open the verification link directly |
@@ -449,11 +455,12 @@ Start with the first of these that applies to your gateway:
 * **`limits.max_request_header_bytes` set**: raise the value or remove the key
 * **Neither applies, or `431` continues afterward**: have your IdP emit fewer groups. [Identity provider setup](#identity-provider-setup) covers how Okta, Microsoft Entra ID, and Google Workspace supply groups
 
-When you trim the groups claim, keep the groups you named in these settings, which decide a developer's access, policy, and spend caps:
+When you trim the groups claim, keep the groups you named in these settings, which decide a developer's access, policy, upstreams, and spend caps:
 
 * **[`oidc.allowed_groups`](https://code.claude.com/docs/en/claude-apps-gateway-config#oidc)**: decides who can sign in
 * **[`admin.admin_groups`](https://code.claude.com/docs/en/claude-apps-gateway-config#admin)**: decides who can call the admin API with their gateway session
 * **`match.groups` in [`managed.policies`](https://code.claude.com/docs/en/claude-apps-gateway-config#managed)**: decides which policy applies to a developer
+* **`groups` on an [upstream](https://code.claude.com/docs/en/claude-apps-gateway-config.md#send-each-team-to-its-own-upstream)**: decides which upstreams serve a developer
 * **`rbac_group` [spend caps](https://code.claude.com/docs/en/claude-apps-gateway-spend-limits.md)**: decide which group caps apply to a developer
 
 ### Long thinking ends in proxy timeouts

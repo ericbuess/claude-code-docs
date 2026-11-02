@@ -20,7 +20,9 @@ This page covers Claude Code usage only: how to [track your costs](#track-your-c
 >
 > The Session block in `/usage` shows API token usage and is intended for API users. Claude Pro, Max, and Ultra subscribers have usage included in their subscription, so the session cost figure isn't relevant for billing purposes. Subscribers see plan usage bars, activity stats, and a usage breakdown on the same screen.
 
-The Session block at the top of `/usage` shows detailed token usage statistics for your current session. Claude Code computes the dollar figure locally from token counts at list price, unless a [`modelPricing`](https://code.claude.com/docs/en/settings-reference#modelpricing) table is in effect. An administrator sets one in your organization's managed settings so the figure uses your contracted rates, and while a table is in effect the `Total cost` line carries the note `at your organization's configured rates`. The figure is an estimate, so for authoritative billing see the Usage page in the [Claude Console](https://platform.claude.com/usage).
+The Session block at the top of `/usage` shows detailed token usage statistics for your current session.
+
+Claude Code computes the dollar figure locally from token counts at list price, unless a [`modelPricing`](https://code.claude.com/docs/en/settings-reference#modelpricing) table is in effect. An administrator sets one in your organization's managed settings so the figure uses your contracted rates, and while a table is in effect the `Total cost` line carries the note `at your organization's configured rates`. The figure is an estimate, so for authoritative billing see [Manage costs for your organization](#manage-costs-for-your-organization).
 
 ```text theme={null}
 Total cost:            $0.55
@@ -138,7 +140,7 @@ For Team and Enterprise members without billing access, the confirmation appears
 
 If you run `/usage-credits` again while your earlier request is waiting on an admin, Claude Code tells you a request has already been sent rather than sending a duplicate. After an admin dismisses your request, running the command again sends a new one. Before v2.1.222, a dismissed request also blocked new requests.
 
-On Pro and Max plans, when you reach your spend limit with usage credits still available, Claude Code prompts you to raise or remove the limit without leaving the CLI. If the server rejects the change, see [Could not update your spend limit](https://code.claude.com/docs/en/errors.md#could-not-update-your-spend-limit).
+On Pro, Max, and Ultra plans, when you reach your spend limit with usage credits left, Claude Code prompts you to raise or remove the limit without leaving the CLI. If the server rejects the change, see [Could not update your spend limit](https://code.claude.com/docs/en/errors.md#could-not-update-your-spend-limit).
 
 ## Manage costs for your organization
 
@@ -149,7 +151,7 @@ The table maps each setup to where you see spend, where you cap it, and how you 
 | Your setup | See spend | Cap spend | Per-user reporting |
 | :- | :- | :- | :- |
 | [Claude for Teams or Enterprise](#claude-for-teams-and-enterprise) | [Spend report in org analytics](https://support.claude.com/en/articles/12883420-view-usage-analytics-for-team-and-enterprise-plans) | Spend limits in admin settings | [Spend report CSV](https://support.claude.com/en/articles/12883420-view-usage-analytics-for-team-and-enterprise-plans); [Enterprise Analytics API](https://platform.claude.com/docs/en/api/admin/analytics) on Enterprise |
-| [Claude Console (API)](#claude-console) | [Console usage page](https://platform.claude.com/usage) | Workspace spend limits | [Console dashboard](https://platform.claude.com/claude-code), [Claude Code Analytics API](https://platform.claude.com/docs/en/build-with-claude/claude-code-analytics-api) |
+| [Claude Console (API)](#claude-console) | [Console Cost page](https://platform.claude.com/cost) | Workspace spend limits | [Console dashboard](https://platform.claude.com/claude-code), [Claude Code Analytics API](https://platform.claude.com/docs/en/build-with-claude/claude-code-analytics-api) |
 | [Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry](#cloud-providers) | Your cloud billing console | Your cloud's budget controls | [OpenTelemetry](https://code.claude.com/docs/en/monitoring-usage.md) or an [LLM gateway](https://code.claude.com/docs/en/llm-gateway) |
 
 [OpenTelemetry export](https://code.claude.com/docs/en/monitoring-usage.md) works on every setup and is the only option that streams per-user token and cost metrics into your own observability stack in near real time.
@@ -193,7 +195,7 @@ API organizations manage Claude Code spend through [workspaces](https://platform
 >
 > For organizations with custom rate limits, Claude Code traffic in this workspace counts toward your organization's overall API rate limits. You can set a [workspace rate limit](https://platform.claude.com/docs/en/api/rate-limits#setting-lower-limits-for-workspaces) on this workspace's Limits page in the Claude Console to cap Claude Code's share and protect other production workloads.
 
-For per-user reporting, the [Console dashboard](https://platform.claude.com/claude-code) shows spend and accepted lines per member, and the [Claude Code Analytics API](https://platform.claude.com/docs/en/build-with-claude/claude-code-analytics-api) returns the same daily per-user metrics programmatically with an [Admin API key](https://platform.claude.com/settings/admin-keys). See [analytics for API customers](https://code.claude.com/docs/en/analytics.md#access-analytics-for-api-customers).
+For per-user reporting, the [Console dashboard](https://platform.claude.com/claude-code) shows spend and lines accepted per member, and the [Claude Code Analytics API](https://platform.claude.com/docs/en/build-with-claude/claude-code-analytics-api) returns daily per-user metrics programmatically with an [Admin API key](https://platform.claude.com/settings/admin-keys). See [analytics for API customers](https://code.claude.com/docs/en/analytics.md#access-analytics-for-api-customers).
 
 #### Rate limit recommendations
 

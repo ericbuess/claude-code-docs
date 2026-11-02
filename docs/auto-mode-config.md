@@ -355,21 +355,48 @@ The command summarizes what it will remove and asks `Reset auto mode configurati
 
 ## Review denials
 
-To review and retry actions the auto mode classifier denied, open `/permissions` and select the **Recently denied** tab, where Claude Code records each denial. Press `r` on a denied action to mark it for retry: when you exit the dialog, Claude Code sends a message telling the model it may retry that tool call and resumes the conversation.
+To let Claude retry a blocked action, use the **Recently blocked** tab in `/permissions`:
 
-When the classifier produces [no verdict on the action](https://code.claude.com/docs/en/errors.md#auto-mode-cannot-determine-the-safety-of-an-action), because a safety check separate from auto mode refused the classifier's own request or its response didn't parse, Claude Code denies the action without recording it under **Recently denied**. The linked error entry covers what Claude is told and how to run the action if you need it.
+**1. Open the tab**
+
+Run `/permissions` in your session to open the permissions dialog, then select the **Recently blocked** tab.
+
+**2. Check the action**
+
+Highlight the action's row and read its command or input below the list. Go by the command or input, not the row's description, which Claude or the tool wrote.
+
+**3. Approve the action**
+
+Press `r` to approve the action and let Claude retry it.
+
+**4. Close the dialog**
+
+Press `Esc` to close the dialog and apply your approval. If Claude was working when you opened `/permissions`, send a message once Claude finishes to let Claude retry the action. Otherwise, you don't need to send anything: Claude continues now and may retry it. If it doesn't, name the action in your next message, as [Approvals you state in conversation](https://code.claude.com/docs/en/permission-modes.md#approvals-you-state-in-conversation) describes.
+
+Approving an action doesn't add a permission rule. In auto mode, a retried action goes through the check again, so it can be blocked again. To let a command through from now on, [add an `allow` rule](#fix-a-denial-with-an-allow-rule-an-environment-entry-or-a-retry).
+
+If you don't want Claude to retry right away, you can approve an action for later, take back an approval, or close the dialog and discard your approvals:
+
+* **Approve for later**: press `Enter` on the row, then `Esc`. The row leaves the tab, and Claude may retry the action after your next message once Claude finishes. If you also pressed `r` on another row, the row where you pressed `Enter` stays on the tab and Claude isn't told about that action. Approve that row on your next visit, or press `r` on both
+* **Take back an approval**: before you press `Esc`, press `Enter` on the row, whether you approved it with `Enter` or `r`
+* **Close the dialog and discard your approvals**: press `Ctrl+C` twice
+
+You can't approve an action from the tab when its row can't show all of its command or input, or when the action has no row:
+
+* **The row reads `This row can't be approved here`**: if you intended the action, tell Claude in your next message and Claude may try it again
+* **No row, and `Not run` or a classifier error in the conversation**: auto mode's classifier gave no verdict. To see how to run the action, read [Auto mode cannot determine the safety of an action](https://code.claude.com/docs/en/errors.md#auto-mode-cannot-determine-the-safety-of-an-action)
 
 ### Fix a denial with an allow rule, an environment entry, or a retry
 
-To read the command or URL behind a notice such as `bash denied by auto mode · [Data Exfiltration] · /permissions`, use the **Recently denied** tab, a hook, or the conversation:
+Notices read like `bash blocked by auto mode · /permissions · Auto mode: [Data Exfiltration]`. To read the command or URL behind one, use the **Recently blocked** tab, a hook, or the conversation:
 
-* **Recently denied tab**: in the `/permissions` dialog, highlight a denied Bash or PowerShell action to read its command below the list. In [screen reader mode](https://code.claude.com/docs/en/accessibility.md), all the commands appear before the list instead.
-* **Hook**: to capture the exact input of denials programmatically, add a [`PermissionDenied` hook](https://code.claude.com/docs/en/hooks#permissiondenied), which receives it as `tool_input`.
+* **Recently blocked tab**: highlight the action's row. In [screen reader mode](https://code.claude.com/docs/en/accessibility.md), every command and input appears before the list.
+* **Hook**: to capture the exact input of denials programmatically, add a [`PermissionDenied` hook](https://code.claude.com/docs/en/hooks#permissiondenied), which receives it as `tool_input`. If your hook reads `reason`, expect no `Auto mode:` prefix, and text such as `Blocked by classifier` instead of `No reason provided`.
 * **Conversation**: find the tool call. If the call appears shortened or folded into a summary line such as `Ran 3 shell commands`, press `Ctrl+O` to open the [transcript viewer](https://code.claude.com/docs/en/interactive-mode.md#transcript-viewer), which expands it.
 
 The text beneath the call tells you whether there is anything to fix. A dim `Not run · auto mode's check had no usable answer` row, or text that reports a problem with the classifier itself, such as `Auto mode could not evaluate this action`, means Claude Code blocked the call without a verdict from the classifier. For a `Not run` row, press `Ctrl+O` to read the full message, then see [Auto mode cannot determine the safety of an action](https://code.claude.com/docs/en/errors.md#auto-mode-cannot-determine-the-safety-of-an-action) or [The server returned no safety verdict](https://code.claude.com/docs/en/errors.md#the-server-returned-no-safety-verdict) for what to do.
 
-Otherwise, a line reading `Denied by auto mode classifier` with a reason such as `[Production Deploy]` or `Blocked by classifier` means the classifier judged the call unsafe, so pick the fix from what the call was trying to reach or do:
+Otherwise, a `Blocked by auto mode` line means the classifier judged the call unsafe. To let the call through, take the step that matches what Claude was trying to reach or do:
 
 * A destination Claude needs throughout the task, such as a package registry, an internal domain, or a repository host: add it to `autoMode.environment`.
 * A command you want to run without review from now on: add an `allow` rule.

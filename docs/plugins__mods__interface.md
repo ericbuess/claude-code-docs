@@ -738,7 +738,7 @@ on('session.start', async ($, e, next) => {
 })
 ```
 
-Claude Code now runs your `ui.render` hook once a second. The timer stops when the module reloads, and the new instance of the module starts its own.
+Claude Code now runs your `ui.render` hook once a second. The timer stops after the module reloads, and the new instance of the module starts its own.
 
 ### How often a site can redraw
 

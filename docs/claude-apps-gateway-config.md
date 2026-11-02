@@ -214,7 +214,7 @@ For local development, point `postgres_url` at a throwaway Postgres container, f
 
 ### `upstreams`
 
-`upstreams` is an ordered list. The gateway forwards inference to the first upstream that resolves the requested model.
+`upstreams` is an ordered list. The gateway forwards inference to the first upstream that resolves the requested model, passing over any upstream whose [`groups` list](#send-each-team-to-its-own-upstream) leaves the developer out.
 
 On `5xx`, `429`, `401`, `403`, `404`, or timeout the gateway fails over to the next upstream; other `4xx` doesn't, because those errors are attributable to the request rather than the upstream. A `401` or `403` means the upstream rejected the credential the gateway used, or denied it access, for example to the requested model. A `404` means that upstream doesn't serve the requested model, so a later upstream in the list still can.
 
@@ -231,7 +231,7 @@ Amazon Bedrock, Claude Platform on AWS, Google Cloud's Agent Platform, and Micro
 The gateway returns one upstream's error response, or its own `502`, depending on how the upstreams answered:
 
 * **An upstream returned a status the gateway doesn't [fail over](#multiple-upstreams) on**: that upstream's response. The gateway tries no further upstreams.
-* **Every upstream the gateway tried failed in a way it [fails over on](#multiple-upstreams)**: the last `429`. When none returned a `429`, the gateway prefers, in order, the last `401` or `403`, the last `404`, and the last `501`. When none returned any of those, the gateway's own `502`, `all upstreams failed (N attempted)`, where N counts every entry in [`upstreams`](#upstreams), including entries the gateway skipped because they don't serve the requested model.
+* **Every upstream the gateway tried failed in a way it [fails over on](#multiple-upstreams)**: the last `429`. When none returned a `429`, the gateway prefers, in order, the last `401` or `403`, the last `404`, and the last `501`. When none returned any of those, the gateway's own `502`, `all upstreams failed (N attempted)`. N counts your [`upstreams`](#upstreams) entries, including skipped ones, minus any whose [`groups`](#send-each-team-to-its-own-upstream) list leaves the developer out.
 
 When the gateway returns an upstream's response, it keeps the upstream's status code. Whether it keeps the upstream's message depends on the provider. An Anthropic API upstream's error body reaches the developer unchanged.
 
@@ -361,10 +361,6 @@ upstreams:
                                        # keep the quotes: a bare 1 fails at boot
 ```
 
-> [!WARNING]
->
-> The gateway doesn't support guardrail input tags. It adds no guard content tags to prompts, so a guardrail filter that Amazon Bedrock applies only to tagged input doesn't run on traffic through the gateway. For which filters depend on input tags, see [input tags](https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails-tagging.html) in the Amazon Bedrock documentation.
-
 Also grant `bedrock:ApplyGuardrail` on the guardrail to the principal that signs this upstream's requests: the gateway's AWS principal, or with [`assume_role`](#bedrock-in-another-aws-account) the role named in `role_arn`.
 
 Set `guardrail` on every `bedrock` upstream or on none. The gateway refuses to start on a mix, because [failover](#multiple-upstreams) could otherwise send a request to a Bedrock upstream that has no guardrail.
@@ -372,6 +368,90 @@ Set `guardrail` on every `bedrock` upstream or on none. The gateway refuses to s
 The guardrail covers Bedrock upstreams only. If you list another provider in `upstreams`, the gateway sends requests to that provider without the guardrail, or refuses to start if that provider is [`mantle`](#amazon-bedrock-mantle-endpoint).
 
 When a `/v1/messages` request whose body carries an `amazon-bedrock-*` field, such as `amazon-bedrock-guardrailConfig`, reaches a Bedrock upstream that has `guardrail` set, the gateway answers 400 instead of forwarding it.
+
+> [!WARNING]
+>
+> By default the gateway adds no input tags to prompts, so a guardrail filter that Amazon Bedrock applies only to tagged input doesn't run on traffic through the gateway. To add the tags, set [`input_tagging`](#add-guardrail-input-tags). For which filters depend on input tags, see [input tags](https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails-tagging.html) in the Amazon Bedrock documentation.
+
+##### Add guardrail input tags
+
+To have the gateway add the input tags that an Amazon Bedrock guardrail's [prompt attacks filter](https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails-prompt-attack.html) needs, set `input_tagging` in the `guardrail` block and restart the gateway. Set the same value on every `bedrock` upstream, or the gateway refuses to start. Requires Claude Code v2.1.316 or later on the gateway server. A gateway on a version that lacks the key exits at startup with `Unrecognized key(s) in object: 'input_tagging'`.
+
+> [!WARNING]
+>
+> According to [Amazon Bedrock's documentation](https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails-tagging.html), every filter in the guardrail stops evaluating untagged content once a request carries input tags. Try `input_tagging` on a test gateway before you set it on one that developers use.
+
+`input_tagging` takes one of these values:
+
+| `input_tagging` | Where the gateway tags text | After the guardrail blocks a prompt |
+| :- | :- | :- |
+| `last_message` | The `user` messages since Claude's last reply | In Claude Code, the next prompt can pass, and Claude then receives the blocked prompt as part of the conversation |
+| `user_messages` | `user` messages | Later prompts in the session can be blocked as well, until the developer removes the blocked prompt |
+| `all_messages` | `user` and `assistant` messages | Same as `user_messages` |
+| `all_messages_and_system` | The system prompt and every message, including [mid-conversation system messages](https://code.claude.com/docs/en/llm-gateway-protocol.md#feature-pass-through) | Same as `user_messages` |
+
+With `last_message`, if the `user` messages since Claude's last reply hold no text to tag, the gateway tags the mid-conversation system messages since that reply instead. A tool call counts as a reply.
+
+Amazon Bedrock's guidance for the prompt attacks filter is to [tag user input so that the system prompt is excluded](https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails-prompt-attack.html). If you set `all_messages_and_system`, a filter that flags Claude Code's own system prompt can block requests.
+
+The example below tags text in every `user` message:
+
+```yaml theme={null}
+upstreams:
+  - provider: bedrock
+    region: us-east-1
+    auth: {}
+    guardrail:
+      id: gr-abc123
+      version: "1"
+      input_tagging: user_messages
+```
+
+`user` messages can also hold text that Claude Code adds, such as [system reminders](https://code.claude.com/docs/en/glossary.md#system-reminder), so check on the test gateway that ordinary requests aren't blocked.
+
+In Anthropic's testing, a tagged session kept its [prompt cache](https://code.claude.com/docs/en/prompt-caching.md) reads from one prompt to the next, and the tags added no input tokens.
+
+##### What input tags don't cover
+
+No `input_tagging` value stops a developer who deliberately puts text where no tag goes. Don't count on the guardrail to evaluate these parts of a request:
+
+* **Content the gateway doesn't tag**: messages that your `input_tagging` value leaves out, tool definitions, tool call inputs, images, and PDFs, among others. Unless you set `all_messages_and_system`, the system prompt is untagged too.
+* **Tool results**: these hold what Claude's tools return, such as file contents and web pages. In Anthropic's testing, a word filter didn't evaluate them, with or without tags.
+
+If your AWS account or organization enforces a guardrail, see [Amazon Bedrock's documentation](https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails-enforcements.html) for how that guardrail treats input tags.
+
+##### Log which guardrail filter fired
+
+To find out which Amazon Bedrock guardrail filter blocked a developer's request, set `guardrail_trace: true` on the Bedrock upstream, restart the gateway, and have the developer send the request again. Then find the request's `guardrail.trace` event in the [audit log](https://code.claude.com/docs/en/claude-apps-gateway-deploy.md#logs). Requires Claude Code v2.1.314 or later on the gateway server. An earlier gateway refuses to start when it finds `guardrail_trace`.
+
+```yaml theme={null}
+upstreams:
+  - provider: bedrock
+    region: us-east-1
+    auth: {}
+    guardrail:
+      id: gr-abc123
+      version: "1"
+    guardrail_trace: true              # default false; beside guardrail, not inside it
+```
+
+The gateway writes a `guardrail.trace` event, without the matched text, when a filter fired or the guardrail's action is `INTERVENED`. Find the developer's events by `email` or `sub`. One streamed request can produce several events, and one of them can have an empty `filters` list, so read every event that has the same `request_id`:
+
+| Field | What it holds |
+| - | - |
+| `request_id` | The request's ID |
+| `sub`, `email` | The developer's user ID and email |
+| `upstream` | The upstream the reply came from |
+| `action` | The guardrail's action, such as `INTERVENED` |
+| `filters` | The filters that fired. The list is empty when AWS sends no filter detail |
+| `filters[].side` | `input` or `output` |
+| `filters[].guardrail` | The guardrail's ID |
+| `filters[].policy` | The Bedrock policy and list, such as `contentPolicy.filters` or `sensitiveInformationPolicy.piiEntities` |
+| Other `filters[]` fields | An entry can also carry fields such as `action`, `name`, `type`, `confidence`, `filterStrength`, `score`, and `threshold` |
+
+The event leaves out the text a filter matched, including the `match` field of Bedrock's trace. Developers don't receive Bedrock's trace data, because the gateway removes it from each reply, streamed or not.
+
+If a client sends an `amazon-bedrock-*` field in a `/v1/messages` request body, the gateway answers 400 on an upstream that sets `guardrail_trace`.
 
 ##### Bedrock in another AWS account
 
@@ -415,7 +495,9 @@ The role's trust policy names the gateway's own principal, such as its IRSA or E
 * If STS refuses or is unreachable, the gateway doesn't send the request with the upstream's own credentials. It logs the STS error with what to check, then tries the next upstream you listed. [Upstream error messages](#upstream-error-messages) covers what the client receives when no upstream succeeds. A later upstream without `assume_role` would serve the request with its own credentials, so list one only if that is what you want.
 * The gateway calls the regional STS endpoint `sts.<region>.amazonaws.com`, which its network must reach. For the FIPS endpoint, set `AWS_USE_FIPS_ENDPOINT=true` in the gateway's environment rather than `use_fips_endpoint` in an AWS config file.
 * `assume_role` applies to `provider: bedrock` only and needs SigV4 source credentials: the gateway refuses to start when it's set beside `aws_bearer_token`.
-* Every developer the gateway admits can use this upstream; [`managed`](#managed) governs which developers may use which models. To keep a model served through the role from also being served from another account, give it a custom id whose `upstream_model` map has only this upstream's name. For such an id the gateway skips every other upstream, so neither the request nor the token count for an aborted request can fail over to another account. A request for a built-in model name can still [reach this upstream](#multiple-upstreams), and the gateway signs it with the same role. List this upstream last unless its account should also serve those models.
+* Without a [`groups` list](#send-each-team-to-its-own-upstream), every developer the gateway admits can use this upstream. To limit which models a developer can use, set `availableModels` in a [`managed`](#managed) policy.
+* To keep a model served through the role from also being served from another account, give it a custom id whose `upstream_model` map has only this upstream's name. For such an id the gateway skips every other upstream, so neither the request nor the token count for an aborted request can fail over to another account.
+* A request for a built-in model name can still [reach this upstream](#multiple-upstreams), and the gateway signs it with the same role. List this upstream last unless its account should also serve those models.
 
 This example gives one model a custom id that only the isolated upstream serves:
 
@@ -627,7 +709,11 @@ The gateway tries upstreams in order. `5xx`, `429`, `401`, `403`, `404`, timeout
 
 `429` is per-upstream capacity, so provisioned-throughput (PT) exhaustion fails over to on-demand. If you set [`forward_user_identity: true`](#per-user-identity-headers-for-a-proxy-you-run) on an upstream, a `429` to a request that carried the developer's email is a per-user denial instead and doesn't fail over.
 
-Every request starts at the first upstream. A request reaches a later upstream only when every upstream ahead of it has failed or doesn't serve the requested model.
+A request moves past an upstream only in these cases:
+
+* The upstream has failed
+* The upstream doesn't serve the requested model
+* The upstream has a [`groups` list](#send-each-team-to-its-own-upstream) that leaves the developer out
 
 The gateway keeps no record of failed upstreams, so while an upstream is down, every request that reaches it still tries it and waits for it to fail before moving on.
 
@@ -680,13 +766,83 @@ models:
 | - | - |
 | Different regions | One Amazon Bedrock upstream per region, each with its own `region:`. With [`auto_include_builtin_models: true`](#models) the cross-region inference profiles route automatically; for region-pinned deployments use a `models:` block. |
 | Different accounts | One Amazon Bedrock upstream per account. The default chain (`auth: {}`) uses the pod's identity; for a second account, add [`assume_role`](#bedrock-in-another-aws-account) to reach it with short-lived credentials, or set explicit credentials or a bearer token in `auth:`. |
+| Different teams | Give each team's upstream a `groups` list, so that only developers in those IdP groups reach it. See [Send each team to its own upstream](#send-each-team-to-its-own-upstream). |
 | Provisioned throughput | Map the model to the provisioned-throughput ARN in `models:` for that upstream's name. Other upstreams keep the on-demand ID, so PT capacity is exhausted before failing over. |
 | VPC / FIPS endpoints | Set `base_url:` on the upstream to your VPC endpoint or FIPS endpoint URL |
-| Model-scoped routing | Only a custom model `id`, one that isn't a built-in Claude model, skips the upstreams absent from its `upstream_model:` map. A `mantle` upstream is tried only for the models listed in its [`models` field](#amazon-bedrock-mantle-endpoint). On every other upstream the gateway tries built-in models in order and uses the provider's default ID where the map has no entry, so for built-in models the map changes which ID an upstream receives rather than whether it is tried; an upstream that rejects the ID follows the same [failover rules](#upstreams) as any other upstream error. |
+| Model-scoped routing | A custom model `id`, one that isn't a built-in Claude model, skips the upstreams absent from its `upstream_model:` map. An upstream with a `models` list, which a [`mantle` upstream](#amazon-bedrock-mantle-endpoint) must have, is tried only for those models. |
+| Built-in model routing | On an upstream with no `models` or `groups` list, the gateway tries built-in models in order and uses the provider's default ID where the `upstream_model:` map has no entry. For a built-in model the provider has a default ID for, the map changes which ID an upstream receives rather than whether it is tried. An upstream that rejects the ID follows the same [failover rules](#upstreams) as any other upstream error. |
 
 Failing over between cloud providers, or to the direct Anthropic API, changes which agreement, geography, and other terms govern the request.
 
 The CLI applies the same feature gating to gateways regardless of which upstream serves a given request, so by default failover doesn't send a body field an upstream would reject. If you set the [one-hour cache TTL](#one-hour-prompt-cache) in a policy, it goes to every upstream in the list, so set it only if all of them accept it.
+
+#### Send each team to its own upstream
+
+To send each team's requests to its own AWS account or Google Cloud project, list one upstream per team and give each one a `groups` list. Only developers in a listed IdP group reach that upstream, on the first try and on [failover](#multiple-upstreams). Every provider takes `groups`. Requires Claude Code v2.1.314 or later on the gateway server.
+
+This example gives the `payments-eng` and `search-eng` groups an AWS account each, and adds an upstream with no `groups` list that every developer can use:
+
+```yaml theme={null}
+upstreams:
+  - name: bedrock-payments
+    provider: bedrock
+    region: us-east-1
+    auth: {}
+    assume_role:
+      role_arn: arn:aws:iam::111111111111:role/claude-gateway-bedrock
+    groups: [payments-eng]
+  - name: bedrock-search
+    provider: bedrock
+    region: us-east-1
+    auth: {}
+    assume_role:
+      role_arn: arn:aws:iam::222222222222:role/claude-gateway-bedrock
+    groups: [search-eng]
+  - name: bedrock-shared               # no groups: open to everyone, so listed last
+    provider: bedrock
+    region: us-east-1
+    auth: {}
+```
+
+With the example config, each developer's requests start at the first upstream in their row and move to the next on failover:
+
+| Developer's groups | Upstreams, in order |
+| - | - |
+| `payments-eng` | `bedrock-payments`, then `bedrock-shared` |
+| `search-eng` | `bedrock-search`, then `bedrock-shared` |
+| `payments-eng` and `search-eng` | `bedrock-payments`, then `bedrock-search`, then `bedrock-shared` |
+| Neither | `bedrock-shared` |
+
+When a team's upstream denies the requested model with a `403`, the gateway tries the next upstream in that team's row that serves the model. To keep the team on one upstream, give every upstream a `groups` list, and make sure no other upstream lists a group the team's developers are in. That team then has no failover, and requests from developers in no listed group [fail with a `400`](#what-happens-when-a-developer-is-in-no-listed-group).
+
+To get each developer to the upstream you intend, write entries that match exactly and put open upstreams last:
+
+* **Entries**: write each group exactly as your IdP sends it in the [groups claim](#oidc), which [`match.groups`](#managed) also reads. The gateway refuses to start when it finds an empty list or an empty entry. It doesn't check an entry against your IdP, so an entry that matches no one raises no warning.
+* **Order**: put an upstream that has no `groups` list last. It serves everyone, so listed earlier it takes a team's requests ahead of that team's own upstream.
+
+> [!WARNING]
+>
+> A gateway earlier than v2.1.314 refuses to start when it finds `groups`, so upgrade every replica before you add it.
+>
+> Before you roll back, remove each upstream that has a `groups` list and every `upstream_model` key or pricing override that names it, and keep at least one upstream. With only the `groups` key gone, that upstream is open to every developer. A key or override that still names a removed upstream stops the gateway from starting, with `references unknown upstream`.
+
+##### What happens when a developer is in no listed group
+
+If every upstream has a `groups` list, a developer in none of those groups sees this error, and the gateway contacts no provider:
+
+```text theme={null}
+API Error: 400 you aren't in a group that can use this gateway. Ask your administrator to add you to one
+```
+
+Add the developer to a listed group in your IdP, or add an upstream with no `groups` list.
+
+The gateway reads a developer's groups again at each token refresh. If your IdP leaves groups out of a refresh, the developer then has none:
+
+* **[`oidc.allowed_groups`](#oidc) is set**: the gateway refuses the refresh, and the session ends
+* **Otherwise, an upstream has no `groups` list**: the developer's requests move to it
+* **Otherwise, every upstream has a `groups` list**: the developer's requests fail with that error
+
+If your IdP's userinfo endpoint returns the groups claim and `oidc.google_groups` isn't set, set [`oidc.userinfo_fallback`](#oidc) to `true` to fill in the groups from there.
 
 ## Optional sections
 
@@ -782,9 +938,12 @@ A gateway server earlier than v2.1.271 refuses to start if you set a `multiplier
 
 #### Send the rates to signed-in clients
 
-With v2.1.268 or later on the gateway server, the gateway also puts the rates from `pricing` into the [`managed`](#managed) policies it serves, as the [`modelPricing`](https://code.claude.com/docs/en/settings-reference#modelpricing) managed setting. Developers matched by a policy then see the `pricing` rates for the first upstream that serves each model ID in `/usage`, the status line, and OpenTelemetry. A developer who matches no policy receives no managed settings, so their figures stay at list price. Clients apply the setting in Claude Code v2.1.242 or later.
+With v2.1.268 or later on the gateway server, the gateway also puts the rates from `pricing` into the [`managed`](#managed) policies it serves, as the [`modelPricing`](https://code.claude.com/docs/en/settings-reference#modelpricing) managed setting.
+
+Developers matched by a policy then see the `pricing` rates in `/usage`, the status line, and OpenTelemetry. A developer who matches no policy receives no managed settings, so their figures stay at list price. Clients apply the setting in Claude Code v2.1.242 or later.
 
 * What the gateway adds: unless a policy's `cli` block already sets `modelPricing`, the gateway adds the `multiplier` and, for every model ID a client can request, the override row of the first upstream that serves that ID. A rate that only a failover upstream charges stays on the gateway.
+* Upstreams with a [`groups` list](#send-each-team-to-its-own-upstream): when one is the first upstream that serves a model ID, the gateway adds no row for that ID. Developers then see Claude Code's own rate for that ID, which is the model's standard rate when Claude Code recognizes the ID, times the `multiplier`.
 * Opt one policy out: set `modelPricing` to `{}` in that policy's `cli` block, and its developers stay at list price.
 * Keep a policy's own rates: a policy whose `cli` block sets `modelPricing` with its own `multiplier` or `overrides` keeps that `modelPricing` whole, and the gateway adds no rates of its own to it.
 
@@ -808,7 +967,7 @@ Each key under `upstream_model` must match the `name` of a configured upstream, 
 
 ### `managed`
 
-The `managed` block defines role-based access policies keyed on IdP groups or email domain. Policies are evaluated in order; the first match is selected, then merged onto the `match: {}` catch-all base. They are served per-user at `GET /managed/settings` with ETag/304 caching.
+The `managed` block defines role-based access policies keyed on IdP groups or email domain. Policies are evaluated in order; by default the first match is selected, then merged onto the `match: {}` catch-all base. A user who matches two role policies gets only the first, so the second policy's deny rules don't apply unless you [apply every matching policy](#apply-every-matching-policy). Policies are served per-user at `GET /managed/settings` with ETag/304 caching.
 
 ```yaml theme={null}
 managed:
@@ -849,6 +1008,8 @@ The gateway validates the `model` value itself before it relays a request, so a 
 
 An authenticated user who matches no policy gets the gateway's defaults, which means every model in the catalog and no managed settings. Add a `match: {}` catch-all last if you want a guaranteed default policy.
 
+Put organization-wide deny rules in the `match: {}` policy, because a group policy's rules apply only while the user's token carries that group.
+
 > [!NOTE]
 >
 > The gateway keeps no user directory of its own. It authorizes each request from the user's IdP token, reading group membership from the token's `groups` claim and evaluating policies against it. There is no roster to enumerate and no accounts to pre-create, and therefore no SCIM endpoint, because there is nothing for SCIM to sync into.
@@ -861,6 +1022,52 @@ An authenticated user who matches no policy gets the gateway's defaults, which m
 > * **Group membership**: changing a user's group membership changes which policy matches them. This takes effect on the next session re-mint, meaning the next silent refresh, bounded by `session.ttl_hours`.
 >
 > Claude Desktop follows [its own schedule](#when-a-policy-change-reaches-claude-desktop).
+
+#### Apply every matching policy
+
+A user who matches several role policies gets only the first unless you set `policy_mode: layered` beside `policies`. With `layered`, every policy that matches the user applies, down to the first `match: {}` policy.
+
+`policy_mode` requires Claude Code v2.1.316 or later on the gateway server. A gateway on a version that lacks it refuses to start when it finds the key. Upgrade every replica before you add the key, and remove the key before you roll back to an earlier version. This example has one group that loses `WebFetch` and one that gains Opus:
+
+```yaml theme={null}
+managed:
+  policy_mode: layered
+  policies:
+    - match: { groups: [no-web] }
+      cli:
+        permissions: { deny: ["WebFetch"] }
+    - match: { groups: [opus-users] }
+      cli:
+        availableModels: [opus, sonnet]
+    - match: {}
+      cli:
+        availableModels: [sonnet]
+        enforceAvailableModels: true
+```
+
+The table shows what a user in both `no-web` and `opus-users` receives under the default, `first_match`, and under `layered`.
+
+| Setting | `first_match` | `layered` |
+| - | - | - |
+| `availableModels` | `sonnet` | `opus`, `sonnet` |
+| `enforceAvailableModels` | `true` | `true` |
+| `permissions.deny` | `WebFetch` | `WebFetch` |
+
+The gateway merges each matching policy onto the ones listed below it, by the same [merge rules](#managed) as the base layer:
+
+* **Allow-lists, single values, and blocks such as `sandbox`**: each comes whole from the first-listed matching policy that sets it, so two groups' `availableModels` lists don't add up.
+* **Deny-lists and hook arrays**: these add up across every matching policy, so a user in two groups gets both groups' deny rules.
+* **`env`, `modelOverrides`, and `skillOverrides`**: entries merge by name, and the first-listed matching policy that sets a name supplies its value.
+* **`desktop` keys**: these merge by [the rules for the base `desktop` block](#how-a-role-policy-inherits-the-base-desktop-block).
+
+> [!WARNING]
+>
+> Policies can add up to looser rules than any one of them gives alone. For example, the `match: {}` policy sets `sandbox.enabled: true`, one group's policy sets `permissions.allow: ["Bash"]`, and another group's sets `sandbox.enabled: false`. A user in both groups receives `Bash` allowed with the sandbox off. In this case, list the policy that allows `Bash` first, and copy the `match: {}` policy's whole `sandbox` block into it.
+
+With `layered`, the gateway refuses to start on some settings, including these:
+
+* **A `!` pattern**: a [`!` negation](https://code.claude.com/docs/en/permissions#special-characters-and-negation) in a `Read` or `Edit` rule in any policy's `permissions.deny` or `permissions.ask` list, the `match: {}` policy's included
+* **A limit on hooks outside the catch-all**: `disableAllHooks`, `allowedHttpHookUrls`, or `httpHookAllowedEnvVars` in any policy other than `match: {}`
 
 #### Start sessions on a model the policy allows
 

@@ -1559,7 +1559,7 @@ The `claude_code.cost.usage` metric helps with:
 
 > [!NOTE]
 >
-> Cost metrics are approximations. For official billing data, refer to your API provider (Claude Console, Amazon Bedrock, or Google Cloud's Agent Platform).
+> Cost metrics are approximations. For official billing data, see [Manage costs for your organization](https://code.claude.com/docs/en/costs.md#manage-costs-for-your-organization).
 
 Claude Code counts each streaming response toward the cost and token metrics exactly once, including when a gateway or proxy behind `ANTHROPIC_BASE_URL` streams usage progressively across multiple frames.
 

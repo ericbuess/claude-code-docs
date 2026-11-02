@@ -41,6 +41,7 @@ Claude Code doesn't auto-approve the following in any mode, including `bypassPer
 * Reads outside the working directories while [`permissions.blockReadsOutsideWorkingDirectories`](https://code.claude.com/docs/en/settings-reference#permissions-blockreadsoutsideworkingdirectories) is on: recognized file-reading Bash commands prompt even in auto mode and `bypassPermissions` mode, and so does any [unsandboxed retry](https://code.claude.com/docs/en/sandboxing.md#the-unsandboxed-retry-escape-hatch) that needs approval to run outside the sandbox. Requires Claude Code v2.1.257 or later.
 
   A command the shell parser can't trace, such as one that changes directory more than once or runs a subshell, prompts the same way even when it names no outside path. This prompt doesn't apply when the command runs in the [sandbox](https://code.claude.com/docs/en/sandboxing.md) and the sandbox enforces the block.
+* Writes outside the working directories while [`permissions.blockWritesOutsideWorkingDirectories`](https://code.claude.com/docs/en/settings-reference#permissions-blockwritesoutsideworkingdirectories) is on: Claude Code refuses `Write`, `Edit`, and `NotebookEdit` calls there, apart from [some of its own files](https://code.claude.com/docs/en/settings-reference.md#what-the-write-block-refuses-and-what-stays-writable). The key doesn't limit shell commands, MCP tools, or the programs hooks run, so use [sandboxing](https://code.claude.com/docs/en/sandboxing.md) to limit where shell commands write. Requires Claude Code v2.1.314 or later.
 
 ## Common setups
 
@@ -531,7 +532,7 @@ The prompt doesn't appear in non-interactive `-p` runs or background sessions; r
 Whatever you answer, Claude keeps working:
 
 * **Yes, and keep allowing any reads outside the working directories**: the read runs, later reads outside the working directories run as before, and Claude Code records your answer so the prompt doesn't appear again
-* **No, and block reads outside the working directories from now on**: the read is refused, and Claude Code sets [`permissions.blockReadsOutsideWorkingDirectories`](https://code.claude.com/docs/en/settings-reference#permissions-blockreadsoutsideworkingdirectories) to `true` in your user settings, which makes the file tools refuse such reads in every later session and every permission mode. To let Claude read such a path later, add its directory with `/add-dir` or remove the setting.
+* **No, and block reads outside the working directories from now on**: the read is refused, and Claude Code sets [`permissions.blockReadsOutsideWorkingDirectories`](https://code.claude.com/docs/en/settings-reference#permissions-blockreadsoutsideworkingdirectories) to `true` in your user settings, which makes the file tools refuse such reads in this and every later session and every permission mode. To lift the block, remove the setting from every [settings file](https://code.claude.com/docs/en/settings.md#settings-files-and-who-they-affect) that sets it, then restart each running session. For one directory this session, use `/add-dir`.
 * **No, and ask again next time**: the read is refused, and the next read outside the working directories prompts again
 * **Yes, but ask again next time**: the read runs, nothing is saved, and the next read outside the working directories prompts again
 
@@ -553,9 +554,9 @@ If you tell Claude that a blocked action is allowed, the classifier reads that a
 
 When auto mode can't approve your session's actions, what happens depends on the case:
 
-* **A blocked action**: Claude Code shows a notification and lists the action in `/permissions` under the **Recently denied** tab, where you can press `r` to retry it with a manual approval.
+* **A blocked action**: Claude Code shows a notification and lists the action in `/permissions` under the **Recently blocked** tab, where you can [approve the action so Claude may retry](https://code.claude.com/docs/en/auto-mode-config.md#review-denials).
 * **Repeated blocks**: if the classifier blocks an action 3 times in a row or 20 times total, auto mode pauses and Claude Code resumes prompting. Approving the prompted action resumes auto mode. See [Repeated-block thresholds](#repeated-block-thresholds) for how the blocks are counted.
-* **No verdict from the classifier**: when a safety check separate from auto mode refuses the classifier's own request, or the classifier's response doesn't parse, Claude Code denies the action without the notification or the **Recently denied** entry. See [Auto mode cannot determine the safety of an action](https://code.claude.com/docs/en/errors.md#auto-mode-cannot-determine-the-safety-of-an-action) for the message each case shows and what to do.
+* **No verdict from the classifier**: when a safety check separate from auto mode refuses the classifier's own request, or the classifier's response doesn't parse, Claude Code blocks the action without the notification or the **Recently blocked** entry. See [Auto mode cannot determine the safety of an action](https://code.claude.com/docs/en/errors.md#auto-mode-cannot-determine-the-safety-of-an-action) for the message each case shows and what to do.
 * **No verdict from the server**: under [server-side classifier review](#server-side-classifier-review), Claude Code denies an action the server gives no verdict for, and stops the turn after ten responses in a row with no verdict. See [The server returned no safety verdict](https://code.claude.com/docs/en/errors.md#the-server-returned-no-safety-verdict).
 * **A mode switch during a check**: if you switch permission modes while a classifier check is pending, Claude Code discards a verdict the new mode wouldn't have requested. You're prompted for approval instead, or the action is auto-denied in [`dontAsk` mode](#allow-only-pre-approved-tools-with-dontask-mode).
 
@@ -738,6 +739,8 @@ Writes to a small set of paths are never auto-approved, except in `bypassPermiss
 
 In a session started with [`--restricted`](https://code.claude.com/docs/en/cli-reference#cli-flags), which requires Claude Code v2.1.248 or later, the classifier can't approve protected-path writes.
 
+While [`permissions.blockWritesOutsideWorkingDirectories`](https://code.claude.com/docs/en/settings-reference#permissions-blockwritesoutsideworkingdirectories) is on, Claude Code refuses `Write`, `Edit`, and `NotebookEdit` writes to settings files in every permission mode.
+
 In the modes that route protected-path writes to the classifier, a write that the [symlink check](https://code.claude.com/docs/en/permissions.md#symlinks) resolves to a protected path prompts you instead when the path Claude requested isn't itself protected.
 
 [`permissions.allow`](https://code.claude.com/docs/en/permissions#manage-permissions) rules in settings files do not pre-approve protected-path writes. The safety check runs before Claude Code evaluates allow rules from settings, so an entry such as `Edit(.claude/**)` in `~/.claude/settings.json` or `.claude/settings.json` does not change the per-mode outcome in the table above. In permission modes that prompt, the prompt for a write to the project's `.claude/` folder or to `~/.claude/` can offer one of these session-scoped options:
@@ -776,6 +779,7 @@ Protected files:
 * `.devcontainer.json`
 * `.ripgreprc`, `pyrightconfig.json`
 * `.mcp.json`, `.claude.json`
+* `remote-settings.json`, the stored copy of your organization's [server-managed settings](https://code.claude.com/docs/en/server-managed-settings.md), and the signature, sync, and consent files Claude Code keeps with it, in `~/.claude` or the directory [`CLAUDE_CONFIG_DIR`](https://code.claude.com/docs/en/env-vars) points to
 * A file you passed to [`--settings`](https://code.claude.com/docs/en/cli-reference#cli-flags), `--mcp-config`, or `--agents` when you started the session
 * The file that your user, project, or local [settings file](https://code.claude.com/docs/en/settings.md#settings-files-and-who-they-affect) points to when the settings file is itself a symbolic link, for example into a dotfiles repository. In the modes that route protected-path writes to the classifier, a write to this file prompts you instead, even when an allow rule matches. If the file's own path is also that of a settings file, such as `.claude/settings.json` in another folder, the write goes to the classifier as other protected-path writes do
 

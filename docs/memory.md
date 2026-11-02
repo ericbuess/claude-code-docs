@@ -206,7 +206,7 @@ paths:
 - Include OpenAPI documentation comments
 ```
 
-Rules without a `paths` field are loaded unconditionally and apply to all files. A path-scoped rule loads when Claude uses the Read, Write, or Edit tool on a matching file. It also loads when Claude views a matching file with a Bash command that [counts as a read](https://code.claude.com/docs/en/tools-reference.md#edit-tool-behavior), such as `cat` or `head` on a single file. Matching also works when Claude reaches a file through a symlinked path to the project directory, for example in a symlinked checkout.
+A path-scoped rule loads when Claude uses the Read, Write, or Edit tool on a matching file. It also loads when Claude views a matching file with a Bash command that [counts as a read](https://code.claude.com/docs/en/tools-reference.md#edit-tool-behavior), such as `cat` or `head` on a single file. Matching also works when Claude reaches a file through a symlinked path to the project directory, for example in a symlinked checkout.
 
 Each pattern is relative to the rule's base directory:
 
@@ -219,10 +219,11 @@ Use glob patterns in the `paths` field to match files by extension, directory, o
 
 | Pattern | Matches |
 | - | - |
-| `**/*.ts` | All TypeScript files in any directory |
-| `src/**/*` | All files under `src/` directory |
-| `*.md` | Markdown files in the project root |
-| `src/components/*.tsx` | React components in a specific directory |
+| `**/*.ts` | `.ts` files anywhere under the base directory |
+| `src/**/*` | All files under the base directory's `src/` |
+| `*.md` | `.md` files anywhere under the base directory |
+| `/*.md` | `.md` files directly in the base directory, not in subfolders |
+| `src/components/*.tsx` | `.tsx` files directly in the base directory's `src/components/`, not in subfolders |
 
 You can specify multiple patterns and use brace expansion to match multiple extensions in one pattern:
 

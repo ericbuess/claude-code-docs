@@ -335,6 +335,7 @@ Cloud sessions come with common language runtimes, build tools, and databases pr
 | **C/C++** | GCC, Clang, cmake, ninja, conan |
 | **Docker** | docker, dockerd, docker compose |
 | **Databases** | PostgreSQL 16, Redis 7.0 |
+| **Browser** | Chrome for Testing at `/usr/bin/google-chrome`, with the `CHROME_PATH` environment variable set to that path |
 | **Utilities** | git, gh, jq, yq, ripgrep, tmux, vim, nano |
 
 ¹ Bun is installed but has known [proxy compatibility issues](#install-dependencies-with-a-sessionstart-hook) for package fetching.

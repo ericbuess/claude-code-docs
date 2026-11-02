@@ -131,6 +131,8 @@ From the Browser pane, you can:
 * Start or stop servers, or stop them all at once, from the **Dev servers** menu in the Browser pane's header
 * Choose whether the Browser keeps cookies after you quit the app with **Keep cookies** in the Browser pane's **⋮** menu, so you don't have to sign in again during development
 
+In an SSH session, you lose the pane's cookies when you quit Desktop. You can't change that with **Keep cookies**.
+
 Claude creates the initial server configuration based on your project. If your app uses a custom dev command, edit `.claude/launch.json` to match your setup. See [Configure preview servers](#configure-preview-servers) for the full reference.
 
 To clear the Browser's saved data, select **Clear browsing data** in the Browser pane's **⋮** menu. To turn the Browser off entirely, turn off **Browser tools** in **Settings > Code** or **Settings > Claude Code**.
@@ -312,7 +314,7 @@ To see how full this session's context window is, find your Code tab layout:
 
 In either layout, type `/context` in the prompt box to print a per-category breakdown of this session's context window in the chat.
 
-Both layouts have the usage ring next to the model picker. Click it to see your plan usage, which is shared across all your Claude Code surfaces.
+In both layouts, the usage ring is in the row under the prompt box. Click it to see your plan usage, which is shared across all your Claude Code surfaces.
 
 ## Let Claude use your computer
 
@@ -409,9 +411,9 @@ In the split view, the pane you opened or clicked last has focus, and the other 
 
 #### Run a session in its own worktree
 
-In a project that's a Git repository, turn on **Worktree** before you start a session to run it in its own [Git worktree](https://code.claude.com/docs/en/worktrees.md), an isolated copy of the project. By default, **Worktree** is off and Claude works in the project folder itself. On the [current layout](#check-which-layout-you-have), turn on the **Worktree** button in the [row under the prompt box](#start-a-session).
+In a project that's a Git repository, turn on **Worktree** before you start a session to run it in its own [Git worktree](https://code.claude.com/docs/en/worktrees.md), an isolated copy of the project. By default, **Worktree** is off and Claude works in the project folder itself. On the [current layout](#check-which-layout-you-have), turn on **Worktree** in the [row under the prompt box](#start-a-session).
 
-* **With a [third-party provider](https://code.claude.com/docs/en/third-party-integrations.md)**: if the row under the prompt box shows the project folder control but no **Worktree** button, click that control and turn on **Worktree**
+* **With a [third-party provider](https://code.claude.com/docs/en/third-party-integrations.md)**: if the row under the prompt box shows the project folder control but not **Worktree**, click the project folder control and turn on **Worktree**
 * **As the default for a [saved local or SSH environment](#create-a-saved-environment)**: set **Worktree** when you create or edit the environment
 * **[Earlier layout](#check-which-layout-you-have)**: select the **worktree** checkbox beside the branch name, above the prompt box
 
@@ -1094,11 +1096,11 @@ You can leave the **SSH port** and **SSH key (optional)** fields empty. If you f
 
 ##### Connect on Windows without the OpenSSH client
 
-On Windows, you connect through Desktop's built-in SSH client if your computer doesn't meet [the requirements for the OpenSSH client](#use-your-ssh-configuration). With a third-party provider, you connect through the built-in client by default, and your administrator can change that. For the setting, see [SSH remote sessions in Claude Desktop on 3P](https://claude.com/docs/third-party/claude-desktop/ssh-remote-sessions).
+On Windows, you connect through Desktop's built-in SSH client if your computer doesn't meet [the requirements for the OpenSSH client](#use-your-ssh-configuration). With a third-party provider, which client you connect through also depends on your Desktop version and on your administrator's settings. See [SSH remote sessions in Claude Desktop on 3P](https://claude.com/docs/third-party/claude-desktop/ssh-remote-sessions).
 
 With the built-in client, you can still enter a `Host` name from your SSH configuration in the **SSH host** field if your `PATH` has an `ssh` command, with these limits:
 
-* **Settings from the entry**: Desktop takes `HostName`, `User`, `Port`, and `IdentityFile`. It also takes `ProxyCommand` if an `sh` shell is on your `PATH`.
+* **Settings from the entry**: Desktop takes `HostName`, `User`, `Port`, `IdentityFile`, and `ConnectTimeout`. It also takes `ProxyCommand` if an `sh` shell is on your `PATH`.
 * **SSH key (optional)**: leave this field empty to keep the entry's `IdentityFile`, because a key file that you pick here replaces the `IdentityFile`
 * **`CertificateFile` and `ProxyJump`**: Desktop ignores `CertificateFile`, and the connection fails if the entry sets `ProxyJump`. To use either setting, [connect through the OpenSSH client](#use-your-ssh-configuration).
 
@@ -1198,7 +1200,7 @@ Run `ssh` with the host in a terminal to confirm that the entry still connects t
 
 ##### Raise the SSH connection timeout
 
-If your SSH configuration sets no `ConnectTimeout` for the host, Desktop gives `ssh` 30 seconds to connect. Through a jump host or a `ProxyCommand`, that time includes the time the route takes to connect. If your route needs longer, add a higher value to the entry:
+If your session times out while it connects through a jump host or a `ProxyCommand`, raise `ConnectTimeout` in the remote machine's entry in your `~/.ssh/config`. Use more than 90 seconds. Add any time that a jump host or a `ProxyCommand` waits for you, for example at a login prompt or for a phone push:
 
 ```text ~/.ssh/config theme={null}
 Host devbox
@@ -1210,7 +1212,15 @@ Host devbox
 
 `ssh` uses the first value it finds for a host, so keep the entry above any `Host *` entry that sets `ConnectTimeout`. To confirm, run `ssh -G devbox` in a terminal on your computer. Its output includes `connecttimeout 120`. After you change the value, quit and reopen Desktop.
 
-If the remote machine itself waits for an approval on your phone, approve within 45 seconds, whatever `ConnectTimeout` you set. You can't raise this limit, because Desktop sets `ServerAliveInterval` and `ServerAliveCountMax` itself, and `ssh` then closes a login in which the remote machine sends nothing for that long. If a jump host or a `ProxyCommand` waits for you instead, raise `ConnectTimeout` in the remote machine's entry to cover that time.
+If your SSH configuration sets no `ConnectTimeout` for the host, Desktop gives `ssh` 30 seconds to connect. Through a jump host or a `ProxyCommand`, that time includes the time the route takes to connect.
+
+| `ConnectTimeout` | Connection | Time that you have |
+| - | - | - |
+| Not set | You start a session through a jump host or a `ProxyCommand`, with Claude Desktop v4.4212.0 or later on macOS or Linux | 30 seconds, then a second try with 90 seconds. If Desktop showed you a prompt during the first try, you have no second try. Time at a login prompt that Desktop shows for a `ProxyJump` host doesn't count. Other waits on the route do. |
+| Not set | Desktop on Windows or an earlier version, a remote machine that sets `MaxSessions 1`, or a reconnect that Desktop starts on its own | 30 seconds. Every wait on the route counts. |
+| Set | Every connection and reconnect | The value that you set. Every wait on the route counts. |
+
+If the remote machine itself waits for an approval on your phone, approve within 45 seconds, whatever `ConnectTimeout` you set. You can't raise this limit, because Desktop sets `ServerAliveInterval` and `ServerAliveCountMax` itself, and `ssh` then closes a login in which the remote machine sends nothing for that long.
 
 ##### Fix a `Match host` block that only Desktop applies
 
@@ -1334,7 +1344,7 @@ File edits and some tools can fail while Desktop is disconnected. If the task ne
 >
 > Edits still fail in some cases, including these:
 >
-> * **Built-in SSH client**: Desktop uses it, for example in a Microsoft Store install, on a Windows computer without Microsoft's OpenSSH 9.4 or later, or by default on Windows with a third-party provider
+> * **Built-in SSH client**: Desktop uses it, for example in a Microsoft Store install, or on a Windows computer without Microsoft's OpenSSH 9.4 or later
 > * **Repository location**: the repository is your home directory, a folder above it, or `~/.claude`
 > * **macOS paths**: on a macOS remote machine, the repository is under `/Volumes`, or a folder name in the path of the repository or the worktree has a `~` or a non-ASCII character
 > * **Folder restrictions**: your organization restricts which folders sessions may use
@@ -1369,11 +1379,12 @@ If Desktop hasn't reconnected when you come back, send a message in the session.
 * **Remembered password**: a password that you let Desktop remember also works without a prompt, but for a long absence prefer a key that your SSH agent holds. If sign-ins with that password break off or hang, Desktop can stop reconnecting and wait for you.
 * **Any other prompt**: if the remote machine prompts for anything else, such as a one-time code, you can get a notification on your computer. Click the notification, or send a message in the session, and Desktop shows the prompt.
 
-> [accordion] If a jump host asks for a sign-in, the outage is long, output is missing, or the process is gone
+> [accordion] If a jump host asks for a sign-in, the outage is long, a message isn't sent, output is missing, or the process is gone
 >
 > * **Jump host, pushes stop while you're away**: this can happen with Desktop on macOS or Linux when nobody answers a jump host's sign-in, for example a push to a phone. Desktop then stops reconnecting while nobody is at your computer. When you unlock or use the computer, you can get another push, because Desktop can try again. After three unanswered attempts it waits until you retry or send a message.
 > * **Jump host, pushes keep coming**: where Desktop can't tell that nobody answers, as with Desktop on Windows, it keeps trying while it has a process to rejoin, whether or not that process still runs. You can get another push with each attempt. To end the attempts, quit Desktop, which [can cost you the running task](#reopen-a-session-after-you-quit-desktop).
-> * **Long outage**: Desktop slows to about one attempt every five minutes. To reconnect sooner, retry in the session or send a message, which Desktop delivers once it is connected.
+> * **Long outage**: Desktop slows to about one attempt every five minutes. To reconnect sooner, retry in the session or send a message. Desktop tries to deliver the message once it is connected.
+> * **Message not sent**: the row `Your organization's settings haven't loaded, so your message to <host> wasn't sent. Retry to send it.` under your message means that Desktop reconnected and held your message back, because your organization's settings hadn't loaded yet. Select **Retry** to send the message now. If you do nothing, Desktop tries again once the settings load.
 > * **Missing output**: while Desktop is disconnected, the helper keeps each session's most recent Claude Code output in a 16 MiB buffer and drops older output. After Desktop reconnects, the session can show `Loading recent output from <host>…`. If Desktop can't load all of the output, you see the row `Some output produced while you were disconnected may be missing here.` The row doesn't mean that the task stopped.
 > * **Process gone**: the process ended while Desktop was disconnected, as when the remote machine restarts. Desktop can then start a new one from the conversation's saved history and tell Claude to continue the task. If the task stays stopped, send a message. With a third-party provider, update to Claude Desktop v2.42304.0 or later, because earlier versions never continue the task on their own.
 
@@ -2290,6 +2301,8 @@ Find the card's title, or the code that ends the error message, in this table, t
 | `<host> is out of disk space` | `[ENOSPC]` or `[EDQUOT]` | Free space or quota on the remote machine, in your home directory or `/tmp` |
 | `Free up disk space on this computer` | `[ENOSPC]` or `[EDQUOT]`, in a message that starts with `Couldn't prepare the deploy locally` | Free space on your computer |
 | `Claude Code won't start on <host>` | `[CLI_UNRESPONSIVE]` | Wait a minute, then try again. If it keeps failing, run the command that the message names on the remote machine to see whether Claude Code answers there. |
+| `Ask <host>'s administrator to let Claude's server run` | `[SERVER_NOT_RUNNABLE]` or `[SETUP_DIR_NOEXEC]` | Ask the remote machine's administrator to let programs run from `~/.claude/remote/` on that machine, as the [requirements](#remote-machine-requirements-for-ssh-sessions) say |
+| `Try again in a few minutes` | `[DOWNLOAD_BUSY]` | Wait a few minutes, then try again. Anthropic's download server or a proxy on your computer's network reported that it is busy. If the card keeps coming back, ask that network's administrator whether a proxy limits downloads. |
 
 For any other message, check the [remote machine requirements](#remote-machine-requirements-for-ssh-sessions).
 

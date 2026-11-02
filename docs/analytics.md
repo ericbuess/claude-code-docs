@@ -77,7 +77,7 @@ The dashboard displays these summary metrics at the top:
 * **Lines of code with CC**: total lines of code across all merged PRs that were written with Claude Code assistance. Only "effective lines" are counted: lines with more than 3 characters after normalization, excluding empty lines and lines with only brackets or trivial punctuation.
 * **PRs with Claude Code (%)**: percentage of all merged PRs that contain Claude Code-assisted code
 * **Suggestion accept rate**: percentage of times users accept Claude Code's code editing suggestions, including Edit, Write, and NotebookEdit tool usage
-* **Lines of code accepted**: total lines of code written by Claude Code that users have accepted in their sessions. This excludes rejected suggestions and does not track subsequent deletions.
+* **Lines of code accepted**: total lines of code that Claude Code's Edit and Write tools added or removed in accepted edits. This excludes rejected suggestions, and lines deleted later don't reduce the total.
 
 ### Explore the charts
 
@@ -192,7 +192,7 @@ To query contribution data through GitHub instead, search for PRs labeled with `
 
 ## Access analytics for API customers
 
-API customers using the Claude Console can access analytics at [platform.claude.com/claude-code](https://platform.claude.com/claude-code). You need the UsageView permission to access the dashboard, which is granted to Developer, Billing, Admin, Owner, and Primary Owner roles. To pull the same daily per-user metrics programmatically, use the [Claude Code Analytics API](https://platform.claude.com/docs/en/build-with-claude/claude-code-analytics-api) with an Admin API key.
+API customers using the Claude Console can access analytics at [platform.claude.com/claude-code](https://platform.claude.com/claude-code). You need the UsageView permission to access the dashboard. The Developer, Billing, Admin, Owner, and Primary Owner roles have this permission. To pull daily per-user metrics programmatically, use the [Claude Code Analytics API](https://platform.claude.com/docs/en/build-with-claude/claude-code-analytics-api) with an Admin API key.
 
 > [!NOTE]
 >
@@ -200,22 +200,22 @@ API customers using the Claude Console can access analytics at [platform.claude.
 
 The Console dashboard displays:
 
-* **Lines of code accepted**: total lines of code written by Claude Code that users have accepted in their sessions. This excludes rejected suggestions and does not track subsequent deletions.
+* **Lines of code accepted**: total lines of code that Claude Code's Edit and Write tools added or removed in accepted edits. This excludes rejected suggestions, and lines deleted later don't reduce the total.
 * **Suggestion accept rate**: percentage of times users accept code editing tool usage, including Edit, Write, and NotebookEdit tools.
-* **Activity**: daily active users and sessions shown on a chart.
-* **Spend**: daily API costs in dollars alongside user count.
+* **Active users** and **Sessions**: daily counts of active users and Claude Code sessions.
+* **Spend**: daily API costs in dollars.
 
 ### View team insights
 
-The team insights table shows per-user metrics:
+The team insights table shows these per-user columns for the date range you select at the top of the dashboard, by default the last 30 days:
 
-* **Members**: all users who have authenticated to Claude Code. API key users display by key identifier, OAuth users display by email address.
-* **Spend this month**: per-user total API costs for the current month.
-* **Lines this month**: per-user total of accepted code lines for the current month.
+* **Members**: users and API keys with reported Claude Code usage in that range. API key users display by key name, and OAuth users by email address.
+* **Spend**: per-user total API costs.
+* **Lines accepted**: per-user total of lines that the Edit and Write tools added or removed in accepted edits.
 
 > [!NOTE]
 >
-> Spend figures in the Console dashboard are estimates for analytics purposes. For actual costs, refer to your billing page.
+> Spend figures in the Console dashboard are estimates for analytics purposes. For actual costs, refer to the [Cost page](https://platform.claude.com/cost).
 
 ## Related resources
 
