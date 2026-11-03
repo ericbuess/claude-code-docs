@@ -658,8 +658,8 @@
     "jetbrains.md": {
       "original_url": "https://code.claude.com/docs/en/jetbrains",
       "original_md_url": "https://code.claude.com/docs/en/jetbrains.md",
-      "hash": "1af2bb66618140841118e0cff7149bcf6223d1c003a6fbc1f934ff1377f9a1da",
-      "last_updated": "2026-10-30T21:46:09.504652"
+      "hash": "488a0cba98c2e6dfcd168cbe39bff43c5e374e02b1889ec708a712ec38992a01",
+      "last_updated": "2026-11-03T13:10:28.570942"
     },
     "keybindings.md": {
       "original_url": "https://code.claude.com/docs/en/keybindings",
@@ -1365,8 +1365,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-11-03T04:24:53.640427",
-    "fetch_duration_seconds": 124.494446,
+    "last_fetch_completed": "2026-11-03T13:11:32.425277",
+    "fetch_duration_seconds": 123.553642,
     "total_pages_discovered": 227,
     "pages_fetched_successfully": 228,
     "pages_failed": 0,
@@ -1376,7 +1376,7 @@
     "total_files": 227,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-11-03T04:24:53.640445",
+  "last_updated": "2026-11-03T13:11:32.425311",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",
