@@ -197,15 +197,19 @@ You may have pinned a model version that is older than the current Claude Code d
 * **If you accept**: Claude Code writes the new model ID to your [user settings file](https://code.claude.com/docs/en/settings.md) and restarts
 * **If you decline**: Claude Code remembers your choice until the next default version change
 
-For a pin in the `env` block of [managed settings](https://code.claude.com/docs/en/managed-settings.md), Claude Code runs no check and shows no prompt.
+For a pin in the `env` block of [managed settings](https://code.claude.com/docs/en/managed-settings.md), Claude Code runs no check and shows no prompt. If the update prompt still appears for this pin, update Claude Code to v2.1.314 or later. Before v2.1.314, the managed pin stayed in effect after you accepted, so the prompt came back at the next start.
 
 If you have not pinned a model and the current default is unavailable in your project, Claude Code falls back for the current session and shows a notice. It tries earlier versions of the default model first and, when the default is an Opus model and no Opus version is available, falls back to the default Sonnet model. The fallback is not persisted. Enable the newer model in [Model Garden](https://console.cloud.google.com/vertex-ai/model-garden) or [pin a version](#5-pin-model-versions) to make the choice permanent.
 
+### Start a session on a specific model
+
 When you start the session on a specific Sonnet or Opus version, for example with `--model`, `ANTHROPIC_MODEL`, or the [`model` setting](https://code.claude.com/docs/en/settings-reference#model), that version acts as the session's pinned default for the matching `sonnet` or `opus` alias. Claude Code skips the availability check for the built-in default your model replaces and starts on the model you configured, with no fallback notice.
 
-Model aliases such as `opus` don't act as pins, and neither does a model ID Claude Code doesn't recognize.
+When you start a session on a model alias such as `opus` or on a model ID Claude Code doesn't recognize, that value doesn't act as a pin.
 
-When these checks find a model your project can't invoke, Claude Code remembers the refusal on this machine for up to a day, and launches during that time skip the remembered model without asking Agent Platform again. Claude Code checks a remembered refusal of a current default model again at launch once ten minutes have passed since the last check, so a default your administrator re-enables comes back. To turn the memory off, set [`CLAUDE_CODE_SKIP_MODEL_ACCESS_MEMORY=1`](https://code.claude.com/docs/en/env-vars).
+### Remembered model refusals
+
+When the startup model checks find a model your project can't invoke, Claude Code can remember the refusal on this machine for up to a day. Once ten minutes have passed since the last check, Claude Code checks a remembered refusal of a current default model again at launch. A default your administrator re-enables then comes back. To turn the memory off, set [`CLAUDE_CODE_SKIP_MODEL_ACCESS_MEMORY=1`](https://code.claude.com/docs/en/env-vars).
 
 ### When your organization enforces a model allowlist
 

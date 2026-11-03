@@ -79,6 +79,8 @@ After WSL sessions are enabled, extend your managed settings to them:
 * Deploy `wslInheritsWindowsSettings: true` through the HKLM registry or the `C:\Program Files\ClaudeCode` file so WSL sessions inherit the same policy as host sessions.
 * Verify by running `/status` inside a WSL session and reading the `Setting sources` line. To interpret what it lists, see [Read the source in /status](https://code.claude.com/docs/en/managed-settings.md#read-the-source-in-/status).
 
+If a WSL session starts on a device with Claude Desktop's [`allowedWorkspaceFolders`](https://claude.com/docs/third-party/claude-desktop/configuration#allowedworkspacefolders) list, a `~` entry means the home directory inside the distribution.
+
 Processes inside the WSL 2 utility VM aren't visible to Windows-side endpoint detection sensors. To observe in-distro process and file activity, check your endpoint detection vendor's WSL guidance for a Linux sensor you can run inside the distribution and the exclusions it needs. Claude Code's [OpenTelemetry tool-execution telemetry](https://code.claude.com/docs/en/monitoring-usage.md) is emitted identically for WSL and native sessions.
 
 ## Decide what to enforce
