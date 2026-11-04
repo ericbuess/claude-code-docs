@@ -1289,13 +1289,13 @@ Claude Code runs as a process on the remote machine, under a background helper t
 
 > [!WARNING]
 >
-> If you sign in to Desktop with a Claude account, don't count on a task to run overnight. Desktop renews that sign-in for the task only while Desktop is running and connected, so the task's sign-in can expire after you disconnect, and the task then stops. How much time is left when you disconnect varies, and it can be only a few minutes.
+> If you sign in to Desktop with a Claude account, don't count on a task to run overnight. Desktop renews that sign-in for the task only while Desktop is running, connected, and signed in, so the task's sign-in can expire after you disconnect, and the task then stops. How much time is left when you disconnect varies, and it can be only a few minutes.
 >
 > The work done so far stays on the remote machine, and you can continue with a message when you return.
 >
 > If the task must run through the night:
 >
-> * [Keep your computer awake](https://code.claude.com/docs/en/desktop-scheduled-tasks.md#how-scheduled-tasks-run) and online, with the lid open and Desktop running
+> * [Keep your computer awake](https://code.claude.com/docs/en/desktop-scheduled-tasks.md#how-scheduled-tasks-run) and online, with the lid open and Desktop running and signed in
 > * Use a login that works without a prompt, such as a key that your SSH agent holds, for the remote machine and for any jump host on the way. Desktop can then reconnect on its own after a drop.
 >
 > For a task that must run while your computer is asleep or off, start a [cloud session](#run-long-running-tasks-in-the-cloud) instead.
@@ -1303,8 +1303,9 @@ Claude Code runs as a process on the remote machine, under a background helper t
 * **After sleep or a network loss**: you get the running task back if the process [still runs](#limits-while-desktop-is-disconnected) and Desktop can log in without a prompt. If it can't, [send a message](#reconnect-after-sleep-or-a-network-loss).
 * **After a quit**: the task keeps running, but you lose it when the session opens again unless Desktop can rejoin its process. Check [when Desktop can rejoin](#reopen-a-session-after-you-quit-desktop) before you quit. If you lost the task, send a message to continue.
 
-When you come back and the task isn't done, check for word that Desktop can't reconnect, an authentication error, or a waiting request:
+When you come back and the task isn't done, check for Desktop's sign-in page, word that Desktop can't reconnect, an authentication error, or a waiting request:
 
+* **Sign-in page**: sign in. If the task stopped, send a message to continue. On an Enterprise plan, your organization can [sign you out a set number of days after you sign in](https://support.claude.com/en/articles/13163631-configuring-session-security-settings), however active you are. With a Claude account, Desktop doesn't renew the task's sign-in while you're signed out, so the task can stop.
 * **Desktop can't reconnect**: the session says why, and a notification may say so too. Desktop may [need you to log in](#reconnect-after-sleep-or-a-network-loss).
 * **Authentication error**: the [sign-in token or credential](#limits-while-desktop-is-disconnected) may have expired. With a Claude account, send a message to continue. With a third-party provider, see [SSH remote sessions in Claude Desktop on 3P](https://claude.com/docs/third-party/claude-desktop/ssh-remote-sessions).
 * **Waiting request**: [answer it](#handle-requests-that-arrive-while-you-are-away)
