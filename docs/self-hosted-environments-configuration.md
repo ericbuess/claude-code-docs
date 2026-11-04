@@ -16,7 +16,14 @@ A few hook environment variables on this page still use `pool`, such as `CLAUDE_
 
 ## Wrapper scripts
 
-Use a wrapper script when each session needs setup the runner can't do on its own: provisioning short-lived credentials scoped to the session creator, exporting environment-specific secrets, preparing language toolchains, or applying resource limits around the child process. The runner starts your wrapper in place of the Claude Code binary, once per session. End the wrapper by `exec`-ing into `$CLAUDE_RUNNER_CLAUDE_BIN`, the runner's own binary, so signals and exit codes propagate correctly.
+Use a wrapper script when each session needs setup the runner can't do on its own:
+
+* Provisioning short-lived credentials scoped to the session creator
+* Exporting environment-specific secrets
+* Preparing language toolchains
+* Applying resource limits around the child process
+
+The runner starts your wrapper in place of the Claude Code binary each time it starts a session, including when a session resumes or is requeued. End the wrapper by `exec`-ing into `$CLAUDE_RUNNER_CLAUDE_BIN`, the runner's own binary, so signals and exit codes propagate correctly.
 
 Point `--exec-path`, or `SELF_HOSTED_RUNNER_EXEC_PATH`, at the wrapper when you start the runner, replacing `<writable-dir>` as the [quickstart](https://code.claude.com/docs/en/self-hosted-environments-quickstart.md#set-up-manually) describes:
 
@@ -139,7 +146,9 @@ These hooks are distinct from [Claude Code hooks](https://code.claude.com/docs/e
 
 ### checkout
 
-Runs once per repository, in place of the runner's built-in clone and fetch. Use the hook to clone from a read-through mirror that you reach over HTTPS or SSH, seed a working tree from an archive, or apply per-session git auth. The runner sets these variables, and may set other `CLAUDE_RUNNER_` variables that the table doesn't list:
+Runs for each repository each time the runner starts a session, including when the session resumes or is requeued, in place of the runner's built-in clone and fetch. Use the hook to clone from a read-through mirror that you reach over HTTPS or SSH, seed a working tree from an archive, or apply per-session git auth.
+
+The runner sets these variables, and may set other `CLAUDE_RUNNER_` variables that the table doesn't list:
 
 | Variable | Description |
 | :- | :- |
@@ -179,7 +188,12 @@ When the hook succeeds, the runner removes the checkout path after the session e
 
 ### post-session
 
-Runs once per session, after the Claude Code child has exited and before the runner tears the workspace down. This hook is your only chance to save uncommitted work: at `--capacity` above one, the runner deletes per-session worktrees right after the hook returns, and at `--capacity 1` the reused [canonical clone](https://code.claude.com/docs/en/self-hosted-environments-deploy.md#reuse-a-pre-warmed-checkout) is hard-reset when the next session starts, so uncommitted tracked changes don't survive on either path. Typical uses are pushing a snapshot branch of uncommitted changes, archiving logs, or emitting a session-ended event to your own systems.
+Runs after the Claude Code child has exited and before the runner tears the workspace down. This hook is your only chance to save uncommitted work, because uncommitted tracked changes don't survive on either path:
+
+* **At `--capacity` above one**: the runner deletes per-session worktrees right after the hook returns
+* **At `--capacity 1`**: the reused [canonical clone](https://code.claude.com/docs/en/self-hosted-environments-deploy.md#reuse-a-pre-warmed-checkout) is hard-reset when the next session starts
+
+Typical uses are pushing a snapshot branch of uncommitted changes, archiving logs, or emitting a session-ended event to your own systems.
 
 The hook fires on every session end where a child process was spawned, whatever the cause; the `CLAUDE_RUNNER_EXIT_REASON` values below enumerate the cases. It can't fire when the runner terminates abruptly, such as a VM preemption or a power loss; if you need guarantees against abrupt termination, snapshot periodically from inside the session with a Claude Code `PostToolUse` hook instead. The runner sets:
 
@@ -275,7 +289,7 @@ Before v2.1.280, the runner set none of these settings, and under `--configure-g
 
 ### command
 
-Runs once per session after checkout, in place of the built-in child spawn. The hook receives the same environment as a [wrapper script](#wrapper-scripts) and should `exec` into `"$CLAUDE_RUNNER_CLAUDE_BIN"` the same way. Use the `command` hook to keep all customization in one hooks directory; use `--exec-path` when the wrapper lives elsewhere. If `--exec-path` is also set, the flag takes precedence and the `command` hook is ignored.
+Runs after checkout each time a session starts or resumes, in place of the built-in child spawn. The hook receives the same environment as a [wrapper script](#wrapper-scripts) and should `exec` into `"$CLAUDE_RUNNER_CLAUDE_BIN"` the same way. Use the `command` hook to keep all customization in one hooks directory; use `--exec-path` when the wrapper lives elsewhere. If `--exec-path` is also set, the flag takes precedence and the `command` hook is ignored.
 
 Always `exec` the runner's own binary rather than a PATH-resolved `claude`; otherwise you defeat [version pinning](https://code.claude.com/docs/en/self-hosted-environments-deploy.md#pin-the-version).
 
@@ -523,7 +537,7 @@ Check the method you choose against these runner behaviors:
 
 * **Metadata endpoint**: if you deny sessions the [cloud metadata endpoint](https://code.claude.com/docs/en/self-hosted-environments-deploy.md#harden-your-deployment) outright, credentials served from it, such as an instance profile, don't reach Claude Code either. A file-based web identity, such as IAM Roles for Service Accounts (IRSA) on Amazon EKS or a Workload Identity Federation credential file, doesn't depend on it.
 * **Renewal**: a session can outlive a credential, so use a method that renews itself, such as a file-based web identity
-* **Wrapper script**: the runner starts your [wrapper script](#provision-credentials-scoped-to-the-session-creator) once per session, so credentials it exports aren't renewed. Claude Code reads AWS credentials from its environment, so if your wrapper already exports AWS credentials for other work, Claude Code can sign model requests with them.
+* **Wrapper script**: credential values your [wrapper script](#provision-credentials-scoped-to-the-session-creator) exports aren't renewed while Claude Code runs, so for a long session, use a method that renews itself. Claude Code reads AWS credentials from its environment, so if your wrapper already exports AWS credentials for other work, Claude Code can sign model requests with them.
 
 **3. Set one provider's variables in the runner's environment**
 

@@ -71,7 +71,7 @@ This opens the sandbox panel with three tabs, plus a Dependencies tab on Linux w
 * **Overrides**: choose whether commands that fail under the sandbox can fall back to running unsandboxed. This is the [`allowUnsandboxedCommands`](https://code.claude.com/docs/en/settings-reference#sandbox-allowunsandboxedcommands) setting
 * **Config**: view the resolved sandbox settings
 
-If the panel shows only a Dependencies tab, a required package is missing. Install it as described in [Set up Linux and WSL2](#set-up-linux-and-wsl2), restart Claude Code, and run `/sandbox` again.
+If the panel shows only a Dependencies tab, the sandbox can't start yet. Fix what the tab reports as described in [Set up Linux and WSL2](#set-up-linux-and-wsl2), restart Claude Code, and run `/sandbox` again.
 
 **2. Choose a mode**
 
@@ -97,7 +97,7 @@ claude --settings '{"sandbox": {"enabled": true, "allowUnsandboxedCommands": fal
 
 > [!WARNING]
 >
-> By default, if the sandbox can't start because a dependency is missing or the platform is unsupported, Claude Code runs commands without sandboxing. To make Claude Code exit at startup instead, set [`sandbox.failIfUnavailable`](https://code.claude.com/docs/en/settings-reference#sandbox-failifunavailable) to `true`. Managed deployments that require sandboxing as a security gate can use this setting.
+> By default, when the platform doesn't support the sandbox or the dependency check at startup fails, Claude Code runs commands without sandboxing. To make Claude Code exit at startup instead, set [`sandbox.failIfUnavailable`](https://code.claude.com/docs/en/settings-reference#sandbox-failifunavailable) to `true`. Managed deployments that require sandboxing as a security gate can use this setting.
 
 ### Confirm commands run inside the sandbox
 
@@ -135,37 +135,47 @@ When a dependency is missing, the Dependencies tab in `/sandbox` lists which of 
 
 Ripgrep is bundled with the native Claude Code binary. The seccomp filter is optional and adds Unix domain socket blocking. Install it with `npm install -g @anthropic-ai/sandbox-runtime` if it is missing.
 
-When a required dependency is missing, the Dependencies tab is the only tab shown until you install it. When only the optional seccomp filter is missing, the Dependencies tab appears alongside the other tabs. The dependency check runs at startup, so restart Claude Code after installing packages for `/sandbox` to detect them.
+* **Dependencies is the only tab**: the sandbox can't start. Install what the tab lists as missing, or if it reports Ubuntu's AppArmor restriction, [add an AppArmor profile for bubblewrap](#add-an-apparmor-profile-for-bubblewrap)
+* **Dependencies appears beside the other tabs**: the tab lists a missing optional item, such as the seccomp filter. The sandbox can start without it, so install it only if you want what it adds
 
-> [accordion] Ubuntu 24.04 and later: allow bubblewrap to create user namespaces
->
-> On Ubuntu 24.04 and later, the default AppArmor policy prevents bubblewrap from creating the user namespaces it needs for isolation.
->
-> To check whether your environment enforces this restriction, including inside WSL2, run `sysctl kernel.apparmor_restrict_unprivileged_userns`. If the command returns `0`, skip this step. If it prints a `No such file or directory` error, the key doesn't exist and you can skip this step. If it returns `1`, add an AppArmor profile that grants `bwrap` this capability:
->
-> ```bash theme={null}
-> sudo tee /etc/apparmor.d/bwrap > /dev/null <<'EOF'
-> abi <abi/4.0>,
-> include <tunables/global>
->
-> profile bwrap /usr/bin/bwrap flags=(unconfined) {
->   userns,
->   include if exists <local/bwrap>
-> }
-> EOF
-> ```
->
-> The profile applies only to `bwrap` itself, not to the commands it runs inside the sandbox. Reload AppArmor to apply it:
->
-> ```bash theme={null}
-> sudo systemctl reload apparmor
-> ```
+The dependency check runs at startup, so restart Claude Code after installing packages for `/sandbox` to detect them.
 
 > [accordion] WSL2 notes
 >
 > Check your WSL version with `wsl -l -v` from PowerShell. If you see `Sandboxing requires WSL2`, your distribution is running WSL1. Upgrade it to WSL2 or run Claude Code without sandboxing.
 >
 > On WSL2, WSL hands a launch of a Windows binary such as `cmd.exe`, `powershell.exe`, or anything under `/mnt/c/` to the Windows host over a Unix socket, so whether a sandboxed command can launch one follows the sandbox's [Unix-socket settings](https://code.claude.com/docs/en/settings-reference.md#sandbox-network-allowunixsockets): the optional seccomp filter has to be installed to block the socket in the first place. To allow these launches, set `allowAllUnixSockets`, which opens every Unix socket to sandboxed commands.
+
+#### Add an AppArmor profile for bubblewrap
+
+Add the profile if Claude Code runs `/usr/bin/bwrap` and either of these happens:
+
+* Claude Code [reports Ubuntu's AppArmor restriction on user namespaces](#apparmor-restriction-stops-bubblewrap)
+* Sandboxed commands fail with `bwrap: setting up uid map: Permission denied` or `bwrap: loopback: Failed RTM_NEWADDR: Operation not permitted` while [that restriction is on](#bwrap-uid-map-permission-denied)
+
+Claude Code runs the first `bwrap` on `PATH`, unless managed settings name one in [`sandbox.bwrapPath`](https://code.claude.com/docs/en/settings-reference#sandbox-bwrappath). To see which `bwrap` is first, run `which bwrap` in the shell you start Claude Code from. If Claude Code runs any path other than `/usr/bin/bwrap`, [lift the restriction with `sysctl`](#apparmor-restriction-stops-bubblewrap) instead.
+
+To add the profile for `/usr/bin/bwrap`, run this command:
+
+```bash theme={null}
+sudo tee /etc/apparmor.d/bwrap > /dev/null <<'EOF'
+abi <abi/4.0>,
+include <tunables/global>
+
+profile bwrap /usr/bin/bwrap flags=(unconfined) {
+  userns,
+  include if exists <local/bwrap>
+}
+EOF
+```
+
+Reload AppArmor to apply it:
+
+```bash theme={null}
+sudo systemctl reload apparmor
+```
+
+Then restart Claude Code and [confirm the sandbox works](#confirm-commands-run-inside-the-sandbox).
 
 ### Sandbox modes
 
@@ -716,7 +726,7 @@ The following managed settings configuration enables the sandbox, refuses to sta
 
 The two keys beyond `enabled` control what happens when the sandbox cannot run a command:
 
-* **`failIfUnavailable`**: a missing dependency such as bubblewrap on Linux blocks Claude Code from starting rather than falling back to unsandboxed execution
+* **`failIfUnavailable`**: when the platform doesn't support the sandbox or the dependency check at startup fails, Claude Code refuses to start rather than falling back to unsandboxed execution
 * **`allowUnsandboxedCommands: false`**: Claude Code ignores the `dangerouslyDisableSandbox` escape hatch, so when a command fails under the sandbox, Claude can't retry it unsandboxed
 
 Consider these additions alongside them:
@@ -901,6 +911,28 @@ Before v2.1.307, the folder was deleted even with something in it and no `HEAD`.
 ### Bubblewrap fails to start inside a container
 
 In an unprivileged container, [bubblewrap](#os-level-enforcement) can't mount a fresh `/proc` filesystem, so sandboxed commands fail with a `bwrap` error such as `Can't mount proc on /newroot/proc: Operation not permitted`. Set [`enableWeakerNestedSandbox`](https://code.claude.com/docs/en/settings-reference#sandbox-enableweakernestedsandbox) to `true` so the sandbox bind-mounts the container's existing `/proc` instead. Only use this setting when the outer container already provides the isolation boundary you need, since the setting exposes process information to sandboxed commands that a fresh `/proc` mount would hide.
+
+### Ubuntu's AppArmor restriction stops bubblewrap
+
+On Linux and WSL2, the message `Ubuntu's AppArmor restriction on user namespaces stops bubblewrap here` means that Ubuntu's AppArmor restriction keeps the sandbox from starting.
+
+To get the sandbox to start, lift the restriction in one of these two ways:
+
+* [Add an AppArmor profile for bubblewrap](#add-an-apparmor-profile-for-bubblewrap) if Claude Code runs `/usr/bin/bwrap`
+* In your shell, run `sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0`, which lifts the restriction for every program on the machine and lasts until you reboot
+
+Then restart Claude Code and [confirm the sandbox works](#confirm-commands-run-inside-the-sandbox).
+
+Until you lift the restriction, commands run without the sandbox under the regular permission flow, or Claude Code refuses to start if [`sandbox.failIfUnavailable`](https://code.claude.com/docs/en/settings-reference#sandbox-failifunavailable) is `true`.
+
+### Sandboxed commands fail with `bwrap: setting up uid map: Permission denied`
+
+On Linux and WSL2, this error or `bwrap: loopback: Failed RTM_NEWADDR: Operation not permitted` can mean that Ubuntu's AppArmor restriction on user namespaces is stopping bubblewrap. To check, run `sysctl kernel.apparmor_restrict_unprivileged_userns` in your shell:
+
+* `kernel.apparmor_restrict_unprivileged_userns = 1`: the restriction is on. [Add an AppArmor profile](#add-an-apparmor-profile-for-bubblewrap) if Claude Code runs `/usr/bin/bwrap`, or run `sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0`, which lifts it for every program until you reboot. Then restart Claude Code and [confirm the sandbox works](#confirm-commands-run-inside-the-sandbox)
+* Any other output: the restriction isn't the cause. To report the failure, run [`/feedback`](https://code.claude.com/docs/en/commands#all-commands) at the Claude Code prompt
+
+Before v2.1.310, Claude Code didn't check for this restriction at startup, so `/sandbox` didn't report it.
 
 ### 0-byte read-only files appear at `.claude` settings paths, and "Yes, and don't ask again" doesn't save
 

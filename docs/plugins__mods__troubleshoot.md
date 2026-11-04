@@ -199,6 +199,10 @@ In auto mode, a denied tool call gives this reason. A hook changed the tool call
 
 The message tells Claude to issue the call once more as recorded. If that's denied too, the hook changes the input every time, so turn off the mod or hook, or leave auto mode and approve the call yourself.
 
+> [!NOTE]
+>
+> In [some interactive terminal sessions and VS Code sessions](https://code.claude.com/docs/en/hooks.md#pretooluse-updatedinput-in-auto-mode), the same denial gives the reason `a hook changed this call's input after auto mode reviewed it`. The repeated call there carries the mod's first change, and a `tool.call` hook still runs on it, but a further change is dropped. You don't need to change your mod unless Claude tells you in its reply that [auto mode couldn't check the call](https://code.claude.com/docs/en/errors.md#hook-changed-input-after-review).
+
 ### A message about the deny rules in your settings
 
 `tried to lift a deny rule in your settings` and `the deny rules in your settings could not be checked for this call, so it is refused` both come from the built-in guard.

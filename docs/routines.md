@@ -31,7 +31,7 @@ Scheduled tasks are available on Pro, Max, Ultra, Team, and Enterprise plans. Cr
 >
 > Two other features schedule work on your machine instead of in the cloud: [Desktop scheduled tasks](https://code.claude.com/docs/en/desktop-scheduled-tasks.md) and [`/loop`](https://code.claude.com/docs/en/scheduled-tasks). To choose among all three, see [Compare scheduling options](https://code.claude.com/docs/en/scheduled-tasks.md#compare-scheduling-options).
 
-Team and Enterprise Owners can turn off scheduled tasks for all members with the **Scheduled tasks (Was Routines)** toggle at [**Organization settings > Capabilities > Remote sessions**](https://claude.ai/admin-settings/capabilities). When the toggle is off, existing scheduled tasks stop running and members can't create new ones.
+Team and Enterprise Owners can turn off scheduled tasks for all members with the **Scheduled tasks (Was Routines)** or **Routines** toggle at [**Organization settings > Capabilities > Remote sessions**](https://claude.ai/admin-settings/capabilities). When the toggle is off, existing scheduled tasks stop running and members can't create new ones.
 
 If your Enterprise organization manages your access with [custom roles](https://support.claude.com/en/articles/13930452), you also need a role that includes the scheduled tasks permission. An Owner can add it in a role's **Remote sessions** section at [**Organization settings > Roles**](https://claude.ai/admin-settings/roles).
 
@@ -485,7 +485,7 @@ Scheduled tasks were previously called routines, and these places keep the earli
 * **Web address**: `claude.ai/code/routines`
 * **CLI**: the `/routines` alias for `/schedule`, the command's description, and Claude's replies while it sets up a task
 * **API**: the `/fire` endpoint path, its beta header, its response `type`, the `<routine-fire-payload>` tag, and the [Trigger a routine through the API](https://platform.claude.com/docs/en/api/claude-code/routines-fire) reference page
-* **Organization settings**: the **Scheduled tasks (Was Routines)** toggle
+* **Organization settings**: the **Scheduled tasks (Was Routines)** or **Routines** toggle
 
 ## Troubleshooting
 
@@ -504,9 +504,9 @@ The cause is usually one of the following:
 
 If the cause is your CLI sign-in or being inside a cloud session, you can still create and manage scheduled tasks at [claude.ai/code/routines](https://claude.ai/code/routines). You need a Pro, Max, Ultra, Team, or Enterprise account there. If scheduled tasks or cloud sessions are off for your organization or missing from your roles, you can't create them on the web either.
 
-### "Routines are disabled by your organization's policy"
+### Scheduled tasks are off for your organization
 
-An Owner in your Team or Enterprise organization has likely turned off the **Scheduled tasks (Was Routines)** toggle at [**Organization settings > Capabilities > Remote sessions**](https://claude.ai/admin-settings/capabilities). On Claude Code v2.1.227 or later, the same toggle also hides `/schedule` in the CLI. This is a server-side organization setting, so it cannot be overridden from your local configuration. Ask an Owner to turn scheduled tasks back on for your organization.
+Cloud scheduled tasks are off for your organization, and you can't change that from your local configuration. Ask your Team or Enterprise Owner whether they can turn on the **Scheduled tasks (Was Routines)** or **Routines** toggle at [**Organization settings > Capabilities > Remote sessions**](https://claude.ai/admin-settings/capabilities).
 
 ### "The last run" warnings
 

@@ -613,7 +613,7 @@ Claude Code resolves the session's effort level in this order, taking the first 
 4. Your settings: the level you saved for the model or an [`effortLevel`](https://code.claude.com/docs/en/settings-reference#effortlevel) key, with the precedence between them and across settings files stated at [`modelSettings`](https://code.claude.com/docs/en/settings-reference#modelsettings)
 5. The model's default effort: `high` on every model that supports effort, except that Opus 5.5, Sonnet 5.5, and Haiku 5.5 default to `medium` and Opus 4.7 defaults to `xhigh`. If your organization sets a default effort level for its [organization default model](#organization-default-model), that level is the default when you run that model.
 
-After an automatic model fallback, see [Effort level after a fallback](#effort-level-after-a-fallback) for the level that applies.
+After an automatic model fallback, see [Effort level after a fallback](#effort-level-after-a-fallback) for the level that applies. For subagents and teammates, see [Effort level of subagents and teammates](#effort-level-of-subagents-and-teammates).
 
 Opus 5.5 starts at `medium` unless one of the sources above sets a level for it, and a top-level `effortLevel` in your user settings file doesn't count for Opus 5.5. That key is the older form `/effort` wrote before Claude Code saved levels per model: it keeps applying where it applied before, on Opus 5, Fable 5.1, and earlier models, while Opus 5.5 and models released after it start at their own default until you choose a level for them with `/effort` or the `/model` picker. A top-level `effortLevel` in project, local, or managed settings, or one passed with `--settings`, applies to every model.
 
@@ -699,6 +699,10 @@ You can change effort through any of the following:
 A skill's `effort` applies until the end of the turn it runs in, or for the forked subagent's run with `context: fork`. A subagent's `effort` applies while the subagent runs, unless [its invocation overrides it](https://code.claude.com/docs/en/sub-agents.md#choose-an-effort-level). While either one applies, the skill or subagent runs at its level, whatever level you launch with, save, or pick. If `CLAUDE_CODE_EFFORT_LEVEL` is set, that level applies instead.
 
 A [`maxEffortLevel`](https://code.claude.com/docs/en/settings-reference#maxeffortlevel) or [organization effort cap](#organization-effort-limits) still limits the level the skill or subagent runs at. If you set `effortLevel` in [managed settings](https://code.claude.com/docs/en/managed-settings.md), Claude Code applies it at the settings step of the [effort resolution order](#adjust-effort-level), and users can still change the level with `/effort` or `--effort`. To keep users at or below a level, set [`maxEffortLevel`](https://code.claude.com/docs/en/settings-reference#maxeffortlevel).
+
+#### Effort level of subagents and teammates
+
+On the main conversation's model, a [subagent](https://code.claude.com/docs/en/sub-agents.md#choose-an-effort-level) or [teammate](https://code.claude.com/docs/en/agent-teams.md#specify-teammates-and-models) with no `effort` of its own runs at the level you pick in the session or set with `--effort`. On another model, that level doesn't apply. To pick a subagent's level, set `effort` in its definition.
 
 #### Check the effort level you set
 

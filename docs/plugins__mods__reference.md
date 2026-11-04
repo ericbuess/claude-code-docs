@@ -154,9 +154,15 @@ Subagent events fire when a subagent type is offered to Claude and when a subage
 | Event | Fires when | A hook can return |
 | :- | :- | :- |
 | `agent.offer` | A subagent type is offered to Claude | `{ isOffered: false }` to withhold it |
-| `agent.spawn` | A subagent or an [agent team](https://code.claude.com/docs/en/agent-teams.md) teammate is about to start. For a teammate, `e.isTeammate` is `true`. | `next({ ...e, model })` to choose its model, or `{ deny: reason }` |
+| `agent.spawn` | A subagent or an [agent team](https://code.claude.com/docs/en/agent-teams.md) teammate is about to start, or a subagent that finished or stopped is about to run again. For a teammate, `e.isTeammate` is `true`. For a resumed run, `e.resume` is set. | `next({ ...e, model })` to choose the model of one that is starting, or `{ deny: reason }` |
 
-When Claude resumes a subagent with the [`SendMessage`](https://code.claude.com/docs/en/sub-agents#resume-subagents) tool, your `agent.spawn` hook doesn't run again. To refuse the `SendMessage` calls that resume a subagent, match that tool in a [`tool.call`](https://code.claude.com/docs/en/plugins/mods/events#guard-or-change-a-tool-call) hook.
+Your `agent.spawn` hook also runs when a subagent that finished or stopped is about to run again, such as when Claude sends it a message with the [`SendMessage`](https://code.claude.com/docs/en/sub-agents#resume-subagents) tool. On that event, `e.resume` is `{ agentId }`. If your hook counts subagents, skip the events where `e.resume` is set, so a resumed subagent isn't counted again.
+
+Return `{ deny: reason }` to refuse a resumed run. The run doesn't start, and the subagent stays as it was. When a `SendMessage` call asked for the run, Claude reads `a plugin declined the resume:` followed by your reason as that call's result. If you pass a changed event to `next` for a resumed run, such as a different `model`, Claude Code ignores the change.
+
+> [!NOTE]
+>
+> The event for a resumed run requires Claude Code v2.1.299 or later. Before v2.1.299, your `agent.spawn` hook didn't run when a subagent resumed. On those versions, to refuse the `SendMessage` calls that resume a subagent, match that tool in a [`tool.call`](https://code.claude.com/docs/en/plugins/mods/events#guard-or-change-a-tool-call) hook.
 
 ### Interface
 

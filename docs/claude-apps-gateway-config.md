@@ -494,7 +494,7 @@ The role's trust policy names the gateway's own principal, such as its IRSA or E
 
 * If STS refuses or is unreachable, the gateway doesn't send the request with the upstream's own credentials. It logs the STS error with what to check, then tries the next upstream you listed. [Upstream error messages](#upstream-error-messages) covers what the client receives when no upstream succeeds. A later upstream without `assume_role` would serve the request with its own credentials, so list one only if that is what you want.
 * The gateway calls the regional STS endpoint `sts.<region>.amazonaws.com`, which its network must reach. For the FIPS endpoint, set `AWS_USE_FIPS_ENDPOINT=true` in the gateway's environment rather than `use_fips_endpoint` in an AWS config file.
-* `assume_role` applies to `provider: bedrock` only and needs SigV4 source credentials: the gateway refuses to start when it's set beside `aws_bearer_token`.
+* `assume_role` needs SigV4 source credentials: the gateway refuses to start when it's set beside `aws_bearer_token`.
 * Without a [`groups` list](#send-each-team-to-its-own-upstream), every developer the gateway admits can use this upstream. To limit which models a developer can use, set `availableModels` in a [`managed`](#managed) policy.
 * To keep a model served through the role from also being served from another account, give it a custom id whose `upstream_model` map has only this upstream's name. For such an id the gateway skips every other upstream, so neither the request nor the token count for an aborted request can fail over to another account.
 * A request for a built-in model name can still [reach this upstream](#multiple-upstreams), and the gateway signs it with the same role. List this upstream last unless its account should also serve those models.
@@ -556,6 +556,7 @@ The table below lists the fields specific to a `mantle` upstream.
 | `region` | Yes | AWS region. The gateway derives the endpoint from it as `https://bedrock-mantle.<region>.api.aws/anthropic`. |
 | `models` | Yes | The models your AWS account has been granted on Mantle, named as clients send them, such as `claude-haiku-4-5`. Only these go to this upstream, and every other model skips to the next one. |
 | `auth` | No | Takes the same keys as the [Amazon Bedrock](#amazon-bedrock) upstream's `auth` block, under the same rules. |
+| `assume_role` | No | The role that this upstream's requests go through, with the same keys as [on a `bedrock` upstream](#bedrock-in-another-aws-account), including `session_name` for [per-developer attribution](#per-developer-aws-cost-attribution). Give the role Mantle's IAM actions. Requires a gateway running Claude Code v2.1.318 or later. An earlier gateway exits at startup with `Unrecognized key(s) in object: 'assume_role'`. |
 | `base_url` | No | Override the derived endpoint. Keep the `/anthropic` path at the end. |
 
 Grant the upstream's AWS identity Mantle's own IAM actions for inference and token counting, which [Use the Mantle endpoint](https://code.claude.com/docs/en/amazon-bedrock.md#use-the-mantle-endpoint) lists.
@@ -565,7 +566,7 @@ For a Mantle model ID that the gateway doesn't know, add an entry to the top-lev
 A `bedrock` upstream's `guardrail` and `assume_role` settings don't extend to the requests Mantle serves:
 
 * **`guardrail`**: the gateway applies no [Bedrock guardrail](#apply-an-amazon-bedrock-guardrail) to requests it sends to Mantle, so it refuses to start when a `mantle` upstream is listed while any `bedrock` upstream sets `guardrail`.
-* **`assume_role`**: a `mantle` upstream takes no [`assume_role`](#bedrock-in-another-aws-account). Requests that Mantle serves are sent with the `mantle` upstream's own `auth` credentials, and aren't [attributed per developer](#per-developer-aws-cost-attribution).
+* **`assume_role`**: set it on the `mantle` upstream itself. Without it, requests that Mantle serves are sent with the `mantle` upstream's own `auth` credentials.
 
 For what Mantle's own error responses mean, see [Mantle endpoint errors](https://code.claude.com/docs/en/amazon-bedrock.md#mantle-endpoint-errors).
 

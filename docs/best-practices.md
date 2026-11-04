@@ -603,7 +603,7 @@ You rarely have to clean any of this up yourself:
 >
 > A `claude -p --worktree` run is one you clean up yourself, since it exits without asking. Remove those with `git worktree remove <path>`, and if git refuses because the worktree is locked, `git worktree unlock <path>` first.
 
-For one big mechanical change across many files, [`/batch migrate every handler to the v2 response helpers`](https://code.claude.com/docs/en/commands) splits the work into 5 to 30 units and shows you the plan. Then it runs each unit in its own worktree and opens a PR for it. From your shell, [`claude agents`](https://code.claude.com/docs/en/agent-view) (still a research preview) gives you one screen for everything running in the background on your machine.
+For one big mechanical change across many files, [`/batch migrate every handler to the v2 response helpers`](https://code.claude.com/docs/en/commands) splits the work into 5 to 30 units and shows you the plan. Once you approve it, each unit gets its own worktree and opens a PR or reports what happened. From your shell, [`claude agents`](https://code.claude.com/docs/en/agent-view) (still a research preview) gives you one screen for everything running in the background on your machine.
 
 A second session is also the easiest independent reviewer you can get. One session writes the rate limiter, another reviews `@src/middleware/rateLimiter.ts` without having watched it being written, and you paste the findings back into the first. Same idea as `/code-review`, with you carrying the messages.
 

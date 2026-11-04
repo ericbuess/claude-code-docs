@@ -330,6 +330,10 @@ This span appears only when detailed beta tracing is active, which requires `ENA
 
 In interactive CLI sessions, detailed beta tracing also requires your organization to be allowlisted for the feature. Agent SDK and non-interactive `-p` sessions don't require allowlisting.
 
+> [!WARNING]
+>
+> Set `ENABLE_BETA_TRACING_DETAILED` only for debugging, not in production. Detailed beta tracing has a high export volume, and its [content attributes](#new-context-gates) aren't part of the stable span schema.
+
 | Attribute | Description | Gated by |
 | - | - | - |
 | `hook_event` | Hook event type, such as `PreToolUse` | |

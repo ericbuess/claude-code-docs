@@ -463,9 +463,11 @@ Claude Code sends this as the `X-Amzn-Bedrock-Service-Tier` header on each reque
 
 ## AWS Guardrails
 
-[Amazon Bedrock Guardrails](https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails.html) let you implement content filtering for Claude Code. Create a Guardrail in the [Amazon Bedrock console](https://console.aws.amazon.com/bedrock/), publish a version, then add the Guardrail headers to your [settings file](https://code.claude.com/docs/en/settings.md). Enable Cross-Region inference on your Guardrail if you're using cross-region inference profiles.
+[Amazon Bedrock Guardrails](https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails.html) let you implement content filtering for Claude Code. Create a Guardrail in the [Amazon Bedrock console](https://console.aws.amazon.com/bedrock/) and publish a version. Enable Cross-Region inference on your Guardrail if you're using cross-region inference profiles.
 
-Example configuration:
+To apply the Guardrail through a [Claude apps gateway](https://code.claude.com/docs/en/claude-apps-gateway), follow [Apply an Amazon Bedrock guardrail](https://code.claude.com/docs/en/claude-apps-gateway-config.md#apply-an-amazon-bedrock-guardrail). Without a Claude apps gateway, add the Guardrail headers to your [settings file](https://code.claude.com/docs/en/settings.md).
+
+Example settings file configuration:
 
 ```json theme={null}
 {
@@ -474,8 +476,6 @@ Example configuration:
   }
 }
 ```
-
-If your organization delivers the guardrail headers through a [Claude apps gateway](https://code.claude.com/docs/en/claude-apps-gateway) policy instead, they count as [settings that need approval](https://code.claude.com/docs/en/server-managed-settings.md#environment-variables-and-the-approval-dialog).
 
 When the guardrail blocks a response partway through, the text streamed so far stays and the reply ends with the message configured on the guardrail for blocked responses.
 
