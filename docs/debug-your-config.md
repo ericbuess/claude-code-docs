@@ -12,7 +12,9 @@ For installation, authentication, and connectivity problems, see [Troubleshoot i
 
 ## See what loaded into context
 
-The `/context` command shows everything occupying the context window for the current session, broken down by category: system prompt, system tools, MCP tools, custom subagents with the source each loaded from, memory files, skills, and conversation messages. Run it first to confirm whether your `CLAUDE.md`, rules, or skill descriptions are present at all. The skills section in `/context` also includes [bundled skills](https://code.claude.com/docs/en/skills.md#bundled-skills), which `/skills` doesn't list.
+The `/context` command shows everything occupying the context window for the current session. It breaks this down by category: system prompt, system tools, MCP tools, custom subagents with the source each loaded from, memory files, skills, and conversation messages. Run it first to confirm whether your `CLAUDE.md`, rules, or skill descriptions are present at all. The skills section in `/context` also includes [bundled skills](https://code.claude.com/docs/en/skills.md#bundled-skills), which `/skills` doesn't list.
+
+In [fullscreen mode](https://code.claude.com/docs/en/fullscreen.md), `/context` collapses the per-item breakdown, so run `/context all` to expand it.
 
 For detail on a specific category, follow up with the dedicated command:
 

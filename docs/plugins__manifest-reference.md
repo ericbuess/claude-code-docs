@@ -571,7 +571,7 @@ In each plugin component, `${...}` references resolve inline in specific fields,
 | :- | :- | :- |
 | Hook commands | Anywhere in `command` and `args` | `CLAUDE_PLUGIN_ROOT`, `CLAUDE_PLUGIN_DATA`, `CLAUDE_PROJECT_DIR`, and `CLAUDE_PLUGIN_OPTION_<KEY>` |
 | Monitor commands | Anywhere in `command` | Not exported |
-| MCP `stdio` servers | `command`, `args`, `env` | `CLAUDE_PLUGIN_ROOT`, `CLAUDE_PLUGIN_DATA` |
+| MCP `stdio` servers | `command`, `args`, `env` | `CLAUDE_PLUGIN_ROOT`, `CLAUDE_PLUGIN_DATA`, `CLAUDE_PROJECT_DIR` |
 | MCP `http`, `sse`, `ws` servers | `url`, `headers`, `headersHelper` | Not applicable |
 | LSP servers | `command`, `args`, `env`, `workspaceFolder` | `CLAUDE_PLUGIN_ROOT`, `CLAUDE_PLUGIN_DATA`, `CLAUDE_PROJECT_DIR` |
 | Skill, command, and agent content | Anywhere in the Markdown body | Not applicable |

@@ -155,7 +155,7 @@ A `CLAUDE.md` that passes that test stays short:
 - Integration tests need DATABASE_URL set, see .env.example
 ```
 
-In a session, run `/context` to confirm that Claude loaded the file.
+In a session, run [`/context all`](https://code.claude.com/docs/en/commands#all-commands) to confirm that Claude loaded the file.
 
 Notice that the typecheck line is only the command. Claude needs to know the command so it can check its own work as it goes. If you also want Claude Code to *enforce* a passing typecheck before Claude finishes, that's a job for a [`Stop` hook](#enforce-the-check-with-a-stop-hook). A line like `Always typecheck before you finish` in this file works most of the time, not every time.
 
