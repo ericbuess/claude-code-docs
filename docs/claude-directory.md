@@ -131,7 +131,7 @@ Claude Code deletes the files in the paths below once they're older than [`clean
 | `session-env/` | Per-session environment metadata |
 | `tasks/` | Task lists written by the task tools, one directory per list |
 | `shell-snapshots/` | Aliases, functions, and shell options captured at startup and applied by the [Bash tool](https://code.claude.com/docs/en/tools-reference.md#bash-tool-behavior) to each command. Removed on clean exit. The sweep clears any left after a crash. |
-| `backups/` | Earlier versions of `~/.claude.json`, copied when Claude Code rewrites the file. Claude Code keeps the five newest, plus a copy of any version it couldn't parse. |
+| `backups/` | Earlier versions of `~/.claude.json`, copied when Claude Code rewrites the file. Claude Code keeps the five newest copies, plus a copy of any version it couldn't parse. Past the age cutoff, the last copy that holds your configuration is deleted too. If the current file parses, holds your configuration, and is under 8 MiB, you're left with a new copy of it. |
 | `feedback-bundles/` | Redacted transcript archives written by `/feedback` on third-party providers or when no Anthropic credentials are configured, for sending to your Anthropic account team |
 | `feedback/drafts/` | Queued [Claude-drafted feedback](https://code.claude.com/docs/en/tools-reference.md#sendfeedback-tool-behavior) awaiting your review in `/feedback`. Swept after `cleanupPeriodDays` or 30 days, whichever is shorter. When the queue is at its 10-draft limit, Claude Code deletes the oldest draft to make room. |
 | `usage-data/` | `report.html` and timestamped report copies written by [`/insights`](https://code.claude.com/docs/en/costs#analyze-your-usage-patterns), plus cached per-session analysis data used to build them |
@@ -288,7 +288,8 @@ You can also delete any of the application-data paths above yourself, apart from
 | `~/.claude/tasks/` | Your [task lists](https://code.claude.com/docs/en/interactive-mode.md#task-list), including any still in use |
 | `~/.claude/skills/.trash/`, `~/.claude/plugins/.trash/` | The chance to recover [synced skills](https://code.claude.com/docs/en/skills.md#how-synced-skills-behave) and [synced plugins](https://code.claude.com/docs/en/plugins/loading.md#synced-plugins) that Claude Code removed |
 | `~/.claude/plugins/installed_plugins.set-aside.<date>.<hash>.json`, `~/.claude/plugins/installed_plugins.unreadable.<date>.<hash>.kept` | The copies of plugin install records that Claude Code dropped or couldn't read. Nothing reads them back |
-| `~/.claude/debug/`, `~/.claude/plans/`, `~/.claude/session-env/`, `~/.claude/shell-snapshots/`, `~/.claude/backups/` | Nothing user-facing |
+| `~/.claude/debug/`, `~/.claude/plans/`, `~/.claude/session-env/`, `~/.claude/shell-snapshots/` | Nothing user-facing |
+| `~/.claude/backups/` | The earlier copies you can [restore `~/.claude.json` from](https://code.claude.com/docs/en/errors#configuration-error-in-claude-json) |
 | `~/.claude/todos/`, `~/.claude/statsig/`, `~/.claude/logs/`, `~/.claude/image-cache/` | Nothing. Legacy directories not written by current versions. |
 
 Don't delete `~/.claude.json`, `~/.claude/settings.json`, or `~/.claude/plugins/`: those hold your account details, preferences, and installed plugins.

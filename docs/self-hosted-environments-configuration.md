@@ -472,6 +472,29 @@ These lines change how the rest of the hook behaves, so check it for each of the
 
 To confirm the trap works, add a line directly below the `trap` line that calls a command that doesn't exist, such as `no-such-command`. Run the hook file from your shell and check that `echo $?` prints `1`, then remove the line.
 
+#### Find out why a spawn request was sent
+
+Your hook receives the reason for each spawn request in `CLAUDE_RUNNER_SPAWN_REASON`, so you can log why the hook ran, together with `CLAUDE_RUNNER_SESSION_UUID`. Requires Claude Code v2.1.318 or later on the orchestrator. Read it as `"${CLAUDE_RUNNER_SPAWN_REASON:-}"`, because it can be unset, and start the runner whatever the value is. If your hook branches on it, keep a default branch, because Anthropic can add values.
+
+To find the reason for earlier requests, search the log of every orchestrator replica for `session=` and the session's `CLAUDE_RUNNER_SESSION_UUID`, not its `session_...` ID. The `ok session=` and `nack session=` lines show the value of `CLAUDE_RUNNER_SPAWN_REASON` after `reason=`, or `reason=-` if it was unset:
+
+* **`[runner:orchestrator] ok session=`**: the hook exited 0
+* **`[runner:orchestrator] nack session=`**: the orchestrator is reporting a failed spawn request to Anthropic
+
+Each value gives only the last cause that Anthropic recorded for the session, not its history:
+
+| Value | What happened | What to check |
+| :- | :- | :- |
+| `session_created` | This is the first spawn request for a new session | Nothing. Don't rely on it to spot a session's first request, because the first request your hook sees can carry `runner_lost` after a fixed-fleet or standby runner held the session. |
+| `no_runner_registered` | No runner registered for the previous request within `--expected-spawn-seconds`, and Anthropic recorded no failure report for it | `stop: no nack for session=` or `nack failed session=` among the session's earlier lines means that no failure report was recorded. Read any hook error before it, and if the orchestrator was stopping, see [Stop or restart the orchestrator](#stop-or-restart-the-orchestrator). After an `ok session=` line, check that its runner started and registered within `--expected-spawn-seconds`. If no replica logged the request, check your orchestrators for restarts and `poll failed` lines. |
+| `hook_failed` | Your orchestrator reported that the previous request failed and can be retried, for example because your hook exited 1 or was still running when `--hook-timeout` ended. The value is the same when your orchestrator returns a request to Anthropic without running the hook, for example while the orchestrator is stopping. | Find the session's last `[runner:orchestrator] nack session=` or `stop: handing back session=` line before this request. The spawn error that the orchestrator sent follows the `reason=` value and can continue onto the following lines. A `handing back session=` line means that the orchestrator was stopping and didn't run the hook, so the hook has nothing to fix. |
+| `runner_lost` | The runner that held the session stopped reporting to Anthropic, deregistered, or was deleted | Find what stopped the runner or cut it off from Anthropic, such as a node eviction, an out-of-memory kill, a spot reclaim, or your own rollout or scale-down |
+| `runner_reported_failure` | The previous runner reported that the session failed on it, for example during checkout | Read the previous runner's log. If many sessions get this value, check the image and the repository setup. |
+| `resumed` | The session was paused and now needs a runner again. For example, its runner released it under [`--release-idle-session-min`](#make-on-demand-runners-exit-when-idle), and later it received a new message. | Nothing |
+| `requeued` | The session was put back in the queue, for example when an Owner selected **Retry** or a blocked session received a new message | If the same session keeps getting this value, read the error on its `nack session=` lines. If its hook exited 0, read the runner's log. |
+| `server_retry` | Anthropic gave up on the previous request or on starting the session on its runner, and is retrying. Your hook didn't fail. | Nothing for a single request. If the value keeps appearing, on one session or across many, report it to [your Anthropic account team](https://code.claude.com/docs/en/self-hosted-environments-deploy.md#report-an-issue). |
+| `prewarm` | This is a pre-warming request, with no session yet | Nothing |
+
 ### Stop or restart the orchestrator
 
 To stop or restart the orchestrator without cutting off running `spawn-runner` hooks, start it with [`--shutdown-drain-sec`](https://code.claude.com/docs/en/self-hosted-environments-reference#orchestrator-cli-flags). On `SIGTERM` it then gives running hooks up to the number of seconds you set to finish. To choose the value and set up your process supervisor to match, see [Size `--shutdown-drain-sec` and the orchestrator's stop timeout](#size-shutdown-drain-sec-and-the-supervisors-stop-timeout-for-the-orchestrator).

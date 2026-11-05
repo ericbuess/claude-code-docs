@@ -502,6 +502,21 @@ Common causes:
 * Network or proxy issue: a firewall or proxy may be blocking the outbound HTTPS request. Remote Control requires access to the Anthropic API on port 443.
 * Session creation failed: if you also see `Session creation failed — see debug log`, the failure happened earlier in setup. Check that your subscription is active.
 
+### "working folder not found"
+
+In the terminal running [`claude remote-control`](#start-a-remote-control-session), `Session failed: working folder not found:` followed by a quoted path means a session couldn't start because no folder exists at that path.
+
+* **The server is still running**: restore the folder and start the session again, or stop the server
+* **The server has exited**: run `claude remote-control` again from a folder that exists
+
+Before v2.1.318, a session that failed this way showed `Session failed: spawn error:` and an `ENOENT` message that named a program file instead of the missing folder.
+
+### "The program file this Remote Control started from is gone"
+
+This warning in the terminal running [`claude remote-control`](#start-a-remote-control-session) means the program file the server started from is missing, and new sessions run the newer version that replaced it. To move the server to that version too, stop it and run `claude remote-control` again. If Claude Code is installed on network storage, restart the server now and follow [Install on network storage](https://code.claude.com/docs/en/setup.md#install-on-network-storage). Otherwise, new sessions start without a restart.
+
+When the program file is gone and Claude Code finds no newer version to run, new sessions fail. The terminal shows an error such as `Session failed: spawn error:` followed by an `ENOENT` message. Stop the server, [install Claude Code](https://code.claude.com/docs/en/setup.md#install-claude-code) again if `claude` doesn't run in your shell, and run `claude remote-control` again. Before v2.1.318, new sessions failed this way even with a newer version installed.
+
 ### "Couldn't reconnect to your Remote Control session"
 
 When you resume a conversation with `claude --resume` or `claude --continue`, Claude Code reconnects to the Remote Control session recorded in that conversation. This message means the reconnection failed for a reason that may be temporary, such as a network interruption or a server error, so Claude Code can't confirm whether the remote session still exists.

@@ -480,7 +480,7 @@ Three messages mean a thread or the project can't reach one of its repositories.
 * **"Unable to access your repository"**, reported by a thread when its clone fails: GitHub rejected the clone, the repository wasn't found under the name the project has, or the branch the thread was asked to start from doesn't exist.
 * **"Claude can't access" a repository**, shown when you save repositories in the **New project** dialog or **Project settings**. The message continues with an install link and a reconnect link. Use the install link if the Claude GitHub App isn't on that repository, and the reconnect link if it is, since the GitHub App can be installed on GitHub without being linked to the account you connected to Claude. If the message says the GitHub App is suspended or doesn't include this repository, follow its link to GitHub to fix that.
 
-To fix any of them, click the button the message offers, such as **Install GitHub App** or **Select repositories on GitHub**, then **Check again**. When the block is on the GitHub organization's side, such as an owner who hasn't approved the app or an IP allow list that excludes Claude, the message shows a **See how to fix** link instead. If there's no button, follow [Set up GitHub access](#set-up-github-access), then send another message to retry.
+To fix GitHub access for "Couldn't start the session" or "Unable to access your repository", click the button the message offers, such as **Install on GitHub** or **Select repositories**. If there's no button, follow [Set up GitHub access](#set-up-github-access). After the fix, ask Claude in the project conversation to start a new thread for the same work.
 
 ### A thread hit the usage limit
 
@@ -505,7 +505,7 @@ These messages name their own cause. The table gives the next step for each.
 
 | Message | What to do |
 | :- | :- |
-| "Unable to connect to repository" with "Claude couldn't reach GitHub to fetch your repository" | Wait a moment, then send another message to retry |
+| "Unable to connect to repository" with "Claude couldn't reach GitHub to fetch your repository" | Wait a moment, then ask Claude in the project conversation to start a new thread for the same work |
 | "Unable to connect to repository" with "Claude couldn't access your repository or environment" | Your GitHub account needs push access to the repository, and the environment must still exist. Check both in **Project settings > Environment**, then retry |
 | "Couldn't show the setup proposal" | The app you have open is older than the **Setup recommendations** Claude sent. Refresh the page or restart the desktop app, or ask Claude to propose the setup again |
 | "The project's environment was removed" | Choose a different environment in **Project settings > Environment**; the change applies to new threads |
