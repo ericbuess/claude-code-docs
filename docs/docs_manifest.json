@@ -496,14 +496,14 @@
     "desktop.md": {
       "original_url": "https://code.claude.com/docs/en/desktop",
       "original_md_url": "https://code.claude.com/docs/en/desktop.md",
-      "hash": "cd95f89d0832246a5bc177b682e015d1065fedc2f0334eaadfd5f35fbe414868",
-      "last_updated": "2026-11-05T01:08:43.501190"
+      "hash": "35b7c1ee8b3512849a8652bddb08a049d15682dfe6ca06dc99ef1d7447a54b9f",
+      "last_updated": "2026-11-05T09:59:52.788488"
     },
     "desktop-ios-simulator.md": {
       "original_url": "https://code.claude.com/docs/en/desktop-ios-simulator",
       "original_md_url": "https://code.claude.com/docs/en/desktop-ios-simulator.md",
-      "hash": "4b675510b80fa45c90764c58c2b26fab5ceb9c41f9fd61558d2a11c6e9f462e7",
-      "last_updated": "2026-10-30T21:45:55.127978"
+      "hash": "bc4092ebda67b85f6f4cbd642e243464a383bb948310a2109fd021999801351b",
+      "last_updated": "2026-11-05T09:59:53.327168"
     },
     "desktop-linux.md": {
       "original_url": "https://code.claude.com/docs/en/desktop-linux",
@@ -1365,8 +1365,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-11-05T01:10:03.422480",
-    "fetch_duration_seconds": 125.78906,
+    "last_fetch_completed": "2026-11-05T10:01:10.322890",
+    "fetch_duration_seconds": 122.095768,
     "total_pages_discovered": 227,
     "pages_fetched_successfully": 228,
     "pages_failed": 0,
@@ -1376,7 +1376,7 @@
     "total_files": 227,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-11-05T01:10:03.422508",
+  "last_updated": "2026-11-05T10:01:10.322922",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",
