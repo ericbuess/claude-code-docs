@@ -61,7 +61,9 @@ Match the message you see to a section below.
 | `Could not resolve authentication method` | [Authentication](#could-not-resolve-authentication-method) |
 | `Invalid API key` | [Authentication](#invalid-api-key) |
 | `Your apiKeyHelper script is failing` | [Authentication](#your-apikeyhelper-script-is-failing) |
-| `Claude Code didn't send your claude.ai login, because the API key helper your administrator set isn't in effect` | [Authentication](#claude-code-didnt-send-your-claude-ai-login) |
+| `Your organization's settings need an update` | [Authentication](#claude-code-didnt-send-your-claude-ai-login) |
+| `Couldn't load your organization's settings. Check your connection` | [Authentication](#claude-code-didnt-send-your-claude-ai-login) |
+| `Restart Claude Code to finish signing in` | [Authentication](#claude-code-didnt-send-your-claude-ai-login) |
 | `Invalid auth token · Fix external auth token` | [Authentication](#invalid-request-header-value) |
 | `Invalid ANTHROPIC_CUSTOM_HEADERS · Fix the environment variable` | [Authentication](#invalid-request-header-value) |
 | `Invalid request header from the environment · Fix the environment variable` | [Authentication](#invalid-request-header-value) |
@@ -1117,16 +1119,23 @@ Running `/login` doesn't help here: the helper's output [takes precedence](https
 
 ### Claude Code didn't send your claude.ai login
 
-Send this full message to your administrator. It lists the changes they can make. The message means Claude Code refused your prompt. While you use your claude.ai login, Claude Code keeps refusing prompts, after a restart too:
+These messages mean Claude Code refused your request and didn't send your claude.ai login:
 
 ```text theme={null}
-Claude Code didn't send your claude.ai login, because the API key helper your administrator set isn't in effect. Your organization's managed settings may be overriding it. Ask your administrator to keep the key helper and its API address in effect, to name Anthropic's API address in those managed settings, or to remove the key helper. Run /status to see your setting sources.
+Your organization's settings need an update. Ask your administrator to fix the API key helper configuration.
+Couldn't load your organization's settings. Check your connection, then restart Claude Code.
+Restart Claude Code to finish signing in.
 ```
 
 **What to do:**
 
-* To tell your administrator which managed sources your machine has, run `/status` at the Claude Code prompt and copy the [`Setting sources` line](https://code.claude.com/docs/en/managed-settings#read-the-source-in-/status). If a `Skipped sources` line appears, copy it too
-* If you administer the settings, see [why the machine's key helper isn't in effect](https://code.claude.com/docs/en/server-managed-settings.md#machine-apikeyhelper-not-in-effect)
+* `Your organization's settings need an update`: ask your administrator to fix the API key helper configuration
+  * To tell your administrator which managed sources your machine has, run `/status` at the Claude Code prompt and copy the [`Setting sources` line](https://code.claude.com/docs/en/managed-settings#read-the-source-in-/status). If a `Skipped sources` line appears, copy it too
+  * If you administer the settings and the helper is in a machine's managed settings file or MDM policy, see [When a machine's `apiKeyHelper` isn't in effect](https://code.claude.com/docs/en/server-managed-settings#machine-apikeyhelper-not-in-effect)
+* `Couldn't load your organization's settings`: check your connection, then restart Claude Code. If the message comes back after a restart, tell your administrator
+* `Restart Claude Code to finish signing in`: restart Claude Code
+
+Before v2.1.315, a refused prompt or file upload printed one message that began `Claude Code didn't send your claude.ai login`.
 
 ### Invalid request header value
 

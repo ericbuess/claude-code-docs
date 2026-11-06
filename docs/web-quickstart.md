@@ -242,13 +242,15 @@ Cloud session features create a default cloud environment automatically if you d
 
 ### Setup script failed
 
-The setup script exited with a non-zero status, which blocks the session from starting. Common causes:
+The [setup script](https://code.claude.com/docs/en/cloud-environments.md#setup-scripts) exited with a non-zero status, so the session failed to start or started without whatever the script failed to install. If the session started, you can keep working in it.
+
+Common causes:
 
 * A package install failed because the registry isn't in your [network access level](https://code.claude.com/docs/en/cloud-environments.md#access-levels). `Trusted` covers most package managers; `None` blocks them all.
 * The script references a file or path that doesn't exist in a fresh clone.
 * A command that works locally needs a different invocation on Ubuntu.
 
-To debug, add `set -x` at the top of the script to see which command failed. For non-critical commands, append `|| true` so they don't block session start.
+To debug, add `set -x` at the top of the script to see which command failed. For non-critical commands, append `|| true` so they don't fail the script. After you fix the cause, start a new session so the script runs again. If what failed to start was a run of a [cloud scheduled task](https://code.claude.com/docs/en/routines.md), click **Run now** on the task's detail page instead of starting a new session.
 
 ### New sessions hang or time out during setup
 

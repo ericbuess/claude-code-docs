@@ -74,7 +74,7 @@ When Claude finishes a task or pauses for a permission prompt, and you appear to
 
 By default, Claude Code sends a desktop notification in some terminals, and a bell character or nothing in others:
 
-* **Ghostty, Kitty, and iTerm2**: a desktop notification, which iTerm2 shows only after you turn on its alert settings.
+* **Ghostty, Kitty, and iTerm2, when Claude Code detects them**: a desktop notification, which iTerm2 shows only after you turn on its alert settings.
 * **Apple Terminal**: no sound; a silent bell character when Claude Code finds "Audible bell" off in the front Terminal window's profile, otherwise nothing. That bell character shows as a window flash, or a Dock bounce while Terminal is in the background, if that profile's "Visual bell" or Dock bounce option is on.
 * **Other terminals**: nothing.
 
@@ -86,7 +86,7 @@ To make Claude Code send the bell character whatever the terminal or profile, se
 }
 ```
 
-The desktop notification reaches your local machine over SSH, so a remote session can still alert you. Ghostty and Kitty forward it to your OS notification center without further setup. iTerm2 requires you to enable forwarding:
+Over SSH from a terminal running outside tmux, set [`preferredNotifChannel`](https://code.claude.com/docs/en/settings-reference#preferrednotifchannel) to your local terminal's value, `"iterm2"`, `"kitty"`, or `"ghostty"`, on the machine running Claude Code. The desktop notification then reaches your local machine. Ghostty and Kitty forward it to your OS notification center without further setup. iTerm2 requires you to enable forwarding:
 
 **1. Open iTerm2 notification settings**
 
@@ -131,7 +131,7 @@ The tab title doesn't start with a status glyph in a terminal that reports suppo
 
 ## Configure tmux
 
-When Claude Code runs inside tmux, by default Shift+Enter submits instead of inserting a newline, and desktop notifications and the [progress bar](https://code.claude.com/docs/en/settings-reference.md#terminalprogressbarenabled) never reach the outer terminal. Add these lines to `~/.tmux.conf`, then run `tmux source-file ~/.tmux.conf` to apply them to the running server:
+When Claude Code runs inside tmux, by default Shift+Enter submits instead of inserting a newline, and desktop notifications don't reach the outer terminal. Add these lines to `~/.tmux.conf`, then run `tmux source-file ~/.tmux.conf` to apply them to the running server:
 
 ```bash ~/.tmux.conf theme={null}
 set -g allow-passthrough on
@@ -140,7 +140,7 @@ set -s extended-keys on
 set -as terminal-features 'xterm*:extkeys'
 ```
 
-The `allow-passthrough` line lets notifications and progress updates reach the outer terminal instead of being swallowed by tmux. The `extended-keys` lines let tmux distinguish Shift+Enter from plain Enter so the newline shortcut works.
+To send notifications from a visible pane to the outer terminal, keep the `allow-passthrough` line and set [`preferredNotifChannel`](https://code.claude.com/docs/en/settings-reference#preferrednotifchannel) to `"iterm2"`, `"kitty"`, or `"ghostty"`. With this sample, a pane in a window you aren't viewing sends none. The `extended-keys` lines let tmux distinguish Shift+Enter from plain Enter so the newline shortcut works.
 
 A [mod's `Image`](https://code.claude.com/docs/en/plugins/mods/reference#elements) needs the `allow-passthrough` and `focus-events` lines, along with the other [requirements for drawing inside tmux](https://code.claude.com/docs/en/plugins/mods/gallery.md#draw-an-image-inside-tmux). After you add the lines, also detach from tmux, attach again, and restart Claude Code.
 

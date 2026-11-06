@@ -95,7 +95,7 @@ At [claude.ai/code](https://claude.ai/code) or in the Code tab of the desktop ap
 Scope the project to one stream of work you'll keep adding to, such as everything it takes to keep one API under its latency target. [When to use a project](#when-to-use-a-project) has more examples. Then fill in the dialog's fields:
 
 * **Name**: how the project appears in the **Projects** list.
-* **Goal** (optional): one line of what you're trying to get done, such as "Hold p95 API latency under 200 ms". Claude in the conversation works toward it. Without a goal, Claude works from the tasks you send, and you can add a goal later in **Project settings > General**.
+* **What do you want to work on?** (optional): one line that becomes the project's goal, such as "Hold p95 API latency under 200 ms". Claude in the conversation works toward it. Without a goal, Claude works from the tasks you send, and you can add a goal later in **Project settings > General**.
 * **Context** (optional): the GitHub repositories this project works on, plus any files, folders, or Google Drive folders threads should read. Click **Add** for each. Add the repositories most tasks need rather than every one the work might touch; [Decide which repositories to add](#decide-which-repositories-to-add) covers the choice, and you can add more later in **Project settings > Environment**.
 
 Standing rules for how threads should work go in [project instructions](#give-a-project-standing-context), which you set after the project exists.
@@ -388,6 +388,7 @@ Settings save as you change them; a text field you're editing, such as the goal 
 | Plugins | Plugins | The plugins that load into each new cloud thread |
 | Usage | Usage | [Token use](#usage-and-cost) by thread and by model |
 | Memory | Memory | The project's [memory files](#give-a-project-standing-context) |
+| Auto-continue when usage limits reset | General | Whether a thread or the project conversation that [stops at a usage limit](#usage-limit-reached) continues on its own when the limit resets. On by default. |
 | Restart Claude | General | Restarts the project conversation when [Claude stops responding there](#claude-hasnt-responded) |
 | Pause, Archive, Delete | General | Stops, hides, or removes the project; see [Pause, archive, or delete a project](#pause-archive-or-delete-a-project) |
 
@@ -403,7 +404,7 @@ All three controls are at the bottom of **Project settings > General**:
 
 Project usage counts against the same [plan limits](https://code.claude.com/docs/en/errors.md#youve-hit-your-session-limit) as your other Claude Code sessions, and a project can't spend past those limits on its own.
 
-A thread that reaches your plan's limit waits and continues on its own when the limit resets, so work you left running starts using your next usage window without a message from you. [A thread hit the usage limit](#usage-limit-reached) covers what you see, how to stop it, and the one case that doesn't wait.
+A thread that stops at your plan's limit waits and by default continues on its own when the limit resets. Its work then counts against your next usage window. To keep threads from continuing, see [A thread hit the usage limit](#usage-limit-reached).
 
 Work goes past your plan's limits only if you have turned on [usage credits](https://code.claude.com/docs/en/costs.md#add-usage-credits-to-your-subscription) for your account. A thread can't turn them on for you.
 
@@ -484,9 +485,9 @@ To fix GitHub access for "Couldn't start the session" or "Unable to access your 
 
 ### A thread hit the usage limit
 
-When a thread or the project conversation reaches your plan's five-hour or weekly limit, it keeps retrying on its own and continues when the limit resets. A thread that a scheduled task started doesn't wait: its turn stops with a limit error, and you send it a message after the limit resets.
+When a thread or the project conversation stops at your plan's five-hour or weekly limit, it waits and by default continues on its own when the limit resets.
 
-While a thread waits, it shows **Service is busy** with "Claude is still retrying and will continue automatically." You don't need to do anything for the work to continue. If you'd rather it not use your next usage window, click **Stop** in the thread, or [pause the project](#pause-archive-or-delete-a-project) to hold every thread. [Usage limit errors](https://code.claude.com/docs/en/errors.md#youve-hit-your-session-limit) explain the limits and when they reset.
+To keep a thread or conversation from continuing at the reset time its message shows, turn off **Auto-continue when usage limits reset** in [**Project settings > General**](#project-settings-reference) before then. The setting is for the whole project, not only the thread you're looking at. To continue with the setting off, send the thread or conversation a message after the reset. [Usage limit errors](https://code.claude.com/docs/en/errors.md#youve-hit-your-session-limit) explain the limits and when they reset.
 
 ### Additional usage credits are required
 
@@ -509,7 +510,7 @@ These messages name their own cause. The table gives the next step for each.
 | "Unable to connect to repository" with "Claude couldn't access your repository or environment" | Your GitHub account needs push access to the repository, and the environment must still exist. Check both in **Project settings > Environment**, then retry |
 | "Couldn't show the setup proposal" | The app you have open is older than the **Setup recommendations** Claude sent. Refresh the page or restart the desktop app, or ask Claude to propose the setup again |
 | "The project's environment was removed" | Choose a different environment in **Project settings > Environment**; the change applies to new threads |
-| "Setup script failed" | Click **Edit setup script** on the error, fix the script in the environment, then send another message. [Setup script failed](https://code.claude.com/docs/en/web-quickstart.md#setup-script-failed) lists common causes |
+| "Setup script failed" | [Setup script failed](https://code.claude.com/docs/en/web-quickstart.md#setup-script-failed) lists common causes. Fix the script in the environment, then ask Claude in the project conversation to run the task in a new thread, so the script runs again |
 | "Claude ran out of context on this turn" | The thread filled its context window. If the message says the thread continues in a fresh session, it carries on by itself; otherwise ask Claude in the project conversation to start a new thread for the remaining work |
 | "Couldn't start in" followed by your folder's name | You allowed a thread to run on your computer, but the session couldn't start there. When a line under the message gives the reason, fix that, then ask Claude to run the task again |
 | "Claude is out of date on your device" | The computer you picked to run a thread has a Claude Code version older than v2.1.280. Update Claude Code there, or update the desktop app if that's what connects the folder, then ask Claude to run the task again |

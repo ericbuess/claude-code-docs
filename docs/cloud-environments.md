@@ -445,7 +445,7 @@ apt update && apt install -y shellcheck
 
 A setup script has four constraints to write around:
 
-* **Exit zero**: if the script exits non-zero, the session fails to start. Append `|| true` to non-critical commands so an intermittent install failure doesn't block the session.
+* **Exit zero**: if the script exits non-zero, the session [fails to start](https://code.claude.com/docs/en/web-quickstart.md#setup-script-failed) or starts without whatever the script failed to install. Append `|| true` to non-critical commands so an intermittent install failure doesn't fail the script.
 * **Finish within five minutes**: keep the script's total runtime under roughly five minutes so the [environment cache](#environment-caching) can build. When setup takes longer than that, the environment isn't cached. Run independent installs in parallel with `&` and `wait`, and move any single download that won't fit into a [SessionStart hook](#setup-scripts-vs-sessionstart-hooks) that launches it in the background. If new sessions stall or fail during setup, see [New sessions hang or time out during setup](https://code.claude.com/docs/en/web-quickstart.md#new-sessions-hang-or-time-out-during-setup).
 * **Network access for installs**: package installs need to reach registries. The default **Trusted** level covers [common package registries](#default-allowed-domains) including npm, PyPI, RubyGems, and crates.io; with **None** network access, installs fail.
 * **The environment's variables aren't set yet**: the script runs before the session sets the environment's [environment variables](#set-environment-variables). Set any value the script needs in the script itself.

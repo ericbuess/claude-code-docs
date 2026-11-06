@@ -202,6 +202,8 @@ If you autoscale on CPU, a replica at the limit queues requests without triggeri
 >
 > Every open request holds memory in the gateway process while it streams and while it waits for a slot. If you keep the limit at 256, memory on an overloaded replica still grows, because waiting requests keep their request bodies. Size the container's memory for the number of requests open at peak, and watch memory when you change the limit. A replica that runs out of memory is killed and drops every stream it holds.
 
+In a load test with [`load_test_mode`](https://code.claude.com/docs/en/claude-apps-gateway-config#load_test_mode), requests don't wait at this limit, but a replica still logs the `client requests are open` warning.
+
 ### Keep `API_TIMEOUT_MS` above the gateway's time to first byte
 
 If you lower [`API_TIMEOUT_MS`](https://code.claude.com/docs/en/network-config#streaming-idle-watchdogs) to retry an unanswered request sooner, keep it above the time the gateway takes to send the first bytes of a streaming response. A request that waits longer times out, and so does each retry that waits as long, until the turn ends with `Request timed out` unless the [first-byte deadline](#retry-an-unanswered-request-sooner-with-the-first-byte-deadline) ends it.

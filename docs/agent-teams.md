@@ -296,7 +296,7 @@ To cycle a running teammate's permission mode, press [`Shift+Tab`](https://code.
 >
 > To have it ask before it edits, press Enter on the `main` row in the agent panel and switch the lead to Manual mode too. The lead then asks too, as does any other teammate in Manual mode.
 
-You can't set per-teammate permission modes at spawn time. A new teammate starts with the lead's mode, including `bypassPermissions` mode, which `--dangerously-skip-permissions` turns on. If the lead is in [`dontAsk` mode](https://code.claude.com/docs/en/permission-modes#allow-only-pre-approved-tools-with-dontask-mode), the teammate starts in [Manual mode](https://code.claude.com/docs/en/permission-modes.md#available-modes) instead.
+You can't set per-teammate permission modes at spawn time. A new teammate starts with the lead's mode, including `bypassPermissions` mode, which `--dangerously-skip-permissions` turns on. If the lead is in [`dontAsk` mode](https://code.claude.com/docs/en/permission-modes#allow-only-pre-approved-tools-with-dontask-mode), the teammate starts in [Manual mode](https://code.claude.com/docs/en/permission-modes.md#available-modes) instead. For a split-pane teammate of a lead in Manual or `dontAsk` mode, this requires Claude Code v2.1.317 or later.
 
 An [in-process](#choose-a-display-mode) teammate runs under the lead's live allow and deny rules, so [`--disallowedTools`](https://code.claude.com/docs/en/cli-reference#cli-flags), `--tools`, and `--allowedTools` all apply to it. For a split-pane teammate, check each flag:
 

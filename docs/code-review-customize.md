@@ -25,7 +25,7 @@ A review reads the `CLAUDE.md` at your repository root and the `CLAUDE.md` files
 
 ## Use REVIEW\.md for review-only rules
 
-`REVIEW.md` is a file at your repository root that tailors Code Review to your repository. You can also add a `REVIEW.md` in a subdirectory to add checks for changes under that path, on top of the root file.
+`REVIEW.md` is a file at your repository root that tailors Code Review to your repository. On a [protected branch](#what-a-review-reads-for-each-branch-setup), you can also add a `REVIEW.md` in [most subdirectories](#when-a-subdirectory-review-md-doesnt-apply) to add checks for changes under that subdirectory, on top of the root file.
 
 The agents that find issues and the agents that verify them receive its contents as your repository's review instructions, alongside Code Review's default review guidance. The step that writes the final review consults it before settling severity and writing the summary.
 
@@ -45,6 +45,19 @@ Before you rely on a subdirectory file, protect your default branch and check [w
 > [!NOTE]
 >
 > The Code Review service and the local [`/code-review` command](https://code.claude.com/docs/en/code-review-local) are two separate tools, and they read different files. The service reads both `CLAUDE.md` and `REVIEW.md`. The `/code-review` command, which you run inside a Claude Code session on your own machine, reads your `CLAUDE.md` files and not `REVIEW.md`. Put guidance you want applied in both places in `CLAUDE.md`, and keep `REVIEW.md` for rules specific to pull request review.
+
+### When a subdirectory REVIEW\.md doesn't apply
+
+Code Review doesn't apply a `REVIEW.md` in or below a subdirectory with one of these names, whatever the subdirectory holds. A subdirectory name matches only as a whole, in any letter case and at any depth, so `Tests` matches and `integration-tests` doesn't:
+
+* **Tests**: `test`, `tests`, `__tests__`, `testdata`, `fixtures`, `__fixtures__`, `golden`, `corpus`, `snapshots`, `__snapshots__`
+* **Examples**: `example`, `examples`, `sample`, `samples`, `demo`, `demos`
+* **Generated code**: `generated`
+* **Third-party code**: `vendor`, `third_party`, `third-party`, `thirdparty`, `node_modules`, `bower_components`, `external`, `extern`, `deps`, `godeps`, `pods`, `carthage`, `site-packages`, `contrib`
+
+Put checks for those subdirectories in the root `REVIEW.md`, or in a parent subdirectory's `REVIEW.md` when neither that parent nor anything above it is on the list.
+
+The remaining subdirectory `REVIEW.md` files on the paths a pull request changes share a limit of 150,000 bytes, not counting the root file. If the [check run](https://code.claude.com/docs/en/code-review-pull-requests.md#check-run-output) reports that some of them didn't fit, shorten the files to fit that limit.
 
 ### Example REVIEW\.md
 
@@ -217,8 +230,8 @@ Find your repository's situation in the first column of the table below.
 
 | Branch protection | Copy read | Files read |
 | :- | :- | :- |
-| The default branch is protected, and the pull request targets it or targets a branch no ruleset protects | Default branch | Root file, the files it includes, and subdirectory files |
-| The pull request targets another branch that a ruleset protects | That base branch | Root file, the files it includes, and subdirectory files |
+| The default branch is protected, and the pull request targets it or targets a branch no ruleset protects | Default branch | Root file, the files it includes, and [most subdirectory files](#when-a-subdirectory-review-md-doesnt-apply) |
+| The pull request targets another branch that a ruleset protects | That base branch | Root file, the files it includes, and [most subdirectory files](#when-a-subdirectory-review-md-doesnt-apply) |
 | The default branch isn't protected, and the base branch has no protection rule of either kind | Default branch | Root file |
 | Code Review can't confirm the protection settings. This includes an unprotected default branch with a base branch that has only a classic rule | None | None |
 
