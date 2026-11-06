@@ -566,8 +566,17 @@ When you've chosen **Ask each time**, some cases behave differently:
 * If both models flag the same request, you can edit the prompt and retry, or start a new session.
 * In [cloud sessions](https://code.claude.com/docs/en/claude-code-on-the-web.md) on the mobile app, editing and retrying is not supported. Switch models, or continue the session from a desktop browser or the desktop app.
 * In [non-interactive mode](https://code.claude.com/docs/en/cli-reference.md#cli-flags) and SDK integrations that can't show the prompt, a flagged request ends the turn with a refusal instead.
-* In a [subagent](https://code.claude.com/docs/en/sub-agents.md), Claude Code doesn't show the prompt, and a flagged request that would switch models re-runs on the fallback model.
+* In a subagent that Claude starts with the [Agent tool](https://code.claude.com/docs/en/tools-reference.md#agent-tool-behavior), Claude Code doesn't pause to ask, and the subagent fails instead of switching models. See [Subagents switch or fail without asking](#subagents-switch-or-fail-without-asking).
 * When the fallback target is blocked by [`availableModels`](#restrict-model-selection), Claude Code doesn't show the prompt. The flagged request ends with the refusal, the same as automatic fallback when the target is blocked.
+
+#### Subagents switch or fail without asking
+
+In a built-in or custom [subagent](https://code.claude.com/docs/en/sub-agents.md) that Claude starts with the [Agent tool](https://code.claude.com/docs/en/tools-reference.md#agent-tool-behavior), Claude Code doesn't [pause to ask](#ask-before-switching) at a flagged request. If a fallback model is available, the request re-runs on it or the subagent fails, according to your **Switch models when a message is flagged** choice in `/config`:
+
+* **Switch automatically**, or no choice yet: the request re-runs on the fallback model, and your session's model is unchanged
+* **Ask each time**: the subagent fails with [`Agent terminated early due to an API error`](https://code.claude.com/docs/en/errors#agent-terminated-early-due-to-an-api-error) and the refusal message. Claude receives that error and decides what to do about the unfinished task. To let subagents switch models, choose **Switch automatically**. Your main conversation then switches without asking too.
+
+When no fallback model is available, the subagent fails the same way with either choice. Before v2.1.318, a subagent's flagged request re-ran on an available fallback model whichever you chose.
 
 #### Enable fallback on Bedrock, Agent Platform, and Foundry
 

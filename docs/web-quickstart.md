@@ -138,7 +138,7 @@ At claude.ai/code, to start Claude from a feature branch instead of the default,
 
 The [permission mode control](https://code.claude.com/docs/en/permission-modes.md#switch-permission-modes) shows the permission mode the session will run in:
 
-* **Auto**: a classifier reviews Claude's actions instead of asking you. Appears when your organization allows auto mode and the selected model supports it
+* **Auto**: a classifier reviews Claude's actions instead of asking you. Appears unless your organization turns off [auto mode](https://code.claude.com/docs/en/permission-modes.md#eliminate-prompts-with-auto-mode). On claude.ai/code, if it's grayed out, select a model that supports auto mode
 * **Accept edits**: Claude makes changes and pushes a branch without stopping for approval
 * **Plan**: Claude proposes an approach and waits for you to approve it before editing files
 

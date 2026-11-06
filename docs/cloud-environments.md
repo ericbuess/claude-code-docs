@@ -120,9 +120,8 @@ To add a secret to a [shared environment](#organization-shared-environments), op
 
 Select **Add secret**, labeled **Add** in admin settings, and fill in the form. Keep the default **Secret type**, **Bearer**, for an API key that travels in a request header, and fill in these fields:
 
-* **Name**: a label for the secret, such as `Internal billing API`
 * **Allowed websites**: the API's hosts, such as `api.example.com`. A leading `*.` matches every subdomain
-* **Custom headers**: one row for the header that carries the key. The row starts with `Authorization` as the header's **Name** and `Bearer` as its **Prefix**; paste the key itself as the **Value**. For a header like `X-Api-Key` that takes the bare value, change the name and clear the prefix
+* **Custom headers**: one row for the header that carries the key. The row already has `Authorization` as the **Header name** and `Bearer` as the **Prefix**; paste the key itself as the **Value**. For a header like `X-Api-Key` that takes the bare value, change the name and clear the prefix
 
 For an API that authenticates another way, pick a different **Secret type**. The list is the same one [Claude Tag](https://claude.com/docs/claude-tag/overview), the Slack integration for Team and Enterprise plans, offers for [connections](https://claude.com/docs/claude-tag/admins/add-connections).
 
@@ -137,8 +136,7 @@ To confirm the secret works, start a session in the environment and ask Claude t
 If you're on a Team or Enterprise plan and don't hold an [organization admin role](#requirements), the **Add secret** form takes one secret for one host. Select your environment's [**Network secrets** row](#add-a-credential) and then **Add secret**. Fill in these fields and select the form's **Add secret** button:
 
 * **Host**: the one host that gets the secret, such as `api.example.com`. The form doesn't accept a `*.` wildcard
-* **Name**: an optional label for the secret
-* **Secret type**: **Token** for a key that travels in a request header, or **Username and password**. For a token, paste the key as the **Value**
+* **Secret type**: **Token** for a key that travels in a request header, or **Username and password**. For a token, paste the key in the **Token** field. For a header other than `Authorization`, such as `X-Api-Key`, change **Header** to its name
 
 #### Which requests get the secret
 

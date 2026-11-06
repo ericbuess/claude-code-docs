@@ -350,7 +350,7 @@ A declared block narrows who can sign in but doesn't prove where a machine is, s
 
 ### Deliver policy to Claude Desktop sessions
 
-Claude Desktop runs its Cowork and Code tabs, plus Chat when you enable it, on embedded Claude Code sessions and sends their model requests through the gateway. It passes policy to each of those sessions, built from the configuration the gateway serves it at `/user/bootstrap`: the model allowlist, disabled tools, and egress allowlist derived from the matched policy's `cli` or `code` block, plus the [`desktop` overlay](https://code.claude.com/docs/en/claude-apps-gateway-config#claude-desktop-overlay).
+Claude Desktop runs its tabs on embedded Claude Code sessions and sends their model requests through the gateway. It passes policy to each of those sessions, built from the configuration the gateway serves it at `/user/bootstrap`. That configuration holds the model allowlist, disabled tools, and egress allowlist derived from the matched policy's `cli` or `code` block, plus the [`desktop` overlay](https://code.claude.com/docs/en/claude-apps-gateway-config#claude-desktop-overlay).
 
 The block's other keys, such as hooks, `env`, and scoped permission rules like `Bash(npm *)`, reach clients that sign in through `/login`. Under `code`, they also reach the Code tab's session when the [conditions for the Code tab](https://code.claude.com/docs/en/claude-apps-gateway-config.md#apply-code-settings-in-the-code-tab) hold. They don't reach Cowork or Chat sessions. Claude Desktop reads the gateway URL from its own managed configuration and signs in with its own flow, separate from the `forceLoginMethod` and `forceLoginGatewayUrl` keys in [Set the gateway URL](#set-the-gateway-url).
 
@@ -476,11 +476,9 @@ Passing these keys in `managedSettings` requires Claude Code v2.1.309 or later, 
 
 ### Connect Claude Desktop
 
-[Claude Desktop](https://code.claude.com/docs/en/desktop.md) connects to the same gateway through a different MDM key: set `bootstrapUrl` in Claude Desktop's [managed configuration](https://claude.com/docs/third-party/claude-desktop/configuration) to `<listen.public_url>/user/bootstrap`, and opt the user's policy in with a `desktop` key. [Claude Desktop overlay](https://code.claude.com/docs/en/claude-apps-gateway-config.md#claude-desktop-overlay) covers both halves. Requires Claude Code v2.1.203 or later on the gateway server.
+[Claude Desktop](https://code.claude.com/docs/en/desktop.md) connects to the same gateway through a different MDM key: set `bootstrapUrl` in Claude Desktop's [managed configuration](https://claude.com/docs/third-party/claude-desktop/configuration) to `<listen.public_url>/user/bootstrap`, and opt the user's policy in with a `desktop` key. [Claude Desktop overlay](https://code.claude.com/docs/en/claude-apps-gateway-config.md#claude-desktop-overlay) covers both halves. Requires Claude Code v2.1.203 or later on the gateway server. Once connected, Claude Desktop sends model requests from every enabled tab through the gateway.
 
 Claude Desktop signs the developer in through the gateway's identity provider with the same browser SSO step, then fetches its configuration from the gateway instead of from Anthropic. Model access and policy follow the same per-group rules as the CLI. A developer who uses both the CLI and Claude Desktop signs in to each separately; the gateway session isn't shared between them.
-
-Once connected, Claude Desktop sends model requests from every enabled tab through the gateway. It shows the Cowork and Code tabs by default. To make Chat available as well, set `chatTabEnabled` to `true` in the policy's [`desktop` block](https://code.claude.com/docs/en/claude-apps-gateway-config#claude-desktop-overlay) on a gateway running Claude Code v2.1.227 or later. With Cowork on, Claude Desktop then shows Chat and Cowork together in one tab.
 
 ### CI pipelines and remote machines
 
@@ -523,7 +521,7 @@ The gateway delivers the [`anthropic-beta`](https://platform.claude.com/docs/en/
 | Inference forwarding (Amazon Bedrock, Claude Platform on AWS, Google Cloud's Agent Platform, Microsoft Foundry, Anthropic) | Available | With per-upstream model translation and failover. The Amazon Bedrock upstream uses the `bedrock-runtime` endpoint and the AWS default credential chain. The [Amazon Bedrock Mantle upstream](https://code.claude.com/docs/en/claude-apps-gateway-config.md#amazon-bedrock-mantle-endpoint) requires Claude Code v2.1.283 or later on the gateway server, and the [Claude Platform on AWS upstream](https://code.claude.com/docs/en/claude-apps-gateway-config.md#claude-platform-on-aws) requires v2.1.198 or later. |
 | 1M token context window | Available | Fable models, Sonnet 5 and later, and Opus 4.7 and later run with the 1M window by default; see [Extended context](https://code.claude.com/docs/en/model-config.md#extended-context). The 1M default for the Fable and Opus models requires Claude Code v2.1.287 or later on the developer machine |
 | Model access and managed settings by IdP group | Available | Model access is enforced server-side; managed settings are delivered per IdP group and applied by the CLI at the [managed settings tier](https://code.claude.com/docs/en/settings.md#settings-precedence) |
-| Claude Desktop | Available with opt-in | The gateway serves Claude Desktop's configuration at `/user/bootstrap` once a policy [opts in with a `desktop` key](https://code.claude.com/docs/en/claude-apps-gateway-config#claude-desktop-overlay), and Claude Desktop sends its model requests through the gateway. To turn on Chat, see [Connect Claude Desktop](#connect-claude-desktop). Requires Claude Code v2.1.203 or later on the gateway server. |
+| Claude Desktop | Available with opt-in | Opt a policy in with a [`desktop` key](https://code.claude.com/docs/en/claude-apps-gateway-config#claude-desktop-overlay). Requires Claude Code v2.1.203 or later on the gateway server. |
 | Telemetry fan-out (OTLP/HTTP) | Available | Identity-stamped per export; both protobuf and JSON encodings |
 | OIDC identity providers | Available | Any OIDC-compliant IdP; the gateway runs standard OIDC discovery and the authorization-code flow. See [Identity provider setup](https://code.claude.com/docs/en/claude-apps-gateway-deploy.md#identity-provider-setup) for per-IdP configuration |
 | Per-user and per-group spend limits | Available | See [Spend limits](https://code.claude.com/docs/en/claude-apps-gateway-spend-limits.md) |
@@ -540,7 +538,7 @@ The gateway delivers the [`anthropic-beta`](https://platform.claude.com/docs/en/
 | Multi-tenant (multiple OIDC issuers) | Not supported | One issuer per gateway. Run separate instances |
 | Windows server | Not supported | Deploy on Linux. macOS for local development only |
 | Helm chart | Not available | The gateway runs as a standard stateless Deployment; see the [deployment guide](https://code.claude.com/docs/en/claude-apps-gateway-deploy.md#kubernetes) |
-| Admin UI | Not available | Configuration is the YAML file; redeploy to change it |
+| Admin UI | Spend limits only | In Claude Desktop 4.23118.0 or later [connected to the gateway](#connect-claude-desktop), members of [`admin.admin_groups`](https://code.claude.com/docs/en/claude-apps-gateway-config#admin) can manage spend limits. Other configuration is the YAML file; redeploy to change it |
 
 ## Next steps
 

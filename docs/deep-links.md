@@ -104,7 +104,7 @@ The example below adds an investigation entry point to an incident runbook for a
 3. Post initial findings in #incident.
 ```
 
-To use this in your own runbook, replace `acme/web-gateway` with your service's repository slug. Before engineers click step 2, they must have [sent a prompt in an interactive Claude Code session](#registration-and-supported-platforms) on their machine and opened Claude Code in their local clone.
+To use this in your own runbook, replace `acme/web-gateway` with your service's repository slug. Before engineers click step 2, their machine must have the [`claude-cli://` handler registered](#registration-and-supported-platforms), and they must have run `claude` in their local clone or worktree.
 
 ### Open a link from the shell
 
