@@ -89,6 +89,13 @@ If your enterprise environment uses a custom CA, configure Claude Code to trust 
 export NODE_EXTRA_CA_CERTS=/path/to/ca-cert.pem
 ```
 
+If you see either of these warnings, Claude Code couldn't load the `NODE_EXTRA_CA_CERTS` file as a whole, and connections that need a certificate it skipped can fail:
+
+* `Claude Code used only the certificates that it could read in full from the NODE_EXTRA_CA_CERTS file`
+* `Claude Code ignored all of the NODE_EXTRA_CA_CERTS file: it holds no certificate that Claude Code can read`
+
+The full text of each warning says how to fix the file. A skipped certificate that's also in the [CA certificate store](#ca-certificate-store) still works.
+
 ## mTLS authentication
 
 For enterprise environments requiring client certificate authentication:

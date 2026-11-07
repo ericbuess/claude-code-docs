@@ -306,6 +306,16 @@ Claude Code warns about the configuration problems below. Each entry says what C
 
 The `/mcp` panel shows the tool count next to each connected server and flags servers that advertise the tools capability but expose no tools.
 
+##### Tool counts in a cloud session
+
+In a [cloud session](https://code.claude.com/docs/en/claude-code-on-the-web.md), a count such as `3 of 13 tools available` means Claude can't use the other 10. Check for these causes, among others:
+
+* **A deny rule in your repository's `.claude/settings.json` names the tool or its whole server**: remove the [rule](https://code.claude.com/docs/en/permissions.md#mcp), if [your session reads that file](https://code.claude.com/docs/en/settings.md#settings-in-cloud-sessions)
+* **The tool's full name is over 128 characters**: follow [the steps for an over-long name](https://code.claude.com/docs/en/errors.md#mcp-tool-name-over-128-characters)
+* **The server lists the tool for its own interface and not for Claude**: if you maintain the server, add `model` to the tool's `_meta.ui.visibility` to give Claude the tool. Otherwise, there's nothing to fix.
+
+##### Tools from a server that is still connecting
+
 If your request needs tools from a server that is still connecting in the background, Claude waits for that server before continuing. How the wait happens depends on your configuration:
 
 * **With [tool search](#scale-with-mcp-tool-search), the default**: the wait happens inside the `ToolSearch` call.
@@ -349,9 +359,9 @@ On v2, Claude Code also:
 * Fails an [MCP OAuth sign-in](#authenticate-with-remote-mcp-servers) whose authorization response names an unexpected issuer.
 * Sends [MCP OAuth](#authenticate-with-remote-mcp-servers) credentials only to a token endpoint served over HTTPS or at `localhost`, `127.0.0.1`, or `::1`. Sign-in fails for a server whose token endpoint is plain `http://` anywhere else, such as a device on your local network. See [Refusing to send credentials to non-https token endpoint](https://code.claude.com/docs/en/errors.md#refusing-to-send-credentials-to-non-https-token-endpoint).
 
-Anthropic can keep a specific server on the earlier protocol, or off that stream, with a feature flag Claude Code fetches.
+Anthropic can keep a specific server on the earlier protocol, or off that stream, with a feature flag Claude Code fetches. To pick the runtime yourself, set [`MCP_SDK_GENERATION`](https://code.claude.com/docs/en/env-vars) to `v1` or `v2`.
 
-To pick the runtime yourself, set [`MCP_SDK_GENERATION`](https://code.claude.com/docs/en/env-vars) to `v1` or `v2`. To decide whether Claude Code asks, set [`MCP_PROTOCOL_NEGOTIATION`](https://code.claude.com/docs/en/env-vars) to `auto` or `legacy`.
+To decide whether Claude Code asks servers about the newer revision, set [`MCP_PROTOCOL_NEGOTIATION`](https://code.claude.com/docs/en/env-vars) to `auto` or `legacy`. With that variable unset, Claude Code can skip asking a stdio server for 7 days, for example after the server exits when asked. To have an upgraded server asked sooner, set `auto`.
 
 ### Dynamic tool updates
 

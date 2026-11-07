@@ -66,7 +66,7 @@ For requirements, invocation modes, and troubleshooting, see the [Remote Control
 
 ### Get push notifications
 
-When Remote Control is active, Claude can send push notifications to your phone, typically when a long-running task finishes or when it needs a decision from you. You can also ask for one in your prompt, such as `notify me when the tests finish`. See [mobile push notifications](https://code.claude.com/docs/en/remote-control.md#mobile-push-notifications) for the two `/config` toggles and delivery troubleshooting.
+When Remote Control is active, Claude can send push notifications to your phone when a long-running task finishes or when it needs a decision from you. You can also ask for one in your prompt, such as `notify me when the tests finish`. See [mobile push notifications](https://code.claude.com/docs/en/remote-control.md#mobile-push-notifications) for the two `/config` toggles and delivery troubleshooting.
 
 Dispatch sends its own notification when a Code session it spawned finishes or needs your approval, described in [sessions from Dispatch](https://code.claude.com/docs/en/desktop.md#sessions-from-dispatch).
 

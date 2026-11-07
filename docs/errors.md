@@ -3563,29 +3563,30 @@ Before v2.1.257, a FIFO at `.mcp.json` left the command waiting forever with no 
 
 ### MCP server was not saved or removed
 
-You ran `claude mcp add`, `claude mcp add-json`, or `claude mcp remove` for a server in the `user` or `local` [scope](https://code.claude.com/docs/en/mcp.md#mcp-installation-scopes). Both scopes are stored in `~/.claude.json`, and the change isn't in that file when Claude Code reads it back after writing. The command exits with this error instead of its success line.
+This error means a command such as `claude mcp add` or `claude mcp remove` didn't get your change into `~/.claude.json`. Other Claude Code processes may have kept the file locked, or the file may be read-only or protected by a sandbox.
 
 ```text theme={null}
-MCP server "example" was not saved to /home/user/.claude.json. If that file is read-only or protected by a sandbox, make it writable or run the command outside the sandbox, then add the server again.
+MCP server "example" was not saved to /home/user/.claude.json. If other Claude Code processes use that file, they may have kept it locked: add the server again, with CLAUDE_CODE_CONFIG_LOCK_WAIT_MS=60000 set to wait up to a minute. If that file is read-only or protected by a sandbox, make it writable or run the command outside the sandbox first.
 ```
 
-After a remove, the message reads `was not removed from` and ends with `then remove the server again`. For a `local`-scope server, the path is followed by the project directory the entry belongs to, as `(local scope for /path/to/project)`.
-
-Before v2.1.283, `claude mcp add`, `claude mcp add-json`, and `claude mcp remove` reported success even when the change didn't reach the file.
+After a remove, the message reads `was not removed from` in place of `was not saved to`, and `remove the server again` in place of `add the server again`. For a `local`-scope server, the path is followed by the project directory the entry belongs to, as `(local scope for /path/to/project)`.
 
 **What to do:**
 
-* Make the file the message names writable, or run the command outside the sandbox, then run the same add or remove command again.
+* **Other Claude Code processes are running**: the command waits about 10 to 20 seconds for the lock on the file, then gives up without writing. Run the same command again with [`CLAUDE_CODE_CONFIG_LOCK_WAIT_MS`](https://code.claude.com/docs/en/env-vars#variables) set to a longer wait in milliseconds, such as `60000`.
+* **The file is read-only or sandbox-protected**: make the file the message names writable and run the same add or remove command again, or run that command outside the sandbox.
+
+Before v2.1.283, `claude mcp add`, `claude mcp add-json`, and `claude mcp remove` reported success even when the change didn't reach the file. Before v2.1.318, the message didn't mention the lock, and Claude Code didn't read [`CLAUDE_CODE_CONFIG_LOCK_WAIT_MS`](https://code.claude.com/docs/en/env-vars#variables).
 
 ### MCP server may not have been saved or removed
 
-You ran `claude mcp add`, `claude mcp add-json`, or `claude mcp remove` for a server in the `user` or `local` [scope](https://code.claude.com/docs/en/mcp.md#mcp-installation-scopes), and Claude Code couldn't read `~/.claude.json` back to confirm the change. The change may or may not be on disk. The text in parentheses is the error from that read.
+You ran `claude mcp add`, `claude mcp add-json`, or `claude mcp remove` for a server in the `user` or `local` [scope](https://code.claude.com/docs/en/mcp.md#mcp-installation-scopes), and Claude Code couldn't read `~/.claude.json` back to confirm the change. The change may or may not be on disk. The parentheses after `to confirm the change` give the reason.
 
 ```text theme={null}
 MCP server "example" may not have been saved: /home/user/.claude.json could not be read to confirm the change (EACCES: permission denied, open '/home/user/.claude.json'). Run `claude mcp get example` to check, then add the server again if it is missing.
 ```
 
-After a remove, the message reads `may not have been removed` and ends with `then remove the server again if it is still listed`.
+After a remove, the message reads `may not have been removed` and ends with `then remove the server again if it is still listed`. If the reason is `the file was not found`, the server may still be configured.
 
 Before v2.1.283, the commands reported success even when the change couldn't be confirmed.
 

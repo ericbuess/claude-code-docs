@@ -53,7 +53,7 @@ The command prints nothing when it succeeds and a `curl:` error when it doesn't.
 gpg --show-keys /usr/share/keyrings/claude-desktop-archive-keyring.asc
 ```
 
-The fingerprint gpg prints should be `31DDDE24DDFAB679F42D7BD2BAA929FF1A7ECACE`. If gpg reports that the file can't be opened or contains no valid OpenPGP data, the download failed or returned the wrong content: confirm your network can reach `downloads.claude.ai`, then rerun the download command.
+The only fingerprint gpg prints should be `31DDDE24DDFAB679F42D7BD2BAA929FF1A7ECACE`. If gpg reports that the file can't be opened or contains no valid OpenPGP data, the download failed or returned the wrong content. Confirm your network can reach `downloads.claude.ai`, then rerun the download command.
 
 Register the repository:
 

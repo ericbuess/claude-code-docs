@@ -154,7 +154,7 @@ The next session you start shows `⏸ manual mode on` in the status bar.
 
 ### Permission modes with the HIPAA configuration
 
-In an organization with the [HIPAA configuration](https://code.claude.com/docs/en/hipaa-setup.md) applied, the built-in `auto` default doesn't apply. A terminal or VS Code session starts in Manual mode when nothing else chooses its starting permission mode. A terminal session also shows `Auto mode isn't the default for your organization · Shift+Tab to switch`, and the VS Code extension shows no notice. [Check how developers sign in and connect](https://code.claude.com/docs/en/hipaa-setup.md#check-how-developers-sign-in-and-connect) lists the sessions this applies to.
+In an organization with the [HIPAA configuration](https://code.claude.com/docs/en/hipaa-setup.md) applied, the [built-in `auto` default](#which-mode-a-session-starts-in) doesn't apply. A terminal or VS Code session starts in Manual mode when nothing else chooses its starting permission mode. A terminal session also shows `Auto mode isn't the default for your organization · Shift+Tab to switch`, and the VS Code extension shows no notice. [Check how developers sign in and connect](https://code.claude.com/docs/en/hipaa-setup.md#check-how-developers-sign-in-and-connect) lists the sessions this applies to.
 
 Auto mode and `bypassPermissions` stay available:
 
@@ -162,8 +162,6 @@ Auto mode and `bypassPermissions` stay available:
 * **Start in auto mode**: pass `--permission-mode auto`, or set `permissions.defaultMode` to `auto` in your user settings, or in managed settings for your whole organization. See [Start in a different permission mode](#start-in-a-different-mode)
 * **Remove auto mode**: set [`permissions.disableAutoMode`](https://code.claude.com/docs/en/settings-reference#disableautomode) to `"disable"` in managed settings
 * **Block `bypassPermissions`**: set [`permissions.disableBypassPermissionsMode`](https://code.claude.com/docs/en/settings-reference#permissions-disablebypasspermissionsmode) to `"disable"` in managed settings
-
-Requires Claude Code v2.1.285 or later, the [minimum version for the HIPAA configuration](https://code.claude.com/docs/en/hipaa-setup.md#update-claude-code-and-claude-desktop).
 
 ## Switch permission modes
 
@@ -433,13 +431,13 @@ From your shell, start an auto mode session with [`--debug-file`](https://code.c
 claude --permission-mode auto --debug-file classifier-debug.log
 ```
 
-Have Claude run a shell command that isn't read-only, then search the log for `classifier_request_started`:
+To give the classifier a command to review, have Claude run `curl https://example.com`, then search the log for `classifier_request_started`:
 
 * **Your model after `model=`**: the variable took effect
 * **A different model after `model=`**: search the log for `ignoring CLAUDE_CODE_AUTO_MODE_MODEL`, which gives the reason and any step to take
 * **No such line**: read `Auto mode server` in `/status` at the Claude Code prompt:
   * **`Enabled`**: the [server](#server-side-classifier-review) is set to review this session's calls.
-  * **`Disabled`**: make sure the [permission mode](#switch-permission-modes) is auto, then have Claude run another command that isn't read-only.
+  * **`Disabled`**: this check hasn't tested your model yet. Make sure the [permission mode](#switch-permission-modes) is auto and no [permission rule](https://code.claude.com/docs/en/permissions.md#manage-permissions) matches `curl`, then run the check again with the [sandbox](https://code.claude.com/docs/en/sandboxing.md) off.
 
 ### What the classifier blocks by default
 

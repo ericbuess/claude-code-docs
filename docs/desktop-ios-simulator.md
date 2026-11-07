@@ -63,7 +63,7 @@ Build the app and run it in the simulator to check the onboarding flow.
 
 When the app launches in a simulator, the iOS Simulator pane opens next to the conversation. The first time Claude uses a device, the desktop app asks you to allow it; see [Grant Claude access to a device](#grant-claude-access-to-a-device). Claude installs the app, taps through it, and reads the screen to verify its own changes while you watch.
 
-The simulator pane opens whenever Claude launches the app in a simulator, at any point in the session. When your request is about seeing the app, for example "does the new screen look right?", Claude starts a simulator before it begins the work. After Claude fixes a bug or changes a screen, ask it to verify the change: relaunching the app reopens the pane if it isn't open.
+When your request is about seeing the app, for example "does the new screen look right?", Claude starts a simulator before it begins the work. After Claude fixes a bug or changes a screen, ask it to verify the change.
 
 The simulator pane shows whichever device the app actually launched in. To test on a specific device, name it in your request, for example "run it on the iPhone SE simulator", and Claude targets that device when it builds and launches.
 
@@ -85,6 +85,13 @@ The simulator pane is interactive, not only a viewer. While Claude works, or bet
 If the pane shows a **Display** menu, use it to tune the video stream from the simulator. Lower **Frame rate** or **Resolution** if the pane strains your Mac. Both settings change how the pane displays the device, not how the app runs.
 
 You and Claude drive the same device, so your taps change the app state Claude sees. To have Claude check a specific screen, tap through to it, then ask. While Claude is driving the device, the pane shows a **Claude is using this device** badge above the screen; hold off tapping until the badge clears, so the result reflects the app rather than your input.
+
+### Minimize or close the simulator pane
+
+You can minimize or close the simulator pane, and Claude can still use the device either way.
+
+* If you minimize the pane, the device stays in view at a small size. To minimize the pane or expand it again, see [Minimize a pane](https://code.claude.com/docs/en/desktop.md#minimize-a-pane).
+* If you close the full-size or minimized pane, the device stays attached and running. To show the device again, click **iOS Simulator** in the session's title bar.
 
 ## How sessions manage devices
 
