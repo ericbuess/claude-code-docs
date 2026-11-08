@@ -116,7 +116,7 @@ In Enterprise deployments that route Desktop to Google Cloud's Agent Platform, a
 
 Claude can start a dev server and open it in the Browser pane to verify its changes. This works for frontend web apps as well as backend servers: Claude can test API endpoints, view server logs, and iterate on issues it finds. In most cases, Claude starts the server automatically after editing project files. You can also ask Claude to preview at any time. By default, Claude [auto-verifies](#auto-verify-changes) changes after every edit.
 
-In a local session, click an HTML, PDF, or video path in the chat to open it in the Browser pane.
+In a local session, click an HTML, PDF, or video path in the chat to open it in the Browser pane. In an SSH or WSL session, you can [preview an HTML file](#preview-html-files-in-ssh-and-wsl-sessions).
 
 > [!NOTE]
 >
@@ -136,6 +136,33 @@ In an SSH session, you lose the pane's cookies when you quit Desktop. You can't 
 Claude creates the initial server configuration based on your project. If your app uses a custom dev command, edit `.claude/launch.json` to match your setup. See [Configure preview servers](#configure-preview-servers) for the full reference.
 
 To clear the Browser's saved data, select **Clear browsing data** in the Browser pane's **⋮** menu. To turn the Browser off entirely, turn off **Browser tools** in **Settings > Code** or **Settings > Claude Code**.
+
+#### Preview HTML files in SSH and WSL sessions
+
+In an [SSH](#ssh-sessions) or [WSL](https://code.claude.com/docs/en/desktop-wsl.md) session, click an HTML file's path in the chat to preview the file in the Browser pane. If charts or tables in the preview stay empty, the notice above it tells you why:
+
+* **`This preview doesn't load anything from the web`**: scripts written in the file run, but a chart that loads its library from the web stays empty. If the notice has an **Export** button, select it and open the saved file in your browser, where content from the web loads.
+* **`This preview doesn't run scripts or load anything from the web`**: before Claude Desktop v4.23118.0, these previews didn't run scripts, so update Desktop and open the file again. If Desktop is up to date and the notice stays, restart Desktop. If it still stays, scripts may be [off for your organization](#turn-off-scripts-in-ssh-and-wsl-previews-for-your-organization), so ask your administrator.
+
+If you closed the notice, open the file again to bring it back.
+
+#### Turn off scripts in SSH and WSL previews for your organization
+
+To keep [HTML previews in SSH and WSL sessions](#preview-html-files-in-ssh-and-wsl-sessions) from running scripts, set the [`disableBrowserExternalNavigation` managed setting](#managed-settings) to `true`. With this setting, users also can't [browse external sites](#restrict-external-browsing-for-your-organization) in the Browser pane.
+
+Set it in your [server-managed settings](https://code.claude.com/docs/en/server-managed-settings.md), or in a [Claude Code MDM policy or managed settings file](https://code.claude.com/docs/en/managed-settings.md#where-each-mechanism-stores-the-policy) on the computer that runs Desktop. Desktop doesn't read it from the remote machine or the WSL distribution. With a [third-party provider](https://code.claude.com/docs/en/third-party-integrations.md), use the MDM policy or the file.
+
+> [!WARNING]
+>
+> If the computer that runs Desktop receives no Claude Code managed settings yet, also set [`parentSettingsBehavior`](https://code.claude.com/docs/en/settings-reference#parentsettingsbehavior) to `"merge"` in the managed settings that you create. Desktop passes its own policy to Claude Code, and without `"merge"`, Claude Code [ignores that policy](https://code.claude.com/docs/en/managed-settings.md#let-an-embedding-host-add-policy) once the computer has managed settings. On Windows, if you create a managed settings file, users also lose WSL sessions until you [allow them](https://code.claude.com/docs/en/admin-setup.md#wsl-sessions-in-claude-code-desktop).
+>
+> If the computer already receives Claude Code managed settings, add the setting to those, and leave `parentSettingsBehavior` as it is there. On a computer with more than one MDM policy or managed settings file, use the [highest-ranked one](https://code.claude.com/docs/en/managed-settings.md#how-claude-code-combines-managed-sources).
+
+Then have users restart Desktop to make sure that the setting applies, and tell them what to expect:
+
+* **Files they open**: the preview doesn't run scripts, so charts and tables that scripts draw stay empty
+* **Previews that are running scripts**: if Desktop picks up the setting before the restart, they close. Users see `This preview closed because scripts are turned off for previews. Open the file again to view it without scripts.`
+* **Files they export**: if a user [exports a file](#preview-html-files-in-ssh-and-wsl-sessions) and opens it in a browser, its scripts run there, with or without this setting
 
 ### Browse external sites
 
@@ -162,7 +189,7 @@ The Browser pane uses a clean browser profile, separate from your personal brows
 
 The Browser follows the same [site allowlist and blocklist controls](https://support.claude.com/en/articles/13065128-claude-in-chrome-admin-controls) as the Claude in Chrome extension. If your organization already configured those lists for the extension, the Browser respects them automatically. Administrators can also turn off Claude's tools on external pages with the [`browserExternalPageTools` managed setting](#managed-settings). With tools disabled, users can still visit external sites; Claude's tools can't read or act on them.
 
-To turn off external browsing entirely, set the [`disableBrowserExternalNavigation` managed setting](#managed-settings) to `true`. This blocks all external navigation in the Browser, including sites on your organization's allowlist; localhost dev servers and file previews keep working. Use `browserExternalPageTools` to let users keep browsing external sites without Claude's tools, and `disableBrowserExternalNavigation` to block external sites for both users and Claude.
+To turn off external browsing entirely, set the [`disableBrowserExternalNavigation` managed setting](#managed-settings) to `true`. This blocks all external navigation in the Browser, including sites on your organization's allowlist. Localhost dev servers and file previews keep working, but [HTML previews in SSH and WSL sessions](#turn-off-scripts-in-ssh-and-wsl-previews-for-your-organization) don't run scripts. Use `browserExternalPageTools` to let users keep browsing external sites without Claude's tools, and `disableBrowserExternalNavigation` to block external sites for both users and Claude.
 
 ### Review changes with diff view
 
@@ -2009,7 +2036,7 @@ Managed settings override project and user settings and apply to Claude Code ses
 | `autoMode` | customize what the auto mode classifier trusts and blocks across your organization. See [Configure auto mode](https://code.claude.com/docs/en/auto-mode-config.md). |
 | `browserExternalPageTools` | set to `"disabled"` to prevent Claude from using tools to read or act on external pages in the [Browser pane](#browse-external-sites). Users can still navigate to external sites themselves, and local dev server previews are unaffected. |
 | `disableMobileSimulatorTools` | set to `true` to block Claude's tools for controlling and capturing devices in the [iOS Simulator pane](https://code.claude.com/docs/en/desktop-ios-simulator.md#turn-off-simulator-access). The pane stays usable for the user's own taps; only Claude's access is removed. The value must be the JSON boolean `true`; the string `"true"` is ignored. |
-| `disableBrowserExternalNavigation` | set to `true` to turn off external browsing in the [Browser pane](#browse-external-sites) entirely. Neither users nor Claude can navigate to external sites, and localhost dev server previews are unaffected. The value must be the JSON boolean `true`; the string `"true"` is ignored. |
+| `disableBrowserExternalNavigation` | set to `true` to turn off external browsing in the [Browser pane](#browse-external-sites) entirely. Neither users nor Claude can navigate to external sites, and localhost dev server previews are unaffected. HTML previews in SSH and WSL sessions [don't run scripts](#turn-off-scripts-in-ssh-and-wsl-previews-for-your-organization). The value must be the JSON boolean `true`; the string `"true"` is ignored. |
 | `sshConfigs` | pre-configure [SSH connections](#pre-configure-ssh-connections-for-your-team) that appear in the environment selector. Users can't delete managed connections or edit anything but their own **Worktree folder**. |
 | `sshHostCommands` | give users [SSH connections whose host comes from a command](#distribute-commands-to-your-team), alongside their own. Desktop reads it from the managed settings file or MDM policy on the computer, and ignores it in [server-managed settings](https://code.claude.com/docs/en/server-managed-settings.md). Requires Claude Desktop v3.6556.0 or later on macOS or Linux, or v4.16336.0 or later on Windows, signed in with a Claude account. On Windows, Desktop also has to [connect through the OpenSSH client](#use-your-ssh-configuration). |
 | `sshHostAllowlist` | restrict [SSH sessions](#restrict-which-ssh-hosts-users-can-connect-to) to hosts whose resolved hostname matches one of these patterns. Read from managed settings only. |
