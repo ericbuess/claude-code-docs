@@ -197,6 +197,8 @@ The pane and the band are empty until a mod fills them. Select a tab to see what
 >
 > To draw in the band, filter on `{ component: 'AbovePrompt' }`.
 
+A mod can also [place a row of its own in the transcript](#place-a-row-in-the-transcript).
+
 ### Change what Claude Code already draws
 
 Claude Code draws most of its interface itself: messages, tool call rows, the spinner, and more. Each of those parts is a render site too, so a mod can restyle or replace it. To change one, filter your `ui.render` hook on its name from this table:
@@ -348,6 +350,91 @@ To make a mod work in the panel as well as the terminal, account for these diffe
 * **The question dialog**: at `AskUserQuestion`, the panel keeps its own question card and draws your elements above it. Props you pass to `next` don't change the card.
 * **Prompt suggestions**: `$.prompt.suggest` resolves with `isShown: false` and shows nothing, because the panel keeps the prompt box's dim suggestion text for Claude's own suggestions.
 * **Text limits**: the panel cuts a status line at 200 characters or two rows, and a toast at 500 characters.
+
+### Place a row in the transcript
+
+A row is a line your mod adds to the transcript in the terminal, after the latest message. It stays at that spot as the conversation goes on, and Claude doesn't see it. `$.ui.place` requires Claude Code v2.1.314 or later.
+
+**1. Place the row**
+
+Call [`$.ui.place`](https://code.claude.com/docs/en/plugins/mods/reference#mods-api-methods) with an `id`. The `id` is a name you make up for the row, such as `build-status`. It can be 1 to 64 letters, digits, `_`, or `-`, and each row your mod has in the transcript needs its own.
+
+**2. Draw the row**
+
+Draw the row at the [`Placed`](https://code.claude.com/docs/en/plugins/mods/reference#render-sites) render site.
+
+This example adds a `/build-status` command. When the user runs the command, the mod adds a row that shows `Build: passing`. The text is fixed to keep the example short, so a real mod would draw its own result:
+
+```javascript theme={null}
+export function register(on) {
+  on('session.start', async ($, e, next) => {
+    await $.command.register({ name: 'build-status', description: 'Show the build status' })
+    return next(e)
+  })
+
+  on('command.run', { command: 'build-status' }, async ($) => {
+    const placed = await $.ui.place({ id: 'build-status' })
+    // Where nothing draws the row, reply with text instead
+    return placed.isPlaced ? {} : { text: 'Build: passing' }
+  })
+
+  on('ui.render', { component: 'Placed' }, async ($, e, next) => {
+    // This hook runs for every mod's rows, and another mod can use the same id
+    if (e.props.plugin !== $.plugin.name || e.props.id !== 'build-status') return next(e)
+    const { Text } = $.ui.resolve(e)
+    return Text({ children: ['Build: passing'] })
+  })
+}
+```
+
+To try the example, put this code in a [mod](https://code.claude.com/docs/en/plugins/mods/create.md). In a terminal session, run `/build-status` at the Claude Code prompt. `Build: passing` appears as a row at the end of the transcript.
+
+The call doesn't always show a row, and a row can go away later, so handle these cases in your mod:
+
+* **The result**: `{ isPlaced: true, requestId }` when the terminal draws the row. Otherwise `isPlaced` is `false` and `reason` says why, as in `no attached surface draws placed rows yet`. One reason is the [limit on rows](https://code.claude.com/docs/en/plugins/mods/reference.md#limits) a mod can have at one time.
+* **A second call with the same `id`**: while the first row is still in the transcript, the call adds no row and resolves with that row's `requestId`. To change what the row shows, [redraw the row](#redraw-when-something-changes).
+* **When the row goes away**: when the conversation ends, when the user rewinds past the row, or, outside [fullscreen rendering](https://code.claude.com/docs/en/fullscreen.md), when the conversation is compacted. `--resume` doesn't bring the row back. To show the row again, call `$.ui.place` again.
+
+### Put a backdrop behind the conversation
+
+> [!NOTE]
+>
+> `$.theme.set` and `$.theme.clear` replace `$.ui.backdrop`, which Claude Code v2.1.319 removed. Change `$.ui.backdrop({ id: 'your-backdrop' })` to `$.theme.set({ backdrop: { id: 'your-backdrop' } })`, and `$.ui.backdrop(undefined)` to `$.theme.clear()`, which removes any mod's backdrop.
+
+To put a backdrop behind the conversation in the Desktop app or the mobile app, call [`$.theme.set`](https://code.claude.com/docs/en/plugins/mods/reference#mods-api-methods) with a `backdrop`, then draw the backdrop at the [`Backdrop`](https://code.claude.com/docs/en/plugins/mods/reference#render-sites) render site. To take the backdrop off, call `$.theme.clear()`. The terminal draws no backdrop. `$.theme.set` and `$.theme.clear` require Claude Code v2.1.319 or later.
+
+This mod sets a backdrop when the session starts, draws the backdrop, and adds a `/plain` command that takes the backdrop off:
+
+```javascript theme={null}
+export function register(on) {
+  // Neither a reload of this mod nor --resume keeps the backdrop, so set it here
+  on('session.start', async ($, e, next) => {
+    await $.theme.set({ backdrop: { id: 'night-sky', colorScheme: 'dark' } })
+    await $.command.register({ name: 'plain', description: 'Take the backdrop off' })
+    return next(e)
+  })
+
+  on('ui.render', { component: 'Backdrop' }, async ($, e, next) => {
+    // This hook runs for every mod's backdrop, and another mod can use the same id
+    if (e.props.plugin !== $.plugin.name || e.props.id !== 'night-sky') return next(e)
+    const { Box, Text } = $.ui.resolve(e)
+    return Box({ backgroundColor: 'blue', children: [Text({ children: ['Night sky'] })] })
+  })
+
+  on('command.run', { command: 'plain' }, async ($) => {
+    const cleared = await $.theme.clear()
+    return { text: cleared.reason }
+  })
+}
+```
+
+To try the example, put this code in a [mod](https://code.claude.com/docs/en/plugins/mods/create.md) and start a session in the Desktop app or the mobile app. To take the backdrop off, run `/plain` at the Claude Code prompt. The transcript shows `the theme is cleared` after the mod's name, as in `night-sky: the theme is cleared` for a mod named `night-sky`.
+
+Check what `backdrop` takes, what the call's result tells you, and what other mods can change:
+
+* **The `backdrop` fields**: `id`, a [name](https://code.claude.com/docs/en/plugins/mods/reference.md#limits) you choose, is required, and the other fields are optional. `colorScheme` is `'light'` or `'dark'` and says whether your drawing is light or dark. For `glass`, see [the types for your build](https://code.claude.com/docs/en/plugins/mods/create.md#get-the-types-for-your-build).
+* **Whether the backdrop is drawn**: `$.theme.set` resolves with `isDrawn: true` when a Desktop or mobile app connected to the session says it draws backdrops. Otherwise `isDrawn` is `false` and `reason` says why.
+* **One backdrop for each session**: a `$.theme.set` call replaces the session's backdrop and `$.theme.clear()` removes that backdrop, whichever mod set it. Call `$.theme.clear()` only when the user asks for it.
 
 ## Build a tree from elements
 

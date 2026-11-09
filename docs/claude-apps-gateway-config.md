@@ -28,6 +28,7 @@ Five sections are [required](#required-sections). Every other section is [option
 
 **Optional sections:**
 
+* [`login_notice`](#login_notice): a notice developers see when they sign in
 * [`admin`](#admin): Admin API auth and retention for spend limits
 * [`enforcement`](#enforcement): spend-limit fail-open or fail-closed behavior
 * [`pricing`](#pricing): contracted rates and a multiplier for the spend meter and for the cost figures developers see
@@ -847,6 +848,18 @@ If your IdP's userinfo endpoint returns the groups claim and `oidc.google_groups
 
 ## Optional sections
 
+### `login_notice`
+
+To show developers a notice when they sign in, set the top-level `login_notice` key to the notice text, up to 500 characters. This example says who the gateway is for and where to ask for access:
+
+```yaml theme={null}
+login_notice: This gateway is for Example Corp staff. For access questions, email it-help@example.com.
+```
+
+Developers see the text under `Notice from <gateway hostname>` on the gateway's verification page in the browser and on the interactive sign-in screen in the terminal. Line breaks in the text become spaces. The notice appears before sign-in, so anyone who can reach the gateway can read it.
+
+Requires Claude Code v2.1.319 or later on the gateway server, and also on the developer's machine for the terminal screen. An earlier gateway refuses to start when it finds the key. Upgrade every replica before you add the key, and remove the key before you roll back.
+
 ### `admin`
 
 Optional. Enables `/v1/organizations/spend_limits`, which mirrors Anthropic's public Admin API, and per-developer spend enforcement on `/v1/messages`. See [Spend limits](https://code.claude.com/docs/en/claude-apps-gateway-spend-limits.md) for how caps are set and enforced; this section covers the `gateway.yaml` keys that turn the feature on and tune it.
@@ -865,6 +878,9 @@ admin:
   # IdP groups granted full admin via the normal gateway JWT (no API key).
   admin_groups: [platform-finops]
   blocked_message: request an increase at https://go.example.com/claude-limits
+  # Try eng-platform's pooled budget first, then eng-all's, then any other group's.
+  pooled_conflict_rule: priority_list
+  pooled_priority_order: [eng-platform, eng-all]
 ```
 
 | Field | Required | Description |
@@ -877,6 +893,21 @@ admin:
 | `spend_retention_months` | No | Default `13`. `spend` counter rows older than this are swept. The default keeps a full year plus the current partial month for year-over-year reporting. |
 | `identity_retention_days` | No | Default `90`. Last-seen TTL for `principal_emails` rows, which hold each developer's email, display name, and groups (PII). Deliberately shorter than spend retention so a deprovisioned identity ages out while its anonymous spend counters remain. |
 | `group_limit_mode` | No | `min` (default) or `max`. When a developer is in several groups with caps, `min` enforces the most restrictive and `max` the least. Used by both enforcement and `/effective`. |
+| `pooled_conflict_rule` | No | `default_order` (default) or `priority_list`. The order the gateway tries a developer's pooled budgets in. See [Pooled budget order](#pooled-budget-order). Requires v2.1.319 or later. |
+| `pooled_priority_order` | With `priority_list` | Up to 50 group names, each listed once and spelled as your IdP sends it. The groups whose pooled budgets the gateway tries first. See [Pooled budget order](#pooled-budget-order). Requires v2.1.319 or later. |
+
+#### Pooled budget order
+
+A pooled budget is one monthly limit that a whole group spends against. To set one, add `pooled_budget` to the [request that sets the group's monthly cap](https://code.claude.com/docs/en/claude-apps-gateway-spend-limits.md#set-a-cap), as in `"pooled_budget": {"amount": "500000"}` for \$5,000. The request also takes the group's `scope`, `"period": "monthly"`, and `amount`, which stays each member's own cap.
+
+For a developer in several such groups, each request counts against the first budget whose spend is below its limit, and is refused when every budget is used up. `pooled_conflict_rule` sets the order the gateway tries the budgets in:
+
+* **`default_order`**: the largest limit first, and equal limits in ascending group-name order
+* **`priority_list`**: the budgets of the groups in `pooled_priority_order`, in list order, then the other groups' budgets by group name
+
+If you list groups without `pooled_conflict_rule: priority_list`, the gateway ignores the list and logs a warning at boot.
+
+A gateway server earlier than v2.1.319 refuses to start when it finds `pooled_conflict_rule` or `pooled_priority_order`. Upgrade every replica before you add either key, and remove both keys before you roll back.
 
 ### `enforcement`
 
@@ -1675,6 +1706,8 @@ This full reference config exercises every core section; the [HTTP tuning blocks
 # environment variable (debug | info | warn | error; default info). debug
 # also logs the claim names in each id_token, for groups_claim diagnosis.
 # It does not affect audit events, which are always emitted.
+# Set CLAUDE_GATEWAY_LOG_FORMAT=json to write operational log lines as JSON
+# objects with severity, time, and message.
 
 listen:
   host: 0.0.0.0
@@ -1715,6 +1748,9 @@ store:
   # connect_timeout_seconds: 5
   # readiness_grace_seconds: 300   # keep passing the readiness check through a database failover
 
+# Notice shown at sign-in. Anyone who can reach the gateway can read it.
+# login_notice: This gateway is for Example Corp staff. For access questions, email it-help@example.com.
+
 # Enables /v1/organizations/spend_limits (mirrors the Anthropic Admin API)
 # and per-developer spend enforcement on /v1/messages. Omit to disable.
 # Caps themselves are set via the admin API, not here.
@@ -1729,6 +1765,8 @@ store:
 #   # spend_retention_months: 13
 #   # identity_retention_days: 90
 #   # group_limit_mode: min
+#   # pooled_conflict_rule: priority_list
+#   # pooled_priority_order: [eng-platform, eng-all]
 
 # enforcement:
 #   fail_closed_on_error: false

@@ -433,14 +433,14 @@ If you'd rather see every edit and command before it happens, `Shift+Tab` in the
 
 ### Change the model and effort
 
-[Effort](https://code.claude.com/docs/en/model-config.md#adjust-effort-level) is the main control for how long Claude thinks, and it replaces most of what people used to do with prompt wording. Claude Opus 5.5, Sonnet 5.5, and Haiku 5.5 default to `medium`, which is plenty for everyday feature work with a clear scope. The times you'd move it, with `/effort` in the session:
+[Effort](https://code.claude.com/docs/en/model-config.md#adjust-effort-level) is the main control for how long Claude thinks, and it replaces most of what people used to do with prompt wording. Claude Fable 5.2, Opus 5.5, Sonnet 5.5, and Haiku 5.5 default to `medium`, which is plenty for everyday feature work with a clear scope. The times you'd move it, with `/effort` in the session:
 
 * Raise it with `/effort high` or `/effort xhigh` when getting it right depends on cases that are quick to overlook. Think of a bug in code you didn't write, a flaky test, or a schema change where Claude has to find every reader of the old shape. Claude then checks more edge cases and verifies more of its work before answering, which is where the extra time and tokens go.
 * Lower it with `/effort low` when you're going back and forth quickly and reviewing each result anyway: brainstorming, a first sketch, a rename across a few files. Claude gets you a starting point sooner, and since you're steering every step, the extra deliberation wouldn't have changed much besides the wait.
 * Save `max` for a hard problem you want Claude to work through without you, like hunting for a security vulnerability. On ordinary tasks it tends to overthink, so you pay more for an answer that may be no better than `high` would have given you.
 * When only the next message needs it, like one tricky question in the middle of otherwise routine work, put [`ultrathink`](https://code.claude.com/docs/en/model-config#use-ultrathink-for-one-off-deep-reasoning) in that prompt instead of changing the setting.
 
-For the model itself, the default Opus 5.5 handles most coding well and Sonnet costs less on routine work. [Claude Fable 5.1](https://code.claude.com/docs/en/model-config.md#work-with-fable) is there when you select it explicitly with `/model fable`, and Haiku is a good fit for subagents doing simple jobs. [Model configuration](https://code.claude.com/docs/en/model-config.md) has the full list per plan and provider.
+For the model itself, the default Opus 5.5 handles most coding well and Sonnet costs less on routine work. To use [Claude Fable 5.2](https://code.claude.com/docs/en/model-config.md#work-with-fable), run `/model fable`. Haiku is a good fit for subagents doing simple jobs. [Model configuration](https://code.claude.com/docs/en/model-config.md) has the full list per plan and provider.
 
 ### Know what subagents cost
 

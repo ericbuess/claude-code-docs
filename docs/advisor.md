@@ -98,10 +98,11 @@ Claude Code ranks models by capability for the advisor role, and an advisor must
 | Opus 4.7 or Opus 4.8 | Fable, Opus 4.7 or later, Sonnet 5.5 |
 | Sonnet 5.5 | Fable, Opus 5 or later, Sonnet 5.5 |
 | Opus 5 or Opus 5.5 | Fable, Opus 5 or later |
-| Fable 5 | Fable 5.1 or Fable 5 |
-| Fable 5.1 | Fable 5.1 |
+| Fable 5 | Fable 5.2, Fable 5.1, or Fable 5 |
+| Fable 5.1 | Fable 5.2 or Fable 5.1 |
+| Fable 5.2 | Fable 5.2 |
 
-Fable 5.1 requires Claude Code v2.1.257 or later. Fable models require [Fable access](https://code.claude.com/docs/en/model-config.md#work-with-fable). Sonnet 5.5 as the advisor for an Opus 4.7 or Opus 4.8 main model requires Claude Code v2.1.287 or later. Haiku 5.5 as the main model or as the advisor requires Claude Code v2.1.293 or later.
+Fable 5.2 requires Claude Code v2.1.321 or later, and Fable 5.1 requires v2.1.257 or later. Fable models require [Fable access](https://code.claude.com/docs/en/model-config.md#work-with-fable). Sonnet 5.5 as the advisor for an Opus 4.7 or Opus 4.8 main model requires Claude Code v2.1.287 or later. Haiku 5.5 as the main model or as the advisor requires Claude Code v2.1.293 or later.
 
 Set the advisor as `fable`, `opus`, or `sonnet`. These aliases resolve to Claude Code's [built-in default version](https://code.claude.com/docs/en/model-config.md#model-aliases) for each model family, which advances with new Claude Code releases. You can also pass a full model ID such as `claude-opus-5-5` or `claude-haiku-5-5`. Haiku 4.5 can call the advisor but can't act as one.
 

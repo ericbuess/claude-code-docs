@@ -147,6 +147,7 @@ Every key below links to its entry. Scope lists the [files](https://code.claude.
 | [`permissions.blockWritesOutsideWorkingDirectories`](#permissions-blockwritesoutsideworkingdirectories) | Make the `Write`, `Edit`, and `NotebookEdit` tools refuse paths outside the [working directories](https://code.claude.com/docs/en/permissions.md#working-directories) in every permission mode, apart from [some of Claude Code's own files](#what-the-write-block-refuses-and-what-stays-writable) | Permission settings | Any file |
 | [`permissions.defaultMode`](#permissions-defaultmode) | Set the default [permission mode](https://code.claude.com/docs/en/permission-modes.md#which-mode-a-session-starts-in) for new sessions | Permission settings | Any file |
 | [`permissions.deny`](#permissions-deny) | Block listed [tool uses](https://code.claude.com/docs/en/permissions.md#permission-rule-syntax), including reads of files that hold secrets | Permission settings | Any file |
+| [`permissions.denyInsteadOfPrompting`](#permissions-denyinsteadofprompting) | Deny tool calls that would wait on a [permission prompt](https://code.claude.com/docs/en/permissions.md#permission-system), so a session nobody is watching keeps working | Permission settings | User or managed |
 | [`permissions.disableBypassPermissionsMode`](#permissions-disablebypasspermissionsmode) | Prevent anyone from entering [bypassPermissions mode](https://code.claude.com/docs/en/permission-modes.md#skip-all-checks-with-bypasspermissions-mode) | Permission settings | Any file |
 | [`plansDirectory`](#plansdirectory) | Choose where [plan mode](https://code.claude.com/docs/en/permission-modes.md#analyze-before-you-edit-with-plan-mode) writes plan files | Memory and context | Any file |
 | [`pluginConfigs`](#pluginconfigs) | Store the answers you gave a [plugin](https://code.claude.com/docs/en/plugins/overview.md)'s configuration dialog | Plugins and skills | User or managed |
@@ -448,11 +449,11 @@ Unlike most array settings, this key doesn't merge across settings files: the hi
 
 Turn [fast mode](https://code.claude.com/docs/en/fast-mode.md) on for sessions where it's available, for interactive work such as rapid iteration or live debugging where you want speed at a higher cost per token. You don't usually edit this key yourself. Running `/fast` writes `fastMode: true` to `~/.claude/settings.json`, and running it again to turn fast mode off removes the key.
 
-Only Opus 5.5, Opus 5, and Opus 4.8 support fast mode. Running `/fast` from another model switches you to Opus, and switching to an unsupported model turns fast mode off. See [Switch models while fast mode is on](https://code.claude.com/docs/en/fast-mode.md#switch-models-while-fast-mode-is-on).
+Only Fable 5.2, Opus 5.5, Opus 5, and Opus 4.8 support fast mode. Running `/fast` from another model switches you to Opus, and switching to an unsupported model turns fast mode off. See [Switch models while fast mode is on](https://code.claude.com/docs/en/fast-mode.md#switch-models-while-fast-mode-is-on).
 
 * **Scope**: [`Any file`](#scopes)
 * **Type**: Boolean
-  * `true`: Claude Code turns fast mode on for sessions where it's available
+  * `true`: Claude Code turns fast mode on for sessions where it's available. On Fable 5.2, you must also [run `/fast` while using Fable 5.2](https://code.claude.com/docs/en/fast-mode#switch-models-while-fast-mode-is-on)
   * `false`: fast mode stays off
 * **Default**: unset, so fast mode is off
 * **Per-session overrides**: [`CLAUDE_CODE_DISABLE_FAST_MODE`](https://code.claude.com/docs/en/env-vars) turns fast mode off for one session, and this key can't turn it back on
@@ -465,14 +466,14 @@ Only Opus 5.5, Opus 5, and Opus 4.8 support fast mode. Running `/fast` from anot
 
 ### `fastModePerSessionOptIn`
 
-Normally, running `/fast` saves [`fastMode`](#fastmode) to a person's user settings, so new sessions on a supported model start with fast mode on. Set this key to `true` to stop that: a saved `fastMode: true` no longer turns fast mode on at session start, and each person runs `/fast` in each session they want it. Claude Code leaves `fastMode` in their file, so turning this key off restores the old behavior.
+Normally, running `/fast` saves [`fastMode`](#fastmode) to a person's user settings, so new sessions on a supported model start with fast mode on. On Fable 5.2, that happens only if they [turned it on while using Fable 5.2](https://code.claude.com/docs/en/fast-mode.md#switch-models-while-fast-mode-is-on). To make each person run `/fast` in each session they want it, set this key to `true`. Claude Code leaves `fastMode` in their file, so turning this key off restores the old behavior.
 
 Owners on Team or Enterprise plans can deploy it organization-wide through [server-managed settings](https://code.claude.com/docs/en/server-managed-settings.md). When managed settings set the key, `/fast on` is refused outside interactive terminal sessions and reports that your organization has disabled fast mode. That covers [non-interactive mode](https://code.claude.com/docs/en/headless.md), the [VS Code extension](https://code.claude.com/docs/en/vs-code.md), and [cloud sessions](https://code.claude.com/docs/en/claude-code-on-the-web.md).
 
 * **Scope**: [`Any file`](#scopes)
 * **Type**: Boolean
   * `true`: a saved `fastMode: true` no longer turns fast mode on at session start, so each person runs `/fast` in each session they want it; a `fastMode: true` passed with `--settings` still counts for that session unless managed settings set this key
-  * `false`: a saved `fastMode: true` turns fast mode on at the start of each new session on a supported model
+  * `false`: a saved `fastMode: true` works as [`fastMode`](#fastmode) describes
 * **Default**: `false`
 
 ```json settings.json theme={null}
@@ -904,7 +905,7 @@ Remove [auto mode](https://code.claude.com/docs/en/permission-modes.md#eliminate
 Control which tools Claude can use without asking, which ones prompt, and which ones are blocked. Also set the default [permission mode](https://code.claude.com/docs/en/permission-modes.md) for new sessions. Every `permissions.*` key below nests under this object.
 
 * **Scope**: [`Any file`](#scopes)
-* **Type**: object with `allow`, `ask`, `deny`, `additionalDirectories`, `blockReadsOutsideWorkingDirectories`, `blockWritesOutsideWorkingDirectories`, `defaultMode`, `disableBypassPermissionsMode`, and `disableAutoMode`
+* **Type**: object with `allow`, `ask`, `deny`, `additionalDirectories`, `blockReadsOutsideWorkingDirectories`, `blockWritesOutsideWorkingDirectories`, `defaultMode`, `denyInsteadOfPrompting`, `disableBypassPermissionsMode`, and `disableAutoMode`
 * **Default**: unset
 
 This example approves `npm run` commands without asking, prompts before `git push`, blocks reads of `.env`, and starts sessions in `acceptEdits`:
@@ -1162,6 +1163,66 @@ Set the default [permission mode](https://code.claude.com/docs/en/permission-mod
 ```
 
 Permission rules layer on top of every mode: `deny` rules block in every mode, including `bypassPermissions`. See [Permission modes](https://code.claude.com/docs/en/permission-modes.md). In cloud sessions, Claude Code honors only `acceptEdits`, `plan`, `default`, and `auto` from this key. For conversations the VS Code extension starts, see [which setting the extension reads for the starting permission mode](https://code.claude.com/docs/en/permission-modes.md#switch-permission-modes).
+
+### `permissions.denyInsteadOfPrompting`
+
+Set this to `true` to keep a session running when nobody is there to answer a permission prompt. Claude Code denies a tool call that would otherwise wait on a prompt, and the turn continues. Requires Claude Code v2.1.319 or later.
+
+A call goes ahead if an allow rule, your [permission mode](https://code.claude.com/docs/en/permission-modes.md), or auto mode's classifier approves it. To allow most calls that would otherwise prompt, answer from a [`PermissionRequest` hook](https://code.claude.com/docs/en/hooks#permissionrequest).
+
+* **Scope**: [`User or managed`](#scopes), and `--settings`. A repository can't set it for you.
+* **Type**: Boolean
+  * `true`: Claude Code denies calls that would otherwise prompt
+  * `false`: the same as unset; calls are still denied if another of these sources sets `true`
+* **Default**: unset, so a call that needs approval prompts you
+
+In `~/.claude/settings.json`, this example starts sessions in auto mode and denies whatever would still fall back to a prompt:
+
+```json settings.json theme={null}
+{
+  "permissions": {
+    "defaultMode": "auto",
+    "denyInsteadOfPrompting": true
+  }
+}
+```
+
+The key applies in `-p` runs, interactive terminal sessions, the [VS Code extension](https://code.claude.com/docs/en/vs-code.md), local sessions in the [Desktop app](https://code.claude.com/docs/en/desktop.md), [subagents](https://code.claude.com/docs/en/sub-agents.md), and [agent teams](https://code.claude.com/docs/en/agent-teams.md). To deny what would prompt in a single [non-interactive](https://code.claude.com/docs/en/headless.md) run instead, pass [`--permission-prompts none`](https://code.claude.com/docs/en/headless#turn-off-permission-prompts-in-unattended-runs) with `-p`.
+
+#### What else `denyInsteadOfPrompting` stops
+
+With the setting on, Claude Code also stops these requests for an answer:
+
+* **Question and plan tools**: Claude Code leaves out [`AskUserQuestion`](https://code.claude.com/docs/en/tools-reference#askuserquestion-tool-behavior), `EnterPlanMode`, and `ExitPlanMode`, so a session in plan mode can't leave it on its own. A teammate in an agent team keeps `EnterPlanMode` and `ExitPlanMode`
+* **MCP elicitation**: Claude Code cancels an [elicitation request](https://code.claude.com/docs/en/mcp.md#respond-to-mcp-elicitation-requests) unless an [`Elicitation` hook](https://code.claude.com/docs/en/hooks#elicitation) answers it
+* **Permission hosts**: Claude Code doesn't ask your [`canUseTool` callback](https://code.claude.com/docs/en/agent-sdk/user-input) or [`--permission-prompt-tool`](https://code.claude.com/docs/en/cli-reference#cli-flags). To approve calls from code, answer from a `PermissionRequest` hook. Some calls are denied before any hook is asked, such as a [critical-path removal](https://code.claude.com/docs/en/permission-modes.md#critical-path-removals-in-each-permission-mode) in `auto` mode that no ask rule covers.
+* **Classifier billing notice**: where the [notice about billed classifier requests](https://code.claude.com/docs/en/auto-mode-classifier-billing.md#actions-denied-in-place-of-the-notice) would open a dialog, Claude Code doesn't show it and denies the actions that need those requests
+
+A session can still wait on the [workspace trust dialog](https://code.claude.com/docs/en/permissions.md#project-allow-rules-and-workspace-trust) and on [project MCP server approval](https://code.claude.com/docs/en/mcp.md#project-server-approvals-and-workspace-trust). Answer both before you leave the session running.
+
+#### Messages from `denyInsteadOfPrompting`
+
+These messages report refused calls. They aren't prompts, so nothing waits for your answer.
+
+The denial Claude reads can open with this text:
+
+```text theme={null}
+Permission for this tool use was denied. It requires approval, and this session has no approval surface
+```
+
+In `stream-json` output, [the runs that emit a `permission_denied` message](https://code.claude.com/docs/en/agent-sdk/typescript#sdkpermissiondeniedmessage) report this `decision_reason`:
+
+```text theme={null}
+no approval surface in this session; permission request denied automatically
+```
+
+In auto mode with the setting on, the turn ends after 20 calls in a row that the classifier blocked or a [safety check refused](https://code.claude.com/docs/en/errors.md#auto-mode-cannot-determine-the-safety-of-an-action), and you see this message:
+
+```text theme={null}
+20 actions were refused and no work went ahead in between, so Claude stopped.
+```
+
+A `-p` run reports that turn as `error_during_execution`.
 
 ### `permissions.disableBypassPermissionsMode`
 

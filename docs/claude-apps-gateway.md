@@ -172,7 +172,7 @@ Boot is fail-closed for the config, the Postgres connection, OIDC discovery, and
 
 A successful boot doesn't validate the inference path, because Amazon Bedrock and Google Cloud's Agent Platform instance credentials resolve on the first request, not at boot.
 
-Watch stderr for the boot sequence. Log lines use the format `[gateway] <timestamp> <level> <message>`, audit events are single-line JSON with an `evt` field, and a startup banner, omitted below, prints between the migration and listening lines. A fresh database prints one `migration N applied` line per schema migration; an already-migrated database prints none. You should see, in order:
+Watch stderr for the boot sequence. By default, log lines use the format `[gateway] <timestamp> <level> <message>`, and a startup banner, omitted below, prints between the migration and listening lines. Audit events are single-line JSON with an `evt` field. A fresh database prints one `migration N applied` line per schema migration; an already-migrated database prints none. You should see, in order:
 
 ```text theme={null}
 {"ts":"2026-06-10T17:03:21.114Z","evt":"config.load","path":"/etc/claude/gateway.yaml","sha256":"…"}

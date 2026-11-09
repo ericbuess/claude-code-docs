@@ -4,15 +4,15 @@
 
 # Speed up responses with fast mode
 
-> Get faster Opus responses in Claude Code by toggling fast mode.
+> Get faster Opus and Fable responses in Claude Code by toggling fast mode with `/fast`.
 
 > [!NOTE]
 >
-> Fast mode for Claude Opus 5.5 is available, and fast mode for Claude Opus 5 and Claude Opus 4.8 is in [research preview](#research-preview).
+> Fast mode for Claude Fable 5.2 and Claude Opus 5.5 is available. Fast mode for Claude Opus 5 and Claude Opus 4.8 is in [research preview](#research-preview).
 
-Fast mode is a high-speed configuration for Claude Opus, making the model up to 2.5x faster at a higher cost per token. Toggle it on with `/fast` when you need speed for interactive work like rapid iteration or live debugging, and toggle it off when cost matters more than latency.
+Fast mode is a high-speed configuration for supported models, making the model up to 2.5x faster at a higher cost per token. Toggle it on with `/fast` when you need speed for interactive work such as rapid iteration or live debugging, and toggle it off when cost matters more than latency.
 
-Fast mode is not a different model. It uses Claude Opus with a different API configuration that prioritizes speed over cost efficiency. You get identical quality and capabilities with faster responses. Fast mode is supported on Opus 5.5, Opus 5, and Opus 4.8. It is not available on Sonnet, Haiku, or other models.
+Fast mode uses the same model with a different API configuration that prioritizes speed over cost efficiency, so quality and capabilities stay the same. Fast mode is supported on Fable 5.2, Opus 5.5, Opus 5, and Opus 4.8. It is not available on Sonnet, Haiku, or other models.
 
 > [!WARNING]
 >
@@ -26,7 +26,7 @@ Opus 4.7 doesn't support fast mode, so switching to it turns fast mode off. Fast
 What to know:
 
 * Use `/fast` to toggle on fast mode in the Claude Code CLI. The [VS Code extension](https://code.claude.com/docs/en/vs-code.md) offers a **Toggle fast mode** command when the selected model supports fast mode. Claude Code saves that toggle to your [`fastMode` setting](#toggle-fast-mode).
-* Fast mode pricing per MTok input/output is \$8/\$40 on Opus 5.5 and \$10/\$50 on Opus 5 and Opus 4.8.
+* Fast mode pricing per MTok input/output is \$16/\$80 on Fable 5.2, \$8/\$40 on Opus 5.5, and \$10/\$50 on Opus 5 and Opus 4.8.
 * Available to Claude Code users on subscription plans (Pro/Max/Ultra/Team/Enterprise) and on Claude Console. Team and Enterprise organizations need an Owner to enable it first, and Console organizations need access provisioned first to use it with Opus 5 or Opus 4.8. [Requirements](#requirements) describes both.
 * For Claude Code users on subscription plans (Pro/Max/Ultra/Team/Enterprise), fast mode is available via usage credits only and not included in the subscription rate limits.
 
@@ -35,9 +35,9 @@ What to know:
 In the CLI, toggle fast mode in either of these ways:
 
 * Run `/fast`, press Space to toggle on or off, then press Enter to confirm
-* On a model that supports fast mode, set `"fastMode": true` in your [user settings file](https://code.claude.com/docs/en/settings.md). If you set it on any other model, you stay on that model with fast mode off.
+* On a model that supports fast mode, set `"fastMode": true` in your [user settings file](https://code.claude.com/docs/en/settings.md). If you set it on any other model, you stay on that model with fast mode off. On Fable 5.2, that setting alone has no effect until you run `/fast` while using Fable 5.2.
 
-By default, fast mode you turn on in an interactive session persists across sessions on a supported model. You can configure fast mode to reset each session. See [require per-session opt-in](#require-per-session-opt-in) for details.
+By default, fast mode you turn on in an interactive session persists across sessions on a supported model. On Fable 5.2, it persists only if you [turned it on while using Fable 5.2](#switch-models-while-fast-mode-is-on). You can configure fast mode to reset each session. See [require per-session opt-in](#require-per-session-opt-in) for details.
 
 Outside a [cloud session](#use-fast-mode-in-cloud-sessions), in [non-interactive mode](https://code.claude.com/docs/en/headless.md) with the `-p` flag, `/fast` works only in a session launched with fast mode in its [`--settings`](https://code.claude.com/docs/en/cli-reference#cli-flags) value, for example `claude -p --settings '{"fastMode": true}'`; the toggle then applies to that session only and isn't saved as your default. The `-p` form requires Claude Code v2.1.205 or later. Elsewhere in non-interactive mode, the command reports that fast mode isn't available.
 
@@ -48,20 +48,22 @@ For the best cost efficiency, enable fast mode at the start of a session rather 
 When you enable fast mode with `/fast`:
 
 * If your current model doesn't support fast mode, Claude Code switches to Opus
+* Fast mode on Fable 5.2 requires Claude Code v2.1.321 or later
 * You'll see a confirmation message: "Fast mode ON"
 * A small `↯` icon appears next to the prompt while fast mode is active
 * Run `/fast` again at any time to check whether fast mode is on or off
 
 Opus 5.5 is the fast mode default in Claude Code v2.1.280 and later. Before v2.1.280, fast mode defaulted to Opus 5 from v2.1.219.
 
-When you disable fast mode with `/fast` again, you remain on Opus. To switch to a different model, use `/model`.
+When you disable fast mode with `/fast` again, you remain on your current model. To switch to a different model, use `/model`.
 
 ### Switch models while fast mode is on
 
-Fast mode follows your model switches in both directions:
+Fast mode follows your model switches:
 
 * **Switch away**: when you switch to a model that doesn't support fast mode, Claude Code turns fast mode off. This includes Opus 4.7; before v2.1.221, fast mode stayed on after a switch to Opus 4.7 and the API rejected the requests.
-* **Switch back**: switching back to a supported Opus model turns fast mode on again when your saved fast mode preference is on, the same preference a new session starts from by default. A model switch never turns fast mode on for a session whose saved preference is off, and with [per-session opt-in](#require-per-session-opt-in) configured, switching back doesn't turn it on either; run `/fast` to re-enable it.
+* **Switch back**: fast mode comes back on a supported Opus model when your saved preference is on. With [per-session opt-in](#require-per-session-opt-in), run `/fast` instead.
+* **Switch to Fable 5.2**: fast mode turns off unless you turned it on while using Fable 5.2. To turn it on, run `/fast` on Fable 5.2. Unless you've set [per-session opt-in](#require-per-session-opt-in), that lasts across sessions until you turn it off or turn it on with another model.
 
 Whenever a model switch turns fast mode on or off, Claude Code shows a `Fast mode ON` or `Fast mode OFF` confirmation, and the `↯` icon appears while fast mode is on. This holds whether you switch with `/model`, with [`/config model=<model>`](https://code.claude.com/docs/en/settings), or from a device connected through [Remote Control](https://code.claude.com/docs/en/remote-control.md).
 
@@ -77,15 +79,16 @@ In the browser at [claude.ai/code](https://claude.ai/code), you can also turn fa
 
 ## Understand the cost tradeoff
 
-Fast mode has higher per-token pricing than standard Opus:
+Fast mode has higher per-token pricing than standard speed:
 
 | Model | Input (MTok) | Output (MTok) |
 | - | - | - |
+| Fable 5.2 | \$16 | \$80 |
 | Opus 5.5 | \$8 | \$40 |
 | Opus 5 | \$10 | \$50 |
 | Opus 4.8 | \$10 | \$50 |
 
-Fast mode pricing is flat across the full 1M token context window. For the standard Opus rate to compare against, see the [Claude pricing reference](https://platform.claude.com/docs/en/about-claude/pricing).
+Fast mode pricing is flat across the full 1M token context window. For the standard rate to compare against, see the [Claude pricing reference](https://platform.claude.com/docs/en/about-claude/pricing).
 
 The first time you enable fast mode in a conversation, you pay the full fast mode uncached input token price for the entire conversation context. The deeper into a conversation you are, the more this costs, so the charge is smallest when you enable fast mode at the start. Fast mode and standard speed keep [separate caches](https://code.claude.com/docs/en/prompt-caching.md#turning-on-fast-mode), so each later switch reads part or all of the conversation uncached again.
 
@@ -137,7 +140,7 @@ Fast mode requires all of the following:
 
 * **Paid Console organization**: Claude Console accounts don't use usage credits, and your organization pays for fast mode per token with the rest of its API usage. On the Console's free Evaluation plan, `/fast` shows "Fast mode unavailable during evaluation. Please purchase credits." To clear it, purchase credits in your [Console billing settings](https://platform.claude.com/settings/billing).
 
-  Fast mode with Opus 5.5 also depends on your organization's [usage tier](https://platform.claude.com/docs/en/api/rate-limits).
+  Fast mode with Fable 5.2 or Opus 5.5 also depends on your organization's [usage tier](https://platform.claude.com/docs/en/api/rate-limits).
 * **Owner enablement for Team and Enterprise**: fast mode is disabled by default for Team and Enterprise organizations. An Owner must explicitly [enable fast mode](#enable-fast-mode-for-your-organization) before users can access it.
 
 > [!NOTE]
@@ -147,7 +150,7 @@ Fast mode requires all of the following:
 > * **Fast mode not enabled**: if fast mode hasn't been enabled for your organization, turning fast mode on with `/fast` shows "Fast mode has been disabled by your organization."
 > * **Fast mode turned off by managed settings**: if your organization deploys [managed settings](https://code.claude.com/docs/en/managed-settings.md) that set [`fastMode: false`](https://code.claude.com/docs/en/settings-reference#fastmode), turning fast mode on with `/fast` shows the same "Fast mode has been disabled by your organization" message.
 > * **Per-session opt-in required**: managed settings that set [`fastModePerSessionOptIn: true`](#require-per-session-opt-in) refuse `/fast on` with the same message everywhere except an interactive terminal session.
-> * **Fast-mode model not allowed**: if your organization's [`availableModels`](https://code.claude.com/docs/en/model-config#restrict-model-selection) allowlist excludes the fast-mode Opus model, turning it on is refused with "is not in your organization's allowed models". In a session already running on an allowed Opus model that supports fast mode, `/fast` instead enables fast mode on your current model without switching models.
+> * **Fast-mode model not allowed**: if your organization's [`availableModels`](https://code.claude.com/docs/en/model-config#restrict-model-selection) allowlist excludes the fast-mode Opus model, turning it on is refused with "is not in your organization's allowed models". In a session already running on an allowed model that supports fast mode, `/fast` instead enables fast mode on your current model without switching models.
 
 ### Enable fast mode for your organization
 
@@ -196,7 +199,9 @@ In both cases, set `CLAUDE_CODE_SKIP_FAST_MODE_ORG_CHECK=1`, which skips the che
 
 ### Require per-session opt-in
 
-By default, fast mode a user turns on in an interactive session persists across sessions on a supported model. To change this, set `fastModePerSessionOptIn` to `true` in any [settings file](https://code.claude.com/docs/en/settings.md#where-settings-live), which causes each session to start with fast mode off and requires users to explicitly enable it with `/fast`. Owners on [Team](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=fast_mode_teams#team-&-enterprise) or [Enterprise](https://anthropic.com/contact-sales?utm_source=claude_code\&utm_medium=docs\&utm_content=fast_mode_enterprise) plans can deploy it organization-wide through [server-managed settings](https://code.claude.com/docs/en/server-managed-settings.md).
+By default, fast mode a user turns on in an interactive session persists across sessions on a supported model. On Fable 5.2, it persists only if the user [turned it on while using Fable 5.2](#switch-models-while-fast-mode-is-on).
+
+To make every session start with fast mode off, set `fastModePerSessionOptIn` to `true` in any [settings file](https://code.claude.com/docs/en/settings.md#where-settings-live). Users then enable it with `/fast` in each session. Owners on [Team](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=fast_mode_teams#team-&-enterprise) or [Enterprise](https://anthropic.com/contact-sales?utm_source=claude_code\&utm_medium=docs\&utm_content=fast_mode_enterprise) plans can deploy it organization-wide through [server-managed settings](https://code.claude.com/docs/en/server-managed-settings.md).
 
 ```json theme={null}
 {
@@ -210,7 +215,7 @@ When managed settings set the key, `/fast on` works only in an interactive termi
 
 ## Handle rate limits
 
-Fast mode has separate rate limits from standard Opus; for Console organizations, the Claude Platform's [rate limits](https://platform.claude.com/docs/en/api/rate-limits) page describes them. When you hit the fast mode rate limit:
+Fast mode has separate rate limits from standard speed; for Console organizations, the Claude Platform's [rate limits](https://platform.claude.com/docs/en/api/rate-limits) page describes them. When you hit the fast mode rate limit:
 
 1. Fast mode automatically falls back to standard speed
 2. The `↯` icon turns gray to indicate cooldown

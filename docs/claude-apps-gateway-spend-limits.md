@@ -6,7 +6,7 @@
 
 > Cap each developer's spend through the Claude apps gateway by day, week, or month. Set limits with an Admin API and the gateway enforces them live on every request.
 
-Spend limits cap how much each developer can spend through your [Claude apps gateway](https://code.claude.com/docs/en/claude-apps-gateway) in a given day, week, or month. When a developer passes their cap, the gateway returns `429` on their next request and blocks them until the period resets or an admin raises the cap. Use spend limits to give each developer, group, or the whole organization a ceiling on a credential everyone shares.
+Spend limits cap how much each developer can spend through your [Claude apps gateway](https://code.claude.com/docs/en/claude-apps-gateway) in a given day, week, or month. When a developer passes their cap, the gateway returns `429` on their following requests until an admin raises the cap, or until the cap resets if it's above \$0. Use spend limits to give each developer, group, or the whole organization a ceiling on a credential everyone shares.
 
 By default, a Claude apps gateway forwards all inference through one shared upstream credential, so your provider's bill attributes everything to that credential, not to individual developers. On Amazon Bedrock, [per-developer AWS cost attribution](https://code.claude.com/docs/en/claude-apps-gateway-config.md#per-developer-aws-cost-attribution) changes this. Without per-developer limits, one runaway agent fleet can spend the organization's entire commitment. Spend limits are the gateway's per-developer view and circuit breaker on top of that shared bill.
 
@@ -51,7 +51,15 @@ Send one of:
 
 On each `/v1/messages` request, the gateway looks up the developer's caps and period-to-date spend in one Postgres query. A developer over any cap gets a `429` with `error.type: billing_error` and header `x-should-retry: false`.
 
-The message names the period and reset time, such as `spend limit reached (daily; resets 2026-08-08 00:00 UTC)`, followed by your [`admin.blocked_message`](https://code.claude.com/docs/en/claude-apps-gateway-config#admin) if set. When a developer exceeds several caps at once, the message names the cap that resets last. The response also carries a `retry-after` header with the seconds remaining until that reset. Before v2.1.225 on the gateway server, the message was `spend limit reached` with no period, reset time, or `retry-after` header.
+For a cap above `"0"`, the message gives the UTC date that cap resets. If you set [`admin.blocked_message`](https://code.claude.com/docs/en/claude-apps-gateway-config#admin), the gateway appends it, as in this example:
+
+```text theme={null}
+spend limit reached · resets Dec 1 · request an increase at https://go.example.com/claude-limits
+```
+
+For a `"0"` cap, which a reset doesn't lift, the message has no date. When a developer exceeds several caps at once, the message describes the cap that resets last. The response also carries a `retry-after` header with the seconds until that cap's period ends.
+
+Before v2.1.319 on the gateway server, the message named the period and reset time, such as `spend limit reached (daily; resets 2026-08-08 00:00 UTC)`. Before v2.1.225, the message was `spend limit reached` with no period, reset time, or `retry-after` header.
 
 On v2.1.227 or later, the protocol reference at `<public_url>/protocol` also lists the exact usage-limit response headers and `429` body.
 
@@ -95,6 +103,7 @@ Each display needs a minimum Claude Code version on the developer's machine and 
 | Usage warnings at 75% and 95% | v2.1.225 or later | v2.1.225 or later |
 | A **Spend limit** bar in `/usage` with the percentage of their cap used and when it resets, and a `rate_limits.spend_limit` object in the status line input | v2.1.251 or later | v2.1.225 or later |
 | Their estimated spend and the cap in US dollars in the **Spend limit** bar, such as "\$271.40 / \$500.00 spent this month", and the same amounts plus the cap's period in the status line input | v2.1.284 or later | v2.1.284 or later |
+| On a gateway with an [`admin:`](https://code.claude.com/docs/en/claude-apps-gateway-config#admin) block, when no cap applies to them, their estimated spend under **Spend (UTC)** in `/usage`, such as "\$13.06 today · \$80.76 this week · \$272.06 this month" | v2.1.319 or later | v2.1.319 or later |
 
 The warnings and the percentage come from the `anthropic-ratelimit-unified-*` headers, which the gateway adds to each successful `/v1/messages` response for a developer who has a cap. The headers always describe the developer's own cap: the gateway strips the upstream provider's rate-limit headers, which describe your shared quota, and never forwards them.
 
