@@ -56,7 +56,7 @@ For what the message Claude writes looks like when it arrives, including an exam
 
 ### Message delivery
 
-The receiving Claude reads the message between tool calls during an active turn, so a running tool is never interrupted. When the receiving session is idle, Claude Code starts a new turn with the message.
+The receiving Claude reads the message between tool calls during an active turn. When the receiving session is idle, Claude Code starts a new turn with the message.
 
 A message from another session arrives as plain text. If it mentions a file or an [MCP resource](https://code.claude.com/docs/en/mcp.md#use-mcp-resources) with `@`, Claude sees the mention as written and Claude Code attaches nothing, whether the message starts a new turn or arrives during one. Claude can still open a mentioned path on the receiving machine with its own tools, subject to that session's permissions.
 

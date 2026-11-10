@@ -892,8 +892,6 @@ To inspect this state without reading the files directly, run `claude daemon sta
 
 The command also warns when the running supervisor is on a different version than the `claude` you invoked, which happens after an update the supervisor hasn't restarted into yet. The warning shows both versions and tells you to run `claude daemon stop --any` to pick up the new version.
 
-Sessions survive that version mismatch intact: an older Claude Code version that updates a session's `state.json` preserves fields it doesn't recognize and keeps the session listed. The session list in `roster.json` follows the same rule, so sessions started by the newer version stay reachable and keep accepting input after the supervisor restarts.
-
 ### Turn off agent view
 
 To turn off background agents and agent view entirely, set the `disableAgentView` [setting](https://code.claude.com/docs/en/settings.md) to `true` or set the `CLAUDE_CODE_DISABLE_AGENT_VIEW` environment variable. Administrators can enforce this through [managed settings](https://code.claude.com/docs/en/managed-settings.md).

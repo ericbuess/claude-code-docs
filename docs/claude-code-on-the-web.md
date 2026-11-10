@@ -205,7 +205,7 @@ Pull a cloud session into your terminal using any of these:
 * **Using `/teleport`**: inside an existing CLI session, run `/teleport` or `/tp` to open the same session picker without restarting Claude Code.
 * **From `/tasks`**: run `/tasks` to see your background sessions, then press `t` to teleport into one.
 * **From claude.ai/code**: select **Open in > Terminal** from the session menu to copy a command you can paste into your terminal.
-* **From inside the cloud session**: type `/teleport` and Claude Code replies with the exact `claude --teleport <session-id>` command for that session, ready to run from a checkout of the repository. Requires Claude Code v2.1.223 or later in the session's environment.
+* **From inside the cloud session**: type `/teleport` and Claude Code replies with the exact `claude --teleport <session-id>` command for that session, ready to run from a checkout of the repository.
 
 When you teleport a session, Claude verifies you're in the correct repository, fetches and checks out the branch from the cloud session, and loads the conversation into your terminal.
 

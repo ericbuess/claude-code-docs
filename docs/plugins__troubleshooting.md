@@ -675,15 +675,21 @@ Before v2.1.246, the skills count in that summary included only a plugin's `comm
 
 ### `Plugin "<name>" not cached at <path>`
 
-The **Errors** tab shows this line with the guidance `Run /plugin to refresh the plugin cache`. Claude Code has an install record for the plugin, but the directory the record points at is missing, for example after you cleared the cache.
+The **Errors** tab shows this line with the guidance `Run /plugin to refresh the plugin cache`. It means Claude Code found no usable copy of the plugin. For example, you cleared the cache, so the directory its install record points at is missing. Or you opened a repository whose settings enable the plugin, and you haven't installed it.
 
-Reinstall the plugin from your shell. `claude plugin install <name>@<marketplace>` re-downloads a plugin whose install directory is missing even though its record exists:
+Install the plugin from your shell. If you opened a repository whose `.claude/settings.json` enables the plugin, run this from the project with the plugin's key from `enabledPlugins`, as [Enabled in project settings but not installed](https://code.claude.com/docs/en/plugins/loading.md#enabled-in-project-settings-but-not-installed) describes:
+
+```shell theme={null}
+claude plugin install <name>@<marketplace> --scope project
+```
+
+Otherwise, run this, which re-downloads a plugin whose install directory is missing even though its record exists:
 
 ```shell theme={null}
 claude plugin install <name>@<marketplace>
 ```
 
-Then run `/reload-plugins` in your session. The **Errors** tab entry disappears and the plugin is back under **Installed**.
+Then run `/reload-plugins` in your session. The **Errors** tab entry disappears and the plugin is listed under **Installed**.
 
 ### `installed_plugins.json holds a record under "<id>" that this version of Claude Code cannot read`
 

@@ -141,7 +141,7 @@ One control is specific to self-hosted environments: `CLAUDE_CODE_BYOC_ENABLE_DA
 
 ## Health endpoint
 
-The runner serves `GET /healthz` on the configured health port. The response is `200 OK` whenever the process is alive, whatever state the poll loop is in, so an HTTP probe on this endpoint detects a dead process only. The JSON body describes current state:
+The runner serves `GET /healthz` on the configured health port once it has registered and finished its startup checks. From then on, the response is `200 OK` whenever the process is alive, whatever state the poll loop is in, so an HTTP probe on this endpoint detects a dead process only. The JSON body describes current state:
 
 ```json theme={null}
 {

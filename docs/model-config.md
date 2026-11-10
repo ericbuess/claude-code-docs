@@ -97,7 +97,7 @@ On the Anthropic API, a Fable model appears in the `/model` picker unless [`avai
 
 Depending on your plan and seat tier, Fable usage can bill to [usage credits](https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans) instead of drawing on your plan's included limits. When it does, the `/model` picker shows "Requires usage credits" on the Fable row. To manage usage credits, see [Add usage credits to your subscription](https://code.claude.com/docs/en/costs.md#add-usage-credits-to-your-subscription).
 
-In interactive sessions, Claude Code can show a Fable usage-credits consent prompt. Members of Enterprise plans with organization billing don't see the prompt. You can continue on Fable using usage credits or switch to your default model. You can also dismiss the prompt:
+In interactive sessions, Claude Code can show a Fable usage-credits consent prompt. You can continue on Fable using usage credits or switch to your default model. You can also dismiss the prompt:
 
 * When you select a Fable model with `/model`, you keep your current model.
 * Mid-session, Claude Code continues the turn on your default model.

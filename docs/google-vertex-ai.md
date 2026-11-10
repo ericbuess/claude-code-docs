@@ -139,7 +139,7 @@ Claude Code decides between [MCP tool search](https://code.claude.com/docs/en/mc
 * **Claude Opus 4.5, Sonnet 4.5, Haiku 4.5, and later**: Claude Code enables tool search by default.
 * **Earlier models**: Claude Code loads MCP tool definitions upfront, because their Agent Platform serving stacks reject the required beta header. Setting `ENABLE_TOOL_SEARCH=true` doesn't override this.
 
-Set `ENABLE_TOOL_SEARCH=false` to disable tool search on every model. Before v2.1.221, Claude Code disabled tool search for all models on Google Cloud's Agent Platform unless you set `ENABLE_TOOL_SEARCH=true`.
+Set `ENABLE_TOOL_SEARCH=false` to disable tool search on every model.
 
 ### 5. Pin model versions
 

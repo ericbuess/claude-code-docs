@@ -21,7 +21,7 @@ If you haven't decided whether a mod is the right tool, read the [comparison on 
 
 Describe the mod you want in an interactive Claude Code session, and Claude writes it. Claude works from a built-in [skill](https://code.claude.com/docs/en/skills.md) named `plugin-authoring`, which tells it where to write the mod, which events and methods your version has, and how the mod gets loaded. Claude can load the skill when you ask for a mod, or you can load it yourself by running `/plugin-authoring` at the Claude Code prompt.
 
-The mod runs once you approve it, except in [sessions where a mod Claude writes can't load](#sessions-that-skip-the-approval).
+In the `auto` and `bypassPermissions` [permission modes](https://code.claude.com/docs/en/permission-modes.md), the mod can run when the turn ends. Otherwise, it runs once you approve it, except in [sessions where a mod Claude writes can't load](#sessions-that-skip-the-approval).
 
 **1. Describe the mod**
 
@@ -33,11 +33,11 @@ Ask for the mod in your own words, for example `make a mod that shows the curren
 
 **2. Approve the mod**
 
-When Claude saves the first file, Claude Code asks whether to enable hot reloading for the session. Hot reloading runs the mods Claude writes in this session and picks up each later change.
+When Claude saves the first file, Claude Code asks whether to enable hot reloading for the session. Hot reloading runs the mods Claude writes in this session and picks up each later change. If no question appears, skip this step.
 
 Choose one of these answers:
 
-* **Enable for this session**: the mods in the session's mods folder load when the turn ends, and reload at the end of each turn that changes them. Your answer lasts for the session, including after you resume it.
+* **Turn them on**: the mods in the session's mods folder load when the turn ends, and reload at the end of each turn that changes them. Your answer lasts for the session, including after you resume it.
 * **Not now**: nothing loads for now. The files stay where Claude wrote them, and the mods load the next time that session starts. To keep a mod from ever loading, delete its directory.
 
 **3. Check that the mod loaded**
@@ -59,9 +59,9 @@ A mod Claude wrote loads only in the session that made it, and Claude Code delet
 
 ### Sessions where a mod Claude writes can't load
 
-A mod Claude writes loads only after you approve it, in a trusted workspace where mods are allowed to run. In these sessions it doesn't load:
+A mod Claude writes loads in a trusted workspace where mods are allowed to run, after you approve it in the modes that ask. In these sessions it doesn't load:
 
-* **Nobody is there to approve**: the session can't show you a prompt, as in a `claude -p` run or [`dontAsk` mode](https://code.claude.com/docs/en/permission-modes)
+* **Nobody is there to approve**: the session can't show you a prompt, as in a `claude -p` run outside `auto` and `bypassPermissions` modes, or [`dontAsk` mode](https://code.claude.com/docs/en/permission-modes)
 * **The workspace isn't trusted**: you haven't accepted the trust prompt for the directory
 * **Mods are disabled**: you started with `--safe-mode` or `--bare`, you set `disableAllHooks`, or your organization's [managed settings block it](https://code.claude.com/docs/en/plugins/mods/admin.md#choose-how-much-to-allow)
 

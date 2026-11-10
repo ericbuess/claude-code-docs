@@ -54,6 +54,8 @@ To turn the plugin on in the local sessions your teammates start in the reposito
 }
 ```
 
+Each teammate also [runs `claude plugin install security-guidance@claude-plugins-official --scope project`](https://code.claude.com/docs/en/plugins/loading#enabled-in-project-settings-but-not-installed) once per clone.
+
 Administrators can enable the plugin organization-wide by setting [`enabledPlugins`](https://code.claude.com/docs/en/settings-reference#enabledplugins) in [managed settings](https://code.claude.com/docs/en/admin-setup.md).
 
 ## What the plugin checks

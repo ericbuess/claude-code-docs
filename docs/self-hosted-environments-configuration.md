@@ -235,6 +235,7 @@ The hook's exit status never affects the session outcome; a failure is logged an
 set -u
 export GIT_ALLOW_PROTOCOL=${GIT_ALLOW_PROTOCOL:-https:http:ssh}
 IFS=':'
+rc=0  # becomes 1 when a step fails; a non-zero exit makes the runner log it
 # -c overrides beat repo-local settings, blocking session-written fsmonitor,
 # hook-path, and gpg-program config from executing code with the hook's
 # privileges. -c commit.gpgsign=false also leaves these rescue commits
@@ -245,12 +246,13 @@ IFS=':'
 g() { git -c core.fsmonitor=false -c core.hooksPath=/dev/null \
         -c commit.gpgsign=false "$@"; }
 for ws in $CLAUDE_RUNNER_WORKSPACE_PATHS; do
-  cd "$ws" 2>/dev/null || continue
-  [ -z "$(g status --porcelain 2>/dev/null)" ] && continue
-  g add -A
-  g commit -q -m "runner snapshot: $CLAUDE_RUNNER_SESSION_ID ($CLAUDE_RUNNER_EXIT_REASON)" || continue
-  g push -q origin "HEAD:refs/heads/rescue/$CLAUDE_RUNNER_SESSION_ID" || true
+  cd "$ws" || { rc=1; continue; }
+  g add -A || rc=1
+  g diff-index --cached --quiet HEAD && continue  # nothing to save
+  g commit -q -m "runner snapshot: $CLAUDE_RUNNER_SESSION_ID ($CLAUDE_RUNNER_EXIT_REASON)" || { rc=1; continue; }
+  g push -q origin "HEAD:refs/heads/rescue/$CLAUDE_RUNNER_SESSION_ID" || rc=1
 done
+exit "$rc"
 ```
 
 The `GIT_ALLOW_PROTOCOL` line in the script limits git to HTTPS, HTTP, and SSH remotes. If the runner's environment already sets a non-empty `GIT_ALLOW_PROTOCOL` list of its own, the script keeps that list.

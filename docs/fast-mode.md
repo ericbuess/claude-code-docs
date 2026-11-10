@@ -227,7 +227,7 @@ To disable fast mode manually instead of waiting for cooldown, run `/fast` again
 If you run out of usage credits mid-session, Claude Code retries each rejected fast mode request at standard speed and pricing, so you keep working, and there is no cooldown. How you see the rejection depends on the session type:
 
 * In an interactive session, Claude Code shows a "Fast mode disabled · Out of usage credits" notification and turns fast mode off. Your saved fast mode preference doesn't change; run `/fast` to turn fast mode back on.
-* In [non-interactive mode](https://code.claude.com/docs/en/headless.md) with `--output-format stream-json`, and through the Agent SDK, Claude Code emits the same text on the message stream as a `system` message with subtype `notification`, once per turn while you're out of usage credits. Fast mode stays on. Requires Claude Code v2.1.221 or later.
+* In [non-interactive mode](https://code.claude.com/docs/en/headless.md) with `--output-format stream-json`, and through the Agent SDK, Claude Code emits the same text on the message stream as a `system` message with subtype `notification`. The message arrives once per turn while you're out of usage credits. Fast mode stays on.
 
 ## Research preview
 

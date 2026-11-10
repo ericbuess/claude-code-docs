@@ -26,7 +26,7 @@ To add custom tools, connect an [MCP server](https://code.claude.com/docs/en/mcp
 | `CronDelete` | Cancels a session-scoped scheduled task by ID | No |
 | `CronList` | Lists all session-scoped scheduled tasks | No |
 | `Edit` | Makes targeted edits to specific files. See [Edit tool behavior](#edit-tool-behavior) | Yes |
-| `EndConversation` | Ends the session, in rare cases of sustained abusive input or when you ask Claude to demonstrate the tool. See [EndConversation tool behavior](#endconversation-tool-behavior) | No |
+| `EndConversation` | Ends the session, in rare cases of sustained abusive input or when you ask Claude to end the session and then confirm. See [EndConversation tool behavior](#endconversation-tool-behavior) | No |
 | `EnterPlanMode` | Switches to plan mode to design an approach before coding | No |
 | `EnterWorktree` | Creates an isolated [git worktree](https://code.claude.com/docs/en/worktrees.md) and switches into it, or switches into an existing worktree. See [EnterWorktree tool behavior](#enterworktree-tool-behavior) | Yes |
 | `ExitPlanMode` | Presents a plan for approval and exits plan mode | Yes |
@@ -274,8 +274,8 @@ Claude can still replace such a file with Write, unless the new content contains
 
 The EndConversation tool ends the current session. Claude uses it only in two situations:
 
-* as a last resort against sustained abusive input, after attempts to redirect the conversation have failed and after a clear warning in an earlier message
-* when you explicitly ask to see the tool demonstrated and confirm that you want the session to end
+* When you keep sending abusive messages after Claude gives a clear warning and fails to redirect the conversation
+* When you explicitly ask Claude to end the session, then confirm when Claude asks whether you still want to proceed
 
 General frustration, profanity, or a task going badly don't qualify, and neither do requests for harmful content, which Claude declines instead of ending the session. Claude Code follows the same approach as claude.ai, which can [end a rare subset of chats](https://www.anthropic.com/research/end-subset-conversations).
 

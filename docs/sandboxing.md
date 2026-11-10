@@ -903,6 +903,10 @@ When Claude pipes text to one of these tools, adding the tool to [`excludedComma
 
 After the failure, Claude may [offer to rerun the command outside the sandbox](#the-unsandboxed-retry-escape-hatch). Approve that retry, or run the git command yourself in another terminal. If you've set `allowUnsandboxedCommands` to `false`, Claude can't offer the retry, so run the command yourself.
 
+### A git command fails with `Unable to create '…/index.lock'`
+
+If you started Claude Code in a repository's subdirectory, this error can mean `.git` is outside [what sandboxed commands can write to](#filesystem-isolation). Start Claude Code from the repository root instead, or from the worktree's root in a [linked worktree](https://code.claude.com/docs/en/worktrees.md).
+
 ### A folder named `objects` or `refs` disappears after a command
 
 A top-level `objects` or `refs` folder that appeared during the session can be [deleted after a sandboxed command ends](#when-the-sandbox-deletes-head-objects-or-refs). It doesn't matter whether a command, Claude, or you created it. To keep a folder, leave something in it. If a `HEAD` file or symlink has been at the top level during the session, move it away, then restart every Claude Code session open there.

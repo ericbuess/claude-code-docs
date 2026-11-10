@@ -160,7 +160,7 @@ When Claude calls the advisor, the advisor model reads the conversation, so each
 * **API billing**: you pay the advisor model's input and output rates for advisor tokens
 * **Subscription plans**: advisor usage counts toward your plan's usage limits, except that a Fable advisor bills to [usage credits](https://code.claude.com/docs/en/model-config.md#fable-and-usage-credits) on plans where Fable usage does
 
-If your account requires the usage-credits consent, a Fable advisor bills nothing before you give it, because Claude Code [doesn't apply the selection](#fable-advisor-and-usage-credits) until then.
+For how a Fable advisor works with usage credits, see [Fable advisor and usage credits](#fable-advisor-and-usage-credits).
 
 Claude calls the advisor at decision points rather than on every turn, so pairing a faster main model with a stronger advisor typically costs less than running the stronger model throughout. Advisor usage counts toward the session totals shown by [`/usage`](https://code.claude.com/docs/en/costs#track-your-costs).
 

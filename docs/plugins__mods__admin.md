@@ -57,10 +57,10 @@ With no mod settings of your own, this is what your users get:
 * **Mods are on.** A user can install a plugin that contains a mod from any marketplace your plugin settings allow, or load one from a directory with `--plugin-dir`.
 * **A built-in guard runs first.** Claude Code loads a built-in mod named `sec-default@builtin` ahead of every mod a user installs. Users can't turn it off. `/plugin` and the debug log list it as `cc-plugin-sec-default`. The guard loads when either of these is true:
 
-  * The machine has managed settings
+  * The machine has managed settings or a [`managed-mcp.json`](https://code.claude.com/docs/en/managed-mcp#deploy-managed-mcp-json) file
   * The session runs on [`/login` credentials](https://code.claude.com/docs/en/authentication#authentication-precedence) for a Team or Enterprise plan
 
-  A user who authenticates with an API key, or through Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry, gets the guard only on a machine that has managed settings. A session that runs on a long-lived [`CLAUDE_CODE_OAUTH_TOKEN`](https://code.claude.com/docs/en/authentication#generate-a-long-lived-token) doesn't count as that login either, even when a Team or Enterprise login is stored on the machine.
+  A user with an API key, or on Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry, gets the guard only on a machine with managed settings or `managed-mcp.json`. A session that runs on a long-lived [`CLAUDE_CODE_OAUTH_TOKEN`](https://code.claude.com/docs/en/authentication#generate-a-long-lived-token) doesn't count as that login either, even when a Team or Enterprise login is stored on the machine.
 * **The guard protects what you manage.** A user's mod can't change what your managed hooks receive or decide, the system prompt, your managed `CLAUDE.md` and other managed instructions, what any mod reads as settings, or the tools and descriptions of your managed MCP servers.
 * **Outside what you manage, a user's mod acts as that user.** The mod keeps that user's permissions: it can still read and write files, start processes, and make network requests. It can also rewrite tool calls and prompts, deny a tool call, and draw in the interface.
 * **Permission rules and `PreToolUse` hooks take precedence over a user's mod.** With the guard loaded, by default a user's mod can't approve a call that a `deny` rule refuses or an `ask` rule prompts for, whichever settings file holds the rule. The mod can't approve a call that any `PreToolUse` hook blocked, either.
@@ -76,7 +76,7 @@ Mods don't replace the controls you already have:
 
 * **Settings hooks keep working.** Command, HTTP, prompt, and agent hooks in settings files and in plugins' `hooks/hooks.json` run as before, alongside mods.
 * **Deny rules take precedence where the guard loads.** A user's mod can't approve a call that a `deny` rule refuses, unless you set [`allowModsToOverrideDenyRules`](#set-options-on-the-built-in-guard).
-* **Managed hooks run first.** A `PreToolUse` hook in managed settings runs before any mod's [`tool.call`](https://code.claude.com/docs/en/plugins/mods/reference#tools) hook, and when that managed hook blocks a tool call, no mod's `tool.call` hook runs for that call. If the call goes ahead and a mod rewrites it, your managed hooks run again on the rewritten call, so they can still block it.
+* **Managed hooks run first.** A `PreToolUse` hook in managed settings runs before any mod's [`tool.call`](https://code.claude.com/docs/en/plugins/mods/reference#tools) hook, and when that managed hook blocks a tool call, no mod's `tool.call` hook runs for that call. If the call goes ahead and a mod rewrites it, your managed hooks run again on the rewritten call, so by default they can still block it.
 
   `PreToolUse` hooks from other settings files and from plugins run after the last mod. If a mod answers the tool call itself, the tool never runs and neither do those hooks. See [The order mods run in](https://code.claude.com/docs/en/plugins/mods/events.md#the-order-mods-run-in).
 * **Network policy covers `$.http.fetch`.**
@@ -260,7 +260,7 @@ The table gives what your users get with each option unset and with it set to `t
 | Option | Unset | `true` |
 | :- | :- | :- |
 | `allowManagedModsOnly` | Users' own mods run | Only [your organization's mods](#install-your-organizations-mods), and mods built into Claude Code, run their hooks. Claude Code refuses every other mod, including one a user installed or named with `--plugin-dir`. |
-| `allowModsToOverrideDenyRules` | Deny rules take precedence over users' mods | A user's mod that approves tool calls can approve a call that a `deny` rule refuses |
+| `allowModsToOverrideDenyRules` | Deny rules take precedence over users' mods | A user's mod that approves tool calls can approve a call past most of [the outcomes that stay in place by default](https://code.claude.com/docs/en/permissions.md#precedence-among-rules-hooks-and-mods), including a `deny` rule |
 
 These rules decide whether an option takes effect:
 
@@ -350,7 +350,8 @@ These rules decide which ids in the two lists take effect:
 
 * **The list replaces the default**: when you set `prependPlugins` in managed settings, name `sec-default@builtin` in it to keep the built-in guard. The guard is built in and needs no `enabledPlugins` entry.
 * **Your own ids must count as yours**: in managed settings, Claude Code skips an id whose plugin doesn't meet the conditions for an organization's mod
-* **Repositories can't set them**: Claude Code reads both settings from managed settings, never from a repository's settings file. A user can set them in `~/.claude/settings.json` to order their own mods only on a machine with no managed settings, and only when the session's credential isn't a Team or Enterprise `/login`. Anywhere else, Claude Code ignores both keys in user settings. A list there neither adds nor removes the built-in guard.
+* **Repositories can't set either list**: Claude Code ignores both in a repository's settings file, so set them in managed settings.
+* **A user can set them to order their own mods**: in `~/.claude/settings.json`, only on a machine with no managed settings or `managed-mcp.json` file, and only when the session's credential isn't a Team or Enterprise `/login`. Anywhere else, Claude Code ignores both keys in user settings. A list there neither adds nor removes the built-in guard.
 
 ### Enforce a policy with a mod of your own
 

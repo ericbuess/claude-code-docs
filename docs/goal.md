@@ -178,7 +178,7 @@ The evaluator runs on whichever provider your session is configured for. It does
 
 ## Requirements
 
-Claude Code makes `/goal` available under the same [workspace trust rule as hooks in settings files](https://code.claude.com/docs/en/permissions.md#what-runs-before-you-trust-a-folder), because the evaluator is part of the hooks system. `/goal` is also unavailable when [`disableAllHooks`](https://code.claude.com/docs/en/hooks#disable-or-remove-hooks) is `true` after settings precedence applies, or when [`allowManagedHooksOnly`](https://code.claude.com/docs/en/settings-reference#allowmanagedhooksonly) is set in managed settings. In each case, the command tells you why instead of silently doing nothing.
+Claude Code makes `/goal` available under the same [workspace trust rule as hooks in settings files](https://code.claude.com/docs/en/permissions.md#what-runs-before-you-trust-a-folder), because the evaluator is part of the hooks system. `/goal` is also unavailable when [`disableAllHooks`](https://code.claude.com/docs/en/hooks#disable-or-remove-hooks) is `true` after settings precedence applies, or when [`allowManagedHooksOnly`](https://code.claude.com/docs/en/settings-reference#allowmanagedhooksonly) is set in managed settings.
 
 ## See also
 

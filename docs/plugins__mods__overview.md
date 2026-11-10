@@ -78,7 +78,7 @@ A mod runs with your permissions, so before you install one, know what it has ac
 
 Mods aren't sandboxed. If you turn on [sandboxing](https://code.claude.com/docs/en/sandboxing.md), the sandbox isolates the Bash commands Claude runs, and a process that a mod starts runs outside it.
 
-With [managed settings](https://code.claude.com/docs/en/settings.md#check-what-your-organization-enforces) or a Team or Enterprise [`/login`](https://code.claude.com/docs/en/authentication#authentication-precedence) as the session's credential, by default a mod's approval doesn't get a call past your `ask` rules or `PreToolUse` hooks. Without either, a mod can approve a call that an `ask` rule would prompt for, or that your `PreToolUse` hook blocked. To check when a mod can also approve a call that a `deny` rule refuses, see [Extend permissions with hooks](https://code.claude.com/docs/en/permissions.md#precedence-among-rules-hooks-and-mods).
+A mod can approve [many tool calls](https://code.claude.com/docs/en/permissions.md#precedence-among-rules-hooks-and-mods) that your `deny` or `ask` rules or your `PreToolUse` hooks would stop, unless the [built-in guard](https://code.claude.com/docs/en/plugins/mods/admin.md#know-what-happens-by-default) prevents it. With the guard loaded, by default a user's mod can't do this. In a local terminal session, `cc-plugin-sec-default` on the **Installed** tab of `/plugin` means the guard is loaded.
 
 A mod can restyle much of Claude Code's interface, but not the permission prompt. It can't change what a prompt shows you.
 

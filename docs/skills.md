@@ -22,7 +22,7 @@ Claude Code skills follow the [Agent Skills](https://agentskills.io) open standa
 
 Claude Code includes a set of bundled skills, such as `/doctor`, `/code-review`, `/batch`, `/debug`, `/loop`, and `/claude-api`. Bundled skills are prompt-based: they give Claude detailed instructions and let it orchestrate the work using its tools. Most built-in commands instead execute fixed logic directly.
 
-You invoke a bundled skill the same way as any other skill, by typing `/` followed by the skill name. Claude invokes some bundled skills automatically when relevant; others, including `/verify`, run only when you invoke them, which keeps you in control of when these longer-running checks spend time and tokens.
+You invoke a bundled skill by typing `/` followed by the skill name. Claude invokes some bundled skills automatically when relevant; others, including [`/verify`](#run-and-verify-your-app), run only when you invoke them.
 
 Most bundled skills are available in every session. A few depend on a specific feature: `/workflow-authoring`, for example, is available only when [dynamic workflows](https://code.claude.com/docs/en/workflows.md) are enabled.
 

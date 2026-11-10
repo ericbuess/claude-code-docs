@@ -57,7 +57,7 @@ Tool events fire around each tool call Claude makes, from the description Claude
 | :- | :- | :- |
 | [`tool.call`](https://code.claude.com/docs/en/plugins/mods/events#guard-or-change-a-tool-call) | A tool is about to run | `next(e)`, `{ deny: reason }`, or `{ result }` |
 | [`tool.check`](https://code.claude.com/docs/en/plugins/mods/events#where-settings-hooks-run-in-the-order) | Claude Code decides whether a tool call may run, after the `tool.call` and `PreToolUse` hooks. `next(e)` resolves to the decision the rules, the permission mode, and those hooks reached. | `next(e)` or `{ decision }`, with `decision` set to `allow`, `ask`, or `deny` and an optional `reason` |
-| `tool.describe` | Once for each tool, when its description is first sent to Claude. A second time for an MCP tool when Claude loads it through [tool search](https://code.claude.com/docs/en/mcp.md#scale-with-mcp-tool-search), with `e.description` set to the text Claude reads for the loaded tool. | `{ description }`, optionally with `isDeferred` set to `true` to put the tool behind tool search or `false` to load it upfront |
+| `tool.describe` | Once for each tool, when its description is first sent to Claude. A second time for an MCP tool when Claude loads it through [tool search](https://code.claude.com/docs/en/mcp.md#scale-with-mcp-tool-search), with `e.description` set to the text Claude reads for the loaded tool. | `{ description }`, optionally with `isDeferred` set to `true` to put the tool behind tool search or `false` to load it upfront. Add [`breakPromptCache: true`](#break-prompt-cache) to send a changed description on the next turn. |
 
 #### Agent and organization fields on `tool.check`
 
@@ -85,7 +85,7 @@ Prompt events cover the text the user types and the text Claude Code sends to Cl
 | `prompt.edit` | The user edits the prompt box | `next(e)` |
 | `prompt.autocomplete` | The user types in the prompt box and a word ends at the cursor. `e.token` is that word. Claude Code doesn't wait for the hook: its own autocomplete rows show first. | `{ suggestions }`, a list of `{ text, label, description }` rows shown below Claude Code's own. Choosing a row writes its `text` over the word. |
 | `prompt.compose` | Claude Code renders a system prompt | `{ sections }`, a list of `{ id, text, scope }` in the order they're sent |
-| [`prompt.section`](https://code.claude.com/docs/en/plugins/mods/events#rewrite-or-add-to-a-prompt) | Once for each named section of the system prompt. `e.name` is the section's `id` in `prompt.compose`. | `{ text }`, or `{ text: null }` to omit the section |
+| [`prompt.section`](https://code.claude.com/docs/en/plugins/mods/events#rewrite-or-add-to-a-prompt) | Once for each named section of the system prompt. `e.name` is the section's `id` in `prompt.compose`. | `{ text }`, or `{ text: null }` to omit the section. Add [`breakPromptCache: true`](#break-prompt-cache) to send a changed section on the next turn. |
 | [`prompt.context`](https://code.claude.com/docs/en/plugins/mods/events#rewrite-or-add-to-a-prompt) | Once for each conversation, for the context sent with the first message | `{ blocks }` |
 | `prompt.attachment` | Claude Code adds a message of its own for Claude, such as a reminder. `e.type` names the kind, and for the kinds the types declare, `e.detail` holds the facts the text was written from. | `{ text }`, or `{ text: null }` to omit it |
 | `prompt.mention` | Claude Code is about to read a file that a prompt @-mentions. Requires Claude Code v2.1.290 or later. | `next({ ...e, path })` to read a different file, or `{ deny: reason }` |
@@ -107,6 +107,12 @@ In a `skill.prompt` hook, you can read these fields along with the skill's name 
 A hook can pass a changed `text` or `frontmatter` to `next`: the hooks after it read both, and Claude reads the final `text`. A hook that changes any other field [fails](https://code.claude.com/docs/en/plugins/mods/events.md#handle-a-hook-that-fails).
 
 On `skill.prompt`, `e.source`, `e.pluginName`, `e.path`, `e.frontmatter`, and `e.frontmatterProblem` require Claude Code v2.1.299 or later.
+
+#### Send a changed system prompt section or tool description with `breakPromptCache`
+
+To change a section or a tool description in a running conversation, call `$.ui.invalidate('prompt.section')` or `$.ui.invalidate('tool.describe')` so your hook runs again. Return `{ text, breakPromptCache: true }` or `{ description, breakPromptCache: true }` from it. Without the field, Claude keeps reading the text [saved with the conversation](https://code.claude.com/docs/en/cli-reference.md#system-prompt-flags-in-resumed-conversations) for a section or a tool loaded upfront until a new conversation or a [compaction](https://code.claude.com/docs/en/prompt-caching.md#compacting-the-conversation).
+
+The changed text reaches Claude on the next turn, and the [prompt cache](https://code.claude.com/docs/en/prompt-caching.md) starts over, so that turn is slower and more expensive. The field requires Claude Code v2.1.321 or later. From v2.1.299 until v2.1.321, a running conversation got the changed text on the next turn.
 
 ### Commands and configuration
 
@@ -246,15 +252,15 @@ Rendering in the VS Code extension requires extension version 2.1.299 or later. 
 | [`AbovePrompt`](https://code.claude.com/docs/en/plugins/mods/interface#pick-where-to-draw) | `hasSurvey`, `isWorking`, `maxRows`, `bodyColumns`, `scroll`, `view` | One instance | Terminal, Desktop |
 | [`Placed`](https://code.claude.com/docs/en/plugins/mods/interface#place-a-row-in-the-transcript) | `id`, `plugin`, `onScreen` | The `requestId` that `$.ui.place` returned | Terminal |
 | [`Backdrop`](https://code.claude.com/docs/en/plugins/mods/interface#put-a-backdrop-behind-the-conversation) | `id`, `plugin`, `glass`, `colorScheme` | `backdrop` | `desktop` and `mobile` surfaces. Your hook runs when the Desktop or mobile app asks to draw a backdrop. |
-| `UserMessage` | `text`, `origin`, `isExpanded`, and `task` or `from` by origin | The message id | Terminal, Desktop, VS Code |
-| `AssistantMessage` | The reply's text | The message id | Terminal, Desktop, VS Code |
+| `UserMessage` | `text`, `origin`, `isExpanded`, and `task` or `from` by origin | The drawn row's id | Terminal, Desktop, VS Code |
+| `AssistantMessage` | The reply's text | The drawn row's id | Terminal, Desktop, VS Code |
 | `ToolUse`, `ToolResult`, `ToolGroup` | The tool's name, input, and result | The tool call id | Terminal, Desktop, VS Code |
-| `CommandOutput` | `command`, `text` | The message id | Terminal, Desktop |
+| `CommandOutput` | `command`, `text` | The drawn row's id | Terminal, Desktop |
 | [`AskUserQuestion`](https://code.claude.com/docs/en/plugins/mods/interface#change-what-claude-code-already-draws) | The question and options | The tool call id | Terminal, Desktop, VS Code |
 | `ToolProgress` | `kind` | The tool call id | Terminal |
 | [`Spinner`](https://code.claude.com/docs/en/plugins/mods/interface#change-what-claude-code-already-draws) | `word`, `message`, `suffix`, `mode` | The agent id | Terminal, Desktop, VS Code |
-| `TurnDuration` | `word`, `durationMs` | The message id | Terminal |
-| `InfoNotice` | `text`, `command` | The message id | Terminal |
+| `TurnDuration` | `word`, `durationMs` | The drawn row's id | Terminal |
+| `InfoNotice` | `text`, `command` | The notice's `text` prefixed with `notice:` | Terminal |
 | `SessionMode` | `modes` | One instance | Terminal, Desktop |
 | `PromptHint` | `isDraft`, `isWorking`, `hint` | One instance | Terminal, Desktop |
 
@@ -418,15 +424,15 @@ These are the settings and environment variables that affect mods. The Where col
 | :- | :- | :- |
 | `CLAUDE_CODE_PLUGIN_DIRS` | Environment, or `env` in `~/.claude/settings.json` | Plugin directories to load as `--plugin-dir` does, for apps you can't pass a flag to. Absolute paths separated by `:`, or `;` on Windows. |
 | `CLAUDE_CODE_PLUGIN_DIR_WATCH` | Environment | `1` makes a long-running non-interactive session reload `--plugin-dir` mods on save |
-| `prependPlugins`, `appendPlugins` | Managed settings. User settings only on a machine with no managed settings, in a session whose credential isn't a Team or Enterprise `/login`. | Lists of plugin ids, such as `acme-guard@acme-tools`. Mods in `prependPlugins` run before every mod a user installs, and mods in `appendPlugins` run after, in the listed order. See [The order mods run in](https://code.claude.com/docs/en/plugins/mods/events.md#the-order-mods-run-in). |
+| `prependPlugins`, `appendPlugins` | Managed settings. User settings only on a machine with no managed settings or [`managed-mcp.json`](https://code.claude.com/docs/en/managed-mcp#deploy-managed-mcp-json) file, in a session whose credential isn't a Team or Enterprise `/login`. | Lists of plugin ids, such as `acme-guard@acme-tools`. Mods in `prependPlugins` run before every mod a user installs, and mods in `appendPlugins` run after, in the listed order. See [The order mods run in](https://code.claude.com/docs/en/plugins/mods/events.md#the-order-mods-run-in). |
 | `allowManagedModsOnly` | Managed settings, as an [option on the built-in guard](https://code.claude.com/docs/en/plugins/mods/admin.md#set-options-on-the-built-in-guard) | Only mods that [count as your organization's](https://code.claude.com/docs/en/plugins/mods/admin.md#install-your-organizations-mods), and mods built into Claude Code, run their hooks. Users' settings hooks keep running. |
-| `allowModsToOverrideDenyRules` | Managed settings, as an [option on the built-in guard](https://code.claude.com/docs/en/plugins/mods/admin.md#set-options-on-the-built-in-guard) | Lets a mod a user installed approve a tool call that a `deny` rule refuses |
+| `allowModsToOverrideDenyRules` | Managed settings, as an [option on the built-in guard](https://code.claude.com/docs/en/plugins/mods/admin.md#set-options-on-the-built-in-guard) | Lets a mod a user installed approve a tool call past most of [the outcomes that stay in place by default](https://code.claude.com/docs/en/permissions.md#precedence-among-rules-hooks-and-mods), including a `deny` rule |
 | `allowManagedHooksOnly` | Managed settings | Blocks hooks and installed mods that aren't your organization's. See [what keeps running](https://code.claude.com/docs/en/settings-reference.md#what-runs-under-allowmanagedhooksonly). |
 | `disableAllHooks` | Any settings file | In managed settings, no mod or hook from an installed plugin runs. In your own settings, what your organization manages keeps running. See [`disableAllHooks`](https://code.claude.com/docs/en/settings-reference#disableallhooks). |
 | `disableSideloadFlags` | Managed settings | Rejects `--plugin-dir` and `--plugin-url` at startup |
 | `pluginConfigs` | User or managed settings | Holds `userConfig` values for a mod, keyed by the plugin's id, such as `acme-guard@acme-tools`, or its name and `@inline`, such as `first-mod@inline`, for one loaded with `--plugin-dir` |
 
-`sec-default@builtin` is a guard built into Claude Code, listed as `cc-plugin-sec-default` in `/plugin` and the debug log. It loads ahead of every mod a person installs on a machine with managed settings, or in a session whose credential is a Team or Enterprise [`/login`](https://code.claude.com/docs/en/authentication#authentication-precedence). If managed `prependPlugins` is set, the guard loads only when that list names it, at the position listed.
+`sec-default@builtin` is a guard built into Claude Code, listed as `cc-plugin-sec-default` in `/plugin` and the debug log. [Where it loads](https://code.claude.com/docs/en/plugins/mods/admin.md#know-what-happens-by-default), it runs ahead of every mod a person installs. If managed `prependPlugins` is set, the guard loads only when that list names it, at the position listed.
 
 Its source is in the [`mods/sec-default` directory of the Claude Code repository](https://github.com/anthropics/claude-code/tree/main/mods/sec-default).
 

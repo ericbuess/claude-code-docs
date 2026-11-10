@@ -189,7 +189,7 @@ A version string, not checked against semver. Setting it pins the plugin to that
 
 ### `metadata`
 
-A free-form object for your own data, such as catalog or entitlement fields. Claude Code doesn't read it. Requires Claude Code v2.1.222 or later.
+A free-form object for your own data, such as catalog or entitlement fields. Claude Code doesn't read it.
 
 ### Directory listing fields
 
@@ -394,7 +394,7 @@ A monitor `command` can't reference `${user_config.*}`. See [Fields that run thr
 
 Every component path in a manifest is relative to the plugin root and must start with `./`. A path such as `commands/foo.md` fails validation. `skills` and `mcpServers` each accept one form outside that rule:
 
-* **`skills`**: also accepts `"."`. Both `"."` and `"./"` denote the plugin root. Before v2.1.221, `"."` failed manifest validation, so use `"./"` when the plugin must load on earlier versions
+* **`skills`**: also accepts `"."`. Both `"."` and `"./"` denote the plugin root
 * **`mcpServers`**: also accepts an `https://` bundle URL
 
 `experimental.evals` isn't a component path, so the rules in this section don't cover it, and `claude plugin eval` checks the value when it runs instead. It names a directory below the plugin root, such as `"quality/evals"`, with or without the `./` prefix. With an array, only the first entry is used. For what the value accepts and what happens with an unusable one, see [Use a different eval directory](https://code.claude.com/docs/en/plugin-evals.md#use-a-different-eval-directory).

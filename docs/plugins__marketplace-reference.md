@@ -94,7 +94,7 @@ The table lists the entry's own fields and the manifest fields whose meaning cha
 | `dependencies` | array | Plugins that must be enabled for this one to work. Each item is `"name"`, `"name@marketplace"`, or an object. See [Plugin dependencies](https://code.claude.com/docs/en/plugins/dependencies.md) |
 | `defaultEnabled` | boolean | Default `true`. Whether the plugin starts enabled when the user hasn't set it in [`enabledPlugins`](https://code.claude.com/docs/en/settings-reference#enabledplugins). The entry value takes precedence over `plugin.json` |
 | `displayName` | string | Human-readable name shown in the UI. When neither the entry nor the plugin's `plugin.json` sets one, users see the plugin's `name` |
-| `metadata` | object | Free-form object for your own fields. Claude Code doesn't read it. Requires Claude Code v2.1.222 or later |
+| `metadata` | object | Free-form object for your own fields. Claude Code doesn't read it |
 | `headers` | object | HTTP headers Claude Code sends when it downloads this entry's [archive](#archive-plugin-source). A header set here replaces a header of the same name from the marketplace source's [`headers`](#fields-by-type). Requires Claude Code v2.1.238 or later |
 | `headersHelper` | string | Command that prints this entry's archive-download headers as one JSON object, for a credential that expires. The entry must also set [`"strict": false`](#strict-mode). Requires Claude Code v2.1.238 or later. See [Authenticate archive downloads](https://code.claude.com/docs/en/plugins/host-marketplace.md#authenticate-archive-downloads) |
 
@@ -142,7 +142,7 @@ The table lists each plugin source type and its fields.
 | `url` | `url`, `ref`, `sha` | Any git repository by URL |
 | `git-subdir` | `url`, `path`, `ref`, `sha` | One subdirectory of a git repository, fetched with a sparse checkout |
 | `npm` | `package`, `version`, `registry` | npm registry package or tarball link, fetched with your npm client and unpacked without running install scripts |
-| `archive` | `url`, `sha256` | Zip archive over HTTPS. Requires Claude Code v2.1.224 or later |
+| `archive` | `url`, `sha256` | Zip archive over HTTPS |
 | `command` | `command`, `timeout`, `mode` | Directory printed by a command Claude Code runs on the user's machine. Requires Claude Code v2.1.229 or later |
 
 The names `url` and `github` are also [marketplace source](#marketplace-sources) types, where `url` means a direct link to a `marketplace.json` file rather than a git repository. `git` exists only as a marketplace source, and `npm` exists as both. `git-subdir`, `archive`, and `command` exist only as plugin sources.

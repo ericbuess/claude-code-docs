@@ -73,7 +73,9 @@ Create the environment on claude.ai, start the runner from a terminal on the hos
 
 Go to the [**Cloud environments** page](https://claude.ai/admin-settings/cloud-environments) in admin settings. Under **Self-hosted environments**, select **New**, name the environment, and select **Create**. On the wizard's second step, select **Copy environment key** to copy the environment secret, which the admin UI labels an environment key. claude.ai shows the secret once, and you can't retrieve it later; it expires 365 days after creation. The environment's `ccpool_...` ID stays visible in its detail dialog; you'll need it for the `aud` check in [token verification](https://code.claude.com/docs/en/self-hosted-environments-identity.md) and for dispatching [test sessions from CI](https://code.claude.com/docs/en/self-hosted-environments-testing.md#run-the-test-loop).
 
-If you lose the secret or need to rotate it, create a new secret from the environment's **Configuration** tab, roll the new secret out to your runners, then revoke the old one. Runners holding a revoked secret fail their next authenticated poll and exit, logging `poll auth failed`, and your orchestrator restarts them with the new secret.
+If the secret may have leaked, follow [the deploy page's steps for a suspected compromise](https://code.claude.com/docs/en/self-hosted-environments-deploy.md#after-a-suspected-compromise), not the rotation below.
+
+If you lose the secret or plan to rotate it, create a new secret from the environment's **Configuration** tab. Roll the new secret out to your runners, then revoke the old one. Runners holding a revoked secret fail their next authenticated poll and exit, logging `poll auth failed`, and your orchestrator restarts them with the new secret.
 
 **2. Start a runner**
 

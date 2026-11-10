@@ -4277,17 +4277,15 @@ This example enables two plugins from the `team-tools` marketplace and disables 
 Each scope serves a different purpose:
 
 * **User settings**: your personal plugin preferences
-* **Project settings**: plugins shared with everyone in the repository
+* **Project settings**: plugins turned on for everyone in the repository. This doesn't install them, so each user [installs them](https://code.claude.com/docs/en/plugins/org.md#require-plugins-per-repository).
 * **Local settings**: per-machine overrides, gitignored when Claude Code saves a setting there
 * **Managed settings**: organization-wide policy. A plugin set to `false` here is blocked from installation at every scope and hidden from the marketplace
 
 Project settings take precedence over user settings, so setting a plugin to `false` in `~/.claude/settings.json` doesn't disable a plugin that the project's `.claude/settings.json` enables. To opt out of a project-enabled plugin on your machine, set it to `false` in `.claude/settings.local.json` instead. Plugins force-enabled by managed settings can't be disabled this way, since managed settings override local settings.
 
-Enabling a plugin from an external source such as a GitHub repository or npm package in a project's `.claude/settings.json` doesn't install it for other people. On every path that loads plugins, Claude Code reports the plugin as not installed until each user [installs it themselves](https://code.claude.com/docs/en/plugins/org.md#require-plugins-per-repository).
-
 ### `extraKnownMarketplaces`
 
-Register additional plugin marketplaces by name, so that people who open the repository, or everyone your managed settings reach, get the marketplace without adding it themselves. Claude Code registers each marketplace it doesn't already know. Whether a plugin that [`enabledPlugins`](#enabledplugins) names from it installs depends on the plugin's source and which file enables it; that entry has the rules.
+Register additional plugin marketplaces by name, so that people who open the repository, or everyone your managed settings reach, get the marketplace without adding it themselves. Claude Code registers each marketplace it doesn't already know. Whether a plugin that [`enabledPlugins`](#enabledplugins) names from it installs depends on the plugin's source and which file enables it; [Enabled in project settings but not installed](https://code.claude.com/docs/en/plugins/loading.md#enabled-in-project-settings-but-not-installed) has the rules.
 
 * **Scope**: [`Any file`](#scopes). Claude Code honors entries in a repository's `.claude/settings.json` or `.claude/settings.local.json` only after you accept the workspace trust dialog for that folder; in a folder you haven't trusted, including a `-p` run there, it ignores them without a message.
 * **Type**: object mapping a marketplace name to an object with a `source` object and an optional `autoUpdate` Boolean
@@ -4415,7 +4413,7 @@ Claude Code ignores project and local entries because it substitutes these value
 
 List the managed plugins whose [mods](https://code.claude.com/docs/en/plugins/mods/overview.md) run before every mod a user installs, in the listed order. When you set this key in managed settings, name `sec-default@builtin` in the list to keep the built-in guard. In managed settings, Claude Code skips an id whose plugin doesn't count as your organization's. See [Install your organization's mods and set the order](https://code.claude.com/docs/en/plugins/mods/admin.md#install-your-organizations-mods) for those conditions and for how the two ordering keys work together.
 
-* **Scope**: [`User or managed`](#scopes). Claude Code reads the key from managed settings. It reads the key from user settings only on a machine with no managed settings, in a session whose credential isn't a Team or Enterprise `/login`. It ignores the key in project and local settings and in a `--settings` file.
+* **Scope**: [`User or managed`](#scopes). Claude Code reads the key from managed settings. It reads the key from user settings only on a machine with no managed settings or `managed-mcp.json` file, in a session whose credential isn't a Team or Enterprise `/login`. It ignores the key in project and local settings and in a `--settings` file.
 * **Type**: array of `plugin-name@marketplace-name` strings
 * **Default**: unset
 
@@ -4435,7 +4433,7 @@ List the managed plugins whose [mods](https://code.claude.com/docs/en/plugins/mo
 
 List the managed plugins whose [mods](https://code.claude.com/docs/en/plugins/mods/overview.md) run after every mod a user installs, in the listed order. An id listed in both `prependPlugins` and `appendPlugins` is prepended. In managed settings, Claude Code skips an id whose plugin doesn't [count as your organization's](https://code.claude.com/docs/en/plugins/mods/admin.md#install-your-organizations-mods).
 
-* **Scope**: [`User or managed`](#scopes). Claude Code reads the key from managed settings. It reads the key from user settings only on a machine with no managed settings, in a session whose credential isn't a Team or Enterprise `/login`. It ignores the key in project and local settings and in a `--settings` file.
+* **Scope**: [`User or managed`](#scopes). Claude Code reads the key from managed settings. It reads the key from user settings only on a machine with no managed settings or `managed-mcp.json` file, in a session whose credential isn't a Team or Enterprise `/login`. It ignores the key in project and local settings and in a `--settings` file.
 * **Type**: array of `plugin-name@marketplace-name` strings
 * **Default**: unset
 
@@ -4673,7 +4671,7 @@ A plugin's own `settings.json` can also supply this key; see [Ship default setti
 
 ### `crossSessionInbound`
 
-Choose what this session does with [messages arriving from your other Claude Code sessions](https://code.claude.com/docs/en/cross-session-messaging.md#control-inbound-messages). When no value applies, Claude Code decides per message from the two sessions' permission-mode classes. Requires Claude Code v2.1.224 or later.
+Choose what this session does with [messages arriving from your other Claude Code sessions](https://code.claude.com/docs/en/cross-session-messaging.md#control-inbound-messages). When no value applies, Claude Code decides per message from the two sessions' permission-mode classes.
 
 * **Scope**: [`Any file`](#scopes). A project or local value applies only when it's stricter than the value managed settings, the `--settings` flag, or user settings give.
 * **Type**: string, one of:
