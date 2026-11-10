@@ -102,7 +102,7 @@ These requirements decide whether you can add a secret and whether the agent pro
 * **Role**: on every plan, you can add and delete secrets on your own environments whatever your role. On Team and Enterprise, Owners hold an organization admin role in your claude.ai organization and Admins don't, which changes what you see in these cases:
   * **Your own environment**: without an organization admin role, **Add secret** opens a [shorter form](#add-a-secret-without-the-role)
   * **A shared environment**: Owners [add and delete its secrets](#add-a-credential) from admin settings. Without an organization admin role, ask an Owner to add the secret, because the environment's dialog has no **Network secrets** section
-* **Environment type**: an Anthropic-hosted cloud environment that already exists. A [self-hosted environment](https://code.claude.com/docs/en/self-hosted-environments) doesn't have network secrets
+* **Environment type**: an Anthropic-hosted cloud environment. A [self-hosted environment](https://code.claude.com/docs/en/self-hosted-environments) doesn't have network secrets
 * **API reachability**: the API accepts connections from the internet, because requests leave from Anthropic's network
 * **Encryption keys**: if your organization uses customer-managed encryption keys, you can't save network secrets
 

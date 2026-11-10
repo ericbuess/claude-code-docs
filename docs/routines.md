@@ -528,6 +528,6 @@ When a warning under **History** begins with "The last run", find it in the firs
 * [`/loop` and in-session scheduling](https://code.claude.com/docs/en/scheduled-tasks): schedule local tasks within an open CLI session
 * [Desktop scheduled tasks](https://code.claude.com/docs/en/desktop-scheduled-tasks.md): local scheduled tasks that run on your machine with access to local files
 * [Cloud environments](https://code.claude.com/docs/en/cloud-environments.md): configure network access, environment variables, and setup scripts for cloud sessions
-* [Projects](https://code.claude.com/docs/en/claude-projects.md): ongoing work Claude coordinates across parallel cloud sessions; scheduled tasks created from a project appear on its **Scheduled tasks** tab
+* [Projects](https://code.claude.com/docs/en/claude-projects.md): ongoing work Claude coordinates across parallel cloud sessions; scheduled tasks created from a project appear in its **Scheduled tasks** view
 * [MCP connectors](https://code.claude.com/docs/en/mcp.md): connect external services like Slack, Linear, and Google Drive
 * [GitHub Actions](https://code.claude.com/docs/en/github-actions.md): run Claude in your CI pipeline on repository events

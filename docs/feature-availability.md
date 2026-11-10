@@ -93,7 +93,7 @@ These features work in the local CLI but depend on a server-side capability that
       <td>✓ (Opus 5 and 4.8 need provisioning)</td>
       <td>✗</td>
       <td>✗</td>
-      <td>✗</td>
+      <td>✓ ([Fable 5.2, with conditions](https://code.claude.com/docs/en/fast-mode.md#use-fast-mode-on-agent-platform))</td>
       <td>✗</td>
     </tr>
 
@@ -256,12 +256,13 @@ Each tab lists what is unavailable or partially supported on that provider, with
 
 > [tab] Google Cloud's Agent Platform
 >
-> **Not available:** all [features that require a Claude subscription](#features-that-require-a-claude-subscription), plus [fast mode](https://code.claude.com/docs/en/fast-mode.md), [Advisor](https://code.claude.com/docs/en/advisor.md), [Channels](https://code.claude.com/docs/en/channels.md), the [analytics dashboard](https://code.claude.com/docs/en/analytics.md), [server-managed settings](https://code.claude.com/docs/en/server-managed-settings.md), and the [`/design-sync` and `/import` commands](https://code.claude.com/docs/en/commands#all-commands).
+> **Not available:** all [features that require a Claude subscription](#features-that-require-a-claude-subscription), plus [Advisor](https://code.claude.com/docs/en/advisor.md), [Channels](https://code.claude.com/docs/en/channels.md), the [analytics dashboard](https://code.claude.com/docs/en/analytics.md), [server-managed settings](https://code.claude.com/docs/en/server-managed-settings.md), and the [`/design-sync` and `/import` commands](https://code.claude.com/docs/en/commands#all-commands).
 >
 > **Partial support:**
 >
 > * [Desktop](https://code.claude.com/docs/en/desktop.md): via [managed settings](https://claude.com/docs/third-party/claude-desktop/configuration) or [Claude Desktop on 3P](https://claude.com/docs/third-party/claude-desktop/overview)
 > * [Web search](https://code.claude.com/docs/en/tools-reference.md#websearch-tool-behavior): Opus 4, Sonnet 4, Haiku 4.5, and later models
+> * [Fast mode](https://code.claude.com/docs/en/fast-mode.md#use-fast-mode-on-agent-platform): Fable 5.2 in the `global`, `us`, and `eu` regions, or standard speed if Agent Platform refuses fast mode
 > * [Auto mode](https://code.claude.com/docs/en/auto-mode-config.md): Sonnet 5 or later, Opus 4.7 or later, Haiku 5.5, and Fable models only
 > * [Cross-session messaging](https://code.claude.com/docs/en/cross-session-messaging.md): between your sessions on this machine only <sup>[5](#fn5)</sup>
 > * [Zero Data Retention](https://code.claude.com/docs/en/zero-data-retention.md): subject to your Google Cloud agreement

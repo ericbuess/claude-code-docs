@@ -40,7 +40,7 @@ Google Cloud's Agent Platform is Google Cloud's Claude endpoint, formerly Vertex
 
 | Format | Selected by | Endpoints | Forward unchanged |
 | :- | :- | :- | :- |
-| Anthropic Messages | `ANTHROPIC_BASE_URL` | `/v1/messages`, `/v1/messages/count_tokens` (optional) | `anthropic-beta` and `anthropic-version` request headers |
+| Anthropic Messages | `ANTHROPIC_BASE_URL` | `/v1/messages`, `/v1/messages/count_tokens` (optional) | `anthropic-beta` and `anthropic-version` request headers, plus `Authorization` when a [claude.ai login](#request-headers) authenticates the request to Anthropic |
 | Amazon Bedrock InvokeModel | `ANTHROPIC_BEDROCK_BASE_URL` with `CLAUDE_CODE_USE_BEDROCK=1` | `/model/{model}/invoke`, `/model/{model}/invoke-with-response-stream`, `/model/{model}/count-tokens` (optional) | `anthropic_beta` and `anthropic_version` request body fields |
 | Google Cloud's Agent Platform rawPredict | `ANTHROPIC_VERTEX_BASE_URL` with `CLAUDE_CODE_USE_VERTEX=1` | `:rawPredict`, `:streamRawPredict`, `count-tokens:rawPredict` (optional) | `anthropic-beta` and `anthropic-version` request headers, and the `anthropic_version` request body field |
 
@@ -115,11 +115,11 @@ Two client-side settings change what Claude Code assumes for a model ID it doesn
 
 ## Request headers
 
-Claude Code includes these headers on API requests. Header names are case-insensitive on the wire. Forward `anthropic-version` and `anthropic-beta` unchanged, plus `anthropic-workspace-id` when the upstream is the [Claude Platform on AWS](https://code.claude.com/docs/en/claude-platform-on-aws.md); the rest the gateway may consume for routing, attribution, and tracing, and need not forward.
+Claude Code includes these headers on API requests. Header names are case-insensitive on the wire. Forward `anthropic-version` and `anthropic-beta` unchanged, plus `anthropic-workspace-id` when the upstream is the [Claude Platform on AWS](https://code.claude.com/docs/en/claude-platform-on-aws.md). Also forward `Authorization` when your gateway authenticates to Anthropic with the developer's claude.ai login and not a key of its own. The rest the gateway may consume for routing, attribution, and tracing, and need not forward.
 
 | Header | Description |
 | :- | :- |
-| `Authorization`, `x-api-key` | The developer's gateway credential, in one or both headers depending on which [credential variable](https://code.claude.com/docs/en/llm-gateway-connect.md#set-the-credential-variable) they set |
+| `Authorization`, `x-api-key` | The developer's gateway credential, in one or both headers depending on which [credential variable](https://code.claude.com/docs/en/llm-gateway-connect.md#set-the-credential-variable) they set. With a claude.ai login and no gateway credential, `Authorization` carries the login's token |
 | `anthropic-version` | API version, currently `2023-06-01`. Amazon Bedrock- and Google Cloud's Agent Platform-format requests also carry the `anthropic_version` body field, whose value is the provider dialect string, not this header's value |
 | `anthropic-beta` | Comma-separated capability values for the request. Forward the header verbatim; don't allowlist individual values, because the set changes with Claude Code releases. When the developer authenticates with a claude.ai login, which is possible when `ANTHROPIC_BASE_URL` is set without a gateway credential variable, this header also carries an OAuth capability that the upstream requires, and stripping it fails those requests with `401` |
 | `x-claude-code-session-id` | A unique identifier for the current Claude Code session. Use it to aggregate all requests from one session without parsing request bodies |

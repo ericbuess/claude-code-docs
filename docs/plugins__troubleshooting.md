@@ -322,7 +322,7 @@ If the repository has large git submodules, update Claude Code. On v2.1.295 and 
 
 ### Marketplace updates keep failing offline
 
-You work in an environment where the marketplace's git host is unreachable, and every session repeats a failed refresh in the background. Your existing checkout of the marketplace stays in place and startup isn't delayed.
+You work in an environment where the marketplace's git host is unreachable, and every session repeats a failed refresh in the background. Your existing checkout of the marketplace stays in place.
 
 Each session, for a marketplace with [auto-update on](https://code.claude.com/docs/en/plugins/loading.md#which-marketplaces-and-plugins-auto-update), Claude Code checks the marketplace's git host for new commits in the background. When that check can't reach the host, it tries to clone the marketplace again, and offline that clone fails too.
 

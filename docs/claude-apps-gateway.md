@@ -313,7 +313,7 @@ Some organizations number their internal network from a public IPv4 block they o
 >
 > `gatewayInternalNetworks` is for internal networks that happen to be numbered from public address space. It doesn't make it safe to expose a gateway to the internet: a trusted gateway can push settings that run commands on developer machines.
 >
-> Keep the gateway unreachable from outside your network with your firewall or load balancer rules. Set the gateway's [`access_control.allow_cidrs`](https://code.claude.com/docs/en/claude-apps-gateway-config#http-tuning) to the same blocks you declare here, so the gateway itself refuses clients from anywhere else. Behind a load balancer or ingress, set `listen.trusted_proxies` to that front end as well, because the gateway otherwise matches `allow_cidrs` against the front end's own address rather than the developer's.
+> Keep the gateway unreachable from outside your network with your firewall or load balancer rules. Set the gateway's [`access_control.allow_cidrs`](https://code.claude.com/docs/en/claude-apps-gateway-config#http-tuning) to the same blocks you declare here. If a load balancer or ingress [belongs in `listen.trusted_proxies`](https://code.claude.com/docs/en/claude-apps-gateway-config#listen), list it there as well, because the gateway otherwise matches `allow_cidrs` against the frontend's own address rather than the developer's.
 
 Add the key to the same managed settings source as the login keys: the managed settings file, MDM profile, or registry policy. Claude Code ignores it in user, project, and server-managed settings.
 

@@ -403,7 +403,7 @@ Every component path in a manifest is relative to the plugin root and must start
 
 Every component path must resolve inside the plugin root and must exist. `claude plugin validate` checks the paths under every component key:
 
-* **Containment**: a path that resolves outside the plugin root doesn't load, and the `/plugin` **Errors** tab shows `<component> path escapes plugin directory: <path>`. A path containing `..` is the usual case, and `claude plugin validate` reports the error `Path contains ".." which could be a path traversal attempt`
+* **Containment**: a path that resolves outside the plugin root doesn't load, and the `/plugin` **Errors** tab shows `<component> path escapes plugin directory: <path>`. A path containing `..` is the usual case, and `claude plugin validate` reports the error `Path contains ".." which could be a path traversal attempt`. For an `mcpServers` or `lspServers` file, a [`path not read`](https://code.claude.com/docs/en/errors#server-file-path-not-read) message means the path is absolute or contains `..`
 * **Existence**: a path that doesn't exist doesn't load, and the `/plugin` **Errors** tab shows `<component> path not found: <path>`. `claude plugin validate` reports the error `Path not found`
 
 For `outputStyles`, `lspServers`, `monitors`, and `themes` paths, the `claude plugin validate` check requires Claude Code v2.1.283 or later.

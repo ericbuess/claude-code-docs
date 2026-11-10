@@ -76,7 +76,7 @@ The meter picks each request's rates in this order:
 3. List price for the [`models[].id`](https://code.claude.com/docs/en/claude-apps-gateway-config#models) you mapped to that upstream ID, for upstream strings that carry no model name, such as an Amazon Bedrock application-inference-profile ARN or a Microsoft Foundry deployment name. Requires v2.1.218 or later.
 4. The unknown-model tier of \$5/\$25 per million input/output tokens, so an ID the meter can't place is never free. The gateway warns at boot and once per ID at runtime when it uses this tier.
 
-Whichever rate applies, the meter then multiplies the amount by [`pricing.multiplier`](https://code.claude.com/docs/en/claude-apps-gateway-config#pricing), default `1`.
+Whichever rate applies, the meter then multiplies the amount by [`pricing.multiplier`](https://code.claude.com/docs/en/claude-apps-gateway-config#pricing), default `1`. Requires a gateway server running Claude Code v2.1.227 or later.
 
 Client aborts are billed too. When a stream ends without the upstream's final usage frame, the meter bills a floor estimate of about four characters per output token for the text already sent to the client, so aborting requests early doesn't evade a cap.
 

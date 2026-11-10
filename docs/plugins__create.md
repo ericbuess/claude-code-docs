@@ -169,7 +169,13 @@ If two plugins loaded in different ways share a name, see [Name conflicts](https
 
 ### Load a plugin for one session
 
-You can load a plugin for a single session in three ways: from a directory or `.zip` archive on disk with `--plugin-dir`, from a URL with `--plugin-url`, or from an environment variable when you can't add a flag. Each plugin loads for that session only, and nothing is written to your settings for it. When you edit the plugin's files during the session, run `/reload-plugins` to load the changes.
+You can load a plugin for a single session in three ways:
+
+* From a directory or `.zip` archive on disk with `--plugin-dir`
+* From a URL with `--plugin-url`
+* From an environment variable when you can't add a flag
+
+When you edit the plugin's files during the session, run `/reload-plugins` to load the changes.
 
 #### Load a plugin from a directory or `.zip`
 

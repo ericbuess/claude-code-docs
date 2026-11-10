@@ -173,6 +173,20 @@ If you set a plugin to `false` in `~/.claude/settings.json` and it still loads, 
 
 To opt out of a project-enabled plugin on your machine, set the id to `false` in `.claude/settings.local.json`, which has higher precedence than the project file.
 
+### Enabled in an `--add-dir` directory but not loaded
+
+Claude Code reads an `enabledPlugins` entry of `true` in one of the added directory's files only when that file's setting sources are on:
+
+* **`.claude/settings.json`**: `project`
+* **`.claude/settings.local.json`**: `project` and `local`
+
+Check which setting sources the session loads. You set them with [`--setting-sources`](https://code.claude.com/docs/en/cli-reference#cli-flags). In the CLI, `user`, `project`, and `local` are all on by default.
+
+For example, if you run `claude --setting-sources user --add-dir ./shared` in your shell, Claude Code reads neither file in `./shared`. Pass the flag for the file that holds the `true`:
+
+* **`settings.json`**: `--setting-sources user,project`
+* **`settings.local.json`**: `--setting-sources user,project,local`
+
 ### Enabled in project settings but not installed
 
 By default, a plugin enabled only in your project's `.claude/settings.json` doesn't load at session start until you install it on your machine. With the marketplace on your machine, the `/plugin` **Errors** tab shows [`Plugin "<name>" is enabled in project settings but isn't installed here`](https://code.claude.com/docs/en/plugins/troubleshooting#plugin-is-enabled-in-project-settings-but-isnt-installed-here) or [`Plugin "<name>" not cached at <path>`](https://code.claude.com/docs/en/plugins/troubleshooting#plugin-not-cached-at).

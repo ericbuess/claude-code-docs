@@ -169,7 +169,9 @@ A working row shows what the session says it's doing, and a blocked row shows th
 
 When the list is [grouped by directory](#organize-the-list), the summary opens with the session's state as a colored word, such as `Needs input · double jump or wall climb?`. In the default state grouping, the group header already names the state, so the row shows only the summary.
 
-The end-of-turn summary and each mid-turn rewrite are one short Haiku-class request through your normal provider, billed and handled under the same [data usage terms](https://code.claude.com/docs/en/data-usage.md) as the session itself. The 15-second updates between model rewrites reuse the session's own output and don't send a request. On a third-party provider or gateway with no Haiku-class model configured, the request uses the session's main model instead; set [`ANTHROPIC_DEFAULT_HAIKU_MODEL`](https://code.claude.com/docs/en/model-config#environment-variables) to choose one.
+#### Cost of row summaries
+
+The end-of-turn summary and each mid-turn rewrite are one short request through your normal provider, billed and handled under the same [data usage terms](https://code.claude.com/docs/en/data-usage.md) as the session itself. On a third-party provider or gateway, summaries use the model you set in [`ANTHROPIC_DEFAULT_HAIKU_MODEL`](https://code.claude.com/docs/en/model-config#environment-variables). With it unset, they use your provider's model for background tasks: see [Amazon Bedrock](https://code.claude.com/docs/en/amazon-bedrock.md#4-pin-model-versions), [Google Cloud's Agent Platform](https://code.claude.com/docs/en/google-vertex-ai.md#5-pin-model-versions), [Microsoft Foundry](https://code.claude.com/docs/en/microsoft-foundry.md#4-pin-model-versions), or your [gateway](https://code.claude.com/docs/en/llm-gateway-protocol.md#requests-and-defaults-by-connection-method).
 
 ### Pull request status
 

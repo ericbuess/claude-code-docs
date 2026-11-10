@@ -104,6 +104,8 @@ Match the message you see to a section below.
 | `Failed to authenticate: OAuth session expired and could not be refreshed` | [Authentication](#login-expired) |
 | `Could not refresh your login because another Claude Code process is refreshing it` | [Authentication](#could-not-refresh-your-login) |
 | `Failed to refresh OAuth token: another Claude Code process is refreshing it or exited mid-refresh` | [Authentication](#could-not-refresh-your-login) |
+| `Could not refresh your login: the disk that holds the Claude Code config directory (~/.claude by default), or your disk quota on it, is full` | [Authentication](#could-not-refresh-your-login-disk-full) |
+| `Failed to refresh OAuth token: the disk that holds the Claude Code config directory (~/.claude by default), or your disk quota on it, is full` | [Authentication](#could-not-refresh-your-login-disk-full) |
 | `Your account is on hold and can't use Claude Code. View details or appeal: https://claude.ai/restricted` | [Authentication](#your-account-is-on-hold) |
 | `Your account is on hold and can't sign in to Claude Code. View details or appeal: https://claude.ai/restricted` | [Authentication](#your-account-is-on-hold) |
 | `Anthropic profile login expired · Re-authenticate your Anthropic profile` | [Authentication](#anthropic-profile-login-expired) |
@@ -322,6 +324,7 @@ Match the message you see to a section below.
 | `The packages it lists are not installed` / `The packages it lists were not installed, because` | [Plugin troubleshooting](https://code.claude.com/docs/en/plugins/troubleshooting.md#the-packages-it-lists-are-not-installed) |
 | `does not load (...), so Claude Code ignores the whole file` | [Plugin troubleshooting](https://code.claude.com/docs/en/plugins/troubleshooting.md#does-not-load-so-claude-code-ignores-the-whole-file) |
 | `path escapes plugin directory` | [Plugin errors](#path-escapes-plugin-directory) |
+| `path not read: <path> is absolute or has a ".." part` | [Plugin errors](#server-file-path-not-read) |
 | `Plugin not loaded: its manifest <path> was not read` | [Plugin errors](#plugin-not-loaded-its-manifest-was-not-read) |
 | `path could not be checked` | [Plugin errors](#path-could-not-be-checked) |
 | `its marketplace entry path does not stay inside the marketplace directory` | [Plugin errors](#marketplace-entry-path-does-not-stay-inside-the-marketplace-directory) |
@@ -370,6 +373,7 @@ Match the message you see to a section below.
 | `Refusing to write <path>: where it leads on disk could not be determined` / `Refusing to read <path>: where it leads on disk could not be determined` | [Tool errors](#refusing-after-a-symlink-changed) |
 | `Refusing to search <path>: a path one of its Read deny rules is written through changed while the search was being prepared` / `Refusing to search <path>: it could not be opened` | [Tool errors](#refusing-after-a-symlink-changed) |
 | `its permission check expired before it ran (too many concurrent file operations)` / `ripgrep was found only by name on PATH` | [Tool errors](#refusing-after-a-symlink-changed) |
+| `The search failed, so this is not a "no matches" result: matches may exist` | [Tool errors](#the-search-failed) |
 | `task output swap refused (tasks dir moved or linked)` | [Tool errors](#task-output-swap-refused) |
 | `Command killed: its output file was replaced or could no longer be verified` | [Tool errors](#task-output-swap-refused) |
 | `Disk full: this computer's volume holding <dir> (Claude Code's temporary directory) has <n> MB free` / `Nearly out of inodes: this computer's volume holding <dir>` | [Tool errors](#disk-quota-or-temp-filesystem-is-full) |
@@ -379,6 +383,7 @@ Match the message you see to a section below.
 | `Command output was lost: the temp filesystem at <dir> is full` / `is out of inodes` | [Tool errors](#disk-quota-or-temp-filesystem-is-full) |
 | `File is not valid UTF-8. It may use a legacy encoding such as Windows-1252, Shift-JIS or GBK, or be binary` | [Tool errors](#file-is-not-valid-utf-8) |
 | `git is not installed on this Mac. To install it, run xcode-select --install, then try again.` | [Tool errors](#git-is-not-installed-on-this-mac) |
+| `Refusing to apply edits to <path>: a hook is configured for file edits in this session` | [Tool errors](#a-hook-is-configured-for-file-edits) |
 | `the source file is not valid UTF-8 text` / `the source file is not valid UTF-16 text` | [Tool errors](#the-source-file-is-not-valid-utf-8-text) |
 | `the source file has the replacement character U+FFFD` | [Tool errors](#the-source-file-is-not-valid-utf-8-text) |
 | `Not published: that file is on a network share` | [Tool errors](#not-published-that-file-is-on-a-network-share) |
@@ -389,7 +394,7 @@ Match the message you see to a section below.
 | `The safety check for domain ... is rate-limited` | [Tool errors](#webfetch-domain-safety-check-failed) |
 | `The safety check for domain ... is temporarily rate-limited` | [Tool errors](#webfetch-domain-safety-check-failed) |
 | `Unable to verify if domain ... is safe to fetch` | [Tool errors](#webfetch-domain-safety-check-failed) |
-| `MCP tool "<tool>" on server "<server>" gave no answer that could be read` / `answered without its text` | [How an MCP tool hook's result is read](https://code.claude.com/docs/en/hooks.md#how-the-tool’s-result-is-read) |
+| `MCP tool "<tool>" on server "<server>" gave no answer that could be read` / `answered without its text` | [How an MCP tool hook's result is read](https://code.claude.com/docs/en/hooks.md#how-the-tools-result-is-read) |
 | `Can't open MCP settings while no terminal is attached to this background session` | [Background session errors](#commands-refused-in-a-background-session) |
 | `Can't open MCP settings in a background session` | [Background session errors](#commands-refused-in-a-background-session) |
 | `blocked because the path is spelled in a form that cannot be safely resolved` | [Background session errors](#write-or-command-blocked-because-the-path-cannot-be-safely-resolved) |
@@ -400,6 +405,7 @@ Match the message you see to a section below.
 | `Can't open — this session is running in another terminal` | [Background session errors](#this-session-is-running-in-another-terminal) |
 | `This conversation is already open in another running Claude session` | [Background session errors](#this-session-is-running-in-another-terminal) |
 | `This session's saved conversation is no longer on disk` | [Background session errors](#this-sessions-saved-conversation-is-no-longer-on-disk) |
+| `This forked session could not be started. Fork the conversation again to retry.` | [Background session errors](#this-forked-session-could-not-be-started) |
 | `Bypass permissions was requested at launch and ignored` | [Bypass permissions ignored in a background session](https://code.claude.com/docs/en/permission-modes.md#bypass-permissions-ignored-in-a-background-session) |
 | `kept <id> — its worktree is still at <path>` | [Background session errors](#worktree-has-commits-that-are-not-pushed-anywhere) if the message's next line mentions unpushed commits, otherwise [What deleting a session removes](https://code.claude.com/docs/en/agent-view.md#what-deleting-a-session-removes) |
 | `kept <id> — <n> unpushed commits on <branch>` | [Background session errors](#worktree-has-commits-that-are-not-pushed-anywhere) |
@@ -551,12 +557,20 @@ You can tune retry behavior with these environment variables:
 | [`CLAUDE_CODE_MAX_RETRIES`](https://code.claude.com/docs/en/env-vars) | 10 | Number of retry attempts. Capped at 15 as of v2.1.186; as of v2.1.199 `CLAUDE_CODE_RETRY_WATCHDOG` raises the default and removes the cap. Lower it to surface failures faster in scripts. |
 | [`CLAUDE_CODE_RETRY_WATCHDOG`](https://code.claude.com/docs/en/env-vars) | unset | Set to `1` in unattended sessions such as CI jobs to retry `429` and `529` capacity errors indefinitely instead of failing after `CLAUDE_CODE_MAX_RETRIES` attempts. Claude Code fails at once when a standard-speed request gets a `429` that reports a spend limit or exhausted usage credits, even one from a [gateway spend cap](#spend-limit-reached) that resets on a schedule. Before v2.1.239, the watchdog retried these indefinitely. For fast mode requests, see [Handle rate limits](https://code.claude.com/docs/en/fast-mode.md#handle-rate-limits). On v2.1.199 or later it also raises the default retry count for other transient errors, such as server errors, timeouts, and dropped connections, to 300, roughly three hours of backoff, and removes the cap of 15 on `CLAUDE_CODE_MAX_RETRIES` if you set that variable explicitly. |
 | [`CLAUDE_CODE_RETRY_WATCHDOG_MAX_WAIT_MS`](https://code.claude.com/docs/en/env-vars) | unset | Maximum time in milliseconds that each API request spends waiting out `429` and `529` errors when `CLAUDE_CODE_RETRY_WATCHDOG` is set. When unset, the wait has no limit. Requires Claude Code v2.1.295 or later. |
+| `CLAUDE_CODE_RETRY_WATCHDOG_MAX_USAGE_LIMIT_WAIT_MS` | no cap | With `CLAUDE_CODE_RETRY_WATCHDOG` set, the longest time in milliseconds one request waits for your plan's [usage limit](#youve-hit-your-session-limit), such as the session or weekly limit, to reset. When the reset is further away than this cap, the request fails at once, unless usage credits have room or the API couldn't check them. In those cases it's retried, and fails if the cap passes before it succeeds. Requires Claude Code v2.1.301 or later. |
 | [`CLAUDE_CODE_RETRY_WATCHDOG_USAGE_LIMIT_RECHECK_MS`](https://code.claude.com/docs/en/env-vars) | unset | Minimum interval in milliseconds between checks of whether a [usage limit](#youve-hit-your-session-limit) was already lifted, while a request waits for that limit to reset with `CLAUDE_CODE_RETRY_WATCHDOG` set. When a check finds the limit lifted, the request goes out at once. Give plain digits from `60000` to `10800000`. When unset or outside that range, no checks are made. For when Claude Code skips these checks, see the [environment variables reference](https://code.claude.com/docs/en/env-vars.md). Requires Claude Code v2.1.305 or later. |
 | [`CLAUDE_CODE_OVERLOADED_RETRY_BASE_DELAY_MS`](https://code.claude.com/docs/en/env-vars) | 500 | Starting delay in milliseconds of the backoff between retries of a request that the API rejects with a `529` overloaded error. Raise it, up to 32000, to spread the retries over a longer window when the API is at capacity. Has no effect when `CLAUDE_CODE_RETRY_WATCHDOG` is set to `1`, or when the rejected request was sent in [fast mode](https://code.claude.com/docs/en/fast-mode.md#handle-rate-limits). Requires Claude Code v2.1.292 or later. |
 | [`CLAUDE_CODE_OVERLOADED_RETRY_MAX_DELAY_MS`](https://code.claude.com/docs/en/env-vars) | 32000 | Ceiling in milliseconds on the backoff between retries of a request that the API rejects with a `529` overloaded error. Raise it, up to 64000, so that later retries keep spreading apart when the API is at capacity. Has no effect when `CLAUDE_CODE_RETRY_WATCHDOG` is set to `1`, or when the rejected request was sent in [fast mode](https://code.claude.com/docs/en/fast-mode.md#handle-rate-limits). Requires Claude Code v2.1.296 or later. |
 | [`API_TIMEOUT_MS`](https://code.claude.com/docs/en/env-vars) | 600000 | Time in milliseconds that each request attempt has to receive its response headers. It doesn't limit how long a streaming response runs after that. Raise it for slow networks or proxies. For how it caps the first-byte deadline, see [No response from API](#no-response-from-api). |
-| [`CLAUDE_CODE_NONSTREAMING_TIMEOUT_RETRIES`](https://code.claude.com/docs/en/env-vars) | unset | Limit on re-sends of a [non-streaming request](#streaming-response-ended-before-any-complete-data-was-received) that times out. At the limit, the request fails. A response from Claude that takes longer than the timeout to generate times out again on every re-send, so set a low number such as `0` to fail sooner. Each non-streaming attempt times out after 300 seconds in a local session, or after `API_TIMEOUT_MS` when you set a positive value. Requires Claude Code v2.1.285 or later. |
+| [`CLAUDE_CODE_NONSTREAMING_TIMEOUT_RETRIES`](https://code.claude.com/docs/en/env-vars) | unset | Limit on re-sends of a [non-streaming request](#streaming-response-ended-before-any-complete-data-was-received) that times out. At the limit, the request fails. A response from Claude that takes longer than the timeout to generate times out again on every re-send, so set a low number such as `0` to fail sooner. For each attempt's timeout, see [How long a non-streaming attempt waits](#how-long-a-non-streaming-attempt-waits). Requires Claude Code v2.1.285 or later. |
 | [`CLAUDE_STREAM_FIRST_BYTE_TIMEOUT_MS`](https://code.claude.com/docs/en/env-vars) | unset | Deadline in milliseconds for the first response byte of a streaming request. Requires Claude Code v2.1.242 or later. For how Claude Code picks the deadline when this is unset, see [No response from API](#no-response-from-api). |
+
+#### How long a non-streaming attempt waits
+
+A non-streaming attempt ends at its request timeout or at the body idle timeout, whichever comes first:
+
+* **Request timeout**: `API_TIMEOUT_MS` when you set a positive value, otherwise 300 seconds in a local session.
+* **[Body idle timeout](https://code.claude.com/docs/en/network-config.md#streaming-idle-watchdogs)**: 5 to 6 minutes without a response, however high you set `API_TIMEOUT_MS`, where it runs and you haven't turned it off.
 
 ## Server errors
 
@@ -1439,8 +1453,6 @@ For a `Login expired` message that ends with `or re-authenticate your Anthropic 
 
 This is not the same state as [OAuth token revoked or expired](#oauth-token-revoked-or-expired). Those messages report a rejection the API returned. Claude Code itself produces `Login expired` for a login it already failed to renew, so it sends no request. When the renewal fails because the account itself is suspended rather than the login being stale, Claude Code shows [Your account is on hold](#your-account-is-on-hold) instead.
 
-Sessions authenticated with an API key, [`CLAUDE_CODE_OAUTH_TOKEN`](https://code.claude.com/docs/en/env-vars), or a third-party provider don't use the saved login and never see this message.
-
 You can check for this state before a request fails: [`/status`](https://code.claude.com/docs/en/commands) shows a `Login` row reading `Expired — log in again`, plus the organization and email it has saved for the expired login. The row appears only when the saved login is your active credential and can no longer be refreshed. Sessions authenticated another way don't show the row, even if an expired login remains saved. Before v2.1.210, `/status` gave no indication in this state that a login had ever existed, because the cleared credential left it nothing to report.
 
 **What to do:**
@@ -1464,13 +1476,30 @@ In [non-interactive mode](https://code.claude.com/docs/en/headless.md) (`-p`) an
 Failed to refresh OAuth token: another Claude Code process is refreshing it or exited mid-refresh. This is usually transient; retry in a minute, and if it persists close other Claude Code processes or sign in again
 ```
 
-Sessions authenticated with an API key, [`CLAUDE_CODE_OAUTH_TOKEN`](https://code.claude.com/docs/en/env-vars), or a third-party provider don't use the saved login and never see this message.
-
 **What to do:**
 
 * Try again in a minute. If another process completes the refresh first, this session uses the renewed login.
 * If the message keeps returning, close other Claude Code windows and processes, then retry.
 * If it returns with no other Claude Code process running, run `/login`. Signing in again doesn't wait on the refresh lock.
+
+### Could not refresh your login: the disk that holds the Claude Code config directory is full
+
+Free space on the disk that holds the Claude Code config directory, then send your message again. Signing in wouldn't help while the disk is full, because a new login couldn't be saved. The config directory is `~/.claude` in your home directory unless you set [`CLAUDE_CONFIG_DIR`](https://code.claude.com/docs/en/env-vars).
+
+```text wrap theme={null}
+Could not refresh your login: the disk that holds the Claude Code config directory (~/.claude by default), or your disk quota on it, is full · Delete files you no longer need on that disk, then try again · Signing in again won't help
+```
+
+In [non-interactive mode](https://code.claude.com/docs/en/headless.md) (`-p`) and the [Agent SDK](https://code.claude.com/docs/en/agent-sdk/overview.md), the message reads:
+
+```text wrap theme={null}
+Failed to refresh OAuth token: the disk that holds the Claude Code config directory (~/.claude by default), or your disk quota on it, is full. Delete files you no longer need on that disk and retry; signing in again won't help
+```
+
+**What to do:**
+
+* For a script, rerun its `claude -p` command
+* If the disk already shows free space, running out of disk quota or of inodes produces the same message. Delete your own files on that disk. If the message returns, delete many small files rather than a few large ones, because each file takes one inode whatever its size.
 
 ### Couldn't save your login
 
@@ -2445,11 +2474,16 @@ See [Explore the context window](https://code.claude.com/docs/en/context-window.
 
 ### Context exceeds the token limit
 
-`/context` shows this warning at the top of its output when the conversation has grown past the model's context window. Requests fail with [`Prompt is too long`](#prompt-is-too-long) until you free space. An interactive session shows that error as the `Context limit reached` line.
+`/context` shows this warning at the top of its output when the conversation has grown past the model's context window:
 
 ```text theme={null}
 Context exceeds the 200k-token limit by 94k tokens — run /compact or /clear to continue.
 ```
+
+After a `Context exceeds` warning, you don't need to run either command while [auto-compact](https://code.claude.com/docs/en/settings-reference.md#autocompactenabled) is on, which is the default:
+
+* **Auto-compact on**: send your next message. If it still fails with [`Prompt is too long`](#prompt-is-too-long), see that entry.
+* **Auto-compact off**: in the session, run `/compact` if the warning names it, or `/clear` to start over. Until you run one, messages fail with `Context limit reached`, or `Prompt is too long` in `-p` output.
 
 When the limit you exceeded is a compaction window, such as the 200K boundary on 1M-context models, the warning reads differently. A compaction window can sit below the model's context window, so requests past it can still succeed.
 
@@ -2461,7 +2495,7 @@ Both forms name `/clear` instead of `/compact` when you have set [`DISABLE_COMPA
 
 **What to do:**
 
-* In a multi-turn conversation, run `/compact` to summarize earlier turns and free space. To start fresh instead, run `/clear`
+* **After a compaction-window warning**: in a multi-turn conversation, run `/compact` to summarize earlier turns and free space. To start fresh instead, run `/clear`.
 * For more ways to reduce usage, see [Prompt is too long](#prompt-is-too-long)
 
 Before v2.1.216, `/context` showed usage above 100% with no warning line explaining what that meant or how to recover.
@@ -3305,7 +3339,7 @@ Claude Code rejects a `--settings` path that isn't a regular file the same way: 
 
 ### Configuration error in \~/.claude.json
 
-Claude Code couldn't parse `~/.claude.json`, the file that holds your account details, MCP servers, and per-project state. Your file is unchanged. A [non-interactive](https://code.claude.com/docs/en/headless.md) start such as `claude -p` exits with code 1 each time until you repair the file.
+Claude Code couldn't parse `~/.claude.json`, the file that holds your account details, MCP servers, and per-project state. A [non-interactive](https://code.claude.com/docs/en/headless.md) start such as `claude -p` exits with code 1.
 
 When Claude Code finds a [backup](https://code.claude.com/docs/en/claude-directory.md#cleaned-up-automatically), the output names it and prints a `cp` line that copies it back:
 
@@ -3320,10 +3354,9 @@ Configuration error in /home/user/.claude.json: <JSON parser's message>
 
 **What to do:**
 
-* **The output has a `cp` line**: run that line in your terminal. On Windows, run it in PowerShell. It replaces the broken file with the backup, an earlier version of `~/.claude.json`.
-* **The output has no `cp` line, or the error returns after you run it**: fix the JSON in `~/.claude.json`, copy another `.claude.json.backup.<timestamp>` file from [`~/.claude/backups/`](https://code.claude.com/docs/en/claude-directory#cleaned-up-automatically) over it if there is one, or rename it. With no file at `~/.claude.json`, Claude Code starts with default settings and none of what the file held.
-
-Before v2.1.318, you were left with defaults in `~/.claude.json` after a non-interactive start printed this error, so the next start ran without your configuration.
+* **The output has a `cp` line**: run that line in your terminal. On Windows, run it in PowerShell.
+* **The output has no `cp` line, or the error returns after you run it**: if `~/.claude.json` still has your configuration, fix its JSON. If you can't, copy another `.claude.json.backup.<timestamp>` file from [`~/.claude/backups/`](https://code.claude.com/docs/en/claude-directory#cleaned-up-automatically) over it if there is one, or rename it. With no file at `~/.claude.json`, Claude Code starts with default settings and none of what the file held.
+* **`~/.claude.json` no longer has your configuration**: find a `.claude.json.corrupted.<timestamp>` file that still has it, in [`~/.claude/backups/`](https://code.claude.com/docs/en/claude-directory#cleaned-up-automatically) or your home directory. Fix its JSON, then copy it over `~/.claude.json`. If you can't find or fix one, try the same steps with a `.claude.json.backup.<timestamp>` file that has your configuration. If none does, rename `~/.claude.json` and add your MCP servers again with [`claude mcp add`](https://code.claude.com/docs/en/mcp#installing-mcp-servers).
 
 ### Claude configuration file was empty and no backup holds anything
 
@@ -3531,7 +3564,7 @@ Claude Code turns `claude import` on through a feature flag it fetches from Anth
 
 * You haven't started a session since installing, so Claude Code hasn't fetched the flag yet. The first `claude import` can print this even when the feature is available to you.
 * You use Claude Code through Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry, or Claude Platform on AWS, or through a [Claude apps gateway](https://code.claude.com/docs/en/claude-apps-gateway#availability-and-limitations). Claude Code doesn't fetch feature flags in these sessions, so `claude import` stays unavailable.
-* You set `DISABLE_TELEMETRY`, `DO_NOT_TRACK`, `DISABLE_GROWTHBOOK`, or [`CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC`](https://code.claude.com/docs/en/env-vars), which turn off feature-flag fetching, so `claude import` stays unavailable.
+* You set `DISABLE_TELEMETRY`, `DO_NOT_TRACK`, [`CLAUDE_CODE_DISABLE_FEATURE_FLAGS`](https://code.claude.com/docs/en/env-vars#variables), `DISABLE_GROWTHBOOK`, or [`CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC`](https://code.claude.com/docs/en/env-vars), which turn off feature-flag fetching, so `claude import` stays unavailable.
 
 **What to do:**
 
@@ -4489,6 +4522,22 @@ Before v2.1.257, the check on paths the plugin declares looked only at the path'
 * If the message ends with `EACCES`, restore your execute permission on every directory leading to the file or folder the path names. Check the directories above the path, then follow each symlink you reach and check the directories leading to where it points. For any other error code, look it up in the [causes and steps for a path that couldn't be checked](#path-could-not-be-checked).
 * To share files with other plugins in the same marketplace, link them with a symlink inside the plugin directory, following the [symlink rules](https://code.claude.com/docs/en/plugins/host-marketplace.md#share-files-within-a-marketplace-with-symlinks)
 
+### Server file path not read
+
+The `path not read` message means Claude Code didn't read an MCP or LSP server file that a plugin names, because of the file's path. The rest of the plugin loads, without the servers the file defines.
+
+A `..` part counts even when the path stays inside the plugin, as in this example:
+
+```text theme={null}
+mcp-servers path not read: ./sub/../x.json is absolute or has a ".." part
+```
+
+**What to do:**
+
+* If you installed the plugin and don't maintain it, report the message to its author
+* If you maintain the plugin, keep the server file inside the plugin directory. Name it in the manifest or marketplace entry with a path that starts with `./` and has no `..`, for example `./servers/x.json`
+* To share one server file between plugins in the same marketplace, link the file into each plugin with a symlink, following the [symlink rules](https://code.claude.com/docs/en/plugins/host-marketplace.md#share-files-within-a-marketplace-with-symlinks)
+
 ### Plugin not loaded: its manifest was not read
 
 Claude Code couldn't confirm that a marketplace plugin's [manifest](https://code.claude.com/docs/en/plugins/manifest-reference.md) at `.claude-plugin/plugin.json` is inside the plugin, so it loads nothing from that plugin. For a plugin in a [local marketplace](https://code.claude.com/docs/en/plugins/loading.md#in-place-and-copied-plugins), Claude Code also couldn't confirm that the manifest is inside that marketplace. The message appears in the `/plugin` **Errors** tab, and the reason at its end says what Claude Code found.
@@ -5097,6 +5146,23 @@ Before v2.1.251, Claude Code re-checked a path's resolution only for file writes
 
 Before v2.1.280, the `where it leads on disk could not be determined` refusal didn't appear.
 
+### The search failed, so this is not a "no matches" result
+
+A [Grep](https://code.claude.com/docs/en/tools-reference.md#grep-tool-behavior) or [Glob](https://code.claude.com/docs/en/tools-reference.md#glob-tool-behavior) search Claude ran failed before returning any result, so whether matches exist is unknown. The message Claude receives in place of results starts:
+
+```text wrap theme={null}
+The search failed, so this is not a "no matches" result: matches may exist. What happened to the search program (ripgrep) is not known, and no results were read. Run the search once more. If it fails again, tell the user that searches are failing.
+```
+
+**What to do:**
+
+* **The first time it appears**: nothing. The message asks Claude to search again first.
+* **If Claude says searches are failing**: capture ripgrep's error for a bug report:
+  1. From your shell, start a session with the same flags as the session where searches failed, plus [`--debug-file claude-debug.log`](https://code.claude.com/docs/en/cli-reference#cli-flags)
+  2. Send Claude the request that led to the failed search
+  3. If the search fails again, find the line containing `rg error (signal=` in `claude-debug.log`
+  4. Include that line when you [report the problem](#report-an-error)
+
 ### Task output swap refused
 
 Claude Code saves each Bash command's output to a file under its temp directory. Every time it opens one of these files, it checks that the path still leads to the file it created, with no symbolic link, extra hard link, or moved directory redirecting it. This message means that check failed, so Claude Code refused the operation rather than write or read output through that path. The message appears in the Bash tool result:
@@ -5184,6 +5250,23 @@ A file that is meant to be UTF-8 gets this message too when it contains even one
 * To keep editing the file with the Edit tool, convert it to UTF-8, or fix the invalid bytes in a file that is meant to be UTF-8, then ask Claude to make the edit again
 
 Before v2.1.296, Edit and NotebookEdit applied such an edit and saved every byte they couldn't decode as `U+FFFD`. On those versions, update Claude Code.
+
+### Refusing to apply edits: a hook is configured for file edits in this session
+
+Claude tried to publish an [artifact](https://code.claude.com/docs/en/artifacts.md) with a [one-step update](https://code.claude.com/docs/en/artifacts.md#turn-off-one-step-artifact-updates), a small change to the artifact's file included in the publish, and Claude Code refused. Nothing was published and the file is unchanged. The message appears in the Artifact tool result:
+
+```text wrap theme={null}
+Refusing to apply edits to <path>: a hook is configured for file edits in this session, so a publish can't apply edits here. Edit the file, then publish it without edits. Nothing was published.
+```
+
+Claude Code doesn't allow one-step updates while your session has a [`PreToolUse` hook](https://code.claude.com/docs/en/hooks#pretooluse) or [mod](https://code.claude.com/docs/en/plugins/mods/overview.md) on `Edit` or `Write`.
+
+**What to do:**
+
+* Nothing, if Claude went on to edit the file and publish it
+* If Claude stopped at the message, ask Claude to edit the file and publish
+* If the message keeps coming back, quit and relaunch Claude Code
+* If the message comes back even after a relaunch, [turn off one-step updates](https://code.claude.com/docs/en/artifacts.md#turn-off-one-step-artifact-updates)
 
 ### The source file is not valid UTF-8 text
 
@@ -5654,6 +5737,20 @@ Before v2.1.281, this message also appeared when the directory was already gone 
 **What to do:**
 
 * Recreate the directory the message names, or dispatch from a directory that exists, then try again
+
+### This forked session could not be started
+
+You [forked a Remote Control session](https://code.claude.com/docs/en/remote-control.md#fork-a-session-from-your-browser) from claude.ai, and Claude Code couldn't finish starting the [background session](https://code.claude.com/docs/en/agent-view.md) that runs the fork on your machine. This notice appears in the forked session's transcript:
+
+```text theme={null}
+This forked session could not be started. Fork the conversation again to retry.
+```
+
+The session you forked keeps running.
+
+**What to do:**
+
+* Go back to the session you forked and fork it again once the session is idle
 
 ### Workspace not trusted when dispatching a background session
 

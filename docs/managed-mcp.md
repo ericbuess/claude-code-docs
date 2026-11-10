@@ -187,7 +187,7 @@ Claude Code loads an entry only when it passes every check below. It drops an en
 
 * `type` is `http` or `sse`. As in `.mcp.json`, `streamable-http` is accepted as an alias for `http`.
 * `url` is an `https://` URL. Claude Code refuses a plain `http://` URL, including one that points at `localhost`.
-* The entry has no `command`, `args`, `env`, or `headersHelper` member, so a managed settings document never names a program to run on a user's machine.
+* The entry has no `command`, `args`, `env`, or `headersHelper` member.
 * No value contains a `${VAR}` reference. Claude Code doesn't expand environment variables in these entries, so write literal values.
 * The server name contains only letters, numbers, hyphens, and underscores, and no key or value contains control or invisible formatting characters.
 

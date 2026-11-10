@@ -142,6 +142,7 @@ Claude Code deletes the files in the paths below once they're older than [`clean
 Session files in `sessions/`, auto memory, and Claude Desktop and Cowork transcripts each follow their own retention rule:
 
 * **`sessions/`**: holds one small file per running session, used to detect concurrent sessions and crashes. It isn't part of the age-based sweep: Claude Code removes each file when its session exits and clears crash leftovers on the next launch.
+* **`seed-admin/`**: scratch git directories Claude Code makes while packaging your repository for an [ultrareview](https://code.claude.com/docs/en/ultrareview.md) or a [cloud session upload](https://code.claude.com/docs/en/claude-code-on-the-web.md#send-local-repositories-without-github). When an upload ends, or in a later session if it was interrupted, Claude Code removes that upload's directory and leaves `seed-admin/` in place.
 * **Auto memory**: the sweep doesn't delete the memory files in a project's [auto memory](https://code.claude.com/docs/en/memory.md#auto-memory) directory, `projects/<project>/memory/`. Claude Code removes that directory only if it has been empty for the whole retention period. Before v2.1.228, the sweep treated folders inside the memory directory as session data and could delete old files beneath it.
 * **Claude Desktop and Cowork transcripts**: Claude Code keeps the transcript of a session you started or most recently continued in Claude Desktop or Cowork at any age. To give these transcripts an age limit, set [`desktopSessionCleanupPeriodDays`](https://code.claude.com/docs/en/settings-reference#desktopsessioncleanupperioddays). Requires Claude Code v2.1.248 or later; earlier versions delete them after `cleanupPeriodDays`.
 
@@ -153,7 +154,9 @@ Session files in `sessions/`, auto memory, and Claude Desktop and Cowork transcr
 Claude Code skips the age-based sweep in these cases:
 
 * **Bare mode**: when you run `claude -p` with [`--bare`](https://code.claude.com/docs/en/headless#start-faster-with-bare-mode), Claude Code doesn't run the sweep in that session.
-* **Paused sweep**: if Claude Code can't safely determine the retention period, it pauses the retention cleanup sweep; the [`retention_sweep` event](https://code.claude.com/docs/en/monitoring-usage#retention-sweep-event) lists each configuration that pauses it. When the cause is a settings file that can't be read or parsed, or settings errors with `cleanupPeriodDays` or `desktopSessionCleanupPeriodDays` explicitly set, Claude Code also shows a warning in `/status` until you fix the settings errors. When [managed settings](https://code.claude.com/docs/en/server-managed-settings.md) provide `cleanupPeriodDays`, Claude Code runs the sweep at the managed value in either case.
+* **Paused sweep**: if Claude Code can't safely determine the retention period, it pauses the sweep; the [`retention_sweep` event](https://code.claude.com/docs/en/monitoring-usage#retention-sweep-event) lists each configuration that pauses it. When the cause is a settings file that can't be read or parsed, or settings errors with `cleanupPeriodDays` or `desktopSessionCleanupPeriodDays` set, `/status` shows a warning until you fix the cause.
+
+When [managed settings](https://code.claude.com/docs/en/managed-settings.md) provide `cleanupPeriodDays`, Claude Code runs the sweep at the managed value even when a lower-priority settings file has errors.
 
 To check that the machines in your organization run the sweep with the retention period you set, see [Check the retention sweep](https://code.claude.com/docs/en/monitoring-usage.md#check-the-retention-sweep).
 

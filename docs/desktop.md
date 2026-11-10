@@ -256,7 +256,7 @@ To hide or show the panel, click **Hide session rail** or **Show session rail** 
 
 ### Minimize a pane
 
-To keep the Terminal, Browser, or [iOS Simulator](https://code.claude.com/docs/en/desktop-ios-simulator.md) in view at a small size, click **Minimize** in the pane's header. The button requires Claude Desktop v4.0.0 or later and a Claude account rather than a [third-party provider](https://code.claude.com/docs/en/third-party-integrations.md). The Browser pane has it only in local sessions.
+To keep the Terminal, Browser, [iOS Simulator](https://code.claude.com/docs/en/desktop-ios-simulator.md), or a [side chat](#ask-a-side-question-without-derailing-the-session) in view at a small size, click **Minimize** in the pane's header. The button requires Claude Desktop v4.0.0 or later and a Claude account rather than a [third-party provider](https://code.claude.com/docs/en/third-party-integrations.md). The Browser pane has it only in local sessions.
 
 The minimized pane sits in the [session details panel](#see-session-details) while that panel is on screen, and floats in a corner of the chat otherwise:
 

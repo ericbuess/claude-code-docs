@@ -20,7 +20,7 @@ Without a project, running several sessions means doing the coordinating yoursel
 
 * **Send work to one place**: paste a bug report, a stack trace, or a list of tasks into the conversation whenever one comes up. Claude starts a thread for each piece of work or passes it to the thread already working in that area, and answers quick questions in place.
 * **Set context once**: every new thread starts with the project's instructions, so a rule you state once, such as which branch to target, reaches all of them.
-* **Walk away and come back to finished work**: when you come back an hour later or the next morning, the **Overview** pane shows which threads finished, which pull requests are ready for review, and which thread is waiting for your answer.
+* **Walk away and come back to finished work**: the Overview pane shows which threads finished, which pull requests are ready for review, and which thread is waiting for your answer.
 
 If you already know the work you want a project to run, go straight to [Create a project](#create-a-project).
 
@@ -28,10 +28,10 @@ If you already know the work you want a project to run, go straight to [Create a
 
 A project is worth creating when the work has a goal that outlasts one session and keeps producing tasks. These kinds of work suit a project well:
 
-* **One goal across many repositories**: "Bring every service up to the new lint config." Claude can run a thread per repository, each with its own pull request, and the [**Overview** pane](#see-what-needs-you-in-overview) shows which ones are ready for review.
+* **One goal across many repositories**: "Bring every service up to the new lint config." Claude can run a thread per repository, each with its own pull request, and the [Overview pane](#see-what-needs-you-in-overview) shows which ones are ready for review.
 * **An area you keep feeding**: the bugs, stack traces, and review requests for one service, pasted into the conversation as they reach you. A pitfall you tell Claude to remember after one fix is in [project memory](#give-a-project-standing-context) for the next.
 * **A build or migration bigger than a session**: "Build what `docs/spec.md` describes" or "Move the app off the deprecated ORM." The work splits into threads that each take a part, decisions you ask Claude to remember early on reach the later cloud threads, and the spec changes and bugs you find during the build go into the same conversation.
-* **Work that isn't code**: a folder of contracts or a support-ticket export you keep coming back to with new questions, such as "find the ten most common integration mistakes in these tickets." Upload the documents instead of adding a repository, and threads deliver each write-up as a file on the project's [**Library** tab](#see-what-needs-you-in-overview).
+* **Work that isn't code**: a folder of contracts or a support-ticket export you keep coming back to with new questions, such as "find the ten most common integration mistakes in these tickets." Upload the documents instead of adding a repository, and threads deliver each write-up as a file in the project's [**Library**](#see-what-needs-you-in-overview).
 
 In any of them you can send a batch of tasks, tell Claude to start without asking you to confirm, and walk away. When you're back, you can find the threads that need you under [**Waiting on you**](#see-what-needs-you-in-overview). You can also ask Claude to put part of the work on a schedule as a [cloud scheduled task](https://code.claude.com/docs/en/routines.md). If one of these is your situation, [create a project](#create-a-project).
 
@@ -57,11 +57,11 @@ A project is one coordinating conversation with Claude plus the threads it start
   * The `CLAUDE.md` in [each of the project's repositories](#what-threads-pick-up-from-your-repositories), but not the repositories' skills, `.claude/settings.json`, or `.mcp.json`
   * The [connectors](#get-skills-plugins-connectors-and-tools-into-threads) on your claude.ai account
   * A [cloud environment](#choose-an-environment-for-threads) that sets its network access, environment variables, network secrets, and installed tools
-* **The Overview pane**: where you [see all the threads at once](#see-what-needs-you-in-overview) and which of them need you. Its other tabs are **Library** for the files you added and the files threads produced, **Pull requests** for the ones threads opened, and **Scheduled tasks** for scheduled work in the project.
+* **The Overview pane**: where you [see all the threads at once](#see-what-needs-you-in-overview) and which of them need you.
 
 Cloud threads don't pick up anything from the Claude Code setup on your own machine. [Get skills, plugins, connectors, and tools into threads](#get-skills-plugins-connectors-and-tools-into-threads) covers how to give them what they'd otherwise be missing.
 
-Here is how those parts connect, from you through the conversation to the threads doing the work, with **Overview** tracking their state:
+Here is how those parts connect, from you through the conversation to the threads doing the work, with Overview tracking their state:
 
 ![Diagram of a project. You write in the project conversation, where Claude answers or starts a thread. Each cloud thread works on its own branch and pull request. The Overview pane lists threads by state, such as ready for review, waiting on you, and working.](https://mintcdn.com/claude-code/e8CLbxM17eD7cAiv/images/claude-projects-overview.svg?fit=max\&auto=format\&n=e8CLbxM17eD7cAiv\&q=85\&s=dbf446f69f0bbdb9961d21af207cb93b)
 
@@ -96,7 +96,7 @@ Scope the project to one stream of work you'll keep adding to, such as everythin
 
 * **Name**: how the project appears in the **Projects** list.
 * **What do you want to work on?** (optional): one line that becomes the project's goal, such as "Hold p95 API latency under 200 ms". Claude in the conversation works toward it. Without a goal, Claude works from the tasks you send, and you can add a goal later in **Project settings > General**.
-* **Context** (optional): the GitHub repositories this project works on, plus any files, folders, or Google Drive folders threads should read. Click **Add** for each. Add the repositories most tasks need rather than every one the work might touch; [Decide which repositories to add](#decide-which-repositories-to-add) covers the choice, and you can add more later in **Project settings > Environment**.
+* **Context** (optional): the GitHub repositories this project works on, plus any files, folders, or Google Drive folders threads should read. Click **+** for each. Add the repositories most tasks need rather than every one the work might touch; [Decide which repositories to add](#decide-which-repositories-to-add) covers the choice, and you can add more later in **Project settings > Environment**.
 
 Standing rules for how threads should work go in [project instructions](#give-a-project-standing-context), which you set after the project exists.
 
@@ -109,7 +109,7 @@ On your first project, Claude takes a turn of its own as soon as the project is 
 * Start one thread that explores the repository without changing anything and proposes next steps, if the project has a repository it can read.
 * Post **Setup recommendations** drawn from your recent cloud sessions: repositories to add, scheduled tasks to create, and threads it could start. Every recommended repository and scheduled task starts switched on. Switch off the ones you don't want, then click **Update setup** to add the rest, or ignore the recommendations and describe work yourself.
 
-The project is now listed under **Projects** in the sidebar, and its conversation is open. [Your first batch](#your-first-batch) covers what to set up before you send it work.
+The project is now in the sidebar, and its conversation is open. [Your first batch](#your-first-batch) covers what to set up before you send it work.
 
 ### Start from an existing session
 
@@ -168,7 +168,7 @@ Claude decides where each message you send in the conversation goes:
 
 If Claude routes something differently than you wanted, say so. [Tune how Claude runs a project](#tune-how-claude-runs-a-project) lists things you can tell it, such as reusing an existing thread for follow-ups or answering in place instead of starting a thread.
 
-A thread's full results stay in the thread, and you open its card in the conversation to read them. Files a thread produced are also on the **Library** tab in **Overview**.
+A thread's full results stay in the thread, and you open its card in the conversation to read them. Files a thread produced are also in the project's [**Library**](#see-what-needs-you-in-overview).
 
 Sometimes Claude proposes threads instead of starting them, in a **Suggested threads** list. Click the arrow on a suggestion to start that thread. When several are listed, a button under the list starts all of them.
 
@@ -190,11 +190,11 @@ To change when threads open pull requests, for example only when you ask, or whi
 
 ### See what needs you in Overview
 
-The **Overview** pane beside the conversation tracks the project's threads. It's already open the first time you open a new project. The **Overview** button in the project header closes and reopens it, and shows a dot when a thread is waiting on you.
+The Overview pane beside the conversation tracks the project's threads. It's already open the first time you open a new project. To reopen it after you close it, click the **Threads** button in the project header. The button shows a dot when a thread is waiting on you.
 
-In the desktop app, you also get a desktop notification when Claude posts in the conversation, a thread hits an error, or a thread needs your input, so you don't have to keep the project open to find out. To also get one each time a thread finishes a turn, or to turn them off for a project, choose **Notifications** in the project's sidebar menu. These notifications are desktop-only: in a browser, check the dot on the **Overview** button.
+In the desktop app, a notification appears by default when Claude posts in the conversation, a thread hits an error, or a thread needs your input. None appears while you're viewing the project. To also get one each time a thread finishes a turn, or to turn them off for a project, choose **Notifications** in the project's sidebar menu. In a browser, check the dot on the **Threads** button.
 
-The pane's **Threads** tab groups threads by state:
+The pane's **Threads** view groups threads by state:
 
 | Group | What's in it |
 | :- | :- |
@@ -205,15 +205,14 @@ The pane's **Threads** tab groups threads by state:
 | **Idle** | Threads that finished and aren't waiting on anything |
 | **Resolved** | Threads marked done: by you from the thread's menu, by Claude once you've taken the last step, such as merging its pull request, or automatically after a week with no activity. You can reopen one from the same menu |
 
-The pane's other tabs are:
+Open the project's files and scheduled tasks in the pane from the project header:
 
-* **Library**: the files and folders you added and the files threads produced
-* **Pull requests**: shown once threads have opened any
-* **Scheduled tasks**: the [cloud scheduled tasks](https://code.claude.com/docs/en/routines.md) Claude set up from this project
+* **Library**: the files and folders you added and the files that threads produced. Click the **Library** button beside **Threads**.
+* **Scheduled tasks**: the [cloud scheduled tasks](https://code.claude.com/docs/en/routines.md) Claude set up from this project. Select it in the header's **⋯** menu.
 
 ### Open a thread when you need control
 
-Click a thread's card in the conversation or its row in **Overview** to open its transcript in the Overview pane. From there you can:
+Click a thread's card in the conversation or its row in Overview to open its transcript in the Overview pane. From there you can:
 
 * Read what Claude did, step by step.
 * Steer the task by writing in the thread's own message box. A message there goes straight to that thread, while a follow-up in the project conversation reaches it only when Claude matches the follow-up to that thread.
@@ -290,13 +289,13 @@ Project memory, project instructions, and the project's repositories, files, and
 | :- | :- | :- |
 | Project memory | Notes Claude keeps about the project, such as requirements, decisions, and pitfalls, stored as files. Every cloud thread reads the index file `MEMORY.md` when it starts and opens the other files when it needs them | Ask Claude in the project conversation or any cloud thread to remember a requirement, a decision, or a pitfall, or to forget one. Read, edit, and delete the files in **Project settings > Memory** |
 | Project instructions | Text sent to each new thread and to Claude in the project conversation, up to 16,000 characters. [Write project instructions](#write-project-instructions) covers what to put in it | **Project settings > Memory > Project instructions**, or ask Claude to change the instructions |
-| Repositories, files, and environment | The repositories every cloud thread clones, the folders and files it can read under `/mnt/project-files`, and the cloud environment it runs in | Repositories and environment in **Project settings > Environment**, or ask Claude in the conversation to add a repository to the project. [Files and folders](#add-files-and-folders) from **Add** on the **Library** tab in **Overview** |
+| Repositories, files, and environment | The repositories every cloud thread clones, the folders and files it can read under `/mnt/project-files`, and the cloud environment it runs in | Repositories and environment in **Project settings > Environment**, or ask Claude in the conversation to add a repository to the project. [Files and folders](#add-files-and-folders) from **Add** in the project's [**Library**](#see-what-needs-you-in-overview) |
 
 **Project settings > Memory** lists these files under **Auto memory**, because Claude writes them itself as it works in the project. They're separate from the [auto memory](https://code.claude.com/docs/en/memory.md) Claude Code keeps on your machine, even though both use a `MEMORY.md` index. Project memory is also separate from the `CLAUDE.md` files in the project's repositories. Each cloud thread still reads those `CLAUDE.md` files from its clone when it starts, so put instructions about a repository in its `CLAUDE.md` and notes about the project in project memory.
 
 ### Write project instructions
 
-Project instructions are the brief every new thread starts from. Click the gear icon in the project header to open **Project settings**, then go to **Memory > Project instructions**. A useful brief covers:
+Project instructions are the brief every new thread starts from. Select **Settings** in the **⋯** menu in the project header to open **Project settings**, then go to **Memory > Project instructions**. A useful brief covers:
 
 * What the project is for
 * Where the work happens: which repositories, which branch to start from, how to name pull requests
@@ -324,7 +323,7 @@ The repositories you add to a project come with their code and `CLAUDE.md` in ev
 * **Add it to the project**, in the **New project** dialog, in **Project settings > Environment**, or by asking Claude in the conversation to add it to the project. Every cloud thread from then on clones it and starts with its `CLAUDE.md` loaded, whether or not the task touches it.
 * **Leave it off and let threads add it when needed.** A cloud thread whose task needs a repository the project doesn't have can add it to itself, and a note in the thread says it was added to this thread only. The clone happens partway through the task, so that repository's `CLAUDE.md` wasn't there when the thread started. The next thread starts without it. A repository added this way needs the same [prerequisites](#check-the-prerequisites) as a project repository: the Claude GitHub App installed on it and push access from your GitHub account.
 
-A project doesn't need a repository at all. Its cloud threads can still research, write documents, and write and run code in their own sandbox, and they deliver files to the **Library** tab. Any of its cloud threads can still add a repository to itself when a task calls for one.
+A project doesn't need a repository at all. Its cloud threads can still research, write documents, and write and run code in their own sandbox. They deliver files to the project's **Library**. Any of its cloud threads can still add a repository to itself when a task calls for one.
 
 Once the project has repositories, Claude can only add repositories from a GitHub owner the project already uses, whether it adds one to the project or a thread adds one to itself. To bring in a repository from a different owner, add it to the project yourself in **Project settings > Environment**.
 
@@ -332,11 +331,10 @@ For a project that spans many repositories, such as one feature with server, web
 
 ### Add files and folders
 
-Add the files and folders you want threads to read in the **New project** dialog's **Context** field, or afterward with **Add** on the **Library** tab in **Overview**. These limits apply to what you add:
+Add the files and folders you want threads to read in the **New project** dialog's **Context** field, or afterward with **Add** in the project's [**Library**](#see-what-needs-you-in-overview). These limits apply to what you add:
 
-* **Library tab**: up to 100 files and 2 GB in one pick, with a single file up to 480 MB.
-* **New project dialog**: files over 30 MB are skipped, so add larger files from the **Library** tab after you create the project.
-* **Folders**: when you add a folder from either place, the project receives a copy of its first 100 files up to 200 MB, without any files over 30 MB, hidden files, or `node_modules`. A project holds up to 10 folders and Google Drive folders combined, and single files don't count toward that limit.
+* **Files you upload at claude.ai/code or in the desktop app**: up to 1,000 files and 2 GB at a time, with a single file up to 480 MB.
+* **Folders you upload**: hidden files and `node_modules` aren't added. A project holds up to 10 folders and Google Drive folders combined, and single files don't count toward that limit.
 * **Changes after upload**: uploads are copies, so a change you make on your computer afterward doesn't reach the project until you upload the file again and choose **Replace** when asked about the existing name.
 
 ### What threads pick up from your repositories
@@ -373,7 +371,7 @@ To see which connectors a running cloud thread has at claude.ai/code, open the t
 
 ## Project settings reference
 
-You change project settings at claude.ai/code or in the desktop app, not in `settings.json`. Open **Project settings** from **Settings** in the project's sidebar menu or from the gear icon in the project header.
+You change project settings at claude.ai/code or in the desktop app, not in `settings.json`. Open **Project settings** from **Settings** in the project's sidebar menu or in the project header's **⋯** menu.
 
 Settings save as you change them; a text field you're editing, such as the goal or instructions, shows **Save changes** and **Discard** until you leave it. Changes to instructions, repositories, plugins, and environment in **Project settings** reach new threads, not threads already running.
 
@@ -434,7 +432,7 @@ Several Claude Code features let more than one session work at the same time, so
 
   Projects are on Pro, Max, and Ultra. A project is yours alone: you're the only one who sends it work or sees its threads, and it uses your own GitHub access and connectors. [How Claude Tag differs from Cowork and Claude Code](https://claude.com/docs/claude-tag/concepts/how-it-works#how-claude-tag-differs-from-cowork-and-claude-code) has the side-by-side.
 * **Cloud sessions**: every thread is a [cloud session](https://code.claude.com/docs/en/claude-code-on-the-web.md) unless you ask Claude to run it on your machine. Either way, Claude starts and tracks it instead of you. You can also bring the work of a cloud session you started yourself into a project: choose [**Continue in project**](#start-from-an-existing-cloud-session) in that session's sidebar menu.
-* **Scheduled tasks**: when you ask for scheduled work in a project, Claude creates a [cloud scheduled task](https://code.claude.com/docs/en/routines.md) that runs as threads in that project and appears on its **Scheduled tasks** tab. Scheduled tasks you create outside a project keep working on their own.
+* **Scheduled tasks**: when you ask for scheduled work in a project, Claude creates a [cloud scheduled task](https://code.claude.com/docs/en/routines.md) that runs as threads in that project and appears in its **Scheduled tasks** view. Scheduled tasks you create outside a project keep working on their own.
 * **Remote Control**: [Remote Control](https://code.claude.com/docs/en/remote-control.md) connects claude.ai to a Claude Code session running on your machine. When you ask Claude in a project to run a thread on your computer, the project [uses Remote Control to do it](#run-a-thread-on-your-own-computer).
 * **Local sessions and agent view**: a session you start yourself in your terminal, IDE, or the desktop app's local environment stays outside your projects, though you can [bring its work into one](#start-from-an-existing-cloud-session). [Agent view](https://code.claude.com/docs/en/agent-view.md) is a screen for tracking several local sessions side by side, and you still start each one and give it its task yourself.
 * **Worktrees**: a [worktree](https://code.claude.com/docs/en/worktrees.md) gives each local session its own working copy of a repository. Cloud threads don't need them: each clones its repositories into its own cloud sandbox and works on its own branch.
@@ -466,7 +464,7 @@ Claude doesn't post each step a thread takes, so a thread that shows as running 
 When several threads come back having assumed something wrong, worked around missing access, or stopped with "blocked", the cause is usually the same gap in the project's setup rather than a problem with each task. Sort out which threads are sound before you fix anything:
 
 1. Ask Claude in the conversation: "For every open thread, list what you asked it to do, what it assumed or couldn't reach, and what it's waiting on." Claude reads each thread and answers in the conversation.
-2. For threads that started from a wrong assumption, open the thread from **Overview** and mark it resolved from its menu, or tell it what to do instead in its message box. Its branch and any pull request stay on GitHub until you delete them.
+2. For threads that started from a wrong assumption, open the thread from Overview and mark it resolved from its menu, or tell it what to do instead. Its branch and any pull request stay on GitHub until you delete them.
 3. Fix the gap once, in [project instructions](#give-a-project-standing-context) or the [environment](#choose-an-environment-for-threads), then send one thread before sending the rest of the work again as new threads.
 
 ### Claude hasn't responded

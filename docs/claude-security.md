@@ -71,7 +71,7 @@ Run `/claude-security` and pick **Scan codebase**.
 
 **2. Choose what to scan**
 
-The plugin reads your repository first, then offers the whole repository or a focused area, with each option's file count and relative cost stated. Pick the whole repository, or answer "I don't know" and the plugin picks a sensible default for your repository's size.
+The plugin reads your repository first, then offers the whole repository or a focused area. Pick the whole repository, or answer "I don't know" and the plugin picks a sensible default for your repository's size.
 
 **3. Confirm the run**
 
@@ -95,7 +95,7 @@ You don't have to start from the menu: ask for a job directly, as arguments to t
 
 When your branch has commits its base doesn't, the `/claude-security` menu offers to scan only that diff, so you can check a branch before merging. You can also scan one of your open pull requests, or a single commit by asking for it, such as "scan commit abc1234". Only committed changes are scanned: commit or stash in-progress edits first, or run a full scan, which reads the working tree.
 
-Change scans need a git repository; full scans of an unversioned directory still work. Finding your open pull requests is the one step that reaches the network, and it's offered only when your session already has permission to run the GitHub CLI and `gh` is signed in.
+Change scans need a git repository; full scans of an unversioned directory still work. Finding your open pull requests is offered only when your session already has permission to run the GitHub CLI and `gh` is signed in.
 
 ### Scope large repositories
 
@@ -120,11 +120,11 @@ Every scan writes its results into a timestamped `CLAUDE-SECURITY-<timestamp>/` 
 * **`CLAUDE-SECURITY-RESULTS.md`**: the report, with each finding's ID, such as `F1`, plus its impact, exploit scenario, severity, confidence, and recommendation
 * **`CLAUDE-SECURITY-RESULTS.jsonl`**: the same findings in machine-readable form, one JSON object per line
 * **`CLAUDE-SECURITY-RESULTS.sarif`**: the same findings as a [SARIF 2.1.0](https://docs.oasis-open.org/sarif/sarif/v2.1.0/sarif-v2.1.0.html) log for GitHub code scanning and any other tool that reads the standard. The scan classifies findings under their [CWE](https://cwe.mitre.org/) weakness categories
-* **`CLAUDE-SECURITY-REVISION-<commit>.json`**: the revision stamp, recording which commit was scanned, at what [scan effort](#choose-a-scan-effort), whether uncommitted changes were part of the scanned tree, and how thoroughly the run was verified, so a report is always tied to the code it describes. A scan outside version control stamps `UNVERSIONED` in place of the commit
+* **`CLAUDE-SECURITY-REVISION-<commit>.json`**: the revision stamp, recording which commit was scanned, at what [scan effort](#choose-a-scan-effort), whether uncommitted changes were part of the scanned tree, and how thoroughly the run was verified. A scan outside version control stamps `UNVERSIONED` in place of the commit
 
 That directory is the only change a scan makes to your checkout, and it carries its own `.gitignore`, so a stray `git add` never sweeps a report into a commit. To keep a report in history for an audit trail, delete that one `.gitignore` file and commit the directory like any other.
 
-Findings only appear in the report after independent verifier agents analyze them, which keeps reports short and worth reading. Scans are nondeterministic: two scans of the same code can surface different findings. Run scans regularly, and use the revision stamps to attribute each report to the exact code and settings it covered.
+Findings only appear in the report after independent verifier agents analyze them, which keeps reports short and worth reading. Scans are nondeterministic: two scans of the same code can surface different findings. Run scans regularly.
 
 ## Fix findings
 

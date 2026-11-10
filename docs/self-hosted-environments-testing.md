@@ -12,7 +12,7 @@
 
 In a [self-hosted environment](https://code.claude.com/docs/en/self-hosted-environments), Claude Code [cloud sessions](https://code.claude.com/docs/en/claude-code-on-the-web.md) run on a runner image you build and maintain. Before rolling a new image to your production environment, drive a full session against a test environment from a script: create a session, read Claude's reply, send a follow-up, and read that reply too. This is the shape of a CI smoke test that verifies your runner image, git access, and any custom tools before you promote a change.
 
-This recipe assumes you've already [set up an environment and a runner](https://code.claude.com/docs/en/self-hosted-environments-quickstart.md#set-up-an-environment-and-runner), and that your CI job starts the runner process on the same host as the test script, the natural setup for testing a new runner image. A Stop hook you install on the runner writes each turn's final reply to a local file, and the script reads it from there, so the only calls to the Anthropic API are the two dispatches themselves. If your test runners are on separate infrastructure, see [Remote test runners](#remote-test-runners).
+This recipe assumes you've already [set up an environment and a runner](https://code.claude.com/docs/en/self-hosted-environments-quickstart.md#set-up-an-environment-and-runner), and that your CI job starts the runner process on the same host as the test script. A Stop hook you install on the runner writes each turn's final reply to a local file, and the script reads it from there. If your test runners are on separate infrastructure, see [Remote test runners](#remote-test-runners).
 
 ## Install the capture hook on your test runner
 

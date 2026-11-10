@@ -29,7 +29,7 @@ Match the error message or symptom you're seeing to a fix:
 | `EACCES: permission denied` during install | [Fix the install directory's permissions](#permission-errors-during-installation) |
 | `TLS connect error` or `SSL/TLS secure channel` | [Update CA certificates](#tls-or-ssl-connection-errors) |
 | `CRYPT_E_NO_REVOCATION_CHECK` or `CRYPT_E_REVOCATION_OFFLINE` | [Work around blocked revocation checks](#tls-or-ssl-connection-errors) |
-| `Failed to fetch version` or can't reach download server | [Check network and proxy settings](#check-network-connectivity) |
+| `Failed to fetch version` or can't reach download server | [Check network and proxy settings](#check-network-connectivity), or for a certificate error, [configure corporate CA certificates](#tls-or-ssl-connection-errors) |
 | `The connection dropped while downloading the update` or `Download timed out: exceeded the total deadline` | [Run the update again or set your proxy](#the-connection-dropped-while-downloading-the-update) |
 | `Release verification failed for Claude Code` | [Run `claude update` or `claude install` again](#release-verification-failed) |
 | `Auto-update failed · Run claude doctor` in red in the session footer | [Run `claude update` from your shell](#auto-update-failed) |
@@ -94,11 +94,11 @@ You reached the server if the first line shows a `200` status. You see `HTTP/2 2
 * `403`: usually a proxy or network filter blocking the host, or Claude Code is [not available in your region](https://www.anthropic.com/supported-countries)
 * `5xx`: usually a temporary service issue; wait a few minutes and retry
 
-If you see no output, `Could not resolve host`, or a connection timeout, your network is blocking the connection. Common causes:
+If you see no output, or the installer shows `Could not resolve host` or a connection timeout, the connection failed, so check for these causes:
 
 * Corporate firewalls or proxies blocking `downloads.claude.ai`
 * Regional network restrictions: try a VPN or alternative network
-* TLS/SSL issues: update your system's CA certificates, or check if `HTTPS_PROXY` is configured
+* TLS/SSL issues: see [TLS or SSL connection errors](#tls-or-ssl-connection-errors)
 
 If you're behind a corporate proxy, set `HTTPS_PROXY` and `HTTP_PROXY` to your proxy's address before installing. Ask your IT team for the proxy URL if you don't know it, or check your browser's proxy settings.
 
@@ -566,13 +566,19 @@ For `CRYPT_E_NO_REVOCATION_CHECK` or `CRYPT_E_REVOCATION_OFFLINE`, go to step 4.
    irm https://claude.ai/install.ps1 | iex
    ```
 
-3. **Check for proxy or firewall interference**: corporate proxies that perform TLS inspection can cause these errors, including `unable to get local issuer certificate` and `SELF_SIGNED_CERT_IN_CHAIN`. For the install step, make the install download trust your corporate proxy's CA:
+3. **Check for proxy or firewall interference**: corporate proxies that perform TLS inspection can cause these errors, including `unable to get local issuer certificate`, `unable to verify the first certificate`, and `SELF_SIGNED_CERT_IN_CHAIN`. Make the install download trust your corporate proxy's CA:
 
    > [tab] macOS/Linux
    >
+   > Set `CURL_CA_BUNDLE` for the install script's `curl` downloads, and [`NODE_EXTRA_CA_CERTS`](https://code.claude.com/docs/en/network-config#custom-ca-certificates) for the `claude install` command the script then runs. Ask your IT team for a PEM file with your proxy's root CA certificate if you don't have it. This example sets both to your proxy's CA file and runs the script in the same terminal:
+   >
    > ```bash theme={null}
-   > curl --cacert /path/to/corporate-ca.pem -fsSL https://claude.ai/install.sh | bash
+   > export CURL_CA_BUNDLE=/path/to/corporate-ca.pem
+   > export NODE_EXTRA_CA_CERTS=/path/to/corporate-ca.pem
+   > curl -fsSL https://claude.ai/install.sh | bash
    > ```
+   >
+   > If the install still fails with one of those certificate errors, ask your IT team for a file with both the public root certificates and your proxy's full CA chain. Then set both variables to that file.
 
    > [tab] Windows PowerShell
    >
@@ -596,8 +602,6 @@ For `CRYPT_E_NO_REVOCATION_CHECK` or `CRYPT_E_REVOCATION_OFFLINE`, go to step 4.
    > $env:NODE_EXTRA_CA_CERTS = 'C:\path\to\corporate-ca.pem'
    > ```
 
-   Ask your IT team for the certificate file if you don't have it. You can also try on a direct connection to confirm the proxy is the cause.
-
 4. **On Windows, work around blocked revocation checks**. The errors `CRYPT_E_NO_REVOCATION_CHECK (0x80092012)` and `CRYPT_E_REVOCATION_OFFLINE (0x80092013)` mean curl reached the server but your network blocks the certificate revocation lookup, which is common behind corporate firewalls. If the failing command is the `curl` that downloads `install.cmd`, rerun it from a Command Prompt with `--ssl-revoke-best-effort` added:
    ```batch theme={null}
    curl --ssl-revoke-best-effort -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd && del install.cmd
@@ -610,7 +614,7 @@ For `CRYPT_E_NO_REVOCATION_CHECK` or `CRYPT_E_REVOCATION_OFFLINE`, go to step 4.
 
 ### `Failed to fetch version from downloads.claude.ai`
 
-The installer couldn't reach the download server. This typically means `downloads.claude.ai` is blocked on your network. See [Check network connectivity](#check-network-connectivity).
+The end of the message gives the reason. If it's a certificate error such as `unable to verify the first certificate`, see [TLS or SSL connection errors](#tls-or-ssl-connection-errors). For any other reason, see [Check network connectivity](#check-network-connectivity).
 
 ### The connection dropped while downloading the update
 

@@ -59,7 +59,11 @@ The `listen` block controls where the gateway serves: the bind address and port,
 | `port` | No | Bind port. Default `8080`. |
 | `public_url` | Unless `host` is loopback | The externally visible `https://` origin, used to build the IdP `redirect_uri` and discovery metadata. Required whenever `host` isn't a loopback address, whether TLS terminates at a proxy such as an ALB, Ingress, or Cloud Run or at the gateway itself through `tls`, because the gateway never derives its own origin from `X-Forwarded-*` headers; they are client-spoofable. Boot fails without it. `trusted_proxies` below governs client-IP resolution only. Also required to enable [telemetry](#telemetry), because the gateway builds the OTLP endpoint it pushes to clients from this URL. |
 | `tls.cert` / `tls.key` | No | PEM paths if the gateway terminates TLS itself |
-| `trusted_proxies` | No | CIDRs or IPs of load balancers in front of the gateway. When set, the gateway trusts `X-Forwarded-For` only from these peers and records the real client IP for per-IP rate limiting and audit. Equivalent to nginx `set_real_ip_from`. `X-Forwarded-For` entries written as `ipv4:port` or `[ipv6]:port`, as some load balancers do, are read with the port dropped. An IPv6 address with a port appended and no brackets may be read as a different address or not read at all, so turn off the port option on any proxy that writes that form. |
+| `trusted_proxies` | No | CIDRs or IPs of the frontends to trust. When set, the gateway trusts `X-Forwarded-For` only from these peers and records the real client IP for per-IP rate limiting and audit. |
+
+List a frontend in `trusted_proxies` only if the last `X-Forwarded-For` entry that it passes on is one that no developer wrote. List no address or range that developers connect from. A frontend that appends the address of each connection it receives qualifies. One that passes the header on as developers send it doesn't.
+
+`X-Forwarded-For` entries written as `ipv4:port` or `[ipv6]:port`, as some load balancers do, are read with the port dropped. An IPv6 address with a port appended and no brackets may be read as a different address or not read at all. Turn off the port option on any proxy that writes that form.
 
 ### `oidc`
 
@@ -1659,7 +1663,7 @@ While `allow_cidrs` is empty, the gateway warns in two places, without changing 
 
 Both signals use the client address as the gateway resolves it. If a load balancer, port-forward, or tunnel relays traffic and isn't listed in `listen.trusted_proxies`, the gateway sees the relay's address, which is usually private, so neither the runtime warning nor a private allow list catches traffic relayed through it.
 
-Behind such a front end, set [`listen.trusted_proxies`](#listen) first so the gateway sees real client addresses, and keep the gateway and everything in front of it unreachable from the public internet regardless.
+If the relay [belongs in `listen.trusted_proxies`](#listen), list it there. Keep the gateway and everything in front of it unreachable from the public internet regardless.
 
 ### `load_test_mode`
 

@@ -71,9 +71,9 @@ No Fable model is the account-type default on any plan or provider. Select one e
 * **Fable 5.2**: run `/model fable`, or launch with `claude --model fable`. In [Claude apps gateway](https://code.claude.com/docs/en/claude-apps-gateway) sessions, run `/model claude-fable-5-2` instead.
 * **Fable 5.1 or Fable 5**: select it by model ID. On the Anthropic API, run `/model claude-fable-5-1` or `/model claude-fable-5`, or launch with `claude --model claude-fable-5-1`. On other providers, use your provider's model ID or [pin it](#pin-models-for-third-party-deployments) with `ANTHROPIC_DEFAULT_FABLE_MODEL`.
 
-On Pro, Max, Team, and Enterprise plans, a `claude-fable-5-1` model saved in your user settings moves to the `fable` alias:
+On Pro, Max, Ultra, Team, and Enterprise plans, a `claude-fable-5-1` model saved in your user settings moves to the `fable` alias:
 
-* **Pro or Max plan**: the move happens the first time you run v2.1.321 or later. In the terminal, the startup model line can show `(auto-updated)` once.
+* **Pro, Max, or Ultra plan**: the move happens the first time you run v2.1.321 or later. In the terminal, the startup model line can show `(auto-updated)` once.
 * **Team or Enterprise plan**: the move waits for your organization's settings, so it can come at a later startup, or not at all. It applies from the next session, with no `(auto-updated)` line. To check your model, run `/model`.
 
 After the move, sessions start at Fable 5.2's default effort unless you've [set a level](#adjust-effort-level) for it. Console accounts, third-party providers, and project, local, or managed settings keep `claude-fable-5-1`.
