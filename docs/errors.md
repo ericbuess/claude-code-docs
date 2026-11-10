@@ -242,10 +242,12 @@ Match the message you see to a section below.
 | `The current directory no longer exists (it was deleted or moved)` / `Can't read the current directory` | [Command-line errors](#the-current-directory-no-longer-exists) |
 | `Temp directory <dir> ... Refusing to use it` / `Claude Code's temporary directory <dir> could not be created` | [Command-line errors](#temp-directory-refused-or-cannot-be-created) |
 | `ENOSPC: no space left on device, mkdir '<dir>'` | [Command-line errors](#temp-directory-refused-or-cannot-be-created) |
+| `Error: Claude Code could not save ... because the disk is full (ENOSPC)` / `because your disk quota is used up (EDQUOT)` | [Command-line errors](#could-not-save-because-the-disk-is-full) |
 | `couldn't be resolved to a real location, so its skills, commands, and agents weren't loaded` | [Command-line errors](#directory-couldnt-be-resolved-to-a-real-location) |
 | `Error: Workspace not trusted` when starting Remote Control | [Command-line errors](#workspace-not-trusted-when-starting-remote-control) |
 | `Error: Workspace not trusted` when running `claude ultrareview` | [Command-line errors](#workspace-not-trusted-when-running-claude-ultrareview) |
 | `Ultrareview did not start` | [Command-line errors](#ultrareview-did-not-start) |
+| `Remote Control did not start: "<question>" got no answer` | [Command-line errors](#remote-control-did-not-start-got-no-answer) |
 | `` `<flag>` before `remote-control` is not carried over to the sessions Remote Control starts `` | [Command-line errors](#not-carried-over-to-the-sessions-remote-control-starts) |
 | `--sandbox is not supported by claude remote-control` / `--no-sandbox is not supported by claude remote-control` | [Command-line errors](#sandbox-is-not-supported-by-claude-remote-control) |
 | `` `claude import` is not yet available in this build `` | [Command-line errors](#claude-import-is-not-yet-available-in-this-build) |
@@ -387,6 +389,7 @@ Match the message you see to a section below.
 | `The safety check for domain ... is rate-limited` | [Tool errors](#webfetch-domain-safety-check-failed) |
 | `The safety check for domain ... is temporarily rate-limited` | [Tool errors](#webfetch-domain-safety-check-failed) |
 | `Unable to verify if domain ... is safe to fetch` | [Tool errors](#webfetch-domain-safety-check-failed) |
+| `MCP tool "<tool>" on server "<server>" gave no answer that could be read` / `answered without its text` | [How an MCP tool hook's result is read](https://code.claude.com/docs/en/hooks.md#how-the-tool’s-result-is-read) |
 | `Can't open MCP settings while no terminal is attached to this background session` | [Background session errors](#commands-refused-in-a-background-session) |
 | `Can't open MCP settings in a background session` | [Background session errors](#commands-refused-in-a-background-session) |
 | `blocked because the path is spelled in a form that cannot be safely resolved` | [Background session errors](#write-or-command-blocked-because-the-path-cannot-be-safely-resolved) |
@@ -3381,6 +3384,21 @@ Temp directory /tmp/claude-501 is not readable (its mode may have been altered, 
 
 Before v2.1.309, Claude Code printed only the operating system's error text when the volume was full or your quota was used up. An example is `ENOSPC: no space left on device, mkdir '/tmp/claude-501'`, and the same steps apply.
 
+### Claude Code could not save because the disk is full
+
+This line on stderr after a [`claude -p`](https://code.claude.com/docs/en/headless) run means the disk is full or your disk quota is used up, so Claude Code couldn't save everything from the run:
+
+```text wrap theme={null}
+Error: Claude Code could not save all of this session's transcript under /Users/you/.claude because the disk is full (ENOSPC). If you resume this session, part of the conversation may be missing. Free up space on that disk before the next run.
+```
+
+With text or `json` output, the run exits with code 1, and the answer has already been printed. With `stream-json` output, the run keeps its usual exit code, and the answer still arrives.
+
+**What to do:**
+
+* **`the disk is full (ENOSPC)`**: before your next run, free up space on the disk that holds the path in the message
+* **`your disk quota is used up (EDQUOT)`**: before your next run, free up space or ask for a larger quota
+
 ### Directory couldn't be resolved to a real location
 
 You ran `/add-dir` for a subdirectory of your working directory, and Claude Code couldn't resolve the directory to its real location.
@@ -3451,6 +3469,20 @@ Each of these messages from `claude ultrareview` means that no review started an
 * **``Ultrareview did not start: `--trust-workspace` takes no value``**: something other than a flag follows `--trust-workspace`, such as a PR number or `false`. If you don't trust the folder, leave the flag out. To trust it for this run, put the PR number or base branch before the flag: `claude ultrareview 1234 --trust-workspace`.
 
 Before v2.1.309, `claude ultrareview` didn't accept `--trust-workspace`.
+
+### Remote Control did not start because a question got no answer
+
+This message means [`claude remote-control`](https://code.claude.com/docs/en/remote-control) asked the first-run question quoted in the message and got no answer:
+
+```text theme={null}
+Remote Control did not start: "Enable Remote Control?" got no answer. Run `claude remote-control` at a terminal and answer y once; it won't ask again.
+Remote Control did not start: "Choose [1/2] (default: 1):" got no answer. You can run `claude remote-control` and choose, or pass --spawn=same-dir or --spawn=worktree.
+```
+
+**What to do:**
+
+* **`Enable Remote Control?`**: in a script or a service, standard input ends before anyone can answer. Run `claude remote-control` once in a terminal, as the user your script or service runs as, and answer `y`.
+* **`Choose [1/2] (default: 1):`**: run `claude remote-control` again and [choose a spawn mode](https://code.claude.com/docs/en/remote-control.md#set-the-default-spawn-mode-for-a-project), or pass [`--spawn=same-dir` or `--spawn=worktree`](https://code.claude.com/docs/en/remote-control#start-a-remote-control-session) to skip the question
 
 ### Not carried over to the sessions Remote Control starts
 

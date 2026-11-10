@@ -41,12 +41,13 @@ ZDR covers model inference calls made through Claude Code on Claude for Enterpri
 
 ### What ZDR does not cover
 
-ZDR does not extend to the following, even for organizations with ZDR enabled. These features follow [standard data retention policies](https://code.claude.com/docs/en/data-usage.md#data-retention):
+ZDR does not extend to the following, even for organizations with ZDR enabled. Except where a row says otherwise, these features follow [standard data retention policies](https://code.claude.com/docs/en/data-usage.md#data-retention):
 
 | Feature | Details |
 | - | - |
 | Chat on claude.ai | Chat conversations through the Claude for Enterprise web interface are not covered by ZDR. |
 | Cowork | Cowork sessions are not covered by ZDR. |
+| Artifacts | Artifacts in chat conversations and Cowork sessions are not covered by ZDR, and are kept until deleted unless your organization sets a retention period for them. Artifacts are not available in Claude Code with ZDR. |
 | Claude Code Analytics | Does not store prompts or model responses, but collects productivity metadata such as account emails and usage statistics. Contribution metrics are not available for ZDR organizations; the [analytics dashboard](https://code.claude.com/docs/en/analytics.md) shows usage metrics only. |
 | User and seat management | Administrative data such as account emails and seat assignments is retained under standard policies. |
 | Third-party integrations | Data processed by third-party tools, MCP servers, or other external integrations is not covered by ZDR. Review those services' data handling practices independently. |
@@ -60,7 +61,8 @@ When ZDR is enabled for a Claude Code organization on Claude for Enterprise, cer
 | [Cloud sessions](https://code.claude.com/docs/en/claude-code-on-the-web.md), including those started from the [Desktop app](https://code.claude.com/docs/en/desktop.md#cloud-sessions) | Requires server-side storage of session data, including conversation history with prompts and completions. |
 | [Chat and Cowork unified](https://support.claude.com/en/articles/17444462-set-up-and-manage-the-new-unified-claude-experience-for-your-enterprise-organization) | Requires cloud sessions. |
 | [Claude Tag](https://claude.com/docs/claude-tag) | Retains channel memory and session transcripts. |
-| [Artifacts](https://code.claude.com/docs/en/artifacts.md) | Requires storing published page content on Anthropic-operated infrastructure. |
+| [Artifacts](https://code.claude.com/docs/en/artifacts.md) in Claude Code | Requires storing published page content on Anthropic-operated infrastructure. |
+| [Claude Docs](https://support.claude.com/en/articles/16923645-get-started-with-claude-docs) | Requires storing document content on Anthropic-operated infrastructure. |
 | Feedback submission (`/feedback`, `/bug`, `/share`) | Submitting feedback sends conversation data to Anthropic. |
 | [Remote Control](https://code.claude.com/docs/en/remote-control.md) | Stores the session transcript on Anthropic servers to sync the conversation across devices. |
 
