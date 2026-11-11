@@ -168,7 +168,7 @@ When you switch models through the [Agent SDK](https://code.claude.com/docs/en/a
 
 See [Model is not a recognized model id](https://code.claude.com/docs/en/errors.md#model-is-not-a-recognized-model-id) and [Model not found](https://code.claude.com/docs/en/errors.md#model-not-found) for the messages.
 
-If you set the model with the `--model` flag, the `ANTHROPIC_MODEL` environment variable, or the `model` setting, Claude Code doesn't reject a mistyped value up front. The session starts, and the first request produces [There's an issue with the selected model](https://code.claude.com/docs/en/errors.md#theres-an-issue-with-the-selected-model). On the Anthropic API, a value that doesn't start with `claude-` and nearly spells a model name or alias can also produce a [startup warning that suggests it](#fix-a-mistyped-model-name).
+If you set the model with the `--model` flag, the `ANTHROPIC_MODEL` environment variable, or the `model` setting, Claude Code doesn't reject a mistyped value up front. The session starts, and the first request produces [There's an issue with the selected model](https://code.claude.com/docs/en/errors.md#theres-an-issue-with-the-selected-model). On the Anthropic API, you can see a [warning that suggests the closest name](#fix-a-mistyped-model-name) if the value nearly spells a model name or alias and doesn't start with `claude-`.
 
 When the requested model has a scheduled retirement date or is automatically remapped to a newer version, Claude Code shows a warning that names the requested model. Interactive sessions show it as a startup notice. From v2.1.182, the same warning is written to stderr in [non-interactive mode](https://code.claude.com/docs/en/headless.md) when using the default text output format. The check also covers a `model` set in [subagent frontmatter](https://code.claude.com/docs/en/sub-agents.md). The stderr warning is suppressed for `--output-format json` and `stream-json`; read the actual model from the `modelUsage` field of the [result message](https://code.claude.com/docs/en/headless.md#get-structured-output) instead.
 
@@ -194,6 +194,18 @@ Example settings file:
     "model": "opus"
 }
 ```
+
+#### Fix a mistyped model name
+
+Either of these warnings means Claude Code doesn't recognize the model ID you set, and the ID nearly spells a model name or alias it does recognize:
+
+```text theme={null}
+⚠ Model "<model>" isn't recognized · did you mean "<suggestion>"?
+Claude Code doesn't recognize the model "<model>". Did you mean "<suggestion>"?
+```
+
+* **You mistyped the ID**: change it to the suggestion [wherever you set the model](#setting-your-model)
+* **The ID is deliberate**: leave it as it is. The session sends it as you wrote it. If the context window Claude Code assumes for it is wrong, [correct the window](#correct-the-window-for-a-gateway-or-custom-model-id)
 
 #### Set a default model for new sessions
 
@@ -772,11 +784,18 @@ Extended thinking is the reasoning Claude emits before responding. On models tha
 | :- | :- |
 | Toggle for the current session | Press `Option+T` on macOS or `Alt+T` on Windows and Linux |
 | Set the global default | Run `/config` and toggle thinking mode. Saved as `alwaysThinkingEnabled` in `~/.claude/settings.json` |
-| Disable through an environment variable | Set [`MAX_THINKING_TOKENS=0`](https://code.claude.com/docs/en/env-vars), which turns thinking off on the Anthropic API except on Opus 5.5, Sonnet 5.5, Haiku 5.5, and Fable models. On [third-party providers](https://code.claude.com/docs/en/third-party-integrations.md), Claude Code omits the `thinking` parameter instead, and adaptive-reasoning models may still think |
+| Disable through an environment variable | Set [`MAX_THINKING_TOKENS=0`](https://code.claude.com/docs/en/env-vars) |
+
+Claude Code collapses thinking output by default. Press `Ctrl+O` to toggle verbose mode and see the reasoning as gray italic text. Interactive sessions on the Anthropic API receive redacted thinking blocks by default, so set [`showThinkingSummaries: true`](https://code.claude.com/docs/en/settings-reference#showthinkingsummaries) in settings if you want the full summaries available when you expand. You are charged for all thinking tokens generated, even when collapsed or redacted.
+
+#### Where you can't turn thinking off
 
 You can't turn thinking off on Opus 5.5, Sonnet 5.5, Haiku 5.5, or the Fable models. The session toggle and the `/config` row show `Thinking can't be turned off` for these models instead of offering the switch, and a saved `alwaysThinkingEnabled: false` or `MAX_THINKING_TOKENS=0` has no effect there. On these models, the model decides per step how much to think based on the effort level. The saved setting applies again when you switch to a model that accepts it.
 
-Claude Code collapses thinking output by default. Press `Ctrl+O` to toggle verbose mode and see the reasoning as gray italic text. Interactive sessions on the Anthropic API receive redacted thinking blocks by default, so set `showThinkingSummaries: true` in [settings](https://code.claude.com/docs/en/settings.md) if you want the full summaries available when you expand. You are charged for all thinking tokens generated, even when collapsed or redacted.
+To stop or reduce thinking, use the step for your provider:
+
+* **Anthropic API**: you can turn thinking off on models such as `claude-opus-5`, `claude-sonnet-5`, and `claude-haiku-4-5`. [Aliases](#model-aliases) such as `sonnet` select models where you can't, so [set the model](#setting-your-model) by its ID.
+* **[Third-party providers](https://code.claude.com/docs/en/third-party-integrations.md)**: on providers such as Amazon Bedrock and Microsoft Foundry, models with [adaptive reasoning](#adaptive-reasoning-and-fixed-thinking-budgets) may still think with thinking off. [Lower the effort level](#set-the-effort-level) to reduce thinking.
 
 ### Extended context
 
@@ -899,18 +918,6 @@ Claude Code [auto-compacts](#default-auto-compact-thresholds) the conversation a
 * **Any other window**: set [`CLAUDE_CODE_MAX_CONTEXT_TOKENS`](https://code.claude.com/docs/en/env-vars) to the window size in tokens in the environment that starts Claude Code, such as `CLAUDE_CODE_MAX_CONTEXT_TOKENS=400000`. For an unrecognized ID that doesn't start with `claude-` and has no `[1m]` suffix, the variable takes effect on its own. For any other ID, check [which IDs it applies to](#which-ids-claude_code_max_context_tokens-applies-to) first.
 
 Once Claude Code recognizes the ID or uses the window you gave it, the warning no longer appears when you start a session on that ID.
-
-#### Fix a mistyped model name
-
-Either of these warnings means Claude Code doesn't recognize the model ID you set, and the ID nearly spells a model name or alias it does recognize:
-
-```text theme={null}
-⚠ Model "<model>" isn't recognized · did you mean "<suggestion>"?
-Claude Code doesn't recognize the model "<model>". Did you mean "<suggestion>"?
-```
-
-* **You mistyped the ID**: change it to the suggestion [wherever you set the model](#setting-your-model)
-* **The ID is deliberate**: leave it as it is. The session sends it as you wrote it. If the context window Claude Code assumes for it is wrong, [correct the window](#correct-the-window-for-a-gateway-or-custom-model-id)
 
 #### Which IDs `CLAUDE_CODE_MAX_CONTEXT_TOKENS` applies to
 

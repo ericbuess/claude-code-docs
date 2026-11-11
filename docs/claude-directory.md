@@ -170,7 +170,7 @@ The scratchpad lives under Claude Code's temp directory rather than `~/.claude`.
 * **Linux**: `/tmp/claude-<uid>/<project>/<session-id>/scratchpad/`, or the same shape under `$TMPDIR` when your system sets one
 * **Windows**: `%TEMP%\claude\<project>\<session-id>\scratchpad\`
 
-`<project>` is your working directory path with every character other than letters and digits replaced by `-`, such as `-Users-you-my-project`. If you set [`CLAUDE_CODE_TMPDIR`](https://code.claude.com/docs/en/env-vars), the tree moves under that directory instead. Hooks receive the current session's path as [`scratchpad_dir`](https://code.claude.com/docs/en/hooks#common-input-fields).
+`<project>` is your working directory path with every character other than letters and digits replaced by `-`, such as `-Users-you-my-project`. On Windows, `<project>` is a 16-character hash of that string, such as `73295dabccd14c56`. In a Desktop app session, it can be the string itself. To get the exact path, ask Claude. If you set [`CLAUDE_CODE_TMPDIR`](https://code.claude.com/docs/en/env-vars), the tree moves under that directory instead. Hooks receive the current session's path as [`scratchpad_dir`](https://code.claude.com/docs/en/hooks#common-input-fields).
 
 Scratchpad files last as long as the session's transcript: the [retention sweep](#cleaned-up-automatically) deletes the directory when it deletes the transcript, and [`claude purge`](#clear-local-data) doesn't touch the temp directory. Because the directory sits under the system temp location, your operating system can also clear it, such as on restart. To keep something Claude wrote there, ask Claude to move it into your project.
 

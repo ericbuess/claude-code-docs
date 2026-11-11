@@ -229,7 +229,7 @@ When both day-of-month and day-of-week are constrained, a date matches if either
 
 ## Disable session-scoped scheduled tasks
 
-Set `CLAUDE_CODE_DISABLE_CRON=1` in your environment to disable the scheduler entirely. The cron tools and `/loop` become unavailable, and any already-scheduled tasks stop firing. See [Environment variables](https://code.claude.com/docs/en/env-vars.md) for the full list of disable flags.
+Set `CLAUDE_CODE_DISABLE_CRON=1` in your environment to disable the scheduler entirely. `CronCreate` and `/loop` become unavailable, and any already-scheduled tasks stop firing. While the project's `.claude/scheduled_tasks.json` file holds tasks, `CronList` and `CronDelete` stay available, so you can still ask Claude to list or cancel them. See [Environment variables](https://code.claude.com/docs/en/env-vars.md) for the full list of disable flags.
 
 ## Limitations
 

@@ -2349,7 +2349,7 @@ Couldn't send feedback: Feedback has not been enabled for your organization. To 
 **What to do:**
 
 * **Not signed in**: the message continues `: not signed in. Run /login, then retry.` Run `/login`, then send again
-* **Your organization's refusal**: for example `: Feedback has not been enabled for your organization.` or `: Feedback collection is not available for organizations with custom data retention policies.` If the message adds `To report a bug, open an issue`, do so at [github.com/anthropics/claude-code/issues](https://github.com/anthropics/claude-code/issues). `/feedback` can then answer that it's [disabled by your organization's policy](#feedback-is-disabled-by-your-organizations-policy) for seven days. A queued draft stays queued and still [expires on schedule](https://code.claude.com/docs/en/tools-reference.md#discard-or-keep-a-draft)
+* **Your organization's refusal**: for example `: Feedback has not been enabled for your organization.` or `: Feedback collection is not available for organizations with custom data retention policies.` `/feedback` can then answer that it's [disabled by your organization's policy](#feedback-is-disabled-by-your-organizations-policy) for seven days. A queued draft stays queued and still [expires on schedule](https://code.claude.com/docs/en/tools-reference.md#discard-or-keep-a-draft)
 * **Refused credentials**: the message continues `: the sign-in this session uses is not allowed to send feedback` or `: the server did not accept the credentials this session uses`. Run `/status` at the Claude Code prompt to see which login, token, or API key this session sends
 * **`(request timed out)` or `(couldn't reach the service)` straight after `Couldn't send feedback`**: send the report or the queued draft again. The dialog keeps your text, and a queued draft's message says `The draft is still queued.` If other requests are failing too, check your network connection and see [Unable to connect to API](#unable-to-connect-to-api). If it keeps failing, file the report at [github.com/anthropics/claude-code/issues](https://github.com/anthropics/claude-code/issues)
 * **`(server returned <status>)`, or no reason, straight after `Couldn't send feedback`**: the status is the service's response code. The service's own message follows it when one was sent, as in `(server returned 403: Access Forbidden)`. If it keeps failing, file the report at [github.com/anthropics/claude-code/issues](https://github.com/anthropics/claude-code/issues)
@@ -6622,7 +6622,7 @@ On Windows, `The one with hasCompletedOnboarding or mcpServers in it is usually 
 
 **2. Update every host that shares the home directory**
 
-If several hosts share this home directory, first update Claude Code on every host to the version the message names or later. An older version can write a moved `.config.json` back.
+If several hosts share this home directory, first update Claude Code on every host to the version the message names or later.
 
 **3. Stop Claude Code**
 
