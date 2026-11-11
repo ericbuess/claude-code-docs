@@ -146,7 +146,7 @@ Session files in `sessions/`, auto memory, and Claude Desktop and Cowork transcr
 * **Auto memory**: the sweep doesn't delete the memory files in a project's [auto memory](https://code.claude.com/docs/en/memory.md#auto-memory) directory, `projects/<project>/memory/`. Claude Code removes that directory only if it has been empty for the whole retention period. Before v2.1.228, the sweep treated folders inside the memory directory as session data and could delete old files beneath it.
 * **Claude Desktop and Cowork transcripts**: Claude Code keeps the transcript of a session you started or most recently continued in Claude Desktop or Cowork at any age. To give these transcripts an age limit, set [`desktopSessionCleanupPeriodDays`](https://code.claude.com/docs/en/settings-reference#desktopsessioncleanupperioddays). Requires Claude Code v2.1.248 or later; earlier versions delete them after `cleanupPeriodDays`.
 
-  Claude Code deletes these transcripts after `cleanupPeriodDays` instead in either of these cases:
+  Claude Code deletes these transcripts after `cleanupPeriodDays` instead in cases such as these:
 
   * [Managed settings](https://code.claude.com/docs/en/managed-settings.md) set `cleanupPeriodDays`
   * The [HIPAA configuration applies to your sessions](https://code.claude.com/docs/en/hipaa-setup.md#check-how-developers-sign-in-and-connect)

@@ -2219,14 +2219,14 @@ You may also see a TLS certificate that doesn't match the destination's real cer
 This error is not a client-side network problem. Cloud sessions and [cloud scheduled tasks](https://code.claude.com/docs/en/routines.md) run inside a sandboxed VM whose outbound traffic through the session's network is filtered to the [cloud environment's](https://code.claude.com/docs/en/cloud-environments.md) allowlist:
 
 * **GitHub and connector traffic**: [GitHub operations](https://code.claude.com/docs/en/cloud-environments.md#github-proxy) and MCP connector traffic use separate channels, which is why they can keep working while other hosts are blocked
-* **Default environment**: the **Default** environment uses **Trusted** access, which permits the [default allowlist](https://code.claude.com/docs/en/cloud-environments.md#default-allowed-domains) of package registries, cloud provider APIs, container registries, and common development domains and blocks other domains on that path
+* **Default environment**: the **Default** environment uses **Limited** access with **Allow package managers** checked. Its sessions reach the [default allowlist](https://code.claude.com/docs/en/cloud-environments.md#default-allowed-domains) of package registries, cloud provider APIs, container registries, and common development domains.
 
 **What to do:**
 
 These steps change one of your own environments. An [organization-shared environment](https://code.claude.com/docs/en/cloud-environments.md#organization-shared-environments) opens read-only in the selector, so ask an Owner to change its network access from the **Cloud environments** page in [admin settings](https://claude.ai/admin-settings).
 
 * Open your environment for editing, either from the [cloud scheduled task's form](https://code.claude.com/docs/en/routines.md#environments-and-network-access) or from the [environment selector](https://code.claude.com/docs/en/cloud-environments.md#configure-your-environment) where you start cloud sessions.
-* In the **Edit cloud environment** dialog, change **Network access** from **Trusted** to **Custom**, then add the blocked domain to **Allowed domains**. Enter one domain per line. Check **Also include default list of common package managers** to keep the [default allowlist](https://code.claude.com/docs/en/cloud-environments.md#default-allowed-domains) alongside your custom domains. Select **Full** instead if you want unrestricted access.
+* In the **Edit cloud environment** dialog, select **Limited** under **Network access**, then add the blocked domain to **Allowed domains**. Enter one domain per line. Check **Allow package managers** to allow the [default allowlist](https://code.claude.com/docs/en/cloud-environments.md#default-allowed-domains) alongside your own domains. Select **Full** instead if you want unrestricted access.
 * Click **Save changes**. The next run uses the updated allowlist. For a cloud session that's already open, see [when a network access change reaches existing sessions](https://code.claude.com/docs/en/cloud-environments.md#network-access).
 
 See [Network access](https://code.claude.com/docs/en/cloud-environments.md#network-access) for access levels and the default allowlist. Local CLI sessions are not affected by this policy.

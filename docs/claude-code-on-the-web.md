@@ -36,7 +36,7 @@ Once you're set up, use this page to move work between your terminal and the clo
 
 Every cloud session runs in a [cloud environment](https://code.claude.com/docs/en/cloud-environments.md), the saved configuration that controls network access, environment variables, and setup scripts.
 
-* **Your first environment**: if you don't have one yet, onboarding sets up a **Default** environment with [**Trusted** network access](https://code.claude.com/docs/en/cloud-environments.md#access-levels), either by creating it for you or by asking you to create it. See [The Default environment](https://code.claude.com/docs/en/cloud-environments.md#the-default-environment) for which of those happens on your plan
+* **Your first environment**: if you don't have one yet, onboarding sets up a **Default** environment with [**Limited** network access](https://code.claude.com/docs/en/cloud-environments.md#access-levels). See [The Default environment](https://code.claude.com/docs/en/cloud-environments.md#the-default-environment) for how that works on your plan
 * **Which environment a session uses**: see [The Default environment](https://code.claude.com/docs/en/cloud-environments.md#the-default-environment) for how sessions choose an environment when you have more than one
 * **Change what sessions can reach or run at startup**: see [Configure cloud environments](https://code.claude.com/docs/en/cloud-environments.md)
 * **What's installed without any configuration**: see [Installed tools](https://code.claude.com/docs/en/cloud-environments.md#installed-tools)

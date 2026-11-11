@@ -8,7 +8,7 @@
 
 > [!NOTE]
 >
-> The advisor tool is experimental and requires the Anthropic API. It is not available on Amazon Bedrock, Claude Platform on AWS, Google Cloud's Agent Platform, or Microsoft Foundry. Behavior, pricing, and availability may change.
+> The advisor tool is experimental and requires the Anthropic API or [Claude Platform on AWS](https://code.claude.com/docs/en/claude-platform-on-aws.md). On Claude Platform on AWS, it requires Claude Code v2.1.300 or later. It isn't available on Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry. Behavior, pricing, and availability may change.
 
 The advisor tool lets Claude consult a second, typically stronger model at key moments during a task, such as before committing to an approach, when stuck on a recurring error, or before declaring a task complete. The advisor receives the full conversation, including every tool call and result, and returns guidance that Claude applies before continuing.
 
@@ -174,11 +174,10 @@ The advisor model's own read of the conversation is not cached. Each advisor cal
 
 ## Requirements
 
-The advisor tool requires all of the following:
-
-* **Anthropic API only**: the advisor is a server-executed tool. It is not available on Amazon Bedrock, Claude Platform on AWS, Google Cloud's Agent Platform, or Microsoft Foundry. Through an [LLM gateway](https://code.claude.com/docs/en/llm-gateway) configured with `ANTHROPIC_BASE_URL`, availability depends on whether the gateway forwards the request intact to the Anthropic API. If the gateway or its upstream doesn't recognize the advisor tool, see [Automatic retry and error forwarding](https://code.claude.com/docs/en/llm-gateway-protocol.md#automatic-retry-and-error-forwarding) for how Claude Code responds.
+* **Provider**: the Anthropic API or [Claude Platform on AWS](https://code.claude.com/docs/en/claude-platform-on-aws.md), not Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry. On Claude Platform on AWS, the advisor requires Claude Code v2.1.300 or later.
+* **LLM gateway**: through an [LLM gateway](https://code.claude.com/docs/en/llm-gateway) configured with `ANTHROPIC_BASE_URL`, availability depends on whether the gateway forwards the request intact to the Anthropic API. If the gateway or its upstream doesn't recognize the advisor tool, see [Automatic retry and error forwarding](https://code.claude.com/docs/en/llm-gateway-protocol.md#automatic-retry-and-error-forwarding) for how Claude Code responds.
 * **Supported main model**: Fable, Opus 4.6 or later, Sonnet 4.6 or later, Haiku 4.5, or Haiku 5.5. See [Choose an advisor model](#choose-an-advisor-model) for which advisors each accepts.
-* **Feature-flag fetching**: Claude Code turns the advisor on through a feature flag it fetches from Anthropic. In a session where a variable that turns flag fetching off is set, such as `DISABLE_TELEMETRY`, the advisor stays off. See [Features that need feature-flag fetching](https://code.claude.com/docs/en/env-vars.md#features-that-need-feature-flag-fetching).
+* **Feature-flag fetching**: unless you're on Claude Platform on AWS, the advisor needs a feature flag fetched from Anthropic. A session with a variable that turns fetching off, such as `DISABLE_TELEMETRY`, doesn't have that flag. To check your session, see [which sessions skip the fetch or start without the flag](https://code.claude.com/docs/en/env-vars.md#features-that-need-feature-flag-fetching).
 
 ## Turn the advisor off
 

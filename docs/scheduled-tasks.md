@@ -92,13 +92,15 @@ When you omit the prompt, Claude uses a built-in maintenance prompt instead of o
 * tend to the current branch's pull request: review comments, failed CI runs, merge conflicts
 * run cleanup passes such as bug hunts or simplification when nothing else is pending
 
-Claude does not start new initiatives outside that scope, and irreversible actions such as pushing or deleting only proceed when they continue something the transcript already authorized.
+Each run goes through your session's [permission checks](https://code.claude.com/docs/en/permissions.md) before it pushes or deletes anything.
+
+A bare `/loop` runs this prompt at a [dynamically chosen interval](#let-claude-choose-the-interval):
 
 ```text theme={null}
 /loop
 ```
 
-A bare `/loop` runs this prompt at a [dynamically chosen interval](#let-claude-choose-the-interval). Add an interval, for example `/loop 15m`, to run it on a fixed schedule instead. To replace the built-in prompt with your own default, see [Customize the default prompt with loop.md](#customize-the-default-prompt-with-loop-md).
+Add an interval, for example `/loop 15m`, to run it on a fixed schedule instead. To replace the built-in prompt with your own default, see [Customize the default prompt with loop.md](#customize-the-default-prompt-with-loop-md).
 
 ### Customize the default prompt with loop.md
 

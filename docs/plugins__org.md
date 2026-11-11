@@ -185,7 +185,7 @@ The table lists each plugin policy key, what it enforces, and what it can't do.
 | `disableSideloadFlags` | Rejects `--plugin-dir`, `--plugin-url`, `--agents`, the Agent SDK `plugins` option, and folders named in the [`CLAUDE_CODE_PLUGIN_DIRS`](https://code.claude.com/docs/en/env-vars#variables) variable at startup, and `--mcp-config` too unless every server in it is an in-process `type: "sdk"` entry. Refuses plugin folders an Agent SDK application adds mid-session with [`addPlugins`](https://code.claude.com/docs/en/agent-sdk/typescript#load-more-plugin-folders-with-addplugins) | Doesn't restrict `.mcp.json`, `claude mcp add`, or SDK-provided servers. Pair it with [`allowedMcpServers`](https://code.claude.com/docs/en/managed-mcp) |
 | `disableCommandPluginSources` | Blocks plugins with a `command` source from installing, updating, or loading. A `command` source is one whose plugin directory is produced by running a command on the machine. When unset, it takes the value of `allowManagedHooksOnly` | Doesn't affect other source types |
 | `allowManagedHooksOnly` | Restricts which hooks run. See [`allowManagedHooksOnly`](https://code.claude.com/docs/en/settings-reference#allowmanagedhooksonly) | Doesn't trust hooks from plugins users enable themselves |
-| `strictPluginOnlyCustomization` | Blocks skills, agents, hooks, and MCP servers that don't come from a plugin, managed settings, or Claude Code's built-ins. It also stops [skills-directory plugins](#keep-skills-directory-plugins-loading) loading. Set `true` to cover all four types, or an array of `skills`, `agents`, `hooks`, and `mcp` values such as `["skills", "hooks"]` to cover some | Doesn't restrict which plugins users install. Pair it with `strictKnownMarketplaces` |
+| `strictPluginOnlyCustomization` | Blocks skills, agents, hooks, and MCP servers from user and project sources. It also stops [skills-directory plugins](#keep-skills-directory-plugins-loading) loading. Set `true` to cover all four types, or an array of `skills`, `agents`, `hooks`, and `mcp` values such as `["skills", "hooks"]` to cover some | Doesn't restrict which plugins users install, or reject the CLI flags that sideload plugins, agents, and MCP servers. Pair it with `strictKnownMarketplaces` and `disableSideloadFlags` |
 | `pluginSuggestionMarketplaces` | Marketplaces whose plugins may appear as install suggestions in the terminal. See [Recommend plugins](#recommend-plugins) | Doesn't affect the built-in tips |
 | `pluginTrustMessage` | Appends your text to the trust warning that `/plugin` shows before a plugin installs | Doesn't change the warning's own text |
 | `allowedChannelPlugins` | Replaces the default list of plugins allowed to push channel messages. Requires `channelsEnabled: true` | See [Restrict which channel plugins can run](https://code.claude.com/docs/en/channels.md#restrict-which-channel-plugins-can-run) |
@@ -336,12 +336,13 @@ To stop Claude Code's own updates but keep plugin auto-update, add `"FORCE_AUTOU
 
 ### Assign release channels to user groups
 
-To run stable and early-access channels, host two marketplaces that point at different refs of the same plugins. Then give each user group its own marketplace through either separate endpoint-managed settings or a gateway policy. Server-managed settings from the admin console [apply to every user in your organization](https://code.claude.com/docs/en/server-managed-settings.md#current-limitations), so they can't assign different settings to different groups.
+To run stable and early-access channels, host two marketplaces that point at different refs of the same plugins. Then give each user group its own marketplace through separate endpoint-managed settings or a gateway policy. On an Enterprise plan, you can also use server-managed settings from the admin console.
 
 * Deploy separate [endpoint-managed settings](https://code.claude.com/docs/en/managed-settings.md#delivery-mechanisms), such as a managed settings file or an MDM profile, to each group's devices. To check whether the per-group file or profile applies on a device that also has an organization-wide source, see [How Claude Code combines managed sources](https://code.claude.com/docs/en/managed-settings.md#precedence-within-the-managed-tier).
 * Define one [Claude apps gateway policy](https://code.claude.com/docs/en/claude-apps-gateway-config.md#managed) per group. By default, the gateway applies the first policy whose match rule fits a user, so order the policies so that each user reaches their group's policy. That policy's `extraKnownMarketplaces` map doesn't merge with any other policy's, so list every marketplace the group needs in it, not only its channel marketplace.
+* On an Enterprise plan, [give each group its own configuration](https://code.claude.com/docs/en/server-managed-settings.md#give-groups-different-settings) in the admin console. A group's configuration doesn't merge with the organization-wide one, so put every setting the group needs in the group's own configuration, including each marketplace.
 
-With either mechanism, the stable group receives this configuration:
+With any of these mechanisms, the stable group receives this setting:
 
 ```json theme={null}
 {
@@ -383,7 +384,7 @@ On the Enterprise plan, `GET /v1/organizations/analytics/plugins` returns per-pl
 
 These requests from security reviews have no dedicated key in the current settings schema. The nearest existing controls are:
 
-* **Per-user or per-group targeting**: every plugin key applies to every user who receives the settings. Server-managed settings deliver one configuration per organization. For per-group policy, use separate endpoint-managed settings or gateway policies, as under [Assign release channels to user groups](#assign-release-channels-to-user-groups).
+* **Per-user or per-group targeting**: every plugin key applies to every user who receives the settings. For per-group policy, deliver each group its own settings, as under [Assign release channels to user groups](#assign-release-channels-to-user-groups).
 * **Restricting entries inside an allowed marketplace**: the allowlist matches marketplace sources. To block one plugin from an allowed marketplace, set it to `false` in managed `enabledPlugins`.
 * **Hiding `/plugin`**: no key disables the command. The nearest equivalent combines an allowlist naming only your marketplace, managed `enabledPlugins` entries for the plugins you supply, and `disableSideloadFlags`.
 * **Gating `--plugin-dir` through the allowlist**: the allowlist doesn't cover `--plugin-dir`. `disableSideloadFlags` does.

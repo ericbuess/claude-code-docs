@@ -711,7 +711,8 @@ The `agent.name`, `skill.name`, `plugin.name`, `mcp_server.name`, and `mcp_tool.
 * `plugin.name`: Owning plugin when the active skill or subagent is provided by a plugin. Official-marketplace plugin names appear verbatim. Third-party plugin names are replaced with `"third-party"`. Absent when neither the skill nor the subagent has an owning plugin.
 * `marketplace.name`: Marketplace the owning plugin was installed from. Only emitted for official-marketplace plugins, even with `OTEL_LOG_TOOL_DETAILS=1` set. Absent otherwise.
 * `mcp_server.name`: MCP server whose tool result this request consumed. Built-in, claude.ai-proxied, and official-registry server names appear verbatim. User-configured server names are replaced with `"custom"`. Absent when the request consumed no MCP tool result. Before v2.1.222, Claude Code set this attribute on every request after an MCP tool call, not only on requests that consumed a tool result, so dashboards that aggregate it show a step down after you upgrade.
-* `mcp_tool.name`: MCP tool whose result this request consumed, with the same redaction and version behavior as `mcp_server.name`. Absent when the request consumed no MCP tool result.
+  * From v2.1.312, the name of a remote server with a fixed URL that a plugin from Anthropic's official marketplace declares also appears verbatim, as `plugin_<plugin>_<server>`. That name is replaced with `"custom"` when the plugin's marketplace copy didn't come from Anthropic's registered source, such as one mounted from a seed directory in a cloud session.
+* `mcp_tool.name`: MCP tool whose result this request consumed, with the same redaction and version behavior as `mcp_server.name`, except that it can read `"custom"` when `mcp_server.name` shows a `plugin_<plugin>_<server>` name. Absent when the request consumed no MCP tool result.
 
 #### Token counter
 
@@ -998,7 +999,7 @@ Logged when a tool permission decision is made (accept/reject).
     * A grant for the rest of the session, given at an earlier permission prompt in the same interactive CLI session
     * The tool being inherently safe
 
-    The `source` value doesn't indicate which of these sources matched. To find which one refused a call, look for the [Safety event](#safety-event) with the same `tool_use_id` and read its `category` and `rule_source` attributes. Some refused calls [have no safety event](#calls-without-a-safety-event).
+    The `source` value doesn't indicate which of these sources matched. When `classifier_verdict` is present, it gives the classifier outcome that decided the call. No `tool_decision` attribute names the permission rule or setting that refused the call.
 
     Claude Code also reports `"config"` when the permission prompt request itself fails. For example, that request fails when the Agent SDK's [`canUseTool`](https://code.claude.com/docs/en/agent-sdk/typescript#canusetool) callback or the [`--permission-prompt-tool`](https://code.claude.com/docs/en/cli-reference#cli-flags) tool returns an invalid result, or when the input stream closes while the request is pending.
   * `"hook"`: A `PreToolUse` or `PermissionRequest` hook returned the decision.
@@ -1046,7 +1047,18 @@ If you lower the OpenTelemetry SDK's `OTEL_LOGRECORD_ATTRIBUTE_COUNT_LIMIT` belo
 
 #### Safety event
 
-Logged when a check refuses a tool call or requires a permission prompt, except for [calls without a safety event](#calls-without-a-safety-event). Also logged when the [sandbox's network proxy](https://code.claude.com/docs/en/sandboxing.md#network-isolation) refuses a connection or request, and when a hook blocks a result. Requires Claude Code v2.1.307 or later.
+Claude Code has stopped sending `claude_code.safety_event`:
+
+* **v2.1.312 and later**: these versions don't send the event, and no setting turns it on
+* **v2.1.307 through v2.1.311**: a session stops sending the event at its next feature-flag refresh. A session that doesn't [fetch feature flags](https://code.claude.com/docs/en/env-vars.md#features-that-need-feature-flag-fetching), such as on Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry, can keep sending it.
+
+To see refused tool calls, query [`tool_decision`](#tool-decision-event) events, which show that a call was refused but not always which check refused it.
+
+The event details here describe events from v2.1.307 through v2.1.311, where a safety event records [cases](#safety-event-categories) such as these:
+
+* A check refuses a tool call or requires a permission prompt, except for [calls without a safety event](#calls-without-a-safety-event)
+* The [sandbox's network proxy](https://code.claude.com/docs/en/sandboxing.md#network-isolation) refuses a connection or request
+* A hook blocks a result or the end of a turn
 
 The event exports with the other events and has no separate setting. The event's own attributes hold no command text, file paths, host names, or MCP server and tool names. The record also carries the [standard attributes](#standard-attributes) every event has, which can include `workspace.host_paths` and the [repository attributes](#repository-attributes). To see the command or MCP tool behind an event, set `OTEL_LOG_TOOL_DETAILS=1` and read `tool_parameters` on the matching `tool_decision` event.
 
@@ -1663,6 +1675,8 @@ Without `OTEL_LOG_TOOL_DETAILS`, these events drop the identifying detail:
 
 ### Map security questions to events
 
+Rows for `safety_event` apply only to a session on v2.1.307 through v2.1.311 that [still sends the event](#safety-event).
+
 When building detection rules, look up the signal you want to monitor and query your backend for the corresponding event and attributes:
 
 | Signal | Event | Key attributes |
@@ -1672,8 +1686,9 @@ When building detection rules, look up the signal you want to monitor and query 
 | Auto mode classifier allowed or blocked a tool call, or Claude Code denied the call without a classifier verdict | [`tool_decision`](#tool-decision-event) where `classifier_verdict` is present. For a denial without a verdict, `classifier_verdict` is `"no_verdict"` or `"unavailable"` | `classifier_verdict`, `permission_mode`, `tool_name`; `classifier_category` when you set `OTEL_LOG_TOOL_DETAILS=1` |
 | Permission mode escalation | `permission_mode_changed` | `from_mode`, `to_mode`, `trigger` |
 | Which permission mode each tool call was checked in, including calls subagents make | [`tool_decision`](#tool-decision-event) | `permission_mode`, `session.id` |
-| Policy hook blocked an action | `hook_execution_complete` | `hook_event`, `num_blocking` |
-| Which tool call a hook refused, and which result or turn end a hook blocked | [`safety_event`](#safety-event) where `category` is `"hook"` and `decision` is `"reject"` for a refused call, or `category` is `"hook_review"` for a blocked result or turn end | `category`, `decision`, `hook_event`; `tool_use_id` for a tool call |
+| Policy hook blocked an action | `hook_execution_complete`, which isn't tied to a call or to `tool_use_id` | `hook_event`, `num_blocking` |
+| Tool call a hook refused | [`tool_decision`](#tool-decision-event) where `decision` is `"reject"` and `source` is `"hook"` | `decision`, `source`, `tool_use_id` |
+| Which result or turn end a hook blocked | [`safety_event`](#safety-event) where `category` is `"hook_review"` | `category`, `hook_event`; `tool_use_id` for a tool call |
 | Sandbox's network proxy refused a connection or request from a Bash or PowerShell command | [`safety_event`](#safety-event) where `sandbox_violation_count` is present and isn't `"0"` | `sandbox_violation_count`, `category`, `sandbox_enabled`, `tool_use_id` |
 | Login, logout, and authentication failure | `auth` | `action`, `success`, `error_category` |
 | MCP server connect or failure | `mcp_server_connection` | `status`, `server_name`, `is_plugin`, `error_code` |
