@@ -194,7 +194,18 @@ This table lists the ones mods use most. The first column is the call your mod m
 | `session.receive` | `($, e) => ({ text: e.text })`. Fire it with `$.session.receive({ origin: { kind: 'peer-send-message' }, text })`. |
 | `ui.render` | `() => ({ type: 'Text', props: {}, children: ['...'] })` |
 
-`expect` has the assertions `toBe`, `toEqual`, `toMatch`, `toMatchObject`, `toContain`, `toBeDefined`, `toBeUndefined`, and `toThrow`, and `.not` before any of them.
+### Check a result with `expect`
+
+The kit has these assertions, and the one you pick goes after the value you're checking, as in `expect(answer.text).toBe('ok')`:
+
+* **Equality**: `toBe` for the same value or object, `toEqual` for structure, `toStrictEqual` for structure plus `undefined` fields and the prototype, and `toMatchObject` for the fields you name
+* **Text**: `toMatch`, which takes a regular expression or a substring, `toStartWith`, and `toEndWith`
+* **Numbers**: `toBeGreaterThan`, `toBeGreaterThanOrEqual`, `toBeLessThan`, `toBeLessThanOrEqual`
+* **Contents**: `toContain` for a substring or a member, `toContainEqual` for a member compared by structure, `toHaveLength`, and `toHaveProperty`
+* **Presence and type**: `toBeDefined`, `toBeUndefined`, `toBeNull`, `toBeTruthy`, `toBeFalsy`, `toBeNaN`, `toBeInstanceOf`
+* **Throwing**: `toThrow`, for a function `expect` calls, or for a promise you check with `.rejects`
+
+Put `.not` in front of an assertion to check the opposite, and `.resolves` or `.rejects` to check what a promise settles with.
 
 When an `expect` fails inside a stub or hook that you passed to `on` as a plain function rather than an async generator, the test fails. The engine skips that hook, and the failure output names it, such as `in the test's store.set hook`.
 
