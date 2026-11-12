@@ -5466,12 +5466,13 @@ Can't open — this session is running in another terminal
 This conversation is already open in another running Claude session — use that one, or close it and try again
 ```
 
-* **`running in another terminal`**: a terminal holds the conversation, for example one where you resumed it with `claude --resume` or `/resume`. The row also shows `Open in a terminal`.
-* **`already open in another running Claude session`**: another non-interactive Claude Code process holds it, for example a [background session](https://code.claude.com/docs/en/agent-view.md#the-supervisor-process) process for the same conversation that hasn't exited yet.
+* **`running in another terminal`**: a process other than a background session holds the conversation, for example a `claude -p` run, or a terminal where you resumed it with `claude --resume` or `/resume`. The row also shows `Open in a terminal`.
+* **`already open in another running Claude session`**: another [background session](https://code.claude.com/docs/en/agent-view.md#the-supervisor-process) holds it.
 
 **What to do:**
 
-* Continue the conversation in the process that has it open, or exit that process and open the row again
+* For `running in another terminal`: continue in that terminal, or exit that process or let it finish, and then try again
+* For `already open in another running Claude session`: use that session, or stop it and then try again
 
 Before v2.1.248, only the `already open in another running Claude session` refusal existed: a conversation resumed in a terminal didn't count as open, and opening the row started a second Claude Code process writing to the same conversation.
 

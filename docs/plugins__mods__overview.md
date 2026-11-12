@@ -218,9 +218,9 @@ Each of the others has its own page: [Hooks](https://code.claude.com/docs/en/hoo
 
 ## Mods built into Claude Code
 
-Some of Claude Code's own features are mods. To see the ones your session has, run `/plugin` at the Claude Code prompt and go to the **Installed** tab, which lists them under **Built-in**. You can't update or uninstall a built-in mod, and the table's last column says how to turn each one off. The [`mods active` line](#see-which-mods-a-session-loaded) omits built-in mods.
+Some of Claude Code's own features are mods. To see the ones your session has, run `/plugin` at the Claude Code prompt and go to the **Installed** tab, which lists them under **Built-in**. You can't update or uninstall a built-in mod. The [`mods active` line](#see-which-mods-a-session-loaded) omits built-in mods.
 
-This table lists each entry by the name `/plugin` shows:
+This table lists some of the **Built-in** entries by the name `/plugin` shows:
 
 | Name in `/plugin` | What it does | Where it's on | How to turn it off |
 | :- | :- | :- | :- |
@@ -230,6 +230,8 @@ This table lists each entry by the name `/plugin` shows:
 | `cc-plugin-sec-default` | Guards what your organization manages from the mods a user installs | [Where the guard loads](https://code.claude.com/docs/en/plugins/mods/admin.md#know-what-happens-by-default) | You can't. An administrator [sets the order](https://code.claude.com/docs/en/plugins/mods/admin.md#install-your-organizations-mods) in managed settings |
 | `cc-plugin-telemetry` | Sends the analytics records that Claude Code and its built-in mods log | Wherever Claude Code's own analytics are on | Disable it in `/plugin`, or turn analytics off, for example with [`DISABLE_TELEMETRY`](https://code.claude.com/docs/en/env-vars) |
 | `cc-plugin-you-should-know` | [You should know](https://code.claude.com/docs/en/interactive-mode.md#you-should-know-suggestions): a side agent shows a note above the prompt when it finds something you might have missed | Off until you [turn it on](https://code.claude.com/docs/en/interactive-mode.md#you-should-know-suggestions) | Disable it in `/plugin` |
+
+For a **Built-in** plugin that isn't in the table, [open its details in `/plugin`](https://code.claude.com/docs/en/plugins/install#manage-installed-plugins) to read what it does or to disable it.
 
 The settings and flags that stop installed mods, such as `disableAllHooks`, `--bare`, and `--safe-mode`, don't stop built-in mods.
 
