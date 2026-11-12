@@ -29,10 +29,17 @@ print_doc_header() {
 }
 
 
-# Function to auto-update docs if needed
+# Function to auto-update docs if needed (throttled to once per 3 hours)
 auto_update() {
+    local last_check="$DOCS_PATH/.last_fetch"
+    local now=$(date +%s)
+    local last=0
+    [[ -f "$last_check" ]] && last=$(cat "$last_check")
+    (( now - last < 10800 )) && return 0
+
     cd "$DOCS_PATH" 2>/dev/null || return 1
-    
+    echo "$now" > "$last_check"
+
     # Get current branch
     local BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "main")
     
@@ -83,7 +90,8 @@ show_freshness() {
         exit 1
     fi
     
-    # Try to sync with GitHub
+    # Force fetch - bypass throttle since user explicitly asked for freshness check
+    rm -f "$DOCS_PATH/.last_fetch"
     auto_update
     local sync_status=$?
     
@@ -130,54 +138,8 @@ read_doc() {
     if [[ -f "$doc_path" ]]; then
         print_doc_header
         
-        # Quick check if we're up to date (0.37s)
-        cd "$DOCS_PATH" 2>/dev/null || exit 1
-        local BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "main")
-        local VERSION=$SCRIPT_VERSION
-        
-        # Do the fetch to check status
-        local COMPARE_BRANCH="$BRANCH"
-        if ! git fetch --quiet origin "$BRANCH" 2>/dev/null; then
-            # Try main if current branch doesn't exist on origin
-            if git fetch --quiet origin main 2>/dev/null; then
-                COMPARE_BRANCH="main"
-            else
-                echo "⚠️  Could not check GitHub for updates - using cached docs (v$VERSION, $BRANCH)"
-                echo ""
-                cat "$doc_path"
-                echo ""
-                echo "📖 Official page: https://docs.anthropic.com/en/docs/claude-code/$topic"
-                return
-            fi
-        fi
-        
-        local LOCAL=$(git rev-parse HEAD 2>/dev/null)
-        local REMOTE=$(git rev-parse origin/"$COMPARE_BRANCH" 2>/dev/null)
-        local BEHIND=$(git rev-list HEAD..origin/"$COMPARE_BRANCH" --count 2>/dev/null || echo "0")
-        
-        if [[ "$LOCAL" != "$REMOTE" ]] && [[ "$BEHIND" -gt 0 ]]; then
-            # We're behind - safe to update
-            echo "🔄 Updating to latest documentation..."
-            git pull --quiet origin "$COMPARE_BRANCH" 2>&1 | grep -v "Merge made by" || true
-            
-            # Check if installer needs updating
-            local INSTALLER_VERSION=$SCRIPT_VERSION
-            local VERSION_INT=$(echo "$INSTALLER_VERSION" | sed 's/^0\.//' | cut -d. -f1)
+        auto_update
 
-            if [[ $VERSION_INT -ge 3 ]]; then
-                ./install.sh >/dev/null 2>&1
-            fi
-            echo "✅ Updated to latest (v$VERSION, $BRANCH)"
-        else
-            local AHEAD=$(git rev-list origin/"$COMPARE_BRANCH"..HEAD --count 2>/dev/null || echo "0")
-            if [[ "$AHEAD" -gt 0 ]]; then
-                echo "⚠️  Using local development version (v$VERSION, $BRANCH, +$AHEAD commits)"
-            else
-                echo "✅ You have the latest docs (v$VERSION, $BRANCH)"
-            fi
-        fi
-        echo ""
-        
         cat "$doc_path"
         echo ""
         if [[ "$topic" == "changelog" ]]; then
@@ -229,14 +191,6 @@ list_docs() {
     ls "$DOCS_PATH/docs" | grep '\.md$' | sed 's/\.md$//' | sort | column -c 80
     echo ""
     echo "Usage: /docs <topic> or /docs -t to check freshness"
-}
-
-# Function for hook check (auto-update)
-hook_check() {
-    # This is now just a passthrough since auto_update handles everything
-    # Note: We could potentially start a background fetch here for parallelization,
-    # but since git fetch only takes ~0.37s, the complexity isn't worth it
-    exit 0
 }
 
 # Function to show what's new (simplified version)
@@ -360,7 +314,7 @@ case "${1:-}" in
         fi
         ;;
     hook-check)
-        hook_check
+        exit 0
         ;;
     uninstall)
         uninstall
