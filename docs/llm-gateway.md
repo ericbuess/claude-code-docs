@@ -43,6 +43,10 @@ When you're ready to roll out an LLM gateway to your organization, the sequence 
 
 To make a gateway reached through `ANTHROPIC_BASE_URL` the only destination a managed machine may use, set [`allowedProviders`](https://code.claude.com/docs/en/settings-reference#allowedproviders) to `["customEndpoint"]` in the same managed settings file and put the gateway's `ANTHROPIC_BASE_URL` in that file's `env` block. Claude Code then refuses a session pointed anywhere else, including at Anthropic directly or at a developer's own proxy, and accepts `ANTHROPIC_BASE_URL` only with the value you set there. For a gateway reached through a provider-specific endpoint variable such as `ANTHROPIC_BEDROCK_BASE_URL`, the `allowedProviders` entry says which variable to pin. Requires Claude Code v2.1.285 or later.
 
+> [!NOTE]
+>
+> With Desktop signed in to claude.ai, a Cowork session on the user's machine counts as [`"anthropic"`](https://code.claude.com/docs/en/settings-reference#allowedproviders). If you leave it out of this list in an MDM policy or managed settings file, that session is refused. With it in, sessions sent to Anthropic directly also pass this list.
+
 ## Subscriptions and gateways
 
 While a [gateway credential variable](https://code.claude.com/docs/en/llm-gateway-connect.md#set-the-credential-variable) or `apiKeyHelper` is active, requests carry that credential in place of a developer's claude.ai subscription login, and the subscription's usage limits don't apply to them. Claude Code keeps a saved claude.ai login on the machine but doesn't send it with those requests. That traffic is billed per token to whoever owns the credential the gateway forwards, such as your organization's Anthropic Console account, or your Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry account when the gateway routes there.

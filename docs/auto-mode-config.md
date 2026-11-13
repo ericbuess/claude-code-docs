@@ -222,6 +222,10 @@ Three additional fields let you replace the classifier's built-in rule lists:
 
 Each is an array of prose descriptions, read as natural-language rules. For tool-pattern-based hard blocks that run before the classifier, use [`permissions.deny`](https://code.claude.com/docs/en/permissions).
 
+> [!NOTE]
+>
+> In a [Code Mode](https://code.claude.com/docs/en/code-mode.md#permission-checks) session, the classifier applies `hard_deny` and `soft_deny` when it reviews Claude's code, and not to each tool call the code makes. `permissions.deny` rules apply to each call.
+
 Inside the classifier, precedence works in four tiers:
 
 * `hard_deny` rules block unconditionally. User intent and `allow` exceptions don't apply.
@@ -283,7 +287,7 @@ Claude Code shows entries from [managed settings](https://code.claude.com/docs/e
 
 By default, narrow Bash and PowerShell allow rules such as `Bash(npm test)` stay in effect in auto mode. Claude Code resolves them before the classifier runs, unless the command carries [per-command allowed domains](https://code.claude.com/docs/en/sandboxing.md#per-command-allowed-domains-in-auto-mode). Claude Code suspends only the broad rules that grant arbitrary code execution, such as `Bash(*)` or wildcarded interpreters, together with every rule that names [`Monitor`](https://code.claude.com/docs/en/tools-reference#monitor-tool), because Monitor commands run through the shell. This means a narrow rule can still let a destructive argument through without the classifier seeing it, for example a script path or flag the rule's prefix didn't anticipate.
 
-Set `autoMode.classifyAllShell` to `true` to suspend every Bash and PowerShell allow rule while auto mode is active, so the classifier evaluates every shell command regardless of your allow list, except [critical-path removals](https://code.claude.com/docs/en/permission-modes.md#critical-paths).
+Set `autoMode.classifyAllShell` to `true` to suspend every Bash and PowerShell allow rule while auto mode is active, so the classifier evaluates every shell command regardless of your allow list, except [critical-path removals](https://code.claude.com/docs/en/permission-modes.md#critical-paths). In a [Code Mode](https://code.claude.com/docs/en/code-mode.md#permission-checks) session, the classifier reviews the code that runs the commands, even with this setting on.
 
 ```json theme={null}
 {

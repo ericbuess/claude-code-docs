@@ -173,6 +173,10 @@ Security teams can configure managed permissions for what Claude Code is and is 
 
 To limit which of these deployment options a managed machine may use, set [`allowedProviders`](https://code.claude.com/docs/en/settings-reference#allowedproviders) in managed settings. For example, `["bedrock"]` allows Amazon Bedrock and nothing else; a Bedrock fleet that also enables the Mantle endpoint lists `"mantle"` too. The entry says which endpoint variables also need a managed `env` pin. Requires Claude Code v2.1.285 or later.
 
+> [!NOTE]
+>
+> With Desktop signed in to claude.ai, a Cowork session on the user's machine counts as [`"anthropic"`](https://code.claude.com/docs/en/settings-reference#allowedproviders). If you leave it out of this list in an MDM policy or managed settings file, that session is refused. With it in, sessions sent to Anthropic directly also pass this list.
+
 ### Use MCP for integrations
 
 MCP is a great way to give Claude Code more information, such as connecting to ticket management systems or error logs. Have one central team configure MCP servers and check a `.mcp.json` configuration into the codebase so that all users benefit. [Learn more](https://code.claude.com/docs/en/mcp.md).

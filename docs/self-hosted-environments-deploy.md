@@ -840,13 +840,19 @@ If tool traffic must stay inside your network, run the equivalent tools as local
 
 ### Some sessions don't count as idle
 
-A session holding a background task that keeps running doesn't count as idle, so `--release-idle-session-min` won't release that session's slot. A session that's waiting on an approval requested from inside a running tool call also doesn't count as idle. Set `--kill-session-after-min` alongside it as a hard backstop.
+While a session doesn't count as idle, it keeps its slot past the `--release-idle-session-min` limit, so also set `--kill-session-after-min`.
+
+A session counts as idle after its turn ends or while its turn waits on its user, but not in cases such as these:
+
+* Its turn has ended and it isn't waiting on its user, but a background task keeps running
+* Its turn waits on an approval that a non-MCP tool requests while that tool runs
+* Its turn waits on an MCP server's [`elicitation/create` request](https://code.claude.com/docs/en/mcp#respond-to-mcp-elicitation-requests)
 
 `--kill-session-after-min` is a backstop for runaway sessions. On a runner on v2.1.260 or later, a session that reaches the limit isn't terminated outright. The runner gives it a grace window, 15 minutes by default, which you can change with [`SELF_HOSTED_RUNNER_MAX_LIFETIME_GRACE_MS`](https://code.claude.com/docs/en/self-hosted-environments-reference#environment-variable-only-settings):
 
 * If the session is waiting on its user, the runner releases it. If its turn has ended and it holds only background tasks, the runner waits up to 60 seconds for those tasks to finish and then releases it. The session resumes when its user sends their next message.
 * If a turn is still running, the runner waits for the turn to finish, or for the session to next wait on its user, and then releases it.
-* If the session is still on the runner when the grace window ends, the runner terminates it, and any running turn's work is lost. A turn waiting on an approval requested from inside a running tool call is one way a session outlasts the window.
+* If the session is still on the runner when the grace window ends, the runner terminates it, and any running turn's work is lost. For example, a session can stay on the runner until then if its turn waits on an approval that a non-MCP tool requests while that tool runs. A session can also stay there while its turn waits on an MCP server's `elicitation/create` request.
 
 A released session resumes from a fresh clone, so work it hadn't pushed is gone either way; see [Resumed sessions lose unpushed work](#resumed-sessions-lose-unpushed-work). Before v2.1.260, the runner terminated every session at the limit, after waiting at most the grace window for a running turn to finish.
 

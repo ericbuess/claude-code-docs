@@ -110,7 +110,7 @@ On machines with managed settings, see [How managed settings lock the OTLP desti
 | `CLAUDE_CODE_ENABLE_TELEMETRY` | Enables telemetry collection (required) | `1` |
 | `OTEL_METRICS_EXPORTER` | Metrics exporter types, comma-separated. Use `none` to disable | `console`, `otlp`, `prometheus`, `none` |
 | `OTEL_LOGS_EXPORTER` | Logs/events exporter types, comma-separated. Use `none` to disable | `console`, `otlp`, `none` |
-| `OTEL_EXPORTER_OTLP_PROTOCOL` | Protocol for OTLP exporter, applies to all signals. Claude Code has no default protocol, so set this or the signal-specific protocol variable for each `otlp` exporter you enable | `grpc`, `http/json`, `http/protobuf` |
+| `OTEL_EXPORTER_OTLP_PROTOCOL` | Protocol for OTLP exporter, applies to all signals. Defaults to `http/protobuf` for a valid `http://` or `https://` endpoint. For a gRPC endpoint such as `http://localhost:4317`, set this to `grpc`. The default requires Claude Code v2.1.323 or later | `grpc`, `http/json`, `http/protobuf` |
 | `OTEL_EXPORTER_OTLP_ENDPOINT` | OTLP collector endpoint for all signals | `http://localhost:4317` |
 | `OTEL_EXPORTER_OTLP_METRICS_PROTOCOL` | Protocol for metrics, overrides general setting | `grpc`, `http/json`, `http/protobuf` |
 | `OTEL_EXPORTER_OTLP_METRICS_ENDPOINT` | OTLP metrics endpoint, overrides general setting | `http://localhost:4318/v1/metrics` |
@@ -475,7 +475,7 @@ If the name doesn't arrive, check for one of these causes:
 
 * **You set it on the computer that runs Desktop**: Desktop doesn't pass a value you set there to the SSH session
 * **You exported it in `/etc/profile` or another file that only login shells read**: the name arrives when you run `claude` from a login shell, but not in a Desktop SSH session. Desktop doesn't start Claude Code through a login shell. Set the variable under `env` in the [managed settings file](https://code.claude.com/docs/en/desktop.md#managed-settings) on the remote machine instead.
-* **A value has a space inside it**: Claude Code then copies none of the keys onto events or datapoints and reports no error. [Take the space out of the value](#multi-team-organization-support).
+* **A value has a space inside it**: Claude Code then copies none of the keys onto events or datapoints. To see which value has the space, run `/status` in a session on the remote machine. [Take the space out of the value](#multi-team-organization-support).
 * **Something else already sets the variable**: in a session that the desktop app starts, a variable already set in the launch environment [takes precedence over settings files](https://code.claude.com/docs/en/settings-reference.md#how-env-values-interact-with-your-shell). The [debug log](https://code.claude.com/docs/en/debug-your-config.md) names each ignored variable. When a third-party Desktop deployment [names an OTLP endpoint](#how-managed-settings-lock-the-otlp-destination) in the environment it provides, that environment carries Desktop's own `OTEL_RESOURCE_ATTRIBUTES`.
 
 ### Example configurations

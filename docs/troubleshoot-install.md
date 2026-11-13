@@ -995,7 +995,7 @@ Then run `source ~/.bashrc` and retry `claude`.
 
 These issues apply if you installed Claude Code with `npm install -g` inside WSL. If you used the [native installer](https://code.claude.com/docs/en/setup.md), skip this section. On npm 12, install as [Fix an npm 12 install](#fix-an-npm-12-install) describes.
 
-**OS or platform detection issues.** If npm reports a platform mismatch during install, WSL is likely picking up the Windows `npm`. Run `npm config set os linux` first, then install with `npm install -g @anthropic-ai/claude-code --force`. Do not use `sudo`.
+**OS or platform detection issues.** If npm reports a platform mismatch during install, run `npm config set os linux` first, then install with `npm install -g @anthropic-ai/claude-code@latest --force`. Do not use `sudo`.
 
 **`exec: node: not found` when running `claude`.** Your WSL environment is likely using the Windows installation of Node.js. Confirm with `which npm` and `which node`: paths starting with `/mnt/c/` are Windows binaries, while Linux paths start with `/usr/`. To fix this, install Node via your Linux distribution's package manager or via [`nvm`](https://github.com/nvm-sh/nvm).
 
@@ -1082,7 +1082,7 @@ To fix an npm 12 install, switch to the native installer or allow the step:
   3. Reinstall:
 
      ```bash theme={null}
-     npm install -g @anthropic-ai/claude-code
+     npm install -g @anthropic-ai/claude-code@latest
      ```
 
      If this or step 1 fails with `EACCES`, switch to the native installer instead of rerunning it with `sudo`. Claude Code runs npm without `sudo` when it updates itself, so automatic updates would fail the same way.
@@ -1093,7 +1093,7 @@ To fix an npm 12 install, switch to the native installer or allow the step:
 
 ### npm `ENOTEMPTY` error during update or reinstall
 
-When you run `npm install -g @anthropic-ai/claude-code` over an existing installation, npm can fail while moving the old package directory aside:
+When you run `npm install -g @anthropic-ai/claude-code@latest` over an existing installation, npm can fail while moving the old package directory aside:
 
 ```text theme={null}
 npm error code ENOTEMPTY
@@ -1127,7 +1127,7 @@ The `npm error path` line names the directory npm couldn't move. Delete that dir
 Then reinstall. On npm 12, follow [Fix an npm 12 install](#fix-an-npm-12-install). Otherwise, run:
 
 ```bash theme={null}
-npm install -g @anthropic-ai/claude-code
+npm install -g @anthropic-ai/claude-code@latest
 ```
 
 Confirm with `claude --version`, which prints a version number such as `2.1.211 (Claude Code)`.

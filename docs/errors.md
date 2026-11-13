@@ -154,6 +154,7 @@ Match the message you see to a section below.
 | `403` with `GitHub GraphQL is not available from Claude Code sessions` in a cloud session | [GitHub proxy](https://code.claude.com/docs/en/cloud-environments.md#github-proxy) |
 | `The cloud environments service returned an empty response` / `The cloud environments service returned a response in an unexpected format` | [Network](#the-cloud-environments-service-returned-an-empty-or-unexpected-response) |
 | `Failed to fetch session from Sessions API: Failed to fetch session logs` | [Network](#failed-to-fetch-session-from-sessions-api) |
+| `Couldn't load the history of cloud session` | [Network](#couldnt-load-the-history-of-cloud-session) |
 | `Couldn't reconnect to your Remote Control session` | [Network](#couldnt-reconnect-to-your-remote-control-session) |
 | `N sessions ended while this machine was offline — the environment was cleaned up on the server and can't be resumed.` | [Network](#sessions-ended-while-this-machine-was-offline) |
 | `Couldn't share the transcript.` | [Network](#couldnt-share-the-transcript) |
@@ -181,6 +182,7 @@ Match the message you see to a section below.
 | `PDF too large` / `PDF is password protected` / `pdftoppm is not installed` | [Request errors](#pdf-errors) |
 | `Extra inputs are not permitted` | [Request errors](#extra-inputs-are-not-permitted) |
 | `API Error: 400 ... tools.N.custom.input_schema: JSON schema is invalid` / `Property keys should match pattern` | [Request errors](#tool-input-schema-is-invalid) |
+| `N tools left out` beside a server in `/mcp` / `Claude wasn't given N tools because the Anthropic API would reject their input schemas` | [Tools with invalid input schemas](https://code.claude.com/docs/en/mcp.md#tools-with-invalid-input-schemas) |
 | `Tool "mcp__<server>__<tool>" is not sent to Claude: its name has <N> characters and the API accepts at most 128` | [Request errors](#mcp-tool-name-over-128-characters) |
 | `tools.N.custom.name: String should have at most 128 characters` | [Request errors](#mcp-tool-name-over-128-characters) |
 | `tool_use.name: String should have at most 200 characters` | [Request errors](#tool-use-name-over-200-characters) |
@@ -271,6 +273,7 @@ Match the message you see to a section below.
 | `No available ports for OAuth redirect` | [Command-line errors](#no-available-ports-for-oauth-redirect) |
 | `Shell command failed for pattern "..."`, from `/security-review` or any skill that injects dynamic context | [Command-line errors](#security-review-fails-without-origin-head) |
 | `Shell command permission check failed for pattern "..."`, from a skill that injects dynamic context | [Command-line errors](#security-review-fails-without-origin-head) |
+| ``Couldn't run `<command>` for <name>. A file named HEAD or .git in this folder or one above it may not be yours``, from a skill that injects dynamic context | [Permission checks on injected commands](https://code.claude.com/docs/en/skills.md#permission-checks-on-injected-commands) |
 | ``Skill <name> requires bash (`shell: bash` in frontmatter) but Git Bash was not found`` | [Command-line errors](#security-review-fails-without-origin-head) |
 | `No shell command in <name> was run, because the <tool> tool does not accept one of them` | [Command-line errors](#no-shell-command-was-run) |
 | `Input must be provided either through stdin or as a prompt argument when using --print` | [Command-line errors](#input-must-be-provided-when-using-print) |
@@ -563,7 +566,7 @@ You can tune retry behavior with these environment variables:
 | `CLAUDE_CODE_RETRY_WATCHDOG_MAX_USAGE_LIMIT_WAIT_MS` | no cap | With `CLAUDE_CODE_RETRY_WATCHDOG` set, the longest time in milliseconds one request waits for your plan's [usage limit](#youve-hit-your-session-limit), such as the session or weekly limit, to reset. When the reset is further away than this cap, the request fails at once, unless usage credits have room or the API couldn't check them. In those cases it's retried, and fails if the cap passes before it succeeds. Requires Claude Code v2.1.301 or later. |
 | [`CLAUDE_CODE_RETRY_WATCHDOG_USAGE_LIMIT_RECHECK_MS`](https://code.claude.com/docs/en/env-vars) | unset | Minimum interval in milliseconds between checks of whether a [usage limit](#youve-hit-your-session-limit) was already lifted, while a request waits for that limit to reset with `CLAUDE_CODE_RETRY_WATCHDOG` set. When a check finds the limit lifted, the request goes out at once. Give plain digits from `60000` to `10800000`. When unset or outside that range, no checks are made. For when Claude Code skips these checks, see the [environment variables reference](https://code.claude.com/docs/en/env-vars.md). Requires Claude Code v2.1.305 or later. |
 | [`CLAUDE_CODE_OVERLOADED_RETRY_BASE_DELAY_MS`](https://code.claude.com/docs/en/env-vars) | 500 | Starting delay in milliseconds of the backoff between retries of a request that the API rejects with a `529` overloaded error. Raise it, up to 32000, to spread the retries over a longer window when the API is at capacity. Has no effect when `CLAUDE_CODE_RETRY_WATCHDOG` is set to `1`, or when the rejected request was sent in [fast mode](https://code.claude.com/docs/en/fast-mode.md#handle-rate-limits). Requires Claude Code v2.1.292 or later. |
-| [`CLAUDE_CODE_OVERLOADED_RETRY_MAX_DELAY_MS`](https://code.claude.com/docs/en/env-vars) | 32000 | Ceiling in milliseconds on the backoff between retries of a request that the API rejects with a `529` overloaded error. Raise it, up to 64000, so that later retries keep spreading apart when the API is at capacity. Has no effect when `CLAUDE_CODE_RETRY_WATCHDOG` is set to `1`, or when the rejected request was sent in [fast mode](https://code.claude.com/docs/en/fast-mode.md#handle-rate-limits). Requires Claude Code v2.1.296 or later. |
+| [`CLAUDE_CODE_OVERLOADED_RETRY_MAX_DELAY_MS`](https://code.claude.com/docs/en/env-vars) | 32000 | Ceiling in milliseconds on the backoff between retries of a request that the API rejects with a `529` overloaded error. Raise it, up to 300000, so that later retries keep spreading apart when the API is at capacity. Values above 64000 require v2.1.323 or later. Has no effect in the same cases as `CLAUDE_CODE_OVERLOADED_RETRY_BASE_DELAY_MS`. Requires Claude Code v2.1.296 or later. |
 | [`API_TIMEOUT_MS`](https://code.claude.com/docs/en/env-vars) | 600000 | Time in milliseconds that each request attempt has to receive its response headers. It doesn't limit how long a streaming response runs after that. Raise it for slow networks or proxies. For how it caps the first-byte deadline, see [No response from API](#no-response-from-api). |
 | [`CLAUDE_CODE_NONSTREAMING_TIMEOUT_RETRIES`](https://code.claude.com/docs/en/env-vars) | unset | Limit on re-sends of a [non-streaming request](#streaming-response-ended-before-any-complete-data-was-received) that times out. At the limit, the request fails. A response from Claude that takes longer than the timeout to generate times out again on every re-send, so set a low number such as `0` to fail sooner. For each attempt's timeout, see [How long a non-streaming attempt waits](#how-long-a-non-streaming-attempt-waits). Requires Claude Code v2.1.285 or later. |
 | [`CLAUDE_STREAM_FIRST_BYTE_TIMEOUT_MS`](https://code.claude.com/docs/en/env-vars) | unset | Deadline in milliseconds for the first response byte of a streaming request. Requires Claude Code v2.1.242 or later. For how Claude Code picks the deadline when this is unset, see [No response from API](#no-response-from-api). |
@@ -981,7 +984,9 @@ When a proxy, load balancer, or gateway between Claude Code and the API answers 
 
 ### You've hit your monthly spend limit
 
-Your plan's included usage can't cover this request, and the [usage credits](https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans) that would otherwise pay for it have reached a spend limit. That happens when one of your plan's usage windows has run out, or when the request is one that only usage credits pay for, such as a request to a model that [bills to usage credits](https://code.claude.com/docs/en/model-config.md#fable-and-usage-credits). The message names whose limit blocked you. The text after the `·` says how to get that limit increased, and varies with your plan and whether you manage billing:
+Your plan's included usage can't cover this request, and the [usage credits](https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans) that would otherwise pay for it have reached a spend limit. Your plan can't cover a request when one of its usage windows has run out, or when only usage credits pay for the request. One example is a request to a model that [bills to usage credits](https://code.claude.com/docs/en/model-config.md#fable-and-usage-credits).
+
+The words before the `·` name the limit that blocked you, such as your org's monthly spend limit, and the text after it says how to get that limit increased. In a cloud session or under [Remote Control](https://code.claude.com/docs/en/remote-control.md), that text gives no URL, and a message about your own `monthly spend limit` doesn't say how to raise it. Other sessions show forms like these:
 
 ```text theme={null}
 You've hit your monthly spend limit · raise it at https://claude.ai/settings/usage?from=cc_cli_limit_message
@@ -2305,6 +2310,18 @@ You see it after `claude --teleport`, `/teleport`, or choosing the session in th
 * Run the same teleport again. If it fails the same way, [report the problem](#report-an-error)
 
 Before v2.1.296, Claude Code didn't retry a failed read, and after one it could open the session with an empty conversation and report success instead of printing this message.
+
+### Couldn't load the history of cloud session
+
+This message means Claude Code found the [cloud session you asked to pull into your terminal](https://code.claude.com/docs/en/claude-code-on-the-web.md#from-cloud-to-terminal), but the request for its conversation history came back as not found:
+
+```text theme={null}
+Couldn't load the history of cloud session session_01HJKLMNOPQRSTUVWXYZ. Check it at https://claude.ai/code/session_01HJKLMNOPQRSTUVWXYZ?from=cli
+```
+
+**What to do:**
+
+* Open the link in the message to check the session in your browser. If it opens there and the same teleport fails this way again, [report the problem](#report-an-error).
 
 ### Couldn't reconnect to your Remote Control session
 
@@ -3849,7 +3866,7 @@ Claude Code shows the same error for any skill that [injects dynamic context](ht
 
 Sibling strings fire before the command runs at all:
 
-* `Shell command permission check failed for pattern "..."`: the command's permission check didn't allow it. [Permission checks on injected commands](https://code.claude.com/docs/en/skills.md#permission-checks-on-injected-commands) covers which results abort in each permission mode and how to pre-approve a command with `allowed-tools`
+* `Shell command permission check failed for pattern "..."`: the command's permission check didn't allow it. See [Permission checks on injected commands](https://code.claude.com/docs/en/skills.md#permission-checks-on-injected-commands) for which results abort in each permission mode and when `allowed-tools` pre-approves a command
 * ``Skill <name> requires bash (`shell: bash` in frontmatter) but Git Bash was not found``: the skill's frontmatter demands bash on a machine without it. Install Git for Windows or change the frontmatter to `shell: powershell`. See [How injected commands run](https://code.claude.com/docs/en/skills.md#how-injected-commands-run)
 
 **What to do:**
@@ -5523,10 +5540,10 @@ Before v2.1.248, only the `already open in another running Claude session` refus
 You opened a [background session](https://code.claude.com/docs/en/agent-view.md) that ended while the background service was off, and [transcript cleanup](https://code.claude.com/docs/en/settings-reference.md#cleanupperioddays) has since removed its saved conversation, for example after the machine was off for weeks. Opening such a row normally [resumes its saved conversation](https://code.claude.com/docs/en/agent-view.md#sessions-show-as-failed-after-shutdown). With nothing left to resume, Claude Code refuses rather than re-run the session's original prompt without asking:
 
 ```text theme={null}
-This session's saved conversation is no longer on disk (it ended while the background service was off, and old transcripts are cleaned up), so there is nothing to resume. `claude rm 7c5dcf5d` deletes the row; `claude respawn 7c5dcf5d` runs its original prompt again instead.
+This session's saved conversation is no longer on disk (it ended while the background service was off, and old transcripts are cleaned up), so there is nothing to resume. `claude rm 7c5dcf5d` removes the row; `claude respawn 7c5dcf5d` runs its original prompt again instead.
 ```
 
-`claude attach <id>` prints this text. In agent view, the footer is shorter and ends with `ctrl+x deletes the row`.
+`claude attach <id>` prints this text. In agent view, the footer is shorter and ends with `ctrl+x removes the row`.
 
 **What to do:**
 
@@ -5545,7 +5562,7 @@ kept 7c5dcf5d — its worktree is still at “/home/you/project/.claude/worktree
   push them and run 'claude rm 7c5dcf5d' again, or discard the worktree and its commits: claude rm 7c5dcf5d --discard-unpushed a1b2c3d000000000000000000000000000000000@0123456789abcdef0123456789abcdef
 ```
 
-When Claude Code can't summarize the commits, the detail line reads `The worktree has unpushed commits` instead. In [agent view](https://code.claude.com/docs/en/agent-view.md), the session's row shows `not deleted` with the same reason.
+When Claude Code can't summarize the commits, the detail line reads `The worktree has unpushed commits` instead. In [agent view](https://code.claude.com/docs/en/agent-view.md), the session's row shows `not removed` with the same reason.
 
 Commits on a remote don't block the delete. Neither do commits on the local copy of your `origin` remote's default branch, as long as that branch is checked out in your main checkout, the repository directory itself rather than a worktree.
 
