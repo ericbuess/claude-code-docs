@@ -4,7 +4,7 @@
 
 # Add components to a plugin
 
-> Add skills, hooks, MCP servers, and every other component type to a Claude Code plugin, with an example that validates for each.
+> Add skills, hooks, MCP servers, and other component types to a Claude Code plugin, with an example that validates for each.
 
 A Claude Code plugin is built from components, such as skills, agents, hooks, and MCP servers. Each component has a default folder in the plugin, an optional manifest key in `.claude-plugin/plugin.json` that replaces or adds to that folder, and a name the user sees. For each key's full field table, see the [manifest reference](https://code.claude.com/docs/en/plugins/manifest-reference.md#fields).
 
@@ -22,7 +22,7 @@ After you add a component, run `/reload-plugins` in a running session or start a
 
 ## Explore the plugin directory
 
-The explorer shows an example plugin, `my-plugin`, that has one of every kind of component in its default location:
+The explorer shows an example plugin, `my-plugin`, that has these components in their default locations:
 
 * A review skill and an `about` command
 * A security-review subagent
@@ -31,14 +31,13 @@ The explorer shows an example plugin, `my-plugin`, that has one of every kind of
 * An output style and a color theme
 * A route-audit workflow
 * A `hello-plugin` executable
-* Default settings
 * A local MCP server and a Go language server
 
 Each file is the smallest valid example of its format, there to show the shape rather than to be useful: a real skill or agent carries full instructions and often supporting files, and a real hook or monitor does real work. The sections after the explorer use the same files as their examples and link to fuller ones. Select a file or folder to read what it's for, see what goes in it, and find the section that covers it.
 
 What goes in a plugin
 
-This example plugin, `my-plugin`, has one of every kind of component, each in its default location. Select a file or folder to read what it’s for and see what goes in it.
+This example plugin, `my-plugin`, has the components listed here, each in its default location. Select a file or folder to read what it’s for and see what goes in it.
 
 Plugin directory
 
@@ -176,16 +175,6 @@ The hook in `hooks/hooks.json` runs a script, and this folder is where the examp
 ```bash theme={null}
 #!/bin/bash
 npx prettier --write .
-```
-
-A `settings.json` at the plugin root holds [settings](https://code.claude.com/docs/en/settings-reference.md) that apply while the plugin is enabled, so a plugin can change how the session behaves and not only add components. Only two keys take effect from a plugin, [`agent`](https://code.claude.com/docs/en/settings-reference#agent) and [`subagentStatusLine`](https://code.claude.com/docs/en/settings-reference#subagentstatusline); every other key is dropped. See [Default settings](#default-settings).
-
-This one sets `agent`, which runs the session's main thread as the plugin's own `security-reviewer` agent, so that agent's system prompt, tool restrictions, and model apply to the whole session:
-
-```json theme={null}
-{
-  "agent": "security-reviewer"
-}
 ```
 
 An [MCP server](https://code.claude.com/docs/en/mcp.md) gives Claude tools from an external system. Declare it in `.mcp.json` at the plugin root. This one starts a local server from a script inside the plugin, and appears in `/mcp` as `plugin:my-plugin:db`:
@@ -483,30 +472,6 @@ Make it executable with `chmod +x bin/hello-plugin` and load the plugin. When yo
 Plugin `bin/` directories come after the user's own `PATH` entries, so a plugin can't shadow `git`, `ls`, or another system command.
 
 claude.ai and Cowork don't install a plugin that has a top-level `bin/` directory, including one you [distribute through claude.ai organization settings](https://claude.com/docs/plugins/org-sync#keep-executables-out-of-the-top-level-bin-directory).
-
-### Default settings
-
-To set defaults that apply while the plugin is enabled, add a `settings.json` at the plugin root, or put the same object inline in the `settings` manifest key. Two keys take effect, `agent` and `subagentStatusLine`, and every other key is dropped.
-
-Set `agent` to run one of the plugin's own agents as the main thread:
-
-```json settings.json theme={null}
-{
-  "agent": "security-reviewer"
-}
-```
-
-Load the plugin and start a session. Claude then answers in the main conversation with the `security-reviewer` agent's system prompt and model.
-
-For everything the key controls, see the [`agent` setting](https://code.claude.com/docs/en/settings-reference#agent).
-
-When the same key is set in more than one place, these rules decide which value applies:
-
-* **File over manifest**: when both exist and `settings.json` sets at least one supported key, `settings.json` applies and the manifest's `settings` is ignored
-* **User settings over plugin defaults**: across settings sources, plugin defaults are the lowest layer, so a user's own `agent` in `~/.claude/settings.json` overrides yours
-* **Two plugins set the same key**: the value from the plugin loaded last applies, and `claude --debug` logs `overrides setting`
-
-For the `subagentStatusLine` shape, see [subagent status lines](https://code.claude.com/docs/en/statusline.md#subagent-status-lines).
 
 ### Themes and output styles
 

@@ -4533,11 +4533,10 @@ Claude Code rejects both a path that points outside the plugin as written, such 
 commands path escapes plugin directory: ./commands/deploy.md — it resolves to /home/user/shared/deploy.md, outside the plugin directory
 ```
 
-A message that gives the full path of one of a marketplace plugin's own files, such as `hooks/hooks.json`, means Claude Code skipped that file. That happens when Claude Code can't confirm the file is inside the plugin or, for a plugin in a [local marketplace](https://code.claude.com/docs/en/plugins/loading.md#in-place-and-copied-plugins), inside that marketplace. The message reports each of these files under the component name shown:
+A message that gives the full path of one of a marketplace plugin's own files, such as `hooks/hooks.json`, means Claude Code skipped that file. When Claude Code can't confirm the file is inside the plugin, or inside its marketplace for a plugin in a [local marketplace](https://code.claude.com/docs/en/plugins/loading.md#in-place-and-copied-plugins), it skips the file. The message reports these files under the component name shown:
 
 * `hooks/hooks.json`: `hooks`
 * `monitors/monitors.json`: `monitors`
-* `settings.json`: `settings`
 * `SKILL.md` at the plugin root: `skills`
 
 For example, this message is for a `hooks/hooks.json` that resolves outside both the plugin and its local marketplace:

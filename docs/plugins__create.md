@@ -72,7 +72,7 @@ The four fields do this:
 * **`version`**: optional. Setting it keeps users on that version until you change it; [Release a new version](https://code.claude.com/docs/en/plugins/host-marketplace.md#release-a-new-version) says when to set or omit it.
 * **`author`**: who to credit. `name` is required inside it; `email` and `url` are optional.
 
-Every other field is on the [manifest reference](https://code.claude.com/docs/en/plugins/manifest-reference.md#fields).
+Other fields are on the [manifest reference](https://code.claude.com/docs/en/plugins/manifest-reference.md#fields).
 
 Only `plugin.json` goes inside `.claude-plugin/`. The skill you add next goes directly under `my-first-plugin/`, next to that folder.
 
