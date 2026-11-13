@@ -92,7 +92,7 @@ Mirror the release into your internal registry if your builds can't reach the re
 
 Beyond the binary, the image needs:
 
-* **A glibc-based image**: the glibc build's only dynamic dependencies are glibc libraries. Musl-based images need the `linux-x64-musl` or `linux-arm64-musl` build plus additional packages; see [Alpine Linux setup](https://code.claude.com/docs/en/setup.md#alpine-linux-and-musl-based-distributions).
+* **A glibc-based image**: the glibc build's only dynamic dependencies are glibc libraries. Musl-based images need the `linux-x64-musl` or `linux-arm64-musl` build, whose only dynamic dependency is musl.
 * **A writable state directory**: the gateway runs as any user, but minimal images have no writable home. Set `CLAUDE_CONFIG_DIR` to a writable path such as `/tmp/.claude`.
 * **The container command**: `claude gateway --config /etc/claude/gateway.yaml`, with the config file mounted read-only and secrets supplied as environment variables; the gateway listens on `listen.port`, default `8080`.
 

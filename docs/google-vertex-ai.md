@@ -228,11 +228,16 @@ For aliases, version prefixes, and `modelOverrides` entries, see [Pin models for
 
 ### When a model is disabled mid-session
 
-If your project loses access to the model your session is running on, for example because an administrator disables it in [Model Garden](https://console.cloud.google.com/vertex-ai/model-garden), Claude Code switches the session to another model instead of failing each request, and shows `Switched to <fallback> because <model> is not available`. It tries the same models as the startup fallback: earlier versions of the same tier first and, for an Opus session with no Opus version available, the default Sonnet model.
+When Agent Platform rejects your session's model as unavailable in your project or region, Claude Code switches your session to another model, and you can keep working. You see a message that starts with `Switched to <fallback> because <model> is not available`. This happens, for example, when an administrator disables the model in [Model Garden](https://console.cloud.google.com/vertex-ai/model-garden) or it isn't served in your region.
 
-The switch applies only to a tier you haven't pinned, the same condition as the startup fallback. A session on a specific version you picked keeps its model and, without a fallback model chain, the request fails instead. In [auto mode](https://code.claude.com/docs/en/permission-modes.md#enable-auto-mode-on-bedrock-agent-platform-or-foundry), Claude Code switches only to a model auto mode supports on Agent Platform. If none of those models is available either, the request fails.
+If you configured a [fallback model chain](https://code.claude.com/docs/en/model-config.md#fallback-model-chains), Claude Code switches to your configured fallback instead. Without a chain, the request fails in cases such as these:
 
-A [fallback model chain](https://code.claude.com/docs/en/model-config.md#fallback-model-chains) you configure replaces the tier switch: on these refusals Claude Code switches to your configured fallback instead. To have refused requests fail rather than switch, set [`CLAUDE_CODE_DISABLE_MODEL_ACCESS_FALLBACK=1`](https://code.claude.com/docs/en/env-vars). A fallback chain you configured still switches on these refusals; remove the chain as well if you want every refused request to fail.
+* Your session is on a pinned model or a specific version you picked
+* None of the [models Claude Code tries](#startup-model-checks) is available. In [auto mode](https://code.claude.com/docs/en/permission-modes.md#enable-auto-mode-on-bedrock-agent-platform-or-foundry), Claude Code only switches to a model auto mode supports on Agent Platform.
+
+To keep working, run `/model` in the session and press `s` on a model available in your project and region, which leaves your default unchanged.
+
+To have rejected requests fail instead of switching, set [`CLAUDE_CODE_DISABLE_MODEL_ACCESS_FALLBACK=1`](https://code.claude.com/docs/en/env-vars). If you configured a fallback model chain, remove it as well, because Claude Code still moves to that fallback.
 
 ## IAM configuration
 

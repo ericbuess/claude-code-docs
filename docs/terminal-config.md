@@ -26,7 +26,7 @@ In most terminals you can also press Shift+Enter, but support varies by terminal
 
 | Terminal | Shift+Enter for newline |
 | :- | :- |
-| Ghostty, Kitty, iTerm2, WezTerm, Warp, Apple Terminal, Windows Terminal | Works without setup |
+| Ghostty, Kitty, iTerm2, WezTerm, Warp, Windows Terminal | Works without setup |
 | Other terminals that support the kitty keyboard protocol, such as foot and Alacritty 0.16 or later | Works without setup. Requires Claude Code v2.1.269 or later |
 | VS Code, Cursor, Devin Desktop, Alacritty before 0.16, Zed | Run `/terminal-setup` once |
 | gnome-terminal, JetBrains IDEs such as PyCharm and Android Studio | Not available; use Ctrl+J or `\` then Enter |

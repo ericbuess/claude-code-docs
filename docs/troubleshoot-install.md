@@ -388,7 +388,7 @@ Confirm the binary exists and is executable:
 > Get-Command claude | Select-Object Source
 > ```
 
-On Linux, check for missing shared libraries. If `ldd` shows missing libraries, you may need to install system packages. On Alpine Linux and other musl-based distributions, see [Alpine Linux setup](https://code.claude.com/docs/en/setup.md#alpine-linux-and-musl-based-distributions).
+On Linux, check for missing shared libraries. If `ldd` shows missing libraries, you may need to install system packages. On Alpine Linux and other musl-based distributions, see [Linux musl or glibc binary mismatch](#linux-musl-or-glibc-binary-mismatch).
 
 ```bash theme={null}
 ldd "$(command -v claude)" | grep "not found"
@@ -906,13 +906,11 @@ If this prints `False`, you are on a 32-bit edition of Windows. Claude Code requ
 
 ### Linux musl or glibc binary mismatch
 
-If you see errors about missing shared libraries like `libstdc++.so.6` or `libgcc_s.so.1` after installation, the installer may have downloaded the wrong binary variant for your system.
+If you see errors about missing shared libraries like `ld-linux-x86-64.so.2` or `ld-linux-aarch64.so.1` after installation, the installer may have downloaded the wrong binary variant for your system.
 
 ```text theme={null}
-Error loading shared library libstdc++.so.6: No such file or directory
+Error loading shared library ld-linux-x86-64.so.2: No such file or directory
 ```
-
-This can happen on glibc-based systems that have musl cross-compilation packages installed, causing the installer to misdetect the system as musl.
 
 **Solutions:**
 
@@ -924,11 +922,7 @@ This can happen on glibc-based systems that have musl cross-compilation packages
 
 2. **If you're on glibc but got the musl binary**, remove the installation and reinstall. You can also manually download the correct binary using the manifest at `https://downloads.claude.ai/claude-code-releases/{VERSION}/manifest.json`. File a [GitHub issue](https://github.com/anthropics/claude-code/issues) with the output of `ldd --version` and `ls /lib/libc.musl*`.
 
-3. **If you're actually on musl**, such as Alpine Linux, install the required packages:
-   ```bash theme={null}
-   apk add libgcc libstdc++ ripgrep
-   ```
-   On Alpine, `ripgrep` is in the community repository. If `apk` reports that the package is missing, see [Alpine Linux setup](https://code.claude.com/docs/en/setup.md#alpine-linux-and-musl-based-distributions).
+3. **If you're on musl but got the glibc binary**, [remove the installation](https://code.claude.com/docs/en/setup.md#uninstall-claude-code). On Alpine Linux, first install the packages that [Alpine Linux setup](https://code.claude.com/docs/en/setup.md#alpine-linux-and-musl-based-distributions) names. Then run the [install command](https://code.claude.com/docs/en/setup.md#install-claude-code), which installs the musl binary.
 
 ### `Illegal instruction`
 

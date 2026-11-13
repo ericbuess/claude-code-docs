@@ -431,7 +431,7 @@ Each custom key becomes a label on every metric series, so high-cardinality valu
 > * **No spaces allowed**: values can't contain spaces. For example, `user.organizationName=My Company` is invalid
 > * **Format**: must be comma-separated key=value pairs: `key1=value1,key2=value2`
 > * **Allowed characters**: only US-ASCII characters excluding control characters, whitespace, double quotes, commas, semicolons, and backslashes
-> * **Special characters**: characters outside the allowed range must be percent-encoded
+> * **Special characters**: characters outside the allowed range must be percent-encoded, and an `=` inside a value must be written as `%3D`
 >
 > For a value that would need a space, use underscores or camelCase instead. The following examples set `org.name` with each form:
 >

@@ -276,6 +276,8 @@ By default, sandboxed commands can write to the current working directory, the p
 
 These paths are enforced at the OS level, so all commands running inside the sandbox, including their child processes, respect them. This is the recommended approach when a tool needs write access to a specific location, rather than excluding the tool from the sandbox entirely with `excludedCommands`.
 
+On Linux and WSL2, an entry for a path that doesn't exist yet has no effect, so create the path first.
+
 When you define the same filesystem array in multiple [settings scopes](https://code.claude.com/docs/en/settings.md#settings-precedence), Claude Code merges them, combining the paths rather than replacing one scope's array with another's. Claude Code leaves an entry out of the merge when a lock under [Keep developers from widening the policy](#keep-developers-from-widening-the-policy) covers it.
 
 If you exclude a source with [`--setting-sources`](https://code.claude.com/docs/en/cli-reference) on the CLI or [`settingSources`](https://code.claude.com/docs/en/agent-sdk/claude-code-features#control-filesystem-settings-with-settingsources) in the Agent SDK, Claude Code ignores its `sandbox.filesystem` entries, its `Edit` permission rules, and its `Read` deny rules when building the sandbox configuration. Requires Claude Code v2.1.246 or later.
@@ -376,9 +378,9 @@ The sandbox has two independent layers: [filesystem isolation](#filesystem-isola
 
 Because turning filesystem isolation off widens what sandboxed commands can do, Claude Code honors `filesystem.disabled` from these settings sources only:
 
-* User settings, managed settings, and the `--settings` CLI flag can set it. Project settings in `.claude/settings.json` and `.claude/settings.local.json` can't, so a checked-out project can't switch filesystem isolation off.
-* When managed settings configure `sandbox.filesystem` at all, or list any `sandbox.credentials.files` entry with `"mode": "deny"`, only managed settings can set the key. This keeps developers from turning filesystem isolation off in such a deployment; to turn it off for everyone, set `"disabled": true` in managed settings.
-* When [`CLAUDE_CODE_SUBPROCESS_ENV_SCRUB`](https://code.claude.com/docs/en/env-vars) is set, Claude Code ignores `filesystem.disabled` from every source, including managed settings, and keeps filesystem isolation on.
+* User settings, managed settings, and the `--settings` CLI flag can set it. Project settings in `.claude/settings.json` and `.claude/settings.local.json` can't set it.
+* When managed settings configure `sandbox.filesystem` at all, or list any `sandbox.credentials.files` entry with `"mode": "deny"`, only managed settings can set the key. To turn filesystem isolation off for everyone, set `"disabled": true` in managed settings.
+* When [`CLAUDE_CODE_SUBPROCESS_ENV_SCRUB`](https://code.claude.com/docs/en/env-vars) is set, Claude Code ignores `filesystem.disabled` from every source, including managed settings.
 
 A [valid](https://code.claude.com/docs/en/settings-reference.md#invalid-credential-entries-in-managed-settings) `mask` entry doesn't lock the key, even when Claude Code [falls back to `deny`](#mask-credential-files) for it at startup. List a path that can't be masked, such as a credential directory, as an explicit `deny` entry in managed settings, which locks the key.
 

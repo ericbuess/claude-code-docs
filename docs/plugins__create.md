@@ -344,7 +344,7 @@ This example shows the shape with one hook that runs a linter on each file Claud
     "PostToolUse": [
       {
         "matcher": "Write|Edit",
-        "hooks": [{ "type": "command", "command": "jq -r '.tool_input.file_path' | xargs npm run lint:fix" }]
+        "hooks": [{ "type": "command", "command": "f=$(jq -r '.tool_input.file_path') && npm run lint:fix -- \"$f\"" }]
       }
     ]
   }

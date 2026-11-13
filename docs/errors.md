@@ -122,6 +122,7 @@ Match the message you see to a section below.
 | `A request to MCP server "<name>" was sent without your stored credentials` | [Authentication](#couldnt-read-the-stored-credentials-for-mcp-server) |
 | `This server's URL is missing or not a valid URL, so sign-in can't start` | [Authentication](#mcp-server-url-is-missing-or-not-a-valid-url) |
 | `Issuer mismatch in authorization response (RFC 9207)` | [Authentication](#issuer-mismatch-in-authorization-response) |
+| `Stopped an OAuth request` | [Authentication](#stopped-an-oauth-request) |
 | `Refusing to send credentials to non-https token endpoint` / `<short-name> from the MCP SDK for <server-url>` | [Authentication](#refusing-to-send-credentials-to-non-https-token-endpoint) |
 | `Cloud gateway session expired — run /login to reconnect.` | [Authentication](#cloud-gateway-session-expired) |
 | `Cloud gateway <url> no longer accepts this session` | [Authentication](#cloud-gateway-session-expired) |
@@ -251,6 +252,8 @@ Match the message you see to a section below.
 | `Ultrareview did not start` | [Command-line errors](#ultrareview-did-not-start) |
 | `Remote Control did not start: "<question>" got no answer` | [Command-line errors](#remote-control-did-not-start-got-no-answer) |
 | `` `<flag>` before `remote-control` is not carried over to the sessions Remote Control starts `` | [Command-line errors](#not-carried-over-to-the-sessions-remote-control-starts) |
+| `Remote Control did not start, because sessions would skip part or all of the --settings file` | [Command-line errors](#remote-control-did-not-start-because-of-the-settings-file) |
+| `The settings file <file> has changed since Remote Control started, so this session did not start` | [Command-line errors](#settings-file-changed-since-remote-control-started) |
 | `--sandbox is not supported by claude remote-control` / `--no-sandbox is not supported by claude remote-control` | [Command-line errors](#sandbox-is-not-supported-by-claude-remote-control) |
 | `` `claude import` is not yet available in this build `` | [Command-line errors](#claude-import-is-not-yet-available-in-this-build) |
 | `Could not read Claude Code config` | [Command-line errors](#could-not-read-claude-code-config) |
@@ -825,7 +828,7 @@ This denial means a hook or mod [changed the call's input](https://code.claude.c
 Later calls in the same Claude response can be denied with this reason:
 
 ```text theme={null}
-another call in this response was changed by a hook after auto mode reviewed it, or could not be confirmed unchanged
+another call in this response was changed after auto mode reviewed it, or could not be confirmed unchanged
 ```
 
 Claude can then issue each denied call again so the server reviews it. If a permission prompt opens, answer it. You don't need to do anything else unless Claude says in its reply that auto mode couldn't check the call. Then stop the change or approve the call yourself, and ask Claude to try the call again:
@@ -1822,6 +1825,19 @@ Issuer mismatch in authorization response (RFC 9207): expected "https://auth.exa
 
 Before v2.1.232, Claude Code used the v2 runtime only in a gradual rollout or when you set `MCP_SDK_GENERATION=v2`.
 
+### Stopped an OAuth request
+
+This message means that Claude Code stopped an [OAuth request for an MCP server](https://code.claude.com/docs/en/mcp.md#authenticate-with-remote-mcp-servers) because an OAuth endpoint redirected it. In both forms of the message, the first address is the one that sent the redirect:
+
+```text theme={null}
+Stopped an OAuth request, which can hold secrets: https://auth.example.com redirected it to https://other.example.com. Ask the owner of https://auth.example.com to remove that redirect.
+Stopped an OAuth request: https://auth.example.com redirected it more than 5 times. Ask the owner of https://auth.example.com to fix those redirects.
+```
+
+**What to do:**
+
+* Ask whoever runs the first address, such as the MCP server's operator, to remove or fix the redirect. Then try again from `/mcp`.
+
 ### Refusing to send credentials to non-https token endpoint
 
 On the [v2 runtime](https://code.claude.com/docs/en/mcp.md#mcp-client-runtimes), Claude Code sends an [MCP OAuth](https://code.claude.com/docs/en/mcp.md#authenticate-with-remote-mcp-servers) token request only to a token endpoint served over HTTPS or at `localhost`, `127.0.0.1`, or `::1`. This message means the server's token endpoint is neither, so Claude Code stopped before sending the request. That happens after the browser sign-in, so the browser step succeeds first, and again whenever Claude Code refreshes the server's token.
@@ -2207,7 +2223,7 @@ On [Amazon Bedrock](https://code.claude.com/docs/en/amazon-bedrock.md), the requ
 
 ### Host not allowed in a cloud session
 
-An outbound HTTP request from a cloud session or cloud scheduled task was blocked by the environment's network policy.
+In a cloud session or cloud scheduled task, a `403` or a DNS error such as `ENOTFOUND` can mean that the requested host isn't on the [cloud environment's allowlist](https://code.claude.com/docs/en/cloud-environments.md#access-levels). To confirm, check the host against that list. A `403` with this header confirms the block, but not every blocked request's `403` has it:
 
 ```text theme={null}
 HTTP 403
@@ -2565,6 +2581,8 @@ Unable to resize image — its pixels could not be decoded (the file may be dama
 
 Claude Code normally resizes large images automatically. These errors mean the image couldn't be decoded or resized to fit within the API limits.
 
+The error you see can name a different pixel limit, such as `2576x2576px` where these examples say `2000x2000px`.
+
 **What to do:**
 
 * If the message asks you to convert the image, convert it to PNG, JPEG, GIF, or WebP and attach it again. Claude Code can verify dimensions for these formats from the file header, without decoding the image.
@@ -2873,7 +2891,7 @@ The reason after the colon says what refused the switch:
 * **A reason a hook wrote**: a PreModelSwitch hook supplied that reason when it [denied the switch or asked for confirmation](https://code.claude.com/docs/en/hooks.md#premodelswitch-decision-control). Address what it asks, or pick a model your hooks allow.
 * **`PreModelSwitch hook <name> did not respond before its timeout`**: a hook that doesn't answer before its [timeout](https://code.claude.com/docs/en/hooks.md#timeouts) blocks the switch. Fix the hanging command or raise that hook's `timeout`, then switch again.
 * **`confirmation required, and this session cannot ask`**: a hook answered `ask` without a reason, and a control request has no way to show the confirmation prompt. A `/model` command in a [`-p` run](https://code.claude.com/docs/en/headless) reports the same condition with `(run /model interactively to confirm)` after the reason. Make the switch from an interactive session, or change the hook's decision for this model.
-* **`so organization-managed PreModelSwitch hooks could not be checked`**: Claude Code couldn't tell which PreModelSwitch hooks your organization's [managed plugins](https://code.claude.com/docs/en/settings-reference.md#enabledplugins) deliver, for example because a managed plugin failed to load. One of those hooks might block the switch, so Claude Code refuses rather than apply the switch unchecked. The start of the reason names what failed. Claude Code re-checks on every switch attempt, so a failure that has since cleared stops blocking; if it keeps failing, run `claude --debug` and switch again to capture the details, then fix the plugin or ask your admin to fix it.
+* **`so organization-managed PreModelSwitch hooks could not be checked`**: Claude Code before v2.1.323 refuses when it can't tell which PreModelSwitch hooks your [managed plugins](https://code.claude.com/docs/en/settings-reference.md#enabledplugins) deliver. The text before this phrase names what failed. To stop the refusal, update Claude Code. To also get a failed plugin's hooks running, fix the plugin or ask your admin. For details, start `claude --debug` in your shell and switch models, then read the [debug log](https://code.claude.com/docs/en/hooks.md#debug-hooks).
 * **`a PreModelSwitch hook failed before answering`** or **`PreModelSwitch hooks were cancelled (the control stream closed) before answering`**: the hook run ended without a verdict, and Claude Code doesn't treat that as approval. Run `claude --debug` to see what failed, then switch again.
 
 Before v2.1.260, the managed-plugin refusal read `plugin hooks could not be loaded, so PreModelSwitch hooks could not be checked; see the debug log`. Claude Code retried the plugin load once and then refused later switches in the session, even when your organization managed no plugins. Restart the session to run the plugin load again on those versions.
@@ -3522,7 +3540,7 @@ Remote Control did not start: "Choose [1/2] (default: 1):" got no answer. You ca
 You started [Remote Control](https://code.claude.com/docs/en/remote-control.md) with a global `claude` flag before the `remote-control` verb, one that would restrict or configure the sessions Remote Control starts, such as `--settings`, `--setting-sources`, `--permission-mode`, `--disallowed-tools`, or `--mcp-config`. A flag placed before the verb never reaches those sessions. Claude Code refuses to start instead, naming the flag:
 
 ```text theme={null}
-Error: `--settings` before `remote-control` is not carried over to the sessions Remote Control starts, so Remote Control refuses to start rather than drop it — remove it, and give Remote Control's own options after the verb (see `claude remote-control --help`).
+Error: `--settings` before `remote-control` is not carried over to the sessions Remote Control starts, so Remote Control refuses to start rather than drop it — remove it, and give Remote Control's own options after the verb (see `claude remote-control --help`). Pass settings with `claude remote-control --settings <file>`.
 ```
 
 Claude Code doesn't refuse global flags that are harmless to drop, such as `--verbose`, `--model`, or a wrapper-injected `--session-id` or `--plugin-dir`: it ignores them and Remote Control starts.
@@ -3535,6 +3553,31 @@ Claude Code also refuses to start for a global flag it doesn't yet recognize as 
 * When the refused flag is `--permission-mode`, run `claude remote-control --permission-mode <mode>` to set the permission mode for the sessions Remote Control starts
 
 Before v2.1.248, `claude remote-control` didn't accept its own flags when a global flag came first, and the command failed with an `unknown option` error.
+
+### Remote Control did not start because of the `--settings` file
+
+The file you passed to [`claude remote-control --settings`](https://code.claude.com/docs/en/remote-control#start-a-remote-control-session) has a problem:
+
+```text theme={null}
+Error: Remote Control did not start, because sessions would skip part or all of the --settings file ./rc-settings.json: Invalid or malformed JSON
+```
+
+**What to do:**
+
+* Fix the problem the message names, then run your `claude remote-control` command again
+
+### The settings file has changed since Remote Control started
+
+This message in the terminal running `claude remote-control` means that sessions won't start from the file you passed to [`--settings`](https://code.claude.com/docs/en/remote-control#start-a-remote-control-session) as it is now:
+
+```text theme={null}
+Session failed: Error: The settings file /path/to/settings.json has changed since Remote Control started, so this session did not start. Restart `claude remote-control` to use it as it is now.
+```
+
+**What to do:**
+
+* To use the file as it is now, stop `claude remote-control` and run the same command again. To bring back the sessions it was serving, see [Resume sessions after stopping the server](https://code.claude.com/docs/en/remote-control.md#resume-sessions-after-stopping-the-server).
+* To keep the settings Remote Control started with, put the file's contents back as they were, then run the command again if `claude remote-control` has exited
 
 ### `--sandbox` or `--no-sandbox` is not supported by claude remote-control
 

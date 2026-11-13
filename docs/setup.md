@@ -141,30 +141,12 @@ Open your WSL distribution and run the Linux installer from the [install instruc
 
 ### Alpine Linux and musl-based distributions
 
-Installing Claude Code on Alpine and other musl/uClibc-based distributions requires `bash` and `curl` for the install command, and `libgcc`, `libstdc++`, and `ripgrep` at runtime. Alpine doesn't include `bash` or `curl` by default, so the documented install command fails with a `not found` error until you install them. Install these packages using your distribution's package manager, then set `USE_BUILTIN_RIPGREP=0`.
+On Alpine and other musl-based distributions, the [install command](#install-claude-code) requires `bash` and `curl`, and Claude Code itself requires `bash` or `zsh`. Alpine doesn't include `bash` or `curl` by default, so the documented install command fails with a `not found` error until you install them.
 
 This example installs the required packages on Alpine:
 
 ```bash theme={null}
-apk add bash curl libgcc libstdc++ ripgrep
-```
-
-On Alpine, `ripgrep` is in the community repository. If `apk` reports that the package is missing, add the community repository to `/etc/apk/repositories`, using your Alpine version:
-
-```bash theme={null}
-echo "https://dl-cdn.alpinelinux.org/alpine/v3.22/community" >> /etc/apk/repositories
-```
-
-Run `apk update` to refresh the package index, and retry the `apk add` command.
-
-Then set `USE_BUILTIN_RIPGREP` to `0` in your [`settings.json`](https://code.claude.com/docs/en/settings-reference#all-settings) file:
-
-```json theme={null}
-{
-  "env": {
-    "USE_BUILTIN_RIPGREP": "0"
-  }
-}
+apk add bash curl
 ```
 
 ## Verify your installation
@@ -443,7 +425,7 @@ All repositories are signed with the [Claude Code release signing key](#binary-i
 > wget -O /etc/apk/keys/claude-code.rsa.pub \
 >   https://downloads.claude.ai/keys/claude-code.rsa.pub
 > echo "https://downloads.claude.ai/claude-code/apk/stable" >> /etc/apk/repositories
-> apk add claude-code
+> apk add bash claude-code
 > ```
 >
 > To switch to the `latest` channel, remove the `stable` repository line and add the `latest` repository:

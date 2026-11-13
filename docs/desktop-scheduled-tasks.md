@@ -83,11 +83,16 @@ Back in the **Trigger** card, select a [schedule preset](#schedule-options).
 
 **8. Choose the permission mode and model**
 
-In the instructions box's toolbar, select a [permission mode](#permissions-for-scheduled-tasks) and model. If you leave them unchanged, runs use your Claude Code settings and the default model.
+In the instructions box's toolbar, select a [permission mode](#permissions-for-scheduled-tasks) and model.
+
+* **Permission mode**: if you leave it unchanged, runs use your Claude Code settings.
+* **Model**: if the model menu reads **Default · Set by admin** and you don't pick another model, runs use the model your organization set in [managed settings](https://code.claude.com/docs/en/managed-settings.md). A [catch-up run](#missed-runs) that starts as the app opens can use the [runtime default for your account](https://code.claude.com/docs/en/model-config.md#default-model-setting) instead.
 
 **9. Create the task**
 
 Click **Create**. If you haven't trusted the folder yet, Desktop asks you to trust it at this point. The task's detail page opens.
+
+To see which model **Default · Set by admin** stands for, click **Run now** on the detail page to run the task at once. Then [open the run's session](#find-a-runs-session), where the row under the prompt box shows the model's name.
 
 On the detail page, click the pencil icon to open the [**Edit** form](#manage-scheduled-tasks). There you can change the **Description** that Desktop filled in from your instructions, select **Worktree**, or switch the schedule to **Manual** or **Custom**.
 
@@ -181,7 +186,7 @@ You can also list, create, edit, and pause tasks by asking Claude in any Desktop
 
 To let a task change its own schedule or prompt with the `update_scheduled_task` MCP tool, click **Run now** and approve the call each time.
 
-To edit a task's prompt on disk, open `~/.claude/scheduled-tasks/<task-name>/SKILL.md` (or under [`CLAUDE_CONFIG_DIR`](https://code.claude.com/docs/en/env-vars) if set). The file uses YAML frontmatter for `name` and `description`, with the prompt as the body. Changes take effect on the next run. Schedule, folder, model, and enabled state are not in this file: change them through the Edit form or ask Claude.
+To edit a task's prompt on disk, open `~/.claude/scheduled-tasks/<task-name>/SKILL.md` (or under [`CLAUDE_CONFIG_DIR`](https://code.claude.com/docs/en/env-vars) if set). The file uses YAML frontmatter for `name` and `description`, with the prompt as the body. Changes take effect on the next run. Schedule, folder, and enabled state are not in this file: change them through the Edit form or ask Claude.
 
 ## Related resources
 

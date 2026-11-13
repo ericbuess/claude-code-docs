@@ -142,9 +142,9 @@ Then send a one-shot prompt through the gateway:
 claude -p "Reply with one word: connected"
 ```
 
-**Checkpoint**: the prompt returns a response, and the request appears in the gateway's log as a `POST` to the `/v1/messages` path with status `200`. Claude Code appends a query string such as `?beta=true`, so match on the path, not the full URL. Two failure messages point in different directions:
+**Checkpoint**: the prompt returns a response, and the request appears in the gateway's log as a `POST` to the `/v1/messages` path with status `200`. Claude Code appends a query string such as `?beta=true`, so match on the path, not the full URL. Check the failure message:
 
-* `Not logged in`: check the gateway log to tell the two causes apart. If it's empty, no credential reached the session and no request left the machine; re-run the exports in the shell you're testing from. If it shows a rejected request with `x-api-key` in the `401` body, the gateway expects keys in that header instead; switch to `ANTHROPIC_API_KEY`
+* `Not logged in`: check the gateway log. If it's empty, no credential reached the session and no request left the machine; re-run the exports in the shell you're testing from. If it shows a `401` from the gateway naming `x-api-key`, the gateway expects keys in that header instead; switch to `ANTHROPIC_API_KEY`. If it shows a `401` from `api.anthropic.com` or your provider's endpoint, fix the provider credential the gateway holds
 * `Failed to authenticate. API Error: 401` means a credential was sent and rejected, and the gateway log says where: a `401` naming `api.anthropic.com` or your provider's endpoint means the gateway reached the upstream but its provider credential was rejected, so the developer key worked and the provider credential the gateway holds is wrong or a placeholder
 
 A wrong or unreachable base URL produces a different symptom: Claude Code [retries the connection with backoff](https://code.claude.com/docs/en/errors.md#automatic-retries) and can sit with no output for several minutes before reporting an error. If the command appears to hang, check the gateway log instead of waiting; no arriving request means `ANTHROPIC_BASE_URL` doesn't point at the gateway.
@@ -247,10 +247,10 @@ Confirm everything works from a developer machine, not the gateway host, so the 
 
 You should see `data:` lines arrive incrementally. The whole response arriving at once after a pause means the gateway is buffering, which stalls Claude Code; a `404` means the model name isn't routed. Repeat per model name.
 
-Then start `claude` and send a message. Each symptom at this step has one cause:
+Then start `claude`, send a message, and match what you see:
 
-* A login prompt means a credential gap. Run `/status` and open the **Status** tab: when the `Setting sources` line doesn't include managed settings, the distribution didn't reach the machine; when it does, the developer credential wasn't delivered, so set `ANTHROPIC_AUTH_TOKEN` or the `apiKeyHelper`
-* `Failed to authenticate` errors mean the gateway is rejecting requests; its log says which credential failed. A rejection the gateway logs itself names the developer key, while a `401` from `api.anthropic.com` or your provider's endpoint means the provider credential the gateway holds was rejected
+* A login screen, or `Not logged in` with nothing new in the gateway log, means a credential gap. Run `/status` and open the **Status** tab: when the `Setting sources` line doesn't include managed settings, the distribution didn't reach the machine; when it does, the developer credential wasn't delivered, so set `ANTHROPIC_AUTH_TOKEN` or the `apiKeyHelper`
+* `Please run /login · API Error: 401`, `Not logged in`, or `Invalid API key` with a `401` in the gateway log: check who wrote the `401`. Fix the developer key or its header if the gateway wrote it, or the provider credential it holds if it came from `api.anthropic.com` or your provider's endpoint
 * A one-time approval prompt for the key is expected on first use when the gateway expects keys in the `x-api-key` header, set as `ANTHROPIC_API_KEY`
 
 If your organization uses [fast mode](https://code.claude.com/docs/en/fast-mode.md), run `/fast` here too: the availability check calls `api.anthropic.com` directly rather than following the gateway base URL, so a gateway-routed session can report fast mode as unavailable or disabled even though inference works. [Use fast mode behind proxies and LLM gateways](https://code.claude.com/docs/en/fast-mode.md#use-fast-mode-behind-proxies-and-llm-gateways) maps each message to the variable that restores it, distributed with [the rest of the configuration](#distribute-the-configuration).

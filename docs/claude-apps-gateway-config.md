@@ -656,7 +656,7 @@ upstreams:
 
 | Setup | How |
 | - | - |
-| RBAC | Grant the gateway's identity `Azure AI User` or `Cognitive Services User` on the Microsoft Foundry resource |
+| RBAC | Grant the gateway's identity the `Foundry User` or `Cognitive Services User` role on the Microsoft Foundry resource |
 | Deployments | Microsoft Foundry uses admin-chosen deployment names, not canonical model IDs. Add a [`models:`](#models) block mapping each canonical ID to your deployment name. |
 | AKS (workload identity) | Federate a User-Assigned Managed Identity with the cluster's OIDC issuer and bind it to the gateway's service account. `use_azure_ad: true` picks it up via `WorkloadIdentityCredential`. |
 | ACI / App Service | Enable system-assigned or user-assigned managed identity on the resource. `use_azure_ad: true` picks it up. |
@@ -1001,6 +1001,8 @@ models:
 
 Each key under `upstream_model` must match the `name` of a configured upstream, which defaults to the provider name. A key that matches no upstream fails boot, so omit the lines for providers you don't use.
 
+To let developers use the `fable` alias with `auto_include_builtin_models: false`, add a `claude-fable-5` entry to `models`. That's the ID the [`fable` alias](https://code.claude.com/docs/en/model-config#fable-alias-resolution) resolves to for developers signed in to the gateway. Without it, their messages fail with an error that starts with `API Error: 400 model claude-fable-5 is not in the operator's model allowlist`.
+
 ### `managed`
 
 The `managed` block defines role-based access policies keyed on IdP groups or email domain. Policies are evaluated in order; by default the first match is selected, then merged onto the `match: {}` catch-all base. A user who matches two role policies gets only the first, so the second policy's deny rules don't apply unless you [apply every matching policy](#apply-every-matching-policy). Policies are served per-user at `GET /managed/settings` with ETag/304 caching.
@@ -1025,7 +1027,11 @@ managed:
 A `match: {}` catch-all, conventionally listed last, is treated as a base layer. Every other policy inherits any key it doesn't set from the catch-all, so per-role entries only need to list what differs from the org default. The merge rules depend on the key type:
 
 * **Allow-lists**: `availableModels` and `permissions.allow`. A specific policy's list fully replaces the base's.
-* **Deny-lists and hook arrays**: `permissions.deny`, `permissions.ask`, `disabledMcpjsonServers`, `deniedMcpServers`, `blockedMarketplaces`, `deniedModels`, and every `hooks` event-type array. These take the union of base and policy, so an org-wide deny or audit hook can't be accidentally dropped by a per-role override.
+* **Deny-lists and hook arrays**: these take the union of base and policy:
+  * `permissions.deny` and `permissions.ask`
+  * `disabledMcpjsonServers` and `deniedMcpServers`
+  * `blockedMarketplaces` and `deniedModels`
+  * The `hooks` event-type arrays
 * **Record-typed keys**: `env`, `modelOverrides`, and `skillOverrides`. These shallow-merge, so a per-role `env` block overrides keys it sets and inherits the rest from the base.
 
 `availableModels` is also enforced server-side at `/v1/messages`, so a denied model returns `400` regardless of what the client sends. An empty list denies every model. The check also covers the model a session starts on before the developer picks one, so [start sessions on a model the policy allows](#start-sessions-on-a-model-the-policy-allows).

@@ -147,23 +147,9 @@ To verify your setup, run `/status` inside Claude Code. The API provider line sh
 
 ## Azure RBAC configuration
 
-The `Azure AI User` and `Cognitive Services User` default roles include all required permissions for invoking Claude models.
+If you authenticate with Microsoft Entra ID or a bearer token it issued, assign your identity the `Foundry User` or `Cognitive Services User` role on your Foundry resource. You might still see `Foundry User` under its previous name, `Azure AI User`.
 
-For more restrictive permissions, create a custom role with the following:
-
-```json theme={null}
-{
-  "permissions": [
-    {
-      "dataActions": [
-        "Microsoft.CognitiveServices/accounts/providers/*"
-      ]
-    }
-  ]
-}
-```
-
-For details, see [Microsoft Foundry RBAC documentation](https://learn.microsoft.com/en-us/azure/ai-foundry/concepts/rbac-azure-ai-foundry).
+If these roles don't meet your needs, see [Microsoft Foundry RBAC documentation](https://learn.microsoft.com/en-us/azure/foundry/concepts/rbac-foundry) for custom roles.
 
 ## 1M token context window
 

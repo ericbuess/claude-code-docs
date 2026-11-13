@@ -196,16 +196,7 @@ This table lists the ones mods use most. The first column is the call your mod m
 
 ### Check a result with `expect`
 
-The kit has these assertions, and the one you pick goes after the value you're checking, as in `expect(answer.text).toBe('ok')`:
-
-* **Equality**: `toBe` for the same value or object, `toEqual` for structure, `toStrictEqual` for structure plus `undefined` fields and the prototype, and `toMatchObject` for the fields you name
-* **Text**: `toMatch`, which takes a regular expression or a substring, `toStartWith`, and `toEndWith`
-* **Numbers**: `toBeGreaterThan`, `toBeGreaterThanOrEqual`, `toBeLessThan`, `toBeLessThanOrEqual`
-* **Contents**: `toContain` for a substring or a member, `toContainEqual` for a member compared by structure, `toHaveLength`, and `toHaveProperty`
-* **Presence and type**: `toBeDefined`, `toBeUndefined`, `toBeNull`, `toBeTruthy`, `toBeFalsy`, `toBeNaN`, `toBeInstanceOf`
-* **Throwing**: `toThrow`, for a function `expect` calls, or for a promise you check with `.rejects`
-
-Put `.not` in front of an assertion to check the opposite, and `.resolves` or `.rejects` to check what a promise settles with.
+`expect` has its own set of assertions, such as `toEqual` and `toHaveLength`, which go after the value you're checking, as in `expect(answer.text).toBe('ok')`. For the full list, search `claude-code/index.d.ts` in [the types for your build](https://code.claude.com/docs/en/plugins/mods/create.md#get-the-types-for-your-build) for `type Matchers`. Put `.not` before the assertion to check the opposite. To check what a promise settles with, put `.resolves` or `.rejects` right after `expect(...)` and `await` the line, as in `await expect(promise).rejects.toThrow()`.
 
 When an `expect` fails inside a stub or hook that you passed to `on` as a plain function rather than an async generator, the test fails. The engine skips that hook, and the failure output names it, such as `in the test's store.set hook`.
 

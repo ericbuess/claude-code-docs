@@ -304,7 +304,7 @@ Enter plan mode by pressing `Shift+Tab` or prefixing a single prompt with `/plan
 claude --permission-mode plan
 ```
 
-Press `Shift+Tab` again to leave plan mode without approving a plan.
+With no approval prompt open, press `Shift+Tab` again to leave plan mode. At the approval prompt, press `Esc` first, since pressing `Shift+Tab` there approves the plan.
 
 ### Review and approve a plan
 
