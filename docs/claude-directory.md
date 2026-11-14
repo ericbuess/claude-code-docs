@@ -137,6 +137,7 @@ Claude Code deletes the files in the paths below once they're older than [`clean
 | `usage-data/` | `report.html` and timestamped report copies written by [`/insights`](https://code.claude.com/docs/en/costs#analyze-your-usage-patterns), plus cached per-session analysis data used to build them |
 | `skills/.trash/`, `plugins/.trash/` | [Skills](https://code.claude.com/docs/en/skills.md#how-synced-skills-behave) and [plugins](https://code.claude.com/docs/en/plugins/loading.md#synced-plugins) that the claude.ai sync removed, such as after you turn one off on claude.ai or stop syncing. The files stay here so you can recover them until the sweep deletes them |
 | `plugins/installed_plugins.set-aside.<date>.<hash>.json`, `plugins/installed_plugins.unreadable.<date>.<hash>.kept` | Dated copies Claude Code makes before rewriting [`installed_plugins.json`](https://code.claude.com/docs/en/plugins/loading#find-plugins-on-disk): install records it dropped, and the contents of a file it couldn't read. |
+| `plugins/mcpb/` | The files Claude Code extracted from the [MCP bundles](https://code.claude.com/docs/en/plugins/components.md#include-a-packaged-mcpb-server) that plugins declare. A bundle's age counts from the last session that used it. |
 | `todos/`, `statsig/`, `logs/` | Legacy directories from older versions. No longer written. The sweep removes their contents and then the empty directory. |
 
 Session files in `sessions/`, auto memory, and Claude Desktop and Cowork transcripts each follow their own retention rule:

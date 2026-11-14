@@ -46,7 +46,6 @@ You can't give your marketplace any of the following names:
 * **Names that impersonate an official marketplace**: names such as `official-claude-plugins` or `claude-plugins-v2`, and any name containing a non-ASCII character. The error is `Marketplace name impersonates an official Anthropic/Claude marketplace`. A control or bidirectional-formatting character in a name also reports `Marketplace name cannot contain control or bidirectional-formatting characters`. A marketplace already registered under such a name stops loading, along with its plugins.
 * **Another spelling of a reserved name**: a name that differs from a reserved name only by a trailing dot, or by a symbol other than an underscore in place of a hyphen, so `claude.code.plugins` counts as `claude-code-plugins`. Adding the marketplace fails with [`is another spelling of "<reserved>", a reserved marketplace name`](https://code.claude.com/docs/en/errors#marketplace-name-is-another-spelling-of-a-reserved-name), and a marketplace already registered under one stops loading. This check requires Claude Code v2.1.280 or later.
 * **Names Claude Code uses for plugins that don't come from a marketplace**: `inline` for plugins loaded with [`--plugin-dir`](https://code.claude.com/docs/en/cli-reference), `builtin` for built-in plugins, `skills-dir` for plugins auto-loaded from [`.claude/skills/`](https://code.claude.com/docs/en/skills), and `synced` for plugins synced from your claude.ai account. `claude-plugin-test` is also reserved. `skills-dir` also appears as `{"source": "skills-dir"}` in `strictKnownMarketplaces` and `blockedMarketplaces`, described under [Source values valid only in policy lists](#source-values-valid-only-in-policy-lists).
-* **`npm`, `pip`, `uv`, `cargo`, `github`, and `gh`**: reserved in any casing. This check requires Claude Code v2.1.275 or later.
 * **Member names that every JavaScript object has**: `constructor`, `hasOwnProperty`, `isPrototypeOf`, `propertyIsEnumerable`, `toLocaleString`, `toString`, and `valueOf`. `claude plugin marketplace add` refuses a marketplace that uses one with [`Claude Code reserves this name and cannot register a marketplace under it`](https://code.claude.com/docs/en/plugins/troubleshooting#claude-code-reserves-this-name). This check requires Claude Code v2.1.296 or later.
 * **Names starting with `claudeai-`**: reserved for marketplaces hosted on claude.ai. `claude plugin marketplace add` refuses any other marketplace that uses one with `Cannot add marketplace "<name>": names starting with "claudeai-" are reserved for marketplaces hosted on claude.ai`.
 * **The download folder of a registered GitHub marketplace, `<owner>-<repo>`**: Claude Code downloads a marketplace added from a `github` source such as `acme/x-tools` through a folder named `acme-x-tools`, whatever that marketplace's own `name` is. While that marketplace is registered under a name other than `acme-x-tools`, `claude plugin marketplace add` refuses a different marketplace named `acme-x-tools` after downloading it, and reports `Can't use the marketplace name "acme-x-tools"`. This check requires Claude Code v2.1.290 or later.
@@ -405,7 +404,7 @@ The table lists each marketplace source field that has a default, a constraint, 
 | `headers` | `url` | Map of HTTP headers Claude Code sends with the fetch, for authenticated hosts |
 | `headersHelper` | `url` | Command that prints headers whose values are too short-lived to list in `headers`. Requires Claude Code v2.1.238 or later. See [Authenticate archive downloads](https://code.claude.com/docs/en/plugins/host-marketplace.md#authenticate-archive-downloads) |
 | `repo` | `github` | In `marketplace add` and `extraKnownMarketplaces`, `repo` must name one repository. `marketplace add` rejects `owner/*` as not a valid `owner/repo` shorthand; in `extraKnownMarketplaces` Claude Code takes it literally and the clone fails |
-| `ref` | `github`, `git` | Branch or tag. Defaults to the repository's default branch |
+| `ref` | `github`, `git` | Branch, tag, or the full lowercase SHA of a commit on a branch or tag. Defaults to the repository's default branch. A SHA requires Claude Code v2.1.324 or later and is refused for a marketplace with a [reserved name](#reserved-names), such as `claude-plugins-official` |
 | `path` | `github`, `git` | The marketplace file's path inside the repository. Defaults to `.claude-plugin/marketplace.json` |
 | `path` | `file` | The marketplace file itself. Claude Code reads it in place and takes the directory two levels up as the marketplace root, so keep the file at `<root>/.claude-plugin/marketplace.json` |
 | `path` | `directory` | The marketplace root, the directory that contains `.claude-plugin/marketplace.json` |
@@ -413,6 +412,14 @@ The table lists each marketplace source field that has a default, a constraint, 
 | `skipLfs` | `github`, `git` | Accepted and has no effect. See [Keep plugin files out of Git LFS](https://code.claude.com/docs/en/plugins/host-marketplace.md#keep-plugin-files-out-of-git-lfs) |
 | `name` | `settings` | Must equal the `extraKnownMarketplaces` key and can't be a [reserved name](#reserved-names) |
 | `plugins` | `settings` | The inline catalog, with no hosted file. Each item takes `name`, `source`, `description`, `version`, `strict`, `headers`, and `headersHelper`. Write each item's `source` as an object type, because a relative path has no repository to resolve against |
+
+To keep refreshes and auto-updates from moving a `github` or `git` marketplace off a commit you've reviewed, set `ref` to that commit's full SHA, as in this source:
+
+```json theme={null}
+{ "source": "github", "repo": "acme-corp/plugins", "ref": "a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0" }
+```
+
+Update Claude Code on every machine first, because versions before v2.1.324 can't load a marketplace pinned this way. A plugin entry with its own remote source can still update, so pin that entry too, such as with [`sha`](#plugin-sources) on a `github`, `url`, or `git-subdir` source.
 
 ### Source values valid only in policy lists
 
@@ -472,7 +479,7 @@ The table maps marketplace-level messages to the field each is about.
 | `Marketplace name cannot contain path separators (/ or \), ".." sequences, or be "."` | Error | `name` |
 | `Marketplace name impersonates an official Anthropic/Claude marketplace` | Error | `name`. See [Reserved names](#reserved-names) |
 | `Marketplace name cannot contain control or bidirectional-formatting characters` | Error | `name` contains a control character, such as an escape or a newline, or a Unicode bidirectional-formatting character |
-| `Marketplace name "inline" is reserved for --plugin-dir session plugins`, and the `builtin`, `skills-dir`, `synced`, `claude-plugin-test`, `npm`, `pip`, `uv`, `cargo`, `github`, and `gh` variants | Error | `name` |
+| `Marketplace name "inline" is reserved for --plugin-dir session plugins`, and the `builtin`, `skills-dir`, `synced`, and `claude-plugin-test` variants | Error | `name` |
 | `Author name cannot be empty` | Error | `owner.name` |
 | `Plugin name cannot contain spaces. Use kebab-case (e.g., "my-plugin")` | Error | `plugins[i].name` |
 | `Plugin name cannot contain control or bidirectional-formatting characters` | Error | `plugins[i].name` |

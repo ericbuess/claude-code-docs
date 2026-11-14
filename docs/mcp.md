@@ -516,7 +516,9 @@ The result goes to Claude, not into the transcript, so ask Claude for it. If Cla
 
 #### Answer a question from an MCP task
 
-A running task can open an [elicitation dialog](#respond-to-mcp-elicitation-requests) to ask you for input. While `/tasks` is open, the dialog stays hidden, so close `/tasks` to answer. Declining or pressing `Esc` is an answer to the server, which then decides whether the task goes on.
+A running task can open an [elicitation dialog](#respond-to-mcp-elicitation-requests) to ask you for input. While `/tasks` is open, the dialog stays hidden, so close `/tasks` to answer. Declining is an answer to the server, which then decides whether the task goes on.
+
+Unless you've set Claude to [wait for the result](#make-claude-wait-for-the-result-of-an-mcp-task), press `Esc` in the dialog to answer later. To reopen the question, run `/tasks`, open the task's details, and press `Enter`. Answering later requires Claude Code v2.1.324 or later.
 
 In a [non-interactive](https://code.claude.com/docs/en/headless.md) session, Claude Code asks the server to cancel a task that requests input, without running your [`Elicitation` hooks](https://code.claude.com/docs/en/hooks#elicitation) or calling the Agent SDK's `onElicitation` callback.
 

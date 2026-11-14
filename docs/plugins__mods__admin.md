@@ -40,7 +40,7 @@ To keep every mod your users bring from running its hooks, set the `allowManaged
 With the option set in managed settings:
 
 * **No mod a user brings runs its hooks**: that covers a mod in a plugin the user installed, a mod loaded with `--plugin-dir`, and a mod [Claude wrote during a session](https://code.claude.com/docs/en/plugins/mods/create.md#ask-claude-for-a-mod)
-* **Your organization's mods still run**: a mod that [counts as your organization's](#install-your-organizations-mods) isn't checked. Every other mod counts as a user's and is refused. That includes a mod in a plugin you enable from a GitHub or other remote marketplace, and one your organization turns on for its members on claude.ai. If none counts as yours, no installed mod runs its hooks.
+* **Your organization's mods still run**: a mod that [counts as your organization's](#install-your-organizations-mods) isn't checked. Every other mod counts as a user's and is refused. That includes a mod your organization turns on for its members on claude.ai. If none counts as yours, no installed mod runs its hooks.
 * **Users can't undo it**: the guard reads the option from managed settings only, so the same entry in a user, project, or local settings file, or in a file passed with `--settings`, changes nothing
 * **A file or MDM policy covers every provider**: when you deliver the option as a file or through MDM, it works the same way on Amazon Bedrock, Google Cloud's Agent Platform, and Microsoft Foundry. For delivery from the claude.ai admin console, see [Platform availability](https://code.claude.com/docs/en/server-managed-settings.md#platform-availability)
 * **Users' other customizations keep working**: their [hooks in settings files](https://code.claude.com/docs/en/hooks.md) and in plugins' `hooks/hooks.json`, status lines, and `/goal` aren't affected
@@ -126,7 +126,7 @@ Only a plugin that counts as your organization's own runs hooks on these events.
 
 To let these hooks run, change managed settings in one of two ways:
 
-* **Run the mod as your organization's**: [install the mod so that it counts as yours](#install-your-organizations-mods). Its hooks on these events then run, and the guard stays loaded for every other mod. The mod turns on for everyone who receives these settings, and it has to sit in a directory you place on each machine. If you list it in `prependPlugins`, keep `sec-default@builtin` in the list.
+* **Run the mod as your organization's**: [install the mod so that it counts as yours](#install-your-organizations-mods). Its hooks on these events then run, and the guard stays loaded for every other mod. The mod turns on for everyone who receives these settings. If you list it in `prependPlugins`, keep `sec-default@builtin` in the list.
 * **Remove the guard**: leave `sec-default@builtin` out of `prependPlugins`. An empty list, `"prependPlugins": []`, is enough. You lose the whole guard, not only these events. A user's mod can then do what [the guard otherwise stops it from doing](#know-what-happens-by-default), and [the guard's options](#set-options-on-the-built-in-guard) don't apply.
 
 If you deliver a list without the guard through [server-managed settings](https://code.claude.com/docs/en/server-managed-settings.md#fetch-and-caching-behavior), the guard stays loaded until the server confirms the settings for the session. To confirm either change on a machine that runs v2.1.299 or later, open `/plugin` in a session there and check that the note is gone.
@@ -253,7 +253,7 @@ A mod is a plugin, so the ways you [manage plugins for your organization](https:
 * **Give one group a different policy, such as a pilot**: [Plan for what managed settings can't enforce](https://code.claude.com/docs/en/plugins/org.md#plan-for-what-managed-settings-can’t-enforce)
 * **Check which apps and session kinds apply the plugin keys**: [When each surface applies the plugin keys](https://code.claude.com/docs/en/plugins/org.md#when-each-surface-applies-the-plugin-keys)
 * **Set up CI and containers**: [Seed containers and CI](https://code.claude.com/docs/en/plugins/org.md#seed-containers-and-ci)
-* **Offer mods your users may install**: [Host a marketplace](https://code.claude.com/docs/en/plugins/host-marketplace.md). A mod that Claude Code copies from a GitHub, git, URL, or npm source counts as a user's, not as [your organization's](#install-your-organizations-mods).
+* **Offer mods your users may install**: [Host a marketplace](https://code.claude.com/docs/en/plugins/host-marketplace.md). A mod that Claude Code copies from a GitHub, git, URL, or npm source counts as a user's unless you [install it as your organization's](#install-your-organizations-mods).
 
 ### Set options on the built-in guard
 
@@ -281,7 +281,15 @@ You can deploy mods of your own to every user, choose where they run relative to
 
 ### Install your organization's mods and set the order
 
-Your organization's mods load where users' mods don't and can run ahead of them, so Claude Code has to be able to tell that a mod came from you. It treats a mod as your organization's only when all of these are true:
+Your organization's mods load where users' mods don't and can run ahead of them, so Claude Code has to be able to tell that a mod came from you.
+
+To make a mod from a remote marketplace, such as a GitHub repository, count as yours on v2.1.324 or later, do all of these in managed settings:
+
+* Set the mod's plugin to `true` in `enabledPlugins`
+* Declare the marketplace in `extraKnownMarketplaces`. To control when the mod's code changes, [pin the marketplace and the mod's entry](https://code.claude.com/docs/en/plugins/marketplace-reference.md#fields-by-type).
+* List the mod's id, such as `acme-guard@acme-tools`, in [`prependPlugins`](https://code.claude.com/docs/en/settings-reference#prependplugins) or [`appendPlugins`](https://code.claude.com/docs/en/settings-reference#appendplugins). With `prependPlugins`, also list `sec-default@builtin` to keep the built-in guard.
+
+A mod in a directory on the user's machine counts as yours only when all of these are true:
 
 * Managed `enabledPlugins` sets the mod's plugin to `true`
 * Managed settings name the plugin's [marketplace](https://code.claude.com/docs/en/plugins/create-marketplace.md) as a directory on the user's machine, by absolute path. An `extraKnownMarketplaces` entry does that and registers the marketplace for the user too.
@@ -316,9 +324,9 @@ The manifest lists the plugin by its path relative to that directory:
 }
 ```
 
-A plugin that Claude Code copies into its cache counts as a user's, even when managed `enabledPlugins` enables it. That covers every plugin from a GitHub, git, URL, or npm source. Its mod runs among users' mods, `prependPlugins` and `appendPlugins` skip it, `allowManagedModsOnly` refuses it, and `allowManagedHooksOnly` keeps it from loading. The user's debug log has a line that starts with the plugin's id and `is enabled by managed settings, but`.
+An installed plugin that meets neither set of conditions counts as a user's, even when managed `enabledPlugins` enables it. Its mod runs among users' mods, `prependPlugins` and `appendPlugins` skip it, `allowManagedModsOnly` refuses it, and `allowManagedHooksOnly` keeps it from loading. When managed settings enable it, the user's debug log has a line that starts with the plugin's id and `is enabled by managed settings, but`.
 
-Claude Code fires an event each time it's about to act, such as run a tool, and passes it to each mod in turn. A mod that counts as yours [runs before users' mods](https://code.claude.com/docs/en/plugins/mods/events.md#the-order-mods-run-in) even when you list it nowhere. To set its place, list its id in one of two settings. The id is the plugin's name, `@`, and the marketplace's name, such as `acme-guard@acme-tools`.
+Claude Code fires an event each time it's about to act, such as run a tool, and passes it to each mod in turn. A mod that meets the directory conditions [runs before users' mods](https://code.claude.com/docs/en/plugins/mods/events.md#the-order-mods-run-in) even when you list it nowhere. To set its place, list its id in one of two settings. The id is the plugin's name, `@`, and the marketplace's name, such as `acme-guard@acme-tools`.
 
 * **`prependPlugins`**: your mod sees an event before any user's mod, and the event's result after them. It can change the event, refuse it, or skip the users' mods. On v2.1.323 or later, check that your hooks still [reach other mods' controls and drawings](https://code.claude.com/docs/en/plugins/mods/events.md#hook-other-mods-drawings-and-controls).
 * **`appendPlugins`**: your mod runs after every user's mod, so it sees only the events those mods pass on, in the form they pass them

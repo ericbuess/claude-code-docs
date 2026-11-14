@@ -925,15 +925,13 @@ Once Claude Code recognizes the ID or uses the window you gave it, the warning n
 
 On an [LLM gateway](https://code.claude.com/docs/en/llm-gateway) or other custom deployment, Claude Code can assume a context window for the model ID that differs from the model's real window, whether or not it resolves the ID to a Claude model. Set [`CLAUDE_CODE_MAX_CONTEXT_TOKENS`](https://code.claude.com/docs/en/env-vars) to the window Claude Code should assume instead.
 
-How the variable applies depends on the ID. Claude Code treats an ID as a provider or custom spelling when it doesn't start with `claude-`, in any casing, or when it carries a suffix that Claude Code strips when reading the ID, such as the `@YYYYMMDD` date used on Google Cloud's Agent Platform. Before v2.1.259, Claude Code didn't count a stripped suffix, so an unrecognized `claude-` ID with a date suffix was treated as a bare `claude-` name.
+The variable works differently for an unrecognized ID, an unrecognized ID with `[1m]`, and an ID that Claude Code recognizes:
 
-An unrecognized provider or custom spelling, the same spelling with `[1m]`, and every other ID are three separate cases:
-
-* If Claude Code can't resolve a provider or custom spelling to a model it recognizes and the ID doesn't contain `[1m]`, the variable applies directly and proactive compaction continues at the declared window.
-* If Claude Code can't resolve a provider or custom spelling to a model it recognizes and the ID contains `[1m]`, in any casing, Claude Code assumes a 1M window for it and the variable doesn't apply on its own. To correct the window while keeping proactive compaction, also set [`CLAUDE_CODE_DISABLE_1M_CONTEXT=1`](https://code.claude.com/docs/en/env-vars). With that variable set, Claude Code sizes the ID like the same spelling without `[1m]`, so `CLAUDE_CODE_MAX_CONTEXT_TOKENS` applies when it would apply to that untagged spelling.
+* If Claude Code doesn't recognize the ID and the ID doesn't contain `[1m]`, the variable applies on its own and proactive compaction continues at the declared window. For an ID such as `claude-sonnet-latest`, this requires Claude Code v2.1.324 or later.
+* If Claude Code doesn't recognize the ID and the ID contains `[1m]`, in any casing, Claude Code assumes a 1M window for it. A value under 1M in the variable doesn't apply on its own. To correct the window while keeping proactive compaction, also set [`CLAUDE_CODE_DISABLE_1M_CONTEXT=1`](https://code.claude.com/docs/en/env-vars). With that variable set, Claude Code sizes the ID like the same ID without `[1m]`, so `CLAUDE_CODE_MAX_CONTEXT_TOKENS` applies.
 
   With a declared window above 200K, the warning that [the 200K limit isn't enforced](https://code.claude.com/docs/en/errors.md#the-200k-limit-isnt-enforced) is expected in this configuration.
-* If the ID resolves to a model Claude Code recognizes, or the ID is a bare `claude-` name with no suffix for Claude Code to strip, in any casing, the variable takes effect only when you also set [`DISABLE_COMPACT`](https://code.claude.com/docs/en/env-vars), which disables all compaction.
+* If the ID resolves to a model Claude Code recognizes, the variable takes effect only when you also set [`DISABLE_COMPACT`](https://code.claude.com/docs/en/env-vars), which disables all compaction.
 
   For example, an ID that contains a Claude model name that Claude Code knows, such as `anthropic/claude-opus-4-8`, `us.anthropic.claude-…-v1:0`, or the dated `claude-sonnet-4-5@20250929`, resolves to that model. This includes IDs that also contain `[1m]`: Claude Code resolves `claude-opus-4-8[1m]` to Opus 4.8 even with `CLAUDE_CODE_DISABLE_1M_CONTEXT` set.
 

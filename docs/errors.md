@@ -89,6 +89,7 @@ Match the message you see to a section below.
 | `Session failed: working folder not found:` | [Troubleshoot Remote Control](https://code.claude.com/docs/en/remote-control.md#working-folder-not-found) |
 | `The program file this Remote Control started from is gone` | [Troubleshoot Remote Control](https://code.claude.com/docs/en/remote-control.md#program-file-is-gone) |
 | `Session failed: spawn error:` followed by an `ENOENT` message | [Troubleshoot Remote Control](https://code.claude.com/docs/en/remote-control.md#program-file-is-gone) |
+| `Remote Control disconnected:` followed by a reason that mentions a `share link` | [Remote Control](https://code.claude.com/docs/en/remote-control.md#what-connected-devices-see) |
 | `OAuth token revoked` / `OAuth token has expired` | [Authentication](#oauth-token-revoked-or-expired) |
 | `Failed to authenticate: OAuth token revoked` | [Authentication](#oauth-token-revoked-or-expired) |
 | `Your account does not have access to Claude. Please login again or contact your administrator.` | [Authentication](#oauth-token-revoked-or-expired) |
