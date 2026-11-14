@@ -48,6 +48,7 @@ ZDR does not extend to the following, even for organizations with ZDR enabled. E
 | Chat on claude.ai | Chat conversations through the Claude for Enterprise web interface are not covered by ZDR. |
 | Cowork | Cowork sessions are not covered by ZDR. |
 | Artifacts | Artifacts in chat conversations and Cowork sessions are not covered by ZDR, and are kept until deleted unless your organization sets a retention period for them. Artifacts are not available in Claude Code with ZDR. |
+| Claude in Chrome | The [Claude in Chrome](https://support.claude.com/en/articles/13065128-claude-in-chrome-admin-controls) browser extension is not covered by ZDR. It is [not available in Claude Code](https://code.claude.com/docs/en/chrome.md#chrome-availability-with-hipaa-or-zero-data-retention) with ZDR, but members can still use it outside Claude Code where your organization allows it. |
 | Claude Code Analytics | Does not store prompts or model responses, but collects productivity metadata such as account emails and usage statistics. Contribution metrics are not available for ZDR organizations; the [analytics dashboard](https://code.claude.com/docs/en/analytics.md) shows usage metrics only. |
 | User and seat management | Administrative data such as account emails and seat assignments is retained under standard policies. |
 | Third-party integrations | Data processed by third-party tools, MCP servers, or other external integrations is not covered by ZDR. Review those services' data handling practices independently. |

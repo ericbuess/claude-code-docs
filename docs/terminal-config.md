@@ -332,7 +332,7 @@ In a wide terminal, each line of prose in Claude's responses runs the full width
 
 When you paste more than 800 characters or more than three lines into the prompt, Claude Code collapses the input to a placeholder such as `[Pasted text #1 +120 lines]` so the input box stays usable, and still sends the full content when you submit. For very large inputs such as entire files or long logs, write the content to a file and ask Claude to read it instead of pasting. The conversation transcript stays readable and Claude can refer to the file by path in later turns. The VS Code integrated terminal can also drop characters from very large pastes before they reach Claude Code, so use a file there.
 
-If the paste carries [invisible Unicode characters](https://code.claude.com/docs/en/interactive-mode.md#invisible-characters-in-prompts), Claude Code removes them when you press Enter and puts the cleaned prompt back in the input box for you to send with another Enter.
+If the paste carries [invisible Unicode characters](https://code.claude.com/docs/en/interactive-mode.md#invisible-characters-in-prompts), Claude Code removes them when you press Enter.
 
 ### How Claude treats pasted text
 

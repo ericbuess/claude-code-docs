@@ -15,8 +15,8 @@ When a mod does nothing, check what Claude Code reads from the mod's files, and 
 When a module doesn't load, a hook is skipped, or another mod refuses yours, Claude Code writes one line that names your mod. Where you read that line depends on the session:
 
 * **A session that hot-reloads a plugin directory**: a dim line in the transcript. That's an interactive session you started with `--plugin-dir`, or one where [hot reloading is on](https://code.claude.com/docs/en/plugins/mods/create.md#ask-claude-for-a-mod) for mods Claude wrote.
-* **Any other interactive session, such as one that runs a mod you installed from a marketplace**: the [debug log](#read-the-debug-log) only. To get one, start the session with `claude --debug`.
-* **A `claude -p` run with `--plugin-dir`**: stderr, in the default text output format. A refusal by another mod goes to the debug log only.
+* **Any other interactive session, such as one that runs a mod you installed from a marketplace**: the [debug log](#read-the-debug-log). To get one, start the session with `claude --debug`.
+* **A `claude -p` run with `--plugin-dir`**: stderr, in the default text output format. A refusal by another mod goes to the debug log.
 
 ## Check whether mods can load
 
@@ -68,13 +68,13 @@ Each of these follows `hooks module`, the mod's name, and `not loaded:` in the d
 
 ### Messages from the built-in guard
 
-Where the [built-in guard](https://code.claude.com/docs/en/plugins/mods/admin.md#know-what-happens-by-default) loads, it can refuse a mod or one of its answers. Each message names the option your organization's administrator sets to change the rule.
+Where the [built-in guard](https://code.claude.com/docs/en/plugins/mods/admin.md#know-what-happens-by-default) loads, it can refuse a mod or one of its answers. Some messages name the option your organization's administrator sets to change the rule.
 
 | Message contains | What it means | Where it appears |
 | :- | :- | :- |
 | `mods are limited to your organization's by policy (allowManagedModsOnly)` | Your organization allows only [its own mods](https://code.claude.com/docs/en/plugins/mods/admin.md#install-your-organizations-mods), so yours was refused | The debug log, and the transcript in a [session that hot-reloads a plugin directory](#find-out-why-a-mod-does-nothing) |
-| `tried to lift a deny rule in your settings` | Your mod's [`tool.check`](https://code.claude.com/docs/en/plugins/mods/reference#tools) hook approved a call that a `deny` rule refuses. The call stays denied. | The transcript and the debug log, once for each mod in a session. In a `claude -p` run, the debug log only. |
-| `the deny rules in your settings could not be checked for this call, so it is refused` | The guard failed while checking a call that a mod approved, so it refused the call | The reason Claude reads for the denied call |
+| `tried to lift a deny rule in your settings` | Your mod's [`tool.check`](https://code.claude.com/docs/en/plugins/mods/reference#tools) hook approved a call that a `deny` rule refuses. The call stays denied. | The transcript and the debug log, once for each mod in a session. In a `claude -p` run, the debug log. |
+| `the rules and hooks in your settings could not be checked for this call, so it is refused` | The guard failed while checking a call that a mod approved, so it refused the call | The reason Claude reads for the denied call |
 
 ### `validate` passes and lists no `hooks` line
 
@@ -137,8 +137,6 @@ To run the mod, [copy its directory out of the mods folder](https://code.claude.
 
 ## A hook is skipped or a mod is unloaded
 
-The mod loaded, and then Claude Code skipped one of its hooks or unloaded it.
-
 ### `hook skipped`
 
 The line names the mod and the event, then says `hook skipped:` and a reason, as in `first-mod: tool.call hook skipped: threw Error: boom`. A hook threw, exceeded its [time limit](https://code.claude.com/docs/en/plugins/mods/reference.md#limits), or returned a result of the wrong shape. The line appears once for each event and kind of failure until the mod reloads.
@@ -177,6 +175,15 @@ A change to a [mod Claude wrote in this session](https://code.claude.com/docs/en
 
 Claude doesn't see this line, so paste it into your next message when you ask Claude for a fix.
 
+### `reload failed`
+
+Match the line to find out whether your mod's last working version is still loaded:
+
+* `reload failed, the previous version stays loaded: <reason>`: your mod keeps running its last working version. If your change still fails to load the next time Claude Code reloads all plugins, such as when you run `/reload-plugins`, the last working version unloads.
+* `reload failed: <reason>`: run `/plugin` at the Claude Code prompt, and widen the terminal if the [`mods active` line](https://code.claude.com/docs/en/plugins/mods/overview#see-which-mods-a-session-loaded) cuts off names. If it names the mod, its last working version is still loaded. If it doesn't, or there's no such line, no version is.
+
+Fix what the reason names and save your change. A `reloaded` line shows that it loaded.
+
 ### `$.agent.register refused: the hooks module that made the call is no longer loaded`
 
 The line starts with your mod's name, as in `first-mod: $.agent.register refused: the hooks module that made the call is no longer loaded (it was reloaded or removed)`, and the agent isn't registered. Your mod was reloaded or unloaded before the call. A reload loads a fresh copy of the hooks module, and this call came from code still running in the old copy, such as a hook that hadn't returned yet.
@@ -205,7 +212,7 @@ The message tells Claude to issue the call once more as recorded. If that's deni
 
 ### A message about the deny rules in your settings
 
-`tried to lift a deny rule in your settings` and `the deny rules in your settings could not be checked for this call, so it is refused` both come from the built-in guard.
+`tried to lift a deny rule in your settings` and `the rules and hooks in your settings could not be checked for this call, so it is refused` both come from the built-in guard.
 
 Look them up in [Messages from the built-in guard](#messages-from-the-built-in-guard).
 
@@ -418,8 +425,6 @@ hooks module first-mod@inline loaded (worker, environment 2, tier user); events:
 ```
 
 To write your own lines in the log, call [`$.ui.log`](https://code.claude.com/docs/en/plugins/mods/api#show-something-without-starting-a-turn) with a second argument, as in `$.ui.log('message', { to: 'debug' })`. Without the second argument, `$.ui.log` adds a dim line to the transcript.
-
-While you edit a mod loaded with `--plugin-dir`, the transcript shows a line for each reload that names the mod and lists its hooks. If a save breaks the module, the line says `reload failed, the previous version stays loaded:` with the reason, and the last working version keeps running until Claude Code next reloads plugins, such as when you run `/reload-plugins`.
 
 ## Next steps
 

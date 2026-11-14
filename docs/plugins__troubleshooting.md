@@ -842,13 +842,12 @@ The **Errors** tab shows one of these messages:
 
 #### `hook error` notices in the transcript
 
-A notice of the form `... hook error: Failed with non-blocking status code: <stderr>` means the hook ran and its command failed. For example, `Stop hook error: Failed with non-blocking status code: /bin/sh: node: command not found` means the shell Claude Code spawned couldn't find `node`. Install it, or make sure it's on the `PATH` of the terminal you start `claude` from.
+A notice of the form `... hook error: Failed with non-blocking status code: <stderr>` means the hook's command failed. For example, `Stop hook error: Failed with non-blocking status code: /bin/sh: node: command not found` means the shell Claude Code spawned couldn't find `node`. Install it, or make sure it's on the `PATH` of the terminal you start `claude` from.
 
 If the stderr shows the plugin's path cut off at a space, the hook's shell-form command uses `${CLAUDE_PLUGIN_ROOT}` outside quotes and the install path contains a space. Wrap the variable in double quotes or use [exec form](https://code.claude.com/docs/en/hooks.md#exec-form-and-shell-form). To find the unquoted variable, run `claude plugin validate` on the plugin's directory and look for its [quoting warning](https://code.claude.com/docs/en/plugins/manifest-reference.md#quoting-and-path-separators).
 
-If the notice reads `Failed to run: Plugin directory does not exist: <path>`, see [`Plugin directory does not exist`](#plugin-directory-does-not-exist).
-
-For any other error, run the hook's command yourself from the plugin directory to see the full output, or capture the full stderr with [debug logging](https://code.claude.com/docs/en/hooks.md#debug-hooks).
+* If the notice reads `Failed to run: Plugin directory does not exist: <path>`, see [`Plugin directory does not exist`](#plugin-directory-does-not-exist).
+* For any other error, capture the full stderr with [debug logging](https://code.claude.com/docs/en/hooks.md#debug-hooks).
 
 #### A plugin hook blocks a tool call or prompt
 
@@ -866,15 +865,15 @@ Event names are case-sensitive, so confirm yours matches exactly, for example `P
 
 **2. Check the matcher**
 
-Confirm the hook's `matcher` matches the tool name.
+For a tool event such as `PostToolUse`, confirm the hook's `matcher` matches the tool name.
 
 **3. Trigger the event on purpose**
 
-For a `PostToolUse` hook, ask Claude to edit a file.
+Turn on debug logging as [Debug hooks](https://code.claude.com/docs/en/hooks.md#debug-hooks) describes. For a `PostToolUse` hook, ask Claude to edit a file.
 
 **4. Read the debug log**
 
-Open the [debug log](https://code.claude.com/docs/en/hooks.md#debug-hooks), which records which hooks matched. A hook that ran shows up there with its exit code.
+Open the [debug log](https://code.claude.com/docs/en/hooks.md#debug-hooks). A hook that ran shows up there with its exit code.
 
 ### `Plugin directory does not exist: <path>`
 

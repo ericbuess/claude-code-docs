@@ -375,7 +375,8 @@ Press `?` in agent view to see shortcuts in context. The table below summarizes 
 | `Ctrl+J` | Insert a newline in the dispatch input |
 | `Ctrl+X` | Stop the session; press again within two seconds to delete it |
 | `Shift+↑` / `Shift+↓` | Reorder the selected session |
-| `Esc` | Close the peek panel, clear the input, or exit. When you opened agent view by backgrounding your session with `←`, the final `Esc` returns to that conversation instead of exiting. With [vim editor mode](https://code.claude.com/docs/en/interactive-mode.md#vim-editor-mode) on, pressing `Esc` in the input switches from INSERT to NORMAL mode and keeps your text, as in the main prompt |
+| `Esc` | Close the peek panel, clear the input, or exit. On Claude Code v2.1.323 or later, clearing a prompt takes two presses. When you opened agent view by backgrounding your session with `←`, the final `Esc` returns to that conversation instead of exiting. With [vim editor mode](https://code.claude.com/docs/en/interactive-mode.md#vim-editor-mode) on, pressing `Esc` in the input switches from INSERT to NORMAL mode and keeps your text, as in the main prompt |
+| `Ctrl+Y` | In the dispatch input, restore the text you last cleared, or removed with `Ctrl+K`, `Ctrl+U`, or `Ctrl+W`. When agent view exits, that text is gone |
 | `Ctrl+C` | Clear the input; press twice to exit. While text on screen is selected, the press clears the selection instead, copying it first unless [selecting already copied it](https://code.claude.com/docs/en/settings-reference.md#copyonselect) |
 | `?` | Show shortcuts |
 
@@ -481,7 +482,7 @@ Sessions started with launch flags the copy wouldn't inherit, such as a replaced
 
 When you background the session, each kind of in-flight background work either carries over to the background session, continues only when Claude relaunches it there, or stops:
 
-* **Carries over**: running background shell commands, backgrounded subagents, scheduled tasks you created with [`/loop`](https://code.claude.com/docs/en/scheduled-tasks), and Claude's [automatic replies to artifact comments](https://code.claude.com/docs/en/artifacts.md#let-claude-reply-to-comments-on-its-own) keep running in the background session. A subagent moves together with everything it started, so it carries over only when all of that work can move too.
+* **Carries over**: running background shell commands, backgrounded subagents, and scheduled tasks you created with [`/loop`](https://code.claude.com/docs/en/scheduled-tasks) keep running in the background session. A subagent moves together with everything it started, so it carries over only when all of that work can move too.
 * **Continues only when Claude relaunches it**: a running [dynamic workflow](https://code.claude.com/docs/en/workflows.md). If the workflow hasn't continued when you check on the background session, [ask Claude to relaunch it](#dynamic-workflows-when-you-background).
 * **Stops**: work that can't move to the background session, such as a running [monitor](https://code.claude.com/docs/en/tools-reference.md#monitor-tool). When any such work is running, Claude Code shows the `Background this session?` dialog so you can confirm before it stops the work. A backgrounded subagent that owns a monitor stops along with the monitor.
 
@@ -901,11 +902,11 @@ Before you dispatch your first session, agent view shows the empty section heade
 
 ### Backgrounding shows a `Background this session?` dialog
 
-When you press `←` to background a session, a `Background this session?` dialog means the session has in-flight background work that would stop, be interrupted, or keep running unattended:
+When you press `←` to background a session, a `Background this session?` dialog means the session has in-flight background work that would stop or be interrupted:
 
 * **Work that can't move**: the session has work that can't move to the background session, such as a running [monitor](https://code.claude.com/docs/en/tools-reference.md#monitor-tool). The dialog names the background work Claude Code would stop and, separately, counts the tasks that carry over.
 * **A workflow with running subagents**: a [dynamic workflow](https://code.claude.com/docs/en/workflows.md) still has subagents running. Those subagents stop if you background anyway, and the dialog says how many. They start over from the beginning when Claude [relaunches the workflow in the background session](#dynamic-workflows-when-you-background).
-* **Automatic artifact replies**: Claude is [replying to comments on an artifact on its own](https://code.claude.com/docs/en/artifacts.md#let-claude-reply-to-comments-on-its-own). Those replies continue in the background session, and the dialog says so.
+* **Automatic artifact replies**: Claude is [replying to comments on an artifact on its own](https://code.claude.com/docs/en/artifacts.md#let-claude-reply-to-comments-on-its-own). Those replies stop if you background anyway.
 
 Run `/tasks` to see everything that's running, then confirm to background anyway or choose `Stay` to let the work finish first. See [What carries over when you background](#what-carries-over-when-you-background) for which kinds of work carry over and which Claude Code stops.
 
@@ -934,10 +935,10 @@ Sleep alone doesn't stop sessions. Sessions are preserved across sleep and the s
 
 ### Opening a session says the conversation is already open
 
-Two processes can't write to the same transcript. When a stopped session's saved conversation is already open in another live Claude Code process, Claude Code refuses to start the session's own process. What you see depends on what holds the conversation:
+These messages mean another Claude Code process on this machine has the stopped session's saved conversation open, so agent view and `claude attach` won't open the session:
 
-* A terminal where you resumed the conversation, for example with `claude --resume` or `/resume`: the row shows `Open in a terminal` with a hint to continue it there, and opening the row shows `Can't open — this session is running in another terminal`. Continue in that terminal, or exit it and open the row again.
-* Another non-interactive Claude Code process, for example a background session process for the same conversation that hasn't exited yet: opening the row shows `This conversation is already open in another running Claude session`. Use that process, or wait for it to exit and open the row again.
+* `Can't open — this session is running in another terminal`: another process has the conversation open, such as a `claude -p` run or a terminal where you resumed it. Continue in that terminal, or exit that process or let it finish, then open the session again.
+* `This conversation is already open in another running Claude session`: another background session has the conversation open. Use that session, or stop it and open this session again.
 
 Claude Code saves a reply you typed with the refused attempt, except one prefixed with `!` or `/`, and sends it the next time the session starts.
 
@@ -1055,6 +1056,7 @@ Agent view has evolved quickly during research preview. If you are on an older C
 
 | Version | Change |
 | - | - |
+| v2.1.323 | In agent view's input, [`Ctrl+Y`](#keyboard-shortcuts) restores cleared text. |
 | v2.1.299 | [`/effort` and `/fast` in the dispatch input](#set-the-model-effort-and-fast-mode) set the effort level and fast mode for the sessions you dispatch next. `/model`, `/effort`, or `/fast` typed with no value opens a picker. |
 | v2.1.299 | Claude Code [reads `--bg` and `--background` as the flag](#from-your-shell) only before any bare `--` separator and outside another flag's value, and refuses an ambiguous position instead of guessing. Before this release, a prompt or reply of `--bg` or `--background` to a background session could be taken for the flag. That could start new background sessions over and over instead of delivering the text. |
 | v2.1.296 | A prompt or `!` shell command that you enter [as the session moves to the background](#switch-sessions-without-leaving-the-terminal) is stopped or left unsent, and its text is kept in prompt history. Before this release, the response or command kept running where you could no longer see it, and a prompt sent right after `←` could run a second time unseen. A prompt typed while `SessionStart` hooks were still running was lost: not sent, and not in prompt history. |
@@ -1102,7 +1104,7 @@ Agent view has evolved quickly during research preview. If you are on an older C
 | v2.1.246 | `/fork` [copies the full conversation](#copy-the-session-with-%2Ffork) from a session that itself started as a copy and hasn't recorded a new prompt since: a `/fork` copy you attached to, a session reattached after `←` or `/background` moved it to the background, or a session started with `claude --resume <id> --fork-session`. Before this release, if you ran `/fork` in such a session before sending it a new prompt, Claude Code printed the normal confirmation but started the copy with an empty conversation. Moving such a session to the background with `←` or `/background` lost the conversation the same way. |
 | v2.1.246 | When you open a session you just dispatched while its worker process is still starting, such as by pressing `Enter` on its row, Claude Code waits for the process and then attaches. Before this release, if you pressed `Enter` while the process was still starting, Claude Code could stop the session with [`Session <id> was stopped while the respawn was in flight`](https://code.claude.com/docs/en/errors#session-was-stopped-while-the-respawn-was-in-flight). |
 | v2.1.246 | When you [background](#from-inside-a-session) a named session, Claude Code lists it once, and when you background the same conversation again, it numbers the new row's name, such as `my-session (2)`, with the existing row keeping its name. Before this release, the terminal you pressed `←` in could appear in `claude agents --json` as a second session under the same name, and if you backgrounded the same conversation again, Claude Code added another row under the identical name. |
-| v2.1.239 | With [vim editor mode](https://code.claude.com/docs/en/interactive-mode.md#vim-editor-mode) on, pressing `Esc` in agent view's input switches from INSERT to NORMAL mode and keeps your text, matching the main prompt; in NORMAL mode with text still in the input, pressing `Esc` clears it, and pressing `Esc` on an empty input exits, as the [`Esc` shortcut](#keyboard-shortcuts) describes. Before this release, `Esc` cleared the input. |
+| v2.1.239 | With [vim editor mode](https://code.claude.com/docs/en/interactive-mode.md#vim-editor-mode) on, pressing `Esc` in agent view's input switches from INSERT to NORMAL mode and keeps your text, matching the main prompt. Before this release, `Esc` cleared the input. |
 | v2.1.233 | For a session linked to a GitLab merge request, Claude Code writes the row's label in GitLab's `!1234` reference syntax. You can also paste the merge request's URL into the [dispatch input](#filter-sessions) to select that session. Before this release, the label rendered as `#1234`, and a pasted merge request URL matched a session only when its first prompt contained the URL. |
 | v2.1.227 | [Deleting a session](#what-deleting-a-session-removes) keeps the session and its worktree while another live Claude Code session is running inside that worktree directory. Agent view shows `not deleted` on the row and the reason in the footer, and `claude rm` prints `kept <id>` with the reason, which names the other session's process ID. Before this release, deleting the session removed the worktree while the other session was still working in it. |
 | v2.1.225 | `claude agents` in a directory you haven't trusted shows the same [workspace trust dialog](https://code.claude.com/docs/en/permissions.md#project-allow-rules-and-workspace-trust) that `claude` shows on startup, before agent view opens. Accepting saves trust for that workspace; declining exits without opening agent view. Before this release, `claude agents` opened without asking, so sessions you dispatched from it ran in a directory you'd never been asked to trust. With the list grouped by directory, hovering the mouse over a row highlights it without changing the [dispatch target](#dispatch-to-a-specific-directory); selecting a row with the arrow keys or a click still changes the target. Before this release, moving the mouse over a session in another project silently changed the directory the next dispatched session started in. |

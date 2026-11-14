@@ -19,6 +19,7 @@ Sessions are saved continuously to [local transcript files](#export-and-locate-s
 | `claude --continue` | Reopens the most recent session in the current directory |
 | `claude --resume` | Opens the [session picker](#use-the-session-picker) |
 | `claude --resume <name>` | Resumes the named session directly |
+| `claude --resume <session-id>` | Resumes the [session with that ID](#resume-by-session-id-or-name) |
 | `claude --resume <transcript-path>` | Resumes the session stored in the `.jsonl` [transcript file](#where-transcripts-are-stored) at that absolute path |
 | `claude --from-pr <number>` | Opens the session picker filtered to sessions linked to that pull request |
 | `/resume` | Switches to a different session from inside an active session |
@@ -54,7 +55,21 @@ When Claude Code loads a conversation from its transcript, the resumed session r
 * Session-scoped scheduled tasks: [tasks that haven't expired](https://code.claude.com/docs/en/scheduled-tasks.md#limitations) are restored. Background Bash and monitor tasks aren't.
 * Background work: a [background subagent](https://code.claude.com/docs/en/sub-agents.md#run-subagents-in-foreground-or-background), background Bash command, or [workflow](https://code.claude.com/docs/en/workflows.md) that ended with the previous process shows up in the resumed transcript as a note that it didn't finish. Claude Code doesn't start a turn from those notes; Claude reads them with your next prompt.
 
-Not every configuration flag from the original launch is restored. If the session depended on `--mcp-config`, `--settings`, `--plugin-dir`, `--fallback-model`, or directories added with `--add-dir`, pass them again when you resume; directories added mid-session with `/add-dir` aren't restored either, though the session picker still uses them to locate the session. The standard settings files, such as `settings.json` and `settings.local.json`, are re-read at launch, so configuration that lives in them doesn't need to be passed again. For `--system-prompt` and `--append-system-prompt`, see [System prompt flags in resumed conversations](https://code.claude.com/docs/en/cli-reference.md#system-prompt-flags-in-resumed-conversations).
+#### Flags to pass again when you resume
+
+> [!NOTE]
+>
+> Don't repeat launch flags when you reopen a [background session](https://code.claude.com/docs/en/agent-view.md#what-persists-across-restarts) while it runs, or when you resume it by full session ID with `--bg` after it stops. In both cases, the session keeps its flags.
+
+For any other `claude --continue` or `claude --resume`, pass [flags](https://code.claude.com/docs/en/cli-reference.md#cli-flags) such as these again, because Claude Code doesn't restore them:
+
+* **MCP servers**: `--mcp-config`
+* **Plugins**: `--plugin-dir`
+* **Directories**: `--add-dir`, as in `claude --continue --add-dir ../shared`. Use `--add-dir` for directories you added with `/add-dir` too.
+* **Extra settings**: `--settings`
+* **Fallback models**: `--fallback-model`
+
+For `--system-prompt` and `--append-system-prompt`, see [System prompt flags in resumed conversations](https://code.claude.com/docs/en/cli-reference.md#system-prompt-flags-in-resumed-conversations).
 
 #### Permission mode on resume
 
@@ -66,7 +81,7 @@ Which permission mode Claude Code starts a resumed session in depends on how you
 * Session picker at launch: a session you select from the [session picker](#use-the-session-picker), whether you opened it with `claude --resume` alone, `claude --from-pr`, or a name that matches more than one session. Claude Code starts the session in the permission mode it would start a new session in from the same command line, except that a session that ended in plan mode resumes in plan mode. If you pass `--permission-mode`, `--dangerously-skip-permissions`, or `--fork-session`, Claude Code doesn't restore plan mode. No other stored permission mode is restored.
 * `/resume` inside a session, with or without an argument: the conversation you switch to continues in the permission mode your current session is in, except that a conversation that ended in plan mode resumes in plan mode, even if you launched Claude Code with `--permission-mode` or `--dangerously-skip-permissions`. If that conversation was already open earlier in this run of Claude Code, such as the conversation you started in or one you left with `/clear` or `/resume`, it continues in your current permission mode instead.
 
-If a [deny rule](https://code.claude.com/docs/en/permissions.md#manage-permissions) removes the [`ExitPlanMode`](https://code.claude.com/docs/en/tools-reference) tool, Claude can't present a plan for approval, so Claude Code doesn't restore plan mode. The session starts in the permission mode a new session would start in from the same command line. With `/resume`, the conversation continues in your current permission mode.
+If a [deny rule](https://code.claude.com/docs/en/permissions.md#manage-permissions) removes the [`ExitPlanMode`](https://code.claude.com/docs/en/tools-reference) tool, or [`permissions.denyInsteadOfPrompting`](https://code.claude.com/docs/en/settings-reference#permissions-denyinsteadofprompting) is on, Claude can't present a plan for approval, so Claude Code doesn't restore plan mode. The session starts in the permission mode a new session would start in from the same command line. With `/resume`, the conversation continues in your current permission mode.
 
 Restoring plan mode on the non-interactive and VS Code paths requires Claude Code v2.1.246 or later. Each row names the permission mode the session ended in, which of the terminal, non-interactive, and VS Code paths you resume it by, and the permission mode Claude Code starts the resumed session in.
 
@@ -74,7 +89,7 @@ Restoring plan mode on the non-interactive and VS Code paths requires Claude Cod
 | :- | :- | :- |
 | `bypassPermissions` | Terminal | The permission mode a new session would start in. To [bypass permissions](https://code.claude.com/docs/en/permission-modes.md#skip-all-checks-with-bypasspermissions-mode) again, enable it at launch with one of its launch flags or `permissions.defaultMode: "bypassPermissions"` in [user, `--settings`, or managed settings](https://code.claude.com/docs/en/settings-reference#permissions-defaultmode) |
 | `plan` | Terminal | Plan mode. With `--fork-session`, the permission mode a new session would start in |
-| `plan` | Terminal, when a deny rule removes `ExitPlanMode` | The permission mode a new session would start in |
+| `plan` | Terminal, when a deny rule removes `ExitPlanMode` or `permissions.denyInsteadOfPrompting` is on | The permission mode a new session would start in |
 | `auto` | Terminal | `auto`, only when your account still meets the [auto mode requirements](https://code.claude.com/docs/en/permission-modes.md#eliminate-prompts-with-auto-mode) |
 | Manual | Terminal | Manual when a new session would start in auto mode from the [built-in default](https://code.claude.com/docs/en/permission-modes.md#which-mode-a-session-starts-in). When a `defaultMode` from a settings file [takes effect](https://code.claude.com/docs/en/permission-modes.md#which-mode-a-session-starts-in), Claude Code starts the resumed session in that mode instead |
 | `plan` | Non-interactive, under the [conditions below](#resume-in-plan-mode-with-p) | Plan mode |
@@ -86,6 +101,7 @@ Restoring plan mode on the non-interactive and VS Code paths requires Claude Cod
 A `claude -p --resume` or `claude -p --continue` run resumes in plan mode only when all of these conditions hold:
 
 * You pass [`--permission-prompt-tool`](https://code.claude.com/docs/en/cli-reference#cli-flags) and don't pass [`--permission-prompts none`](https://code.claude.com/docs/en/headless#turn-off-permission-prompts-in-unattended-runs), so that Claude Code can present the plan for approval
+* [`permissions.denyInsteadOfPrompting`](https://code.claude.com/docs/en/settings-reference#permissions-denyinsteadofprompting) isn't on
 * You don't pass `--permission-mode` or `--dangerously-skip-permissions`
 * You don't pass `--fork-session`
 * The run isn't started through [channels](https://code.claude.com/docs/en/channels.md)
@@ -159,6 +175,8 @@ Sessions you don't name still get two labels that Claude Code assigns. Only the 
 * Default display name: interactive sessions you never name still get a default display name when they start. The default combines the working directory's name with a two-character suffix, for example `my-app-3f`, and identifies the session in listings of running sessions, such as [agent view](https://code.claude.com/docs/en/agent-view.md) and `claude agents --json` output. The default isn't a resume handle. If you pass it to `claude --resume` or `/resume`, Claude Code doesn't find the session.
 * Generated title: if you don't name a session, Claude Code generates a session title for it. The title is a short summary of your first prompt, written by a background request to the small/fast model, normally a Haiku-class model. A `claude -p` run you start directly from a shell or script doesn't get one.
 
+  If you set [`CLAUDE_CODE_DISABLE_TERMINAL_TITLE`](https://code.claude.com/docs/en/env-vars#variables) to `1`, terminal and Agent SDK sessions don't get this title.
+
   Accepting a plan replaces the generated title with a title based on the plan. You can pass either title to `claude --resume` or `/resume`, and Claude Code resolves it the same way as a name you set.
 
 ## Use the session picker
@@ -214,7 +232,7 @@ The `/branch` confirmation prints two session IDs: the new branch you are now in
 | In-flight [background subagents](https://code.claude.com/docs/en/sub-agents.md#run-subagents-in-foreground-or-background) and [background Bash commands](https://code.claude.com/docs/en/interactive-mode.md#background-bash-commands) | Keep running. Their output appears in the new branch you switched into, not in the original session |
 | [Remote Control](https://code.claude.com/docs/en/remote-control.md) connection | Stays connected. A phone or browser connected to the session follows you into the branch and keeps receiving new messages there |
 
-If you resume the same session in two terminals without forking, messages from both interleave into one transcript. For checkpoint-based rewind within a single session, see [Checkpointing](https://code.claude.com/docs/en/checkpointing.md).
+If you resume the same session in two terminals or two `claude -p` runs at the same time, both write to one transcript. When you resume that session later, messages from one of them can be missing. To keep both conversations, add `--fork-session` to each `claude` command. For checkpoint-based rewind within a single session, see [Checkpointing](https://code.claude.com/docs/en/checkpointing.md).
 
 ## Manage context within a session
 

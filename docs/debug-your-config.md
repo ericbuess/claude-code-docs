@@ -49,9 +49,9 @@ Run `/status` to see which settings sources are active, including whether manage
 
 ## Check MCP servers
 
-Run `/mcp` to see every configured server, its connection status, and whether you have approved it for the current project. A server can be defined correctly but still not provide tools for a few common reasons:
+Run `/mcp` to see your servers and their connection status. A server can be defined correctly but still not provide tools for a few common reasons:
 
-* Project-scoped servers in `.mcp.json` require a one-time approval. If the prompt was dismissed, the server stays disabled until you approve it from `/mcp`.
+* Project-scoped servers in `.mcp.json` require a one-time approval. If you dismissed the prompt, the server stays disabled. To see the prompt again, run `claude mcp reset-project-choices` and restart Claude Code. It asks again for every project server.
 * A server that fails to start shows as failed in `/mcp`. Relative file paths in `command` or `args` are a frequent cause, since they resolve against the directory you launched Claude Code from rather than the location of `.mcp.json`.
 * A server that shows as connected but lists zero tools has started successfully but isn't returning a tool list. Select **Reconnect** from `/mcp`. If the count stays at zero, run `claude --debug=mcp` and read the server's stderr in the debug log at `~/.claude/debug/<session-id>.txt`.
 
@@ -72,9 +72,7 @@ If the hook appears but doesn't fire, the matcher is the usual cause. Check it f
 
 When you edit `settings.json`, the change takes effect in the running session after a brief file-stability delay, even if you create the file or the project's `.claude/` folder itself after the session started. You don't need to restart. Before v2.1.257, Claude Code didn't detect edits in a `.claude/` folder created after the session started.
 
-If `/hooks` still shows the old definition a few seconds after you save, run `/hooks` again to refresh the view.
-
-If `/hooks` shows the hook but it still does not fire, the next step is to watch hook evaluation live. Start a session with `claude --debug` and trigger the tool call. The debug log records each event, which matchers were checked, and the hook's exit code and output. See [Debug hooks](https://code.claude.com/docs/en/hooks.md#debug-hooks) for the log format and [hooks troubleshooting](https://code.claude.com/docs/en/hooks-guide.md#limitations-and-troubleshooting) for common failure patterns.
+If `/hooks` still shows the old definition a few seconds after you save, run `/hooks` again to refresh the view. If `/hooks` shows the hook but it still doesn't fire, the next step is to watch hook evaluation live. Start a session with `claude --debug` and trigger the tool call. See [Debug hooks](https://code.claude.com/docs/en/hooks.md#debug-hooks) for the log format and [hooks troubleshooting](https://code.claude.com/docs/en/hooks-guide.md#limitations-and-troubleshooting) for common failure patterns.
 
 ## Test against a clean configuration
 
@@ -159,7 +157,7 @@ Most configuration surprises trace back to a small set of location and syntax ru
 | Cleanup logic never runs at session end | No `SessionEnd` hook configured | Add a `SessionEnd` hook in `settings.json`. See the [hook events list](https://code.claude.com/docs/en/hooks.md#hook-events). |
 | MCP servers in `.mcp.json` never load | File is under `.claude/`, or its servers sit under a top-level `servers` key, as in VS Code's `mcp.json`, instead of `mcpServers` | Project MCP config goes at the repository root as `.mcp.json`, not inside `.claude/`, with servers under the `mcpServers` key. See [MCP configuration](https://code.claude.com/docs/en/mcp.md). |
 | MCP servers added under `mcpServers` in `settings.json` never appear | `settings.json` does not read an `mcpServers` key | Define project servers in `.mcp.json` at the repository root, or run `claude mcp add --scope user` for user-scoped servers. See [MCP configuration](https://code.claude.com/docs/en/mcp.md). |
-| Project MCP server added but doesn't appear | The one-time approval prompt was dismissed | Project-scoped servers require approval. Run `/mcp` to see status and approve. |
+| Project MCP server added but doesn't appear | The one-time approval prompt was dismissed | Project-scoped servers require approval. Run `claude mcp reset-project-choices`, restart Claude Code, and approve the server. |
 | MCP server fails to start from some directories | `command` or `args` uses a relative file path | Use absolute paths for local scripts. Executables on your `PATH` like `npx` or `uvx` work as-is. |
 | MCP server starts without expected environment variables | The server's config entry doesn't set them, and they aren't in the environment Claude Code passes to stdio servers: its own environment, minus the [variables it strips from subprocesses](https://code.claude.com/docs/en/monitoring-usage.md#administrator-configuration) | Set per-server `env` inside the server's `.mcp.json` entry, which doesn't depend on the launch environment or workspace trust. |
 | `Bash(rm *)` deny rule doesn't block `/bin/rm` or `find -delete` | Bash rules match the literal command string, not the underlying executable; see [what a Bash rule doesn't match](https://code.claude.com/docs/en/permissions.md#bash-rule-limits) | Use a [PreToolUse hook](https://code.claude.com/docs/en/hooks-guide.md) or the [sandbox](https://code.claude.com/docs/en/sandboxing.md) for a hard guarantee. |

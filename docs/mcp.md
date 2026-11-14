@@ -504,7 +504,7 @@ Meanwhile, the footer shows a count such as `1 MCP task`, and Claude Code follow
 
 #### Stop an MCP task or get its result
 
-To stop a running task, select it in [`/tasks`](https://code.claude.com/docs/en/commands#all-commands) and press `x`, or ask Claude to. Claude Code stops following the task and asks the server to cancel it, though the server may still finish it. Reconnect a disconnected server from `/mcp` first, or no cancel request goes out and Claude Code forgets the task and can't follow it again. Pressing `Esc` doesn't stop a background task.
+To stop a running task, select it in [`/tasks`](https://code.claude.com/docs/en/commands#all-commands) and press `x`, or ask Claude to. Claude Code stops following the task and asks the server to cancel it, though the server may still finish it. Reconnect a disconnected server from `/mcp` first so the cancel request can go out. Claude Code can't follow a stopped task again. Pressing `Esc` doesn't stop a background task.
 
 When the task ends, a line such as this one appears in the transcript:
 

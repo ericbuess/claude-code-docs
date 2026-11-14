@@ -182,7 +182,7 @@ Claude Code sends the following JSON fields to your script via stdin:
 | `cost.total_api_duration_ms` | Total time spent waiting for API responses in milliseconds |
 | `cost.total_lines_added`, `cost.total_lines_removed` | Lines of code changed |
 | `context_window.total_input_tokens`, `context_window.total_output_tokens` | Token counts currently in the context window, from the most recent API response. Input includes cache reads and writes |
-| `context_window.context_window_size` | Maximum context window size in tokens. 200000 by default, or 1000000 for models with extended context. |
+| `context_window.context_window_size` | Maximum context window size in tokens |
 | `context_window.used_percentage` | Pre-calculated percentage of context window used |
 | `context_window.remaining_percentage` | Pre-calculated percentage of context window remaining |
 | `context_window.current_usage` | Token counts from the last API call, described in [context window fields](#context-window-fields) |

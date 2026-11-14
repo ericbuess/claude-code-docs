@@ -1349,7 +1349,7 @@ The gateway omits keys with no Claude Desktop equivalent, such as `hooks` and sc
 
 ##### Apply `code` settings in the Code tab
 
-The Claude Code settings a policy holds under its [`code`](#choose-cli-or-code) key apply in Claude Desktop's Code tab when all of these hold:
+Apart from [some provider and model variables](https://code.claude.com/docs/en/desktop.md#managed-settings), the Claude Code settings a policy holds under its [`code`](#choose-cli-or-code) key apply in Claude Desktop's Code tab when all of these hold:
 
 * The policy also has a `desktop` key, and an empty `desktop: {}` counts
 * Claude Desktop is version 2.9939.2 or later
