@@ -129,6 +129,7 @@ When you install the app, you grant the following permissions:
 | Administration | Read |
 | Checks | Read and write |
 | Contents | Read and write |
+| Dependabot alerts | Read |
 | Discussions | Read and write |
 | Issues | Read and write |
 | Members | Read |

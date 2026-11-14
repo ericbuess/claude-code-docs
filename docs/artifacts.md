@@ -432,9 +432,9 @@ Public sharing is off by default on Team and Enterprise plans. To let members pu
 
 To set how long artifacts are kept before automatic deletion, go to [**Organization settings > Data and privacy**](https://claude.ai/admin-settings/data-privacy-controls). You can set separate retention periods for artifacts that are still private to their author and artifacts that have been shared.
 
-### Review the audit log
+### Audit artifact activity with the Compliance API
 
-Publishing, sharing, and deleting an artifact each appear in your organization's audit log under the `claude_artifact_*` event types, the same family used for artifacts created in claude.ai conversations.
+On Enterprise plans, query the Compliance API's [Activity Feed](https://platform.claude.com/docs/en/manage-claude/compliance-activity-feed) to see who published, shared, or deleted an artifact. To find the activity types to filter by, expand `activity_types` in the [Activity Feed reference](https://platform.claude.com/docs/en/api/compliance/activities/list) and look for names that contain `artifact`.
 
 ### Allowlist the viewer domain
 

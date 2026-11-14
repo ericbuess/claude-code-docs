@@ -22,7 +22,7 @@ Claude Code skills follow the [Agent Skills](https://agentskills.io) open standa
 
 Claude Code includes a set of bundled skills, such as `/doctor`, `/code-review`, `/batch`, `/debug`, `/loop`, and `/claude-api`. Bundled skills are prompt-based: they give Claude detailed instructions and let it orchestrate the work using its tools. Most built-in commands instead execute fixed logic directly.
 
-You invoke a bundled skill by typing `/` followed by the skill name. Claude invokes some bundled skills automatically when relevant; others, including [`/verify`](#run-and-verify-your-app), run only when you invoke them.
+You invoke a bundled skill by typing `/` followed by the skill name. Claude invokes some bundled skills automatically when relevant.
 
 Most bundled skills are available in every session. A few depend on a specific feature: `/workflow-authoring`, for example, is available only when [dynamic workflows](https://code.claude.com/docs/en/workflows.md) are enabled.
 
@@ -320,7 +320,9 @@ Claude Code watches skill directories for file changes, except in [bare mode](ht
 
 If you create a top-level skills directory that didn't exist when the session started, run [`/reload-skills`](https://code.claude.com/docs/en/commands#all-commands) to pick up the skills you put there. Claude Code isn't watching that directory yet, so run `/reload-skills` again after each later change there.
 
-Live change detection covers `SKILL.md` text only. For a skill folder that is also a [plugin](https://code.claude.com/docs/en/plugins/loading.md#plugins-shared-through-a-repository), changes to `hooks/`, `.mcp.json`, `agents/`, and `output-styles/` need `/reload-plugins` to take effect.
+> [!NOTE]
+>
+> Live change detection covers `SKILL.md` text. For a skill folder that is also a [plugin](https://code.claude.com/docs/en/plugins/loading.md#plugins-shared-through-a-repository), changes to `.mcp.json`, `agents/`, and `output-styles/` need `/reload-plugins` to take effect. Changes to `hooks/` need it too, except a [mod](https://code.claude.com/docs/en/plugins/mods/overview.md)'s module file when it [reloads on its own](https://code.claude.com/docs/en/env-vars.md).
 
 ### Remove a skill
 

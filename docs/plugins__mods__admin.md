@@ -61,8 +61,9 @@ With no mod settings of your own, this is what your users get:
   * The session runs on [`/login` credentials](https://code.claude.com/docs/en/authentication#authentication-precedence) for a Team or Enterprise plan
 
   A user with an API key, or on Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry, gets the guard only on a machine with managed settings or `managed-mcp.json`. A session that runs on a long-lived [`CLAUDE_CODE_OAUTH_TOKEN`](https://code.claude.com/docs/en/authentication#generate-a-long-lived-token) doesn't count as that login either, even when a Team or Enterprise login is stored on the machine.
-* **The guard protects what you manage.** A user's mod can't change what your managed hooks receive or decide, the system prompt, your managed `CLAUDE.md` and other managed instructions, what any mod reads as settings, or the tools and descriptions of your managed MCP servers.
-* **Outside what you manage, a user's mod acts as that user.** The mod keeps that user's permissions: it can still read and write files, start processes, and make network requests. It can also rewrite tool calls and prompts, deny a tool call, and draw in the interface.
+* **The guard protects what you manage.** A user's mod can't change what your managed hooks receive or decide, the system prompt, or your managed `CLAUDE.md` and other managed instructions. It also can't change what any mod reads as settings, or the tools and descriptions of your managed MCP servers once they connect.
+* **On v2.1.323 or later, a user's mod can keep a managed MCP server from connecting.** In that user's session, `/mcp` lists the server as held by that mod. To prevent it, [stop user-installed mods from loading](#stop-user-installed-mods-from-loading).
+* **Outside what you manage, a user's mod acts as that user.** The mod keeps that user's permissions: it can still read and write files, start processes, and make network requests. It can also rewrite tool calls and prompts, deny a tool call, add or remove tools, and draw in the interface.
 * **Permission rules and `PreToolUse` hooks take precedence over a user's mod.** With the guard loaded, by default a user's mod can't approve a call that a `deny` rule refuses or an `ask` rule prompts for, whichever settings file holds the rule. The mod can't approve a call that any `PreToolUse` hook blocked, either.
 
   Permission rules and `PreToolUse` hooks apply to Claude's tool calls, not to a mod's [`$.fs` and `$.process` calls](https://code.claude.com/docs/en/plugins/mods/api#reach-files-processes-and-the-network). With `Read(.env)` denied, a mod can still read that file with `$.fs.read` or start a program that does. To limit a mod's own `$.fs` and `$.process` calls, [keep the mod from loading](#stop-user-installed-mods-from-loading) or handle them in a [policy mod](#enforce-a-policy-with-a-mod-of-your-own).
@@ -159,13 +160,16 @@ claude plugin validate ./some-mod
 The `hooks:` and `calls:` lines in the output describe the mod's code:
 
 ```text theme={null}
-  ❯ ./register.js hooks: session.start, tool.call, ui.render{component=Pane}
+  ❯ ./register.js hooks: session.start, tool.call, ui.render{component=Pane} (default matcher key: plugin)
   ❯ ./register.js calls: $.fs.read, $.http.fetch, $.store.set, $.ui.open
 ```
 
-The `hooks:` line lists the events the mod receives. The `calls:` line lists the mods API methods its code calls. The [mods API](https://code.claude.com/docs/en/plugins/mods/api.md), written `$` in a mod's code, is how a mod reaches files, processes, and the network. Claude Code refuses to load a mod that uses the mods API in a way this command can't read.
+* **`hooks:`**: the events the mod receives. A `default matcher key: plugin` note means the hook before it [skips other mods' controls and drawings](https://code.claude.com/docs/en/plugins/mods/events.md#hook-other-mods-drawings-and-controls).
+* **`calls:`**: the mods API methods its code calls
 
-Look at the `calls:` line for these:
+The [mods API](https://code.claude.com/docs/en/plugins/mods/api.md), written `$` in a mod's code, is how a mod reaches files, processes, and the network. Claude Code refuses to load a mod that uses the mods API in a way this command can't read.
+
+Don't approve a mod that fails this command, because some failures don't stop it from loading. Run the command on Claude Code v2.1.323 or later, where a long list continues on more lines with the same label, and read every `hooks:` and `calls:` line. In the `calls:` lines, look for these:
 
 | Call | What it means |
 | :- | :- |
@@ -174,7 +178,7 @@ Look at the `calls:` line for these:
 | `$.http.fetch` | Makes network requests |
 | `$.env.get`, `$.settings.read` | Reads environment variables and settings, which can hold API keys. An `env reads:` line in the output names each variable. |
 | `$.env.set` | Sets an environment variable for Claude Code and for every command and MCP server it starts afterward, which can change what those programs run. An `env writes:` line names each variable. |
-| `$.mcp.call` | Calls a tool on a connected MCP server, under the session's permission rules |
+| `$.mcp.call` | Calls a tool on a connected MCP server, with no permission prompt. Claude Code refuses the call under a deny rule or a managed ask rule. It also refuses a call to a tool marked [`requiresUserInteraction`](https://code.claude.com/docs/en/mcp#require-approval-for-a-specific-tool), or to one your organization [set to `ask`](https://code.claude.com/docs/en/mcp#organization-controls-on-connector-tools) where that setting reaches Claude Code. |
 | `$.model.complete` | Uses the user's plan or API key for model calls |
 | `$.prompt.submit` | Submits a prompt, and can send it as the user's own words |
 | `$.session.send` | Sends a message that another session's, subagent's, or [teammate's](https://code.claude.com/docs/en/agent-teams.md) Claude reads |
@@ -316,7 +320,7 @@ A plugin that Claude Code copies into its cache counts as a user's, even when ma
 
 Claude Code fires an event each time it's about to act, such as run a tool, and passes it to each mod in turn. A mod that counts as yours [runs before users' mods](https://code.claude.com/docs/en/plugins/mods/events.md#the-order-mods-run-in) even when you list it nowhere. To set its place, list its id in one of two settings. The id is the plugin's name, `@`, and the marketplace's name, such as `acme-guard@acme-tools`.
 
-* **`prependPlugins`**: your mod sees every event before any user's mod and every result after. It can change the event, refuse it, or skip the users' mods.
+* **`prependPlugins`**: your mod sees an event before any user's mod, and the event's result after them. It can change the event, refuse it, or skip the users' mods. On v2.1.323 or later, check that your hooks still [reach other mods' controls and drawings](https://code.claude.com/docs/en/plugins/mods/events.md#hook-other-mods-drawings-and-controls).
 * **`appendPlugins`**: your mod runs after every user's mod, so it sees only the events those mods pass on, in the form they pass them
 
 This example declares the `acme-tools` marketplace at `/opt/acme/claude-plugins`, enables `acme-guard` from it, and runs that mod first, with the built-in guard after it:
@@ -358,6 +362,10 @@ These rules decide which ids in the two lists take effect:
 To keep every user's mod out, you don't need a mod of your own. Set [`allowManagedModsOnly`](#stop-user-installed-mods-from-loading). Write a policy mod when you want to allow some users' mods and refuse others, or to record what mods do.
 
 Each time another mod is about to load, your mod receives the list that `claude plugin validate` prints, in an event named [`plugin.register`](https://code.claude.com/docs/en/plugins/mods/reference#other-mods). A mod in `prependPlugins` can read that list and refuse the mod. It can also [handle any mods API call by name](https://code.claude.com/docs/en/plugins/mods/api.md#reach-files-processes-and-the-network) to record or refuse that call for every other mod. The name is the method without the `$.`, so a hook on `fs.write` sees every `$.fs.write` call.
+
+> [!NOTE]
+>
+> On v2.1.323 or later, a `ui.focus` hook needs a wider matcher to receive other mods' `$.ui.focus` calls. See [Hook other mods' drawings and controls](https://code.claude.com/docs/en/plugins/mods/events.md#hook-other-mods-drawings-and-controls).
 
 This policy mod refuses any user's mod whose own code calls `$.process.run` or `$.process.spawn`. It also keeps an audit log, writing each tool call and each file a mod writes to the debug log. Because it runs first, the log records what was requested, before any user's mod changes it. Save it as `acme-guard/hooks/register.js`:
 
@@ -403,7 +411,9 @@ The `plugin.register` hook reads two fields of the event:
 * **`e.tier`**: where the mod would run, one of `prepend`, `user`, `append`, or `builtin`. Every mod a person installs is `user`.
 * **`e.uses.calls`**: the mods API methods the mod calls, each written `namespace.method` such as `process.run`, without the `$.` that `claude plugin validate` prints
 
-When a user installs a mod that calls `$.process.run`, the mod doesn't load, and their debug log has a line that ends with `refused by acme-guard:` and your reason. The refusal also reaches the transcript in a [session that hot-reloads a plugin directory](https://code.claude.com/docs/en/plugins/mods/troubleshoot.md#find-out-why-a-mod-does-nothing). To block a call without refusing the whole mod, return `{ deny: 'your reason' }` from a hook on that call's name.
+When a user installs a mod that calls `$.process.run`, the mod doesn't load, and their debug log has a line that ends with `refused by acme-guard:` and your reason. The refusal also reaches the transcript in a [session that hot-reloads a plugin directory](https://code.claude.com/docs/en/plugins/mods/troubleshoot.md#find-out-why-a-mod-does-nothing).
+
+To block a call without refusing the whole mod, return `{ deny: 'your reason' }` from a hook on that call's name, after you [check who made the call](https://code.claude.com/docs/en/plugins/mods/reference.md#mods-api-calls).
 
 To send the audit lines somewhere other than the debug log, call `$.http.fetch` from the same hooks.
 

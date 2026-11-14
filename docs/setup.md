@@ -40,7 +40,7 @@ To install Claude Code, open a terminal and run the command for your system. If 
 >
 > **macOS, Linux, WSL:**
 >
-> ```bash theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null}
+> ```bash theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null}
 > curl -fsSL https://claude.ai/install.sh | bash
 > ```
 >
@@ -48,13 +48,13 @@ To install Claude Code, open a terminal and run the command for your system. If 
 >
 > **Windows PowerShell:**
 >
-> ```powershell theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null}
+> ```powershell theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null}
 > irm https://claude.ai/install.ps1 | iex
 > ```
 >
 > **Windows CMD:**
 >
-> ```batch theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null}
+> ```batch theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null}
 > curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd && del install.cmd
 > ```
 >
@@ -72,7 +72,7 @@ To install Claude Code, open a terminal and run the command for your system. If 
 
 > [tab] Homebrew
 >
-> ```bash theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null}
+> ```bash theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null}
 > brew install --cask claude-code
 > ```
 >
@@ -84,7 +84,7 @@ To install Claude Code, open a terminal and run the command for your system. If 
 
 > [tab] WinGet
 >
-> ```powershell theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null}
+> ```powershell theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null}
 > winget install Anthropic.ClaudeCode
 > ```
 >
@@ -220,6 +220,8 @@ Configure this via `/config` → **Auto-update channel**, or add it to your [set
 }
 ```
 
+With this setting, a native installation updates to the stable version even when that version is older than yours. To avoid the downgrade, also [pin a minimum version](#pin-a-minimum-version).
+
 A newly launched model can require a Claude Code version newer than the stable channel serves. To run the model now, move to the latest channel.
 
 For enterprise deployments, you can enforce a consistent release channel across your organization using [managed settings](https://code.claude.com/docs/en/managed-settings.md).
@@ -230,20 +232,27 @@ Installations from the apt, dnf, and apk repositories choose a channel by reposi
 
 ### Pin a minimum version
 
-The `minimumVersion` setting establishes a floor. Background auto-updates and `claude update` refuse to install any version below this value, so moving to the `"stable"` channel does not downgrade you if you are already on a newer `"latest"` build.
+To move a native installation to the `"stable"` [release channel](#configure-release-channel) without a downgrade, set [`minimumVersion`](https://code.claude.com/docs/en/settings-reference#minimumversion) to the version you're running. Background auto-updates and `claude update` refuse to install any version below the minimum.
 
-Switching from `"latest"` to `"stable"` via `/config` prompts you to either stay on the current version or allow the downgrade. Choosing to stay sets `minimumVersion` to that version. Switching back to `"latest"` clears it.
+Set the minimum in `/config` to have Claude Code fill in your current version, or in your settings file to type the number yourself:
 
-Add it to your [settings.json file](https://code.claude.com/docs/en/settings.md) to pin a floor explicitly:
+* **In `/config`**: switch **Auto-update channel** to stable, then select **Stay on current version**. If you switch back to latest in `/config`, Claude Code clears the minimum.
+* **In your [settings file](https://code.claude.com/docs/en/settings.md)**: run `claude --version` in your shell, and set `minimumVersion` to the number at the start of the output. In the same edit, set `autoUpdatesChannel` to `"stable"`.
+
+This `~/.claude/settings.json` switches an installation on version 2.1.323 to stable:
 
 ```json theme={null}
 {
   "autoUpdatesChannel": "stable",
-  "minimumVersion": "2.1.100"
+  "minimumVersion": "2.1.323"
 }
 ```
 
-In [managed settings](https://code.claude.com/docs/en/managed-settings.md), this enforces an organization-wide minimum that user and project settings cannot override.
+The installation stays on 2.1.323 until the stable channel serves a newer version.
+
+#### Set version limits for your organization
+
+In [managed settings](https://code.claude.com/docs/en/managed-settings.md), `minimumVersion` enforces an organization-wide minimum that user and project settings can't override.
 
 The `minimumVersion` pin only constrains updates. To make Claude Code refuse to start outside a version range, use the managed settings `requiredMinimumVersion` and `requiredMaximumVersion` instead. Updates also respect the `requiredMaximumVersion` ceiling. See [`requiredMinimumVersion`](https://code.claude.com/docs/en/settings-reference#requiredminimumversion) and [`requiredMaximumVersion`](https://code.claude.com/docs/en/settings-reference#requiredmaximumversion).
 

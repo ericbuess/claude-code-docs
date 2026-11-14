@@ -102,17 +102,39 @@ Agent teams support two display modes:
 >
 > `tmux` has known limitations on certain operating systems and traditionally works best on macOS. Using `tmux -CC` in iTerm2 is the suggested entrypoint into `tmux`.
 
-The default is `"in-process"`. Set `"auto"` to enable split panes when you're already running inside a tmux session, or when your terminal is iTerm2 with the `it2` CLI installed, falling back to in-process otherwise. The `"tmux"` setting enables split-pane mode and auto-detects whether to use tmux or iTerm2 based on your terminal.
+With agent teams [enabled](#enable-agent-teams), follow these steps to give each teammate its own pane:
 
-Set `"iterm2"` to use iTerm2 native split panes explicitly. This mode requires the [`it2` CLI](https://github.com/mkusaka/it2) and shows an error with the install command if `it2` is missing. The setup prompt that offers to install `it2` or switch to tmux appears under `"auto"` or `"tmux"` when your terminal is iTerm2 and tmux is available as a fallback.
+**1. Install tmux or set up iTerm2**
 
-To override the default, set [`teammateMode`](https://code.claude.com/docs/en/settings-reference#teammatemode) in `~/.claude/settings.json`:
+Split-pane mode requires either [tmux](https://github.com/tmux/tmux/wiki) or iTerm2 with the [`it2` CLI](https://github.com/mkusaka/it2). Set up the one you'll run Claude Code in:
+
+* **tmux**: install through your system's package manager. See the [tmux wiki](https://github.com/tmux/tmux/wiki/Installing) for platform-specific instructions.
+* **iTerm2**: install the [`it2` CLI](https://github.com/mkusaka/it2), then enable the Python API in **iTerm2 > Settings > General > Magic > Enable Python API**.
+
+**2. Turn on split panes**
+
+Teammates run in-process until you change the [`teammateMode`](https://code.claude.com/docs/en/settings-reference#teammatemode) setting.
+
+Set it to `"auto"` in `~/.claude/settings.json`:
 
 ```json theme={null}
 {
   "teammateMode": "auto"
 }
 ```
+
+With `"auto"`, teammates open in split panes when you run Claude Code inside tmux or iTerm2, and run in-process in other terminals.
+
+**3. Start Claude Code and spawn teammates**
+
+Run `claude` inside tmux or in iTerm2, then ask Claude to spawn teammates.
+
+If a setup prompt for `it2` appears in iTerm2, select **Install it2 now** to open the panes in your iTerm2 window.
+
+If you run Claude Code outside tmux and iTerm2, or the panes don't open in your iTerm2 window, change `teammateMode` again:
+
+* **Outside tmux and iTerm2**: with tmux installed, set `teammateMode` to `"tmux"`. The panes open in a separate tmux session. To watch them, copy the command from the `View teammates` line at the Claude Code prompt and run that command in a second terminal.
+* **Panes don't open in your iTerm2 window**: set `teammateMode` to `"iterm2"` to use iTerm2's own panes. Teammates then start only when you run Claude Code in iTerm2 with `it2` set up.
 
 To set the mode for a single session, pass it as a flag:
 
@@ -121,11 +143,6 @@ claude --teammate-mode auto
 ```
 
 The `--teammate-mode` flag is experimental and doesn't appear in `claude --help`.
-
-Split-pane mode requires either [tmux](https://github.com/tmux/tmux/wiki) or iTerm2 with the [`it2` CLI](https://github.com/mkusaka/it2). To install manually:
-
-* **tmux**: install through your system's package manager. See the [tmux wiki](https://github.com/tmux/tmux/wiki/Installing) for platform-specific instructions.
-* **iTerm2**: install the [`it2` CLI](https://github.com/mkusaka/it2), then enable the Python API in **iTerm2 → Settings → General → Magic → Enable Python API**.
 
 ### Specify teammates and models
 
@@ -497,7 +514,7 @@ Agent teams are experimental. Current limitations to be aware of:
 * **No background subagents from in-process teammates**: an in-process teammate's own subagents run in the foreground, because a teammate's background work can't outlive the lead's process. Claude Code returns an error when a teammate spawns a subagent whose definition sets `background: true`. A teammate's `run_in_background: true` request also fails, either with an error or by running silently in the foreground. Subagents launched from the main conversation follow the [background default](https://code.claude.com/docs/en/sub-agents.md#run-subagents-in-foreground-or-background).
 * **Lead is fixed**: the main session is the lead for its lifetime. You can't promote a teammate to lead or transfer leadership.
 * **No per-teammate permission modes at spawn**: teammates start with the permission mode described under [Permissions](#permissions).
-* **Split panes require tmux or iTerm2**: the default in-process mode works in any terminal. Split-pane mode isn't supported in VS Code's integrated terminal, Windows Terminal, or Ghostty.
+* **Split panes require tmux or iTerm2**: the default in-process mode works in any terminal.
 
 ## Next steps
 

@@ -283,7 +283,7 @@ Learn more: [Organize rules with `.claude/rules/`](https://code.claude.com/docs/
 
 ### Sandboxing
 
-OS-level filesystem and network isolation for the Bash tool. Commands run inside a boundary you define upfront, so Claude can work freely within it without per-command approval prompts. Sandboxing is a separate layer from [permission rules](#permission-rule).
+OS-level filesystem and network isolation for the Bash tool. Commands run inside a boundary you define upfront. Sandboxing is a separate layer from [permission rules](#permission-rule).
 
 Learn more: [Sandboxing](https://code.claude.com/docs/en/sandboxing.md)
 

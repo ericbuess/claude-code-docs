@@ -117,7 +117,7 @@ With either flag set, the runner starts a listener of its own and sends proxy tr
 
 * **Listener**: the listener is a forward proxy on `127.0.0.1`. The runner starts the listener before registering with the control plane, and exits at startup if the listener can't start.
 * **Proxy variables**: the runner rewrites whichever of `HTTPS_PROXY` and `HTTP_PROXY` you set so that it points at the listener. That rewritten value reaches the runner itself, its lifecycle hooks, and every session it runs.
-* **Token rotation**: a rotated token takes effect without a restart. For each connection the listener opens to your proxy, the runner runs your command or reads your file again and adds the result as the header.
+* **Token rotation**: when you rotate the token, new connections carry the new one without a runner restart. For each connection the listener opens to your proxy, the runner runs your command or reads your file again and adds the result as the header. A connection that's already open stays usable with the old token until your proxy closes it or the runner exits.
 * **Session environment**: a session reaches your proxy only through the listener. In each session's environment the runner removes `ALL_PROXY`, removes any spelling of `HTTPS_PROXY` or `HTTP_PROXY` that you didn't set, and pins `NO_PROXY` to the runner's own value.
 * **Logs**: the runner never logs the header value.
 

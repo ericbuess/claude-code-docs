@@ -163,12 +163,12 @@ Before you send a new project a batch of work, set it up so the first threads co
 Claude decides where each message you send in the conversation goes:
 
 * A quick question usually gets an answer in the conversation.
-* New work goes to a new thread or to a thread already working in that area, and Claude tells you which. Each new thread shows up under your message as a card: a box with the thread's title and status, which you click to open the thread.
+* New work goes to a new thread or to a thread already working in that area, and Claude tells you which. Each new thread shows up in the conversation, and you click it to open the thread.
 * Several unrelated tasks in one message become separate threads.
 
 If Claude routes something differently than you wanted, say so. [Tune how Claude runs a project](#tune-how-claude-runs-a-project) lists things you can tell it, such as reusing an existing thread for follow-ups or answering in place instead of starting a thread.
 
-A thread's full results stay in the thread, and you open its card in the conversation to read them. Files a thread produced are also in the project's [**Library**](#see-what-needs-you-in-overview).
+A thread's full results stay in the thread, so open the thread to read them. Files a thread produced are also in the project's [**Library**](#see-what-needs-you-in-overview).
 
 Sometimes Claude proposes threads instead of starting them, in a **Suggested threads** list. Click the arrow on a suggestion to start that thread. When several are listed, a button under the list starts all of them.
 
@@ -179,12 +179,6 @@ When a cloud thread changes code, this is what it does unless you tell it otherw
 * **Branch**: works on a new branch, started from the repository's default branch.
 * **Pull request**: opens one when you ask, and can open one on its own for a bug fix or another concrete change.
 * **After it opens**: watches the pull request with [auto-fix](https://code.claude.com/docs/en/claude-code-on-the-web.md#auto-fix-pull-requests) turned on, whether or not auto-fix is on for your other cloud sessions. It pushes fixes when CI fails, addresses review comments, and replies in the thread when checks pass and the pull request is ready for you.
-
-When a thread has pushed a branch or opened a pull request, its card in the conversation can show a button for the next step:
-
-* **Resolve conflicts**, **Fix CI**, **Address comments**, and **Merge it** send that instruction to the thread as a message from you, so you can prompt the thread yourself instead of waiting for it to react to the pull request.
-* **Review PR** opens the pull request on GitHub.
-* **Create PR** appears when an idle thread has pushed a branch but hasn't opened a pull request. Clicking it creates the pull request from that branch directly rather than sending the thread an instruction to open one.
 
 To change when threads open pull requests, for example only when you ask, or which branch they start from, say so in the task or in [project instructions](#write-project-instructions).
 
@@ -212,7 +206,7 @@ Open the project's files and scheduled tasks in the pane from the project header
 
 ### Open a thread when you need control
 
-Click a thread's card in the conversation or its row in Overview to open its transcript in the Overview pane. From there you can:
+Click a thread in the conversation or its row in Overview to open the thread in the Overview pane. From there you can:
 
 * Read what Claude did, step by step.
 * Steer the task by writing in the thread's own message box. A message there goes straight to that thread, while a follow-up in the project conversation reaches it only when Claude matches the follow-up to that thread.

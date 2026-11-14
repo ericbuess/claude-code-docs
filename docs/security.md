@@ -25,7 +25,7 @@ You and your organization configure these permissions directly. For detailed per
 
 To mitigate risks in agentic systems:
 
-* **Sandboxed bash tool**: [Sandbox](https://code.claude.com/docs/en/sandboxing.md) bash commands with filesystem and network isolation, reducing permission prompts while maintaining security. Configure with `/sandbox` to define boundaries where Claude Code can work autonomously
+* **Sandboxed Bash tool**: [Sandbox](https://code.claude.com/docs/en/sandboxing.md) Bash commands with filesystem and network isolation. Configure with `/sandbox`
 * **Working directory boundary**: In Manual mode, Claude Code asks you before its file tools read or write outside the folder where it was started and its subfolders. The boundary is a permission prompt, so a Bash command you approve can still write anywhere your user account can
   * To read a folder without the prompt, add it as an [additional directory](https://code.claude.com/docs/en/permissions.md#working-directories)
   * To restrict Bash commands at the operating system level, turn on [sandboxing](https://code.claude.com/docs/en/sandboxing.md#filesystem-isolation)
@@ -62,7 +62,7 @@ For full details, please review our [Commercial Terms of Service](https://www.an
 * **Trust verification**: In an interactive session, Claude Code shows the workspace trust dialog when you start it in a folder you haven't trusted. Servers in a project's `.mcp.json` have their own approval prompt, and [Project scope](https://code.claude.com/docs/en/mcp.md#project-scope) lists the sessions that skip it
   * Note: A `-p` session shows neither prompt. [What runs before you trust a folder](https://code.claude.com/docs/en/permissions.md#what-runs-before-you-trust-a-folder) lists what a repository's files can run there
   * Note: When you start Claude Code directly in your home directory, trust acceptance is held for the current session only and is not written to disk, so the prompt reappears on each launch. There is no setting to persist it. Start Claude Code from a project subdirectory instead, where trust acceptance is saved per directory
-* **Command injection detection**: In Manual mode, Claude Code asks before running a Bash command it can't fully analyze. An allow rule for part of a command, such as `Bash(git *)`, doesn't skip that prompt. [Sandboxed commands](https://code.claude.com/docs/en/permissions.md#how-permissions-interact-with-sandboxing) can run without it
+* **Command injection detection**: In Manual mode, Claude Code asks before running a Bash command it can't fully analyze. An allow rule for part of a command, such as `Bash(git *)`, doesn't skip that prompt. [Sandboxed commands](https://code.claude.com/docs/en/permissions.md#how-permissions-interact-with-sandboxing) in [auto-allow mode](https://code.claude.com/docs/en/sandboxing.md#auto-allow-mode) can run without it
 * **Fail-closed matching**: In Manual mode, unmatched commands require approval by default
 * **Secure credential storage**: API keys and tokens are stored in the macOS Keychain when available. On Linux they're stored in a file with mode `0600`, and on Windows in a file that inherits the access controls of your user profile directory. See [Credential Management](https://code.claude.com/docs/en/authentication.md#credential-management)
 

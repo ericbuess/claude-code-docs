@@ -30,7 +30,7 @@ Claude Code supports a range of restriction levels. Each pattern uses one or mor
 | Pattern | What it does | Configure |
 | :- | :- | :- |
 | **Disable MCP** | No servers load except the few that [load under exclusive control](#exclusive-control-with-managed-mcp-json) | `managed-mcp.json` with an empty server map |
-| **Fixed deployment** | Every user gets the same servers and can't add others | `managed-mcp.json` with the servers you want |
+| **Fixed deployment** | Every user gets the servers you list, and servers they configure don't load | `managed-mcp.json` with the servers you want |
 | **Provided servers** | Every user gets the remote servers you list and keeps their own | `managedMcpServers` in managed settings |
 | **Approved catalog** | Publish a list of approved servers; users add the ones they want, anything else is blocked | `allowedMcpServers` + `allowManagedMcpServersOnly: true` |
 | **Plugin servers only** | Users can't add servers through `~/.claude.json` or `.mcp.json`; [skills-directory plugins](https://code.claude.com/docs/en/plugins/loading.md#skills-directory-plugins-blocked-by-managed-settings) stop loading as plugins, and servers from other plugins still load | [`strictPluginOnlyCustomization`](https://code.claude.com/docs/en/settings-reference#strictpluginonlycustomization) with `mcp` in the list |
@@ -49,6 +49,7 @@ When you deploy a `managed-mcp.json` file, Claude Code loads only these MCP serv
 * The servers the file defines
 * Servers you [provide through `managedMcpServers`](#provide-servers-through-managed-settings)
 * In-process servers that the app that started the session registers, such as the VS Code extension's own server or the [connectors the desktop app delivers](https://code.claude.com/docs/en/mcp.md#how-connectors-reach-claude-code)
+* The server that Claude Code creates when a [mod](https://code.claude.com/docs/en/plugins/mods/overview.md) [adds tools](https://code.claude.com/docs/en/plugins/mods/api.md#add-a-tool). To block the tools that your users' mods add, [stop user-installed mods from loading](https://code.claude.com/docs/en/plugins/mods/admin.md#stop-user-installed-mods-from-loading).
 * The built-in [Claude in Chrome](https://code.claude.com/docs/en/chrome.md) server, if you [allow it alongside the managed set](#allow-claude-in-chrome-alongside-the-managed-set)
 
 Users can't add, modify, or use any other MCP servers, including plugin-provided servers and servers passed with the [`--mcp-config` CLI flag](https://code.claude.com/docs/en/cli-reference#cli-flags). The file also suppresses the claude.ai connectors Claude Code fetches itself unless you [allow them alongside the managed set](#allow-claude-ai-connectors-alongside-the-managed-set).
@@ -137,7 +138,7 @@ Deploy a `managed-mcp.json` containing an empty server map to block every MCP se
 }
 ```
 
-`claude mcp add` fails with the enterprise-policy error above. Servers users had previously configured stop loading the next time they start a session, with no warning that policy is the reason. Servers you provide through `managedMcpServers`, and anything else you allow alongside the managed set, still load under an empty map, so leave those keys unset to turn MCP off completely.
+`claude mcp add` fails with the enterprise-policy error above. Servers users had previously configured stop loading the next time they start a session, with no warning that policy is the reason. Servers you provide through `managedMcpServers`, and anything else you allow alongside the managed set, [still load](#exclusive-control-with-managed-mcp-json) under an empty map, so leave those keys unset.
 
 ### Allow claude.ai connectors alongside the managed set
 

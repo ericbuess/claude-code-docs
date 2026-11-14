@@ -115,8 +115,6 @@ The kit also exports ready-made mocks for the clock, the store, environment vari
 
 ### Follow the test kit's rules
 
-The test kit has a few rules of its own, and breaking one produces the errors new test authors hit first:
-
 * **Register every stub before the test's first call on `$`.** Calling `on` after that throws an error such as `on("ui.render") after the test first called $`.
 
 * **[`session.start`](https://code.claude.com/docs/en/plugins/mods/reference#session) doesn't run by itself.** Each test starts with your module freshly loaded and none of its hooks called, so module-level variables hold their initial values. If a hook depends on what `session.start` sets up, fire it first:
@@ -132,14 +130,14 @@ The test kit has a few rules of its own, and breaking one produces the errors ne
 
   The second stub answers the `$.command.register` call that a `session.start` hook such as the [tutorial's](https://code.claude.com/docs/en/plugins/mods/create.md#write-a-mod-yourself) makes. Without it, that call rejects with `no implementation for command.register` and the kit skips your hook, so nothing after the call in the hook runs. The test doesn't fail at that point. The skipped hook is listed under `the engine reported:` only if a later check fails.
 
-* **A hook that returns `next(e)` needs a stub to answer.** When your [`ui.render`](https://code.claude.com/docs/en/plugins/mods/reference#interface) hook returns `next(e)`, for example to draw nothing while Claude is idle, [mounting it](#test-a-drawing) fails with `no implementation for ui.render`. Register a stub that returns an element as plain data:
+* **Register a `ui.render` stub to choose what `next(e)` returns.** When your [`ui.render`](https://code.claude.com/docs/en/plugins/mods/reference#interface) hook returns `next(e)`, for example to draw nothing while Claude is idle, the [mount](#test-a-drawing) succeeds with no stub. To make `next(e)` return an element you pick, register a stub that returns it as plain data:
 
   ```typescript theme={null}
   // Stands for what Claude Code would draw at the site
   on('ui.render', () => ({ type: 'Text', props: {}, children: ['drawn by Claude Code'] }))
   ```
 
-  With the stub registered, the mount succeeds, and `ui.find({ type: 'Text' })` returns that element whenever your hook returned `next(e)`.
+  Where the site [can draw that element](https://code.claude.com/docs/en/plugins/mods/interface.md#change-what-claude-code-already-draws), `ui.find({ type: 'Text' })` returns it when your hook returned `next(e)`. On v2.1.323 or later, for the band, pass your mod's name as the second argument to `on`, as in `{ plugin: 'my-mod' }`. Without it, the stub doesn't answer your `next(e)`. Before v2.1.321, the mount fails with `no implementation for ui.render` unless you register the stub.
 
 * **A stub for `turn.step` is an async generator**, and the test reads the stream to its end to get the result:
 
@@ -192,7 +190,7 @@ This table lists the ones mods use most. The first column is the call your mod m
 | `$.session.id`, `$.agent.list` | `() => ({ value: 'abc123' })`, `() => ({ value: [] })` |
 | `session.send` | `() => ({ isDelivered: true })`. `e.to` arrives as a string even when your mod passed `{ sessionId }`. |
 | `session.receive` | `($, e) => ({ text: e.text })`. Fire it with `$.session.receive({ origin: { kind: 'peer-send-message' }, text })`. |
-| `ui.render` | `() => ({ type: 'Text', props: {}, children: ['...'] })` |
+| `ui.render` | `() => ({ type: 'Text', props: {}, children: ['...'] })`. For the band, see the matcher in [Follow the test kit's rules](#follow-the-test-kit’s-rules). |
 
 ### Check a result with `expect`
 
@@ -316,6 +314,7 @@ The handle that `$.ui.mount` returns has these methods, which address elements b
 | `press({ key: 'more' })` | Presses the `Button` with that key |
 | `input({ key: 'new-note', text: 'buy milk' })` | Types the text into the `Input` with that key and presses Enter. Add `kind: 'change'` to type without submitting. For a field with `rows`, the text can hold `\n`. |
 | `select({ key: 'size', value: 'large' })` | Picks the option with that value in the `Select` with that key |
+| `keepsBeneath()` | In a test with no `ui.render` stub, it resolves to `true` when the drawing includes what `next(e)` returned, and `false` when your hook left it out. In a test that registers one, use `find` to look for what the stub drew. Requires Claude Code v2.1.321 or later. |
 | `find({ key: 'more' })` or `find({ type: 'Text', text: 'Count: 2' })` | Returns the first matching element as `{ type, props, children }`, or `undefined`. `text` can be a string or a regular expression. |
 | `unmount()` | Removes the drawing |
 

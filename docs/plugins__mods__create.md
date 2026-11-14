@@ -21,7 +21,7 @@ If you haven't decided whether a mod is the right tool, read the [comparison on 
 
 Describe the mod you want in an interactive Claude Code session, and Claude writes it. Claude works from a built-in [skill](https://code.claude.com/docs/en/skills.md) named `plugin-authoring`, which tells it where to write the mod, which events and methods your version has, and how the mod gets loaded. Claude can load the skill when you ask for a mod, or you can load it yourself by running `/plugin-authoring` at the Claude Code prompt.
 
-In the `auto` and `bypassPermissions` [permission modes](https://code.claude.com/docs/en/permission-modes.md), the mod can run when the turn ends. Otherwise, it runs once you approve it, except in [sessions where a mod Claude writes can't load](#sessions-that-skip-the-approval).
+In `auto` and `bypassPermissions` [permission modes](https://code.claude.com/docs/en/permission-modes.md), Claude Code [can load the mod without asking you](#sessions-that-skip-the-approval). To be asked first, start a new session in `default` or `acceptEdits` mode, or [switch](https://code.claude.com/docs/en/permission-modes.md#switch-permission-modes) to either mode before you ask for the session's first mod. In [some sessions](#sessions-that-cant-load), the mod can't load.
 
 **1. Describe the mod**
 
@@ -33,7 +33,7 @@ Ask for the mod in your own words, for example `make a mod that shows the curren
 
 **2. Approve the mod**
 
-When Claude saves the first file, Claude Code asks whether to enable hot reloading for the session. Hot reloading runs the mods Claude writes in this session and picks up each later change. If no question appears, skip this step.
+When Claude saves the first file, Claude Code asks whether to enable hot reloading for the session. Hot reloading runs the mods Claude writes in this session and picks up each later change. You don't see this question in a session that [loads new mods without asking](#sessions-that-skip-the-approval) or [can't load them](#sessions-that-cant-load).
 
 Choose one of these answers:
 
@@ -57,12 +57,18 @@ A mod Claude wrote loads only in the session that made it, and Claude Code delet
 * **In a session you start**: in your shell, run `claude --plugin-dir ~/mods/git-branch`
 * **For other people**: [add it to a marketplace](#share-your-mod) so they can install it
 
+### Sessions that load a mod without asking
+
+Claude Code can enable hot reloading without asking in `auto` and `bypassPermissions` modes, and the mods load when the turn ends.
+
+When you resume a session, interactively or with `claude -p`, the mods already in its mods folder [can load](#sessions-that-cant-load) without asking. To keep a mod from loading when you resume, delete its directory.
+
 ### Sessions where a mod Claude writes can't load
 
-A mod Claude writes loads in a trusted workspace where mods are allowed to run, after you approve it in the modes that ask. In these sessions it doesn't load:
+A mod Claude writes doesn't load in these cases, and Claude Code doesn't ask to load it:
 
-* **Nobody is there to approve**: the session can't show you a prompt, as in a `claude -p` run outside `auto` and `bypassPermissions` modes, or [`dontAsk` mode](https://code.claude.com/docs/en/permission-modes)
-* **The workspace isn't trusted**: you haven't accepted the trust prompt for the directory
+* **Nobody is there to approve**: the session is in [`dontAsk` mode](https://code.claude.com/docs/en/permission-modes), or it's the `claude -p` run that writes the mod, in `default` or `acceptEdits` mode, which can't show you the hot reloading question.
+* **An interactive session where the workspace isn't trusted**: you haven't accepted the trust prompt for the directory
 * **Mods are disabled**: you started with `--safe-mode` or `--bare`, you set `disableAllHooks`, or your organization's [managed settings block it](https://code.claude.com/docs/en/plugins/mods/admin.md#choose-how-much-to-allow)
 
 ## Write a mod yourself
@@ -292,7 +298,7 @@ For `first-mod`, the output includes these lines.
 
 Check the `hooks:` line for the events your module hooks, each with its filter in braces, and `calls:` for every mods API method it calls. If your module reads or sets environment variables, look for `env reads:` and `env writes:` lines too, and `state reads:` and `state writes:` if it uses [`$.state`](https://code.claude.com/docs/en/plugins/mods/interface#keep-state). You also see one line for each hook that can refuse an action, such as `gating hook without .catch: tool.call`, which says whether that hook has a [`.catch` handler](https://code.claude.com/docs/en/plugins/mods/events#handle-a-hook-that-fails).
 
-If an event you meant to handle is missing from the first line, Claude Code won't call that hook either. The usual cause is a misspelled event name, which the command reports as an error such as `"tool.calls" is not an event`.
+If an event you meant to handle is missing from the `hooks:` lines, Claude Code won't call that hook either. The usual cause is a misspelled event name, which the command reports as an error such as `"tool.calls" is not an event`.
 
 Follow these rules so that static analysis can find every hook and call:
 

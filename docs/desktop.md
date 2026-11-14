@@ -2127,10 +2127,11 @@ If you set `forceLoginMethod` and `forceLoginOrgUUID` in Claude Code's [managed 
 
 To stop that, also deploy `forceLoginOrgUUID` in the Claude Desktop policy (in `HKLM` on Windows), with your claude.ai organization ID. Unless the policy itself [selects the Claude API](https://claude.com/docs/third-party/claude-desktop/claude-api#choose-an-authentication-approach), Claude Desktop stops using a person's own API key or Console account at the app's next launch.
 
-Check two cases before you deploy it:
+Check three cases before you deploy it:
 
 * **Claude Console organizations**: don't deploy `forceLoginOrgUUID` on its own with a Claude Console organization's ID, or you'd lock your people out of Claude Desktop. See [Which devices offer the Claude API account sign-in](https://claude.com/docs/third-party/claude-desktop/claude-api#which-devices-offer-the-claude-api-account-sign-in) instead.
 * **Enterprise Admin Console**: if it delivers your computers' Claude Desktop configuration, update them to Claude Desktop v2.37337.0 or later first, because earlier versions ignore it once this key is set. See [Keep a device on its managed profile](https://claude.com/docs/third-party/claude-desktop/admin-console#keep-a-device-on-its-managed-profile).
+* **Third-party providers**: if people set up their own [third-party inference configuration](https://claude.com/docs/third-party/claude-desktop/in-app-configuration) in the app, Claude Desktop ignores that configuration from the next launch after you deploy this key. To keep people on Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry, or an LLM gateway, [deploy a configuration](https://claude.com/docs/third-party/claude-desktop/configuration) to their computers in the same Claude Desktop policy.
 
 ### Network access requirements
 
@@ -2260,10 +2261,6 @@ Desktop and CLI read the same configuration files, so your setup carries over:
 #### MCP servers from the Claude Desktop chat app
 
 The Desktop app loads MCP servers from `claude_desktop_config.json` into local Code tab sessions, alongside servers from `~/.claude.json` and `.mcp.json`. A server you define in `claude_desktop_config.json` is available in both the Desktop chat surface and local Code tab sessions.
-
-If you define the same server name in `claude_desktop_config.json` and in `~/.claude.json` or `.mcp.json`, the Code tab in local sessions connects once and uses the `claude_desktop_config.json` definition.
-
-The app also re-delivers stdio servers from `~/.claude.json` to the embedded CLI in local sessions. When the top level of `~/.claude.json` (user scope) and `.mcp.json` define the same stdio server name, the Code tab uses the `~/.claude.json` definition, departing from the CLI [scope hierarchy](https://code.claude.com/docs/en/mcp.md#scope-hierarchy-and-precedence).
 
 > [!NOTE]
 >

@@ -144,7 +144,7 @@ Separately, the icon's shape has its own meaning:
 | Shape | What it means |
 | :- | :- |
 | `✻` or animated `✽` | The session process is running, or the session needs your input |
-| `∙` | The process has exited. You can still peek at the row, and when you reply or attach, Claude restarts it from its saved conversation |
+| `∙` | The process has exited. You can still peek at the row, and when you reply or press `Enter`, Claude restarts it from its saved conversation |
 | `✢` | A [`/loop`](https://code.claude.com/docs/en/scheduled-tasks) session sleeping between iterations. The row shows its run count and a countdown |
 
 The `#N` or `!N` label that can appear at the right edge of a row is a link to the session's [pull request or merge request](#pull-request-status), not part of the state icon.
@@ -316,7 +316,7 @@ Within a group:
 * Press `Enter` on a group header to collapse it, except while a [filter](#filter-sessions) is active, when every group stays expanded
 * Press `Ctrl+X` to stop a session and `Ctrl+X` again within two seconds to delete it from the list, or `Esc` to dismiss the confirmation without deleting. The second press deletes the session even when the stop attempt fails, for example because the [background service isn't responding](#agent-view-says-the-background-service-did-not-respond). In that case the confirmation stays active for another two seconds, and the delete ends the session's process itself
 
-Pressing `Ctrl+X` on a group header deletes every session in that group after confirmation. Except in the kept cases covered in [What deleting a session removes](#what-deleting-a-session-removes), deleting removes the session from the list. A worktree Claude created for it is removed, kept, or left in place depending on how you delete and what the worktree holds. The conversation transcript stays on your local machine, available through `claude --resume`.
+Press `Ctrl+X` on a group header to delete every session in that group after confirmation, except any that Claude Code [refuses to delete](#delete-a-session-after-claude-code-refuses). See [What deleting a session removes](#what-deleting-a-session-removes) for what happens to each session's worktree. The conversation transcript stays on your local machine, available through `claude --resume`.
 
 Completed sessions that don't fit on screen fold into a `… N more` row. The `Completed` group fills the vertical space left after the live groups. On a short terminal, the header compacts to a single summary line so sessions that are working or need input stay visible.
 
@@ -622,48 +622,37 @@ Whatever the task, Claude ends the job with a report saying what it did and wher
 
 #### What deleting a session removes
 
-Delete a session with `Ctrl+X` twice in [agent view](#organize-the-list) or with [`claude rm`](#manage-sessions-from-the-shell). Except in the kept cases below, the session leaves the list. Its transcript stays on your machine through `claude --resume`, and the removal survives supervisor restarts.
+Delete a session with `Ctrl+X` twice in [agent view](#organize-the-list) or with [`claude rm`](#manage-sessions-from-the-shell). The session disappears from the list, unless Claude Code [refuses to delete it](#delete-a-session-after-claude-code-refuses). Its transcript stays on your machine, available through `claude --resume`.
 
 What happens to a worktree Claude created for the session:
 
 * Agent view removes it, including uncommitted changes, so commit what you want to keep first.
 * `claude rm` keeps it, along with the session row, when it has uncommitted changes.
-* Neither agent view nor `claude rm` removes a worktree that another running session is using or has locked, and deleting again doesn't change that. Claude Code keeps the worktree and the session, and names the kept directory and the reason; in agent view, the session's row shows `not removed`. Close the other session, then delete again.
-* When you delete a session whose worktree has commits that Claude Code can't confirm are saved elsewhere, Claude Code keeps the worktree and the session, and the message names the worktree's branch and how many commits are unpushed. The message also offers the two ways forward: push the commits, or delete again to discard them.
 
-  Commits on a remote don't block the delete. Neither do commits on the local copy of your `origin` remote's default branch, as long as that branch is checked out in your main checkout, the repository directory itself rather than a worktree.
+One reason Claude Code refuses to delete a session is [unpushed commits in its worktree](https://code.claude.com/docs/en/errors.md#worktree-has-commits-that-are-not-pushed-anywhere). To keep those commits, push them before you delete the session.
 
-  After that refusal, you choose:
+Some worktrees stay on disk, whether you use agent view or `claude rm`:
 
-  * To keep the commits, push them, or merge them into that default branch, then delete the session again.
-  * To discard them, delete the session again without pushing: press `Ctrl+X` twice on its row in agent view, or run the `claude rm <id> --discard-unpushed` command the refusal printed. This removes the session and the worktree along with its branch, discarding the unpushed commits and any uncommitted changes.
+* If you created a worktree yourself and started the session from inside it, the worktree stays on disk for you to keep or remove.
+* If a worktree directory Claude created inside your repository no longer has its `.git` file, the directory stays on disk for you to remove. The worktree's branch stays in the repository, so you keep the commits on that branch.
 
-  When you delete again, Claude Code discards only what the refusal showed: if the worktree has gained a commit since, Claude Code keeps it again and shows the updated state.
+##### Delete a session after Claude Code refuses
 
-  When another finished session's records also name the worktree, it stays when you delete again; push the commits, then delete again.
-* A worktree git no longer recognizes, for example after `git worktree prune`, doesn't block the delete. Claude Code deletes the session and leaves the directory on disk.
-* When git or your [`WorktreeRemove` hook](https://code.claude.com/docs/en/hooks#worktreeremove) fails to remove the worktree, Claude Code keeps the worktree and the session, and the message names the cause. For a hook, the message says how it ended, such as `exited 1`, and quotes the start of its stderr. The message also tells you which of these to do next:
+When Claude Code refuses to delete a session because of its worktree, follow the message it shows. If the message names unpushed commits, see [Worktree has commits that are not pushed anywhere](https://code.claude.com/docs/en/errors.md#worktree-has-commits-that-are-not-pushed-anywhere).
 
-  * Delete the session again to remove the directory anyway, by pressing `Ctrl+X` twice on its row in agent view or running the `claude rm <id> --force-remove-worktree <worktree-id>` command that the `claude rm` refusal printed. The worktree's branch stays in the repository.
+##### Resolve a `Worktree not removed` message
 
-    Claude Code offers this only when it can confirm all of the following:
+A `Worktree not removed` message means Claude Code or your [`WorktreeRemove` hook](https://code.claude.com/docs/en/hooks#worktreeremove) didn't finish removing the session's worktree. Push any commits and copy out any files you want to keep, then follow the message.
 
-    * The directory is one of the repository's linked worktrees under `.claude/worktrees/`
-    * Neither the worktree nor a checked-out submodule has uncommitted changes to tracked files
-    * No other session's record names it
+##### Resolve a `files that weren't checked against a repository` message
 
-    When Claude Code can't verify a submodule checkout's state, such as one replaced by a separate git repository, it doesn't offer this either.
-  * Fix what stands in the way, such as committing or stashing the uncommitted changes, moving a separate git repository out of the worktree, closing whatever is using the directory, or fixing the hook, then delete the session again.
-  * Remove the directory yourself, then delete the session again.
+This message from `claude rm` means files remain in a worktree directory that isn't inside any git repository or that a [`WorktreeCreate` hook](https://code.claude.com/docs/en/hooks#worktreecreate) manages. Copy out any files you want to keep, then take the step for your case:
 
-A worktree you created yourself and started the session inside is left in place either way.
-
-A session whose worktree directory belongs to no git repository, because the repository was deleted or a [`WorktreeCreate` hook](https://code.claude.com/docs/en/hooks#worktreecreate) created the directory elsewhere, can still be deleted. While files remain in the directory:
-
-* Agent view asks for the same `Ctrl+X` double-press before discarding them. For a hook-created directory it runs your [`WorktreeRemove` hook](https://code.claude.com/docs/en/hooks#worktreeremove) instead, and without one it refuses the delete and keeps the session.
-* `claude rm` keeps the session and worktree, and names the reason.
-
-Either path keeps a directory that another finished session's records name.
+| Your case | What to do |
+| :- | :- |
+| No `WorktreeCreate` hook manages the directory | To discard the files, press `Ctrl+X` twice on the session's row in agent view. Or remove the directory yourself, then run `claude rm <id>` again |
+| A `WorktreeCreate` hook manages the directory, and you have a [`WorktreeRemove` hook](https://code.claude.com/docs/en/hooks#worktreeremove) | To try removing the directory with your hook, press `Ctrl+X` twice on the session's row in agent view. Or remove the directory yourself, then run `claude rm <id>` again |
+| A `WorktreeCreate` hook manages the directory, and you have no `WorktreeRemove` hook | Remove the directory yourself, then run `claude rm <id>` again |
 
 ### Set the model, effort, and fast mode
 
@@ -774,7 +763,7 @@ Agent view accepts the same configuration flags as `claude` for loading settings
 | [`--add-dir <path>`](https://code.claude.com/docs/en/permissions#additional-directories-grant-file-access-not-configuration) | Grant file access to an additional directory |
 | [`--plugin-dir <path>`](https://code.claude.com/docs/en/plugins/create#load-a-directory-or-archive-for-one-session) | Load a plugin from a local directory |
 | [`--mcp-config <file-or-json>`](https://code.claude.com/docs/en/mcp) | Load MCP servers from a config file or JSON string |
-| `--strict-mcp-config` | Use only the MCP servers from `--mcp-config`, ignoring other MCP configuration. See [Exclusive control with managed-mcp.json](https://code.claude.com/docs/en/managed-mcp.md#exclusive-control-with-managed-mcp-json) for what the flag does under a managed MCP file |
+| `--strict-mcp-config` | Skip the MCP servers configured in places such as `.mcp.json`, and load the ones you pass with `--mcp-config`. See [Exclusive control with managed-mcp.json](https://code.claude.com/docs/en/managed-mcp.md#exclusive-control-with-managed-mcp-json) for what the flag does under a managed MCP file |
 
 Repeat `--add-dir`, `--plugin-dir`, or `--mcp-config` once per value. `claude agents` doesn't support the space-separated form, such as `--add-dir a b c`.
 
@@ -802,9 +791,9 @@ Every background session has a short ID you can use from the shell. The ID is pr
 | `claude stop <id>` | Stop a session. Also accepts `claude kill` |
 | `claude respawn <id>` | Restart a session, running or stopped, for example to pick up an updated Claude Code binary. A session that has a saved conversation resumes it |
 | `claude respawn --all` | Restart every running session, e.g. to move all sessions onto an updated Claude Code binary at once |
-| `claude rm <id>` | Remove a session from the list, along with a worktree Claude created for it when that's safe to delete; see [What deleting a session removes](#what-deleting-a-session-removes). The conversation transcript stays on your local machine and remains available through `claude --resume` |
-| `claude rm <id> --discard-unpushed <commit>@<worktree-id>` | Delete a session whose delete was refused over unpushed commits, discarding the worktree along with its branch and commits. Pass the exact value that refusal printed; see [What deleting a session removes](#what-deleting-a-session-removes). Requires v2.1.260 or later |
-| `claude rm <id> --force-remove-worktree <worktree-id>` | Delete a session whose delete was refused because git or the `WorktreeRemove` hook couldn't remove its worktree, deleting the worktree directory anyway and leaving its branch in the repository. Pass the exact value that refusal printed; see [What deleting a session removes](#what-deleting-a-session-removes). Requires v2.1.268 or later |
+| `claude rm <id>` | Remove a session from the list, along with a worktree Claude created for it when that's safe to delete. If Claude Code refuses to delete the session because of its worktree, see [Delete a session after Claude Code refuses](#delete-a-session-after-claude-code-refuses). The conversation transcript stays on your local machine and remains available through `claude --resume` |
+| `claude rm <id> --discard-unpushed <commit>@<worktree-id>` | Try again to delete a session and discard its worktree, after Claude Code refused because of unpushed commits. Copy the command from the `claude rm` message that offers it; see [Worktree has commits that are not pushed anywhere](https://code.claude.com/docs/en/errors.md#worktree-has-commits-that-are-not-pushed-anywhere). Requires v2.1.260 or later |
+| `claude rm <id> --force-remove-worktree <worktree-id>` | Try again to delete a session and remove its worktree directory anyway, after Claude Code refused because it couldn't remove the worktree. Copy the command from the `claude rm` message that offers it; see [Resolve a `Worktree not removed` message](#resolve-a-worktree-not-removed-message). Requires v2.1.268 or later |
 | `claude daemon status` | Print the [supervisor's](#the-supervisor-process) state, version, socket directory, and worker count |
 | `claude daemon logs` | Follow the supervisor's log file, [`~/.claude/daemon.log`](#where-state-is-stored), printing new lines as they arrive until you press `Ctrl+C` |
 | `claude daemon stop --any` | Stop the supervisor process and the background sessions it hosts. Pass `--keep-workers` to leave background sessions running for [the next supervisor](#the-supervisor-process) to reconnect to. The next `claude agents` or `claude --bg` starts a fresh supervisor |
@@ -939,7 +928,7 @@ Shutting down or restarting your machine stops running background sessions. A se
 
   Press `Enter` on the row and the footer shows `Press enter again to resume this session (it ended while the background service was off), or ctrl+x to remove it.` Press `Enter` on the same row again to resume its saved conversation. A reply, or `claude attach <id>`, resumes it without that footer prompt.
 
-When [transcript cleanup](https://code.claude.com/docs/en/settings-reference.md#cleanupperioddays) has removed a stopped session's saved conversation, Claude Code refuses to open the row: the message says there is nothing to resume. `claude rm <id>` deletes the row, except in the [kept cases](#what-deleting-a-session-removes) described above, and `claude respawn <id>` runs its original prompt again. See [This session's saved conversation is no longer on disk](https://code.claude.com/docs/en/errors.md#this-sessions-saved-conversation-is-no-longer-on-disk).
+When [transcript cleanup](https://code.claude.com/docs/en/settings-reference.md#cleanupperioddays) has removed a stopped session's saved conversation, Claude Code refuses to open the row: the message says there is nothing to resume. `claude rm <id>` deletes the row, unless [Claude Code refuses](#what-deleting-a-session-removes), and `claude respawn <id>` runs its original prompt again. See [This session's saved conversation is no longer on disk](https://code.claude.com/docs/en/errors.md#this-sessions-saved-conversation-is-no-longer-on-disk).
 
 Sleep alone doesn't stop sessions. Sessions are preserved across sleep and the supervisor reconnects to them on wake.
 
@@ -973,9 +962,11 @@ Claude Code never restarts a row running a [shell command](#run-a-shell-command)
 
 When a background session's process exits before it finishes starting and the host is low on memory, the row's status names the exit and adds `possibly low memory — free some up and retry`.
 
-The note is a hypothesis, not a confirmed cause. Claude Code adds it only when the process exited silently, without writing an error and without being stopped by a signal, and the host reported low memory at that moment. When the process did write an error before exiting, the row shows that error instead.
+> [!NOTE]
+>
+> The note is a hypothesis, not a confirmed cause. Claude Code adds it only when the process exited silently, without writing an error and without being stopped by a signal, and the host reported low memory at that moment. When the process did write an error before exiting, the row shows that error instead.
 
-Free up memory on the machine, then attach or reply to the row and the supervisor starts a fresh process for the session. When memory stays low, the supervisor also [stops idle sessions](#the-supervisor-process) to free resources on its own, and stops idle pinned sessions too if stopping the others freed nothing.
+Free up memory on the host, then press `Enter` on the row, and press it again if [the footer asks](#opening-a-session-says-it-has-no-saved-transcript). The [supervisor](#the-supervisor-process) starts a new process for the session. When memory stays low, the supervisor also [stops idle sessions](#the-supervisor-process) to free resources on its own, and stops idle pinned sessions too if stopping the others freed nothing.
 
 ### Agent view says the background service did not respond
 
@@ -1036,9 +1027,9 @@ While the process starts, Claude Code shows the tail of the session's transcript
 
 ### `.claude/worktrees/` is filling up
 
-Deleting a session in agent view removes the worktree Claude created for it, but [some deletes keep the worktree or leave its directory on disk](#what-deleting-a-session-removes), so leftover directories can accumulate. Directories git no longer recognizes don't appear in `git worktree list`, so remove those by hand.
+Deleting a session in agent view removes the worktree Claude created for it, but [some worktree directories stay on disk](#what-deleting-a-session-removes). Directories git no longer recognizes don't appear in `git worktree list`, so remove those yourself.
 
-List leftover entries with `git worktree list` in the project directory and remove each with `git worktree remove <path>`. See [Clean up worktrees](https://code.claude.com/docs/en/worktrees.md#clean-up-worktrees).
+List leftover entries with `git worktree list` in the project directory and remove each with `git worktree remove <path>`. If git refuses, see [Clean up subagent and background-session worktrees](https://code.claude.com/docs/en/worktrees.md#clean-up-subagent-and-background-session-worktrees).
 
 ## Limitations
 
@@ -1046,7 +1037,7 @@ Agent view is in research preview with the following limitations:
 
 * **Rate limits apply**: background sessions consume your subscription usage the same as interactive sessions, so running ten agents in parallel uses quota roughly ten times as fast as running one.
 * **Sessions are local**: background sessions run on your machine. They are preserved across sleep but stop if the machine shuts down.
-* **Claude-created worktrees are deleted with the session in agent view**: commit changes before deleting a session that edited files in its own worktree. [Some deletes keep the worktree instead](#what-deleting-a-session-removes).
+* **Claude-created worktrees are deleted with the session in agent view**: commit changes before deleting a session that edited files in its own worktree. [Some worktrees stay on disk](#what-deleting-a-session-removes).
 
 ## Related resources
 

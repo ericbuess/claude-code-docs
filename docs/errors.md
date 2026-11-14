@@ -431,6 +431,8 @@ Match the message you see to a section below.
 | `Workspace not trusted.` when starting or restarting a background session | [Background session errors](#workspace-not-trusted-when-dispatching-a-background-session) |
 | `Claude Code is being updated by npm on this machine (still not runnable after 2 min, ...)` | [Background session errors](#eacces-when-starting-a-background-session) |
 | `Claude Code process exited with code N` | [Wrapper and IDE errors](#claude-code-process-exited-with-code-n) |
+| `Subprocess initialization did not complete within 60000ms` | [Wrapper and IDE errors](#subprocess-initialization-did-not-complete-within-60000ms) |
+| `Claude Code did not finish starting` | [Wrapper and IDE errors](#subprocess-initialization-did-not-complete-within-60000ms) |
 | `The connection to Claude Code ended before this message completed` | [Wrapper and IDE errors](#the-connection-to-claude-code-ended-before-this-message-completed) |
 | `Could not locate the Claude CLI on PATH` | [Wrapper and IDE errors](#could-not-locate-the-claude-cli-on-path) |
 | `The Claude Code program for this computer, the <build> build, could not be found` | [Wrapper and IDE errors](#the-claude-code-program-for-this-computer-could-not-be-found) |
@@ -5554,7 +5556,7 @@ Before v2.1.248, opening such a row re-ran the session's original prompt instead
 
 ### Worktree has commits that are not pushed anywhere
 
-You tried to delete a [background session](https://code.claude.com/docs/en/agent-view.md#what-deleting-a-session-removes) whose worktree holds commits Claude Code can't confirm are saved elsewhere. Claude Code keeps the worktree and the session row rather than destroy the commits unseen. `claude rm` names the branch and the unpushed commits, and says how to proceed:
+You tried to delete a [background session](https://code.claude.com/docs/en/agent-view.md#what-deleting-a-session-removes) whose worktree holds commits Claude Code can't confirm are saved elsewhere. `claude rm` says how to proceed:
 
 ```text theme={null}
 kept 7c5dcf5d — its worktree is still at “/home/you/project/.claude/worktrees/fix-login”
@@ -5564,19 +5566,15 @@ kept 7c5dcf5d — its worktree is still at “/home/you/project/.claude/worktree
 
 When Claude Code can't summarize the commits, the detail line reads `The worktree has unpushed commits` instead. In [agent view](https://code.claude.com/docs/en/agent-view.md), the session's row shows `not removed` with the same reason.
 
-Commits on a remote don't block the delete. Neither do commits on the local copy of your `origin` remote's default branch, as long as that branch is checked out in your main checkout, the repository directory itself rather than a worktree.
-
 **What to do:**
 
-* To keep the commits, push the worktree's branch, or merge it into the default branch checked out in your main checkout, then delete the session again
-* To discard the commits, run the `claude rm <id> --discard-unpushed` command the message printed, or press `Ctrl+X` twice on the session's row in agent view again. This removes the session and the worktree along with its branch, the unpushed commits, and any uncommitted changes. If the delete is refused again, follow the new message.
-* When the message says the worktree is also recorded by another finished session, deleting again doesn't discard it: push the commits, then delete the session again
+* To keep the commits, push them. Once the push puts them on a remote-tracking branch, such as `origin/claude/fix-login`, try deleting the session again.
+* If the message offers to discard the commits, first make sure you don't need the worktree, the commits or any uncommitted changes. Then take the step the message gives: press `Ctrl+X` twice on the session's row in agent view, or run the `claude rm <id> --discard-unpushed <commit>@<worktree-id>` command that `claude rm` printed. If Claude Code refuses again, follow the new message.
+* When the message says the worktree is also recorded by another finished session, deleting again doesn't discard it: push the commits, then try deleting the session again
 
 Before v2.1.268, `claude rm` put the commit summary on the `kept` line itself. When `claude rm` couldn't summarize the commits, the `kept` line read `worktree has commits that are not pushed anywhere` in place of the summary.
 
 Before v2.1.260, the message didn't name the branch or commits, and there was no discard route. You can still delete the session, losing uncommitted changes but keeping the branch and commits. Run `git worktree remove --force --force <path>` with the path the refusal printed, then `claude rm <id>`. Git needs `--force` twice for a locked worktree.
-
-Before v2.1.248, the default branch checked out in your main checkout didn't count: a branch you had already merged there still triggered this refusal until its commits reached a remote.
 
 ### Terminal host process died
 
@@ -5838,6 +5836,30 @@ Before v2.1.286, on Windows, this message could also appear in a directory you h
 ## Wrapper and IDE errors
 
 These errors come from the program that launched Claude Code for you, such as an IDE extension or an [Agent SDK](https://code.claude.com/docs/en/agent-sdk/overview.md) application, rather than from Claude Code itself.
+
+### Subprocess initialization did not complete within 60000ms
+
+This error means a Claude Code process that the [VS Code extension](https://code.claude.com/docs/en/vs-code.md) or an Agent SDK application launched didn't report in time that it was ready. The extension or application then stopped it. In a VS Code conversation the error starts with `Claude Code did not finish starting`, for example:
+
+```text theme={null}
+Claude Code did not finish starting: it did not answer in time. The output logs ("View output logs") show how far it got. Slow plugins, MCP servers, hooks, disks or network can each cause this.
+```
+
+In the extension's output logs, on its sign-in screen, and in an Agent SDK application, the error reads differently. It starts with `Subprocess initialization did not complete within` and the time limit, then gives what Claude Code reported, for example:
+
+```text theme={null}
+Subprocess initialization did not complete within 60000ms. Claude Code did not answer the initialize request and reported no SessionStart or Setup hook running. Slow plugins, MCP servers, hooks that Claude Code does not report, disks or network can each cause this.
+```
+
+**What to do:**
+
+* To try again in VS Code, send a message. If the error appeared while you were signing in, select the sign-in method again instead.
+* To see how far Claude Code got, click **View output logs** under a conversation's error, or run **Claude Code: Show Logs** from the Command Palette. Include the entries around the `Subprocess initialization` line when [reporting the problem](https://github.com/anthropics/claude-code/issues).
+* To check your network, see [Network configuration](https://code.claude.com/docs/en/network-config.md). If the message tells you to check your sign-in or authentication, see [Login and authentication](https://code.claude.com/docs/en/troubleshoot-install.md#login-and-authentication).
+* If the message says that [SessionStart](https://code.claude.com/docs/en/hooks.md#sessionstart) or [Setup](https://code.claude.com/docs/en/hooks.md#setup) hooks hadn't finished, [check how long yours run](https://code.claude.com/docs/en/hooks.md#debug-hooks). In VS Code, the first 10 minutes in which Claude Code reports these hooks running don't count toward the 60-second limit. Make a slow hook finish sooner, lower a non-async hook's [`timeout`](https://code.claude.com/docs/en/hooks#common-fields), or [remove the hook](https://code.claude.com/docs/en/hooks.md#disable-or-remove-hooks).
+* If your Agent SDK application calls [`startup()`](https://code.claude.com/docs/en/agent-sdk/typescript#startup), set `initializeTimeoutMs` long enough for the whole start, or leave it unset so up to 10 minutes of reported hook time doesn't count.
+
+Before VS Code extension v2.1.304 and TypeScript Agent SDK v0.3.304, all hook time counted toward the limit. With the default limit, the message contained `Subprocess initialization did not complete within 60000ms — check authentication and network connectivity`. If you see that wording, update the extension or the SDK.
 
 ### Claude Code process exited with code N
 

@@ -202,6 +202,15 @@ The prompt box supports several features:
   Thinking blocks you already have stay empty. In responses after the reload, click a block or press `Ctrl+O` to expand them all.
 * **Multi-line input**: press `Shift+Enter` to add a new line without sending. This also works in the "Other" free-text input of question dialogs.
 
+### Use or turn off suggested prompts
+
+After Claude replies, the panel can show a suggested next prompt as gray italic text in the empty prompt box. Each suggestion uses a [short background request](https://code.claude.com/docs/en/interactive-mode.md#prompt-suggestions) that counts toward your plan's usage limits or API costs.
+
+* **Use the suggestion**: press `Tab` to turn it into editable text, then send it. Pressing `Enter` before you accept it doesn't send the suggestion.
+* **Write your own prompt**: start typing, which hides the suggestion.
+
+To turn suggestions off, set [`promptSuggestionEnabled`](https://code.claude.com/docs/en/settings-reference#promptsuggestionenabled) to `false` in `~/.claude/settings.json`. You stop seeing them in new conversations, or in open ones after you run **Developer: Reload Window** from the Command Palette. If you set [`CLAUDE_CODE_ENABLE_PROMPT_SUGGESTION`](https://code.claude.com/docs/en/env-vars) to `true`, change it to `false` where you set it, or you keep seeing suggestions.
+
 ### Reference files and folders
 
 Use @-mentions to give Claude context about specific files or folders. When you type `@` followed by a file or folder name, Claude reads that content and can answer questions about it or make changes to it. Claude Code supports fuzzy matching, so you can type partial names to find what you need:
@@ -936,6 +945,7 @@ Sign-in, network, and launch errors have their own entries on the install troubl
 | `SSL certificate verification failed` or `Self-signed certificate detected` | [SSL certificate errors](https://code.claude.com/docs/en/errors.md#ssl-certificate-errors) |
 | `Dictation error: WebSocket error:` followed by a certificate error such as `unable to get local issuer certificate`, or `Remote server is not connected` on the Web tab | [Dictation or the Web tab fails behind a TLS-inspecting proxy](#dictation-or-the-web-tab-fails-behind-a-tls-inspecting-proxy) |
 | `Claude Code process exited with code 1`, or another code | [Claude Code process exited with code N](https://code.claude.com/docs/en/errors.md#claude-code-process-exited-with-code-n) |
+| `Claude Code did not finish starting` or `Subprocess initialization did not complete within 60000ms` | [Subprocess initialization did not complete within 60000ms](https://code.claude.com/docs/en/errors.md#subprocess-initialization-did-not-complete-within-60000ms) |
 | `Could not locate the Claude CLI on PATH` | [Could not locate the Claude CLI on PATH](https://code.claude.com/docs/en/errors.md#could-not-locate-the-claude-cli-on-path) |
 | `The connection to Claude Code ended before this message completed` | [The connection to Claude Code ended before this message completed](https://code.claude.com/docs/en/errors.md#the-connection-to-claude-code-ended-before-this-message-completed) |
 | `The Claude Code program for this computer, the <build> build, could not be found` | [The Claude Code program for this computer could not be found](https://code.claude.com/docs/en/errors.md#the-claude-code-program-for-this-computer-could-not-be-found) |

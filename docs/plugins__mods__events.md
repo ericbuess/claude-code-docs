@@ -91,6 +91,16 @@ The event name can be a wildcard. `'classic.*'` matches every [settings hook eve
 
 Register each event once per matcher. If you call `on` twice for `session.start` with no matcher, the module fails to load with `on("session.start") is registered twice without a matcher`. Put everything your mod does at session start in one hook.
 
+#### Hook other mods' drawings and controls
+
+To hook another mod's controls, panes, or row above the prompt, pass a matcher with `plugin`. Use the mod's name without its marketplace, as in `{ plugin: 'other-mod' }`, or `{ plugin: '*' }` for every mod. Without `plugin`, a hook on `ui.press`, `ui.input`, `ui.select`, or `ui.focus` doesn't run for other mods' controls, and a `ui.render` hook skips their panes and their rows above the prompt.
+
+A hook on a wildcard with no matcher, such as `on('*', hook)` or `on('ui.*', hook)`, still runs for every mod. A wildcard with a matcher needs `plugin` too.
+
+> [!NOTE]
+>
+> `{ plugin: '*' }` requires Claude Code v2.1.323 or later. Before v2.1.323, a hook with no `plugin` ran for every mod, and a hook with `{ plugin: '*' }` didn't run. To match every mod on both versions, use `{ plugin: /./ }` on `ui.press`, `ui.input`, and `ui.select`. For `ui.focus` and `ui.render`, use `on('ui.*', hook)` and check the event's name in `next.event`, as in `if (next.event !== 'ui.focus') return next(e)`.
+
 ## Hook what Claude is doing
 
 Handle these events to see or change a tool call, a prompt, a turn, or a settings read as it happens. For every event and what a hook can return, see the [events reference](https://code.claude.com/docs/en/plugins/mods/reference.md#events).

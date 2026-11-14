@@ -273,9 +273,9 @@ Claude Code handles any other blocked selection according to where the model was
 * **`/model`**: Claude Code rejects the switch with an error
 * **`--model` flag, `ANTHROPIC_MODEL`, or the `model` setting**: Claude Code replaces the value at startup with a warning naming both the requested and substituted models, and the session starts on the default model
 * **[`ANTHROPIC_DEFAULT_MODEL`](#set-a-default-model-for-new-sessions)**: Claude Code ignores the variable
-* **Subagent or teammate override**: Claude Code runs the subagent or teammate on a fallback model rather than failing the request. See [Choose a model](https://code.claude.com/docs/en/sub-agents.md#choose-a-model) for the subagent fallback and [Specify teammates and models](https://code.claude.com/docs/en/agent-teams.md#specify-teammates-and-models) for the teammate fallback.
+* **Subagent or teammate override**: Claude Code runs the subagent or teammate on a fallback model rather than failing the request. See [When an allowlist blocks a subagent model](https://code.claude.com/docs/en/sub-agents.md#when-an-allowlist-blocks-a-subagent-model) for the subagent fallback and [Specify teammates and models](https://code.claude.com/docs/en/agent-teams.md#specify-teammates-and-models) for the teammate fallback.
 
-  In interactive sessions, Claude Code warns you when it substitutes a subagent's model, by this fallback or by the newest-permitted-version substitution above, naming the requested and substituted models; it doesn't report a teammate's fallback.
+  In interactive sessions, Claude Code warns you when it substitutes a top-level subagent's model. It doesn't report a teammate's fallback.
 
   Where the newest-permitted-version substitution above operates, a blocked family alias follows it instead. Before v2.1.222, an alias fell back like any other blocked value on every provider
 * **Skill or command override**: Claude Code ignores the override, including a blocked family alias, and the skill or command runs on the session model. A skill or command that [runs in a subagent](https://code.claude.com/docs/en/skills.md#run-skills-in-a-subagent) follows the subagent behavior above instead

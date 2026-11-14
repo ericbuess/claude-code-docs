@@ -296,6 +296,7 @@ The variable doesn't strip every `anthropic-beta` value. What it leaves in place
 * The top-level `output_config.effort` field. [Automatic retry and error forwarding](#automatic-retry-and-error-forwarding) covers an upstream that rejects it
 * The adaptive reasoning `thinking` field, which has no beta header
 * The `role: "system"` entries that carry [mid-conversation system messages](#feature-pass-through)
+* The `anthropic-beta` value and `safeguards` field for auto mode's [server-side classifier review](https://code.claude.com/docs/en/permission-modes.md#server-side-classifier-review), in sessions where that review stays on, such as when `/status` shows **Auto mode server** as `Enabled`. To turn the review off, set `CLAUDE_CODE_AUTO_MODE_SERVER=0` before starting the session. In the terminal, `/status` then shows **Auto mode server** as `Disabled`.
 * The OAuth `anthropic-beta` value that subscription authentication requires
 * Header values and body fields developers add themselves through [`ANTHROPIC_BETAS`](https://code.claude.com/docs/en/env-vars) or [`CLAUDE_CODE_EXTRA_BODY`](https://code.claude.com/docs/en/env-vars)
 
