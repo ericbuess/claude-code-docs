@@ -1033,7 +1033,7 @@ Apply the same pattern for `ANTHROPIC_DEFAULT_FABLE_MODEL`, `ANTHROPIC_DEFAULT_S
 By default, Claude Code treats a pinned ID as having the [1M context window](#extended-context), with no `[1m]` suffix needed, in these cases:
 
 * **An ID Claude Code matches to a model with a native 1M window, such as Opus 4.8 or Sonnet 5**: the ID matches when it contains the model's Anthropic API ID, as `us.anthropic.claude-opus-4-8` contains `claude-opus-4-8`, or when a [`modelOverrides`](#override-model-ids-per-version) entry maps the model to it
-* **An ID Claude Code can't match to a model**: [set the real window](#correct-the-window-for-a-gateway-or-custom-model-id) if the model behind the ID accepts less
+* **An ID Claude Code can't match to a model**: [set the real window](#correct-the-window-for-a-gateway-or-custom-model-id) if the model behind the ID accepts less. Before v2.1.323, Claude Code assumed 200K by default, so on those versions append `[1m]` to the ID if the model accepts 1M.
 
 For a model that reaches 1M through its `[1m]` variant, such as Opus 4.6 or Sonnet 4.6, enable extended context by appending `[1m]` to the model ID in `ANTHROPIC_DEFAULT_OPUS_MODEL` or `ANTHROPIC_DEFAULT_SONNET_MODEL`:
 

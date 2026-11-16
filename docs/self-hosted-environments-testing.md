@@ -79,7 +79,7 @@ Install this hook only on runners serving your test environment. It writes every
 
 The `--environment` and `--ref` dispatch flags require Claude Code v2.1.224 or later on the machine that runs the script, the same floor as the runner itself. With the hook in place and a runner started on this host, the test script:
 
-1. Creates a session on the test environment with `claude -p "<prompt>" --environment <environment-id> --output-format json`. Run the command from a git checkout so the CLI can auto-detect the repository from the `origin` remote. The optional `--ref <branch>` bases the session's checkout on a named ref instead of local HEAD. The command exits without waiting for Claude's reply. What it prints tells your script the outcome:
+1. Creates a session on the test environment with `claude -p "<prompt>" --environment <environment-id> --output-format json`. Run the command from a git checkout so the CLI can auto-detect the repository from the `origin` remote. The optional `--ref <branch>` bases the session's checkout on a named ref. The command exits without waiting for Claude's reply. What it prints tells your script the outcome:
    * **Session created**: one line of JSON such as `{"ok":true,"session_id":"session_...","title":"...","url":"...","pool_id":"..."}`
    * **Session creation failed**: the line `{"ok":false,"error":"..."}`, and the command exits with status 1
    * **Some earlier errors**, such as cloud sessions being unavailable for your organization or a missing prompt: the error on stderr with no JSON line, and the command exits with status 1
@@ -146,7 +146,7 @@ await_reply() {
 
 # 1. Create the session on the test environment. Run from a git checkout
 # so the CLI can auto-detect the repo. --ref pins the checkout to a named
-# ref regardless of local HEAD.
+# ref.
 TURN1="e2e-probe-$(date +%s)-$$: say exactly 'ok: custom tools are reachable' and nothing else"
 EXPECT1="ok: custom tools are reachable"
 create_json=$(claude -p "$TURN1" --environment "$CLAUDE_TEST_ENVIRONMENT_ID" \

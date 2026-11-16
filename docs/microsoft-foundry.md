@@ -173,7 +173,7 @@ This `settings.json` entry tells Claude Code that a deployment named `team-opus-
 
 To keep a 200K window instead, set [`CLAUDE_CODE_DISABLE_1M_CONTEXT=1`](https://code.claude.com/docs/en/model-config#turn-off-1m-context).
 
-If Claude Code can't match a deployment name to a model, it assumes a 1M window by default, so [set the real window](https://code.claude.com/docs/en/model-config.md#correct-the-window-for-a-gateway-or-custom-model-id) if your deployed model accepts less.
+If Claude Code can't match a deployment name to a model, it assumes a 1M window by default, so [set the real window](https://code.claude.com/docs/en/model-config.md#correct-the-window-for-a-gateway-or-custom-model-id) if your deployed model accepts less. Before v2.1.323, Claude Code assumed 200K by default, so on those versions append `[1m]` to the name in your model variables if the model accepts 1M.
 
 Opus 4.6 and Sonnet 4.6 reach the 1M window when you append `[1m]` to the deployment name in `ANTHROPIC_DEFAULT_OPUS_MODEL` or `ANTHROPIC_DEFAULT_SONNET_MODEL`, as [Pin models for third-party deployments](https://code.claude.com/docs/en/model-config.md#pin-models-for-third-party-deployments) describes. Before v2.1.287, the Fable models and Opus 4.7 and later also needed that suffix on Microsoft Foundry and ran with a 200K window by default without it.
 

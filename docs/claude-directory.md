@@ -16,6 +16,192 @@ Most users only edit `CLAUDE.md` and `settings.json`. If your repository already
 
 Click files in the tree to see what each one does, when it loads, and an example.
 
+Configuration files
+
+**`CLAUDE.md`**
+
+**When it loads**: Loaded into context at session start
+
+Project-specific instructions that shape how Claude works in this repository. Put your conventions, common commands, and architectural context here.
+
+**`.mcp.json`**
+
+**When it loads**: In interactive sessions, MCP servers you've [approved](https://code.claude.com/docs/en/mcp.md#project-scope) load when the session begins. Tool schemas are deferred by default and load on demand via [tool search](https://code.claude.com/docs/en/mcp.md#scale-with-mcp-tool-search)
+
+Configures Model Context Protocol (MCP) servers that give Claude access to external tools: databases, APIs, browsers, and more. This file holds the project-scoped servers your whole team uses. Personal servers you want to keep to yourself go in `~/.claude.json`.
+
+**`.worktreeinclude`**
+
+**When it loads**: Read when Claude creates a [git worktree](https://code.claude.com/docs/en/worktrees.md) via `--worktree`, the `EnterWorktree` tool, or subagent `isolation: worktree`
+
+Lists gitignored files to copy from your main repository into each new worktree. Worktrees are fresh checkouts, so untracked files like `.env` are missing by default. Patterns here use `.gitignore` syntax. Only files that match a pattern and are also gitignored get copied.
+
+**`.claude/`**
+
+Project settings, rules, skills, subagents, and other configuration. If you use git, commit most of these files so your team shares them, and keep personal ones such as `settings.local.json` out of your commits.
+
+**`.claude/settings.json`**
+
+**When it loads**: Read at session start. Most edits [apply to the running session](https://code.claude.com/docs/en/settings.md#when-edits-take-effect)
+
+Settings that Claude Code applies directly. Permissions control which commands and tools Claude can use; hooks run your scripts at specific points in a session. Unlike CLAUDE.md, which Claude reads as guidance, these are enforced whether Claude follows them or not.
+
+This file ranks above `~/.claude/settings.json` and below `.claude/settings.local.json`, the `--settings` flag, and managed settings in [settings precedence](https://code.claude.com/docs/en/settings.md#settings-precedence). For most single-value keys, such as `model`, Claude Code uses the highest-ranked value. Most lists, such as `permissions.allow`, [merge across files](https://code.claude.com/docs/en/settings.md#lists-merge-instead-of-overriding).
+
+**`.claude/settings.local.json`**
+
+**When it loads**: Read at session start. Most edits [apply to the running session](https://code.claude.com/docs/en/settings.md#when-edits-take-effect)
+
+Your personal settings for this project. Same JSON format as `settings.json`, gitignored when Claude Code saves a setting to it.
+
+This file ranks above `.claude/settings.json` and below the `--settings` flag and managed settings in [settings precedence](https://code.claude.com/docs/en/settings.md#settings-precedence). For most single-value keys, such as `model`, Claude Code uses the highest-ranked value. Most lists, such as `permissions.allow`, [merge across files](https://code.claude.com/docs/en/settings.md#lists-merge-instead-of-overriding).
+
+**`.claude/rules/`**
+
+**When it loads**: Rules without `paths:` frontmatter load at session start. Rules with `paths:` load when Claude reads, writes, or edits a matching file
+
+Project instructions split into topic files. Like CLAUDE.md, rules are guidance that Claude Code doesn't enforce. For enforced behavior use [hooks](https://code.claude.com/docs/en/hooks.md) or [permissions](https://code.claude.com/docs/en/permissions.md).
+
+**`.claude/skills/`**
+
+**When it loads**: Invoked with `/skill-name` or when Claude matches the task to a skill
+
+Each skill is a folder with a `SKILL.md` file plus any supporting files it needs. By default, both you and Claude can invoke a skill. Use [frontmatter](https://code.claude.com/docs/en/skills.md#frontmatter-reference) to control that: `disable-model-invocation: true` so Claude can't invoke a skill like `/deploy` on its own, or `user-invocable: false` so only Claude can invoke the skill.
+
+**`.claude/commands/`**
+
+**When it loads**: Invoked with `/command-name` or when Claude matches the task to a command
+
+Holds single-file commands: a prompt saved as `.claude/commands/deploy.md` runs as `/deploy`. For a new command, use a [skill](#ce-skills), which can bundle reference docs, templates, or scripts alongside the prompt.
+
+**`.claude/output-styles/`**
+
+**When it loads**: Read at startup in the terminal, so restart Claude Code after you add or edit a style
+
+Each Markdown file defines an [output style](https://code.claude.com/docs/en/output-styles.md#how-output-styles-work), a set of instructions that adjusts how Claude works. Put a style here if your team shares it, like a review mode everyone uses. See [`~/.claude/output-styles/`](#ce-global-output-styles) for how to select one.
+
+**`.claude/agents/`**
+
+**When it loads**: Each subagent runs in its own context window when you or Claude invoke it
+
+Each Markdown file with `name` and `description` frontmatter defines a subagent with its own system prompt, tool access, and optionally its own model. Useful for parallel work or isolated tasks.
+
+**`.claude/workflows/`**
+
+**When it loads**: Loaded at startup when [workflows are on](https://code.claude.com/docs/en/workflows.md). Each saved workflow runs as a `/<name>` command
+
+Each `.js` file is a [dynamic workflow](https://code.claude.com/docs/en/workflows.md): a script the runtime executes to spawn and coordinate many subagents. To add one, have Claude write a workflow, then run `/workflows` in the session and save it here.
+
+**`.claude/agent-memory/`**
+
+**When it loads**: First 200 lines of a subagent's `MEMORY.md`, capped at 25KB, loaded into its system prompt when the subagent runs
+
+Subagents with [`memory: project`](https://code.claude.com/docs/en/sub-agents#enable-persistent-memory) in their frontmatter get a dedicated memory directory here while [auto memory](https://code.claude.com/docs/en/memory.md#auto-memory) is on. Each subagent reads and writes its own `MEMORY.md`, separate from your main session's auto memory in `~/.claude/projects/`.
+
+**`.claude/agent-memory/<agent-name>/MEMORY.md`**
+
+**When it loads**: First 200 lines, capped at 25KB, loaded into the subagent's system prompt when the subagent runs
+
+An index of the notes the subagent has saved. The subagent creates and updates this file itself, in the same format as your main [auto memory](https://code.claude.com/docs/en/memory.md#storage-location) index.
+
+**`~/.claude.json`**
+
+**When it loads**: Read at session start for your preferences and MCP servers. Claude Code writes back to it when you change a [global config option](https://code.claude.com/docs/en/settings-reference.md#global-config-settings) in `/config` or trust a project folder
+
+Holds account details, per-project trust decisions, your personal MCP servers, and UI toggles.
+
+**`~/.claude/`**
+
+The global counterpart to your project [`.claude/`](#ce-dot-claude) directory. Configuration files in this directory apply to you in every project on this machine.
+
+**`~/.claude/CLAUDE.md`**
+
+**When it loads**: Loaded at session start in every project on this machine
+
+Your global instruction file. Loaded alongside the project CLAUDE.md. If the two conflict, Claude may follow either one. Keep this file to preferences that apply everywhere: response style, commit format, personal conventions.
+
+**`~/.claude/settings.json`**
+
+**When it loads**: Read at session start. Most edits [apply to the running session](https://code.claude.com/docs/en/settings.md#when-edits-take-effect)
+
+Same format as project `settings.json`: permissions, hooks, model, and environment variables. Put settings here that you want in every project, like allow rules, a preferred model, or a notification hook.
+
+This file ranks below the project's settings files, the `--settings` flag, and managed settings in [settings precedence](https://code.claude.com/docs/en/settings.md#settings-precedence). For most single-value keys, such as `model`, Claude Code uses the highest-ranked value. Most lists, such as `permissions.allow`, [merge across files](https://code.claude.com/docs/en/settings.md#lists-merge-instead-of-overriding).
+
+**`~/.claude/keybindings.json`**
+
+**When it loads**: Read at session start and hot-reloaded when you edit the file
+
+Rebind keyboard shortcuts in the interactive CLI. Run `/keybindings` in a session to create or open this file. Check the [reserved shortcuts](https://code.claude.com/docs/en/keybindings.md#reserved-shortcuts) before you pick a key.
+
+**`~/.claude/themes/`**
+
+**When it loads**: Read at session start and [hot-reloaded](https://code.claude.com/docs/en/terminal-config.md#create-a-custom-theme) when files change. Listed in `/theme`
+
+Each `.json` file defines a custom color theme: a built-in `base` preset plus an `overrides` map of color tokens. Run `/theme` in a session to create one, or write the JSON yourself. Selecting a custom theme stores `custom:<slug>` as your theme preference.
+
+**`~/.claude/projects/`**
+
+**When it loads**: The current project's `memory/MEMORY.md` loads at session start while auto memory is on. The topic files it lists are read on demand
+
+Holds [auto memory](https://code.claude.com/docs/en/memory.md#auto-memory), the notes Claude saves across sessions: your role and preferences, corrections you give it, project decisions, and where to find information outside the project. Each project gets its own memory directory keyed by the repository path.
+
+**`~/.claude/projects/<project>/memory/MEMORY.md`**
+
+**When it loads**: First 200 lines, capped at 25KB, loaded at session start while [auto memory](https://code.claude.com/docs/en/memory.md#auto-memory) is on
+
+An index pointing to topic files for detail. Claude creates and updates this file as it works. You can edit or delete it.
+
+**`~/.claude/projects/<project>/memory/user_role.md`**
+
+**When it loads**: Claude reads this when a related task comes up
+
+An example of a topic file. Claude saves each memory in its own topic file, picks the filename, and lists it in `MEMORY.md`.
+
+**`~/.claude/rules/`**
+
+**When it loads**: Rules without `paths:` frontmatter load at session start. Rules with `paths:` load when Claude reads, writes, or edits a matching file
+
+Same format as project [`.claude/rules/`](#ce-rules), applied to every project on this machine. Use this for conventions you want across all your work, like personal code style or commit message format.
+
+**`~/.claude/skills/`**
+
+**When it loads**: Invoked with `/skill-name` or when Claude matches the task to a skill
+
+Skills you built for yourself, available in all your projects on this machine. Same format as project [`.claude/skills/`](#ce-skills).
+
+**`~/.claude/commands/`**
+
+**When it loads**: Invoked with `/command-name` or when Claude matches the task to a command
+
+Same format as project [`.claude/commands/`](#ce-commands), available in all your projects on this machine.
+
+**`~/.claude/output-styles/`**
+
+**When it loads**: Read at startup in the terminal, so restart Claude Code after you add or edit a style
+
+Each Markdown file defines an [output style](https://code.claude.com/docs/en/output-styles.md#how-output-styles-work), a set of instructions that adjusts how Claude works. Use a style to adapt Claude Code for uses beyond coding, or to add teaching or review modes.
+
+Select a built-in or custom style with `/output-style` or `/config` in a session, or with the `outputStyle` key in settings. Styles here are available in every project on this machine. If a project style has the same name, Claude Code uses the project's style.
+
+**`~/.claude/agents/`**
+
+**When it loads**: Each subagent runs in its own context window when you or Claude invoke it
+
+Subagents defined here are available across all your projects on this machine. Same format as project [`.claude/agents/`](#ce-agents).
+
+**`~/.claude/workflows/`**
+
+**When it loads**: Loaded at startup when [workflows are on](https://code.claude.com/docs/en/workflows.md). Each saved workflow runs as a `/<name>` command
+
+Workflow scripts saved here are available across all your projects on this machine. A project workflow with the same name in `.claude/workflows/` takes precedence.
+
+**`~/.claude/agent-memory/`**
+
+**When it loads**: First 200 lines of a subagent's `MEMORY.md`, capped at 25KB, loaded into its system prompt when the subagent runs
+
+Subagents with `memory: user` in their frontmatter store knowledge here while [auto memory](https://code.claude.com/docs/en/memory.md#auto-memory) is on. That knowledge persists across all projects. For project-scoped subagent memory, see [`.claude/agent-memory/`](#ce-agent-memory).
+
 ## What's not shown
 
 The explorer covers files you author and edit. A few related files live elsewhere:
@@ -74,7 +260,7 @@ Click a filename to open that node in the explorer above.
 | [`commands/*.md`](#ce-commands) | Project and global | ✓ | Single-file prompts; same mechanism as skills | [Skills](https://code.claude.com/docs/en/skills.md) |
 | [`output-styles/*.md`](#ce-output-styles) | Project and global | ✓ | Custom instruction sets that adjust how Claude works | [Output styles](https://code.claude.com/docs/en/output-styles.md) |
 | [`agents/*.md`](#ce-agents) | Project and global | ✓ | Subagent definitions with their own prompt and tools | [Subagents](https://code.claude.com/docs/en/sub-agents.md) |
-| [`workflows/*.js`](#ce-workflows) | Project and global | ✓ | Dynamic workflow scripts written by Claude and saved from `/workflows`; each file becomes a `/<name>` command | [Dynamic workflows](https://code.claude.com/docs/en/workflows.md) |
+| [`workflows/*.js`](#ce-workflows) | Project and global | ✓ | Dynamic workflow scripts written by Claude and saved from `/workflows`; each saved workflow runs as a `/<name>` command | [Dynamic workflows](https://code.claude.com/docs/en/workflows.md) |
 | [`agent-memory/<name>/`](#ce-agent-memory) | Project and global | ✓ | Persistent memory for subagents | [Persistent memory](https://code.claude.com/docs/en/sub-agents.md#enable-persistent-memory) |
 | [`~/.claude.json`](#ce-claude-json) | Global only | | App state, account details, UI toggles, personal MCP servers. If it's missing, Claude Code creates it when you start a session or run a subcommand such as `claude auth status`, but not for `--version` or `--help`. | [Global config](https://code.claude.com/docs/en/settings-reference.md#global-config-settings) |
 | [`projects/<project>/memory/`](#ce-global-projects) | Global only | | Auto memory: Claude's notes to itself across sessions | [Auto memory](https://code.claude.com/docs/en/memory.md#auto-memory) |

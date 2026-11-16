@@ -22,6 +22,7 @@ The simulator pane uses Apple's simulator tooling, which the desktop app doesn't
 * A Mac, since Apple's iOS Simulator runs only on macOS
 * [Xcode](https://developer.apple.com/xcode/) with the iOS platform installed, which provides the simulator devices. If Xcode lists no simulators yet, see [The simulator pane says no simulators were found](#the-simulator-pane-says-no-simulators-were-found)
   * Xcode 26.x or Xcode 27 is recommended, and the pane works with either. If you have more than one Xcode installed, see [Choose which Xcode the simulator pane uses](#choose-which-xcode-the-simulator-pane-uses)
+  * To test on an iPhone Duo, you need Xcode 27.1 or later. See [Test your app on an iPhone Duo](#test-your-app-on-an-iphone-duo) for what else you need.
 
 > [!NOTE]
 >
@@ -133,6 +134,30 @@ You can turn Claude's simulator access off in the desktop app's settings. Organi
 * The `requireCoworkFullVmSandbox` policy key, which runs Claude's tools inside an isolated virtual machine instead of on your Mac, disables the simulator pane and Claude's simulator tools entirely, so the pane can't attach a device while it's set.
 
 Claude tells you when either applies.
+
+## Test your app on an iPhone Duo
+
+You can test your app on an iPhone Duo simulator in the simulator pane and fold the device into each of its poses: closed, half open, and open. To test on one, you need:
+
+* Claude Desktop v4.29.0 or later, which is newer than the v1.24012.0 that the simulator pane itself requires. To update, open **Claude > Check for Updates…**, then restart the app.
+* Xcode 27.1 or later with its iOS simulator runtime, which includes the iPhone Duo simulator. For Xcode 27.1, that runtime is iOS 27.1. If it's missing, [download it from Xcode's Components settings](https://developer.apple.com/documentation/xcode/downloading-and-installing-additional-xcode-components). If you have more than one Xcode installed, [select Xcode 27.1 or later](#choose-which-xcode-the-simulator-pane-uses).
+
+To open an iPhone Duo in the pane, name it in your request or [switch the pane to it yourself](#control-the-simulator-yourself). If the device menu doesn't list an iPhone Duo yet, select **Add simulator…** at the end of the list of devices and choose an iPhone Duo device type.
+
+For example, to have Claude check one screen of your app in each pose:
+
+```text theme={null}
+Run the app on the iPhone Duo simulator and check the settings screen closed, half open, and open.
+```
+
+### Fold an iPhone Duo
+
+* **Fold it yourself**: click one of the three pose buttons next to the rotate button. Hold the pointer over one to see its name: **Closed**, **Half open**, or **Open**. For an angle between those poses, move the pointer over the pose buttons, then drag the slider that appears above them.
+* **Ask Claude to fold it**: ask for one of the three poses, or for a half-open hinge angle from 1 to 179 degrees.
+
+### Expect a prompt to export Xcode agent skills
+
+Before a layout check on an iPhone Duo, Claude may ask whether to export Xcode's agent skills to your [personal skills folder](https://code.claude.com/docs/en/skills.md#where-skills-live). These skills come with Xcode to guide coding agents, and once they're in that folder, Claude Code loads them in your other projects too. They include a skill for getting your app's layout ready for the iPhone Duo.
 
 ## Limitations
 

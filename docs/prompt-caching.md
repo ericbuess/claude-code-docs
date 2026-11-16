@@ -4,7 +4,7 @@
 
 # How Claude Code uses prompt caching
 
-> Claude Code manages prompt caching automatically. See why a model switch triggers a slow uncached turn, what `/compact` costs, why CLAUDE.md edits don't apply mid-session, and how to check your cache hit rate.
+> See why a model switch triggers a slow uncached turn in Claude Code, what `/compact` costs, and how to check your prompt cache hit rate.
 
 Prompt caching makes Claude Code faster and more cost-efficient. Without caching, the API would reprocess your full history on every turn. With caching, it reuses what it already processed, bills the re-read at the [cached token rate](https://platform.claude.com/docs/en/about-claude/pricing), and fully processes only what changed.
 
@@ -207,7 +207,7 @@ A new Claude Code version typically updates the system prompt or tool definition
 
 ## Actions that keep the cache
 
-These actions either append to the end of the conversation or don't touch the request at all. Some of them, such as editing CLAUDE.md, keep the cache for the same reason the change doesn't reach the running session until `/clear`, `/compact`, or a restart.
+These actions either append to the end of the conversation or don't touch the request at all.
 
 * [Editing files in your repository](#editing-files-in-your-repository)
 * [Editing CLAUDE.md mid-session](#editing-claude-md-mid-session)
@@ -220,13 +220,13 @@ These actions either append to the end of the conversation or don't touch the re
 
 ### Editing files in your repository
 
-File contents enter context only when Claude reads them, and reads append to the conversation. Editing a file Claude previously read does not retroactively change the earlier read in history. Instead, Claude Code appends a [`<system-reminder>`](https://code.claude.com/docs/en/glossary#system-reminder) noting the file changed, and Claude re-reads it if needed.
+When you edit a source file Claude already read, the cached prefix stays intact, because your edit doesn't change the copy already in the conversation.
 
 ### Editing CLAUDE.md mid-session
 
-Your project-root and user-level CLAUDE.md files are read once at session start and held in memory. Editing them mid-session does not invalidate the cache, but the edit also doesn't apply. Claude keeps working with the version that was loaded at session start. The new content loads on the next `/clear`, `/compact`, or restart.
+When you edit your project-root or user-level CLAUDE.md mid-session, the cached prefix stays intact. Claude Code reads these files at session start and holds them in memory. To reload them, run `/clear` or `/compact`, or restart Claude Code.
 
-[Nested CLAUDE.md files in subdirectories](https://code.claude.com/docs/en/memory.md) and [rules with `paths:` frontmatter](https://code.claude.com/docs/en/memory#path-specific-rules) load later, on demand. Editing one yourself before it loads does take effect. After it loads, the content is part of the conversation history, so a mid-session edit doesn't retroactively change it.
+[Nested CLAUDE.md files in subdirectories](https://code.claude.com/docs/en/memory.md) and [rules with `paths:` frontmatter](https://code.claude.com/docs/en/memory#path-specific-rules) load later, on demand. Editing one yourself before it loads takes effect. After it loads, the content is part of the conversation history, so a mid-session edit doesn't retroactively change it.
 
 ### Changing permission mode
 
@@ -250,7 +250,7 @@ Before v2.1.251, a mid-session style switch kept the cache but didn't apply unti
 
 [`/rewind`](https://code.claude.com/docs/en/checkpointing) truncates your conversation back to an earlier turn. The remaining history is the same content the cache was built from at that point, and the system prompt and project context layers are unchanged, so the next request hits the earlier cache entry. Every turn since then has read through that prefix, which kept the entry warm even if the original turn was longer ago than the TTL.
 
-Restoring file checkpoints alongside the conversation has no separate effect on the cache. File contents enter context only when Claude reads them, the same as [editing files in your repository](#editing-files-in-your-repository).
+Restoring file checkpoints alongside the conversation has no separate effect on the cache.
 
 ## Resuming a session
 

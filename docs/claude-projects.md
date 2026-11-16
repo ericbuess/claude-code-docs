@@ -262,6 +262,8 @@ On the computer that has the folder the task needs, make it available through Re
 
 In the project conversation, choose **Work locally** from the **+** menu beside the message box, which tags your message **Local**, and write what you want done. Saying in the message that the task should run on your computer works too.
 
+If **Work locally** is greyed out with a note about trusted devices, [**Require trusted devices**](https://code.claude.com/docs/en/remote-control.md#trusted-devices) is on for your account and this project can't run a thread on your computer. To work in that folder, run Claude Code on that computer directly.
+
 **3. Allow it on the card**
 
 Claude answers with an **Allow Claude to work in a folder on your device** card. Pick the folder if you connected several. Two threads working in one folder at the same time can overwrite each other's changes, so if the folder is a git repository, you can turn on **Worktree** in the folder's options to give this thread its own worktree instead. Then click **Allow once**.
@@ -274,8 +276,6 @@ While the thread runs, a laptop icon in its header shows whether your computer i
 
 * **To get the thread going again**: see [Lost contact with your folder](#lost-contact-with-your-folder)
 * **To keep the computer from sleeping on its own**: in the desktop app, turn on **Keep this computer awake for Remote Control** in **Settings > Code** or **Settings > Claude Code**
-
-A project can't run a thread on your computer while [**Require trusted devices**](https://code.claude.com/docs/en/remote-control.md#trusted-devices) is on for your account.
 
 ## Give a project standing context
 

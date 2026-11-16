@@ -331,13 +331,13 @@ Learn more: [System prompt flags](https://code.claude.com/docs/en/cli-reference.
 
 ### System reminder
 
-A message that Claude Code, as the [harness](#agentic-harness), adds to the conversation to give Claude context. You don't send system reminders yourself. Claude Code inserts them as a session runs, for example when the session starts, when a hook returns text, or when a file changes on disk. Claude reads them alongside your messages. The following all reach Claude as system reminders:
+A message that Claude Code, as the [harness](#agentic-harness), adds to the conversation to give Claude context. You don't send system reminders yourself. Claude Code inserts them as a session runs, for example when the session starts or when a hook returns text. Claude reads them alongside your messages. The following all reach Claude as system reminders:
 
 * Your [CLAUDE.md](#claude-md) files
 * The instructions of your [output style](#output-style)
 * Text a [hook](#hook) returns as `additionalContext`
 * The list of available [skills](#skill)
-* A note that a file Claude read earlier has changed on disk
+* A note that a file Claude edited earlier has since changed on disk
 * The commit and pull request attribution lines
 
 In a logged API request, a system reminder appears wrapped in `<system-reminder>` tags inside a user message, or on some models as a separate message with the `system` role.

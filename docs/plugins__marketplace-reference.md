@@ -142,7 +142,7 @@ The table lists each plugin source type and its fields.
 | `git-subdir` | `url`, `path`, `ref`, `sha` | One subdirectory of a git repository, fetched with a sparse checkout |
 | `npm` | `package`, `version`, `registry` | npm registry package or tarball link, fetched with your npm client and unpacked without running install scripts |
 | `archive` | `url`, `sha256` | Zip archive over HTTPS |
-| `command` | `command`, `timeout`, `mode` | Directory printed by a command Claude Code runs on the user's machine. Requires Claude Code v2.1.229 or later |
+| `command` | `command`, `timeout`, `mode` | Directory printed by a command Claude Code runs on the user's machine |
 
 The names `url` and `github` are also [marketplace source](#marketplace-sources) types, where `url` means a direct link to a `marketplace.json` file rather than a git repository. `git` exists only as a marketplace source, and `npm` exists as both. `git-subdir`, `archive`, and `command` exist only as plugin sources.
 

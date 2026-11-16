@@ -165,7 +165,7 @@ Claude Code installs these marketplaces locally: it registers each entry and clo
 
 * **Use a full git URL.** The `owner/repo` shorthand always resolves to github.com and cannot reference a GHES host.
 * **Prefer HTTPS URLs.** SSH clones fail on machines that do not already trust your GHES host key. An HTTPS URL with your organization's standard git credential helper works on any machine with credentials configured.
-* **Confirm each machine can clone from your GHES host.** If a machine lacks credentials, the marketplace is registered but never installed, and its plugins report as not found instead of prompting for credentials.
+* **Confirm each machine can clone from your GHES host.** If a machine lacks credentials, the clone fails without prompting for them, and the `/plugin` **Errors** tab shows why.
 * **Confirm the setting reaches each machine.** A managed settings file only takes effect on machines it's deployed to, for example through your device management system. See [Deploy managed settings](https://code.claude.com/docs/en/managed-settings.md#delivery-mechanisms) for file locations.
 
 ### Allowlist GHES marketplaces in managed settings
