@@ -121,9 +121,9 @@ When Claude pipes text to one of these tools, adding `pbcopy *`, `wl-copy *`, or
 
 ### Copied text doesn't reach your local clipboard over SSH
 
-When Claude Code runs on a remote machine over SSH, it can't run a clipboard tool on your local machine. Outside tmux, when you select text in [fullscreen rendering](https://code.claude.com/docs/en/fullscreen.md) or run `/copy`, Claude Code sends the text to your terminal as an OSC 52 escape sequence instead. Your terminal decides whether to put it on your clipboard. `/copy` reports `Copied to clipboard` whether or not the text arrived, and outside tmux the selection notice reads `sent N chars via OSC 52`.
+When Claude Code runs on a remote machine over SSH, it can't run a clipboard tool on your local machine. Outside tmux, when you select text in [fullscreen rendering](https://code.claude.com/docs/en/fullscreen.md) or run `/copy`, Claude Code sends the text to your terminal as an OSC 52 escape sequence instead. Your terminal decides whether to put it on your clipboard.
 
-Some terminals don't act on OSC 52. iTerm2 ignores it until you turn on **Settings > General > Selection > Applications in terminal may access clipboard**, and macOS Terminal.app doesn't support it.
+Some terminals don't act on OSC 52. iTerm2 ignores it until you turn on **Settings > General > Selection > Applications in terminal may access clipboard**, and macOS Terminal.app doesn't support it. Neither the `/copy` message nor the `sent N chars via OSC 52` notice confirms that the text arrived.
 
 To get the text without OSC 52:
 

@@ -258,15 +258,15 @@ On the computer that has the folder the task needs, make it available through Re
 * **In the Claude desktop app**: open **Settings > Code** or **Settings > Claude Code** and turn on **Use this computer from your phone and claude.ai**. Add the folder to the list under that switch. Threads can run on this computer while the app is open.
 * **In a terminal**: run `claude remote-control` in the folder and leave it running. In a git repository, add `--spawn worktree` to give each thread there its own [worktree](https://code.claude.com/docs/en/worktrees.md) instead of the folder itself.
 
-**2. Ask for the task with Work locally**
+**2. Ask for the task**
 
-In the project conversation, choose **Work locally** from the **+** menu beside the message box, which tags your message **Local**, and write what you want done. Saying in the message that the task should run on your computer works too.
+In the project conversation, choose **Work locally** from the **+** menu, or **Work in a local folder** in the desktop app, and write what you want done. Saying in the message that the task should run on your computer works too.
 
 If **Work locally** is greyed out with a note about trusted devices, [**Require trusted devices**](https://code.claude.com/docs/en/remote-control.md#trusted-devices) is on for your account and this project can't run a thread on your computer. To work in that folder, run Claude Code on that computer directly.
 
 **3. Allow it on the card**
 
-Claude answers with an **Allow Claude to work in a folder on your device** card. Pick the folder if you connected several. Two threads working in one folder at the same time can overwrite each other's changes, so if the folder is a git repository, you can turn on **Worktree** in the folder's options to give this thread its own worktree instead. Then click **Allow once**.
+Claude answers with an **Allow Claude to work in a folder on your computer** card. Pick the folder if you connected several. Two threads working in one folder at the same time can overwrite each other's changes. If the folder is a git repository, you can turn on **Worktree** in the folder's options to give this thread its own worktree instead. Then click **Allow once**.
 
 The thread runs in [auto mode](https://code.claude.com/docs/en/permission-modes.md#eliminate-prompts-with-auto-mode), so Claude runs commands and edits files in that folder without asking you each time. If auto mode is unavailable or turned off in that computer's Claude Code, the thread runs without it, and any permission prompt it raises waits for your answer in the thread, as [Unblock a thread waiting on approval](#unblock-a-thread-waiting-on-approval) describes.
 

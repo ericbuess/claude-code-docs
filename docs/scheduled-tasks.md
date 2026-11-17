@@ -126,7 +126,7 @@ Edits to `loop.md` take effect on the next iteration, so you can refine the inst
 
 ### Stop a loop
 
-* **[Self-paced loop](#let-claude-choose-the-interval)**: while the loop is waiting for its next iteration, press `Esc` to stop it. You can also stop it with `Ctrl+C` while Claude is idle, except in a [background session you've attached to](#detach-without-stopping-a-loop). A `Pending wakeup cancelled` notice confirms that the loop won't fire again.
+* **[Self-paced loop](#let-claude-choose-the-interval)**: while the loop is waiting for its next iteration, press `Esc` on an empty prompt to stop it. You can also stop it with `Ctrl+C` while Claude is idle, except in a [background session you've attached to](#detach-without-stopping-a-loop). A `Pending wakeup cancelled` notice confirms that the loop won't fire again.
 * **[Fixed-interval loop](#run-on-a-fixed-interval)**: to stop a loop such as `/loop 5m`, ask Claude to cancel it, for example `cancel the deploy check loop`. `Esc` and `Ctrl+C` don't stop it, or any task you [scheduled by asking Claude directly](#manage-scheduled-tasks). A loop you don't cancel ends when [seven days elapse](#seven-day-expiry).
 
 In [self-paced mode](#let-claude-choose-the-interval), Claude can also end the loop on its own once the task is complete. Claude calls the [`ScheduleWakeup` tool](https://code.claude.com/docs/en/tools-reference) with `stop: true`, which cancels the pending wakeup immediately. If an iteration ends without either rescheduling or stopping, Claude Code schedules one fallback wakeup about 20 minutes later and ends the loop when that iteration doesn't reschedule either.

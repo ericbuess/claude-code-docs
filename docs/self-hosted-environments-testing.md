@@ -194,7 +194,7 @@ On the driver side, run anything that accepts the POST and holds the reply until
 
 ## Authenticate from CI
 
-Both `claude -p ... --environment` and `claude -p ... --cloud` authenticate with a claude.ai OAuth token; API keys, such as `sk-ant-xxxxx`, aren't accepted for either call. Two approaches make a token available in CI.
+Both `claude -p ... --environment` and `claude -p ... --cloud` authenticate with a claude.ai OAuth token; API keys, such as `sk-ant-xxxxx`, aren't accepted for either call.
 
 ### Long-lived CI host
 
@@ -206,7 +206,7 @@ The CLI refreshes the short-lived access token automatically on each invocation,
 
 There is no long-lived CI token for this today. The scope that grants cloud-session control, `user:sessions:claude_code`, is capped server-side at 30 days, so `claude setup-token`, which mints a one-year inference-only token, doesn't cover it. The [environment secret](https://code.claude.com/docs/en/self-hosted-environments-quickstart.md#set-up-an-environment-and-runner) isn't accepted either, since it only authorizes a runner to register with the environment, not to create sessions.
 
-To provision a stored login onto an ephemeral runner, set [`CLAUDE_CODE_OAUTH_REFRESH_TOKEN` and `CLAUDE_CODE_OAUTH_SCOPES`](https://code.claude.com/docs/en/env-vars#variables) so `claude auth login` exchanges the token without a browser; the same 30-day cap applies to the refresh grant. Contact your Anthropic account team if you need a machine-identity path that isn't bound to a human account.
+Run `claude -p` from a [long-lived CI host](#long-lived-ci-host) instead. Contact your Anthropic account team if you need a machine-identity path that isn't bound to a human account.
 
 ## Create a dedicated test environment
 

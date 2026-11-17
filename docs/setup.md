@@ -236,7 +236,7 @@ To move a native installation to the `"stable"` [release channel](#configure-rel
 
 Set the minimum in `/config` to have Claude Code fill in your current version, or in your settings file to type the number yourself:
 
-* **In `/config`**: switch **Auto-update channel** to stable, then select **Stay on current version**. If you switch back to latest in `/config`, Claude Code clears the minimum.
+* **In `/config`**: switch **Auto-update channel** to stable, then select the option to stay on your current version. If you switch back to latest in `/config`, Claude Code clears the minimum.
 * **In your [settings file](https://code.claude.com/docs/en/settings.md)**: run `claude --version` in your shell, and set `minimumVersion` to the number at the start of the output. In the same edit, set `autoUpdatesChannel` to `"stable"`.
 
 This `~/.claude/settings.json` switches an installation on version 2.1.323 to stable:
@@ -280,7 +280,7 @@ To apply an update immediately without waiting for the next background check, ru
 claude update
 ```
 
-When an update installs, the command reports `Successfully updated from <old version> to version <new version>`. If you're already on the newest version, it reports `Claude Code is up to date (<version>)`. Installs managed by Homebrew, WinGet, or apk report `Claude is up to date!` instead.
+When an update installs, the command prints a line that ends with `to version <new version>`. If you're already on the newest version, it reports `Claude Code is up to date (<version>)`. Installs managed by Homebrew, WinGet, or apk report `Claude is up to date!` instead.
 
 ## Advanced installation options
 

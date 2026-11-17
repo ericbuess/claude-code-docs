@@ -8,7 +8,7 @@
 
 Agent view, opened with `claude agents`, is one screen for all your background sessions: what's running, what needs your input, and what's done. Dispatch new sessions, watch their state at a glance instead of scrolling through transcripts, and step in only when one needs you. Each background session is a full Claude Code conversation that keeps running without a terminal attached, so you can open it, reply, and leave whenever you want.
 
-![Agent view in a terminal. A line at the top counts the sessions awaiting input, working, and completed. Four sessions are grouped under Needs input, Working, and Completed. Each row shows the session's name, its latest status or question, and a time. At the bottom are an input for describing a new task and a row of keyboard hints.](https://mintcdn.com/claude-code/v_J840yKc6uuKDX_/images/agent-view-light.png?fit=max\&auto=format\&n=v_J840yKc6uuKDX_\&q=85\&s=bd95fda83ea66ca8b2e0e7b68f8cb29e)
+![Agent view in a terminal. A line at the top counts the sessions awaiting input, working, and completed. Four sessions are grouped under Needs input, Working, and Completed. Each row shows the session's name, its latest status or question, and a time. At the bottom are an input for describing a new task and a row of keyboard hints.](https://mintcdn.com/claude-code/H7YQo-xfDxC94ETh/images/agent-view-light.png?fit=max\&auto=format\&n=H7YQo-xfDxC94ETh\&q=85\&s=f27b570ff81c2a316bef487645b1331c)
 
 Use agent view when you have several independent tasks Claude can work on without you watching every step. Dispatch a bug fix, a pull request review, and a flaky-test investigation as three rows, keep working in another window, and check back when a row shows it needs you or has a result.
 
@@ -265,7 +265,7 @@ In a session running in the foreground, one you started in the terminal rather t
 
 If you press `←` right after you delete the last of the prompt's text or move through prompt history, Claude Code asks you to confirm: the first press shows `Press ← again to open agents`, or `Press ← again to go back to agents` in an attached session, and the second press switches.
 
-When `←` backgrounds a foreground session, agent view shows `Your conversation moved to the background` above the list, with that session's row already selected. From there:
+After you background a session with `←`:
 
 * Press `Enter` to reopen the conversation.
 * Press `Esc` to undo the switch and return to the conversation. If `Esc` shows `Still starting — try again in a moment`, the background session isn't ready yet, so press `Esc` again in a moment.

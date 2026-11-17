@@ -1565,7 +1565,7 @@ Some MCP servers declare a tool's input schema as a JSON Schema union, with `any
 Tools with a root-level combinator stay available. Before sending the tool to the API, Claude Code flattens the schema into a single object and prepends a sentence to the tool's description that tells Claude which parameter groups belong together:
 
 * `allOf`: properties from every branch are merged, and each branch's `required` list still applies
-* `anyOf` and `oneOf`: properties from every branch are merged, and each branch's `required` list is described in the tool description instead of enforced by the schema
+* `anyOf` and `oneOf`: properties from every branch are merged, and each branch's `required` list is described in the tool description
 
 Your server receives whichever arguments Claude chose, so keep validating the combination server-side.
 

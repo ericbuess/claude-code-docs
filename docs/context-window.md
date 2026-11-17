@@ -10,12 +10,49 @@ Claude Code's context window holds everything Claude knows about your session: y
 
 ## What the timeline shows
 
-The session walks through a realistic flow with representative token counts:
-
 * **Before you type anything**: CLAUDE.md, auto memory, MCP tool names, and skill descriptions all load into context. [AGENTS.md files](https://code.claude.com/docs/en/memory.md#agents-md) can load in place of CLAUDE.md. Your own setup may add more here, like an [output style](https://code.claude.com/docs/en/output-styles.md) or text from [`--append-system-prompt`](https://code.claude.com/docs/en/cli-reference).
 * **As Claude works**: each file read adds to context, [path-scoped rules](https://code.claude.com/docs/en/memory.md#path-specific-rules) load automatically alongside matching files, and a [PostToolUse hook](https://code.claude.com/docs/en/hooks-guide.md) fires after each edit.
 * **The follow-up prompt**: a [subagent](https://code.claude.com/docs/en/sub-agents.md) handles the research in its own separate context window, so the large file reads stay out of yours. Only the summary and a small metadata trailer come back.
-* **At the end of the walkthrough**: you run `/compact`, which replaces the conversation with a structured summary. Most startup content reloads automatically; the table below shows what happens to each mechanism.
+* **At the end of the session**: you run `/compact`, which replaces the conversation with a structured summary. Most startup content reloads automatically. See [what survives compaction](#what-survives-compaction) for what reloads and what gets summarized.
+
+> [accordion] Token counts for each step
+>
+> Compare how many tokens each step adds in the timeline's example session. The counts are illustrative and vary with your CLAUDE.md size, MCP servers, and file lengths. For real numbers, [check your own session](#check-your-own-session).
+>
+> | Phase | What enters context | Example tokens |
+> | :- | :- | -: |
+> | Before you type | System prompt | 4,200 |
+> | Before you type | Auto memory (`MEMORY.md`) | 680 |
+> | Before you type | Environment info | 280 |
+> | Before you type | MCP tool names | 120 |
+> | Before you type | Skill descriptions | 450 |
+> | Before you type | `~/.claude/CLAUDE.md` | 320 |
+> | Before you type | Project CLAUDE.md | 1,800 |
+> | First prompt | Your prompt | 45 |
+> | As Claude works | Read `src/api/auth.ts` | 2,400 |
+> | As Claude works | Read `src/lib/tokens.ts` | 1,100 |
+> | As Claude works | Rule `api-conventions.md` | 380 |
+> | As Claude works | Read `middleware.ts` | 1,800 |
+> | As Claude works | Read `auth.test.ts` | 1,600 |
+> | As Claude works | Rule `testing.md` | 290 |
+> | As Claude works | Search for `refreshToken` | 600 |
+> | As Claude works | Claude's analysis | 800 |
+> | As Claude works | Edit `auth.ts` | 400 |
+> | As Claude works | Prettier hook output | 120 |
+> | As Claude works | Edit `auth.test.ts` | 600 |
+> | As Claude works | Prettier hook output | 100 |
+> | As Claude works | `npm test` output | 1,200 |
+> | As Claude works | Claude's summary of its changes | 400 |
+> | Follow-up prompt | Your follow-up prompt | 40 |
+> | Follow-up prompt | Claude's call to the subagent | 80 |
+> | Follow-up prompt | Subagent's summary | 420 |
+> | Follow-up prompt | Claude's response | 1,200 |
+> | End of the session | `!git status` and its output | 180 |
+> | End of the session | `/commit-push` skill body | 620 |
+>
+> Before `/compact`, 22,225 tokens are in use. The subagent uses another 9,890 tokens in its own context window.
+>
+> After `/compact`, 17,095 tokens are in use: the "Before you type" rows, a 1,725-token conversation summary, the four files read under "As Claude works", and the `/commit-push` skill body.
 
 ## What survives compaction
 

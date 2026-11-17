@@ -143,21 +143,13 @@ On an Enterprise plan, when you're logged in with your claude.ai account and sav
 
 If you switch models with `/model`, the switch also reaches [subagents that inherit the main conversation's model](https://code.claude.com/docs/en/sub-agents.md#choose-a-model), because Claude Code resolves their model from the one your session is using when Claude starts them. Switch to Opus before Claude delegates research or test runs to one of them, and that work runs on Opus too. To keep a custom subagent on a smaller model, set `model` in its definition.
 
-If you set a model with `/model` in [non-interactive mode](https://code.claude.com/docs/en/headless.md), with the `-p` flag, your choice applies to the current session only and isn't saved as your default; `/model` in that mode requires Claude Code v2.1.205 or later. Project and managed settings still take precedence and reapply on the next launch. An [organization default model](#organization-default-model) that your admin has configured to override user selection also reapplies on the next launch.
+If you set a model with `/model` in [non-interactive mode](https://code.claude.com/docs/en/headless.md), with the `-p` flag, your choice applies to the current session only and isn't saved as your default. `/model` in that mode requires Claude Code v2.1.205 or later.
 
 In v2.1.144 through v2.1.152, `/model` applied to the current session only and `d` in the picker saved a default.
 
 The `--model` flag and `ANTHROPIC_MODEL` environment variable apply only to the session you launch with them. To run different models in different terminals at the same time, launch each one with its own `--model` flag rather than switching with `/model`.
 
 Prices in the `/model` picker appear when Claude Code talks to the Anthropic API, directly or through an [LLM gateway](https://code.claude.com/docs/en/llm-gateway) that proxies it, and the price on a row is the price of the model that row selects. On [third-party providers](https://code.claude.com/docs/en/third-party-integrations.md) such as Amazon Bedrock and on the [Claude apps gateway](https://code.claude.com/docs/en/claude-apps-gateway), your provider or gateway determines what you pay, so picker rows show no price. The price is a display label only; it doesn't affect which model a row selects or what your provider bills. Before v2.1.206, [Claude Platform on AWS](https://code.claude.com/docs/en/claude-platform-on-aws.md) and gateway sessions showed Anthropic list prices, and a row could show the price of a different model than the one it selected.
-
-Resumed sessions started with `claude --resume`, `--continue`, or the `/resume` picker keep the model they were using when the transcript was saved. If the restored model has been retired or is excluded by [`availableModels`](#restrict-model-selection), the session falls through to the normal precedence order. On providers that use provider-specific deployment IDs rather than Anthropic model IDs, such as Amazon Bedrock, Google Cloud's Agent Platform, and Microsoft Foundry, the transcript model isn't restored at all and the session resolves its model through the normal precedence order.
-
-If your `model` setting is `haiku`, a session saved on a Haiku model resumes on the model that `haiku` resolves to now. For example, once `haiku` resolves to Haiku 5.5, a session saved on Haiku 4.5 resumes on Haiku 5.5.
-
-A model you pick for the new launch with `--model` or `ANTHROPIC_MODEL` still takes precedence over the restored model. As of v2.1.195, so does an [`ANTHROPIC_DEFAULT_OPUS_MODEL`](#environment-variables) family variable. [`ANTHROPIC_DEFAULT_MODEL`](#set-a-default-model-for-new-sessions) can too, under the conditions listed in its section.
-
-When the active model at startup comes from project or managed settings rather than your own selection, the startup header shows which settings file set it. Run `/model` to override; the project or managed setting reapplies on the next launch. On platforms that embed Claude Code and set [`CLAUDE_CODE_PROVIDER_MANAGED_BY_HOST`](https://code.claude.com/docs/en/env-vars), the host's model configuration takes precedence over managed model settings, while a managed `availableModels` allowlist stays in force unless the host supplies its own; [Exceptions to managed settings precedence](https://code.claude.com/docs/en/settings.md#exceptions-to-managed-settings-precedence) says which keys and variables the host overrides.
 
 If you or your organization configure [PreModelSwitch hooks](https://code.claude.com/docs/en/hooks.md#premodelswitch), they run before a requested switch applies and can block it or ask you to confirm. To find out why a hook blocked a switch and what to do, see [Model switch was blocked by a PreModelSwitch hook](https://code.claude.com/docs/en/errors.md#model-switch-was-blocked-by-a-premodelswitch-hook).
 
@@ -203,6 +195,22 @@ Example settings file:
 }
 ```
 
+When the active model at startup comes from project or managed settings rather than your own selection, the startup header shows which settings file set it. Run `/model` to override; the project or managed setting reapplies in new sessions.
+
+On platforms that embed Claude Code and set [`CLAUDE_CODE_PROVIDER_MANAGED_BY_HOST`](https://code.claude.com/docs/en/env-vars), the host's model configuration takes precedence over managed model settings. A managed `availableModels` allowlist stays in force unless the host supplies its own. [Exceptions to managed settings precedence](https://code.claude.com/docs/en/settings.md#exceptions-to-managed-settings-precedence) says which keys and variables the host overrides.
+
+#### Which model a resumed session uses
+
+A session you resume with `claude --resume` or `--continue` keeps the model it was saved on, except in cases such as these, where it follows the [priority order](#setting-your-model) instead:
+
+* You set an alias variable such as [`ANTHROPIC_DEFAULT_OPUS_MODEL`](#environment-variables), or [`ANTHROPIC_DEFAULT_MODEL`](#set-a-default-model-for-new-sessions) under the conditions listed in its section
+* The saved model has been retired or is excluded by [`availableModels`](#restrict-model-selection)
+* Your provider uses provider-specific deployment IDs rather than Anthropic model IDs, as Amazon Bedrock, Google Cloud's Agent Platform, and Microsoft Foundry do
+* Your `model` setting is `haiku` and the session was saved on a Haiku or Sonnet model. For example, once `haiku` resolves to Haiku 5.5, a session saved on Haiku 4.5 resumes on Haiku 5.5.
+* Your `model` setting is `opusplan` and the session was saved on an Opus or Sonnet model
+
+To resume on a model you choose, pass `--model` or set `ANTHROPIC_MODEL`.
+
 #### Fix a mistyped model name
 
 Either of these warnings means Claude Code doesn't recognize the model ID you set, and the ID nearly spells a model name or alias it does recognize:
@@ -237,16 +245,16 @@ Claude Code ignores the variable in these cases, and the Default option resolves
 * Your organization's [model restrictions](#restrict-model-selection) exclude the model
 * The model isn't available to your account
 
-When a new session would start on the variable's model, a session you resume with `claude --resume`, `--continue`, or the `/resume` picker starts on it too. Claude Code doesn't restore the model saved in that session's transcript. Otherwise Claude Code doesn't use the variable when you [resume a session](#setting-your-model).
+When a new session would start on the variable's model, a session you resume with `claude --resume`, `--continue`, or the `/resume` picker starts on it too. Claude Code doesn't restore the model saved in that session's transcript. Otherwise Claude Code doesn't use the variable when you [resume a session](#which-model-a-resumed-session-uses).
 
 #### A new session starts on a different model than you picked
 
 When you pick a model with `/model` and your next session starts on something else, these are the usual causes:
 
 * **You chose it for one session.** Pressing `s` in the picker, launching with `--model`, and running `/model` in non-interactive mode all apply to the current session and leave your saved default alone.
-* **Something with higher priority sets the model.** A `model` value in project or managed settings, `ANTHROPIC_MODEL` in your shell, or an [organization default](#organization-default-model) your admin set to override user choices applies again at every launch. Your `/model` choice is still saved; it's outranked. When project or managed settings set the model, the startup header names the file.
+* **Something with higher priority sets the model.** A `model` value in project or managed settings, `ANTHROPIC_MODEL` in your shell, or an [organization default](#organization-default-model) your admin set to override user choices applies again at every new-session launch. Your `/model` choice is still saved; it's outranked. When project or managed settings set the model, the startup header names the file.
 * **Claude Code couldn't save your choice.** `/model` writes `model` to `~/.claude/settings.json`. If you can't write to that file, for example because another tool generates it or links it to a read-only copy, the model you chose lasts for the session and the next launch reads the old value. Set `model` in the tool that generates the file, or make the file writable. See [A change you made in Claude Code is lost in new sessions](https://code.claude.com/docs/en/settings.md#a-change-you-made-in-claude-code-is-lost-in-new-sessions).
-* **You resumed a session.** A session you resume with `claude --resume` or `--continue` usually [keeps the model it was using](#setting-your-model) rather than your current default.
+* **You resumed a session.** A session you resume with `claude --resume` or `--continue` usually [keeps the model it was using](#which-model-a-resumed-session-uses) rather than your current default.
 
 ## Restrict model selection
 
@@ -449,9 +457,9 @@ The organization default is a starting point, not a restriction. These selection
 * a `model` value in [managed settings](https://code.claude.com/docs/en/managed-settings.md) or supplied through `--settings`
 * a `model` value in your user, project, or local settings, including a model you save with `/model`
 
-Admins can also configure the organization default to override user selection. With override on, it takes precedence over the `model` value in user, project, and local settings, so a model you save with `/model` applies for the current session and the organization default returns on the next launch. When your selection differs, `/model` shows `Your organization's default (<model>) applies on restart`. The `--model` flag, `ANTHROPIC_MODEL`, managed settings, and `--settings` still take precedence even with override on.
+Admins can also configure the organization default to override user selection. With override on, it takes precedence over the `model` value in user, project, and local settings. A model you save with `/model` then applies for the current session, and the organization default returns in new sessions. When your selection differs, `/model` shows `Your organization's default (<model>) applies on restart`.
 
-To limit which models members can select, use [organization model restrictions](#organization-model-restrictions) or [`availableModels`](#restrict-model-selection) instead.
+The `--model` flag, `ANTHROPIC_MODEL`, managed settings, and `--settings` still take precedence even with override on. To limit which models members can select, use [organization model restrictions](#organization-model-restrictions) or [`availableModels`](#restrict-model-selection) instead.
 
 Claude Code reads the organization default once at startup, so a default the admin changes mid-session takes effect on the next launch.
 
@@ -459,7 +467,7 @@ When the organization default doesn't override user selection, the first interac
 
 The organization default passes through these restriction checks before it is adopted:
 
-* With the default prefix matching, [`availableModels`](#restrict-model-selection) on its own doesn't apply to the organization default, so an organization default outside the allowlist still applies. When [`enforceAvailableModels`](#enforce-the-allowlist-for-the-default-model) is also set, an organization default outside the allowlist is remapped to the first allowlist entry as well
+* with the default prefix matching and [`enforceAvailableModels`](#enforce-the-allowlist-for-the-default-model) set, an organization default outside the [`availableModels`](#restrict-model-selection) allowlist is remapped to a model on that list
 * an organization default that [organization model restrictions](#organization-model-restrictions) deny for your account is replaced by the newest allowed model in its family, or a lower-cost family when every version of it is restricted
 * for an organization default that `deniedModels` or an `"exact"` list blocks, see [Block specific models or versions](#block-specific-models-or-versions)
 * an organization default that isn't available to your account at all is skipped, and the Default option resolves as it would [without an organization default](#default-model-setting)

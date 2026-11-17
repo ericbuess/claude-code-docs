@@ -204,7 +204,7 @@ Run `/tasks` to see the artifacts your session is watching. `/tasks` groups the 
 
 You can stop Claude from replying on its own in any of these ways:
 
-* **Press Ctrl+C once at an idle prompt**: Claude pauses replying on every artifact your session is watching. Replies start again after you send your next message.
+* **Press Ctrl+C once at an idle, empty prompt**: Claude pauses replying on every artifact your session is watching. Replies start again after you send your next message.
 * **Stop the task in `/tasks`**: Claude stops replying on that artifact until you ask it to resume replies there. Publishing the artifact again doesn't start replies again, and the stop still applies when you resume the session later.
 * **Press `Ctrl+X Ctrl+K` twice within 3 seconds**: the chord that [stops every running background subagent](https://code.claude.com/docs/en/interactive-mode.md#general-controls) also stops Claude from replying on every artifact for the rest of the session. Asking Claude to resume replies doesn't undo this stop.
 
@@ -242,7 +242,7 @@ You can [share a connector-backed page](#share-an-artifact) within your organiza
 
 When a connector-backed page renders but its live sections stay empty for a viewer in your organization, work through these causes:
 
-* **The viewer hasn't connected the connector**: connectors are per-account, so each viewer needs their own connection to every connector the page calls. They can add one under [**Customize > Connectors**](https://claude.ai/customize/connectors) on claude.ai, then reload the page.
+* **The viewer hasn't connected the connector**: connectors are per-account, so each viewer needs their own connection to every connector the page calls. They can add one at [claude.ai/customize/connectors](https://claude.ai/customize/connectors), then reload the page.
 * **The viewer declined the permission ask**: a denial lasts for the rest of that page load. Reloading the page brings the permission ask back.
 * **Connector calls are turned off for the organization**: an Owner controls the [**Enable artifact connectors** toggle](#control-connector-calls-from-artifacts) in admin settings.
 * **The page calls tool names the connector doesn't expose**: the affected sections stay empty for everyone, including you. This can happen when a page names the individual tools behind a gateway-style connector that exposes only a few tools of its own. Ask Claude to fix the tool names the page calls and publish it again.
@@ -323,25 +323,21 @@ Claude treats your design system as higher precedence than its own choices, and 
 
 For typography, Claude can load a typeface from Google Fonts, the one external font source an artifact page can load from. Claude inlines any other typeface as a `@font-face` data URI and gives every typeface a fallback stack, so the page still renders if a font doesn't load. To use a specific typeface, name it in your prompt or your design system.
 
-## Start from a Slides, Design, or Docs template
+## Start an artifact from a template
 
-Instead of building a page from scratch, Claude can start an artifact from one of the templates on your claude.ai account: [Claude Slides](https://support.claude.com/en/articles/17153992-what-are-artifacts-and-how-do-i-use-them#h_11d5a9a5fa) for a presentation, [Claude Design](https://support.claude.com/en/articles/14604416-get-started-with-claude-design) for a visual design, or [Claude Docs](https://support.claude.com/en/articles/16923645-get-started-with-claude-docs) for a document other people will read and edit. Each opens in its own editor on claude.ai, where you and your teammates change it directly or ask Claude to, and export it to formats such as PowerPoint, PDF, or Word.
+The [artifact templates](https://support.claude.com/en/articles/17153992-what-are-artifacts-and-how-do-i-use-them#h_11d5a9a5fa) on your claude.ai account also work from Claude Code. For example, use the [Claude Design](https://support.claude.com/en/articles/14604416-get-started-with-claude-design) template for a visual design, or the [Claude Docs](https://support.claude.com/en/articles/16923645-get-started-with-claude-docs) template for a document other people will read and edit. Your account can include others, such as Sheets, Whiteboards, or Data. To see which ones your session has, ask Claude to list the artifact templates available to you.
 
-To start from a template, describe what you want, such as "turn the migration notes into a deck for Thursday's review" or "write this plan up as a doc for the team". Claude picks the matching template, fills it from your request and from what the session already has, and gives you the link. For a deck or a design you can also run `/slides` or `/design` with a brief.
+To use a template from Claude Code, you need:
 
-> [!NOTE]
->
-> Templates are in beta. They're on by default on Pro, Max, Ultra, and Team plans. On Enterprise plans, an Owner [turns each template on](https://support.claude.com/en/articles/16994751-artifacts-admin-guide-for-team-and-enterprise-plans) under **Organization settings > Artifacts**. If your organization has the Slides template turned off, `/slides` doesn't appear; if it has the Design template turned off, `/design` doesn't draft designs. Both commands require Claude Code v2.1.265 or later and a session where [artifacts are available](#availability).
+* A session where [artifacts are available](#availability)
+* On Team and Enterprise plans, the template turned on for your organization. If it's off, ask an Owner to [turn the template on](https://support.claude.com/en/articles/16994751-artifacts-admin-guide-for-team-and-enterprise-plans#h_6e06d8f1a8) under **Organization settings > Artifacts** on claude.ai.
+* On Enterprise plans with custom roles, a role that [includes the template](https://support.claude.com/en/articles/16994751-artifacts-admin-guide-for-team-and-enterprise-plans#h_d830917488)
+* For the Docs and Sheets templates, the [Claude Docs connector](#write-a-document-with-claude-docs), which Claude uses to write the content of both. If you [turned the connector off](https://code.claude.com/docs/en/mcp.md#disable-claude-ai-connectors), turn it back on first.
+* Claude Code v2.1.265 or later, if you start the Design template with its [`/design` command](#draft-a-design-canvas)
 
-### Make a slide deck
+To start from a template, name it or describe what you want, such as "write this plan up as a doc for the team" or "make a shared task spreadsheet". Claude picks the matching template, fills it from your request and from what the session already has, and gives you the link. To get a file instead, name the format, such as `.csv`.
 
-Run `/slides` with a brief that says what the deck covers and who it's for:
-
-```text wrap theme={null}
-/slides a quarterly review of the platform team's reliability work, for the engineering all-hands
-```
-
-Claude creates a Claude Slides artifact and gives you the link. Open it in a desktop browser to edit or present the deck. If you run `/slides` without a brief, Claude asks what the deck should be about before creating anything.
+To edit the artifact yourself, open the link, which goes to that template's editor on claude.ai. You can also keep asking Claude for changes from your session. For export formats, see [View and export](https://support.claude.com/en/articles/17153992-what-are-artifacts-and-how-do-i-use-them#h_1403132eb8).
 
 ### Draft a design canvas
 
@@ -357,7 +353,7 @@ Open the published artifact in a desktop browser to review the artboards. Select
 
 Claude Docs reaches Claude Code as a claude.ai [connector](https://code.claude.com/docs/en/mcp.md#use-mcp-servers-from-claude-ai) rather than a command. When it's connected, `/mcp` lists it as `claude.ai Claude Docs`. A request for a document meant for other people then goes to Claude Docs instead of an artifact page: a spec, a proposal, or a write-up of the plan you worked through in the session. Claude gives you the doc's link when it's drafted.
 
-A document that belongs in the codebase, such as a README, stays a file. To get a file for something Claude would otherwise put in Claude Docs, name the format, such as `.docx` or a Markdown file in the repository. To turn off only the `claude.ai Claude Docs` connector, see [Disable claude.ai connectors](https://code.claude.com/docs/en/mcp.md#disable-claude-ai-connectors).
+A document that belongs in the codebase, such as a README, stays a file. To get a file for something Claude would otherwise put in Claude Docs, name the format, such as `.docx` or a Markdown file in the repository. To turn off only the `claude.ai Claude Docs` connector, see [Disable claude.ai connectors](https://code.claude.com/docs/en/mcp.md#disable-claude-ai-connectors). Keep the connector on if you use the Sheets template, which needs it too.
 
 ## Page constraints
 

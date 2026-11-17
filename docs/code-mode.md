@@ -49,14 +49,15 @@ Before you turn on Code Mode, check that you can accept these limits:
 ## Requirements
 
 * **Version**: Claude Code v2.1.323 or later, on either [release channel](https://code.claude.com/docs/en/setup.md#configure-release-channel). An older version starts without Code Mode, with or without the reason `it isn't open to your account yet`
-* **Account**: a Claude subscription or Console account. You can't use Code Mode through a gateway, Amazon Bedrock, Claude Platform on AWS, Google Cloud's Agent Platform, or Microsoft Foundry
+* **Account**: a Claude subscription or Console account. You can't use Code Mode through a gateway, Amazon Bedrock, Claude Platform on AWS, Google Cloud's Agent Platform, Microsoft Foundry, or [Claude Models on Google Cloud (Anthropic managed)](https://code.claude.com/docs/en/claude-models-on-google-cloud-anthropic-managed.md)
 * **Organization**: your organization doesn't use the [HIPAA configuration](https://code.claude.com/docs/en/hipaa-setup.md) or [zero data retention](https://code.claude.com/docs/en/zero-data-retention.md)
 * **Model**: Claude Opus 5.5, Sonnet 5.5, Haiku 5.5, or Fable 5.2
 * **Surface**: an interactive `claude` session in a terminal. Code Mode doesn't work with `-p`, the Agent SDK, the VS Code panel, the Desktop app, or cloud sessions
+* **Agent teams**: to use Code Mode with [agent teams](https://code.claude.com/docs/en/agent-teams.md) on, you need v2.1.326 or later. Teammates run in Code Mode in the default [in-process display mode](https://code.claude.com/docs/en/agent-teams.md#choose-a-display-mode), and start without it in split panes
 * **Installation**: the [native build](https://code.claude.com/docs/en/setup.md) of Claude Code
 * **Windows**: [Git for Windows](https://git-scm.com/downloads/win) is installed
 
-You also can't start Code Mode with some settings on, such as an API key helper, agent teams, OpenTelemetry export, or `DISABLE_TELEMETRY`. For the fix for each, see [Code Mode doesn't start](#code-mode-doesnt-start).
+You also can't start Code Mode with some settings on, such as an API key helper, OpenTelemetry export, or `DISABLE_TELEMETRY`. For the fix for each, see [Code Mode doesn't start](#code-mode-doesnt-start).
 
 ## Try Code Mode
 
@@ -143,16 +144,18 @@ Users who are in a Code Mode session stay in it until they exit or restart Claud
 
 ## Permissions and long-running code
 
-Your permission mode decides how Claude's code is checked and whether you can talk to Claude while the code runs.
+Your permission mode decides how the code that Claude writes is checked and whether you can talk to Claude while the code runs.
 
 ### Permission checks
 
-Each tool call that Claude's code makes goes through your `deny` and `ask` [permission rules](https://code.claude.com/docs/en/permissions.md) and your [`PreToolUse` hooks](https://code.claude.com/docs/en/hooks#pretooluse). You don't need to change a rule or matcher for a tool such as `Bash`. Beyond rules and hooks, a classifier reviews the code in auto mode, and you answer prompts in the modes that ask:
+When Claude runs code, each tool call in it goes through your `deny` and `ask` [permission rules](https://code.claude.com/docs/en/permissions.md) and your [`PreToolUse` hooks](https://code.claude.com/docs/en/hooks#pretooluse) under the tool's usual name, such as `Bash`. Beyond rules and hooks, a classifier reviews the code in auto mode, and you answer prompts in the modes that ask:
 
 * **[Auto mode](https://code.claude.com/docs/en/permission-modes.md#eliminate-prompts-with-auto-mode)**: the classifier reviews each piece of code before it runs, not each tool call. It doesn't see values computed at run time, such as a path taken from search output, so keep rules or hooks for calls you must control. You can still be [prompted when new code starts while earlier code runs](#permission-prompt-with-a-countdown)
 * **Other [permission modes](https://code.claude.com/docs/en/permission-modes.md)**: the code starts without a review, and you're prompted for each tool call that would prompt you in that mode
 
-To check the code itself, write a `PreToolUse` hook that matches `REPL`, the tool that runs Claude's code, and read the JavaScript from `tool_input.code`.
+If you have a `PreToolUse` hook that allows or blocks shell commands, make it check each part of a command, as [Bash rules do](https://code.claude.com/docs/en/permissions.md#compound-commands). In Code Mode, a `git push` in a folder named `app` can reach your hook as `cd 'app' && git push`.
+
+To check the code itself, write a `PreToolUse` hook that matches `REPL`, the tool that runs the code, and read the JavaScript from `tool_input.code`.
 
 > [!WARNING]
 >
@@ -179,15 +182,16 @@ For background code, start your session in auto or `bypassPermissions` mode. If 
 
 | Reason includes | What to do |
 | :- | :- |
-| `it isn't open to your account yet` | If your version is older than v2.1.323, [update](#try-code-mode). Otherwise, check your network connection and start again. If the reason stays, try again another day |
-| `it only works with the Anthropic API` | Remove the settings that route requests through a cloud provider, a gateway, or a custom `ANTHROPIC_BASE_URL` |
+| `it isn't open to your account in this version` or `it isn't open to your account yet` | If your version is older than v2.1.323, [update](#try-code-mode). Otherwise, check your network connection and start again. If the reason stays, try again another day |
+| `it only works directly with the Anthropic API` or `it only works with the Anthropic API` | Remove the settings that route requests through a cloud provider, a gateway, or a custom `ANTHROPIC_BASE_URL` |
 | `it doesn't work with an API key helper` | Remove `apiKeyHelper`, `ANTHROPIC_AUTH_TOKEN`, and any `Authorization` or `X-Api-Key` header in `ANTHROPIC_CUSTOM_HEADERS`. Then sign in or set `ANTHROPIC_API_KEY` |
 | `it only works with Opus 5.5, Sonnet 5.5 and later models` | Start with a [supported model](#requirements), for example with `--model opus`. Haiku 5.5 and Fable 5.2 also work |
-| `it doesn't work in background jobs` | Start in the foreground, without `--remote-control` |
+| `it doesn't work in background jobs` | Start in the foreground, without `--remote-control`. If the reason shows in a teammate's split pane, use the [in-process display mode](https://code.claude.com/docs/en/agent-teams.md#choose-a-display-mode) to run teammates in Code Mode |
 | `it needs settings that Claude Code downloads from Anthropic` | Unset the variable that [turns off feature-flag fetching](https://code.claude.com/docs/en/env-vars.md#features-that-need-feature-flag-fetching), such as `DISABLE_TELEMETRY` |
 | `OpenTelemetry is on` | Unset `CLAUDE_CODE_ENABLE_TELEMETRY` and `ENABLE_BETA_TRACING_DETAILED` if you can work without [OpenTelemetry export](https://code.claude.com/docs/en/monitoring-usage.md) |
+| `it doesn't yet work with the plugin` | In a session, run `/plugin` and disable each plugin that the reason names. If your organization turned one on, ask your administrator to turn it off |
 | `it doesn't yet work with an installed mod` | Turn off the [mod](https://code.claude.com/docs/en/plugins/mods/overview.md) that checks tool calls |
-| `it can't be used together with agent teams yet` | Unset `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` |
+| `it can't be used together with agent teams yet` | To keep agent teams on, [update Claude Code](https://code.claude.com/docs/en/setup.md#update-claude-code) to v2.1.326 or later. To stay on your version, unset `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` |
 | `this launch's tool options` | Start without `--restricted`, add `REPL` to `--tools`, and remove `REPL` from `--disallowedTools` and your `deny` rules |
 | `couldn't save your answer` | Make `~/.claude.json` writable |
 | `your organization's settings don't allow it` | Ask your administrator about the [managed setting](#block-code-mode-for-your-organization) |
@@ -208,14 +212,14 @@ Answer before the countdown ends. Otherwise that call is refused, and later call
 
 If Claude reports a refused tool call, ask it for the error text. These errors mean that a `PreToolUse` hook didn't give a decision, which refuses the call even when [`onFailure`](https://code.claude.com/docs/en/hooks#block-the-action-when-a-hook-fails) is unset:
 
-* **`the hook failed`**: on a call from Claude's code, your hook couldn't start, was killed, exited with 126, 127, or a code above 128, or returned an HTTP error or invalid output. Fix the hook
-* **`the hook did not finish`**: your hook timed out on a call from Claude's code, or on any other tool call once Claude has run code in the session. Raise the hook's [`timeout`](https://code.claude.com/docs/en/hooks#common-fields)
+* **`the hook failed`**: on a call from code, your hook couldn't start, was killed, exited with 126, 127, or a code above 128, or returned an HTTP error or invalid output. Fix the hook
+* **`the hook did not finish`**: your hook timed out on a call from code, or on any other tool call once Claude has run code in the session. Raise the hook's [`timeout`](https://code.claude.com/docs/en/hooks#common-fields)
 
 To let calls go ahead when a `command` or `http` hook fails or times out, set `"onFailure": "continue"` on it. If a `command` hook exits with an ordinary code such as 1, the call goes ahead unless you set `"onFailure": "block"`.
 
 ### Code output withheld by a hook
 
-If Claude reports a hook's block reason where you expected output from Claude's code, check your [`UserPromptSubmit`](https://code.claude.com/docs/en/hooks#userpromptsubmit) hooks. When [code can run in the background](#long-running-code), `command`, `http`, and `mcp_tool` hooks on that event also run on code output. To let the output through, change the hook so that it doesn't block when `source` in its input is `poll_event`.
+If Claude reports a hook's block reason where you expected output from code, check your [`UserPromptSubmit`](https://code.claude.com/docs/en/hooks#userpromptsubmit) hooks. When [code can run in the background](#long-running-code), `command`, `http`, and `mcp_tool` hooks on that event also run on code output. To let the output through, change the hook so that it doesn't block when `source` in its input is `poll_event`.
 
 ## Related resources
 

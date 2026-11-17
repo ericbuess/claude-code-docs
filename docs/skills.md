@@ -224,7 +224,7 @@ When two skills share a directory or file name, where each one came from decides
 
 ### Use skills in Cowork and cloud sessions
 
-[Cowork](https://claude.com/product/cowork) sessions and [cloud sessions](https://code.claude.com/docs/en/cloud-environments.md#what-carries-over-from-your-setup), including [cloud scheduled tasks](https://code.claude.com/docs/en/routines.md), don't read `~/.claude/skills/` on your machine. Both interactive and scheduled Cowork sessions load the skills enabled for your claude.ai account, synced at session start. Manage them from **Customize** in the Desktop app sidebar or from the skills settings on claude.ai.
+[Cowork](https://claude.com/product/cowork) sessions and [cloud sessions](https://code.claude.com/docs/en/cloud-environments.md#what-carries-over-from-your-setup), including [cloud scheduled tasks](https://code.claude.com/docs/en/routines.md), don't read `~/.claude/skills/` on your machine. Both interactive and scheduled Cowork sessions load the skills enabled for your claude.ai account, synced at session start. Manage those skills at [claude.ai/customize/skills/yours](https://claude.ai/customize/skills/yours).
 
 If a skill exists only in `~/.claude/skills/` on your machine, Claude Code reports that the skill was not found when a [cloud scheduled task](https://code.claude.com/docs/en/routines.md) invokes it. This happens because each run starts as a fresh cloud session. To make a personal skill available in these sessions:
 

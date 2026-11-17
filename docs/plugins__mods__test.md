@@ -354,7 +354,7 @@ A mod your organization lists in [`prependPlugins`](https://code.claude.com/docs
 * **`tier`**: call it once at the top of the test file, as in `tier('prepend')`, to load your mod as `prepend`, `append`, or `builtin`, its place in the [order mods run in](https://code.claude.com/docs/en/plugins/mods/events.md#the-order-mods-run-in). Without it, your mod loads as `user`.
 * **`plugins`**: pass `test` an options object ahead of the test body. Its `plugins` array holds mods you write inline, each with a `name` and a `register` function. To load one somewhere other than `user`, add `tier` to it.
 
-This test file loads the [policy mod from the admin page](https://code.claude.com/docs/en/plugins/mods/admin.md#enforce-a-policy-with-a-mod-of-your-own) first. It checks that the policy mod refuses a mod that starts a process and allows one that doesn't:
+This test file loads the [policy mod from the admin page](https://code.claude.com/docs/en/plugins/mods/admin.md#enforce-a-policy-with-a-mod-of-your-own) first. It checks that the policy mod stops a mod that starts a process and allows one that doesn't:
 
 ```typescript acme-guard/tests/guard.test.ts theme={null}
 import { expect, test, tier } from 'claude-code/testing'
@@ -392,7 +392,8 @@ test('refuses a mod that starts a process', { plugins: [runner] }, async ($, on)
   } catch (error) {
     message = error.message
   }
-  expect(message).toBe('runner: refused by acme-guard: Acme policy: mods may not call process.run')
+  // "hooks module left out" on v2.1.326 or later, "refused" on earlier versions
+  expect(message).toMatch(/^runner: (hooks module left out|refused) by acme-guard/)
 })
 
 test('admits a mod that starts no process', { plugins: [reader] }, async ($, on) => {
@@ -405,7 +406,7 @@ test('admits a mod that starts no process', { plugins: [reader] }, async ($, on)
 
 In your shell, run `claude plugin test` from the `acme-guard` directory. Both tests pass with the policy mod as the admin page shows it.
 
-The kit loads every mod at the test's first call on `$`. When your mod refuses one, that call throws, and the message names the refused mod, the mod that refused it, and your reason. In the second test nothing is refused, so `reader` answers the tool call before it reaches the stub.
+The kit loads every mod at the test's first call on `$`. When your mod stops one, that call throws, and the message names both mods. In the second test nothing is stopped, so `reader` answers the tool call before it reaches the stub.
 
 ## Next steps
 

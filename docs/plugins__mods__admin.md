@@ -375,7 +375,7 @@ Each time another mod is about to load, your mod receives the list that `claude 
 >
 > On v2.1.323 or later, a `ui.focus` hook needs a wider matcher to receive other mods' `$.ui.focus` calls. See [Hook other mods' drawings and controls](https://code.claude.com/docs/en/plugins/mods/events.md#hook-other-mods-drawings-and-controls).
 
-This policy mod refuses any user's mod whose own code calls `$.process.run` or `$.process.spawn`. It also keeps an audit log, writing each tool call and each file a mod writes to the debug log. Because it runs first, the log records what was requested, before any user's mod changes it. Save it as `acme-guard/hooks/register.js`:
+This policy mod stops any user's mod whose own code calls `$.process.run` or `$.process.spawn`, and lets the rest of the user's plugin load. It also keeps an audit log, writing each tool call and each file a mod writes to the debug log. Because it runs first, the log records what was requested, before any user's mod changes it. Save it as `acme-guard/hooks/register.js`:
 
 ```javascript acme-guard/hooks/register.js theme={null}
 // The methods no user's mod may call, each spelled namespace.method
@@ -387,7 +387,9 @@ export function register(on) {
     // Keep the calls in that mod's code that are on the blocked list
     const blocked = e.uses.calls.filter((call) => BLOCKED_CALLS.includes(call))
     if (e.tier === 'user' && blocked.length > 0) {
-      // Returning refuse keeps the mod from loading, and the text is the reason
+      // v2.1.326 or later: leave out the hooks module and load the rest of the plugin
+      if (e.provides) return next({ ...e, provides: { ...e.provides, modules: [] } })
+      // Earlier versions: refuse leaves out the hooks module, and the text is the reason
       return { refuse: 'Acme policy: mods may not call ' + blocked.join(', ') }
     }
     // Let every other mod load
@@ -410,16 +412,21 @@ export function register(on) {
 
 The file registers three hooks:
 
-* **`plugin.register`**: decides whether another mod loads. It refuses a user's mod that calls a blocked method and passes every other mod on.
+* **`plugin.register`**: decides whether another mod loads. It stops a user's mod that calls a blocked method and passes every other mod on.
 * **`tool.call`**: writes a line such as `audit tool.call Bash` to the debug log for each tool call, and changes nothing
 * **`fs.write`**: writes a line such as `audit fs.write by reader "/tmp/notes.md"` for each `$.fs.write` call another mod makes, and changes nothing. The mod's name comes first and the path is quoted, so a path that a mod picks can't pass for another field of the line.
 
-The `plugin.register` hook reads two fields of the event:
+The `plugin.register` hook reads three fields of the event:
 
 * **`e.tier`**: where the mod would run, one of `prepend`, `user`, `append`, or `builtin`. Every mod a person installs is `user`.
 * **`e.uses.calls`**: the mods API methods the mod calls, each written `namespace.method` such as `process.run`, without the `$.` that `claude plugin validate` prints
+* **`e.provides`**: the plugin's parts by kind, such as `modules`. To load everything but the [hooks module](https://code.claude.com/docs/en/plugins/mods/create.md#write-a-mod-yourself), pass `next` the event with `provides.modules` emptied. Requires Claude Code v2.1.326 or later.
 
-When a user installs a mod that calls `$.process.run`, the mod doesn't load, and their debug log has a line that ends with `refused by acme-guard:` and your reason. The refusal also reaches the transcript in a [session that hot-reloads a plugin directory](https://code.claude.com/docs/en/plugins/mods/troubleshoot.md#find-out-why-a-mod-does-nothing).
+When a user installs a mod that calls `$.process.run`, the mod doesn't load, and their debug log has a line that includes `hooks module left out by acme-guard`. The line also reaches the transcript in a [session that hot-reloads a plugin directory](https://code.claude.com/docs/en/plugins/mods/troubleshoot.md#find-out-why-a-mod-does-nothing). Before v2.1.326, look for `refused by acme-guard:` and your reason instead.
+
+> [!NOTE]
+>
+> When you return `{ refuse }` on v2.1.326 or later, the whole plugin stays out, including its MCP servers and the hooks in its `hooks/hooks.json`. If you wrote a policy mod for an earlier version, add the example's `if (e.provides)` line ahead of each refusal that should stop only the mod. For a `.catch` handler, see [Refuse mods when your check fails](#refuse-mods-when-your-check-fails).
 
 To block a call without refusing the whole mod, return `{ deny: 'your reason' }` from a hook on that call's name, after you [check who made the call](https://code.claude.com/docs/en/plugins/mods/reference.md#mods-api-calls).
 
@@ -431,7 +438,7 @@ A session can run without your mod. If the worker thread that runs installed mod
 
 #### Refuse mods when your check fails
 
-If your `plugin.register` hook throws or exceeds its time limit, Claude Code skips the hook, so the check fails open and the mod it was checking loads. To fail closed and refuse users' mods, move the check into a named function and add a `.catch` handler that returns the refusal. This version of the file shows the `plugin.register` hook only, so keep the two audit hooks from the first version in `register`:
+If your `plugin.register` hook throws or exceeds its time limit, Claude Code skips the hook, so the check fails open and the mod it was checking loads. To fail closed when the check throws, move it into a named function and add a `.catch` handler. This version of the file shows the `plugin.register` hook only, so keep the two audit hooks from the first version in `register`:
 
 ```javascript acme-guard/hooks/register.js theme={null}
 const BLOCKED_CALLS = ['process.run', 'process.spawn']
@@ -440,23 +447,27 @@ const BLOCKED_CALLS = ['process.run', 'process.spawn']
 async function checkMod($, e, next) {
   const blocked = e.uses.calls.filter((call) => BLOCKED_CALLS.includes(call))
   if (e.tier === 'user' && blocked.length > 0) {
+    if (e.provides) return next({ ...e, provides: { ...e.provides, modules: [] } })
     return { refuse: 'Acme policy: mods may not call ' + blocked.join(', ') }
   }
   return next(e)
 }
 
 export function register(on) {
-  // The handler runs only when checkMod throws or exceeds its time limit
+  // The handler runs when checkMod throws
   on('plugin.register', checkMod).catch(async ($, e, next) => {
     // Let your organization's mods and built-in mods load
     if (e.tier !== 'user') return next(e)
-    // Refuse the user's mod that couldn't be checked
+    // Stop the unchecked mod, not its whole plugin
+    if (e.provides && !next.called) return next({ ...e, provides: { ...e.provides, modules: [] } })
     return { refuse: 'Acme policy check failed, so this mod was not loaded' }
   })
 }
 ```
 
-With the handler in place, a mod that was being checked when the check threw or timed out doesn't load, and the refusal line carries the second reason, as in `refused by acme-guard: Acme policy check failed, so this mod was not loaded`. The handler passes every mod outside the `user` tier to `next(e)`, so a failed check doesn't stop the mods your organization lists. [Handle a hook that fails](https://code.claude.com/docs/en/plugins/mods/events.md#handle-a-hook-that-fails) covers `.catch` for other events.
+With the handler in place, a user's mod doesn't load when the check throws. If the check throws after it calls `next`, the handler falls back to `refuse`. Don't rely on the handler for a check that exceeds its time limit.
+
+The handler passes every mod outside the `user` tier to `next(e)`, so a failed check doesn't stop the mods your organization lists. [Handle a hook that fails](https://code.claude.com/docs/en/plugins/mods/events.md#handle-a-hook-that-fails) covers `.catch` for other events.
 
 ## Next steps
 

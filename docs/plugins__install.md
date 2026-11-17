@@ -91,7 +91,7 @@ Pick the tab for where you run Claude Code.
 >
 > **1. Open the plugin browser**
 >
-> Click the **+** button next to the prompt box and select **Add plugins**. If the **+** menu shows **Plugins** instead of **Add plugins**, select **Plugins**, then **Browse plugins**. The plugin browser opens with the plugins from your marketplaces.
+> Click the **+** button next to the prompt box and select **Add plugins**. If the **+** menu shows **Plugins** instead of **Add plugins**, select **Plugins**, then **Browse plugins**. If **Browse plugins** is missing, select **Manage plugins**. The plugin browser opens with the plugins from your marketplaces.
 >
 > **2. Select the plugin**
 >

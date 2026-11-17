@@ -152,7 +152,7 @@ To open the session a run started, go to the task's [detail page](#manage-schedu
 
 The sidebar's session list can show a **Scheduled** group as well, with one row per task. To open the session of a task's latest run, click the task's row in that group. To show the group, [check which layout you have](https://code.claude.com/docs/en/desktop.md#check-which-layout-you-have):
 
-* **Current layout**: open the [**Group and sort** menu](https://code.claude.com/docs/en/desktop.md#organize-and-find-sessions), select **Show**, then select **Scheduled**. The group starts collapsed, so click its heading to expand it. **Show** lists **Scheduled** when at least one of your tasks is **Active**, the **Status** a task's detail page shows. If it isn't listed, use the **History** list, which works whether or not the group shows.
+* **Current layout**: open the [**Group and sort** menu](https://code.claude.com/docs/en/desktop.md#organize-and-find-sessions), select **Show**, then select **Scheduled**. The group starts collapsed, so click its heading to expand it.
 * **Earlier layout**: the group is in the session list with nothing to turn on
 
 In a run's session, whichever way you reached it, you can see what Claude did, review changes, and respond to permission prompts. Claude can edit files, run commands, create commits, and open pull requests, the same as in a session you start yourself.

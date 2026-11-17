@@ -26,10 +26,10 @@ In most terminals you can also press Shift+Enter, but support varies by terminal
 
 | Terminal | Shift+Enter for newline |
 | :- | :- |
-| Ghostty, Kitty, iTerm2, WezTerm, Warp, Windows Terminal | Works without setup |
+| Ghostty, Kitty, iTerm2, WezTerm, Warp, Windows Terminal 1.25 or later | Works without setup |
 | Other terminals that support the kitty keyboard protocol, such as foot and Alacritty 0.16 or later | Works without setup. Requires Claude Code v2.1.269 or later |
 | VS Code, Cursor, Devin Desktop, Alacritty before 0.16, Zed | Run `/terminal-setup` once |
-| gnome-terminal, JetBrains IDEs such as PyCharm and Android Studio | Not available; use Ctrl+J or `\` then Enter |
+| gnome-terminal, Windows Terminal before 1.25, JetBrains IDEs such as PyCharm and Android Studio | Not available; use Ctrl+J or `\` then Enter |
 
 For VS Code, Cursor, Devin Desktop, Alacritty before 0.16, and Zed, `/terminal-setup` writes a Shift+Enter keybinding into the terminal's configuration file. On the first run you see a confirmation such as `Installed VSCode terminal Shift+Enter key binding`. Existing bindings are left in place; if you see a message such as `VSCode terminal Shift+Enter key binding already configured`, no change was made. Run `/terminal-setup` directly in the host terminal rather than inside tmux or screen, since it needs to write to the host terminal's configuration.
 
@@ -140,7 +140,7 @@ set -s extended-keys on
 set -as terminal-features 'xterm*:extkeys'
 ```
 
-To send notifications from a visible pane to the outer terminal, keep the `allow-passthrough` line and set [`preferredNotifChannel`](https://code.claude.com/docs/en/settings-reference#preferrednotifchannel) to `"iterm2"`, `"kitty"`, or `"ghostty"`. With this sample, a pane in a window you aren't viewing sends none. The `extended-keys` lines let tmux distinguish Shift+Enter from plain Enter so the newline shortcut works.
+To use Shift+Enter, keep the last two lines, then detach from tmux, attach again, and restart Claude Code. To send notifications from a visible pane to the outer terminal, keep the `allow-passthrough` line and set [`preferredNotifChannel`](https://code.claude.com/docs/en/settings-reference#preferrednotifchannel) to `"iterm2"`, `"kitty"`, or `"ghostty"`. With this sample, a pane in a window you aren't viewing sends none.
 
 A [mod's `Image`](https://code.claude.com/docs/en/plugins/mods/reference#elements) needs the `allow-passthrough` and `focus-events` lines, along with the other [requirements for drawing inside tmux](https://code.claude.com/docs/en/plugins/mods/gallery.md#draw-an-image-inside-tmux). After you add the lines, also detach from tmux, attach again, and restart Claude Code.
 
@@ -216,7 +216,7 @@ The reference below covers the tokens you can set in `overrides`. The interactiv
 > | `text` | Default foreground text |
 > | `inverseText` | Text drawn on top of a colored background, such as status badges |
 > | `inactive` | Secondary text such as hints, timestamps, and disabled items |
-> | `subtle` | Faint borders and de-emphasized secondary text |
+> | `subtle` | Faint borders, dividers, and symbols |
 > | `suggestion` | Autocomplete suggestions and selection highlight in pickers |
 > | `permission` | Dialog borders, including permission prompts and pickers |
 > | `remember` | Memory and `CLAUDE.md` indicators |

@@ -470,7 +470,7 @@ The same handler shape fits a guard on `prompt.submit` or `config.set`. When `ne
 At `tool.check` and `plugin.register`, a refusal returned after `next` resolved still holds, so return it without testing `next.called`:
 
 * **`tool.check`**: return `{ decision: 'deny', reason: 'the reason' }`
-* **`plugin.register`**: return `{ refuse: 'the reason' }`, as [Refuse mods when your check fails](https://code.claude.com/docs/en/plugins/mods/admin.md#refuse-mods-when-your-check-fails) shows
+* **`plugin.register`**: return `{ refuse: 'the reason' }`. On v2.1.326 or later, the other mod's whole plugin then stays out. To stop only the mod, see [Refuse mods when your check fails](https://code.claude.com/docs/en/plugins/mods/admin.md#refuse-mods-when-your-check-fails).
 
 At `tool.call`, a `deny` returned after `next` resolved [withholds the result from Claude](#guard-or-change-a-tool-call).
 

@@ -110,7 +110,7 @@ These requirements decide whether you can add a secret and whether the agent pro
 
 You add secrets one at a time. To change a secret's hosts or value, delete it and add it again.
 
-To add a secret to a [shared environment](#organization-shared-environments), open it for editing from the **Cloud environments** page in [admin settings](https://claude.ai/admin-settings), then continue from step 2 in its **Network secrets** section. If you're on a Team or Enterprise plan and don't hold an [organization admin role](#requirements), follow step 1 on your own environment, then [fill in the shorter form](#add-a-secret-without-the-role).
+To add a secret to a [shared environment](#organization-shared-environments), open it for editing from the **Cloud environments** page in [admin settings](https://claude.ai/admin-settings), select its **Network secrets** row, then continue from step 2. If you're on a Team or Enterprise plan and don't hold an [organization admin role](#requirements), follow step 1 on your own environment, then [fill in the shorter form](#add-a-secret-without-the-role).
 
 **1. Open the environment's network secrets**
 
@@ -118,7 +118,7 @@ To add a secret to a [shared environment](#organization-shared-environments), op
 
 **2. Add the secret**
 
-Select **Add secret**, labeled **Add** in admin settings, and fill in the form. Keep the default **Secret type**, **Bearer**, for an API key that travels in a request header, and fill in these fields:
+Select **Add secret** and fill in the form. Keep the default **Secret type**, **Bearer**, for an API key that travels in a request header, and fill in these fields:
 
 * **Allowed websites**: the API's hosts, such as `api.example.com`. A leading `*.` matches every subdomain
 * **Custom headers**: one row for the header that carries the key. The row already has `Authorization` as the **Header name** and `Bearer` as the **Prefix**; paste the key itself as the **Value**. For a header like `X-Api-Key` that takes the bare value, change the name and clear the prefix
@@ -200,7 +200,7 @@ In [Claude Tag](https://claude.com/docs/claude-tag/overview) channels, Claude wo
 
 Each environment sets one network access level, which controls the outbound connections its sessions can make. A new environment starts at **Limited** with **Allow package managers** checked, so its sessions reach package registries and other [allowlisted domains](#default-allowed-domains).
 
-To change an environment's network access, [open it for editing](#configure-your-environment) and use the **Network access** selector in the dialog. A [shared environment](#organization-shared-environments) opens read-only there, so an Owner changes its network access from the **Cloud environments** page in [admin settings](https://claude.ai/admin-settings) instead. The control that opens the selector appears on the app surfaces listed under [The Default environment](#the-default-environment) and in the [cloud scheduled task editor](https://code.claude.com/docs/en/routines.md#environments-and-network-access). Personal environments don't have a separate page in your claude.ai account settings.
+To change an environment's network access, [open it for editing](#configure-your-environment) and use the **Network access** selector in the dialog. A [shared environment](#organization-shared-environments) opens read-only there, so an Owner changes its network access from the **Cloud environments** page in [admin settings](https://claude.ai/admin-settings) instead. The control that opens the selector appears on the app surfaces listed under [The Default environment](#the-default-environment) and in the [cloud scheduled task editor](https://code.claude.com/docs/en/routines.md#environments-and-network-access).
 
 When you change an Anthropic-hosted environment's network access, its existing sessions follow the new setting within about a minute, for requests that go through the session's [network allowlist](#access-levels). You don't need to start a new session.
 

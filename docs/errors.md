@@ -407,6 +407,7 @@ Match the message you see to a section below.
 | `Reading a local file from outside this session's connected folders, or through a link, needs the approval card` | [Tool errors](#reading-a-local-file-from-outside-the-connected-folders) |
 | `cannot read file_path (...) — the file could not be examined, and no one can answer the approval card` | [Tool errors](#reading-a-local-file-from-outside-the-connected-folders) |
 | `WebFetch cannot fetch localhost or other hostnames without a dot` | [Tool errors](#webfetch-cannot-fetch-localhost) |
+| `Claude Code is unable to fetch from ...` | [Tool errors](#claude-code-is-unable-to-fetch-from-a-host) |
 | `The safety check for domain ... is rate-limited` | [Tool errors](#webfetch-domain-safety-check-failed) |
 | `The safety check for domain ... is temporarily rate-limited` | [Tool errors](#webfetch-domain-safety-check-failed) |
 | `Unable to verify if domain ... is safe to fetch` | [Tool errors](#webfetch-domain-safety-check-failed) |
@@ -483,6 +484,7 @@ Match the message you see to a section below.
 | `Unable to read managed policy settings` | [Configuration warnings](#unable-to-read-managed-policy-settings) |
 | `Managed settings contain invalid entries, including PreToolUse/PermissionRequest hooks that are NOT loaded; fix or remove each entry:` | [Configuration warnings](#managed-settings-hooks-not-loaded) |
 | `otelHeadersHelper failed; telemetry is not being exported. See /status: ...` | [Configuration warnings](#otelheadershelper-failed) |
+| `apply_flag_settings: nothing in this request was applied and earlier settings stay in force. Fix or remove these invalid settings and send it again` | [`applyFlagSettings()`](https://code.claude.com/docs/en/agent-sdk/typescript#applyflagsettings) |
 | `"crossSessionInbound" must be one of "accept", "hold", "refuse"` | [Configuration warnings](#crosssessioninbound-must-be-one-of-accept-hold-refuse) |
 | `API Error: ANTHROPIC_FOUNDRY_RESOURCE must be a Foundry resource name` | [Configuration warnings](#anthropic-foundry-resource-must-be-a-foundry-resource-name) |
 | `headersHelper not run — this workspace has no persisted trust` | [Configuration warnings](#headershelper-not-run) |
@@ -5433,6 +5435,18 @@ WebFetch cannot fetch localhost or other hostnames without a dot. To reach a loc
 * Usually nothing: the message points Claude at `curl` through the Bash tool, which can reach local and intranet servers
 
 Before v2.1.268, WebFetch reported these URLs with a generic `Invalid URL` error.
+
+### Claude Code is unable to fetch from a host
+
+WebFetch sends a URL's hostname to `api.anthropic.com` before requesting the page, to check it against Anthropic's domain safety blocklist. This message means the check answered that the hostname can't be fetched:
+
+```text wrap theme={null}
+Claude Code is unable to fetch from example.com
+```
+
+Claude Code didn't contact the host, because the check runs before the request.
+
+For what the check sends, see [WebFetch domain safety check](https://code.claude.com/docs/en/data-usage.md#webfetch-domain-safety-check).
 
 ### WebFetch domain safety check failed
 

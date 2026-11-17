@@ -352,7 +352,20 @@ claude plugin eval . --allow-tools Write Edit "Bash(npm test *)"
 
 When a case asked for a tool you didn't grant, the progress output lists it as `not granted`. Tools on a [mocked](#mock-mcp-servers) MCP server need no grant. Tools on a real plugin MCP server need both the server started, with `--allow-real-servers` or `--mocks off`, and a grant by name, such as `--allow-tools "mcp__plugin_my-plugin_github__*"`; a plugin's MCP tools are named `mcp__plugin_<plugin>_<server>__<tool>`.
 
+#### Shell grants need a sandbox
+
 When you grant `Bash` in any form, every command runs under Claude Code's [OS-level sandbox](https://code.claude.com/docs/en/sandboxing.md). Writes are confined to the run's workspace, your home directory and Claude Code configuration are unreadable, and network access is limited to domains you grant with `--allow-tools "WebFetch(domain:example.com)"`. If you grant Bash or PowerShell on a machine with no sandbox backend, Claude Code refuses each run rather than running it unconfined, and the case shows a run error and usually scores 0. Native Windows has no backend, so run shell-granting suites under WSL2; on Linux, install `bubblewrap` and `socat` first. See the [sandboxing prerequisites](https://code.claude.com/docs/en/sandboxing.md).
+
+#### Shell grants refused on a managed machine
+
+When shell-granting runs are refused on a machine your organization manages, a `sandbox` key in its [managed settings](https://code.claude.com/docs/en/managed-settings.md) can be the cause. The error begins `A shell tool (Bash or PowerShell) was granted but this machine cannot confine it (no sandbox backend on this platform, or it is not installed)`. It names a missing backend even where one is installed.
+
+When a managed key is the cause, the message ends with `this machine's managed settings:` and the key, which the per-run progress line cuts off:
+
+* **Without `--json`**: read it from the summary table's `NOTES` column, as in `sandbox.enabled is false`
+* **Under `--json`**: read it from the [JSON result](#json-result), in the run's `error` field
+
+Ask your administrator whether that setting can change for your machine, or drop the shell grant from that run.
 
 ### Command options
 
@@ -685,6 +698,8 @@ Separately, `file_exists` counts only files created during the run, so a file th
 ### Tools are denied, MCP tools are missing, or Bash won't run
 
 Anything beyond the read-only set needs your grant, such as `--allow-tools Bash Write`. Your personal MCP servers never load in a run. The plugin's own servers don't start unless you [opt in](#mock-mcp-servers), and their tools then also need an `--allow-tools "mcp__plugin_<plugin>_<server>__*"` grant; a mocked tool needs neither.
+
+If you granted Bash and the runs are still refused, read the full error, which the per-run progress line cuts short. It is in the summary table's `NOTES` column, or in the run's `error` field under `--json`. See [Shell grants refused on a managed machine](#shell-grants-refused-on-a-managed-machine) when the full error names a managed setting, or [Shell grants need a sandbox](#shell-grants-need-a-sandbox) when it doesn't.
 
 ### The run exits 1 but the results look fine
 

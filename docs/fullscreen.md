@@ -159,7 +159,9 @@ The button's keyboard hint reflects what your keyboard can send. On macOS it sug
 
 On a terminal too narrow for the full label, the button shortens the hint instead of wrapping onto the transcript row underneath.
 
-To turn auto-follow off entirely so the view stays where you leave it, open `/config` and set Auto-scroll to off. With auto-scroll disabled, the view never jumps to the bottom on its own. Permission prompts and other dialogs that need a response still scroll into view regardless of this setting.
+#### Turn off Auto-scroll
+
+To keep auto-follow paused after you send a message or scroll to the bottom, open `/config` and set [Auto-scroll](https://code.claude.com/docs/en/settings-reference.md#autoscrollenabled) to off.
 
 ### Mouse wheel scrolling
 
@@ -221,19 +223,17 @@ Run `/clear` to start a new conversation.
 
 If the display looks garbled or partially blank, press `Ctrl+L` to redraw the screen. The redraw keeps the conversation and your input in place.
 
-`Cmd+K` does the same as `Ctrl+L` when your terminal passes it through to Claude Code. iTerm2 and Terminal.app handle `Cmd+K` themselves and clear their own screen, and Claude Code detects the cleared screen and repaints the conversation. Before v2.1.280, starting with v2.1.260, pressing `Ctrl+L`, or `Cmd+K` where it reaches Claude Code, cleared the screen in fullscreen rendering. Before v2.1.238, pressing `Ctrl+L` twice within two seconds ran `/clear`.
+`Cmd+K` does the same as `Ctrl+L` when your terminal passes it through to Claude Code. iTerm2 handles `Cmd+K` itself and clears its own screen, and Claude Code detects the cleared screen and repaints the conversation. Before v2.1.280, starting with v2.1.260, pressing `Ctrl+L`, or `Cmd+K` where it reaches Claude Code, cleared the screen in fullscreen rendering. Before v2.1.238, pressing `Ctrl+L` twice within two seconds ran `/clear`.
 
 ## Use with tmux
 
 Fullscreen rendering works inside tmux, with three caveats.
 
-Mouse wheel scrolling requires tmux's mouse mode. If your `~/.tmux.conf` doesn't already enable it, add this line and reload your config:
+To scroll Claude Code with the mouse wheel while another tmux pane is active, turn on tmux's mouse mode in `~/.tmux.conf` and reload your config:
 
 ```bash theme={null}
 set -g mouse on
 ```
-
-Without mouse mode, wheel events go to tmux instead of Claude Code. Keyboard scrolling with `PgUp` and `PgDn` works either way. Claude Code prints a one-time hint at startup if it detects tmux with mouse mode off.
 
 Fullscreen rendering is incompatible with iTerm2's tmux integration mode, which is the mode you enter with `tmux -CC`. In integration mode, iTerm2 renders each tmux pane as a native split rather than letting tmux draw to the terminal. The alternate screen buffer and mouse tracking don't work correctly there: the mouse wheel does nothing, and double-click can corrupt the terminal state. Don't enable fullscreen rendering in `tmux -CC` sessions. Regular tmux inside iTerm2, without `-CC`, works fine.
 
