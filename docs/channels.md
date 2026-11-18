@@ -104,6 +104,7 @@ Each supported channel is a plugin that requires [Bun](https://bun.sh). For a ha
 > * View Channels
 > * Send Messages
 > * Send Messages in Threads
+> * Create Public Threads
 > * Read Message History
 > * Attach Files
 > * Add Reactions
