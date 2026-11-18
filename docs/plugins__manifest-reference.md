@@ -140,6 +140,7 @@ For component keys such as `commands` and `hooks`, [Component path forms](#compo
 | [`privacyPolicyUrl`](#directory-listing-fields) | String | Privacy policy link for the plugin's listing in Anthropic's directory. Claude Code doesn't read it |
 | [`termsOfServiceUrl`](#directory-listing-fields) | String | Terms of service link for the plugin's listing in Anthropic's directory. Claude Code doesn't read it |
 | [`defaultEnabled`](#defaultenabled) | Boolean | Whether the plugin starts enabled when the user hasn't set it. Defaults to `true` |
+| `engines` | Object | The Claude Code versions that the plugin works on, as a [semver range](https://github.com/npm/node-semver#ranges) under the `claude-code` key, such as `"engines": { "claude-code": ">=2.1.400" }`. Requires Claude Code v2.1.323 or later. To keep the plugin working on v2.0.15 through v2.1.75, omit `engines`. Those versions reject the manifest with an `Unrecognized key` error when it has the field |
 | [`dependencies`](#dependencies) | Array of strings or objects | Plugins that must be enabled for this one to work |
 | [`userConfig`](#user-configuration) | Object | Values Claude Code prompts the user for when the plugin is enabled |
 | `types` | Path | A `.d.ts` file that declares the `$.state` values and `$` nouns of a [mod](https://code.claude.com/docs/en/plugins/mods/reference.md#files) |

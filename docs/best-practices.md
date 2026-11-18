@@ -425,7 +425,7 @@ The opposite problem is the classifier repeatedly stopping something that's rout
 
 > [!WARNING]
 >
-> Keep `"$defaults"` in every list you set, because without it your entries *replace* that list's built-in rules instead of adding to them. For `environment` and `allow` you'd lose the built-in context and exceptions, and a `soft_deny` list without it drops the built-in blocks on force pushes and production deploys.
+> Keep `"$defaults"` in every list you set, because without it your entries [can replace](https://code.claude.com/docs/en/auto-mode-config.md#override-the-block-and-allow-rules) that list's built-in rules instead of adding to them. You can lose the built-in context in `environment`, the exceptions in `allow`, and the blocks on force pushes and production deploys in `soft_deny`.
 >
 > The `autoMode` block also has to live in `~/.claude/settings.json` rather than the project, because the classifier ignores `autoMode` in project settings.
 

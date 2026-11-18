@@ -198,7 +198,7 @@ Don't set `version` in both `plugin.json` and the marketplace entry. If you do, 
 
 ### Hold users on one version
 
-One marketplace serves one version of each plugin at a time, so you hold users on a version by choosing what each entry points at:
+To hold users on a version, choose which ref, commit, or tag they get:
 
 * **`ref` and `sha` on the plugin entry**: `ref` names a branch or tag and `sha` names a commit for a `github`, `url`, or `git-subdir` source. See [Plugin sources](https://code.claude.com/docs/en/plugins/marketplace-reference.md#plugin-sources).
 * **`#<ref>` on the add command**: users who add `your-org/your-marketplace#stable` get that branch or tag of the catalog. For two release lines at once, see [Run release channels](#run-release-channels).
@@ -219,7 +219,7 @@ Tell users to run the `claude plugin update` command that entry shows, in a term
 
 ## Run release channels
 
-To offer stable and early-access tracks, host two marketplaces whose entries point at different refs of the same plugin, and let each user add the one they want. Claude Code has no release-channel concept, and one marketplace serves one version of each plugin at a time.
+To offer stable and early-access tracks, host two marketplaces whose entries point at different refs of the same plugin, and let each user add the one they want.
 
 Give the two `marketplace.json` files different `name` values. Claude Code identifies a marketplace by its `name`, so a user can't have two marketplaces with the same name registered at once.
 

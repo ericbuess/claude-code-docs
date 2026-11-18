@@ -188,6 +188,8 @@ You can also manage tasks by asking Claude, letting a task update itself, or edi
 * **Let a task update itself**: for a task to change its own schedule or prompt with the `update_scheduled_task` MCP tool, click **Run now** and approve the call each time
 * **Edit the prompt on disk**: open `~/.claude/scheduled-tasks/<task-name>/SKILL.md`, or `scheduled-tasks/<task-name>/SKILL.md` under [`CLAUDE_CONFIG_DIR`](https://code.claude.com/docs/en/env-vars) if you set that variable. The file uses YAML frontmatter for `name` and `description`, with the prompt as the body. Changes take effect on the next run. Schedule, folder, and enabled state are not in this file: change them through the Edit form or ask Claude.
 
+If a local one-time task that has already run isn't on the **Scheduled tasks** page, click the sort icon above the list and select **Include completed**.
+
 ## Related resources
 
 * [Cloud scheduled tasks](https://code.claude.com/docs/en/routines.md): run tasks in the cloud on a schedule, via API call, or in response to GitHub events, even when your computer is off

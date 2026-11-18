@@ -84,7 +84,7 @@ Add `"modules": ["./register.js"]`.
 
 ### `hooks module did not load`
 
-The line starts with the mod's name, then `hooks module did not load:` and a reason, which gives the file and line when the problem is in your code. Claude Code couldn't load the module, for example because its top-level code threw.
+The line starts with the mod's name, then `hooks module did not load:` and a reason, which gives the file and line for a syntax error. Claude Code couldn't load the module, for example because its top-level code threw.
 
 Fix the error the reason names.
 

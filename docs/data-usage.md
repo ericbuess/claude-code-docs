@@ -82,7 +82,7 @@ Encryption at rest depends on your model provider:
 | Anthropic API | Infrastructure-level disk encryption (AES-256). Enable [Zero Data Retention](https://code.claude.com/docs/en/zero-data-retention.md) for no server-side persistence. |
 | Amazon Bedrock | AES-256 with AWS-managed keys. Customer-managed keys available via AWS KMS. |
 | Google Cloud's Agent Platform | Google-managed encryption keys. CMEK available. |
-| Microsoft Foundry | Depends on the deployment's [hosting option](https://platform.claude.com/docs/en/build-with-claude/claude-in-microsoft-foundry#hosting-options). For Hosted on Azure deployments, prompts and completions remain within Azure; only usage metadata and content flagged by Anthropic's safety systems egress to Anthropic. For Hosted on Anthropic deployments, requests route to Anthropic infrastructure with AES-256 disk encryption. |
+| Microsoft Foundry | Depends on the deployment's [hosting option](https://platform.claude.com/docs/en/build-with-claude/claude-in-microsoft-foundry#hosting-options). For Hosted on Azure deployments, see [where data is processed and stored](https://platform.claude.com/docs/en/build-with-claude/claude-in-microsoft-foundry#hosting-options). For Hosted on Anthropic deployments, requests route to Anthropic infrastructure with AES-256 disk encryption. |
 
 Claude Code is built on Anthropic's APIs. For details on API security controls, including API logging procedures, see the compliance artifacts in the [Anthropic Trust Center](https://trust.anthropic.com).
 

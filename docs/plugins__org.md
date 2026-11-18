@@ -148,7 +148,8 @@ To verify a seed, run `claude -p` with `--output-format stream-json --verbose` i
 Seed marketplaces follow these rules:
 
 * **Read-only**: Claude Code never writes to the seed and forces `autoUpdate` off for seed marketplaces.
-* **Seed entries take precedence**: on each startup, a marketplace declared in the seed overwrites the user's entry of the same name. Users opt out of a seed plugin with `claude plugin disable`, not by removing the marketplace.
+* **Build from the declared source**: if user or managed settings declare a seed marketplace's name in `extraKnownMarketplaces`, build the seed from that source and `ref`.
+* **Opting out**: when the repository's settings enable a seed plugin, users opt out with `claude plugin disable`, not by removing the marketplace.
 * **Update and remove fail**: `claude plugin marketplace update <name>` and `remove` without `--scope` on a seed marketplace fail with a message that names the seed directory.
 * **Policy still applies**: the [allowlist and blocklist](#restrict-what-users-can-install) check a seed marketplace's recorded source too. Allow the source you built the seed from.
 

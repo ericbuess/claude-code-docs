@@ -167,7 +167,7 @@ If you publish through your own marketplace and your `plugin.json` sets `version
 
 ### Tag a release
 
-Tag the release in git when other plugins declare a version range on yours, because those ranges resolve against tags. Otherwise you don't need a tag.
+Tag the release in git when other plugins declare a version range on yours, because those ranges resolve against tags.
 
 To tag, run `claude plugin tag` in your shell from the plugin directory. It creates a `{name}--v{version}` tag. Add `--push` to send the tag to `origin`. The [`plugin tag` reference](https://code.claude.com/docs/en/plugins/cli-reference#plugin-tag) lists its flags.
 
