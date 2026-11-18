@@ -63,7 +63,8 @@ If the check run title says issues were found but you don't see inline review co
 
 * **Check run Details**: click **Details** next to the **Claude Code Review** check in the **Checks** tab. The severity table lists findings with their file, line, and summary regardless of whether the inline comment was accepted.
 * **Files changed annotations**: open the **Files changed** tab on the PR. A finding that has a line but wasn't posted as an inline comment appears there as an annotation on the lines concerned.
-* **Review body**: findings that have no inline location, or that fall outside the current diff, appear under an **Additional findings** heading in the review body.
+* **Whole-file comments**: open the **Conversation** tab on the PR and look for a comment from Claude on a whole file instead of on a line
+* **Review body**: in the **Conversation** tab, look for an **Additional findings** heading in Claude's review
 
 ## The check run mentions REVIEW\.md
 

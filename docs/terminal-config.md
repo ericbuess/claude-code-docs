@@ -86,7 +86,7 @@ To make Claude Code send the bell character whatever the terminal or profile, se
 }
 ```
 
-Over SSH from a terminal running outside tmux, set [`preferredNotifChannel`](https://code.claude.com/docs/en/settings-reference#preferrednotifchannel) to your local terminal's value, `"iterm2"`, `"kitty"`, or `"ghostty"`, on the machine running Claude Code. The desktop notification then reaches your local machine. Ghostty and Kitty forward it to your OS notification center without further setup. iTerm2 requires you to enable forwarding:
+To receive the desktop notification in Ghostty, Kitty, or iTerm2 over SSH outside tmux, keep `preferredNotifChannel` at its default, `"auto"`. Before v2.1.326, set it to `"iterm2"`, `"kitty"`, or `"ghostty"` on the machine running Claude Code. iTerm2 requires you to enable forwarding:
 
 **1. Open iTerm2 notification settings**
 
@@ -140,7 +140,7 @@ set -s extended-keys on
 set -as terminal-features 'xterm*:extkeys'
 ```
 
-To use Shift+Enter, keep the last two lines, then detach from tmux, attach again, and restart Claude Code. To send notifications from a visible pane to the outer terminal, keep the `allow-passthrough` line and set [`preferredNotifChannel`](https://code.claude.com/docs/en/settings-reference#preferrednotifchannel) to `"iterm2"`, `"kitty"`, or `"ghostty"`. With this sample, a pane in a window you aren't viewing sends none.
+To use Shift+Enter, keep the last two lines, then detach from tmux, attach again, and restart Claude Code. To send notifications from a visible pane to Ghostty, Kitty, or iTerm2, keep the `allow-passthrough` line and restart Claude Code. With this sample, a pane in a window you aren't viewing sends none. Before v2.1.326 or inside tmux older than 3.3, which has no `allow-passthrough`, set [`preferredNotifChannel`](https://code.claude.com/docs/en/settings-reference#preferrednotifchannel) to `"iterm2"`, `"kitty"`, or `"ghostty"`.
 
 A [mod's `Image`](https://code.claude.com/docs/en/plugins/mods/reference#elements) needs the `allow-passthrough` and `focus-events` lines, along with the other [requirements for drawing inside tmux](https://code.claude.com/docs/en/plugins/mods/gallery.md#draw-an-image-inside-tmux). After you add the lines, also detach from tmux, attach again, and restart Claude Code.
 

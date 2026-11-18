@@ -150,13 +150,13 @@ A session's row in [the listing](#see-which-sessions-claude-can-reach) can show 
 
 A session inside a container and a session on the host can't reach each other. Two sessions inside the same container can still message each other, including on a [self-hosted runner](https://code.claude.com/docs/en/self-hosted-environments). A session inside WSL 2 and a native Windows session on the same computer can't reach each other either.
 
-To require your approval before any message goes beyond this machine, set [`isolatePeerMachines`](#require-approval-for-cross-machine-messages).
+To require your approval before Claude's messages go beyond this machine, set [`isolatePeerMachines`](#require-approval-for-cross-machine-messages).
 
 #### Replies from other machines and cloud sessions
 
 A [cloud session](https://code.claude.com/docs/en/claude-code-on-the-web.md), including one on a [self-hosted runner](https://code.claude.com/docs/en/self-hosted-environments), can't use `SendMessage` to answer a message from another machine, even when the message carries a [reply address](#what-a-message-looks-like). The message still arrives. Read the cloud session's response in its transcript at [claude.ai/code](https://claude.ai/code).
 
-If this session isn't connected to Remote Control when Claude sends to a session beyond this machine, the message still goes through, but without a [reply address](#what-a-message-looks-like). The receiving Claude can't answer it.
+To receive a reply from a session on another of your machines, connect your session to Remote Control before Claude sends. Otherwise the message carries no [reply address](#what-a-message-looks-like), and the receiving Claude can't answer it.
 
 ## How a session treats an incoming message
 
@@ -269,11 +269,11 @@ Claude Code runs messages arriving on the socket through the same [inbound contr
 
 ## Restrict cross-session messaging
 
-Beyond the per-message defaults, you can narrow messaging in two ways. Require your approval before any message leaves the machine, or turn messaging off for a session or an organization.
+Beyond the per-message defaults, you can narrow messaging in two ways. Require your approval before Claude's messages leave the machine, or turn messaging off for a session or an organization.
 
 ### Require approval for cross-machine messages
 
-Set [`isolatePeerMachines`](https://code.claude.com/docs/en/settings-reference#isolatepeermachines) to `true` to require your explicit approval before any `SendMessage` reaches a session beyond this machine:
+Set [`isolatePeerMachines`](https://code.claude.com/docs/en/settings-reference#isolatepeermachines) to `true` to require your explicit approval before Claude's `SendMessage` reaches a session beyond this machine:
 
 ```json theme={null}
 {

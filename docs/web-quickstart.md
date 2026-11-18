@@ -229,7 +229,7 @@ If `/web-setup` says your GitHub CLI token doesn't have the `workflow` scope, yo
 
 `/web-setup` runs inside the Claude Code CLI, not your shell. Launch `claude` first, then type `/web-setup` at the prompt.
 
-If you typed it inside Claude Code and the command menu shows `No commands match "/web-setup"`, or submitting it returns `Unknown command: /web-setup`, the command is hidden because a requirement isn't met. The cause is usually that you're authenticated with an API key or third-party provider instead of a claude.ai subscription. Run `/login` to sign in with your claude.ai account.
+If Claude Code's command menu shows `No commands match "/web-setup"`, or submitting `/web-setup` returns `Unknown command: /web-setup` or says it's unavailable, the command is hidden because a requirement isn't met. The cause is usually that you're authenticated with an API key or third-party provider instead of a claude.ai subscription. Run `/login` to sign in with your claude.ai account.
 
 On Team and Enterprise plans, the command is hidden by default: the [Quick setup toggle](https://code.claude.com/docs/en/claude-code-on-the-web.md#quick-setup-for-team-and-enterprise) is off until an Owner turns it on. While it's off, [connect GitHub from the browser](#connect-github) instead.
 

@@ -61,22 +61,30 @@ With no mod settings of your own, this is what your users get:
   * The session runs on [`/login` credentials](https://code.claude.com/docs/en/authentication#authentication-precedence) for a Team or Enterprise plan
 
   A user with an API key, or on Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry, gets the guard only on a machine with managed settings or `managed-mcp.json`. A session that runs on a long-lived [`CLAUDE_CODE_OAUTH_TOKEN`](https://code.claude.com/docs/en/authentication#generate-a-long-lived-token) doesn't count as that login either, even when a Team or Enterprise login is stored on the machine.
-* **The guard protects what you manage.** A user's mod can't change what your managed hooks receive or decide, the system prompt, or your managed `CLAUDE.md` and other managed instructions. It also can't change what any mod reads as settings, or the tools and descriptions of your managed MCP servers once they connect.
+* **When the guard loads, it blocks a user's mod from rewriting:**
+  * The system prompt
+  * Your managed `CLAUDE.md` and other managed instructions
+  * The answer a mod gets when it reads settings
+  * The tool list and tool descriptions of a managed MCP server that has connected
 * **On v2.1.323 or later, a user's mod can keep a managed MCP server from connecting.** In that user's session, `/mcp` lists the server as held by that mod. To prevent it, [stop user-installed mods from loading](#stop-user-installed-mods-from-loading).
-* **Outside what you manage, a user's mod acts as that user.** The mod keeps that user's permissions: it can still read and write files, start processes, and make network requests. It can also rewrite tool calls and prompts, deny a tool call, add or remove tools, and draw in the interface.
-* **Permission rules and `PreToolUse` hooks take precedence over a user's mod.** With the guard loaded, by default a user's mod can't approve a call that a `deny` rule refuses or an `ask` rule prompts for, whichever settings file holds the rule. The mod can't approve a call that any `PreToolUse` hook blocked, either.
-
-  Permission rules and `PreToolUse` hooks apply to Claude's tool calls, not to a mod's [`$.fs` and `$.process` calls](https://code.claude.com/docs/en/plugins/mods/api#reach-files-processes-and-the-network). With `Read(.env)` denied, a mod can still read that file with `$.fs.read` or start a program that does. To limit a mod's own `$.fs` and `$.process` calls, [keep the mod from loading](#stop-user-installed-mods-from-loading) or handle them in a [policy mod](#enforce-a-policy-with-a-mod-of-your-own).
-* **A user's mod can still skip some prompts.** In [auto mode](https://code.claude.com/docs/en/permission-modes.md#eliminate-prompts-with-auto-mode), a call the mod approves runs without a classifier check, unless the guard is loaded and the session runs with [`--permission-prompt-tool`](https://code.claude.com/docs/en/cli-reference#cli-flags) or an Agent SDK [`canUseTool` callback](https://code.claude.com/docs/en/agent-sdk/user-input#handle-tool-approval-requests). There the classifier checks the call first. For the prompts a mod's approval doesn't skip, see [Extend permissions with hooks](https://code.claude.com/docs/en/permissions.md#precedence-among-rules-hooks-and-mods).
+* **Apart from what the guard blocks, a user's mod acts as that user.** The mod keeps that user's permissions: it can still read and write files, start processes, and make network requests. It can also rewrite tool calls and the user's prompts, deny a tool call, add or remove tools, and draw in the interface.
+* **When a user's mod approves Claude's call** with the guard loaded, these outcomes hold [by default](#set-options-on-the-built-in-guard), whichever settings file has the rule or hook:
+  * A call that a `deny` rule refuses stays refused
+  * A call that an `ask` rule would prompt for still prompts
+  * A call that a `PreToolUse` hook blocked stays blocked
+* **A mod's own calls can skip your checks.** To limit a user's mod, [keep it from loading](#stop-user-installed-mods-from-loading) or handle its calls in a [policy mod](#enforce-a-policy-with-a-mod-of-your-own).
+  * **Files and programs**: [`$.fs` and `$.process` calls](https://code.claude.com/docs/en/plugins/mods/api#reach-files-processes-and-the-network) can skip permission rules and `PreToolUse` hooks. With `Read(.env)` denied, a mod can still read that file with `$.fs.read` or start a program that does.
+  * **Tools**: calls such as [`$.tool.call` and `$.mcp.call`](https://code.claude.com/docs/en/plugins/mods/reference#mods-api-methods) can skip permission rules, permission prompts, a hook's `ask`, and the [auto mode](https://code.claude.com/docs/en/permission-modes.md#eliminate-prompts-with-auto-mode) classifier.
+* **Without the guard, a user's mod can skip more checks.** See [what it can skip](https://code.claude.com/docs/en/permissions.md#precedence-among-rules-hooks-and-mods).
 
 The guard's source is public in the [`mods/sec-default` directory of the Claude Code repository](https://github.com/anthropics/claude-code/tree/main/mods/sec-default).
 
 ### Know which controls still apply
 
-Mods don't replace the controls you already have:
+Your existing controls cover mods within these limits:
 
-* **Settings hooks keep working.** Command, HTTP, prompt, and agent hooks in settings files and in plugins' `hooks/hooks.json` run as before, alongside mods.
-* **Deny rules take precedence where the guard loads.** A user's mod can't approve a call that a `deny` rule refuses, unless you set [`allowModsToOverrideDenyRules`](#set-options-on-the-built-in-guard).
+* **Hooks in settings files run alongside mods.** See [where settings hooks run in the order](https://code.claude.com/docs/en/plugins/mods/events.md#where-settings-hooks-run-in-the-order).
+* **For Claude's calls, deny rules take precedence over a user's mod where the [guard](#know-what-happens-by-default) loads.** To let a user's mod approve some calls that a `deny` rule refuses, set [`allowModsToOverrideDenyRules`](#set-options-on-the-built-in-guard).
 * **Managed hooks run first.** A `PreToolUse` hook in managed settings runs before any mod's [`tool.call`](https://code.claude.com/docs/en/plugins/mods/reference#tools) hook, and when that managed hook blocks a tool call, no mod's `tool.call` hook runs for that call. If the call goes ahead and a mod rewrites it, your managed hooks run again on the rewritten call, so by default they can still block it.
 
   `PreToolUse` hooks from other settings files and from plugins run after the last mod. If a mod answers the tool call itself, the tool never runs and neither do those hooks. See [The order mods run in](https://code.claude.com/docs/en/plugins/mods/events.md#the-order-mods-run-in).
@@ -90,7 +98,7 @@ Mods don't replace the controls you already have:
 
   None of these covers a program the mod starts with `$.process.run`, which reaches the network with the user's own access.
 * **Plugin controls cover mods.** A mod is a plugin, so the [settings that restrict what users can install](https://code.claude.com/docs/en/plugins/org.md#restrict-what-users-can-install), such as `strictKnownMarketplaces`, decide whether it can be installed at all.
-* **Mods can't change the permission prompt.** A mod can restyle much of Claude Code's interface, but not the permission prompt, so it can't change what a prompt shows. A mod can still approve or deny a tool call before the prompt appears, as [Know what happens by default](#know-what-happens-by-default) describes.
+* **The permission prompt appears as Claude Code draws it.** For what a mod can redraw, see [Change what Claude Code already draws](https://code.claude.com/docs/en/plugins/mods/interface.md#change-what-claude-code-already-draws).
 * **Trust prompts come first.** In an interactive session in a directory the user hasn't trusted yet, no mod loads until they answer the trust prompt.
 * **`--safe-mode` turns installed mods off, yours included.** Start a session with `claude --safe-mode` to check whether a mod caused a problem.
 
@@ -178,7 +186,7 @@ Don't approve a mod that fails this command, because some failures don't stop it
 | `$.http.fetch` | Makes network requests |
 | `$.env.get`, `$.settings.read` | Reads environment variables and settings, which can hold API keys. An `env reads:` line in the output names each variable. |
 | `$.env.set` | Sets an environment variable for Claude Code and for every command and MCP server it starts afterward, which can change what those programs run. An `env writes:` line names each variable. |
-| `$.mcp.call` | Calls a tool on a connected MCP server, with no permission prompt. Claude Code refuses the call under a deny rule or a managed ask rule. It also refuses a call to a tool marked [`requiresUserInteraction`](https://code.claude.com/docs/en/mcp#require-approval-for-a-specific-tool), or to one your organization [set to `ask`](https://code.claude.com/docs/en/mcp#organization-controls-on-connector-tools) where that setting reaches Claude Code. |
+| `$.mcp.call` | Calls a tool on a connected MCP server, with no permission prompt |
 | `$.model.complete` | Uses the user's plan or API key for model calls |
 | `$.prompt.submit` | Submits a prompt, and can send it as the user's own words |
 | `$.session.send` | Sends a message that another session's, subagent's, or [teammate's](https://code.claude.com/docs/en/agent-teams.md) Claude reads |

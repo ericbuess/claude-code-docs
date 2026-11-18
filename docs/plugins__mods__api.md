@@ -34,9 +34,13 @@ on('command.run', { command: 'standup' }, async ($, e) => {
 
 After the session starts, `/standup` appears with its description in the list you see when you type `/`. The `argumentHint` shows in the prompt after you type the command and a space, as in `/standup [days]`. When you run `/standup 3`, the second hook returns `Summary for the last 3 day(s): ...`, and the transcript shows that text after the plugin's name. The hook never calls `next`, because the command has no behavior other than yours.
 
-The `text` you return prints in the transcript and Claude reads it. To print nothing, as a command that only opens a [pane](https://code.claude.com/docs/en/plugins/mods/interface.md#pick-where-to-draw) does, return `{}`. To let the command run while Claude is working, add `immediate: true` to the registration.
+The `text` you return prints in the transcript and Claude reads it, unless you [hide it from Claude](#hide-command-text-from-claude). To print nothing, as a command that only opens a [pane](https://code.claude.com/docs/en/plugins/mods/interface.md#pick-where-to-draw) does, return `{}`. To let the command run while Claude is working, add `immediate: true` to the registration.
 
 Pick a name that no built-in command uses. Type `/` in a session to see them. `$.command.register` throws for a taken name, with a message such as `"/focus" refused: it is the built-in /focus`. A hook that throws is skipped, so the rest of your `session.start` hook doesn't run either. Register commands last in that hook, or wrap the call in `try` and `catch`.
+
+#### Hide command text from Claude
+
+To print a command's text without Claude reading it, return `{ text, isTextDisplayOnly: true }` from a hook that doesn't call [`next`](https://code.claude.com/docs/en/plugins/mods/reference#the-hook-function), and leave `immediate` off the registration. Otherwise, or before v2.1.326, Claude can read the text.
 
 ### Add a tool
 

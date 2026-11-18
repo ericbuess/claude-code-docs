@@ -75,7 +75,7 @@ Entries from each scope are combined. A developer can extend `environment`, `all
 
 > [!NOTE]
 >
-> The classifier is a second gate that runs after the [permissions system](https://code.claude.com/docs/en/permissions.md). For actions that must never run regardless of user intent or classifier configuration, use `permissions.deny` in managed settings, which blocks the action before the classifier is consulted and can't be overridden.
+> The classifier is a second gate that runs after the [permissions system](https://code.claude.com/docs/en/permissions.md). To block Claude's [matching calls](https://code.claude.com/docs/en/permissions.md#bash-rule-limits) before the classifier runs, use `permissions.deny` in managed settings.
 
 ## Define trusted infrastructure
 
