@@ -80,7 +80,7 @@ If Claude Code asks for permission before a browser action, approve it. The dial
 
 Run `/chrome` at any time to check the connection status, manage permissions, reconnect the extension, or choose which connected browser to use. The integration is working when the status panel shows "Status: Enabled" and "Extension: Installed".
 
-If more than one browser is connected, you choose which one Claude uses. When a browser action starts before you've chosen, Claude prompts you to pick one. To switch browsers later, run `/chrome` and select **Select browser…**. Claude keeps using your choice even when another browser connects.
+If more than one browser is connected, you choose which one Claude uses. When a browser action starts before you've chosen, Claude prompts you to pick one. To switch browsers later, run `/chrome` and choose another browser. Claude keeps using your choice even when another browser connects.
 
 For VS Code, see [browser automation in VS Code](https://code.claude.com/docs/en/vs-code.md#automate-browser-tasks-with-chrome).
 
@@ -101,7 +101,7 @@ Two managed MCP policies turn the prompt off:
 
 ### Enable Chrome by default
 
-To connect Chrome without passing `--chrome` each time, run `/chrome` in a CLI session and select **Enabled by default**. In the [VS Code extension](https://code.claude.com/docs/en/vs-code.md#automate-browser-tasks-with-chrome), type `/chrome` in the prompt box and turn on the **Enabled by default** switch. The two share one setting, so turning it on in either place turns it on for both the CLI and VS Code.
+To connect Chrome without passing `--chrome` each time, run `/chrome` in a CLI session and select the option that turns Chrome on by default. In the [VS Code extension](https://code.claude.com/docs/en/vs-code.md#automate-browser-tasks-with-chrome), type `/chrome` in the prompt box and turn on the **Enabled by default** switch. The CLI and VS Code share one setting, so turning it on in either place turns it on for both.
 
 With the setting on and Claude Code v2.1.287 or later, each VS Code session connects to your browser as it starts, so Claude can use it before you type `@browser`. On earlier versions, or with the setting off, a VS Code session connects when you type `@browser`.
 
@@ -295,7 +295,7 @@ Claude Code skips the setting because those files are stored in the project dire
 You can keep working as you are. If you want browser tools, or want the warning gone, do one of these:
 
 * **To get browser tools now**: exit and start again with `claude --chrome` in your shell.
-* **To get browser tools in later sessions**: run `/chrome` at the Claude Code prompt and select [**Enabled by default**](#enable-chrome-by-default). This applies to sessions you start afterward, not the one that's running.
+* **To get browser tools in later sessions**: run `/chrome` at the Claude Code prompt and [turn Chrome on by default](#enable-chrome-by-default).
 * **To stop the warning without browser tools**: remove the `CLAUDE_CODE_ENABLE_CFC` line from the project's settings file.
 
 ### Browser not responding

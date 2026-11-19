@@ -30,7 +30,7 @@ Run `/voice` to enable dictation. When you enable it, Claude Code runs a microph
 
 ```
 /voice
-Voice mode enabled (hold). Hold space to record. Dictation language: en (/config to change).
+Turned on voice mode (hold). Hold space to record. Dictation language: en (/config to change).
 ```
 
 `/voice` accepts an optional mode argument:

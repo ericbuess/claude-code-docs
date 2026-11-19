@@ -286,7 +286,7 @@ This guide uses the `claude mcp` CLI commands, but every Claude Code surface can
 
 If a server doesn't connect, check its status with `/mcp` inside a session or `claude mcp list` from your shell, then match the symptom below. The `/mcp` panel also lets you reconnect or authenticate without leaving the session.
 
-> [accordion] /mcp shows No MCP servers configured
+> [accordion] /mcp shows No MCP servers
 >
 > Claude Code didn't find any servers for the current directory. The most common causes:
 >

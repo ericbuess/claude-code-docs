@@ -70,9 +70,9 @@ Pick the tab for where you run Claude Code.
 > The last sentence of the summary tells you whether the plugin is usable in this session yet:
 >
 > * **Active now**: `Plugin is now active.` No reload is needed.
-> * **Active, but a server needs setup**: `Plugin is now active.` is followed by `Its bundled MCP server needs configuration before it can start`. The plugin's [bundled MCP server](https://code.claude.com/docs/en/plugins/components.md#include-a-packaged-mcpb-server) can't start until you set its options. Select the plugin on the **Installed** tab in `/plugin` and choose **Configure** to set the server's options.
+> * **Active, but a server needs setup**: `Plugin is now active.` is followed by a note that starts `Its bundled MCP server needs`. The plugin's [bundled MCP server](https://code.claude.com/docs/en/plugins/components.md#include-a-packaged-mcpb-server) can't start until you set its options. Select the plugin on the **Installed** tab in `/plugin` and choose **Configure**.
 > * **Reload needed**: `Run /reload-plugins to apply.` The panel closes and Claude Code runs that reload for you. If the reload would [invalidate the prompt cache](https://code.claude.com/docs/en/prompt-caching.md#enabling-or-disabling-a-plugin), it warns and leaves the plugin pending instead. Run `/reload-plugins --force` to activate it anyway, which costs one uncached request.
-> * **Load failed**: `The plugin couldn't be loaded`. Open the **Errors** tab in `/plugin` for the reason, then see [After install: plugin not working](https://code.claude.com/docs/en/plugins/troubleshooting.md#plugin-installed-but-not-working).
+> * **Load failed**: the summary includes `The plugin couldn't`. Open the **Errors** tab in `/plugin` for the reason, then see [After install: plugin not working](https://code.claude.com/docs/en/plugins/troubleshooting.md#plugin-installed-but-not-working).
 >
 > **5. Confirm the plugin works**
 >
@@ -206,7 +206,7 @@ From your shell, `claude plugin marketplace add` takes the same sources.
 
 Include the `https://` prefix on every URL, or use the `git@host:path` form for SSH. If you type a bare `gitlab.example.com/your-group/your-marketplace.git`, Claude Code reads it as GitHub `owner/repo` shorthand and rejects it.
 
-When the command succeeds, it prints `Successfully added marketplace: <name>`, and the marketplace's plugins appear on the **Discover** tab the next time you open `/plugin`, with no reload needed. If it fails, match the error message in [Troubleshoot plugins](https://code.claude.com/docs/en/plugins/troubleshooting.md#add-a-marketplace).
+To confirm the add worked, run `/plugin` in a Claude Code session and look for the marketplace on the **Marketplaces** tab. If the add fails, match the error message in [Troubleshoot plugins](https://code.claude.com/docs/en/plugins/troubleshooting.md#add-a-marketplace).
 
 ### Add a marketplace and install in one command
 
@@ -310,7 +310,7 @@ In your shell, run `claude plugin details <name>` for an installed plugin. The `
 
 ### Find plugins you no longer use
 
-On the **Installed** tab in `/plugin`, plugins you installed yourself and haven't used recently appear under a **Not used recently** header, and each plugin's details show a **Last used** line. Use that header and that line to find plugins that still add startup and context cost, then disable or uninstall them.
+On the **Installed** tab in `/plugin`, plugins you installed yourself and haven't used recently appear under a **Not used recently** header. Use that header to find plugins that still add startup and context cost, then disable or uninstall them.
 
 ### Plugins with dependencies
 
@@ -353,7 +353,7 @@ For when auto-update runs, which plugins it skips, and the environment variables
 
 ### Turn auto-update on or off for a marketplace
 
-In a Claude Code session, run `/plugin` and go to the **Marketplaces** tab. Select the marketplace, then select **Enable auto-update** or **Disable auto-update**.
+In a Claude Code session, run `/plugin` and go to the **Marketplaces** tab. Select the marketplace to open its menu, then turn auto-update on or off.
 
 ### Update plugins now
 

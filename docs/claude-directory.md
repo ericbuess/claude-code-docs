@@ -316,7 +316,7 @@ Claude Code deletes the files in the paths below once they're older than [`clean
 | `dev-mods/<session>/` | [Mods that Claude wrote](https://code.claude.com/docs/en/plugins/mods/create.md#ask-claude-for-a-mod) during the session |
 | `session-env/` | Per-session environment metadata |
 | `tasks/` | Task lists written by the task tools, one directory per list |
-| `shell-snapshots/` | Aliases, functions, and shell options captured at startup and applied by the [Bash tool](https://code.claude.com/docs/en/tools-reference.md#bash-tool-behavior) to each command. Removed on clean exit. The sweep clears any left after a crash. |
+| `shell-snapshots/` | Aliases, functions, and shell options applied by the [Bash tool](https://code.claude.com/docs/en/tools-reference.md#bash-tool-behavior) to each command. Removed on clean exit. The sweep clears any left after a crash. |
 | `backups/` | Earlier versions of `~/.claude.json`, copied when Claude Code rewrites the file. Claude Code keeps the five newest copies, plus a copy of any version it couldn't parse. Past the age cutoff, the last copy that holds your configuration is deleted too. If the current file parses, holds your configuration, and is under 8 MiB, you're left with a new copy of it. |
 | `feedback-bundles/` | Redacted transcript archives written by `/feedback` on third-party providers or when no Anthropic credentials are configured, for sending to your Anthropic account team |
 | `feedback/drafts/` | Queued [Claude-drafted feedback](https://code.claude.com/docs/en/tools-reference.md#sendfeedback-tool-behavior) awaiting your review in `/feedback`. Swept after `cleanupPeriodDays` or 30 days, whichever is shorter. When the queue is at its 10-draft limit, Claude Code deletes the oldest draft to make room. |

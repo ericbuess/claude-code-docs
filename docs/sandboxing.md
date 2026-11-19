@@ -143,7 +143,7 @@ The dependency check runs at startup, so restart Claude Code after installing pa
 
 > [accordion] WSL2 notes
 >
-> Check your WSL version with `wsl -l -v` from PowerShell. If you see `Sandboxing requires WSL2`, your distribution is running WSL1. Upgrade it to WSL2 or run Claude Code without sandboxing.
+> Check your WSL version with `wsl -l -v` from PowerShell. If you see `Sandboxing needs WSL2` or `Sandboxing requires WSL2`, your distribution is running WSL1. Upgrade it to WSL2 or run Claude Code without sandboxing.
 >
 > On WSL2, WSL hands a launch of a Windows binary such as `cmd.exe`, `powershell.exe`, or anything under `/mnt/c/` to the Windows host over a Unix socket, so whether a sandboxed command can launch one follows the sandbox's [Unix-socket settings](https://code.claude.com/docs/en/settings-reference.md#sandbox-network-allowunixsockets): the optional seccomp filter has to be installed to block the socket in the first place. To allow these launches, set `allowAllUnixSockets`, which opens every Unix socket to sandboxed commands.
 
@@ -1063,9 +1063,9 @@ Excluded commands and commands you type yourself keep running, and Claude can't 
 
 In a Linux session with `CLAUDE_CODE_SUBPROCESS_ENV_SCRUB` set, every command runs sandboxed, so excluded commands and commands you type are refused too.
 
-### `/sandbox` fails with `Sandbox settings are overridden by a higher-priority configuration`
+### `/sandbox` fails with `Sandbox settings can't be changed here`
 
-`/sandbox` prints `Error: Sandbox settings are overridden by a higher-priority configuration and cannot be changed locally.` instead of opening its panel when a higher [settings level](https://code.claude.com/docs/en/settings.md#settings-precedence) sets `sandbox.enabled`, `sandbox.autoAllowBashIfSandboxed`, or `sandbox.allowUnsandboxedCommands`. The panel saves your choices to `.claude/settings.local.json`, and a value saved there can't override those levels.
+When `sandbox.enabled`, `sandbox.autoAllowBashIfSandboxed`, or `sandbox.allowUnsandboxedCommands` is set above the local [settings level](https://code.claude.com/docs/en/settings.md#settings-precedence), `/sandbox` prints `Sandbox settings can't be changed here. Higher-priority settings override them.` and its panel stays closed. The panel saves your choices to `.claude/settings.local.json`, and a value saved there can't override higher levels.
 
 Managed settings and `--settings` rank above local settings. To see which of them this session loaded, run `/status` and read the `Setting sources` line:
 
@@ -1077,7 +1077,7 @@ Managed settings and `--settings` rank above local settings. To see which of the
 This line means `/sandbox` couldn't save the choice you made in its panel to your project's `.claude/settings.local.json`:
 
 ```text theme={null}
-✗ Sandbox settings not changed: /home/you/project/.claude/settings.local.json couldn't be updated (EACCES). Start Claude Code in a project folder you can write to.
+✗ Sandbox settings not changed: /home/you/project/.claude/settings.local.json couldn't be updated (EACCES). Start Claude Code in a project directory you can write to.
 ```
 
 If the reason in parentheses is `EACCES`, `EPERM`, or `EROFS`, start Claude Code in a project folder you can write to, then run `/sandbox` again in that session. If the reason begins with `Invalid JSON syntax in settings file`, correct the JSON in your project's `.claude/settings.local.json`, then run `/sandbox` again.

@@ -19,7 +19,7 @@ Several products share the Claude Code name. This page covers the `claude-code-a
 
 You can set up the Claude Code GitHub Action in one of two ways:
 
-* **Quick setup**: run `/install-github-app` from Claude Code. Claude Code installs the GitHub App, adds your authentication secret, and prepares the workflow pull request for you
+* **Quick setup**: run `/install-github-app` from Claude Code, which sets up the authentication secret and workflow files for you
 * **Manual setup**: install the app, add the secret, and copy the workflow file into your repository yourself. Use this path when you don't run Claude Code locally, when the command fails, or when you want full control of the workflow files
 
 For either path, you need admin access to the repository.
@@ -28,18 +28,45 @@ For either path, you need admin access to the repository.
 
 `/install-github-app` works only with github.com repositories. If your repository's git remote is on gitlab.com or bitbucket.org, the command prints a notice and exits instead of starting setup. To run Claude Code from GitLab pipelines, see [Claude Code GitLab CI/CD](https://code.claude.com/docs/en/gitlab-ci-cd.md).
 
-Before you start, install the [GitHub CLI](https://cli.github.com) and authenticate it with `gh auth login`. Claude Code checks for it and warns you if it's missing.
+During quick setup, you install the Claude GitHub App in your browser, then create and merge a pull request.
 
-Open `claude` in the repository you want to connect, run `/install-github-app`, and follow the prompts. Claude Code installs the Claude GitHub App, then sets up an authentication secret for the workflows:
+**1. Sign in to the GitHub CLI**
 
-* If Claude Code already has an API key, it reuses that key, and offers to keep the repository's existing `ANTHROPIC_API_KEY` secret if one is already set
-* Otherwise, choose between creating a long-lived token with your Claude subscription and pasting in an API key
+Install the [GitHub CLI](https://cli.github.com). If you aren't signed in yet, run `gh auth login` in your shell.
 
-Claude Code saves the credential as a repository secret, named `ANTHROPIC_API_KEY` for an API key or `CLAUDE_CODE_OAUTH_TOKEN` for a subscription token.
+**2. Start setup from Claude Code**
 
-Claude Code then pushes a branch with the workflow files you select, already set to use that secret, and opens GitHub in your browser with a pull request ready to create. Create and merge that pull request, and `@claude` works in the repository.
+In your shell, run `claude` in the repository you want to connect. At the Claude Code prompt, run `/install-github-app`.
 
-To stop setup partway through, press Esc. A step already in progress finishes, and no later step starts. The closing message lists what already happened in the repository, such as a pushed branch or a saved secret.
+If setup reports missing GitHub CLI permissions, run the command it prints and start again.
+
+**3. Install the Claude GitHub App**
+
+When the [Claude GitHub App](https://github.com/apps/claude) page opens in your browser, install the app and give it access to your repository. Then return to Claude Code and press Enter.
+
+**4. Select the workflows**
+
+Select **Set up GitHub Actions workflows**. To stop with only the app installed, decline the workflow setup and run `/install-github-app` again later.
+
+In the workflow list, deselect the `@claude` mentions workflow or the pull request review workflow if you don't want both.
+
+If the repository already has a `claude.yml` workflow file, an update prompt replaces the workflow list. To keep your file, select **Skip workflow update (configure secrets only)**, then skip the pull request step.
+
+**5. Choose a credential for the workflows**
+
+When asked, choose between creating a long-lived token with your Claude subscription and pasting in an API key. If Claude Code already has an API key, you skip this question and use that key.
+
+By default, Claude Code saves the credential as a repository secret, named `ANTHROPIC_API_KEY` for an API key or `CLAUDE_CODE_OAUTH_TOKEN` for a subscription token.
+
+**6. Confirm the changes**
+
+When Claude Code lists the planned changes to your repository, select **Yes, make these changes**.
+
+**7. Create and merge the pull request**
+
+Claude Code pushes a branch with the workflow files, already set to use your secret, and opens GitHub with a pull request ready for you to create. Create and merge that pull request to turn on the workflows. To test mentions, tag `@claude` in an issue comment.
+
+To stop setup partway through, press Esc in Claude Code. Claude Code finishes any change it's already writing to the repository and doesn't start new ones. The closing message lists what already happened in the repository, such as a pushed branch or a saved secret.
 
 If you select the review workflow, Claude posts each review on the pull request itself, as an inline comment on each issue it finds or as one summary comment when it finds none. Claude skips some pull requests, such as drafts. The [review workflow example](#run-a-skill) uses the same skill and lists them. Before v2.1.229, Claude wrote its review only to the workflow run log.
 
@@ -47,8 +74,6 @@ To update a review workflow that an earlier version generated, do one of the fol
 
 * Run `/install-github-app` again. When the repository already has a `claude.yml`, select **Update workflow file with latest version**. Claude Code pushes fresh copies of the workflow files to a new branch and opens the pull request, the same as a first install.
 * Add the `--comment` argument and the `claude_args` line from the [review workflow example](#run-a-skill) to the checked-in file yourself, which keeps any other edits you made to it.
-
-After installing the GitHub App, Claude Code asks whether to continue with GitHub Actions setup. Choose **Skip for now** to stop with only the GitHub App installed. Run `/install-github-app` again later to finish the workflow and secret steps.
 
 > [!NOTE]
 >

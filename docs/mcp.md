@@ -475,7 +475,7 @@ These timeouts bound how long a call can run, not always how long it blocks the 
 
 ### Automatic backgrounding of long tool calls
 
-If a background call's detail view in [`/tasks`](https://code.claude.com/docs/en/commands#all-commands) shows `runs on the server; survives exiting this session`, see [MCP tasks that run on the server](#mcp-tasks-that-run-on-the-server).
+If a background call's detail view in [`/tasks`](https://code.claude.com/docs/en/commands#all-commands) says the call keeps running after you exit, see [MCP tasks that run on the server](#mcp-tasks-that-run-on-the-server).
 
 An MCP tool call in the main conversation that is still running after two minutes moves to a background task instead of blocking the session. Claude receives the task ID immediately and keeps working, and the result arrives as a task notification when the call settles.
 
@@ -528,7 +528,7 @@ In a [non-interactive](https://code.claude.com/docs/en/headless.md) session, Cla
 
 #### Exit, clear, or resume while an MCP task runs
 
-A task on a remote server keeps running after you exit. A stdio server's process stops when Claude Code exits, though its tasks show `runs on the server; survives exiting this session` in `/tasks`. Unless that server's documentation says the work outlives the process, let those tasks finish or stop them in `/tasks` first.
+A task on a remote server keeps running after you exit. A stdio server's process stops when Claude Code exits, even though `/tasks` says the server's tasks keep running. Unless that server's documentation says the work outlives the process, let those tasks finish or stop them in `/tasks` first.
 
 | Situation | What happens to the task | What you can do |
 | - | - | - |
@@ -1305,6 +1305,7 @@ claude mcp get weather-api
 > Tips:
 >
 > * Make sure the JSON is properly escaped in your shell
+> * To pipe the JSON in, pass `-` in its place: `cat server.json | claude mcp add-json <name> -`. Run the command outside a Claude Code session. Requires Claude Code v2.1.327 or later.
 > * The JSON must conform to the MCP server configuration schema
 > * You can use `--scope user` to add the server to your user configuration instead of the project-specific one
 
@@ -1413,7 +1414,7 @@ Which settings govern a claude.ai connector depends on where your session runs, 
 Your organization can set per-tool controls on [claude.ai connectors](https://claude.com/docs/connectors). Claude Code reads these settings at startup and enforces them locally, except in the desktop app's [local and SSH sessions](#how-connectors-reach-claude-code). There, the desktop app withholds `blocked` tools before it delivers a connector, and the `ask` setting doesn't reach Claude Code, so it applies the session's ordinary [permission rules](https://code.claude.com/docs/en/permissions.md) to those tools instead of prompting on every call. In sessions where Claude Code fetches connectors itself, run `/mcp` to see which setting applies to each tool on a connector.
 
 * **Tool set to `ask`**: Claude Code prompts on every call Claude makes, with the reason `Your organization requires approval for this tool`. The prompt appears even in `acceptEdits`, `auto`, and `bypassPermissions` [permission modes](https://code.claude.com/docs/en/permissions.md#permission-modes). In the terminal, you can't save your choice. Matching [allow rules](https://code.claude.com/docs/en/permissions.md) don't skip the prompt. In `dontAsk` mode, or a `-p` run with nothing to answer the prompt, Claude Code denies the call instead.
-* **Tool set to `blocked`**: Claude Code filters the tool out before Claude sees it, so it never appears in Claude's tool list. In sessions where Claude Code fetches connectors itself, the `/mcp` tool list still shows the tool, marked `disabled by your organization`.
+* **Tool set to `blocked`**: Claude Code filters the tool out before Claude sees it, so it never appears in Claude's tool list. In sessions where Claude Code fetches connectors itself, the `/mcp` tool list still shows the tool, marked `turned off by your organization`.
 
 The desktop app and claude.ai chat apply the same `blocked` setting, so Claude can't use a blocked tool there either, and you can't withhold a tool from the desktop app's sessions while keeping it available in chat. The desktop app skips a connector whose tools are all blocked.
 

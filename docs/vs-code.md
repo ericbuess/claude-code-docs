@@ -220,6 +220,8 @@ Explain the logic in @auth (fuzzy matches auth.js, AuthService.ts, etc.)
 What's in @src/components/ (include a trailing slash for folders)
 ```
 
+To @-mention files or folders from the Explorer, right-click them and select **Claude Code: Add to Chat**. Requires Claude Code v2.1.327 or later.
+
 ### Read specific pages of a PDF
 
 For large PDFs, you can ask Claude to read specific pages instead of the whole file. Ask for a single page, a range like pages 1-10, or an open-ended range like page 3 onward. Reading specific pages requires [poppler-utils](https://code.claude.com/docs/en/tools-reference.md#read-tool-behavior) on the machine where Claude Code runs.
@@ -934,7 +936,7 @@ The server is named `ide` and is hidden from `/mcp` because there's nothing to c
 * **Auth token**: each extension activation generates a fresh random auth token and writes it to a lock file at `~/.claude/ide/<port>.lock`. The CLI must present the token as the `X-Claude-Code-Ide-Authorization` header to connect.
 * **Lock file permissions**: the lock file has `0600` permissions in a `0700` directory, so only the user running VS Code can read it. If `CLAUDE_CONFIG_DIR` is set, the lock file is written to `$CLAUDE_CONFIG_DIR/ide/` instead.
 
-**Tools exposed to the model.** The server hosts a dozen tools, but only two are visible to the model. The rest are internal RPC the CLI uses for its own UI, such as opening diffs, reading selections, and saving files. They are filtered out before the tool list reaches Claude.
+**Tools exposed to the model.** Only two of the server's tools are visible to the model. The CLI filters out the rest before the tool list reaches Claude.
 
 | Tool name (as seen by hooks) | What it does | Read-only |
 | - | - | - |

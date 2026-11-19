@@ -412,7 +412,7 @@ The following command reconnects the Slack connector:
 /mcp reconnect claude.ai Slack
 ```
 
-In the terminal, Claude Code prints `Successfully reconnected to claude.ai Slack`. From the mobile app or the web, the reply is `Reconnected "claude.ai Slack".`
+In the terminal, Claude Code says it reconnected to `claude.ai Slack`. From the mobile app or the web, the reply is `Reconnected "claude.ai Slack".`
 
 ## Troubleshooting
 
