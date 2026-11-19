@@ -325,6 +325,7 @@ To check a session, type `/list-agents`, also available as `/peers`. The result 
   * **Other-machine session missing**: a session on another of your machines appears only when it runs with [Remote Control](https://code.claude.com/docs/en/remote-control.md) and this session is connected as well.
   * **Other-machine session `offline`**: a message to a session listed as `offline` goes through, but [arrives only after that session's machine reconnects](#message-sessions-on-other-machines).
   * **Cloud or other-machine session `can't receive cross-session messages`**: a message to a session listed with this condition [doesn't leave this machine](#message-sessions-on-other-machines), and the result under `SendMessage` begins `Not sent`.
+  * **Long exchange between sessions**: if an exchange [paused or stopped after many replies](#limitations), type a prompt in the sending session to resume it.
   * **Older cloud or other-machine session missing**: Claude Code reads those session lists newest first and stops after a bounded number of pages, so Claude can't message a session that fell past them by name.
 
 In a session with messaging, `/status` also shows a `Peer address` row with the session's own inbox address, or `unavailable` and the reason when Claude Code [couldn't set up an inbox](#the-sessions-inbox-socket).
@@ -336,7 +337,10 @@ The limits here are properties of the messaging channel itself and apply whereve
 * **Plain text only**: Claude sends only plain text across sessions. Structured [agent team](https://code.claude.com/docs/en/agent-teams.md) protocol messages stay within a team.
 * **Same-machine message size is capped**: Claude Code refuses a message to a session on this machine once its serialized form passes about a million characters. The refusal [names the exact sizes](https://code.claude.com/docs/en/errors.md#message-too-large-for-cross-session-delivery). Nothing reaches the receiving session.
 * **Rapid bursts to one session are refused at the sender**: once a rapid burst of messages to a session on this machine reaches what that session's inbox accepts, Claude Code refuses further sends in the sending session. The [refusal names the burst](https://code.claude.com/docs/en/errors.md#too-many-messages-to-this-session-just-now) and tells Claude to batch the rest into one message or wait.
-* **Message loops are throttled**: in the receiving session, Claude Code rate-limits repeated messages per sender, drops identical repeats arriving within a short window, and queues at most 50 accepted messages for Claude to read. A message loop between two sessions therefore stops on its own.
+* **Message loops are throttled**: in the receiving session, Claude Code rate-limits repeated messages per sender, drops identical repeats arriving within a short window, and queues at most 50 accepted messages for Claude to read.
+* **Slower loops on this machine can continue**: two sessions that answer each other slowly enough not to be throttled can exchange thousands of messages without a prompt from you, and each delivered message [counts toward usage](#message-delivery). To stop the exchange, end one of the sessions or [stop it from receiving messages](#turn-off-cross-session-messaging). To end a [background session](https://code.claude.com/docs/en/agent-view.md#attach-to-a-session), attach to it and run `/stop`.
+* **Sending can pause after a long exchange**: if a session's `SendMessage` result begins `Not delivered: this session keeps answering other sessions`, type a prompt in that session to resume sending.
+* **Some long reply chains can be cut off**: when a chain of replies grows long, delivery can stop, for example in a chain that includes a session [beyond this machine](#message-sessions-on-other-machines). To continue the exchange, type a prompt in one of the sessions in the chain.
 
 ## Related resources
 

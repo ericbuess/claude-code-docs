@@ -328,7 +328,8 @@ Both `defaults` and `config` print the four rule lists as a single JSON object, 
     ...
   ],
   "soft_deny": [
-    "Git Destructive [named+specifics — **must name:** the destructive operation and its target]: Force pushing (`git push --force`), deleting remote branches, tags, or releases, or rewriting remote history. Also `git commit --amend` when the commit being rewritten is not the agent's own unpushed work: either no prior `git commit` is visible (HEAD pre-dates the session), or a `git push` of the current branch is visible after the most recent commit (it has been pushed). Clears when the user asked to amend/reword/fixup, or when it is a message-only reword (`--amend -m …`, nothing newly staged) of a commit the agent visibly created this session.",
+    ...
+    "Production Deploy [named+specifics — **must name:** the production target]: Deploying to production/a production service or running production database migrations",
     ...
   ],
   "hard_deny": [...],

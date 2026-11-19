@@ -104,6 +104,7 @@ Match the message you see to a section below.
 | `Artifacts need a claude.ai login` | [Authentication](#artifacts-need-a-claude-ai-login) |
 | `Not signed in to the Cloud gateway — run /login.` | [Authentication](#administrator-policy-requires-a-cloud-gateway-sign-in) |
 | `Administrator policy requires a Cloud gateway sign-in on this machine` | [Authentication](#administrator-policy-requires-a-cloud-gateway-sign-in) |
+| `Managed settings on this machine configure a Cloud gateway sign-in; run interactive /login to authenticate.` | [`claude auth login`](https://code.claude.com/docs/en/cli-reference#cli-commands) |
 | `Failed to authenticate: OAuth session expired and could not be refreshed` | [Authentication](#login-expired) |
 | `Login reached its time limit · Please run /login` / `Failed to authenticate: this login reached its time limit` | [Authentication](#login-expired) |
 | `Failed to authenticate: your claude.ai login expired` | [After the login expires](https://code.claude.com/docs/en/authentication.md#after-the-login-expires) |
@@ -237,6 +238,8 @@ Match the message you see to a section below.
 | `--bg and --print conflict` | [Command-line errors](#conflict-between-bg-and-print) |
 | `Couldn't tell whether --bg is a flag or text here, so nothing was started` | [Command-line errors](#couldnt-tell-whether-bg-is-a-flag-or-text) |
 | `Error: Cannot use both --append-subagent-system-prompt and --append-subagent-system-prompt-file. Please use only one.` | [Command-line errors](#conflict-between-a-system-prompt-flag-and-its-file-form) |
+| `Error: bypassPermissions not supported in restricted mode` | [Restricted mode](https://code.claude.com/docs/en/permission-modes.md#restricted-mode-refuses-bypasspermissions) |
+| `Session was started with bypass permissions, so plan mode won't ask before most edits or commands` | [Plan mode](https://code.claude.com/docs/en/permission-modes.md#analyze-before-you-edit-with-plan-mode) |
 | `Cloud sessions cannot be created from a --restricted session` | [Command-line errors](#cloud-sessions-cannot-be-created-from-a-restricted-session) |
 | `Cloud sessions are disabled by your organization's policy` | [Command-line errors](#cloud-sessions-are-disabled-by-your-organizations-policy) |
 | `Cloud sessions use your claude.ai login`, at the end of a policy denial that names a credential | [Command-line errors](#cloud-sessions-use-your-claude-ai-login) |
@@ -3523,7 +3526,7 @@ If you answer `n` or press Enter at the [`Trust <directory>?` question](https://
 
 **What to do:**
 
-* Trust the directory from a terminal first: run `claude rc` there and answer `y`, or run `claude` there and accept the [workspace trust dialog](https://code.claude.com/docs/en/permissions.md#project-allow-rules-and-workspace-trust), then run your original command again
+* Trust the directory from a terminal first: run `claude` there and accept the [workspace trust dialog](https://code.claude.com/docs/en/permissions.md#project-allow-rules-and-workspace-trust), then run your original command again
 * In your home directory, change to a project directory and start Remote Control there
 
 Before v2.1.284, the command never asked, even in a terminal.
@@ -3542,6 +3545,8 @@ For example, the subcommand can't ask when its standard input or standard output
 
 * In a script or CI job, append `--trust-workspace` to trust the folder for that run: `claude ultrareview --trust-workspace`. Append it only for code you trust, because git and Claude Code can then run programs named in the folder's git configuration and project settings. For a pull request whose code you don't trust, [run the review from a branch you trust](https://code.claude.com/docs/en/ultrareview.md#trust-the-folder-before-the-review-runs).
 * On your own machine, run `claude` in that folder and accept the [workspace trust dialog](https://code.claude.com/docs/en/permissions.md#project-allow-rules-and-workspace-trust), then run your original command again
+
+In a session, `/ultrareview` and `/code-review ultra` can stop with `Ultrareview did not start: "<folder>" is not trusted, and this session started without asking whether you trust it`. Start `claude` in that folder without [`IS_DEMO`](https://code.claude.com/docs/en/env-vars#variables) set, accept the workspace trust dialog, and run the command in the new session.
 
 Each of these messages from `claude ultrareview` means that no review started and the exit code is 1:
 
@@ -5163,7 +5168,7 @@ After the dash, the line gives one or more of these reasons:
 * `its queue of undelivered peer messages was full`: the recipient already held as many undelivered messages from other sessions as its queue allows
 * `you sent faster than that session accepts`: the sending session's messages arrived faster than the recipient accepts from one sender
 * `it repeated your previous message`: the message was identical to one the sending session sent this recipient shortly before
-* `a relay loop between sessions was cut`: the message continued a chain of sessions messaging each other, and the chain had passed through the recipient too many times or grown too long
+* `a relay loop between sessions was cut`: the message continued a long [chain of replies that can be cut off](https://code.claude.com/docs/en/cross-session-messaging.md#limitations), such as one that includes a session beyond this machine
 
 **What to do:**
 

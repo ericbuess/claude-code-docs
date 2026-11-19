@@ -894,7 +894,7 @@ You can set the auto-compact window in these places:
 * **In scripts and cloud environments**: set [`CLAUDE_CODE_AUTO_COMPACT_WINDOW`](https://code.claude.com/docs/en/env-vars) to a token count such as `200000`. Unless Claude Code [ignores the value](#claude_code_auto_compact_window-values), the variable takes precedence over the command, the flag, and the `autoCompactWindow` setting. `/autocompact` then reports the override without saving. The status line's `used_percentage` measures against the model's full context window, so while the variable is set, that percentage doesn't indicate when compaction will run.
 * **For one subagent**: see [Set the auto-compact window for one subagent](https://code.claude.com/docs/en/sub-agents.md#subagent-auto-compact-window).
 
-The command and the flag accept a window size from 100K to 1M tokens, in any of these forms:
+The command and the flag accept a window size of 100K tokens or more, in any of these forms:
 
 * A plain token count, such as `200000`
 * A `k` or `M` suffix, such as `500k` or `1M`
@@ -904,7 +904,7 @@ Whichever way you set the window, Claude Code caps it at the model's context win
 
 #### Values and warnings for `CLAUDE_CODE_AUTO_COMPACT_WINDOW`
 
-A warning that quotes your `CLAUDE_CODE_AUTO_COMPACT_WINDOW` value means the value falls outside 100,000 to 1,000,000 or isn't a token count. To stop the warning, set a number in that range, such as `CLAUDE_CODE_AUTO_COMPACT_WINDOW=200000`. On Claude Code v2.1.304 or later, you can also write the number with `k` for thousands or `M` for millions, as in `200k` or `1M`.
+A warning that quotes your `CLAUDE_CODE_AUTO_COMPACT_WINDOW` value means your session isn't using the value as you set it. To stop the warning, set a number such as `CLAUDE_CODE_AUTO_COMPACT_WINDOW=200000`. On Claude Code v2.1.304 or later, you can also write the number with `k` for thousands or `M` for millions, as in `200k` or `1M`.
 
 Find your warning's wording in the first column, then read across for the window your session uses and what to change:
 

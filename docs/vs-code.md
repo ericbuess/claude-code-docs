@@ -23,7 +23,7 @@ With the extension, you can:
 Before installing, make sure you have:
 
 * VS Code 1.94.0 or later
-* An Anthropic account: any paid Claude subscription (Pro, Max, Ultra, Team, or Enterprise) or a Claude Console account works, and no API key is required. You'll [sign in](https://code.claude.com/docs/en/authentication.md#log-in-to-claude-code) with this account when you first open the extension. If you access Claude through a third-party provider like Amazon Bedrock or Google Cloud's Agent Platform, see [Use third-party providers](#use-third-party-providers) for setup instructions.
+* An Anthropic account: any paid Claude subscription (Pro, Max, Ultra, Team, or Enterprise) or a Claude Console account works, and no API key is required. You'll [sign in](https://code.claude.com/docs/en/authentication.md#log-in-to-claude-code) with this account when you first open the extension. For a provider like Amazon Bedrock or Google Cloud's Agent Platform, see [Use third-party providers](#use-third-party-providers). For a Claude apps gateway, see [Sign in to a Claude apps gateway](#sign-in-to-a-claude-apps-gateway).
 
 > [!TIP]
 >
@@ -808,6 +808,17 @@ On a third-party provider, the extension doesn't offer features that require a c
 
 A claude.ai sign-in left over from an earlier `/login` stays unused: the extension doesn't send it with any request.
 
+## Sign in to a Claude apps gateway
+
+Once your machine's settings [name the gateway](https://code.claude.com/docs/en/claude-apps-gateway#set-the-gateway-url), you can sign in to a [Claude apps gateway](https://code.claude.com/docs/en/claude-apps-gateway) from the Claude Code panel. Requires Claude Code v2.1.316 or later.
+
+1. If the panel opens on a chat, type `/` in the prompt box and select **Sign in to Cloud gateway**. If that isn't listed, select **Switch account**.
+2. On the sign-in screen, click **Cloud gateway**.
+3. Compare the gateway URL and any certificate fingerprint you're shown with what your administrator published. If either differs, click **Cancel sign-in** and tell your administrator. Otherwise, click **Sign in** for the URL and **Yes, trust this gateway** for the fingerprint.
+4. On the page that opens in your browser, check that the code matches the one in the panel. If it does, continue and sign in with your work account. If it doesn't, close the page and tell your administrator.
+
+If the screen says `Login is managed by your organization and must be completed in the terminal.`, update the extension. To sign in without updating, [install the CLI](https://code.claude.com/docs/en/setup.md), click **Run `claude` in terminal**, and run `/login` there.
+
 ## Use a screen reader
 
 The extension's chat panel works with screen readers. You don't need to turn anything on: the extension announces conversation activity for every user, with no visual change. This is separate from the CLI's opt-in [screen reader mode](https://code.claude.com/docs/en/accessibility.md), which adapts the terminal interface.
@@ -969,6 +980,7 @@ Sign-in, network, and launch errors have their own entries on the install troubl
 | - | - |
 | `API Error: 403 Request not allowed` after you sign in | [403 Forbidden after login](https://code.claude.com/docs/en/troubleshoot-install.md#403-forbidden-after-login) |
 | You're asked to sign in again after you already signed in | [Not logged in or token expired](https://code.claude.com/docs/en/troubleshoot-install.md#not-logged-in-or-token-expired) |
+| `Login is managed by your organization and must be completed in the terminal.` | [Sign in to a Claude apps gateway](#sign-in-to-a-claude-apps-gateway) |
 | Cloud provider credentials work in your terminal but not in the extension | [Bedrock, Agent Platform, or Foundry credentials not loading](https://code.claude.com/docs/en/troubleshoot-install.md#bedrock-agent-platform-or-foundry-credentials-not-loading) |
 | `SSL certificate verification failed` or `Self-signed certificate detected` | [SSL certificate errors](https://code.claude.com/docs/en/errors.md#ssl-certificate-errors) |
 | `Dictation error: WebSocket error:` followed by a certificate error such as `unable to get local issuer certificate`, or `Remote server is not connected` on the Web tab | [Dictation or the Web tab fails behind a TLS-inspecting proxy](#dictation-or-the-web-tab-fails-behind-a-tls-inspecting-proxy) |

@@ -128,6 +128,7 @@ On machines with managed settings, see [How managed settings lock the OTLP desti
 | `OTEL_LOG_MANAGED_SETTINGS` | Add the redacted managed settings, and a SHA-256 digest of the settings before redaction, to [managed settings resolved](#managed-settings-resolved-event) events (default: disabled). A value in project or local settings doesn't turn it on. Requires Claude Code v2.1.274 or later | `1` to enable |
 | `OTEL_LOG_RAW_API_BODIES` | Emit the full Anthropic Messages API request and response JSON as `api_request_body` / `api_response_body` log events (default: disabled). Bodies include the entire conversation history. Enabling this implies consent to everything `OTEL_LOG_USER_PROMPTS`, `OTEL_LOG_TOOL_DETAILS`, and `OTEL_LOG_TOOL_CONTENT` would reveal | `1` for inline bodies truncated at the content limit (60 KB by default), or `file:<dir>` for untruncated bodies on disk with a `body_ref` pointer in the event |
 | `CLAUDE_CODE_OTEL_CONTENT_MAX_LENGTH` | Content limit: the maximum length of content-bearing attributes such as model responses, tool content, system prompts, and raw API bodies, truncation marker included, in UTF-16 code units (default: 61440, i.e. 60 KB). The default is sized for backends that cap attribute values at 64 KB; raise it only if your backend accepts larger values, or lower it to cut telemetry volume. When an OpenTelemetry SDK attribute limit, `OTEL_ATTRIBUTE_VALUE_LENGTH_LIMIT` or one of its logrecord and span variants, is set lower, Claude Code truncates at that smaller value so the `[TRUNCATED ...]` marker stays within the SDK limit | `262144` |
+| `OTEL_RESOURCE_INCLUDE_HOST` | Add the machine's name and ID to the resource attributes of metrics, events, and traces (default: disabled). See [Identify the machine a session ran on](#identify-the-machine-a-session-ran-on). Requires Claude Code v2.1.326 or later | `1` to enable |
 | `OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE` | Metrics temporality preference (default: `delta`). Set to `cumulative` if your backend expects cumulative temporality | `delta`, `cumulative` |
 | `CLAUDE_CODE_OTEL_HEADERS_HELPER_DEBOUNCE_MS` | Interval for refreshing dynamic headers (default: 1740000ms / 29 minutes) | `900000` |
 
@@ -158,6 +159,41 @@ The following environment variables control which attributes are included in met
 | `OTEL_METRICS_INCLUDE_REPOSITORY` | Include `vcs.*` [repository identity attributes](#repository-attributes) on metrics and events. Requires Claude Code v2.1.269 or later | `false` | `true` |
 
 Lower cardinality generally means better performance and lower storage costs but less granular data for analysis.
+
+### Identify the machine a session ran on
+
+To see which machine each session ran on, set `OTEL_RESOURCE_INCLUDE_HOST=1` on Claude Code v2.1.326 or later. Set it under `env` in [managed settings](https://code.claude.com/docs/en/managed-settings.md) or user settings, or in the shell you start `claude` from, not in [project or local settings](https://code.claude.com/docs/en/settings-reference.md#variables-claude-code-ignores-in-env).
+
+The following example sets it in a settings file:
+
+```json theme={null}
+{
+  "env": {
+    "OTEL_RESOURCE_INCLUDE_HOST": "1"
+  }
+}
+```
+
+The attributes `host.name` and `host.id` then appear in the resource block of metrics, events, and traces, not on metric datapoints:
+
+* `host.name`: the machine's host name
+* `host.id`: the operating system's machine ID, not hashed. That's the contents of `/etc/machine-id` on Linux, `IOPlatformUUID` on macOS, and the `MachineGuid` registry value on Windows. It's left out when Claude Code can't read one, for example in a container whose image has no machine ID.
+
+Both attributes name the machine that Claude Code runs on. In a Desktop SSH session that's the remote machine, so set the variable there: see [Attribute telemetry to Desktop SSH sessions](#attribute-telemetry-to-desktop-ssh-sessions). In a container, `host.name` is the container's own host name, so to name the machine that runs the container, declare the name yourself in [`OTEL_RESOURCE_ATTRIBUTES`](#multi-team-organization-support).
+
+#### Troubleshoot missing host attributes
+
+If `host.name` and `host.id` are missing, check where and when you set `OTEL_RESOURCE_INCLUDE_HOST` and what started the session. Then check your exporter and endpoint variables and how your backend shows resource attributes:
+
+* **The session's Claude Code is older than v2.1.326**: update it
+* **You set the variable only in project or local settings**: set it in managed settings, user settings, or your shell. Run `/status` to see which variables Claude Code ignored.
+* **The variable is `0` in a managed or user settings file**: if you set `1` [in your shell or in a lower-precedence file](https://code.claude.com/docs/en/settings-reference.md#how-env-values-interact-with-your-shell), the `0` still applies. Change the `0`, or ask your administrator if it's in managed settings.
+* **You set the variable after the session started**: start a new session, because Claude Code reads it once at startup
+* **The desktop app started the session**: a local session gets some variables from your shell profile, but not this one, so set it in managed or user settings. For a Desktop SSH session, set it on the remote machine: see [Attribute telemetry to Desktop SSH sessions](#attribute-telemetry-to-desktop-ssh-sessions).
+* **The session is a cloud session in an Anthropic-hosted environment**: the attributes aren't added there. To tell cloud sessions apart, see [Attribute telemetry to cloud sessions](#attribute-telemetry-to-cloud-sessions).
+* **Any exporter variable lists `console`**: remove `console` from `OTEL_METRICS_EXPORTER`, `OTEL_LOGS_EXPORTER`, and `OTEL_TRACES_EXPORTER`, and the attributes arrive at your other exporters
+* **A per-signal endpoint variable, such as `OTEL_EXPORTER_OTLP_METRICS_ENDPOINT`, isn't a URL**: write a bare `10.0.0.1:4317` as a URL, such as `http://10.0.0.1:4317`
+* **Your metrics backend doesn't surface resource attributes**: with the `prometheus` exporter, look for the `host_name` and `host_id` labels of the `target_info` metric. Otherwise, look in the resource block of events and traces, or declare the name yourself in [`OTEL_RESOURCE_ATTRIBUTES`](#multi-team-organization-support), which by default also reaches metric datapoints.
 
 ### Traces (beta)
 
@@ -450,7 +486,11 @@ Each custom key becomes a label on every metric series, so high-cardinality valu
 
 ### Attribute telemetry to Desktop SSH sessions
 
-To see which remote machine a [Desktop SSH session](https://code.claude.com/docs/en/desktop.md#ssh-sessions) ran on, name each machine in a custom attribute. Metrics and events don't name the machine a session ran on.
+To see which remote machine a [Desktop SSH session](https://code.claude.com/docs/en/desktop.md#ssh-sessions) ran on, either set [`OTEL_RESOURCE_INCLUDE_HOST=1`](#identify-the-machine-a-session-ran-on) or [name each machine in a custom attribute](#name-each-remote-machine-in-a-custom-attribute). Choose the custom attribute if you need the name on metric datapoints: with `OTEL_RESOURCE_INCLUDE_HOST=1`, `host.name` appears in the resource block only.
+
+Set `OTEL_RESOURCE_INCLUDE_HOST` on the remote machine, in the `env` block that turns telemetry on, in the [managed settings file the session reads](https://code.claude.com/docs/en/desktop.md#managed-settings). The [copy of Claude Code that the session runs](https://code.claude.com/docs/en/desktop.md#files-and-processes-on-the-remote-machine) must be v2.1.326 or later. If `host.name` and `host.id` don't arrive, see [Troubleshoot missing host attributes](#troubleshoot-missing-host-attributes).
+
+#### Name each remote machine in a custom attribute
 
 On each remote machine, add [`OTEL_RESOURCE_ATTRIBUTES`](#multi-team-organization-support) to the `env` block that turns telemetry on, in the [managed settings file the session reads](https://code.claude.com/docs/en/desktop.md#managed-settings). Write the name out in each machine's file. Claude Code doesn't expand the value, so `host.name=$(hostname)` arrives as those characters.
 
@@ -469,9 +509,9 @@ The following example names the machine `build-7`:
 }
 ```
 
-When nothing else sets the variable, `host.name` arrives in the resource block, in Desktop SSH sessions and in the CLI on that machine. For where else custom attributes appear, see [Multi-team organization support](#multi-team-organization-support).
+`host.name` arrives in the resource block and, by default, on metric datapoints and events. Desktop SSH sessions and the CLI on that machine both send it. To keep it off datapoints, see [Multi-team organization support](#multi-team-organization-support).
 
-If the name doesn't arrive, check for one of these causes:
+If the name that you set in `OTEL_RESOURCE_ATTRIBUTES` doesn't arrive, check for one of these causes:
 
 * **You set it on the computer that runs Desktop**: Desktop doesn't pass a value you set there to the SSH session
 * **You exported it in `/etc/profile` or another file that only login shells read**: the name arrives when you run `claude` from a login shell, but not in a Desktop SSH session. Desktop doesn't start Claude Code through a login shell. Set the variable under `env` in the [managed settings file](https://code.claude.com/docs/en/desktop.md#managed-settings) on the remote machine instead.
@@ -1794,6 +1834,7 @@ All metrics and events are exported with the following resource attributes:
 * `os.type`: Operating system type (for example, `linux`, `darwin`, `windows`)
 * `os.version`: Operating system version string
 * `host.arch`: Host architecture (for example, `amd64`, `arm64`)
+* `host.name`, `host.id`: The machine's name and ID, off by default. See [Identify the machine a session ran on](#identify-the-machine-a-session-ran-on).
 * `wsl.version`: WSL version number (only present when running on Windows Subsystem for Linux)
 * Meter Name: `com.anthropic.claude_code`
 
@@ -1839,6 +1880,7 @@ For a comprehensive guide on measuring return on investment for Claude Code, inc
   * With `=file:<dir>`, Claude Code writes untruncated bodies to `.request.json` and `.response.json` files under that directory, and the events carry a `body_ref` path instead of the inline body. Ship the directory with a log collector or sidecar rather than through the telemetry stream.
 
     For each successful response, Claude Code also appends one line to `index.jsonl` in that directory, linking the response file to the request file that produced it and to the transcript message it became. Each line holds no message content, and the [API response body event](#api-response-body-event) section lists its fields. The index file requires Claude Code v2.1.274 or later
+* The machine's name and ID aren't included by default. To include them as `host.name` and `host.id`, set [`OTEL_RESOURCE_INCLUDE_HOST=1`](#identify-the-machine-a-session-ran-on). A host name often contains a person's name, and `host.id` is a lasting identifier for the machine. If you set the variable in managed settings, tell the people who use those machines, because Claude Code shows them no notice.
 
 ## Monitor Claude Code on Amazon Bedrock
 

@@ -265,8 +265,6 @@ To turn Remote Control off entirely, use the [`disableRemoteControl`](https://co
 
 > [!NOTE]
 >
-> Trusted Devices is currently in beta. Features and functionality may evolve as the experience is refined.
->
 > Trusted Devices is available on Pro, Max, Ultra, Team, and Enterprise plans and is off by default. On Team and Enterprise plans, an Owner turns it on for the organization. On Pro, Max, and Ultra plans, you turn on **Require trusted devices** yourself in your settings, on the Cowork or Account page.
 
 Trusted Devices requires a verified device before you can view or steer Remote Control sessions from claude.ai, the Claude mobile apps, or Claude Desktop. The requirement applies to each member of your organization, or you alone on a Pro, Max, or Ultra plan. It ties Remote Control access to a known device and a recent authentication, not just a signed-in account.

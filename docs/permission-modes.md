@@ -616,7 +616,9 @@ The following sections cover the order Claude Code evaluates an action in, how t
 >
 > Narrow rules like `Bash(npm test)` stay in effect. Claude Code restores the dropped rules when you leave auto mode. Before v2.1.236, Claude Code left `Monitor` allow rules in effect in auto mode, so a rule that matched the whole tool approved Monitor commands without classifier review.
 >
-> Claude Code also runs `git status` itself before a command that would discard uncommitted work, such as `git reset --hard` or `rm -rf`, and shows the classifier whether staged, modified, or untracked work is present. Claude Code reports untracked files in that check even when the repository's git configuration sets `status.showUntrackedFiles=no`.
+> Claude Code can also run `git status` itself before a command that would discard uncommitted work, such as `git reset --hard` or `rm -rf`, and show the classifier whether staged, modified, or untracked work is present. Claude Code reports untracked files in that check even when the repository's git configuration sets `status.showUntrackedFiles=no`.
+>
+> Under [server-side classifier review](#server-side-classifier-review), `git reset --hard` can be blocked on a clean working tree, because Claude Code can skip `git status` unless auto mode recently blocked an action. After the block, the classifier can see the clean status and allow Claude's retry.
 >
 > In the classifier requests sent by Claude Code itself, the classifier sees user messages, tool calls other than read-only lookups such as file reads and searches, and your CLAUDE.md content. Tool results are stripped from those requests, so hostile content in a file or web page can't manipulate the classifier directly.
 >
@@ -690,8 +692,6 @@ claude --permission-mode bypassPermissions
 
 The `--dangerously-skip-permissions` flag is equivalent.
 
-Claude Code refuses `bypassPermissions` in a session you start with [`--restricted`](https://code.claude.com/docs/en/cli-reference#cli-flags). `--restricted` requires Claude Code v2.1.248 or later.
-
 The first time you start an interactive session with this mode enabled, Claude Code shows a warning dialog asking you to accept responsibility for actions taken without permission checks:
 
 * **If you accept**: Claude Code sets `skipDangerousModePermissionPrompt` to `true` in `~/.claude/settings.json`, so later sessions skip the dialog. To see the dialog again, remove the key from that file or set it to `false`. The [`skipDangerousModePermissionPrompt` reference](https://code.claude.com/docs/en/settings-reference#skipdangerousmodepermissionprompt) lists the other settings files where you or your organization can set it.
@@ -724,6 +724,10 @@ The check is skipped automatically inside a recognized sandbox. To run autonomou
 > [!WARNING]
 >
 > `bypassPermissions` offers no protection against prompt injection or unintended actions. For background safety checks with far fewer permission prompts, use [auto mode](#eliminate-prompts-with-auto-mode) instead. Administrators can block this mode by setting `permissions.disableBypassPermissionsMode` to `"disable"` in [managed settings](https://code.claude.com/docs/en/managed-settings.md).
+
+### Restricted mode refuses bypassPermissions
+
+Claude Code refuses `bypassPermissions` in a session you start with [`--restricted`](https://code.claude.com/docs/en/cli-reference#cli-flags). `--restricted` requires Claude Code v2.1.248 or later. If you see `Error: bypassPermissions not supported in restricted mode`, remove the flag or setting that enables `bypassPermissions`, such as `--dangerously-skip-permissions`. To keep `bypassPermissions`, start without `--restricted` or [`CLAUDE_CODE_RESTRICTED`](https://code.claude.com/docs/en/env-vars#variables) instead.
 
 ### Bypass permissions ignored in a background session
 
@@ -856,6 +860,7 @@ Claude Code also looks inside these constructs:
 * **Inline scripts**: a script passed to `sh`, `bash`, `zsh`, or a similar POSIX shell with `-c`, as in `bash -c 'rm -rf ~'`.
   * When the script is double-quoted, the invoking shell expands its variables before the inner shell receives the script. In `find . -name '*.tmp' -exec sh -c "rm -rf \"$1\"/*" _ {} \;`, the command expands to a removal from the filesystem root once per match, and Claude Code treats it as a critical-path removal.
   * A single-quoted script that binds `$1` to a real value, as `sh -c 'rm -rf "$1"/*' _ {}` does, isn't flagged.
+  * If you see `This shell -c script runs rm and could not be checked`, read the script before you approve it. The command counts as a [critical-path removal](#critical-path-removals-in-each-permission-mode).
 
 To turn off the check on a critical path typed directly in a `-c` script, such as `~`, set [`CLAUDE_CODE_DISABLE_INLINE_SHELL_RM_PROMPT=1`](https://code.claude.com/docs/en/env-vars#variables) in the environment that launches Claude Code.
 
