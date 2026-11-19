@@ -176,7 +176,7 @@ Only a deny rule that matches in the tool-name position blocks a tool this way: 
 
 [Compaction](https://code.claude.com/docs/en/context-window.md#what-survives-compaction) replaces your message history with a summary. By design, this invalidates the conversation layer: the next request has a new, shorter history that doesn't share a prefix with the old one.
 
-* **System prompt**: the next request reads this layer from the cache, unless a [resumed conversation](#resuming-a-session) kept a system prompt that is now out of date. The first time that conversation is compacted, Claude Code switches it to the current prompt, and the next request rebuilds this layer's cache once.
+* **System prompt**: when the conversation's prompt is current, the next request reads this layer from the cache. If that prompt is out of date, such as after you [resume the conversation](#resuming-a-session), Claude Code switches to the current prompt and the next request rebuilds this layer's cache once.
 * **Project context**: Claude Code reloads this layer from disk. It's cached together with the conversation, so after `/compact` or automatic compaction its cache is rebuilt even if its files are unchanged.
 
 To produce the summary, Claude Code sends a separate request. The request repeats your conversation's system prompt, tools, and the history being summarized. It ends with a summarization instruction. While the cache is warm, that request reads your prefix from the cache. A mid-session `/compact` then costs a fraction of what the context size suggests and spends most of its time generating the summary.

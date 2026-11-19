@@ -43,7 +43,7 @@ Prompt injection is a technique where an attacker attempts to override or manipu
 ### Core protections
 
 * **Permission system**: In Manual mode, sensitive operations require explicit approval
-* **Network command approval**: Commands that fetch content from the web such as `curl` and `wget` are not auto-approved by default. In Manual mode they prompt like any other non-read-only Bash command, so you can still approve once or add an explicit allow rule like `Bash(curl *)`. To stop Claude from running them, add them to [`permissions.deny`](https://code.claude.com/docs/en/permissions#tool-specific-permission-rules). A deny rule matches the command [as written](https://code.claude.com/docs/en/permissions.md#bash-rule-limits); for network enforcement that doesn't depend on the command text, see [sandbox network isolation](https://code.claude.com/docs/en/sandboxing.md#network-isolation)
+* **Network command approval**: In Manual mode, commands such as `curl` and `wget` prompt you by default, so you can approve once or add an allow rule like `Bash(curl *)`. To stop Claude from running them, add them to [`permissions.deny`](https://code.claude.com/docs/en/permissions#tool-specific-permission-rules). A deny rule matches the command [as written](https://code.claude.com/docs/en/permissions.md#bash-rule-limits); for network enforcement that doesn't depend on the command text, see [sandbox network isolation](https://code.claude.com/docs/en/sandboxing.md#network-isolation)
 
 ### Privacy safeguards
 

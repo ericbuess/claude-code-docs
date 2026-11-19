@@ -342,7 +342,7 @@ claude plugin uninstall formatter@your-org --scope project
 
 Plugins update automatically when the marketplace they came from has auto-update turned on. After a session starts, Claude Code refreshes those marketplaces and updates the on-disk copies of the plugins you installed from them.
 
-The running session keeps the versions it already loaded. After an update, you see `Plugin updated: <name> · Run /reload-plugins to apply`, and the next session loads the new versions automatically.
+When you see `Plugin updated: <name> · Run /reload-plugins to apply`, run [`/reload-plugins`](https://code.claude.com/docs/en/plugins/cli-reference#reload-plugins) in that session. Whether or not you reload, the new versions load on your next launch.
 
 These are the auto-update defaults for each kind of marketplace:
 

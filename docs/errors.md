@@ -602,7 +602,7 @@ You can tune retry behavior with these environment variables:
 A non-streaming attempt ends at its request timeout or at the body idle timeout, whichever comes first:
 
 * **Request timeout**: `API_TIMEOUT_MS` when you set a positive value, otherwise 300 seconds in a local session.
-* **[Body idle timeout](https://code.claude.com/docs/en/network-config.md#streaming-idle-watchdogs)**: 5 to 6 minutes without a response, however high you set `API_TIMEOUT_MS`, where it runs and you haven't turned it off.
+* **[Body idle timeout](https://code.claude.com/docs/en/network-config.md#streaming-idle-watchdogs) where it runs**: by default, 5 to 6 minutes without a response, however high you set `API_TIMEOUT_MS`.
 
 ## Server errors
 
@@ -2700,11 +2700,10 @@ The first form means the schema isn't valid JSON Schema draft 2020-12. The secon
 
 Claude Code [excludes MCP tools whose input schema would fail this validation](https://code.claude.com/docs/en/mcp.md#tools-with-invalid-input-schemas) when it loads a server's tools, so requests normally never include one.
 
-On a [deployment where flag fetching is off](https://code.claude.com/docs/en/env-vars.md#features-that-need-feature-flag-fetching), or on a machine whose flags have never arrived, Claude Code records in the server's log which tool would be rejected but sends it anyway, so this error can still occur.
+The error can still occur, such as when:
 
-The error can also occur for a tool whose schema declares a JSON Schema dialect other than draft 2020-12 in `$schema`. Claude Code doesn't check those schemas against the JSON Schema meta-schema, though the top-level property-name check still applies.
-
-Before v2.1.216, no deployment ran the exclusion checks.
+* [Feature flag fetching](https://code.claude.com/docs/en/env-vars.md#features-that-need-feature-flag-fetching) is on but the [flags haven't arrived](https://code.claude.com/docs/en/env-vars.md#first-session-after-an-install-or-upgrade). Before v2.1.328, the error could also occur with fetching off.
+* The tool's schema declares a JSON Schema dialect other than draft 2020-12 in `$schema`.
 
 **What to do:**
 

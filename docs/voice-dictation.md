@@ -65,8 +65,6 @@ Hold `Space` to start recording. Claude Code detects a held key by watching for 
 
 The first couple of key-repeat characters type into the input during warmup and are removed automatically when recording activates. A single `Space` tap still types a space, since hold detection only triggers on rapid repeat.
 
-Holding or tapping `Space` starts dictation only where the keypress would otherwise type into the prompt. In the [transcript viewer](https://code.claude.com/docs/en/interactive-mode.md#transcript-viewer), `Space` pages through the conversation, and in [vim mode](https://code.claude.com/docs/en/interactive-mode.md#vim-editor-mode) outside INSERT it is a command. A [rebound modifier combination](#rebind-the-dictation-key) like `meta+k` never types text, so it starts dictation from those places too.
-
 > [!TIP]
 >
 > To skip the warmup, switch to [tap mode](#tap-to-record-and-send) with `/voice tap`, or [rebind to a modifier combination](#rebind-the-dictation-key) like `meta+k`. Modifier combos start recording on the first keypress.
@@ -80,6 +78,8 @@ Your speech appears in the prompt as you speak, dimmed until the transcript is f
 ```
 
 By default, when you release the key, Claude Code inserts the transcript and waits for you to press `Enter`. Set `"autoSubmit": true` in the `voice` settings object to send the prompt automatically when you release the key, as long as the transcript is at least three words long.
+
+Holding or tapping `Space` starts dictation only where the keypress would otherwise type into the prompt. In the [transcript viewer](https://code.claude.com/docs/en/interactive-mode.md#transcript-viewer), `Space` pages through the conversation, and in [vim mode](https://code.claude.com/docs/en/interactive-mode.md#vim-editor-mode) outside INSERT it is a command. To dictate from either place, [rebind to a modifier combination](#rebind-the-dictation-key) like `meta+k`.
 
 ## Tap to record and send
 

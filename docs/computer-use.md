@@ -82,8 +82,8 @@ Apps with broad reach show an extra warning in the prompt so you know what appro
 
 | Warning | Applies to |
 | :- | :- |
-| Equivalent to shell access | Terminal, iTerm, VS Code, Warp, and other terminals and IDEs |
-| Can read or write any file | Finder |
+| Can run commands on your computer | Terminal, iTerm, VS Code, Warp, and other terminals and IDEs |
+| Can open, change, or delete any file, and run apps and scripts | Finder |
 | Can change system settings | System Settings |
 
 These apps aren't blocked. The warning lets you decide whether the task warrants that level of access.

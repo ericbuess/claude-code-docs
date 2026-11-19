@@ -174,18 +174,18 @@ After the restart, open an HTML file from an SSH or WSL session on that computer
 
 ### Browse external sites
 
-The Browser pane is a tabbed browser, so you can open documentation, issue trackers, or any other site next to your running app. To open the Browser, press **Cmd+Shift+B** on macOS or **Ctrl+Shift+B** on Windows, or click **Browser** in the session's title bar. You can sign in to sites in the pane, including popup sign-in flows such as Google OAuth.
+The Browser pane is a tabbed browser, so you can open documentation, issue trackers, or any other site next to your running app. To open the Browser, press **Cmd+Shift+B** on macOS or **Ctrl+Shift+B** on Windows, or [select **Browser**](#arrange-your-workspace). You can sign in to sites in the pane, including popup sign-in flows such as Google OAuth.
 
 The first time you click an external link in the chat, a dialog asks whether links open in the Browser pane or in your default browser. To change your choice later, use **Open links in built-in browser** in the Browser pane's **⋮** menu. **Cmd**-click on macOS or **Ctrl**-click on Windows opens a link in your default browser directly.
 
 Claude can read and interact with external pages using the same tools it uses to [verify your app](#preview-your-app), with two additional safety checks:
 
-* Safety classifiers review Claude's write actions on external pages, such as clicking and typing, in every permission mode. These are the same classifiers [auto mode](#choose-a-permission-mode) uses, and when they flag an action, you get a permission prompt regardless of mode.
+* When [auto mode is available](#auto-mode-availability) for the session, its safety classifiers review Claude's write actions on external pages, such as typing, in every permission mode. A flagged action is blocked, or prompts you after [repeated blocks](https://code.claude.com/docs/en/permission-modes.md#when-auto-mode-falls-back).
 * In permission modes other than Auto and Bypass permissions, a domain allowlist check also applies before Claude navigates to a new site.
 
 #### Approve Claude's actions on a site
 
-The first time Claude acts on an external site, a permission card appears and Claude waits for your choice: **Allow once**, **Always allow**, or **Deny**. **Allow once** approves the action without saving anything. **Always allow** saves the approval for that site on your device, and you can revoke it in Settings. Each site needs its own approval, including subdomains. Your local dev servers and project files don't need approval, so [auto-verify](#auto-verify-changes) keeps working without prompts.
+Outside Auto and Bypass permissions modes, a permission card appears before Claude uses an external site you haven't approved. Choose **Allow once**, **Always allow**, or **Deny**. **Allow once** approves the action without saving anything. **Always allow** saves the approval for that site on your device, and you can revoke it in Settings. Each site needs its own approval. Your local dev servers and project files don't need approval.
 
 Even on an approved site, Claude won't purchase items, create accounts, or bypass CAPTCHAs without your input. Browsing in the Browser pane uses the same safety model as the [Claude in Chrome extension](https://code.claude.com/docs/en/chrome.md). See [Using Claude in Chrome safely](https://support.claude.com/en/articles/12902428-using-claude-in-chrome-safely) for how Claude handles sensitive sites and risky actions.
 
@@ -201,7 +201,7 @@ To turn off external browsing entirely, set the [`disableBrowserExternalNavigati
 
 ### Review changes with diff view
 
-After Claude makes changes to your code, the diff view lets you review modifications file by file before creating a pull request. To open the diff view, click the line counts, such as `+12 -1`, in the **Changes** card of the [session details panel](#see-session-details). You can also click **Changes** in the session's title bar. A cloud session's diff against the base branch can [leave out changes that aren't pushed yet](https://code.claude.com/docs/en/claude-code-on-the-web.md#troubleshoot-a-missing-file-in-the-diff-view).
+After Claude makes changes to your code, the diff view lets you review modifications file by file before creating a pull request. To open the diff view, click the line counts, such as `+12 -1`, in the **Changes** card of the [session details panel](#see-session-details), or [select **Changes**](#arrange-your-workspace). A cloud session's diff against the base branch can [leave out changes that aren't pushed yet](https://code.claude.com/docs/en/claude-code-on-the-web.md#troubleshoot-a-missing-file-in-the-diff-view).
 
 To comment on specific lines, hover over a line and click the **+** that appears beside its line number to open a comment box. Type your feedback and press **Enter** to add the comment. After adding comments to multiple lines, submit all comments at once:
 
@@ -241,12 +241,14 @@ To archive the session automatically once the PR merges or closes, turn on [auto
 
 ## Arrange your workspace
 
-The Code tab is built around panes you can arrange in any layout: chat, diff, browser, terminal, file, plan, tasks, and subagent, along with the [iOS Simulator](https://code.claude.com/docs/en/desktop-ios-simulator.md) on macOS. Drag a pane by its header to reposition it, or drag a pane edge to resize it. Press **Cmd+\\** on macOS or **Ctrl+\\** on Windows to close the focused pane.
+The Code tab is built around panes you can arrange in any layout: chat, diff, browser, terminal, file, plan, tasks, and subagent, along with the [iOS Simulator](https://code.claude.com/docs/en/desktop-ios-simulator.md) on macOS. Drag a pane by its tab or the handle at its top to reposition it, or drag a pane edge to resize it. Press **Cmd+\\** on macOS or **Ctrl+\\** on Windows to close the focused pane.
 
-To open another pane, click its icon button in the session's title bar. Hover to see each button's name, such as **Terminal**, **Changes** for the diff view, **Browser**, and **Files**. If the pane you want has no button in the title bar, select it from the **⋮** menu beside the buttons:
+To open another pane, hover over the icons at the top of the session to see each button's name, such as **Terminal** or **Show side panel**. Then follow the steps for the buttons you have:
 
-* **When the window is narrow**: buttons that don't fit move into the menu
-* **For panes with no button**: panes such as **Background tasks** and **Plan** are listed once the session has something to show in those panes
+* **Show side panel** or **Hide side panel**: show the panel if it's hidden, then pick a pane from the panel's list or **+** menu.
+* **Terminal**, **Changes** for the diff view, **Browser**, and **Files**: click the pane's button. If the pane has no button, select it from the **⋮** menu beside the buttons.
+
+To open **Background tasks** or **Plan**, select it from the side panel or the **⋮** menu once the session has something to show in it.
 
 To work across screens, pop a pane such as the diff or terminal out into its own window, and dock it back when you're done. Claude keeps working in the main window.
 
@@ -260,7 +262,7 @@ The session details panel is a set of cards beside the chat that show where the 
 
 #### Hide or show the session details panel
 
-To hide or show the panel, click **Hide session rail** or **Show session rail** in the session's title bar, or in the bar's **⋮** menu. If you still don't see the panel, [check which Code tab layout you have](#check-which-layout-you-have).
+To hide or show the panel, click **Hide session rail** or **Show session rail** in the session's title bar, or in the bar's **⋮** menu. If you see neither name, click **Activity panel** in the title bar. If you still don't see the panel, [check which Code tab layout you have](#check-which-layout-you-have).
 
 ### Minimize a pane
 
@@ -275,7 +277,9 @@ To get the full pane back, click **Expand** in the minimized pane's header. To c
 
 ### Run commands in the terminal
 
-The integrated terminal lets you run commands alongside your session without switching to another app. Click **Terminal** in the session's title bar or press **Ctrl+\`** on macOS or Windows. The terminal opens in your session's working directory and shares the same environment as Claude, so commands like `npm test` or `git status` see the same files Claude is editing. To open a second terminal tab, click **+** in the terminal pane header or right-click a folder in the chat to choose **Open in terminal**.
+The integrated terminal lets you run commands alongside your session without switching to another app. To open it, [select **Terminal**](#arrange-your-workspace) or press **Ctrl+\`** on macOS or Windows. The terminal opens in your session's working directory and shares the same environment as Claude, so commands like `npm test` or `git status` see the same files Claude is editing.
+
+To open a second terminal tab, click **+** above the terminal, then select **Terminal** if a menu opens.
 
 If a WSL session has no terminal, see [If the terminal or connectors are unavailable](https://code.claude.com/docs/en/desktop-wsl.md#check-for-the-terminal-and-connectors). The terminal is available in local and [SSH](#ssh-sessions) sessions, with a limit on [Windows remote machines](#windows-remote-machines).
 
@@ -392,7 +396,7 @@ The [per-app access tiers](#app-permissions) reinforce this: browsers are capped
 
 ### Enable computer use
 
-Computer use is off by default. If you ask Claude to do something that needs it while it's off, Claude tells you it could do the task if you enable computer use in Settings.
+Computer use is off by default.
 
 **1. Update the desktop app**
 
@@ -419,7 +423,7 @@ On macOS, grant two system permissions before the toggle takes effect:
 * **Accessibility**: lets Claude click, type, and scroll
 * **Screen Recording**: lets Claude see what's on your screen
 
-The Settings page shows the current status of each permission. If either is denied, click the badge to open the relevant System Settings pane.
+The Settings page shows the current status of each permission. If either is denied, click **Open System Settings** next to it.
 
 ### App permissions
 
@@ -524,7 +528,7 @@ Side chats are available in local, SSH, and WSL sessions. The desktop app doesn'
 
 ### Watch background tasks
 
-The tasks pane shows the background work running inside the current session: subagents, background shell commands, and [dynamic workflows](https://code.claude.com/docs/en/workflows.md). Once the session has background work, open the pane with **Background tasks** in the title bar's **⋮** menu.
+The tasks pane shows the background work running inside the current session: subagents, background shell commands, and [dynamic workflows](https://code.claude.com/docs/en/workflows.md). Once the session has background work, [open the **Background tasks** pane](#arrange-your-workspace).
 
 Click any entry to see its output in the subagent pane or stop it. To see what other sessions are doing, use the [sidebar](#work-in-parallel-with-sessions), or ask Claude to [check on them for you](#work-across-sessions).
 
@@ -759,7 +763,7 @@ By default, the preview opens `http://localhost:<port>`. Set `url` when your ser
 
 Localhost addresses open directly, exactly like the default port address. This includes `localhost`, any `*.localhost` subdomain, `127.0.0.1`, and `::1`. For security, a localhost `url` must be your server's origin alone, with no path or query. Its port must match the entry's port. To show a specific page, ask Claude to navigate there after the preview opens. A localhost `url` with a path, query, or mismatched port is reported as a configuration error that names the url and shows the fix.
 
-For any other address, Desktop asks for your permission the first time the preview opens it, the same as when you browse to a new site in the preview. External addresses may include paths. Choose **Always allow** to skip the prompt for that site in the future. Organization policies that restrict external sites in the preview still apply.
+Any other address goes through the same [site approval](#browse-external-sites) as a new site Claude opens in the preview. External addresses may include paths. Choose **Always allow** to skip the prompt for that site in the future. Organization policies that restrict external sites in the preview still apply.
 
 To preview a server you already run yourself, set `url` without a command. Claude attaches the preview to your running server instead of starting one:
 

@@ -1574,7 +1574,7 @@ Tools with a root-level combinator stay available. Before sending the tool to th
 
 Your server receives whichever arguments Claude chose, so keep validating the combination server-side.
 
-When Claude Code can't produce a schema the API accepts, or on a deployment that doesn't receive the remote configuration that enables the rewrite, it skips that one tool, records the reason in the server's log, and leaves the server's other tools available.
+When Claude Code can't produce a schema the API accepts, or when [feature flag fetching](https://code.claude.com/docs/en/env-vars.md#features-that-need-feature-flag-fetching) is on but the [flags haven't arrived](https://code.claude.com/docs/en/env-vars.md#first-session-after-an-install-or-upgrade), the tool is skipped. The server's log records the reason, and the server's other tools stay available. Before v2.1.328, the tool was also skipped with fetching off.
 
 ## Tools with invalid input schemas
 
@@ -1589,14 +1589,12 @@ If one of your MCP server's tools has an input schema that breaks either of two 
 
 When Claude Code excludes a tool, it records the reason in the server's log and tells Claude which tools it excluded and why, so you can ask Claude why a tool is missing. If you fix the schema on the server, the tool comes back the next time Claude Code loads the server's tools.
 
-When [feature flag fetching](https://code.claude.com/docs/en/env-vars.md#features-that-need-feature-flag-fetching) is off or the flags have never arrived, as on an air-gapped machine, a tool that breaks a rule isn't excluded:
+When [feature flag fetching](https://code.claude.com/docs/en/env-vars.md#features-that-need-feature-flag-fetching) is on but the [flags haven't arrived](https://code.claude.com/docs/en/env-vars.md#first-session-after-an-install-or-upgrade), a tool that breaks a rule isn't excluded:
 
 * Claude gets the tool unchanged, and the server's log records `input schema would be rejected by the Anthropic API` for it
 * If the API then rejects the schema, see [Tools whose input schema the API refuses](#tools-whose-input-schema-the-api-refuses)
 
-Before v2.1.216, no deployment ran these checks.
-
-The [root-level combinator handling](#tool-input-schemas-with-a-root-level-combinator) is separate and keeps its own behavior when flag fetching is off or the flags have never arrived.
+Before v2.1.328, tools also weren't excluded with fetching off. Before v2.1.216, no deployment ran these checks.
 
 ### Tools whose input schema the API refuses
 

@@ -134,7 +134,7 @@ With GitHub connected and an environment created, you're ready to submit tasks.
 
 From [claude.ai/code](https://claude.ai/code) or the Code tab in the Claude mobile app, click the repository selector below the input box and choose a repository for Claude to work in. You can add multiple repositories to work across them in one session.
 
-At claude.ai/code, to start Claude from a feature branch instead of the default, change the branch in the control after the repository selector.
+At claude.ai/code, to start Claude from a feature branch instead of the default, change the branch in the control after the repository selector. To start without a repository at claude.ai/code, select **No repository** in the repository selector.
 
 **2. Choose a permission mode**
 
@@ -181,8 +181,8 @@ When Claude finishes, review the changes, leave feedback on specific lines, and 
 
 After Claude pushes its changes to a branch, the **Changes** card in the panel beside the chat shows the lines added and removed across the session, for example `+42 -18`. Click those counts to open the diff view.
 
-* You can also click **Changes** in the session's title bar, or in the bar's **⋮** menu.
-* To show the panel when it's hidden, click the **Show session rail** icon in the session's title bar, or in the bar's **⋮** menu.
+* To show the panel when it's hidden, click **Activity panel** or **Show session rail** in the session's title bar, or **Show session rail** in the bar's **⋮** menu.
+* You can also [open **Changes** as a pane](https://code.claude.com/docs/en/desktop.md#arrange-your-workspace).
 
 The diff compares the session's changes against its base branch by default. To compare against a different branch, select **Compare against** and pick one. Against the base branch, the diff can [leave out changes that aren't pushed yet](https://code.claude.com/docs/en/claude-code-on-the-web.md#troubleshoot-a-missing-file-in-the-diff-view).
 

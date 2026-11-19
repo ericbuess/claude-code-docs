@@ -122,7 +122,7 @@ To change your answer for later sessions, run `/chrome`.
 
 ### Manage site permissions
 
-Site-level permissions are inherited from the Chrome extension. Manage permissions in the Chrome extension settings to control which sites Claude can browse, click, and type on. In [auto mode](https://code.claude.com/docs/en/permission-modes.md#eliminate-prompts-with-auto-mode), when the auto mode classifier itself approves a browser call to a site, the extension skips its own per-site check for that call, unless your permission rules deny any site to Claude in Chrome.
+To let Claude act on a site, approve it when Claude Code asks. In [auto mode](https://code.claude.com/docs/en/permission-modes.md#eliminate-prompts-with-auto-mode), when the classifier itself approves a browser call to a site, the extension can skip its own per-site check for that call, unless your permission rules deny any site to Claude in Chrome.
 
 ### Permission prompts in VS Code sessions
 

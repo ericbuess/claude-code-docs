@@ -32,7 +32,7 @@ An `enabledPlugins` entry becomes a plugin you can use in stages: your settings 
   * `known_marketplaces.json` records each marketplace Claude Code has fetched, with its `source`, `installLocation`, `lastUpdated`, and `autoUpdate`. There is one `known_marketplaces.json` per user, so a marketplace you add in one project is available in every project
   * `installed_plugins.json` records each install with its `scope`, `installPath`, and `version`
   * `cache/` holds the plugin files
-* **Loaded, in the running session**: the plugin set Claude Code loaded at startup or at the last `/reload-plugins`. Changes to settings or to disk don't reach this layer until you run `/reload-plugins` or start a new session. That is why `claude plugin update` ends with `Restart to apply changes.` and background updates prompt you with `Run /reload-plugins to apply`
+* **Loaded, in the running session**: the plugin set Claude Code loaded at startup or at the last reload. After you install, update, enable, or disable a plugin outside the `/plugin` panel, run [`/reload-plugins`](https://code.claude.com/docs/en/plugins/cli-reference#reload-plugins) in the session or start a new session
 
 ### Plugins and marketplaces that aren't on disk at session start
 
@@ -382,7 +382,7 @@ Claude Code skips the refresh before a `name@marketplace` install when:
 
 In an interactive session, after you send your first message, Claude Code waits a random delay of up to ten minutes. It then refreshes every marketplace with auto-update on and updates the plugins installed from them on disk.
 
-The running session keeps the versions it loaded, and you see `Plugin updated: <name> · Run /reload-plugins to apply`. Whether or not you reload, the new versions load on your next launch.
+When you see `Plugin updated: <name> · Run /reload-plugins to apply`, run [`/reload-plugins`](https://code.claude.com/docs/en/plugins/cli-reference#reload-plugins) in that session. Whether or not you reload, the new versions load on your next launch.
 
 #### Which marketplaces and plugins auto-update
 

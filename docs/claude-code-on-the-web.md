@@ -253,8 +253,8 @@ Claude Code resumes a session in the permission mode it was in when you do eithe
 
 After Claude pushes its changes to a branch, the **Changes** card in the panel beside the chat shows the lines added and removed, such as `+42 -18`. Click the line counts on the **Changes** card to open the diff view.
 
-* You can also click **Changes** in the session's title bar, or in the bar's **⋮** menu.
-* To show the panel when it's hidden, click the **Show session rail** icon in the session's title bar, or in the bar's **⋮** menu.
+* To show the panel when it's hidden, click **Activity panel** or **Show session rail** in the session's title bar, or **Show session rail** in the bar's **⋮** menu.
+* You can also [open **Changes** as a pane](https://code.claude.com/docs/en/desktop.md#arrange-your-workspace).
 
 In the diff view, you can comment on lines and compare against another branch:
 

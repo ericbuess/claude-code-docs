@@ -26,8 +26,8 @@ Unlike [cloud sessions](https://code.claude.com/docs/en/claude-code-on-the-web.m
 Before using Remote Control, confirm that your environment meets these conditions:
 
 * **Subscription**: available on Pro, Max, Ultra, Team, and Enterprise plans. API keys are not supported. On Team and Enterprise, an Owner must first enable the Remote Control toggle in [Claude Code admin settings](https://claude.ai/admin-settings/claude-code).
-* **Custom roles**: if your Enterprise organization manages your access with [custom roles](https://support.claude.com/en/articles/13930452), your roles must give you both the cloud sessions permission and the **Claude Code remote control** permission. If either is missing, starting Remote Control shows [`Remote Control is disabled by your organization's policy`](#remote-control-is-disabled-by-your-organizations-policy). Ask an Owner to check your roles and add what's missing at [**Organization settings > Roles**](https://claude.ai/admin-settings/roles).
-* **Authentication**: run `claude` and use `/login` to sign in through claude.ai if you haven't already. Without an eligible login, `claude remote-control` exits with an error, while `claude --remote-control` still starts an interactive session and shows a Remote Control failure notification shortly after launch.
+* **Custom roles**: if your Enterprise organization manages your access with [custom roles](https://support.claude.com/en/articles/13930452), your roles must give you both the cloud sessions permission and the **Claude Code remote control** permission. If either is missing, `/remote-control` shows [`Remote Control is disabled by your organization's policy`](#remote-control-is-disabled-by-your-organizations-policy). Ask an Owner to check your roles and add what's missing at [**Organization settings > Roles**](https://claude.ai/admin-settings/roles).
+* **Authentication**: run `claude` and use `/login` to sign in through claude.ai if you haven't already. Without an eligible login, `claude remote-control` exits with an error, while `claude --remote-control` starts an interactive session with Remote Control off.
 * **API endpoint**: not available in any of these configurations:
   * You use Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry.
   * You point [`ANTHROPIC_BASE_URL`](https://code.claude.com/docs/en/env-vars) at a host other than `api.anthropic.com`, such as an [LLM gateway](https://code.claude.com/docs/en/llm-gateway) or proxy. Unset the variable to use Remote Control.
@@ -428,7 +428,7 @@ At [claude.ai/code](https://claude.ai/code) or in the Desktop app, **Remote Cont
 
 You're not signed in with a claude.ai account, or another credential is taking precedence over your login. The message takes one of these forms:
 
-* Signed out, from `/remote-control` or `--remote-control`: `Remote Control requires a claude.ai subscription.` or `/remote-control requires a claude.ai subscription.`
+* Signed out, from `/remote-control`: `Remote Control requires a claude.ai subscription.` or `/remote-control requires a claude.ai subscription.`
 * Signed out, from `claude remote-control`: `You must be logged in to use Remote Control. Remote Control is only available with claude.ai subscriptions.`
 * Signed in, but an API key or token is in use: `Remote Control requires claude.ai subscription auth.` followed by the credential in use, such as `ANTHROPIC_API_KEY is set, so this session is using API-key auth`. An `apiKeyHelper` setting and `ANTHROPIC_AUTH_TOKEN` are named the same way.
 
@@ -471,7 +471,7 @@ The message names what routed the session away from the Anthropic API, such as `
 
 A policy blocks Remote Control. Check these causes in order:
 
-* **The error mentions `disableRemoteControl`**: your IT administrator has disabled Remote Control on this device through [managed settings](https://code.claude.com/docs/en/managed-settings.md), independent of the organization-wide toggle and of how you're signed in.
+* **The error mentions `disableRemoteControl`**: remove the key from your settings files. If it's in [managed settings](https://code.claude.com/docs/en/managed-settings.md), ask your administrator. Changing your sign-in or the organization toggle won't help.
 * **Your claude.ai plan is Pro, Max, or Ultra**: Claude Code is still signed in under a Team or Enterprise organization from an earlier login, so it checks that organization's Remote Control policy. Run `/status` to see which plan and organization your sign-in uses. Run `claude auth logout` then `claude auth login` to sign in again under your current plan.
 * **The message doesn't say to contact your organization admin**: your organization has the [HIPAA configuration](https://code.claude.com/docs/en/hipaa-setup.md) applied, which turns Remote Control off. To confirm, run `/status` and look for `HIPAA` on the `Organization configuration` line. An Owner sees the **Remote Control** toggle grayed out in [admin settings](https://claude.ai/admin-settings/claude-code) and can't turn it on. If you have questions about the configuration, ask an Owner, who can contact your organization's Anthropic account team. Before v2.1.267, this case showed "Remote Control isn't available for your organization due to its compliance policy" instead.
 * **Remote Control works for others in your organization but not for you**: if your Enterprise organization manages your access with [custom roles](https://support.claude.com/en/articles/13930452), your roles can be the cause. Remote Control needs both the cloud sessions permission and the **Claude Code remote control** permission. Ask an Owner to check whether your roles include both and add what's missing at [**Organization settings > Roles**](https://claude.ai/admin-settings/roles).
@@ -497,10 +497,10 @@ Claude Code couldn't fetch your organization's policy and has no saved copy on t
 
 The message takes one of these forms:
 
-* From `/remote-control`, `claude remote-control`, or `claude --remote-control`: `Couldn't verify your organization's policy for remote control. Check your network connection and try again.`
+* From `/remote-control` or `claude remote-control`: `Couldn't verify your organization's policy for remote control.` followed by what to do next
 * From [auto-connect](#enable-remote-control-for-all-sessions) when a session starts: `couldn't verify your organization's policy — check your network connection and try again`, prefixed with `Remote Control failed` in the notification and `Remote Control disconnected` in the conversation. The session then leaves Remote Control off.
 
-Restore your network connection, then run `/remote-control` or run the command again. Each attempt checks for the policy again, so you don't need to restart Claude Code. If the message keeps appearing, run `claude doctor` and read its `Organization policy` line, which says why the policy didn't load.
+Restore your network connection first. Restart Claude Code if the message says to, then run `/remote-control` or run the command again. If the message keeps appearing, run `claude doctor` and read its `Organization policy` line, which says why the policy didn't load.
 
 Before v2.1.281, this state showed `Remote Control is disabled by your organization's policy` instead.
 

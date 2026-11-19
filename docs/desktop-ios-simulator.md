@@ -70,7 +70,11 @@ The simulator pane shows whichever device the app actually launched in. To test 
 
 A device Claude boots also appears in Apple's Simulator app, or in Device Hub on Xcode 27. Claude can install the app on a device you already have booted.
 
-You can also open the simulator pane yourself. Once the session has a simulator attached or Claude Code detects iOS app work, an **iOS Simulator** button appears in the session's title bar. If the pane isn't showing a device yet, click **Attach simulator**, or pick a specific device from the device menu next to it; picking a shut-down device boots it. If Xcode or its simulators are missing, the pane shows the setup steps instead and checks them off as you complete them.
+### Open the simulator pane yourself
+
+Once the session has a simulator attached or Claude Code detects iOS app work, select **iOS Simulator** in the session's title bar or [side panel](https://code.claude.com/docs/en/desktop.md#arrange-your-workspace).
+
+If the pane isn't showing a device yet, click **Attach simulator**, or pick a specific device from the device menu next to it; picking a shut-down device boots it. If Xcode or its simulators are missing, the pane shows the setup steps instead and checks them off as you complete them.
 
 ## Control the simulator yourself
 
@@ -92,7 +96,7 @@ You and Claude drive the same device, so your taps change the app state Claude s
 You can minimize or close the simulator pane, and Claude can still use the device either way.
 
 * If you minimize the pane, the device stays in view at a small size. To minimize the pane or expand it again, see [Minimize a pane](https://code.claude.com/docs/en/desktop.md#minimize-a-pane).
-* If you close the full-size or minimized pane, the device stays attached and running. To show the device again, click **iOS Simulator** in the session's title bar.
+* If you close the full-size or minimized pane, the device stays attached and running. To show the device again, [reopen the pane](#open-the-simulator-pane-yourself).
 
 ## How sessions manage devices
 

@@ -4976,7 +4976,7 @@ Claude Desktop supplies Code sessions with policy derived from your desktop conf
 
 ### `disableRemoteControl`
 
-Turn off [Remote Control](https://code.claude.com/docs/en/remote-control.md): Claude Code then refuses `claude remote-control`, the `--remote-control` flag, auto-start, and the in-session toggle, and reports that your organization's policy disabled it. Place it in [managed settings](https://code.claude.com/docs/en/managed-settings.md) for per-device MDM enforcement.
+Turn off [Remote Control](https://code.claude.com/docs/en/remote-control.md): Claude Code then refuses `claude remote-control`, the `--remote-control` flag, auto-start, and the in-session toggle. Place it in [managed settings](https://code.claude.com/docs/en/managed-settings.md) for per-device MDM enforcement.
 
 * **Scope**: [`Any file`](#scopes)
 * **Type**: Boolean
