@@ -131,16 +131,50 @@ For the threat model these controls defend against, see [Security](https://code.
 
 On Team and Enterprise plans, the GitHub section of [**Organization settings > Git providers**](https://claude.ai/admin-settings/source-control) lists the GitHub organizations and personal accounts linked to your Claude organization through the [Claude GitHub App](https://github.com/apps/claude). Claude Code, [Claude Tag](https://claude.com/docs/claude-tag/admins/configure-github), and Claude Security share the list. Opening the page requires an [Owner role](https://code.claude.com/docs/en/server-managed-settings.md#access-control) in your Claude organization. The Admin role can't open it.
 
-Someone can link an account from the Git providers page or by connecting GitHub to Claude:
+By default, someone can link an account from the Git providers page or by connecting GitHub to Claude:
 
 * **Owner connection**: an Owner clicks **Connect** in that section, or **Add organization** once an account is connected, and installs the Claude GitHub App on a GitHub organization. Linking an organization this way requires an Owner of your Claude organization who also owns the GitHub organization.
 * **Member connection**: when a member connects their GitHub account to Claude, for example while [setting up cloud sessions](https://code.claude.com/docs/en/web-quickstart.md#connect-github), Claude links the GitHub accounts that member owns where the Claude GitHub App is already installed. That can include their personal account and GitHub organizations they own.
 
-A row marked **Not linked** comes from your own GitHub sign-in. It's an account you can see on GitHub where the Claude GitHub App is installed.
+A row marked **Not linked** can come from your own GitHub sign-in. That's an account you can see on GitHub where the Claude GitHub App is installed.
 
-To unlink an account from your Claude organization, open its row's menu and select **Unlink from this workspace**. Unlinking leaves the Claude GitHub App installed on GitHub, and the account is linked again the next time one of its owners connects GitHub to Claude. To keep it from being linked again, uninstall the Claude GitHub App from that account on GitHub.
+To unlink an account from your Claude organization, open its row's menu and select **Unlink from this workspace**. The Claude GitHub App stays installed on GitHub. Unless you [limit which accounts can be linked](#limit-which-github-accounts-can-be-linked), the account is linked again the next time one of its owners connects GitHub to Claude. To keep it from being linked again, uninstall the Claude GitHub App from that account on GitHub.
+
+> [!NOTE]
+>
+> To stop new links to accounts you haven't approved, or to keep an account unlinked without uninstalling the app, [limit which accounts can be linked](#limit-which-github-accounts-can-be-linked).
 
 On Enterprise plans, the [Compliance API](https://platform.claude.com/docs/en/api/compliance/activities/list) activity types for linking and unlinking are `github_app_installation_linked` and `github_app_installation_unlinked`.
+
+#### Limit which GitHub accounts can be linked
+
+To restrict which github.com organizations and personal accounts can be linked to your Claude organization, allow the ones you approve and turn on **Only allowed accounts can be linked**. For example, if you allow only `example-corp`, neither members nor Owners can link a member's personal account. Accounts that are already linked keep working until you unlink them, even if they aren't allowed.
+
+When an account is linked, Claude can act on its repositories as the Claude GitHub App, for features such as [Code Review](https://code.claude.com/docs/en/code-review.md) and Claude Tag. Members can still connect GitHub to Claude while the setting is on. Their own cloud sessions use [each member's GitHub access](https://code.claude.com/docs/en/claude-code-on-the-web.md#github-authentication-options), so don't rely on this setting to limit which repositories those sessions reach.
+
+**1. Allow organizations**
+
+As an Owner on a Team or Enterprise plan, open the GitHub section of [**Organization settings > Git providers**](https://claude.ai/admin-settings/source-control) in your browser and click **Choose organizations**. Select the organizations you approve in the table and click **Allow**. Include ones that are already linked, because they aren't allowed automatically.
+
+**2. Allow other accounts by name**
+
+To allow a personal account, or an organization that isn't in the table, click **Allow by name** and enter its GitHub username or organization name. If prompted, connect your own GitHub account first. You don't link any accounts by connecting from that prompt.
+
+**3. Turn on the setting**
+
+Above the table, turn on **Only allowed accounts can be linked**, which is off by default.
+
+**4. Unlink accounts you don't approve**
+
+When you unlink an account, features such as Code Review stop working on its repositories for your Claude organization. Scheduled tasks that a [Claude agent identity](https://claude.com/docs/claude-tag/concepts/agent-identity) runs on those repositories turn off. Members' own [cloud scheduled tasks](https://code.claude.com/docs/en/routines.md) stay on.
+
+To see the accounts that aren't allowed, expand **Not allowed** for organizations and **Linked personal accounts** for personal accounts. Select the linked accounts to remove and click **Unlink**, or click **Allow** for the ones to keep.
+
+**5. Get allowed accounts linked**
+
+If an allowed account shows **Not linked**, ask someone who owns it on GitHub to link it through an [Owner or member connection](#connected-github-accounts). For a member connection, have them [install the Claude GitHub App](https://github.com/apps/claude/installations/new) on the account first.
+
+To take an account off the allowed list and keep its link, select it under **Allowed** and click **Disallow**. If you unlink an allowed account, it also comes off the allowed list.
 
 ## Set up usage visibility
 

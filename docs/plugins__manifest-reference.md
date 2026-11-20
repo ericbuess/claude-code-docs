@@ -129,7 +129,7 @@ For component keys such as `commands` and `hooks`, [Component path forms](#compo
 | [`version`](#version) | String | Version string. Setting it keeps users on that version until you change it |
 | `description` | String | Short explanation of what the plugin provides |
 | `author` | Object | `name`, which is required, plus optional `email` and `url` |
-| `homepage` | String | Documentation URL. Must parse as a URL, or the plugin fails to load |
+| `homepage` | String | Documentation URL. Must parse as a URL |
 | `repository` | String | Source repository URL. Not validated |
 | `license` | String | SPDX identifier such as `MIT` or `Apache-2.0` |
 | `keywords` | Array of strings | Discovery tags |

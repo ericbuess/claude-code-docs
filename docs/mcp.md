@@ -324,7 +324,7 @@ If your request needs tools from a server that is still connecting in the backgr
 
 With tool search enabled, when a server finishes connecting while Claude is working, Claude Code lists the server's tool names to Claude on its next request in the same turn. Claude can then search for and call those tools without waiting for your next message.
 
-After you resume a session, Claude can call a tool from the saved conversation while the tool's MCP server is still connecting. While the server is on its first connection attempt, Claude Code holds the call for up to 10 seconds and runs it once the tool is available. If the server doesn't connect in time, or it is already [retrying after a failed attempt](#automatic-reconnection), the call fails with the `No such tool available` [tool error](https://code.claude.com/docs/en/errors.md#no-such-tool-available).
+After you resume a session, Claude can call a tool from the saved conversation while the tool's MCP server is still connecting. While the server is on its first connection attempt, Claude Code holds the call for up to 10 seconds and runs it once the tool is available. If the server doesn't connect in time, the call fails with the `No such tool available` [tool error](https://code.claude.com/docs/en/errors.md#no-such-tool-available).
 
 ### Disable a server without removing it
 
@@ -396,7 +396,7 @@ Claude Code first tries to reconnect a dropped remote server up to five times wi
   * **After a transient error, such as a 5xx response or a timeout**: Claude Code keeps retrying an HTTP or SSE server in the background. Retries last up to about half an hour, or about a day for some servers, and the server's tools become available again when one connects.
 
     Until then, an Agent SDK session reports the [status](https://code.claude.com/docs/en/agent-sdk/mcp.md#error-handling) `failed`, and your code can [reconnect the server](https://code.claude.com/docs/en/agent-sdk/mcp.md#error-handling). To reconnect it in `claude -p`, start the run again.
-  * **When the server [needs you to sign in again](#authenticate-with-remote-mcp-servers)**: Claude Code stops retrying, and an Agent SDK session reports the server's status as `needs-auth`. Sign in with [`claude mcp login <name>`](#authenticate-from-the-command-line) in your shell. Then start the run again or, in an Agent SDK session, [reconnect the server](https://code.claude.com/docs/en/agent-sdk/mcp.md#error-handling) instead.
+  * **When the server [needs you to sign in again](#authenticate-with-remote-mcp-servers)**: an Agent SDK session reports the server's status as `needs-auth`. If `claude mcp list` shows the server, sign in with [`claude mcp login <name>`](#authenticate-from-the-command-line) in your shell. Then start the run again, or [reconnect the server](https://code.claude.com/docs/en/agent-sdk/mcp.md#error-handling) from your Agent SDK code.
 
 #### Failed first connections
 

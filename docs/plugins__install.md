@@ -301,8 +301,8 @@ When Claude Code syncs an added, updated, or removed plugin into an interactive 
 
 When you choose **Uninstall** for a plugin that this repository's `.claude/settings.json` enables, whether from the **Installed** tab or with `/plugin uninstall`, Claude Code asks whether to disable it for you or uninstall it for everyone:
 
-* **Disable for me**: press **y**. Claude Code writes `false` for the plugin in your `.claude/settings.local.json` and leaves it installed for the project.
-* **Uninstall for everyone**: press **u**. Claude Code removes the plugin from the shared `.claude/settings.json`.
+* **Disable for me**: Claude Code writes `false` for the plugin in your `.claude/settings.local.json` and leaves it installed for the project.
+* **Uninstall for everyone**: Claude Code removes the plugin from the shared `.claude/settings.json`.
 
 ### See what an installed plugin adds to your sessions
 

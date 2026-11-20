@@ -208,10 +208,10 @@ Open the project's files and scheduled tasks in the pane from the project header
 
 Click a thread in the conversation or its row in Overview to open the thread in the Overview pane. From there you can:
 
-* Read what Claude did, step by step.
+* Read Claude's messages and see what the thread is working on now.
 * Steer the task by writing in the thread's own message box. A message there goes straight to that thread, while a follow-up in the project conversation reaches it only when Claude matches the follow-up to that thread.
 * Answer a permission prompt the thread is waiting on.
-* Interrupt the thread with **Stop**, which replaces the send button while the thread is working, or by pressing Esc.
+* Interrupt the thread with **Stop**, which replaces the send button while the thread is working.
 
 ### Choose models and let Claude manage context
 
@@ -453,7 +453,7 @@ For the GitHub setup prompts in the **New project** dialog, see [Set up GitHub a
 
 ### A thread looks stuck
 
-Claude doesn't post each step a thread takes, so a thread that shows as running with no new messages in the project conversation is usually still working. A new cloud thread also provisions its [cloud environment](https://code.claude.com/docs/en/cloud-environments.md) before Claude begins, so its first update takes a moment. Open the thread to read its transcript. If the thread is waiting on a permission prompt, answer it there.
+Claude doesn't post each step a thread takes, so a thread that shows as running with no new messages in the project conversation is usually still working. A new cloud thread also provisions its [cloud environment](https://code.claude.com/docs/en/cloud-environments.md) before Claude begins, so its first update takes a moment. Open the thread to see what it's working on. If the thread is waiting on a permission prompt, answer it there.
 
 ### Threads guessed or stalled instead of asking
 

@@ -504,6 +504,18 @@ When `(see the debug log)` follows `is added but ignored` in place of a reason, 
 
 Before v2.1.286, whatever the reason, `claude plugin list` reported such a marketplace as `Marketplace <name> not found`, and the `/plugin` **Errors** tab reported it as `Marketplace "<name>" is registered but was refused (see the debug log)`. The reason appeared only in the debug log. In v2.1.286, the reason and fix sentences used different wording, such as `Its recorded location is network-shaped or unclassifiable (never probed)`.
 
+### `Marketplace "<name>", which managed settings declare, stands from another source and cannot be taken back while its declared source is unreachable`
+
+Claude Code hasn't replaced your marketplace with the one your organization declares, because it couldn't reach the declared source.
+
+To let Claude Code replace your marketplace, restore your access to the declared source, then start a new interactive session. If you don't know what the declared source is, ask your administrator.
+
+### `The list of installed plugins (installed_plugins.json) could not be read, so marketplace "<name>", which managed settings declare, cannot be taken back from another source`
+
+Before Claude Code replaces your marketplace with the one your organization declares, it reads [`installed_plugins.json`](https://code.claude.com/docs/en/plugins/loading#find-plugins-on-disk), and that read failed.
+
+Run `claude plugin list` in your shell. If it reports [a record that this version of Claude Code can't read](#installed-plugins-json-holds-a-record-this-version-cannot-read), follow that entry's steps. Otherwise, make `~/.claude/plugins/installed_plugins.json` readable again, for example by fixing its JSON or restoring it from your own backup. After either fix, start a new interactive session so Claude Code can replace your marketplace.
+
 ### `Plugin <name> has a corrupt manifest file` or `has an invalid manifest file`
 
 Claude Code fetched the plugin, then failed to read its `.claude-plugin/plugin.json`. In the shell, the `<name>` in this line can be a temporary directory name; the `Failed to install plugin "<name>@<marketplace>"` prefix carries the plugin's real name. The wording says which check failed:

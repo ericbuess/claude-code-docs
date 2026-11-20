@@ -342,6 +342,8 @@ Match the message you see to a section below.
 | `Cannot add marketplace "<name>": Claude Code cannot install plugins from a marketplace with this name` | [Plugin troubleshooting](https://code.claude.com/docs/en/plugins/troubleshooting.md#cannot-install-plugins-from-a-marketplace-with-this-name) |
 | `Cannot add marketplace "<name>": Claude Code reserves this name and cannot register a marketplace under it` | [Plugin troubleshooting](https://code.claude.com/docs/en/plugins/troubleshooting.md#claude-code-reserves-this-name) |
 | `Marketplace "<name>" is added but ignored` | [Plugin troubleshooting](https://code.claude.com/docs/en/plugins/troubleshooting.md#marketplace-is-added-but-ignored) |
+| `Marketplace "<name>", which managed settings declare, stands from another source and cannot be taken back while its declared source is unreachable` | [Plugin troubleshooting](https://code.claude.com/docs/en/plugins/troubleshooting.md#marketplace-cannot-be-taken-back-while-its-declared-source-is-unreachable) |
+| `The list of installed plugins (installed_plugins.json) could not be read, so marketplace "<name>", which managed settings declare, cannot be taken back from another source` | [Plugin troubleshooting](https://code.claude.com/docs/en/plugins/troubleshooting.md#installed-plugins-could-not-be-read-so-marketplace-cannot-be-taken-back) |
 | `Marketplace "<name>" is registered but was refused (see the debug log)` | [Plugin troubleshooting](https://code.claude.com/docs/en/plugins/troubleshooting.md#marketplace-is-added-but-ignored) |
 | `references ${user_config.*} in a shell-form command` | [Plugin errors](#plugin-command-references-user-config) |
 | `Monitor "<name>" from plugin <plugin> references ${user_config.*} in its command` | [Plugin errors](#plugin-command-references-user-config) |
@@ -1172,7 +1174,7 @@ When the message continues past `Fix external API key` with a description such a
 
 ### Your apiKeyHelper script is failing
 
-Claude Code ran the command in your [`apiKeyHelper`](https://code.claude.com/docs/en/settings-reference#apikeyhelper) setting and didn't get a key back. Without one, the request reaches the API with a placeholder credential, and the API rejects it with `401`. The `Authentication` panel in the terminal shows which of these happened:
+Claude Code ran the command in your [`apiKeyHelper`](https://code.claude.com/docs/en/settings-reference#apikeyhelper) setting and didn't get a key back. Without one, the request reaches the API with a placeholder credential, and the API rejects it with `401`. A panel in the terminal shows which of these happened:
 
 * The command exited with an error or timed out
 * The command printed nothing to stdout
@@ -1194,7 +1196,6 @@ Running `/login` doesn't help here: the helper's output [takes precedence](https
 * If the command reports an expired session, re-authenticate with your credential provider, for example by signing in to your SSO or secrets vault again
 * Fix the command so it prints only the key to stdout, as a single token of printable ASCII up to 16,384 characters, and exits with code 0. See [rotate credentials with apiKeyHelper](https://code.claude.com/docs/en/llm-gateway-connect.md#rotate-credentials-with-apikeyhelper) for a working setup.
 * Run `/status` to see the failure and confirm `apiKeyHelper` is the active credential source. The `apiKeyHelper` row shows `Failing` with the last failure's detail, such as the exit code and the command's error output, and disappears after the next successful run. Before v2.1.274, `/status` showed only the credential source, not the failure.
-* Each time the command fails, its exit code and error output also appear in an `Authentication` panel in the terminal. Before v2.1.212, the panel was titled `Cloud authentication`.
 
 ### Claude Code didn't send your claude.ai login
 
@@ -1585,7 +1586,7 @@ An API key may still be in `~/.claude.json` too if a Console login created one o
 
 **What to do:**
 
-* Run `claude auth logout` in your shell to try the save again. When the save goes through, the command prints `Successfully logged out from your Anthropic account.`
+* Run `claude auth logout` in your shell to try the save again
 
 ### Couldn't start the local listener that receives the browser sign-in
 
@@ -2320,8 +2321,6 @@ The cloud environments service returned an empty response (HTTP 200 with no body
 The cloud environments service returned a response in an unexpected format (HTTP 200 with a non-JSON body). This is usually temporary — try again in a moment.
 The cloud environments service returned a response in an unexpected format (HTTP 200 without a usable environments list). This is usually temporary — try again in a moment.
 ```
-
-The server accepted the request but answered with a body that isn't the environments list: empty, not JSON, or JSON without the list. This usually accompanies a service-side disruption and clears on its own. Depending on the surface that requested the list, Claude Code may add a prefix, such as `couldn't list environments:` in the `/remote-env` dialog.
 
 **What to do:**
 
@@ -6675,11 +6674,6 @@ For the network lock, the warning names `sandbox.network.allowedDomains` and `al
 ### Sandbox mask files left behind at write-deny paths
 
 This warning in `claude doctor` and `/status` lists mask files: 0-byte read-only placeholder files at paths the [sandbox](https://code.claude.com/docs/en/sandboxing.md) denies writes to. It appears on Linux and WSL2 when sandboxing is enabled with filesystem isolation on. Delete them from your shell once no Claude Code session is open in the project that holds them.
-
-The sandbox creates a placeholder while a sandboxed command runs and removes it when the command ends. One stays behind in cases such as these:
-
-* The session is killed before the command ends, for example by SIGKILL
-* You quit the session while a sandboxed command is still running, such as one in the background
 
 In `claude doctor`, the warning reads:
 

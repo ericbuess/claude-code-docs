@@ -563,7 +563,7 @@ If you add an `allowWrite` entry or an `Edit` allow rule that covers one of thes
 >
 > If you set [`allowNestedUserNamespaces`](https://code.claude.com/docs/en/settings-reference#sandbox-allownestedusernamespaces) to `true` on Linux or WSL2, don't rely on protected paths: code from a sandboxed command can end up running outside the sandbox.
 
-To see most of these paths resolved for your machine, run `/sandbox` and open the **Config** tab, which lists them under **Denied within allowed**, mixed in with your own `denyWrite` entries.
+To see most of these paths resolved for your machine, run `/sandbox` and open the **Config** tab, which lists them mixed in with your own `denyWrite` entries.
 
 If `git merge` or `git checkout` fails with `unable to unlink old` on one of these paths, see [A git command fails with `unable to unlink old`](#a-git-command-fails-with-unable-to-unlink-old).
 
@@ -571,7 +571,7 @@ If `git merge` or `git checkout` fails with `unable to unlink old` on one of the
 
 After a sandboxed command ends, a newer top-level `HEAD`, `objects`, or `refs` entry in your working directory is deleted unless it's a folder with contents. Newer means the entry wasn't there when the sandbox last built its configuration: at session start, or after a change such as [`/cd`](https://code.claude.com/docs/en/commands).
 
-A newer `objects` or `refs` folder with contents is deleted too, with its contents, when a `HEAD` file or symlink was there the last time the sandbox built its configuration. To keep a folder, see [A folder named `objects` or `refs` disappears after a command](#a-folder-named-objects-or-refs-disappears-after-a-command).
+When a `HEAD` file or symlink was there the last time the sandbox built its configuration, a newer `objects` or `refs` folder is instead renamed to `<name>.claude-sandbox-quarantine-<hex>`. Its contents stay intact. To keep a folder or restore a renamed one, see [A folder named `objects` or `refs` disappears after a command](#a-folder-named-objects-or-refs-disappears-after-a-command).
 
 #### Denied paths that pass through a symlink
 
@@ -653,6 +653,13 @@ An unbracketed entry such as `::1:443` is ambiguous between an address and an ad
 
 To find ambiguous entries, run `claude doctor` in your terminal and look for the `Sandbox network domain entries have unreliable spellings` warning. Rewrite each ambiguous entry in the bracketed form.
 
+#### Usernames and passwords in proxy variables
+
+If a command's `HTTPS_PROXY` or other proxy URL contains a username and password, check the username and host:
+
+* **Host `127.0.0.1` or `localhost`, and username `srt` or one that starts with `srt.`**: treat it as the built-in sandbox proxy's own login, which isn't one of your credentials
+* **Any other username or host**: treat it as one of your own credentials
+
 ### OS-level enforcement
 
 The sandboxed Bash tool uses operating system security primitives:
@@ -728,7 +735,7 @@ The following managed settings configuration enables the sandbox, refuses to sta
 
 The two keys beyond `enabled` control what happens when the sandbox cannot run a command:
 
-* **`failIfUnavailable`**: when the platform doesn't support the sandbox or the dependency check at startup fails, Claude Code refuses to start rather than falling back to unsandboxed execution
+* **`failIfUnavailable`**: when the platform doesn't support the sandbox or the dependency check at startup fails, Claude Code refuses to start rather than falling back to unsandboxed execution. In an Anthropic-hosted environment, the session can start anyway
 * **`allowUnsandboxedCommands: false`**: Claude Code ignores the `dangerouslyDisableSandbox` escape hatch, so when a command fails under the sandbox, Claude can't retry it unsandboxed
 
 Consider these additions alongside them:
@@ -910,9 +917,16 @@ If you started Claude Code in a repository's subdirectory, this error can mean `
 
 ### A folder named `objects` or `refs` disappears after a command
 
-A top-level `objects` or `refs` folder that appeared during the session can be [deleted after a sandboxed command ends](#when-the-sandbox-deletes-head-objects-or-refs). It doesn't matter whether a command, Claude, or you created it. To keep a folder, leave something in it. If a `HEAD` file or symlink has been at the top level during the session, move it away, then restart every Claude Code session open there.
+A top-level `objects` or `refs` folder that appeared during the session can be [renamed or deleted after a sandboxed command ends](#when-the-sandbox-deletes-head-objects-or-refs). It doesn't matter whether a command, Claude, or you created it.
 
-Before v2.1.307, the folder was deleted even with something in it and no `HEAD`. On an earlier version, [update Claude Code](https://code.claude.com/docs/en/setup.md#update-claude-code).
+Close the Claude Code sessions running in your working directory, because a running session can rename or delete the folder again. Then look there for an entry named `<name>.claude-sandbox-quarantine-<hex>`, such as `objects.claude-sandbox-quarantine-1a2b3c4d5e6f`, and restore the folder before you start a new session:
+
+* **You find that entry**: the folder was renamed, with its contents intact. Move any top-level `HEAD` file or symlink out of your working directory. Then rename the entry back to `objects` or `refs`.
+* **You find no such entry**: the folder was deleted, so create it again.
+
+To keep a new folder from being renamed, move any top-level `HEAD` file or symlink out of your working directory before you start a new session there. With no `HEAD`, leave something in a folder to keep it.
+
+Before v2.1.315, a folder could be deleted with its contents. On an earlier version, [update Claude Code](https://code.claude.com/docs/en/setup.md#update-claude-code).
 
 ### Bubblewrap fails to start inside a container
 
@@ -944,10 +958,10 @@ Before v2.1.310, Claude Code didn't check for this restriction at startup, so `/
 
 On Linux and WSL2, the sandbox holds a write denial on a file that doesn't exist yet by creating a 0-byte read-only placeholder there while a sandboxed command runs. The sandbox removes the placeholder afterward.
 
-A placeholder stays behind in cases such as these:
+A placeholder can stay behind in cases such as these:
 
 * The session is killed before that cleanup runs, for example by SIGKILL
-* The session exits while a sandboxed command is still running, such as a background command
+* The session exits while a sandboxed command is still running
 
 Later sessions bind the placeholders read-only again on every start, so a settings write such as saving a permission choice fails at a path where a placeholder remains.
 
@@ -955,12 +969,12 @@ Run `claude doctor` in your terminal to list the leftover placeholder files. The
 
 ### `git` over SSH fails with the sandbox on
 
-On macOS, `git fetch`, `git pull`, and `git push` against an SSH remote fail inside the sandbox even when the host is allowed. On Linux and WSL2, they work once the host is allowed. Claude Code tunnels git's SSH connection through the [sandbox proxy](#network-isolation), and the macOS tunnel can't authenticate to that proxy.
+On macOS, `git fetch`, `git pull`, and `git push` against an SSH remote can fail inside the sandbox even when the host is allowed.
 
-On Linux and WSL2, check these if the connection still fails:
+On Linux and WSL2, they work once the host is allowed. If the connection still fails, check these:
 
 * **The host is allowed on port 22**: an `allowedDomains` entry with no port, such as `"git.example.com"`, covers it
-* **Your corporate proxy permits port 22**: if your network requires an upstream proxy, the tunnel goes through it too
+* **Your corporate proxy permits port 22**: if your network requires an upstream proxy, the connection goes through it too
 * **The key is readable as a file**: the sandbox can block the `ssh-agent` socket, and a `denyRead` or `credentials` entry for `~/.ssh` hides your key files
 
 On macOS, switch the remote to HTTPS, which needs HTTPS credentials such as a personal access token:

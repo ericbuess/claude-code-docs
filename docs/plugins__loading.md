@@ -39,7 +39,7 @@ An `enabledPlugins` entry becomes a plugin you can use in stages: your settings 
 Plugins load at session start from `installed_plugins.json` and the cache without using the network. After the session starts, Claude Code checks the declared marketplaces in the background:
 
 * **A marketplace that settings declare but `known_marketplaces.json` lacks**: Claude Code clones it, then reloads plugins and downloads enabled plugins that aren't cached yet
-* **A declared marketplace whose source changed in settings**: Claude Code re-fetches it from the new source and shows `Plugins changed. Run /reload-plugins to activate.`
+* **A declared marketplace whose source changed in settings**: Claude Code re-fetches it from the new source
 
 An enabled plugin that neither path fetched and that has no usable cache directory shows `Plugin "<name>" not cached at <path>` in the `/plugin` **Errors** tab. For the fix, see [`Plugin "<name>" not cached at <path>`](https://code.claude.com/docs/en/plugins/troubleshooting#plugin-not-cached-at).
 

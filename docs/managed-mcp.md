@@ -125,7 +125,7 @@ To confirm the file is in effect, run two checks on a managed machine:
 
 1. `claude mcp list` shows only the servers in `managed-mcp.json`, plus any you provide through `managedMcpServers`. Two other results mean something is wrong:
    * If a user's own servers still appear, Claude Code isn't reading the file, so check its path and the permissions on its parent directories.
-   * If the file's servers don't appear and the `MCP config diagnostics` section marks the enterprise config as failed to parse, Claude Code can't read or parse the file. Fix the error that section names, then have the user restart Claude Code.
+   * If the file's servers don't appear and the `MCP config diagnostics` section lists errors for the enterprise config, fix those errors, then have the user restart Claude Code.
 2. `claude mcp add --transport http test https://example.com/mcp` fails with `Cannot add MCP server: enterprise MCP configuration is active and has exclusive control over MCP servers`. The URL doesn't need to be a real server, since the policy check rejects the command before anything is contacted.
 
 ### Disable MCP entirely
