@@ -39,6 +39,7 @@ In Zed, `/terminal-setup` updates your `keymap.json` in place:
 
 * If the keymap already has bindings and none of them is a Terminal `shift-enter`, Claude Code first backs it up to a copy in the same directory, such as `keymap.json.1a2b3c4d.bak`, then merges the Shift+Enter binding into your keymap, keeping your other keybindings and comments
 * If Claude Code can't read or parse the keymap, can't back it up, or can't verify the merged result, it [leaves the file unchanged and prints the keybinding block to add yourself](https://code.claude.com/docs/en/errors.md#terminal-setup-left-your-zed-keymap-unchanged)
+* If the keymap is a symlink, [add the keybinding yourself](https://code.claude.com/docs/en/errors.md#terminal-setup-left-your-zed-keymap-unchanged)
 
 If you are running inside tmux, Shift+Enter also requires the [tmux configuration below](#configure-tmux) even when the outer terminal supports it.
 
@@ -52,7 +53,7 @@ Some Claude Code shortcuts use the Option key, such as Option+Enter for a newlin
 >
 > Open Settings → Profiles → Keyboard and check "Use Option as Meta Key".
 >
-> If you accepted Claude Code's first-run terminal setup prompt, this is already done. That prompt runs `/terminal-setup` for you, which enables Option as Meta and turns off the audible bell in your Apple Terminal profile.
+> `/terminal-setup` and the first-run terminal setup prompt enable this setting only on macOS 26 and earlier. Both also turn off your profile's audible bell.
 >
 > In [screen reader mode](https://code.claude.com/docs/en/accessibility.md), `/terminal-setup` leaves the bell setting unchanged so the terminal bell stays audible. If an earlier run turned the bell off, turn it back on under Settings → Profiles → Advanced → "Audible bell".
 

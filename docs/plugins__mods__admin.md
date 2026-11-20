@@ -41,7 +41,7 @@ With the option set in managed settings:
 
 * **No mod a user brings runs its hooks**: that covers a mod in a plugin the user installed, a mod loaded with `--plugin-dir`, and a mod [Claude wrote during a session](https://code.claude.com/docs/en/plugins/mods/create.md#ask-claude-for-a-mod)
 * **Your organization's mods still run**: a mod that [counts as your organization's](#install-your-organizations-mods) isn't checked. Every other mod counts as a user's and is refused. That includes a mod your organization turns on for its members on claude.ai. If none counts as yours, no installed mod runs its hooks.
-* **Users can't undo it**: the guard reads the option from managed settings only, so the same entry in a user, project, or local settings file, or in a file passed with `--settings`, changes nothing
+* **Claude Code ignores the option in other settings files**: if someone sets it in a user, project, local, or `--settings` file, your value still applies
 * **A file or MDM policy covers every provider**: when you deliver the option as a file or through MDM, it works the same way on Amazon Bedrock, Google Cloud's Agent Platform, and Microsoft Foundry. For delivery from the claude.ai admin console, see [Platform availability](https://code.claude.com/docs/en/server-managed-settings.md#platform-availability)
 * **Users' other customizations keep working**: their [hooks in settings files](https://code.claude.com/docs/en/hooks.md) and in plugins' `hooks/hooks.json`, status lines, and `/goal` aren't affected
 * **Built-in mods keep running**: mods built into Claude Code, such as `AGENTS.md` support, each have [their own switch](https://code.claude.com/docs/en/plugins/mods/overview.md#mods-built-into-claude-code)
@@ -117,6 +117,7 @@ Where the [built-in guard](#know-what-happens-by-default) loads, a hook that a u
 | `prompt.attachment` | A message Claude Code adds for Claude, such as a reminder |
 | `skill.prompt` | A skill's text as it's expanded for Claude |
 | `attribution.text` | Commit or pull request attribution text |
+| [`telemetry.log`](https://code.claude.com/docs/en/plugins/mods/reference#telemetry) | A record bound for an OpenTelemetry collector. Passed over in v2.1.328 or later |
 | [`session.compact`](https://code.claude.com/docs/en/plugins/mods/reference#session) | A compaction of the conversation |
 | `settings.read` | A read of settings, such as a mod's `$.settings.read` call |
 | `session.append{door=attachment}` | The stored row for a message Claude Code adds for Claude |
@@ -153,7 +154,7 @@ What a user can load as a mod depends on the plugin controls you already have:
 | A marketplace allowlist | A mod from the marketplaces you allow, or from any directory with `--plugin-dir`. A mod Claude writes during a session loads only when the allowlist [includes `skills-dir`](https://code.claude.com/docs/en/plugins/org#keep-skills-directory-plugins-loading). |
 | A marketplace allowlist and `disableSideloadFlags` | A mod from the marketplaces you allow |
 
-[Manage plugins for your organization](https://code.claude.com/docs/en/plugins/org.md) lists the ways a plugin loads and the setting that controls each.
+With any of these, users can also load a mod in a plugin [synced from claude.ai](https://code.claude.com/docs/en/plugins/loading.md#synced-plugins), or in a [skills-directory plugin](https://code.claude.com/docs/en/plugins/org.md#keep-skills-directory-plugins-loading) unless your allowlist leaves out `skills-dir`. [Manage plugins for your organization](https://code.claude.com/docs/en/plugins/org.md) lists the ways a plugin loads and the setting that controls each.
 
 To check the mods in a marketplace before your users install them, see [Review what a mod can do](#review-what-a-mod-can-do). To keep users' mods out until you've done that, see [Stop user-installed mods from loading](#stop-user-installed-mods-from-loading).
 
@@ -202,7 +203,7 @@ Mod policies range from no installed mods at all to any mod a user chooses, with
 | No installed mod runs, with settings hooks untouched | Set [`allowManagedModsOnly`](#set-options-on-the-built-in-guard) and deploy no mods of your own |
 | No installed mods and no hooks at all, your managed hooks included | Set `disableAllHooks` to `true` |
 | Only your organization's mods | Set the guard's [`allowManagedModsOnly` option](#stop-user-installed-mods-from-loading), and [install your mods](#install-your-organizations-mods) so that they count as yours |
-| Any mod from marketplaces you approve | Keep your [marketplace restrictions](https://code.claude.com/docs/en/plugins/org.md#restrict-what-users-can-install), and set `disableSideloadFlags` to `true` |
+| Any mod from marketplaces you approve outside claude.ai | Set a [marketplace allowlist](https://code.claude.com/docs/en/plugins/org.md#restrict-what-users-can-install) without `skills-dir`, set `disableSideloadFlags` to `true`, and set [`syncClaudeAiPlugins`](https://code.claude.com/docs/en/settings-reference#syncclaudeaiplugins) to `false` |
 | Any mod, with your own mod checking the others | [Install your mod](#install-your-organizations-mods), and list it with `sec-default@builtin` in `prependPlugins` |
 
 What each setting does:
@@ -277,8 +278,8 @@ The table gives what your users get with each option unset and with it set to `t
 These rules decide whether an option takes effect:
 
 * **The id has one form here**: Claude Code reads the options only under `cc-plugin-sec-default@builtin`. `prependPlugins` accepts `sec-default@builtin` as well, and `pluginConfigs` doesn't.
-* **Only managed settings count**: the same entry in a user, project, or local settings file, or in a file passed with `--settings`, neither sets an option nor loosens one
-* **The guard has to load**: if you set `prependPlugins`, [name the guard in the list](#install-your-organizations-mods). Where the guard doesn't load, neither option applies.
+* **Claude Code ignores the options in other settings files**: the same entry in a user, project, or local settings file, or in a file passed with `--settings`, neither sets an option nor loosens one
+* **The guard has to load**: if you set `prependPlugins`, [name the guard in the list](#install-your-organizations-mods). Where the guard doesn't load, no option applies.
 * **The guard fails closed**: if the guard can't read managed settings, it refuses every user's mod at load. If it can't check the deny rules for a call that a user's mod approved, it refuses the call.
 
 The [messages from the built-in guard](https://code.claude.com/docs/en/plugins/mods/troubleshoot.md#messages-from-the-built-in-guard) are what your users see when either option applies.

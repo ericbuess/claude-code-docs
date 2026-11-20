@@ -10,7 +10,9 @@
 >
 > Cloud sessions are available on Pro, Max, Ultra, and Team plans, and for Enterprise users with premium seats or Chat + Claude Code seats. If [custom roles](https://support.claude.com/en/articles/13930452) govern your access, you also need a role with the cloud sessions permission to start sessions on Anthropic's infrastructure from the browser, apps, or terminal. Ask an Owner to add it to one of your roles at [**Organization settings > Roles**](https://claude.ai/admin-settings/roles).
 
-A cloud session is a Claude Code session that runs on cloud infrastructure instead of on your machine. By default it runs on infrastructure Anthropic manages, or on your organization's [self-hosted environment](https://code.claude.com/docs/en/self-hosted-environments) when routed there. The session keeps running after you close your laptop, and you can check on it or steer it from any device. It counts toward your plan's usage limits alongside the rest of your Claude and Claude Code usage, and there's no separate charge for the cloud VM.
+A cloud session is a Claude Code session that runs on cloud infrastructure. By default it runs on infrastructure Anthropic manages, or on your organization's [self-hosted environment](https://code.claude.com/docs/en/self-hosted-environments) when routed there.
+
+The session keeps running after you close your laptop, and you can check on it or steer it from any device. It counts toward your plan's usage limits alongside the rest of your Claude and Claude Code usage, and there's no separate charge for the cloud VM.
 
 To let cloud sessions clone your code from GitHub and push branches, connect GitHub with one of the [GitHub connection methods](#github-authentication-options). If your repository is on GitLab, Bitbucket, or another host, see [Platform restrictions](#limitations) for what works.
 
@@ -406,13 +408,11 @@ Claude may reply to review comment threads on GitHub as part of resolving them. 
 
 ## Security and isolation
 
-Each cloud session is separated from your machine and from other sessions through several layers:
+By default, a cloud session runs its shell commands and file edits in an isolated, Anthropic-managed VM. Sessions your organization routes to a [self-hosted environment](https://code.claude.com/docs/en/self-hosted-environments) run on your own infrastructure instead, where isolation is your deployment's responsibility.
 
-* **Isolated virtual machines**: each session runs in an isolated, Anthropic-managed VM. Sessions your organization routes to a [self-hosted environment](https://code.claude.com/docs/en/self-hosted-environments) run on your own infrastructure instead, where isolation is your deployment's responsibility
 * **Network access controls**: in Anthropic-hosted environments, network access is limited by default and can be disabled. See [Network access](https://code.claude.com/docs/en/cloud-environments.md#network-access) for the access levels, the [default allowed domains](https://code.claude.com/docs/en/cloud-environments.md#default-allowed-domains), and the traffic that doesn't go through the allowlist. In a self-hosted environment, you restrict session egress at your own network boundary. When running with network access disabled, Claude Code can still communicate with the Anthropic API, which may allow data to exit the VM.
 * **Credential protection**: in Anthropic-hosted environments, git credentials and signing keys stay outside the sandbox, and a proxy authenticates on the session's behalf with scoped credentials. In a self-hosted environment, your deployment supplies git credentials; see [Configure git](https://code.claude.com/docs/en/self-hosted-environments-deploy.md#configure-git)
 * **Network secrets**: in Anthropic-hosted environments, keys you [add to a cloud environment](https://code.claude.com/docs/en/cloud-environments.md#add-network-secrets) stay outside the sandbox the same way, attached to matching requests after they leave the session. A self-hosted environment doesn't have network secrets
-* **Secure analysis**: code is analyzed and modified within the session's isolated environment before creating PRs
 
 ## Troubleshooting
 
@@ -444,11 +444,9 @@ Your prompt is back in the box you sent it from.
 * `Unable to get organization UUID`
 * ``Cloud sessions need a claude.ai sign-in. Run `claude auth login` (or /login in a local session), then try again.``
 * ``Cloud sessions aren't available with this Console sign-in. They need a claude.ai sign-in. Run `claude auth login` (or /login in a local session), then try again.``
-* `Error loading Claude Code sessions` in the session picker, when you run `claude --teleport` without a session ID
+* `Couldn't load cloud sessions` in the session picker, when you run `claude --teleport` without a session ID. Before v2.1.328, it read `Couldn't load Claude Code sessions` or `Error loading Claude Code sessions`
 
 Run [`claude auth login`](https://code.claude.com/docs/en/cli-reference#cli-commands) in your shell to sign in with your claude.ai account, then retry the command. Inside a running session, `/login` does the same. If the error names your provider instead, see the [error table](#errors-when-sending-to-a-cloud-session): cloud sessions aren't available through third-party providers.
-
-From v2.1.274 through v2.1.289, the sign-in message read `Claude Code cloud sessions require authentication with a Claude.ai account. API key authentication is not sufficient. Please run /login to authenticate, or check your authentication status with /status.`
 
 ### Branch is not on GitHub
 

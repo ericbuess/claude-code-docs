@@ -47,7 +47,7 @@ If the repositories you want are listed in the **Add a repository** dialog, or y
 
 **4. Choose repositories**
 
-Select the repositories you want reviewed, then click **Continue**. Adding a repository needs write access to it from the GitHub account you connected. You can [add more repositories](#add-more-repositories) later.
+Select the repositories you want reviewed, then click the button that adds them, which reads **Add 2 repositories** when you've selected two. Adding a repository needs write access to it from the GitHub account you connected. You can [add more repositories](#add-more-repositories) later.
 
 **5. Click Finish**
 
@@ -124,7 +124,7 @@ You can add repositories one at a time or cover a whole GitHub organization at o
 
 ### Add more repositories
 
-To add repositories after setup, click **Add** above the **Repositories** table in the **Code review** section. The **Add a repository** dialog opens. Select repositories and click **Continue**.
+To add repositories after setup, click **Add** above the **Repositories** table in the **Code review** section. The **Add a repository** dialog opens. Select repositories and click the button that adds them, which reads **Add 2 repositories** when you've selected two.
 
 * **A repository isn't listed**: see [A repository isn't listed in Add a repository](https://code.claude.com/docs/en/code-review-troubleshooting.md#a-repository-isn’t-listed-in-add-a-repository).
 * **You want every repository in a GitHub organization**: [cover the organization](#cover-a-whole-github-organization) instead of selecting repositories one at a time

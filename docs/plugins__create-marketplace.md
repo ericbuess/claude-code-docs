@@ -84,7 +84,7 @@ Register the directory as a marketplace.
 claude plugin marketplace add ./my-marketplace
 ```
 
-The command prints `✔ Successfully added marketplace: my-marketplace (declared in user settings)`, which means the marketplace is recorded in your user settings file.
+In a terminal, the command prints `✔ Added marketplace: my-marketplace (declared in user settings)`, which means the marketplace is recorded in your user settings file.
 
 Install the plugin. The install id is the entry's `name`, an `@`, and the marketplace `name`.
 
@@ -92,7 +92,7 @@ Install the plugin. The install id is the entry's `name`, an `@`, and the market
 claude plugin install my-first-plugin@my-marketplace
 ```
 
-The command prints `✔ Successfully installed plugin: my-first-plugin@my-marketplace (scope: user)`.
+In a terminal, the command prints `✔ Installed plugin: my-first-plugin@my-marketplace (scope: user)`.
 
 Inside a session, `/plugin marketplace add ./my-marketplace` registers the marketplace the same way. `/plugin install my-first-plugin@my-marketplace` opens the plugin's details in the `/plugin` panel, where you install it. For that flow, see [Install and manage plugins](https://code.claude.com/docs/en/plugins/install.md).
 

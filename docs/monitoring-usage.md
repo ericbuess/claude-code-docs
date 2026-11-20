@@ -1479,7 +1479,7 @@ Logged when a [subagent](https://code.claude.com/docs/en/sub-agents.md) finishes
 * `is_built_in`: Whether the subagent is a built-in agent type
 * `is_async`: Whether the subagent ran in the [background](https://code.claude.com/docs/en/sub-agents.md#run-subagents-in-foreground-or-background)
 * `total_tokens`: The token footprint of the subagent's final API request: that one request's input, cache creation, cache read, and output tokens, roughly the subagent's context size at completion. Not a sum across the run
-* `total_tool_uses`: Number of tool calls the subagent made across the whole run
+* `total_tool_uses`: Number of tool calls the subagent made across the whole run, excluding [`SubagentHandback`](https://code.claude.com/docs/en/tools-reference)
 * `duration_ms`: Run time in milliseconds
 * `model`: The model the subagent was resolved to run
 * `final_model`: The model that produced the subagent's final response, which differs from `model` after a mid-run switch such as a fallback
@@ -1513,7 +1513,7 @@ Like every OTel event on this page, it goes only to the telemetry backend you co
 Read `result` to see whether the sweep ran:
 
 * `"complete"`: the sweep ran, and the event carries its counts
-* `"skipped"`: Claude Code couldn't safely determine the retention period, so it paused the sweep and the event carries no counts. If `skip_reason` is `"settings_unknowable"` or `"settings_invalid_key_set"`, fix the settings error that `/status` reports on that machine so a later session can run the sweep
+* `"skipped"`: Claude Code couldn't safely determine the retention period, so it paused the sweep and the event carries no counts. If `skip_reason` is `"settings_unknowable"` or `"settings_invalid_key_set"`, fix any settings error that `/status` reports on that machine so a later session can run the sweep
 
 When [managed settings](https://code.claude.com/docs/en/server-managed-settings.md) set `cleanupPeriodDays`, the managed value pins the retention period and the sweep runs even when a settings file in a lower-priority scope is broken or invalid.
 
@@ -1530,7 +1530,7 @@ When [managed settings](https://code.claude.com/docs/en/server-managed-settings.
 * `used_default`: `"true"` when `period_days` fell back to `30`, `"false"` otherwise. On complete events, `"true"` means the 30-day default applied
 * `skip_reason`: Why Claude Code paused the sweep. Present only when `result` is `"skipped"`:
   * `"user_source_disabled"`: User settings are excluded, for example by the [`--setting-sources`](https://code.claude.com/docs/en/cli-reference#cli-flags) flag or the SDK's [`settingSources`](https://code.claude.com/docs/en/agent-sdk/typescript#options) option, and no enabled source provides `cleanupPeriodDays`
-  * `"settings_unknowable"`: A settings file couldn't be read or parsed, so `cleanupPeriodDays` or `desktopSessionCleanupPeriodDays` may be set to a value Claude Code can't see
+  * `"settings_unknowable"`: A settings source couldn't be read or parsed, so `cleanupPeriodDays` or `desktopSessionCleanupPeriodDays` may be set to a value Claude Code can't see
   * `"settings_invalid_key_set"`: Settings have validation errors and `cleanupPeriodDays` or `desktopSessionCleanupPeriodDays` is explicitly set, so falling back to the default could delete or keep files against that setting
   * `"remote_settings_unknowable"`: A session in Claude Desktop's Code tab on a third-party deployment requested [server-managed settings](https://code.claude.com/docs/en/server-managed-settings.md). It received no usable response, so `cleanupPeriodDays` may be set to a value Claude Code can't see
 * `transcripts_deleted`: Number of session transcripts, the top-level `~/.claude/projects/*/*.jsonl` files, that the sweep deleted

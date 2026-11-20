@@ -341,7 +341,7 @@ Session files in `sessions/`, auto memory, and Claude Desktop and Cowork transcr
 Claude Code skips the age-based sweep in these cases:
 
 * **Bare mode**: when you run `claude -p` with [`--bare`](https://code.claude.com/docs/en/headless#start-faster-with-bare-mode), Claude Code doesn't run the sweep in that session.
-* **Paused sweep**: if Claude Code can't safely determine the retention period, it pauses the sweep; the [`retention_sweep` event](https://code.claude.com/docs/en/monitoring-usage#retention-sweep-event) lists each configuration that pauses it. When the cause is a settings file that can't be read or parsed, or settings errors with `cleanupPeriodDays` or `desktopSessionCleanupPeriodDays` set, `/status` shows a warning until you fix the cause.
+* **Paused sweep**: if Claude Code can't safely determine the retention period, it pauses the sweep; the [`retention_sweep` event](https://code.claude.com/docs/en/monitoring-usage#retention-sweep-event) reports why. When the cause is a settings file that can't be read or parsed, or settings errors with `cleanupPeriodDays` or `desktopSessionCleanupPeriodDays` set, `/status` shows a warning until you fix the cause.
 
 When [managed settings](https://code.claude.com/docs/en/managed-settings.md) provide `cleanupPeriodDays`, Claude Code runs the sweep at the managed value even when a lower-priority settings file has errors.
 

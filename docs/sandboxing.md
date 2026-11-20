@@ -234,6 +234,8 @@ These rules and settings change who approves the retry:
 * **An ask rule for the parameter**: add an [ask rule](https://code.claude.com/docs/en/permissions.md#match-by-input-parameter) for `Bash(dangerouslyDisableSandbox:true)` to be prompted on Bash retries. You get the prompt in auto mode and `bypassPermissions` mode too, and the rule takes precedence over a matching allow rule
 * **[`permissions.blockReadsOutsideWorkingDirectories`](https://code.claude.com/docs/en/settings-reference#permissions-blockreadsoutsideworkingdirectories)**: [Actions no mode auto-approves](https://code.claude.com/docs/en/permission-modes.md#actions-no-mode-auto-approves) covers the retries that prompt while it's on
 
+If you use Code Mode, retries in auto mode work differently. See [Limit shell commands with the sandbox](https://code.claude.com/docs/en/code-mode.md#limit-shell-commands-with-the-sandbox).
+
 While commands are refused with a [`Sandbox is required` message](#commands-refused-with-sandbox-is-required), Claude Code ignores the `dangerouslyDisableSandbox` parameter and refuses the retry too.
 
 #### Turn off the retry with strict sandbox mode
@@ -446,7 +448,7 @@ When you mask a credential, Claude Code shows sandboxed commands a per-session p
 Masking requires the following:
 
 * **TLS termination**: the proxy substitutes the real value inside request contents, so it has to see them. Set [`network.tlsTerminate`](https://code.claude.com/docs/en/settings-reference#sandbox-network-tlsterminate) so the proxy terminates TLS itself. Without it, masking fails without exposing anything: the command still sees only the sentinel, but the sentinel reaches the server unchanged and authentication fails. To check for this misconfiguration, run `claude doctor` in your terminal and look for the `TLS termination is unavailable` warning.
-* **An allowed destination**: each `mask` entry can list `injectHosts`, the hosts the real value is allowed to reach. The proxy injects only on connections the [domain allowlist](#network-isolation) admits, so each `injectHosts` host must also be reachable through `network.allowedDomains`. For a `mask` entry with no `injectHosts`, the proxy substitutes the real value on requests to every host in `network.allowedDomains`.
+* **An allowed destination**: each `mask` entry can list `injectHosts`, the hosts the real value is allowed to reach. The proxy injects only on connections the [domain allowlist](#network-isolation) admits, so each `injectHosts` host must also be reachable through `network.allowedDomains`. For most `mask` entries with no `injectHosts`, the proxy substitutes the real value on requests to every host in `network.allowedDomains`.
 * **A trusted settings scope**: masking authorizes the proxy to send your real credential somewhere, so Claude Code honors `mask` entries, `network.tlsTerminate`, [`credentials.allowPlaintextInject`](https://code.claude.com/docs/en/settings-reference#sandbox-credentials-allowplaintextinject), `awsPairs`, and `sigv4` only from user settings, managed settings, and the `--settings` flag. It ignores them in a repository's `.claude/settings.json` or `.claude/settings.local.json`. When your administrator delivers `mask` entries, `network.tlsTerminate`, or `credentials.allowPlaintextInject` through server-managed settings, they count as [settings that need approval](https://code.claude.com/docs/en/server-managed-settings.md#security-approval-dialogs).
 
 #### Mask environment variables
@@ -484,7 +486,7 @@ The proxy matches each `injectHosts` entry against the connection's bare destina
 
 #### Re-sign AWS requests
 
-AWS requests carry SigV4 signatures over the request contents, so mask `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` together. The proxy detects a SigV4 request by the access key's [sentinel](#mask-credentials) and re-signs the request with the real values, which requires Claude Code v2.1.221 or later. If you mask only the secret, requests are signed with a placeholder the proxy can't detect, so they fail at AWS.
+AWS requests carry SigV4 signatures over the request contents, so mask `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` together. The proxy detects a SigV4 request by the access key's [sentinel](#mask-credentials). Re-signing a request with the real values requires Claude Code v2.1.221 or later. If you mask only the secret, requests are signed with a placeholder the proxy can't detect, so they fail at AWS.
 
 Claude Code links the conventional `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, and `AWS_SESSION_TOKEN` variables into one credential automatically when you mask their whole values. If your AWS credential is in variables with other names, group them with [`credentials.awsPairs`](https://code.claude.com/docs/en/settings-reference#sandbox-credentials-awspairs), which requires Claude Code v2.1.224 or later.
 

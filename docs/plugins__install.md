@@ -63,7 +63,7 @@ Pick the tab for where you run Claude Code.
 >
 > [Choose an install scope](#choose-an-install-scope) says which settings file each one writes to and which applies when the same plugin is set at more than one.
 >
-> After you select a scope, Claude Code installs the plugin along with any dependencies it declares, then prints an install summary.
+> After you select a scope, Claude Code installs the plugin, then prints an install summary.
 >
 > **4. Read the install summary**
 >
@@ -177,7 +177,7 @@ Run `claude plugin install` in your shell to install a plugin without starting a
 claude plugin install formatter@your-org --scope project
 ```
 
-The command prints `Successfully installed plugin: formatter@your-org (scope: project)` when it finishes.
+In a terminal, the command prints `Installed plugin: formatter@your-org (scope: project)` when it finishes.
 
 Some plugins install by running a command that their marketplace names, called a [`command` source](https://code.claude.com/docs/en/plugins/marketplace-reference#command-plugin-source). Claude Code shows you that command and asks you to accept it before it runs. A script has no one to answer that prompt, so pass `--yes` there to accept it.
 
@@ -232,7 +232,7 @@ claude plugin install deploy-helper --marketplace your-org/plugins
 
 The shell command adds the marketplace without a confirmation step. A marketplace you've already added from that source is reused. A new one is added under the same [organization policy checks](https://code.claude.com/docs/en/plugins/org.md#restrict-what-users-can-install) as `claude plugin marketplace add`, and is declared in your user settings even when you pass `--scope project`.
 
-If you haven't added that marketplace yet, the command prints `Successfully added marketplace: <name> (declared in user settings)` and then [installs the plugin](#install-from-your-shell).
+If you haven't added that marketplace yet, your terminal shows `Added marketplace: <name> (declared in user settings)`, and the command then [installs the plugin](#install-from-your-shell).
 
 ### Add a private marketplace
 

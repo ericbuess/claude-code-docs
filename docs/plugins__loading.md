@@ -158,7 +158,7 @@ You can set an `enabledPlugins` entry in any of six sources. The table lists the
 
 | Source | Where you set it | Reaches |
 | :- | :- | :- |
-| `--add-dir` | `.claude/settings.json` or `.claude/settings.local.json` in a directory you pass with `--add-dir` | This session only. Only a `true` value has an effect, and every other source overrides it |
+| `--add-dir` | `.claude/settings.json` or `.claude/settings.local.json` in a directory you pass with `--add-dir` | This session only, and every other source overrides it. Can be [skipped until you save trust for the directory](#enabled-in-an-add-dir-directory-but-not-loaded) |
 | `user` | `~/.claude/settings.json` | You, in every project |
 | `project` | `.claude/settings.json` | Everyone who clones the repository |
 | `local` | `.claude/settings.local.json` | You, in this repository only |
@@ -174,6 +174,12 @@ If you set a plugin to `false` in `~/.claude/settings.json` and it still loads, 
 To opt out of a project-enabled plugin on your machine, set the id to `false` in `.claude/settings.local.json`, which has higher precedence than the project file.
 
 ### Enabled in an `--add-dir` directory but not loaded
+
+Until you save trust for the added directory, Claude Code skips its [`extraKnownMarketplaces`](https://code.claude.com/docs/en/permissions#what-runs-before-you-trust-a-folder) entries. In an interactive terminal session, it also skips `enabledPlugins` entries set to `true`. Answering the prompt that `--add-dir` shows doesn't save that trust. To save it, start a session in the directory and accept the [workspace trust dialog](https://code.claude.com/docs/en/permissions.md#project-allow-rules-and-workspace-trust). If no dialog appears, [set the trust key yourself](https://code.claude.com/docs/en/permissions.md#what-runs-before-you-trust-a-folder). The trust check requires Claude Code v2.1.319 or later.
+
+> [!NOTE]
+>
+> A directory inside a [pull request worktree](https://code.claude.com/docs/en/worktrees.md#branch-from-a-pull-request) can be skipped even after you trust it, so pass your main checkout's copy to `--add-dir` instead.
 
 Claude Code reads an `enabledPlugins` entry of `true` in one of the added directory's files only when that file's setting sources are on:
 
@@ -218,7 +224,7 @@ Claude Code fetches a plugin with an external source only when one of these sour
 
 ## Find plugins on disk
 
-Claude Code keeps plugin files and state records under one plugins root, which is `~/.claude/plugins` unless you set [`CLAUDE_CODE_PLUGIN_CACHE_DIR`](https://code.claude.com/docs/en/env-vars). Every path in the table is relative to that root.
+Claude Code keeps plugin files and state records under a plugins root, which is `~/.claude/plugins` unless you set [`CLAUDE_CODE_PLUGIN_CACHE_DIR`](https://code.claude.com/docs/en/env-vars). Every path in the table except `synced/` and `.trash/` is relative to that root. Those two stay under `~/.claude/plugins`.
 
 | Path | What it holds |
 | :- | :- |

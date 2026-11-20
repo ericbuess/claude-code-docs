@@ -56,7 +56,7 @@ Match the error message or symptom you're seeing to a fix:
 | On Windows, the install command prints script text and nothing installs | [Run the complete install command](#wrong-install-command-on-windows) |
 | `App unavailable in region` | Claude Code is not available in your country. See [supported countries](https://www.anthropic.com/supported-countries). |
 | `unable to get local issuer certificate` | [Configure corporate CA certificates](#tls-or-ssl-connection-errors) |
-| `OAuth error` or `403 Forbidden` | [Fix authentication](#login-and-authentication) |
+| `OAuth error`, `That doesn't look like the full code`, or `403 Forbidden` | [Fix authentication](#login-and-authentication) |
 | `Claude Code access has not been granted for this account` | [Get a role that includes Claude Code](#claude-code-access-has-not-been-granted-for-this-account) |
 | `Unable to connect to Anthropic services` during setup | See [Unable to connect to Anthropic services](https://code.claude.com/docs/en/errors.md#unable-to-connect-to-anthropic-services) in the Error reference |
 | `Could not load the default credentials` or `Could not load credentials from any providers` | [Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry credentials](#bedrock-agent-platform-or-foundry-credentials-not-loading) |
@@ -815,7 +815,7 @@ When installing Claude Code in a Docker container, installing as root into `/` c
 
 **Solutions:**
 
-1. **Set a working directory** before running the installer. When run from `/`, the installer scans the entire filesystem, which causes excessive memory usage. Setting `WORKDIR` limits the scan to a small directory:
+1. **Set a working directory** before running the installer:
    ```dockerfile theme={null}
    WORKDIR /tmp
    RUN curl -fsSL https://claude.ai/install.sh | bash
@@ -1146,7 +1146,9 @@ When login fails and the cause isn't clear, a clean re-authentication resolves m
 
 If the browser doesn't open automatically during login, press `c` to copy the OAuth URL to your clipboard, then paste it into a browser manually. This also works when the URL wraps across lines in a narrow or SSH terminal and can't be clicked directly.
 
-### OAuth error: Invalid code
+### That doesn't look like the full code
+
+If you see `That doesn't look like the full code`, copy the whole login code from the browser, including the `#` in the middle, and paste it again.
 
 If you see `OAuth error: Invalid code. Please make sure the full code was copied`, the login code expired or was truncated during copy-paste.
 

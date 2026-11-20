@@ -189,13 +189,13 @@ claude --plugin-dir ./my-first-plugin --plugin-dir ./other-plugin.zip
 
 To load several plugins from one place, pass a folder that holds them, such as `--plugin-dir ./plugins`. Loading a folder of plugins requires Claude Code v2.1.265 or later.
 
-If the folder has no `.claude-plugin/` directory and no plugin components at its top level, Claude Code treats it as a folder of plugins. Each immediate subfolder that has a `.claude-plugin/plugin.json` manifest then loads as a separate plugin. Everything else in the folder is skipped without an error, including a subfolder that has no manifest. If a plugin in the folder doesn't load, check that its subfolder has a `.claude-plugin/plugin.json`.
+If the folder has no `.claude-plugin/` directory and no plugin components at its top level, Claude Code treats it as a folder of plugins. Each immediate subfolder that has a `.claude-plugin/plugin.json` manifest and no leading `.` in its name then loads as a separate plugin. Everything else in the folder is skipped without an error. If a plugin doesn't load, check its subfolder's name and manifest.
 
 You can also pass a folder that keeps a `.claude-plugin/marketplace.json` beside its plugin folders. As long as that `.claude-plugin/` directory holds no `plugin.json`, the plugin folders still load. Nothing is installed or enabled from the marketplace file, because Claude Code doesn't read it. Loading plugins from such a folder requires Claude Code v2.1.281 or later.
 
 In an interactive session, you can also add and remove plugins in the folder after startup:
 
-* A subfolder you add loads as a new plugin once its manifest exists.
+* A subfolder you add loads as a new plugin once its manifest exists, unless its name starts with `.`.
 * When you remove a subfolder, its plugin unloads.
 
 A message appears in the session for each of these changes. If loading or unloading a plugin mid-conversation would [invalidate the prompt cache](https://code.claude.com/docs/en/prompt-caching.md#enabling-or-disabling-a-plugin), the change is held instead, and the message tells you to run `/reload-plugins` to apply it.

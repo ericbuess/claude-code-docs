@@ -376,7 +376,7 @@ A `managed-mcp.json` server that uses `${VAR}` expansion in its command, argumen
 
 ### Example configuration
 
-The configuration below sets up a hard allowlist with a denylist. The highlighted lines change how the rest of the list is evaluated, and the callouts after the block explain each one:
+The configuration below sets up an allowlist with a denylist. The highlighted lines change how the rest of the list is evaluated, and the callouts after the block explain each one:
 
 ```json {3,5,11} theme={null}
 {

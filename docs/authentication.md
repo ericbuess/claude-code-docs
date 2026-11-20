@@ -229,9 +229,21 @@ Claude Code securely manages your authentication credentials:
 
 `apiKeyHelper`, `ANTHROPIC_API_KEY`, and `ANTHROPIC_AUTH_TOKEN` apply to the CLI and the surfaces that wrap it, including the VS Code extension, the Agent SDK, and GitHub Actions. Claude Desktop and cloud sessions do not call `apiKeyHelper` or read these environment variables: they use OAuth, except desktop sessions running a [third-party inference configuration](https://code.claude.com/docs/en/llm-gateway-connect.md#desktop-app), which authenticate with that configuration's credential.
 
+### Check when a stored login ends
+
+To see when the claude.ai login you're using ends, run `claude auth status --text` in your shell. In Claude Code v2.1.318 or later, look for a line that starts with `Sign-in`:
+
+```text theme={null}
+Sign-in ends: between 2026-11-20 and 2026-11-23 (2026-11-23T17:04:11.000Z)
+```
+
+Before the earlier date, sign in again in the browser with `/login` or `claude auth login`. Using Claude Code doesn't extend the login. If the line says `any day now` or `may have ended`, sign in now. The line is absent for other credentials or when no date is known.
+
+When the later date is under 10 days away, a `claude -p` run with text output prints `Warning: this sign-in` on stderr, so sign in again before the earlier date.
+
 ### Renew an expiring login
 
-When the login you created with `/login` is within three days of expiring, Claude Code shows a warning at startup: `Your login expires in 3 days · run /login to renew`.
+Starting on the earlier of your login's [two end dates](#check-when-a-stored-login-ends), Claude Code shows a warning at startup: `Your login expires in 3 days · run /login to renew`.
 
 Run `/login` to renew. The warning appears only when a claude.ai login is the active credential.
 

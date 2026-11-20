@@ -202,8 +202,8 @@ Claude Code declines the fork in cases such as these:
 
 Remote Control only activates when you explicitly run `claude remote-control`, `claude --remote-control`, or `/remote-control`, unless auto-connect is turned on. To turn auto-connect on for every interactive session, run `/config` inside Claude Code and set **Enable Remote Control for all sessions**. The toggle takes three values:
 
-* **`true`**: connect automatically when an interactive session starts.
-* **`false`**: turn auto-connect off, though a `true` from [managed settings](https://code.claude.com/docs/en/managed-settings.md) outranks it, because Claude Code saves the choice to your user settings. A `false` in project or local settings (`.claude/settings.json`, `.claude/settings.local.json`) turns auto-connect off even over a managed `true`.
+* **`on`**: connect automatically when an interactive session starts.
+* **`off`**: turn auto-connect off, though a `true` from [managed settings](https://code.claude.com/docs/en/managed-settings.md) outranks it, because Claude Code saves the choice to your user settings. A `false` in project or local settings (`.claude/settings.json`, `.claude/settings.local.json`) turns auto-connect off even over a managed `true`.
 * **`default`**: clear your choice and follow your organization's admin default if one is set, otherwise Claude Code's current default. If you set `DISABLE_TELEMETRY` or `DO_NOT_TRACK`, see [Auto-connect with `DISABLE_TELEMETRY` or `DO_NOT_TRACK` set](#auto-connect-with-disable-telemetry-or-do-not-track).
 
 The VS Code extension and the Desktop app also have an auto-connect toggle:
@@ -223,8 +223,8 @@ With only `DISABLE_TELEMETRY` or `DO_NOT_TRACK` set, your sessions don't auto-co
 
 Before you turn auto-connect on with only `DISABLE_TELEMETRY` or `DO_NOT_TRACK` set, confirm that your Claude Code version meets the [requirement for these variables](#requirements). Then check whether your organization requires [Trusted Devices](#trusted-devices):
 
-* **Not required**: set **Enable Remote Control for all sessions** to `true` in `/config`.
-* **Required**: Remote Control isn't available while `DISABLE_TELEMETRY` or `DO_NOT_TRACK` is set. Unset whichever of the two variables you set. If your sessions still don't auto-connect, set **Enable Remote Control for all sessions** to `true` in `/config`.
+* **Not required**: turn on **Enable Remote Control for all sessions** in `/config`.
+* **Required**: Remote Control isn't available while `DISABLE_TELEMETRY` or `DO_NOT_TRACK` is set. Unset whichever of the two variables you set. If your sessions still don't auto-connect, turn on **Enable Remote Control for all sessions** in `/config`.
 
 ### Resume sessions after stopping the server
 
@@ -530,13 +530,21 @@ Before v2.1.318, a session that failed this way showed `Session failed: spawn er
 
 This warning in the terminal running [`claude remote-control`](#start-a-remote-control-session) means the program file the server started from is missing, and new sessions run the newer version that replaced it. To move the server to that version too, stop it and run `claude remote-control` again. If Claude Code is installed on network storage, restart the server now and follow [Install on network storage](https://code.claude.com/docs/en/setup.md#install-on-network-storage). Otherwise, new sessions start without a restart.
 
-When the program file is gone and Claude Code finds no newer version to run, new sessions fail. The terminal shows an error such as `Session failed: spawn error:` followed by an `ENOENT` message. Stop the server, [install Claude Code](https://code.claude.com/docs/en/setup.md#install-claude-code) again if `claude` doesn't run in your shell, and run `claude remote-control` again. Before v2.1.318, new sessions failed this way even with a newer version installed.
+When the program file is gone and Claude Code finds no newer version to run, new sessions fail. The terminal shows an error such as `Session failed: program not found:`, or `Session failed: spawn error:` with `ENOENT`. Stop the server, [install Claude Code](https://code.claude.com/docs/en/setup.md#install-claude-code) again if `claude` doesn't run in your shell, and run `claude remote-control` again. Before v2.1.318, new sessions failed this way even with a newer version installed.
 
 ### "Couldn't reconnect to your Remote Control session"
 
 When you resume a conversation with `claude --resume` or `claude --continue`, Claude Code reconnects to the Remote Control session recorded in that conversation. This message means the reconnection failed for a reason that may be temporary, such as a network interruption or a server error, so Claude Code can't confirm whether the remote session still exists.
 
+The full message looks like this:
+
+```text theme={null}
+Couldn't reconnect to your Remote Control session. Retry, or start a fresh session without --resume.
+```
+
 Run `/remote-control` to retry the connection, or start a new session with `claude --remote-control` to create a new Remote Control session. Your local session keeps running without Remote Control in the meantime.
+
+If the server reports that the previous session is gone, you don't see this message. Claude Code starts a new session in its place or shows [`Previous session is unavailable — run /remote-control to start a new one`](#previous-session-is-unavailable).
 
 ### "Previous session is unavailable — run /remote-control to start a new one"
 

@@ -200,7 +200,7 @@ Both `claude -p ... --environment` and `claude -p ... --cloud` authenticate with
 
 Run `claude auth login` once interactively on the machine that executes the script, using a dedicated user account for automation. Claude Code stores the token in the OS keychain on macOS, or in `~/.claude/.credentials.json` on Linux and Windows. On a macOS host whose Keychain can't be written, as is typical in an SSH session where the login Keychain stays locked, Claude Code stores the token in `~/.claude/.credentials.json` there too. See [Credential management](https://code.claude.com/docs/en/authentication.md#credential-management).
 
-The CLI refreshes the short-lived access token automatically on each invocation, but the underlying refresh-token grant is capped at 30 days from the initial login, so re-run `claude auth login` interactively on that host every 30 days.
+The CLI refreshes the short-lived access token automatically, but the underlying refresh-token grant is capped at 30 days from the initial login. Re-run `claude auth login` interactively on that host before the login's [earliest end date](https://code.claude.com/docs/en/authentication.md#check-when-a-stored-login-ends).
 
 ### Ephemeral CI runners
 

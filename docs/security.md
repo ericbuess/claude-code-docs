@@ -58,7 +58,7 @@ For full details, please review our [Commercial Terms of Service](https://www.an
 ### Additional safeguards
 
 * **Network request approval**: In Manual mode, most tools that make network requests require user approval by default
-* **Web page summaries**: For most fetches, WebFetch runs a separate model call over the page, and Claude receives that call's answer instead of the raw page. See [WebFetch tool behavior](https://code.claude.com/docs/en/tools-reference.md#webfetch-tool-behavior)
+* **Web page summaries**: For most WebFetch fetches, a separate model call reads the page, and Claude receives that call's answer instead of the raw page. See [WebFetch tool behavior](https://code.claude.com/docs/en/tools-reference.md#webfetch-tool-behavior)
 * **Trust verification**: In an interactive session, Claude Code shows the workspace trust dialog when you start it in a folder you haven't trusted. Servers in a project's `.mcp.json` have their own approval prompt, and [Project scope](https://code.claude.com/docs/en/mcp.md#project-scope) lists the sessions that skip it
   * Note: A `-p` session shows neither prompt. [What runs before you trust a folder](https://code.claude.com/docs/en/permissions.md#what-runs-before-you-trust-a-folder) lists what a repository's files can run there
   * Note: When you start Claude Code directly in your home directory, trust acceptance is held for the current session only and is not written to disk, so the prompt reappears on each launch. There is no setting to persist it. Start Claude Code from a project subdirectory instead, where trust acceptance is saved per directory
@@ -96,9 +96,8 @@ See [The built-in IDE MCP server](https://code.claude.com/docs/en/vs-code.md#the
 
 ## Cloud execution security
 
-When you use [cloud sessions](https://code.claude.com/docs/en/claude-code-on-the-web.md), additional security controls are in place. Sessions your organization routes to a [self-hosted environment](https://code.claude.com/docs/en/self-hosted-environments) run on your own infrastructure, where isolation, network egress, and git credentials are your deployment's responsibility. In Anthropic-hosted environments:
+When you use [cloud sessions](https://code.claude.com/docs/en/claude-code-on-the-web.md), additional security controls are in place. By default, a session runs its shell commands and file edits in an isolated, Anthropic-managed VM. Sessions your organization routes to a [self-hosted environment](https://code.claude.com/docs/en/self-hosted-environments) run on your own infrastructure, where isolation, network egress, and git credentials are your deployment's responsibility. In Anthropic-hosted environments:
 
-* **Isolated virtual machines**: Each cloud session runs in an isolated, Anthropic-managed VM
 * **Network access controls**: Network access is limited by default and can be configured to be disabled or allow only specific domains
 * **Credential protection**: GitHub credentials are stored encrypted on Anthropic's servers and never enter the session VM. The VM holds a short-lived credential scoped to that session, and GitHub traffic goes through an [Anthropic proxy](https://code.claude.com/docs/en/cloud-environments.md#github-proxy) that attaches the GitHub credential on the server side. See [GitHub authentication options](https://code.claude.com/docs/en/claude-code-on-the-web.md#github-authentication-options) for how you grant access
 * **Push restrictions**: The [GitHub proxy](https://code.claude.com/docs/en/cloud-environments.md#github-proxy) rejects branch deletions and pushes of anything other than a branch, such as a tag. GitHub decides which branches a session can update by applying your repository's branch protection rules and rulesets to the GitHub access you connected. A rule that access can bypass doesn't block a session's push

@@ -278,7 +278,7 @@ When you run channels in non-interactive mode with `-p`, tools that need termina
 
 ## Security
 
-Every approved channel plugin maintains a sender allowlist: only IDs you've added can push messages, and everyone else is silently dropped.
+The Telegram, Discord, and iMessage channel plugins check direct messages against a sender allowlist. Other people's direct messages reach your session only after you add those people to the list.
 
 Telegram and Discord bootstrap the list by pairing:
 

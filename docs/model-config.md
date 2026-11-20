@@ -443,7 +443,7 @@ Restrictions apply org-wide or per role:
 * Haiku models are always available and can't be disabled, so every member keeps at least one usable model.
 * An access change takes effect on new requests within about a minute; the `/model` picker reflects it the next time a session starts.
 
-Both restrictions apply together: a model is selectable only when it is permitted by `availableModels` and not restricted by the organization. Organization restrictions reach sessions on the Anthropic API and [LLM gateway](https://code.claude.com/docs/en/llm-gateway) deployments only; on any other provider, use `availableModels` instead.
+Both restrictions apply together: a model is selectable only when it is permitted by `availableModels` and not restricted by the organization. Organization restrictions reach sessions on the Anthropic API and [LLM gateway](https://code.claude.com/docs/en/llm-gateway) deployments only; with a [gateway credential](https://code.claude.com/docs/en/llm-gateway#subscriptions-and-gateways) or on any other provider, use `availableModels` instead.
 
 ## Organization default model
 
@@ -485,6 +485,8 @@ Organization admins on Claude Enterprise plans can set a maximum [effort level](
 * Levels above the cap aren't offered in the `/effort` picker, and naming a higher level with `--effort` or `/effort` runs at the cap instead. If you start a plain-text `--print` run with `--effort` above the cap, a warning on stderr names the requested and applied levels. In interactive sessions, with `json` or `stream-json` output, or in background agents, that warning goes to the [debug log](https://code.claude.com/docs/en/errors.md#configuration-warnings) instead.
 * Caps are per model, so switching models can change which levels are available.
 * When several of your roles grant the same model, the least restrictive cap applies.
+* If you see `Your organization limits effort for <model>` and need the higher level, ask an organization admin to raise the limit, then restart Claude Code.
+* If a request fails with `API Error: 400 Invalid effort level`, update to v2.1.314 or later and restart. If it still fails, remove any `output_config.effort` key from [`CLAUDE_CODE_EXTRA_BODY`](https://code.claude.com/docs/en/env-vars#variables).
 
 Effort limits are delivered together with [organization model restrictions](#organization-model-restrictions) and reach the same sessions.
 
@@ -763,7 +765,7 @@ A [`maxEffortLevel`](https://code.claude.com/docs/en/settings-reference#maxeffor
 
 #### Effort level of subagents and teammates
 
-On the main conversation's model, a [subagent](https://code.claude.com/docs/en/sub-agents.md#choose-an-effort-level) or [teammate](https://code.claude.com/docs/en/agent-teams.md#specify-teammates-and-models) with no `effort` of its own runs at the level you pick in the session or set with `--effort`. On another model, that level doesn't apply. To pick a subagent's level, set `effort` in its definition.
+On the main conversation's model, a [subagent](https://code.claude.com/docs/en/sub-agents.md#choose-an-effort-level) or [teammate](https://code.claude.com/docs/en/agent-teams.md#specify-teammates-and-models) with [no other level set](https://code.claude.com/docs/en/sub-agents.md#when-a-subagent-has-no-effort-field-or-parameter) runs at the level you pick in the session or set with `--effort`. On another model, that level doesn't apply. To pick a subagent's level, set `effort` in its definition.
 
 #### Check the effort level you set
 

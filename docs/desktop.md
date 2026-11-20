@@ -148,7 +148,7 @@ If you closed the notice, open the file again to bring it back.
 
 #### Turn off scripts in SSH and WSL previews for your organization
 
-To keep [HTML previews in SSH and WSL sessions](#preview-html-files-in-ssh-and-wsl-sessions) from running scripts, set the [`disableRemotePreviewScripts` managed setting](#managed-settings) to `true`. Users can still browse external sites. Requires Claude Desktop v5.1231.0 or later.
+To keep the Browser pane's [HTML previews in SSH and WSL sessions](#preview-html-files-in-ssh-and-wsl-sessions) from running scripts, set the [`disableRemotePreviewScripts` managed setting](#managed-settings) to `true`. Users can still browse external sites. Requires Claude Desktop v5.1231.0 or later.
 
 > [!NOTE]
 >
@@ -164,7 +164,7 @@ Set each key in your [server-managed settings](https://code.claude.com/docs/en/s
 
 Then have users restart Desktop to make sure that the setting applies, and tell them what to expect:
 
-* **Files they open**: the preview doesn't run scripts, so charts and tables that scripts draw stay empty. Its notice starts with `This preview doesn't run scripts`.
+* **SSH and WSL files they open in the Browser pane**: the preview doesn't run scripts, so charts and tables that scripts draw stay empty
 * **Previews that are running scripts**: if Desktop picks up the setting before the restart, they close. Users see `This preview closed because scripts are turned off for previews. Open the file again to view it without scripts.`
 * **Files they export**: if a user [exports a file](#preview-html-files-in-ssh-and-wsl-sessions) and opens it in a browser, its scripts run there, with or without this setting
 
@@ -435,7 +435,7 @@ The prompt also shows what level of control Claude gets for that app. These tier
 | :- | :- | :- |
 | View only | See the app in screenshots | Browsers, trading platforms |
 | Click only | Click and scroll, but not type or use keyboard shortcuts | Terminals, IDEs |
-| Full control | Click, type, drag, and use keyboard shortcuts | Everything else |
+| Full access | Click, type, drag, and use keyboard shortcuts | Most other apps |
 
 Apps with broad reach, like terminals, Finder or File Explorer, and System Settings or Settings, show an extra warning in the prompt so you know what approving them grants.
 
@@ -1036,9 +1036,14 @@ Before you start a session, open the environment selector under the prompt box a
 
 **2. Add the connection**
 
-On the **SSH** tab of the **New environment** dialog, open the **Host** list, select **Add SSH connection…**, and fill in the connection details:
+In the **New environment** dialog, select the **SSH** tab, then open the form for a new connection from **Host**:
 
-* **Name**: a friendly label for this connection.
+* **Host shows a button**: select **Add SSH connection…**
+* **Host shows a list**: open the list and select **Add SSH connection…** at the bottom
+
+Fill in the connection details:
+
+* **Name (optional)**: a friendly label for this connection. Leave empty to use the **SSH host** value as the name.
 * **SSH host**: `user@hostname` or a host defined in `~/.ssh/config`.
 * **SSH port**: defaults to 22 if left empty, or uses the port from your SSH config.
 * **SSH key (optional)**: path to your private key, such as `~/.ssh/id_ed25519`. Leave empty to use your SSH config or SSH agent.
@@ -2057,8 +2062,8 @@ Managed settings override project and user settings and apply to Claude Code ses
 | `autoMode` | customize what the auto mode classifier trusts and blocks across your organization. See [Configure auto mode](https://code.claude.com/docs/en/auto-mode-config.md). |
 | `browserExternalPageTools` | set to `"disabled"` to prevent Claude from using tools to read or act on external pages in the [Browser pane](#browse-external-sites). Users can still navigate to external sites themselves, and local dev server previews are unaffected. |
 | `disableMobileSimulatorTools` | set to `true` to block Claude's tools for controlling and capturing devices in the [iOS Simulator pane](https://code.claude.com/docs/en/desktop-ios-simulator.md#turn-off-simulator-access). The pane stays usable for the user's own taps; only Claude's access is removed. The value must be the JSON boolean `true`; the string `"true"` is ignored. |
-| `disableBrowserExternalNavigation` | set to `true` to turn off external browsing in the [Browser pane](#browse-external-sites) entirely. Neither users nor Claude can navigate to external sites, and localhost dev server previews are unaffected. HTML previews in SSH and WSL sessions [don't run scripts](#turn-off-scripts-in-ssh-and-wsl-previews-for-your-organization). The value must be the JSON boolean `true`; the string `"true"` is ignored. |
-| `disableRemotePreviewScripts` | set to `true` to [turn off only the scripts in HTML previews](#turn-off-scripts-in-ssh-and-wsl-previews-for-your-organization) in SSH and WSL sessions. Desktop doesn't read it from the remote machine or the WSL distribution. The value must be the JSON boolean `true`; the string `"true"` is ignored. Requires Claude Desktop v5.1231.0 or later. |
+| `disableBrowserExternalNavigation` | set to `true` to turn off external browsing in the [Browser pane](#browse-external-sites) entirely. Neither users nor Claude can go to external sites, and localhost dev server previews are unaffected. The Browser pane's HTML previews in SSH and WSL sessions [don't run scripts](#turn-off-scripts-in-ssh-and-wsl-previews-for-your-organization). The value must be the JSON boolean `true`; the string `"true"` is ignored. |
+| `disableRemotePreviewScripts` | set to `true` to [turn off scripts in the Browser pane's HTML previews](#turn-off-scripts-in-ssh-and-wsl-previews-for-your-organization) in SSH and WSL sessions, without turning off external browsing. Desktop doesn't read it from the remote machine or the WSL distribution. The value must be the JSON boolean `true`; the string `"true"` is ignored. Requires Claude Desktop v5.1231.0 or later. |
 | `sshConfigs` | pre-configure [SSH connections](#pre-configure-ssh-connections-for-your-team) that appear in the environment selector. Users can't delete managed connections or edit anything but their own **Worktree folder**. |
 | `sshHostCommands` | give users [SSH connections whose host comes from a command](#distribute-commands-to-your-team), alongside their own. Desktop reads it from the managed settings file or MDM policy on the computer, and ignores it in [server-managed settings](https://code.claude.com/docs/en/server-managed-settings.md). Requires Claude Desktop v3.6556.0 or later on macOS or Linux, or v4.16336.0 or later on Windows, signed in with a Claude account. On Windows, Desktop also has to [connect through the OpenSSH client](#use-your-ssh-configuration). |
 | `sshHostAllowlist` | restrict [SSH sessions](#restrict-which-ssh-hosts-users-can-connect-to) to hosts whose resolved hostname matches one of these patterns. Read from managed settings only. |

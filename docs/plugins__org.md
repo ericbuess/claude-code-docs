@@ -367,7 +367,7 @@ Suggestions from a marketplace appear only when it's registered on the user's ma
 
 > [!NOTE]
 >
-> In a cloud session's conversation, Claude can suggest plugins whether or not you set `pluginSuggestionMarketplaces`. To turn those suggestions off, see [Turn off plugin suggestions](https://code.claude.com/docs/en/claude-code-on-the-web.md#turn-off-plugin-suggestions).
+> In a cloud session's conversation or the desktop app's Code tab, Claude can suggest plugins whether or not you set `pluginSuggestionMarketplaces`. To turn those suggestions off, see [Turn off plugin suggestions](https://code.claude.com/docs/en/claude-code-on-the-web.md#turn-off-plugin-suggestions).
 
 ## Audit and review
 

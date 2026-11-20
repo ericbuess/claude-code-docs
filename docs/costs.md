@@ -187,13 +187,13 @@ The [Claude Enterprise consumption guide](https://support.claude.com/en/articles
 
 ### Claude Console
 
-API organizations manage Claude Code spend through [workspaces](https://platform.claude.com/docs/en/build-with-claude/workspaces). You can [set workspace spend limits](https://platform.claude.com/docs/en/build-with-claude/workspaces#workspace-limits) on total Claude Code spend and [view cost and usage reporting](https://platform.claude.com/docs/en/build-with-claude/workspaces#usage-and-cost-tracking) in the Console.
+API organizations manage Claude Code spend through [workspaces](https://platform.claude.com/docs/en/build-with-claude/workspaces). You can [set workspace spend limits](https://platform.claude.com/docs/en/build-with-claude/workspaces#workspace-limits) and [view cost and usage reporting](https://platform.claude.com/docs/en/build-with-claude/workspaces#usage-and-cost-tracking) in the Console.
 
 > [!NOTE]
 >
-> When you first authenticate Claude Code with your Claude Console account, a workspace called "Claude Code" is automatically created for you. This workspace provides centralized cost tracking and management for all Claude Code usage in your organization. You cannot create API keys for this workspace; it is exclusively for Claude Code authentication and usage.
+> The first time a member signs in and Claude Code [creates an API key](https://code.claude.com/docs/en/authentication.md#sign-in-without-an-api-key) for them, a workspace called "Claude Code" is automatically created in your Console organization. You can't create API keys for this workspace yourself; it is exclusively for Claude Code authentication and usage.
 >
-> For organizations with custom rate limits, Claude Code traffic in this workspace counts toward your organization's overall API rate limits. You can set a [workspace rate limit](https://platform.claude.com/docs/en/api/rate-limits#setting-lower-limits-for-workspaces) on this workspace's Limits page in the Claude Console to cap Claude Code's share and protect other production workloads.
+> For organizations with custom rate limits, Claude Code traffic in this workspace counts toward your organization's overall API rate limits. You can set a [rate limit for this workspace](https://platform.claude.com/docs/en/api/rate-limits#setting-lower-limits-for-workspaces) on the [Rate limits page](https://platform.claude.com/usage/limits) in the Claude Console to cap the workspace's share and protect other production workloads.
 
 For per-user reporting, the [Console dashboard](https://platform.claude.com/claude-code) shows spend and lines accepted per member, and the [Claude Code Analytics API](https://platform.claude.com/docs/en/build-with-claude/claude-code-analytics-api) returns daily per-user metrics programmatically with an [Admin API key](https://platform.claude.com/settings/admin-keys). See [analytics for API customers](https://code.claude.com/docs/en/analytics.md#access-analytics-for-api-customers).
 

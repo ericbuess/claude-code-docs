@@ -547,6 +547,7 @@ In addition to the [common fields](#common-fields), MCP tool hooks accept these 
 | `server` | yes | Name of a configured MCP server. For a [plugin-bundled server](https://code.claude.com/docs/en/mcp.md#plugin-provided-mcp-servers), this is the scoped name `plugin:<plugin-name>:<server-name>`, such as `plugin:my-plugin:db`, not the bare server key |
 | `tool` | yes | Name of the tool to call on that server |
 | `input` | no | Arguments passed to the tool. String values support `${path}` substitution from the hook's [JSON input](#hook-input-and-output), such as `"${tool_input.file_path}"` |
+| `onFailure` | no | `"continue"` or `"block"`. See [Block the action when a hook fails](#block-the-action-when-a-hook-fails) |
 
 This example calls the `security_scan` tool on the `my_server` MCP server after each `Write` or `Edit`, passing the edited file's path:
 
@@ -572,7 +573,7 @@ This example calls the `security_scan` tool on the `my_server` MCP server after 
 
 ##### How the tool's result is read
 
-Claude Code reads the tool's text content the same way it reads command-hook stdout, following the [parsing rule under exit code 0](#exit-code-0). If the tool returns `isError: true`, the hook produces a non-blocking error and execution continues.
+Claude Code reads the tool's text content the same way it reads command-hook stdout, following the [parsing rule under exit code 0](#exit-code-0). If the tool returns `isError: true`, the hook produces a non-blocking error and execution continues. To block the action instead, set [`onFailure: "block"`](#block-the-action-when-a-hook-fails).
 
 If a hook error contains one of these messages, Claude Code couldn't read the tool's answer, so the hook gave no verdict:
 
@@ -581,7 +582,7 @@ MCP tool "security_scan" on server "my_server" gave no answer that could be read
 MCP tool "security_scan" on server "my_server" answered without its text, which happens when a result is too large, so this hook gave no verdict. If this keeps happening, the tool must send a smaller answer.
 ```
 
-On `PreToolUse`, Claude Code refuses the tool call the hook was checking. On other events such as `UserPromptSubmit`, `PostToolUse`, and `Stop`, the error is non-blocking.
+On `PreToolUse`, Claude Code refuses the tool call the hook was checking. On other events such as `UserPromptSubmit`, `PostToolUse`, and `Stop`, the error is [non-blocking](#exit-code-output).
 
 If the error keeps appearing, return less data from the tool, or change the hook's [`tool` or `input`](#mcp-tool-hook-fields) so the answer is smaller.
 
@@ -589,7 +590,7 @@ If the error keeps appearing, return less data from the tool, or change the hook
 
 On events where a hook can block or change the result, such as `PreToolUse` or `Stop`, Claude Code waits for a connecting server before it calls the tool, for at most [`MCP_TIMEOUT`](https://code.claude.com/docs/en/env-vars) and within the hook's own [`timeout`](#common-fields). On observational events, such as `Notification` or `SessionEnd`, it doesn't wait.
 
-A server showing the [`cached` status](https://code.claude.com/docs/en/mcp#server-status-detail) connects when the hook calls its tool. If the server isn't connected at that point, the hook produces a non-blocking error and execution continues. The hook never starts an OAuth flow, so [authenticate the server from `/mcp`](https://code.claude.com/docs/en/mcp#authenticate-with-remote-mcp-servers) first.
+A server showing the [`cached` status](https://code.claude.com/docs/en/mcp#server-status-detail) connects when the hook calls its tool. If the server isn't connected at that point, the hook [fails](#block-the-action-when-a-hook-fails). The hook doesn't start an OAuth flow, so [authenticate the server from `/mcp`](https://code.claude.com/docs/en/mcp#authenticate-with-remote-mcp-servers) first.
 
 ##### Events that fire before MCP servers are available
 
@@ -811,7 +812,7 @@ What your hook prints to stdout can change the outcome. For example, when a `Pre
 | :- | :- | :- | :- |
 | JSON object that passes [schema validation](#json-output) | Success. The fields apply | Blocking error. Claude Code still reads the fields, but a `PreToolUse` call stays blocked even if you return `"allow"` or `continue: false`. For other events, see [Exit code 2](#exit-code-2) | Success. Claude Code ignores the exit code, and the fields alone decide. For hooks [whose failure blocks the action](#block-the-action-when-a-hook-fails), the run counts as a failure instead |
 | JSON that [can't be parsed](#exit-code-0) or fails schema validation | Non-blocking error. The notice carries the parse or validation message | Blocking error. Your stderr is the reason | Non-blocking error. The notice carries the parse or validation message |
-| [Plain text](#exit-code-0), or nothing | Success | Blocking error. Your stderr is the reason | Non-blocking error. The notice carries the first line of your stderr |
+| [Plain text](#exit-code-0), or nothing | Success | Blocking error. Your stderr is the reason | Non-blocking error |
 
 Some events have their own rules:
 
@@ -902,7 +903,7 @@ When you set up a policy hook, watch for this notice on its first run, because a
 
 Apart from a command hook you run with [`async: true`](#run-hooks-in-the-background), Claude Code cancels a `command`, `http`, or `mcp_tool` hook that reaches its [`timeout`](#common-fields), discarding the hook's output, so on most events a timed-out hook renders no decision. On [`PreModelSwitch`](#premodelswitch), a hook canceled at its timeout blocks the model switch.
 
-On `PreToolUse`, a timed-out `command`, `http`, or `mcp_tool` hook doesn't block the tool call, except for hooks [whose failure blocks the action](#block-the-action-when-a-hook-fails). The call continues through the normal [permission flow](https://code.claude.com/docs/en/permissions.md), so don't count on a stalled hook to act as a gate. To block the call when a `command` or `http` hook times out, set [`onFailure: "block"`](#block-the-action-when-a-hook-fails). An [Agent SDK callback hook](https://code.claude.com/docs/en/agent-sdk/hooks.md) that exceeds its timeout [blocks the tool call](#pretooluse).
+On `PreToolUse`, a timed-out `command`, `http`, or `mcp_tool` hook doesn't block the tool call, except for hooks [whose failure blocks the action](#block-the-action-when-a-hook-fails). The call continues through the normal [permission flow](https://code.claude.com/docs/en/permissions.md), so don't count on a stalled hook to act as a gate. To block the call when the hook times out, set [`onFailure: "block"`](#block-the-action-when-a-hook-fails). An [Agent SDK callback hook](https://code.claude.com/docs/en/agent-sdk/hooks.md) that exceeds its timeout [blocks the tool call](#pretooluse).
 
 > [!NOTE]
 >
@@ -936,7 +937,9 @@ To test the script, make `policy-check.sh` exit 2, then trigger a tool call that
 
 #### Block the action when a hook fails
 
-On most events, when a hook fails or times out, Claude Code still carries out the action. A policy hook with a wrong path or a crashing script then lets everything through. To block the action instead, set `"onFailure": "block"` on a `command` or `http` hook. Requires Claude Code v2.1.295 or later. For Agent SDK callback hooks, see [Block the action when a callback fails](https://code.claude.com/docs/en/agent-sdk/hooks.md#block-the-action-when-a-callback-fails).
+On most events, when a hook fails or times out, Claude Code still carries out the action. A policy hook with a wrong path or a crashing script then lets everything through. To block the action instead, set `"onFailure": "block"` on a `command`, `http`, or `mcp_tool` hook. Requires Claude Code v2.1.295 or later. On `mcp_tool` hooks, `onFailure` requires v2.1.328 or later.
+
+For Agent SDK callback hooks, see [Block the action when a callback fails](https://code.claude.com/docs/en/agent-sdk/hooks.md#block-the-action-when-a-callback-fails).
 
 > [!NOTE]
 >
@@ -978,6 +981,7 @@ Each of these counts as a failure:
 * **Can't start**: a command hook fails to start, for example because the script or executable doesn't exist
 * **Exit code other than 0 or 2**: counts for a command hook even if it printed JSON that allows the action, such as `permissionDecision: "allow"`. To return a JSON decision, exit 0
 * **HTTP error**: an HTTP hook's connection fails, or the response status isn't 2xx
+* **MCP failure**: an `mcp_tool` hook's server isn't connected, or its tool returns an error. With `"block"` set on an event such as `PreToolUse` or `UserPromptSubmit`, a non-empty answer also counts unless it's `{}` or JSON that sets a [hook output field](#json-output) other than `reason`
 * **Timeout**: the hook reaches its [`timeout`](#common-fields)
 * **Invalid output**: the JSON output [can't be parsed](#exit-code-0) or fails [schema validation](#json-output). For an HTTP hook, a 2xx body that is neither empty nor a JSON object also counts. Plain-text stdout from a command hook isn't a failure
 
@@ -1031,7 +1035,7 @@ If your hook exits 2 and also sets `continue: false`, check [Exit code 2](#exit-
 | :- | :- | :- |
 | `PreToolUse` | Yes | Blocks the tool call |
 | `PermissionRequest` | No | Exit code 2 isn't honored for this event and the permission flow proceeds unchanged. Deny through the [`decision` object](#permissionrequest-decision-control) instead |
-| `UserPromptSubmit` | Yes | Blocks the prompt, so it never reaches Claude. See [What a blocked prompt leaves behind](#what-a-blocked-prompt-leaves-behind) |
+| `UserPromptSubmit` | Yes | Blocks the prompt. See [What a blocked prompt leaves behind](#what-a-blocked-prompt-leaves-behind) |
 | `UserPromptExpansion` | Yes | Blocks the expansion |
 | `Stop` | Yes | Prevents Claude from stopping, continues the conversation |
 | `SubagentStop` | Yes | Prevents the subagent from stopping |
@@ -1529,7 +1533,7 @@ block certain types of prompts.
 
 `UserPromptSubmit` hooks have a default timeout of 30 seconds for `command`, `http`, and `mcp_tool` types, shorter than the 600-second default for those types on most other events. Because this hook runs before every prompt and blocks model processing until it completes, a stuck hook stalls the session. If your hook needs more time, set the `timeout` field in the hook entry.
 
-Apart from a command hook you run with [`async: true`](#run-hooks-in-the-background), a `UserPromptSubmit` command, HTTP, or MCP tool hook that reaches its timeout is canceled and its output, including any `additionalContext`, is discarded. The prompt still reaches Claude without that context. To block the prompt instead, set [`onFailure: "block"`](#block-the-action-when-a-hook-fails) on a command or HTTP hook. The transcript shows a notice naming the hook, the timeout that fired, and that the output was discarded.
+Apart from a command hook you run with [`async: true`](#run-hooks-in-the-background), a `UserPromptSubmit` command, HTTP, or MCP tool hook that reaches its timeout is canceled and its output, including any `additionalContext`, is discarded. The prompt still reaches Claude without that context. To block the prompt instead, set [`onFailure: "block"`](#block-the-action-when-a-hook-fails). The transcript shows a notice naming the hook, the timeout that fired, and that the output was discarded.
 
 An [Agent SDK callback hook](https://code.claude.com/docs/en/agent-sdk/hooks.md) on `UserPromptSubmit` that reaches its timeout blocks the prompt with a message naming the hook and the timeout, because a callback there can be acting as a policy gate that must not fail open. The session continues.
 
@@ -1573,7 +1577,7 @@ To block a prompt, return a JSON object with `decision` set to `"block"`:
 
 | Field | Description |
 | :- | :- |
-| `decision` | `"block"` stops the prompt before it reaches Claude. Omit to allow the prompt to proceed |
+| `decision` | `"block"` rejects the prompt. Omit to allow the prompt to proceed |
 | `reason` | Shown to the user when `decision` is `"block"`. Not added to context, except when the hook blocks [Code Mode output](https://code.claude.com/docs/en/code-mode.md#code-output-withheld-by-a-hook) before v2.1.328 |
 | `additionalContext` | String added to Claude's context alongside the submitted prompt. See [Add context for Claude](#add-context-for-claude) |
 | `sessionTitle` | Sets the session title. Use to name sessions automatically based on the prompt content |
@@ -1596,9 +1600,9 @@ If your hook blocks by exiting 2, its stderr text is treated the same way as `re
 
 #### What a blocked prompt leaves behind
 
-A blocked prompt never reaches Claude, but its text isn't removed everywhere. By default the block message shown to the user ends with `Original prompt:` followed by the submitted text, and Claude Code writes that message to the session's transcript file on disk. To leave the text out of the message, print JSON with `"suppressOriginalPrompt": true` inside `hookSpecificOutput`. This works whether the hook blocks with `decision: "block"` or by exiting 2.
+By default the block message shown to the user ends with `Original prompt:` and the submitted prompt. To leave the prompt out of the message, print JSON with `"suppressOriginalPrompt": true` inside `hookSpecificOutput`, whether the hook blocks with `decision: "block"` or by exiting 2.
 
-`suppressOriginalPrompt` changes only the block message. The submitted text can still appear in local files such as the session transcript and your prompt history, so a blocking hook isn't a way to keep a secret off disk. To limit or remove those files, see [Plaintext storage](https://code.claude.com/docs/en/claude-directory.md#plaintext-storage) and [Clear local data](https://code.claude.com/docs/en/claude-directory.md#clear-local-data).
+Either way, the prompt can still appear in local files such as the session transcript and your prompt history. A blocking hook isn't a way to keep a secret off disk. To limit or remove those files, see [Plaintext storage](https://code.claude.com/docs/en/claude-directory.md#plaintext-storage) and [Clear local data](https://code.claude.com/docs/en/claude-directory.md#clear-local-data).
 
 ### UserPromptExpansion
 
@@ -1972,7 +1976,7 @@ When a foreground Agent call completes, your [PostToolUse hook](#posttooluse) re
 | `modelsUsed` | array | `["claude-sonnet-4-5", "claude-haiku-4-5"]` | Models used in order, with consecutive repeats collapsed; set only when the model was swapped mid-run |
 | `totalTokens` | number | `12450` | Token count from the subagent's final API request: input, output, and cache tokens combined. This isn't a total across the whole run |
 | `totalDurationMs` | number | `48211` | Wall-clock duration of the subagent run |
-| `totalToolUseCount` | number | `7` | Count of tool calls the subagent made |
+| `totalToolUseCount` | number | `7` | Count of tool calls the subagent made, excluding `SubagentHandback` |
 | `usage` | object | `{"input_tokens": 8320, ...}` | Per-type token breakdown of the final API request: `input_tokens`, `output_tokens`, `cache_creation_input_tokens`, `cache_read_input_tokens` |
 
 On Claude Code v2.1.271 or later, a subagent that runs with the [`SubagentHandback`](https://code.claude.com/docs/en/tools-reference) tool, which Claude Code provides in [auto mode](https://code.claude.com/docs/en/permission-modes.md#eliminate-prompts-with-auto-mode), delivers its report through that tool rather than returning it as text. The `content` field of its `completed` result then carries a short note about that hand-back rather than the report itself. To read the report, match a `PreToolUse` or `PostToolUse` hook on `SubagentHandback` and read `tool_input.message`.
@@ -2864,7 +2868,7 @@ Each entry in `background_tasks` describes one in-flight task and uses these fie
 | `type` | Friendly task-type label such as `shell`, `subagent`, `monitor`, `workflow`, `teammate`, `cloud session`, or `MCP task`. Each label identifies which Claude Code feature created the task. Falls back to the raw discriminant for unrecognized types |
 | `status` | Current task status |
 | `description` | Free-text description, capped at 1000 characters with an in-string `… [+N chars]` marker when clipped |
-| `command` | Shell command line, capped at 1000 characters. Present only for `shell` tasks |
+| `command` | Shell command line, capped at 1000 characters. Present only for `shell` tasks and `monitor` tasks that run a command |
 | `agent_type` | Subagent type name. Present only for `subagent` tasks |
 | `server` | MCP server name. Present only for `monitor` and `MCP task` tasks |
 | `tool` | MCP tool name. Present only for `monitor` and `MCP task` tasks |
@@ -3335,7 +3339,7 @@ Runs when Claude Code cleans up a worktree that your [`WorktreeCreate`](#worktre
 
 When a subagent or a workflow agent finishes, Claude Code keeps the worktree your WorktreeCreate hook made for it and doesn't run your WorktreeRemove hook. Remove those worktrees yourself when the work is done.
 
-For a `claude remote-control` cleanup, Claude Code runs your hook without prompting you. `ExitWorktree` refuses to remove a hook-created worktree unless the call passes [`discard_changes: true`](https://code.claude.com/docs/en/agent-sdk/typescript#exitworktree).
+When `claude remote-control` cleans up a worktree, expect your hook to run without a prompt. If you ask Claude to remove a hook-created worktree, expect `ExitWorktree` to refuse unless Claude passes [`discard_changes: true`](https://code.claude.com/docs/en/agent-sdk/typescript#exitworktree).
 
 Claude Code uses git to look for changed or untracked files, so it finds none in a worktree that isn't a git checkout or inside one, even when the directory holds uncommitted work. Check for that work in your WorktreeRemove hook before it deletes anything.
 
@@ -3937,7 +3941,7 @@ An ElicitationResult hook can let the user's response through, change its values
 | Let the response through | No output, with exit code 0 | The user's response, unchanged |
 | Change the submitted values | `"action": "accept"`, with the new values in `content` | `accept` with your `content` in place of the user's values |
 | Block the response | `"action": "decline"` | `decline`, without the user's values |
-| Cancel the request | `"action": "cancel"` | `cancel`, along with the values the user submitted. To withhold them, return `"decline"` |
+| Cancel the request | `"action": "cancel"` | `cancel`. To withhold the values the user submitted, return `"decline"` |
 
 This output changes the response shown under [ElicitationResult input](#elicitationresult-input), so the server receives `alice@example.com` where the user submitted `alice`:
 

@@ -213,7 +213,7 @@ Actions available in the `HistorySearch` context:
 | `historySearch:execute` | Enter | Execute selected command |
 | `historySearch:cycleScope` | Ctrl+S | Cycle scope: session, project, everywhere |
 
-The `historySearch:next`, `historySearch:accept`, `historySearch:cancel`, and `historySearch:execute` defaults apply to the inline history search in the classic renderer, which always searches prompts from all projects. `historySearch:cycleScope` takes effect only in [fullscreen rendering](https://code.claude.com/docs/en/fullscreen.md), where `Ctrl+R` opens a search dialog instead and `Ctrl+S` cycles its scope. The dialog's other keys are fixed and can't be rebound: `Enter` or `Tab` places the highlighted match in the prompt input and `Esc` cancels.
+`historySearch:accept`, `historySearch:cancel`, and `historySearch:execute` take effect only in the classic renderer's inline search. That search covers prompts from all projects. `historySearch:cycleScope` takes effect only in [fullscreen rendering](https://code.claude.com/docs/en/fullscreen.md), where `Ctrl+R` opens a search dialog instead and `Ctrl+S` cycles its scope. In the dialog, `Enter` or `Tab` places the highlighted match in the prompt input and `Esc` cancels.
 
 ### Task actions
 
