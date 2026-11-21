@@ -108,7 +108,7 @@ The session clones your repository from GHES and pushes changes back to a branch
 
 ### Teleport sessions to your terminal
 
-Pull a cloud session into your local terminal with `claude --teleport`. Teleport verifies you're in a checkout of the same GHES repository before fetching the branch and loading the session history. See [teleport requirements](https://code.claude.com/docs/en/claude-code-on-the-web.md#teleport-requirements) for details.
+Pull a cloud session into your local terminal with `claude --teleport`. Teleport verifies you're in a checkout of the same GHES repository before loading the session history. See [teleport requirements](https://code.claude.com/docs/en/claude-code-on-the-web.md#teleport-requirements) for details.
 
 ## Plugin marketplaces on GHES
 

@@ -280,7 +280,7 @@ In Anthropic-hosted environments, each session gets a fresh virtual machine (VM)
 
 > [!NOTE]
 >
-> Of the repository configuration in this table, a cloud thread in a [project](https://code.claude.com/docs/en/claude-projects.md) loads only the repository root's `CLAUDE.md`, `.claude/CLAUDE.md`, and `.claude/rules/` files that aren't [path-specific](https://code.claude.com/docs/en/memory.md#path-specific-rules). See [What threads pick up from your repositories](https://code.claude.com/docs/en/claude-projects.md#what-threads-pick-up-from-your-repositories).
+> A cloud thread in a [project](https://code.claude.com/docs/en/claude-projects.md) loads less of the repository configuration in this table. It starts without `.mcp.json` servers or `.claude/settings.json` hooks and permission rules, and it can skip skills, agents, and commands. See [What threads pick up from your repositories](https://code.claude.com/docs/en/claude-projects.md#what-threads-pick-up-from-your-repositories).
 
 Cloud sessions start from a fresh clone of your repository. Anything you commit to the repo is available. Anything you've installed or configured only on your own machine isn't available in the session. Your organization's policy arrives separately through [server-managed settings](https://code.claude.com/docs/en/server-managed-settings.md).
 

@@ -56,6 +56,8 @@ Tool events fire around each tool call Claude makes, from the description Claude
 | :- | :- | :- |
 | [`tool.call`](https://code.claude.com/docs/en/plugins/mods/events#guard-or-change-a-tool-call) | A tool is about to run | `next(e)`, `{ deny: reason }`, or `{ result }` |
 | [`tool.check`](https://code.claude.com/docs/en/plugins/mods/events#where-settings-hooks-run-in-the-order) | Claude Code decides whether a tool call may run, after the `tool.call` and `PreToolUse` hooks. `next(e)` resolves to the decision the rules, the permission mode, and those hooks reached. | `next(e)` or `{ decision }`, with `decision` set to `allow`, `ask`, or `deny` and an optional `reason` |
+| `tool.judge` | [Auto mode](https://code.claude.com/docs/en/permission-modes.md#eliminate-prompts-with-auto-mode) is about to ask its classifier about a call. Requires Claude Code v2.1.326 or later. | `next(e)` or `{ decision }` |
+| `tool.run` | An allowed call is about to run. Requires Claude Code v2.1.326 or later. | `next(e)`, `{ deny: reason }`, or `{ result }` |
 | `tool.describe` | Once for each tool, when its description is first sent to Claude. A second time for an MCP tool when Claude loads it through [tool search](https://code.claude.com/docs/en/mcp.md#scale-with-mcp-tool-search), with `e.description` set to the text Claude reads for the loaded tool. | `{ description }`, optionally with `isDeferred` set to `true` to put the tool behind tool search or `false` to load it upfront. Add [`breakPromptCache: true`](#break-prompt-cache) to send a changed description on the next turn. |
 
 #### Agent and organization fields on `tool.check`
@@ -151,6 +153,7 @@ Session events mark the session starting, ending, compacting, and exchanging mes
 | `session.append` | Once for each row the conversation keeps, such as a prompt, a response block, a tool result, or a notice, before it's stored | `next({ ...e, message })` with a changed `message.content`, to rewrite the row's text blocks or the `content` of a `tool_result` block in it |
 | `session.attach`, `session.detach` | Another app connects to or disconnects from the session | `next(e)` |
 | `session.measure` | After each turn, and when a plan limit's percent used changes | `next(e)` |
+| `session.stop` | The user stops Claude, such as with Esc during a turn. Requires Claude Code v2.1.326 or later. | `next(e)` |
 
 ### Subagents
 
@@ -189,8 +192,8 @@ These events let a mod act on other mods as they load, to refuse one or change t
 
 | Event | Fires when | A hook can return |
 | :- | :- | :- |
-| [`plugin.register`](https://code.claude.com/docs/en/plugins/mods/admin#enforce-a-policy-with-a-mod-of-your-own) | A hooks module is about to load. `e.uses` lists its events, mods API calls, environment variables, and state, as `claude plugin validate` prints them. Each call is written without the `$.` prefix, such as `fs.read`. | `{ refuse: reason }` |
-| `engine.create` | The mods API is being built for this mod | A changed mods API, to add a namespace. A mod outside the `user` [tier](#the-hook-function) can also withhold one. |
+| [`plugin.register`](https://code.claude.com/docs/en/plugins/mods/admin#enforce-a-policy-with-a-mod-of-your-own) | A hooks module is about to load, or, on v2.1.326 or later, a plugin without one. `e.uses` lists the module's events, mods API calls, environment variables, and state, as `claude plugin validate` prints them. Each call is written without the `$.` prefix, such as `fs.read`. | `{ refuse: reason }`. On v2.1.326 or later, a refusal keeps out the whole plugin, and `next({ ...e, provides: { ...e.provides, modules: [] } })` keeps out only its hooks module. Earlier versions ignore `provides` and load the module. |
+| `engine.create` | The mods API is being built for this mod | A changed mods API, to add a namespace. A mod in the `prepend` or `append` [tier](#the-hook-function) can also withhold one. |
 
 When another mod's hook calls a method on a namespace you added in `engine.create`, your method's `$` calls run in that hook's context until every hook on that event returns. For example, a relative path resolves against that hook's working directory, and `$.prompt.submit` rejects while the turn is waiting on that hook. Calls your method makes after that run in your mod's own context.
 
@@ -240,7 +243,7 @@ The mods API is the `$` argument every hook receives. Its methods are grouped in
 | [`$.model`](https://code.claude.com/docs/en/plugins/mods/api#call-a-model) | `complete`, `fork`, `classify` |
 | [`$.prompt`](https://code.claude.com/docs/en/plugins/mods/api#start-a-turn-from-a-background-job) | `submit`, `read`, `fill`, `suggest`, `compose`. Claude reads text from `submit({ text })` after a sentence that names your mod as the sender. `submit({ text, asUser: true })` sends the text as the user's own words, without that sentence. |
 | `$.turn` | `abort` |
-| [`$.session`](https://code.claude.com/docs/en/plugins/mods/api#send-and-receive-messages-between-sessions) | `messages`, `cwd`, `root`, `model`, `turns`, `id`, `repo`, `surfaces`, `usage`, `version`, `compact`, `send`, `append`, `authorize`. `usage()` returns `{ startedAt, context, rateLimits, cost }`: `context` has `tokens`, `window`, and `percent`, and `rateLimits` is a list of `{ kind, percentUsed, resetsAt }`. |
+| [`$.session`](https://code.claude.com/docs/en/plugins/mods/api#send-and-receive-messages-between-sessions) | `messages`, `cwd`, `root`, `model`, `turns`, `id`, `repo`, `surfaces`, `usage`, `version`, `info`, `compact`, `send`, `append`, `authorize`. `info` requires Claude Code v2.1.326 or later. `usage()` returns `{ startedAt, context, rateLimits, cost }`: `context` has `tokens`, `window`, and `percent`, and `rateLimits` is a list of `{ kind, percentUsed, resetsAt }`. |
 | `$.config` | `list`, `set` |
 | [`$.settings`](https://code.claude.com/docs/en/plugins/mods/api#reach-files-processes-and-the-network) | `read` |
 | [`$.env`](https://code.claude.com/docs/en/plugins/mods/api#reach-files-processes-and-the-network) | `get`, `set` |
@@ -249,8 +252,9 @@ The mods API is the `$` argument every hook receives. Its methods are grouped in
 | [`$.state`](https://code.claude.com/docs/en/plugins/mods/interface#keep-a-value-in-\$-state) | Reactive state: `get`, `set`, with the helpers `atom`, `read`, `update`, `derive`, and `memberOf` imported from `claude-code` |
 | [`$.clock`](https://code.claude.com/docs/en/plugins/mods/api#run-work-in-the-background) | `now`, `sleep`, `after`, `every` |
 | [`$.http`](https://code.claude.com/docs/en/plugins/mods/api#reach-files-processes-and-the-network) | `fetch` |
-| [`$.process`](https://code.claude.com/docs/en/plugins/mods/api#reach-files-processes-and-the-network) | `run`, `spawn` |
+| [`$.process`](https://code.claude.com/docs/en/plugins/mods/api#reach-files-processes-and-the-network) | `run`, `spawn`, `hookEnv`. `hookEnv` requires Claude Code v2.1.326 or later. |
 | [`$.mcp`](https://code.claude.com/docs/en/plugins/mods/api#reach-files-processes-and-the-network) | `call`, `connect`. `connect(server)` connects an MCP server that your own plugin's manifest lists. |
+| [`$.wasm`](https://code.claude.com/docs/en/plugins/mods/api#reach-files-processes-and-the-network) | `compile`. Requires Claude Code v2.1.326 or later. |
 | `$.audio` | `play`, `speak` |
 | `$.telemetry` | `log`, `mark`. A record is sent only when Claude Code or a built-in mod makes the call. |
 
@@ -278,6 +282,7 @@ Rendering in the VS Code extension requires extension version 2.1.299 or later. 
 | `InfoNotice` | `text`, `command` | The notice's `text` prefixed with `notice:` | Terminal |
 | `SessionMode` | `modes` | One instance | Terminal, Desktop |
 | `PromptHint` | `isDraft`, `isWorking`, `hint` | One instance | Terminal, Desktop |
+| `AgentRow` | The agent's [`$.agent.list()` fields](https://code.claude.com/docs/en/plugins/mods/create#get-the-types-for-your-build), plus `rowIds`, `columns`, `body`, and `isHidden` | The agent id | Terminal and VS Code's [Focus view](https://code.claude.com/docs/en/vs-code.md#extension-settings). Requires v2.1.326 or later of Claude Code or the extension. |
 
 `e.viewport` holds `columns`, `rows`, and `isFullscreen`. In the terminal and the Desktop app, it's absent until the app has measured its window. There, its `rows` is the height of the whole window, not of your pane. In the VS Code extension, it's always present.
 
@@ -401,11 +406,12 @@ Hooks and mods API calls run under time and size limits. Claude Code skips a hoo
 | :- | :- |
 | A hook's own execution time for one event, not counting time inside `next` or a mods API call other than `$.clock.sleep` | 10 seconds, or 50 milliseconds for a `prompt.edit` hook |
 | A `.catch` handler's execution time | 1 second |
+| Time a `ui.render` or `plugin.register` hook waits on mods API calls for one event | 30 seconds for `ui.render`. 10 seconds for `plugin.register`, not counting `$.ui.ask`. The `ui.render` limit and the `$.ui.ask` exemption require Claude Code v2.1.326 or later. |
 | All `session.end` hooks together | As long as the [SessionEnd hook budget](https://code.claude.com/docs/en/hooks.md#sessionend-input), 1.5 seconds unless you change it, counted from when your settings `SessionEnd` hooks finish |
 | `$.process.run` timeout | 30 seconds by default, 10 minutes at most |
 | `$.process.run` `stdout` and `stderr` | 4 MiB each. `isStdoutTruncated` or `isStderrTruncated` is `true` when one was cut. |
 | `$.model.complete` `maxTokens` | 1024 by default, up to 64,000 or the model's output limit |
-| `$.fs.read` and `$.fs.write` | 4 MiB for one file |
+| `$.fs.read` and `$.fs.write` | 4 MiB for one file. On v2.1.326 or later, read a larger file in parts with `$.fs.read(path, { offset, length })`, both in bytes. |
 | A `$.http.fetch` request body | 4 MiB, counted in characters. A call with a larger body rejects. |
 | A `$.http.fetch` response body | 4 MiB. `text` holds the first 4 MiB and the rest isn't read. When the `Content-Length` header declares more, the call rejects instead, with a reason that ends `is over the 4194304-byte limit`, except when the last request after any redirects uses the `HEAD` method. The `HEAD` exemption requires Claude Code v2.1.296 or later. |
 | One `$.http.fetch` call, redirects and body included | 30 seconds |
@@ -415,6 +421,7 @@ Hooks and mods API calls run under time and size limits. Claude Code skips a hoo
 | A `Code`'s `language` or `path`, a `Select` option's `value`, or a `Client`'s `module` | 10,000 characters. If one is longer, the `ui.render` hook that returned it [fails](https://code.claude.com/docs/en/plugins/mods/events.md#handle-a-hook-that-fails). |
 | A `Link`'s `href` | 2,048 characters. If it's longer, the `ui.render` hook that returned it [fails](https://code.claude.com/docs/en/plugins/mods/events.md#handle-a-hook-that-fails). |
 | Nesting depth of one tree | 32 levels below the root element |
+| Depth and size of a tree counted with its prop values | Claude Code refuses anything `nested more than 100 lists and objects deep` or with `more than 1000000 values once written out`. Requires Claude Code v2.1.326 or later. |
 | Elements and text children in one tree | 20,000 |
 | `Raster` cells in one tree, each `Raster`'s `columns` times its `rows` | 262,144 |
 | The rows above the prompt, stacked | Elements, `Raster` cells, and `Image` bytes add up across the rows, against the limits for one tree |
@@ -426,7 +433,7 @@ Hooks and mods API calls run under time and size limits. Claude Code skips a hoo
 | A pane opened without the user asking | Placed from 144 terminal columns, 110 after they've opened it once |
 | Rows from `$.ui.place` that one mod has in a conversation at one time | 500. At the limit, a call with a new `id` resolves to `{ isPlaced: false, reason: 'a plugin holds at most 500 placed rows' }`. |
 | Nesting depth of a mods API call's arguments | 28,000 levels. Past that, the call rejects with a message ending `nesting deeper than 28000 levels is not supported`. Requires Claude Code v2.1.299 or later. |
-| Nesting depth of a changed event passed to `next`, outside [async generator hooks](#events) such as one on `turn.step` | 28,000 levels. Past that, `next` rejects with a message ending `nesting deeper than 28000 levels is not supported`. Requires Claude Code v2.1.299 or later. |
+| Nesting depth of a changed event passed to `next`, outside `ui.render` and [async generator hooks](#events) such as one on `turn.step` | 28,000 levels. Past that, `next` rejects with a message ending `nesting deeper than 28000 levels is not supported`. Requires Claude Code v2.1.299 or later. |
 | Nesting depth of a hook's return value, outside `ui.render`, `ui.resolve`, and async generator hooks | 28,000 levels. Past that, the hook's result is refused, and [the notice that reports it](https://code.claude.com/docs/en/plugins/mods/troubleshoot.md#find-out-why-a-mod-does-nothing) includes `nesting deeper than 28000 levels is not supported`. Requires Claude Code v2.1.299 or later. |
 | Scopes, such as functions, blocks, and loops, nested inside one another in one file of a hooks module | 2,000 |
 | Command, tool, subagent type, and pane names, the `id` of a placed row, and the `scene` of a backdrop | Letters, digits, `_`, and `-`, up to 64 characters |

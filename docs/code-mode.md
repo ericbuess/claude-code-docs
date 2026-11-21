@@ -42,7 +42,7 @@ Before you turn on Code Mode, check that you can accept these limits:
 * **Resuming**: you can resume a Code Mode session only in the terminal, with Code Mode on
 * **Auto mode**: auto mode's classifier [reviews the code, not each tool call](#permission-checks)
 * **Long-running code**: unless [code can run in the background](#long-running-code), you wait for it to finish, and it stops after ten minutes
-* **Hooks**: you can see [tool calls refused](#tool-call-refused-by-a-hook) when a `PreToolUse` hook can't run or times out
+* **Hooks**: you can see [tool calls refused](#tool-call-refused-by-a-hook) when a `PreToolUse` hook doesn't finish, for example after a timeout
 * **Unavailable features**: you can't use [Remote Control](https://code.claude.com/docs/en/remote-control.md), [Claude in Chrome](https://code.claude.com/docs/en/chrome.md), or [computer use](https://code.claude.com/docs/en/computer-use.md)
 * **Moving the session**: you can't move the session to the Desktop app or turn it into a [background session](https://code.claude.com/docs/en/agent-view.md), and `/fork` can't start a background copy
 
@@ -52,7 +52,7 @@ Before you turn on Code Mode, check that you can accept these limits:
 * **Account**: a Claude subscription or Console account. You can't use Code Mode through a gateway, Amazon Bedrock, Claude Platform on AWS, Google Cloud's Agent Platform, Microsoft Foundry, or [Claude Models on Google Cloud (Anthropic managed)](https://code.claude.com/docs/en/claude-models-on-google-cloud-anthropic-managed.md)
 * **Organization**: your organization doesn't use the [HIPAA configuration](https://code.claude.com/docs/en/hipaa-setup.md) or [zero data retention](https://code.claude.com/docs/en/zero-data-retention.md)
 * **Model**: Claude Opus 5.5, Sonnet 5.5, Haiku 5.5, or Fable 5.2
-* **Surface**: an interactive `claude` session in a terminal. Code Mode doesn't work with `-p`, the Agent SDK, the VS Code panel, the Desktop app, or cloud sessions
+* **Surface**: an interactive `claude` session in a terminal. Code Mode doesn't work with the VS Code panel, the Desktop app, or cloud sessions
 * **Agent teams**: to use Code Mode with [agent teams](https://code.claude.com/docs/en/agent-teams.md) on, you need v2.1.326 or later. Teammates run in Code Mode in the default [in-process display mode](https://code.claude.com/docs/en/agent-teams.md#choose-a-display-mode), and start without it in split panes
 * **Installation**: the [native build](https://code.claude.com/docs/en/setup.md) of Claude Code
 * **Windows**: [Git for Windows](https://git-scm.com/downloads/win) is installed
@@ -324,12 +324,15 @@ Before v2.1.327, you could also be asked about the remaining calls in running co
 
 ### Tool call refused by a hook
 
-If Claude reports a refused tool call, ask it for the error text. These errors mean that a `PreToolUse` hook didn't give a decision, which refuses the call even when [`onFailure`](https://code.claude.com/docs/en/hooks#block-the-action-when-a-hook-fails) is unset:
+If Claude reports a refused tool call, ask it for the error text. These errors mean that your [`PreToolUse` hook](https://code.claude.com/docs/en/hooks#pretooluse) didn't give a decision:
 
-* **`the hook failed`**: on a call from code, your hook couldn't start, was killed, exited with 126, 127, or a code above 128, or returned an HTTP error or invalid output. Fix the hook
-* **`the hook did not finish`**: your hook timed out on a call from code, or on any other tool call once Claude has run code in the session. Raise the hook's [`timeout`](https://code.claude.com/docs/en/hooks#common-fields)
+* **`the hook did not finish`**: your hook timed out, or your agent hook ended without a decision. After a timeout, raise the hook's [`timeout`](https://code.claude.com/docs/en/hooks#common-fields). For an agent hook that gives no decision, move the check to a `command` hook. You can see this error on calls from code, and on other tool calls after Claude runs code in the session
+* **`the hook failed`**: on a call from code, your hook couldn't start, was killed, exited with 126, 127, or a code above 128, or returned an HTTP error or invalid output. Fix the hook. You can see this error before v2.1.329. On later versions it's rare: one cause is [feature-flag fetching](https://code.claude.com/docs/en/env-vars.md#features-that-need-feature-flag-fetching) turning off during a session, after Claude has run code
 
-To let calls go ahead when a `command` or `http` hook fails or times out, set `"onFailure": "continue"` on it. If a `command` hook exits with an ordinary code such as 1, the call goes ahead unless you set `"onFailure": "block"`.
+On v2.1.329 or later, expect a call from code to run by default after a hook failure other than `the hook did not finish`. To choose whether the call runs, use a `command` or `http` hook and set [`onFailure`](https://code.claude.com/docs/en/hooks#block-the-action-when-a-hook-fails) on it:
+
+* **To stop the call after a timeout or failure**: set `"onFailure": "block"`. Do this for a hook that guards calls
+* **To let the call run after a timeout or failure**: set `"onFailure": "continue"`
 
 ### Code output withheld by a hook
 

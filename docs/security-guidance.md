@@ -233,7 +233,7 @@ To find security issues in code you already have, rather than in changes Claude 
 
 The plugin writes runtime diagnostics to `~/.claude/security/log.txt`. Check there first if reviews are not appearing.
 
-Common reasons a review layer skips without a message in the conversation:
+Common reasons a review layer skips:
 
 * The directory is not a git repository: the end-of-turn and commit reviews require git state and skip outside a repository
 * The session has no Anthropic authentication and no third-party provider configured: the model-backed reviews skip and only the per-edit pattern check runs

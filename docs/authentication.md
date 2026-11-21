@@ -26,8 +26,9 @@ You can authenticate with any of these account types:
 * **Claude Pro, Max, or Ultra subscription**: log in with your claude.ai account. Subscribe at [claude.com/pricing](https://claude.com/pricing?utm_source=claude_code\&utm_medium=docs\&utm_content=authentication_pro_max).
 * **Claude for Teams or Enterprise**: log in with the claude.ai account your team admin invited you to.
 * **Claude Console**: log in with your Console credentials. Your admin must have [invited you](#claude-console-authentication) first. You can sign in with or without [creating an API key](#sign-in-without-an-api-key).
-* **Cloud providers**: if your organization uses [Amazon Bedrock](https://code.claude.com/docs/en/amazon-bedrock.md), [Google Cloud's Agent Platform](https://code.claude.com/docs/en/google-vertex-ai.md), or [Microsoft Foundry](https://code.claude.com/docs/en/microsoft-foundry.md), set the required environment variables before running `claude`, or select **3rd-party platform** at the login prompt, which launches an interactive setup wizard for Bedrock and Vertex AI. No browser login is needed.
+* **Cloud providers**: if your organization uses [Amazon Bedrock](https://code.claude.com/docs/en/amazon-bedrock.md), [Google Cloud's Agent Platform](https://code.claude.com/docs/en/google-vertex-ai.md), or [Microsoft Foundry](https://code.claude.com/docs/en/microsoft-foundry.md), set the required environment variables before running `claude`. You can also select **3rd-party platform** at the login prompt, which launches an interactive setup wizard for Bedrock and Agent Platform.
 * **Cloud gateway**: if your organization runs a self-hosted [Claude apps gateway](https://code.claude.com/docs/en/claude-apps-gateway), sign in with corporate SSO through `/login` or [from VS Code](https://code.claude.com/docs/en/vs-code.md#sign-in-to-a-claude-apps-gateway). The gateway-issued token is the session's only credential.
+* **Enterprise Admin Console**: if an Owner [turned on this sign-in](https://claude.com/docs/third-party/claude-desktop/admin-console-claude-code#turn-on-sign-in-from-claude-code) for your organization's provider or gateway, run `claude auth login` in your shell and select your organization in the browser. To confirm, look for `Signed in to the organization` in the terminal. For the Claude Code version you need, see [Before you start](https://claude.com/docs/third-party/claude-desktop/admin-console-claude-code#before-you-start).
 
 Admins can direct which login method developers use and require claude.ai logins to belong to a specific organization; see [Restrict login to your organization](#restrict-login-to-your-organization).
 
@@ -124,7 +125,7 @@ You can sign in to your Console account without creating an API key, even when y
 
 In practice, the profile stores an OAuth login while an API key is a static credential. Claude Code refreshes the profile's login automatically, and when refresh fails, requests fail with an [expired profile login error](https://code.claude.com/docs/en/errors.md#anthropic-profile-login-expired) until you sign in again.
 
-You don't get the choice on every machine. Claude Code creates an API key without asking in these cases:
+You won't see the keyless option in these cases:
 
 * You run against a cloud provider, such as [Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry](https://code.claude.com/docs/en/third-party-integrations.md) or [Claude Platform on AWS](https://code.claude.com/docs/en/claude-platform-on-aws.md)
 * Any settings file sets [`forceLoginOrgUUID`](#restrict-login-to-your-organization), or sets `forceLoginMethod` to `"claudeai"`
@@ -171,11 +172,15 @@ Users can [install Claude Code](https://code.claude.com/docs/en/setup.md#install
 
 To require that developers' claude.ai logins belong to a specific Anthropic organization, set [`forceLoginMethod`](https://code.claude.com/docs/en/settings-reference#forceloginmethod) and [`forceLoginOrgUUID`](https://code.claude.com/docs/en/settings-reference#forceloginorguuid) in [managed settings](https://code.claude.com/docs/en/managed-settings.md). Set `forceLoginOrgUUID` to your organization ID, shown in [claude.ai admin settings](https://claude.ai/admin-settings/organization) for Claude for Teams or Enterprise organizations. Claude Code reports an error for a claude.ai login to any other organization and exits at startup if the claude.ai credential in use belongs to an organization that isn't listed.
 
-For Claude Console logins, Claude Code uses `forceLoginOrgUUID` to pre-select the organization on the Console sign-in page when you set it to a single Console organization ID, shown at [platform.claude.com/settings/organization](https://platform.claude.com/settings/organization). It doesn't check which organization the resulting Console credential belongs to, at login or at startup. A developer who logged in with a Console account before you deployed the keys stays logged in, and that saved key is blocked on a machine that also requires the [gateway](https://code.claude.com/docs/en/claude-apps-gateway) sign-in or in a session that selects a cloud provider.
+If you set `forceLoginOrgUUID` to a single Console organization ID, Claude Code pre-selects that organization on the Claude Console sign-in page. Find the ID at [platform.claude.com/settings/organization](https://platform.claude.com/settings/organization).
 
-If you set `forceLoginOrgUUID` in any settings file, Claude Code stops offering the [keyless Console sign-in](#sign-in-without-an-api-key) in the sessions that file applies to and creates an API key instead. To direct developers to claude.ai sign-in instead, set `forceLoginMethod` to `"claudeai"`.
+> [!NOTE]
+>
+> At startup, Claude Code doesn't check which organization a saved Console credential belongs to. Don't rely on `forceLoginOrgUUID` to restrict the organization for Console logins. A developer already logged in to Console stays logged in after you deploy `forceLoginMethod` or `forceLoginOrgUUID`. However, a saved Console API key is blocked on a machine that also requires the [gateway](https://code.claude.com/docs/en/claude-apps-gateway) sign-in or in a session that selects a cloud provider.
 
-On Claude Code v2.1.212 or later, every login path listed here applies `forceLoginMethod`. On the terminal's interactive login screen, reached by `/login` or first-run onboarding, Claude Code pre-selects a `claudeai` or `console` method without enforcing it, so even with `forceLoginMethod` set to `"claudeai"`, a developer can still complete a Console login there.
+If you set `forceLoginOrgUUID` in any settings file, Claude Code stops offering the [keyless Console sign-in](#sign-in-without-an-api-key) in the sessions that file applies to. To direct developers to claude.ai sign-in instead, set `forceLoginMethod` to `"claudeai"`.
+
+On Claude Code v2.1.212 or later, every login path listed here applies `forceLoginMethod`. On the terminal's interactive login screen, reached by `/login` or first-run onboarding, Claude Code pre-selects a `claudeai` or `console` method. Don't rely on either value to block other logins there.
 
 The paths differ on `forceLoginOrgUUID`:
 
@@ -271,6 +276,8 @@ When multiple credentials are present, Claude Code chooses one in this order:
 7. Subscription OAuth credentials from `/login`. This is the default for Claude Pro, Max, Ultra, Team, and Enterprise users.
 
 A signed-in [Claude apps gateway](https://code.claude.com/docs/en/claude-apps-gateway) session sits outside this list: it is a provider selection like Amazon Bedrock or Google Cloud's Agent Platform, and it outranks them. When a gateway session exists, the CLI authenticates with the gateway token even if `CLAUDE_CODE_USE_BEDROCK`, `CLAUDE_CODE_USE_VERTEX`, or `CLAUDE_CODE_USE_FOUNDRY` is set, and credential sources above such as the bearer token, API key, `apiKeyHelper`, and profiles are not used.
+
+If your organization sets your provider or gateway in the Enterprise Admin Console and you [signed in to that organization](#log-in-to-claude-code), see [where your requests go](https://claude.com/docs/third-party/claude-desktop/admin-console-claude-code#how-console-settings-reach-claude-code) instead.
 
 If your machine's [managed settings](https://code.claude.com/docs/en/managed-settings.md) set [`forceLoginMethod`](https://code.claude.com/docs/en/settings-reference#forceloginmethod) to `"gateway"` or set [`forceLoginGatewayUrl`](https://code.claude.com/docs/en/settings-reference#forcelogingatewayurl), and you don't select a cloud provider through a variable such as `CLAUDE_CODE_USE_BEDROCK` or `CLAUDE_CODE_USE_VERTEX`, your session uses only the gateway sign-in. Claude Code skips the other credential sources and asks you to sign in with `/login`. See [Administrator policy requires a Cloud gateway sign-in](https://code.claude.com/docs/en/errors.md#administrator-policy-requires-a-cloud-gateway-sign-in) for what you see with each leftover credential. Requires Claude Code v2.1.261 or later, or v2.1.265 or later on a machine that sets only `forceLoginGatewayUrl`.
 

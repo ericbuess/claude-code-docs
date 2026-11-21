@@ -346,7 +346,7 @@ Claude Code sends the following JSON fields to your script via stdin:
 >
 > **Fields that may be `null`**:
 >
-> * `context_window.current_usage`: `null` before the first API call in a session, and again after `/compact` until the next API call repopulates it
+> * `context_window.current_usage`: see [context window fields](#context-window-fields)
 > * `context_window.used_percentage`, `context_window.remaining_percentage`: may be `null` early in the session
 >
 > Handle missing fields with conditional access and null values with fallback defaults in your scripts.
@@ -356,7 +356,7 @@ Claude Code sends the following JSON fields to your script via stdin:
 The `context_window` object describes the live context window from the most recent API response.
 
 * **Combined totals** (`total_input_tokens`, `total_output_tokens`): tokens currently in the context window. `total_input_tokens` is the sum of `input_tokens`, `cache_creation_input_tokens`, and `cache_read_input_tokens`; `total_output_tokens` is the output tokens from the most recent response. Both are `0` before the first API response.
-* **Per-component usage** (`current_usage`): the same token counts broken out by category. Use this when you need cache hits separate from fresh input.
+* **Per-component usage** (`current_usage`): the same token counts broken out by category. Use this when you need cache hits separate from fresh input. The object is `null` before the first API call in a session, and `null` or all zeros after `/compact` until the next API call. Treat both as empty.
 
 The `current_usage` object contains:
 
@@ -370,8 +370,6 @@ For what the cache fields mean and how they're billed, see [check cache performa
 The `used_percentage` field is calculated from input tokens only: `input_tokens + cache_creation_input_tokens + cache_read_input_tokens`. It does not include `output_tokens`.
 
 If you calculate context percentage manually from `current_usage`, use the same input-only formula to match `used_percentage`.
-
-The `current_usage` object is `null` before the first API call in a session, and again immediately after `/compact` until the next API call repopulates it.
 
 ### Spend limit fields
 

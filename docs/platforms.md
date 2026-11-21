@@ -15,11 +15,11 @@ Choose a platform based on how you like to work and where your project lives.
 | Platform | Best for | What you get |
 | :- | :- | :- |
 | [CLI](https://code.claude.com/docs/en/quickstart.md) | Terminal workflows, scripting, remote servers | Full feature set, [Agent SDK](https://code.claude.com/docs/en/headless.md), [computer use](https://code.claude.com/docs/en/computer-use.md) on macOS (Pro, Max, and Ultra), third-party providers |
-| [Desktop](https://code.claude.com/docs/en/desktop.md) | Visual review, parallel sessions, managed setup | Diff viewer, app preview, [computer use](https://code.claude.com/docs/en/desktop.md#let-claude-use-your-computer) and [Dispatch](https://code.claude.com/docs/en/desktop.md#sessions-from-dispatch) on Pro, Max, and Ultra |
+| [Desktop](https://code.claude.com/docs/en/desktop.md) | Visual review, parallel sessions, managed setup | Diff viewer, app preview, [computer use](https://code.claude.com/docs/en/desktop.md#let-claude-use-your-computer) on Pro, Max, and Ultra |
 | [VS Code](https://code.claude.com/docs/en/vs-code.md) | Working inside VS Code without switching to a terminal | Inline diffs, integrated terminal, file context |
 | [JetBrains](https://code.claude.com/docs/en/jetbrains.md) | Working inside IntelliJ, PyCharm, WebStorm, or other JetBrains IDEs | Diff viewer, selection sharing, terminal session |
 | [Web](https://code.claude.com/docs/en/claude-code-on-the-web.md) | Long-running tasks that don't need much steering, or work that should continue when you're offline | Cloud, Anthropic-managed by default; continues after you disconnect |
-| [Mobile](https://code.claude.com/docs/en/mobile.md) | Starting and monitoring tasks while away from your computer | Cloud sessions from the Claude app for iOS and Android, [Remote Control](https://code.claude.com/docs/en/remote-control.md) for local sessions, [Dispatch](https://code.claude.com/docs/en/desktop.md#sessions-from-dispatch) to Desktop on Pro, Max, and Ultra |
+| [Mobile](https://code.claude.com/docs/en/mobile.md) | Starting and monitoring tasks while away from your computer | Cloud sessions from the Claude app for iOS and Android, [Remote Control](https://code.claude.com/docs/en/remote-control.md) for local sessions |
 
 The CLI is the most complete surface for terminal-native work: scripting and the Agent SDK are CLI-only. Third-party providers also work in [VS Code](https://code.claude.com/docs/en/vs-code.md#use-third-party-providers) and in [JetBrains](https://code.claude.com/docs/en/feature-availability.md#features-available-on-every-provider), which runs the CLI in your IDE's terminal. Enterprise [Desktop](https://code.claude.com/docs/en/desktop.md) deployments support Google Cloud's Agent Platform, and Desktop supports [gateway providers](https://code.claude.com/docs/en/llm-gateway-connect.md#desktop-app); for Amazon Bedrock or Microsoft Foundry, use the CLI or an IDE extension, or [Claude Desktop on 3P](https://claude.com/docs/third-party/claude-desktop/overview), which runs the Code tab on those providers. Desktop and the IDE extensions trade some CLI-only features for visual review and tighter editor integration. The web runs in the cloud, so tasks keep going after you disconnect. Mobile is a thin client into those same cloud sessions or into a local session via Remote Control, and can send tasks to Desktop with Dispatch.
 
@@ -42,7 +42,7 @@ For integrations not listed here, [MCP servers](https://code.claude.com/docs/en/
 
 ## Work when you are away from your terminal
 
-Claude Code offers several ways to work when you're not at your terminal. They differ in what triggers the work, where Claude runs, and how much you need to set up.
+Claude Code offers several ways to work when you're not at your terminal. They differ in what triggers the work, where Claude runs, and how much you need to set up. [Dispatch](https://code.claude.com/docs/en/desktop.md#sessions-from-dispatch) isn't available to new users.
 
 | | Trigger | Claude runs on | Setup | Best for |
 | :- | :- | :- | :- | :- |

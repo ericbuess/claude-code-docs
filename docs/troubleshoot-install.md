@@ -811,8 +811,6 @@ For any other fatal signal, and for exit code 137 on macOS, the script prints `I
 
 ### Install hangs in Docker
 
-When installing Claude Code in a Docker container, installing as root into `/` can cause hangs.
-
 **Solutions:**
 
 1. **Set a working directory** before running the installer:

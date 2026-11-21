@@ -6,7 +6,7 @@
 
 > Give Claude persistent instructions with CLAUDE.md or AGENTS.md files, and let Claude accumulate learnings automatically with auto memory.
 
-Each Claude Code session begins with a fresh context window. Two mechanisms carry knowledge across sessions:
+Each Claude Code session begins with a fresh context window. CLAUDE.md files and auto memory carry knowledge across sessions:
 
 * **CLAUDE.md files**: instructions you write to give Claude persistent context. Claude can also read a repository's [`AGENTS.md` files](#agents-md) in place of CLAUDE.md
 * **Auto memory**: notes Claude writes itself based on your corrections and preferences
@@ -21,19 +21,19 @@ This page covers how to:
 
 ## CLAUDE.md vs auto memory
 
-Claude Code has two complementary memory systems. Both are loaded at the start of every conversation. Claude treats them as context, not enforced configuration. To block an action regardless of what Claude decides, use a [PreToolUse hook](https://code.claude.com/docs/en/hooks-guide.md) instead. The more specific and concise your instructions, the more consistently Claude follows them.
+Use CLAUDE.md files when you want to guide Claude's behavior. Auto memory lets Claude learn from your corrections without manual effort.
 
 | | CLAUDE.md files | Auto memory |
 | :- | :- | :- |
 | **Who writes it** | You | Claude |
 | **What it contains** | Instructions and rules | Learnings and patterns |
 | **Scope** | Project, user, or org | Per repository, shared across worktrees |
-| **Loaded into** | Every session | Every session (first 200 lines or 25KB) |
+| **Loaded into** | Every session | Sessions with [auto memory on](#enable-or-disable-auto-memory), up to the first 200 lines or 25KB of [`MEMORY.md`](#how-it-works) |
 | **Use for** | Coding standards, workflows, project architecture | Your preferences, corrections you give Claude, project context Claude can't derive from the code |
 
-Use CLAUDE.md files when you want to guide Claude's behavior. Auto memory lets Claude learn from your corrections without manual effort.
-
 Subagents can also maintain their own auto memory. See [subagent configuration](https://code.claude.com/docs/en/sub-agents.md#enable-persistent-memory) for details.
+
+Claude treats CLAUDE.md files and auto memory as context. They aren't enforced configuration. To block an action regardless of what Claude decides, use a [PreToolUse hook](https://code.claude.com/docs/en/hooks-guide.md) instead. The more specific and concise your instructions, the more consistently Claude follows them.
 
 ## CLAUDE.md files
 
@@ -533,7 +533,7 @@ The directory contains a `MEMORY.md` index and one topic file per memory:
 
 ```text theme={null}
 ~/.claude/projects/<project>/memory/
-├── MEMORY.md           # Index, one line per memory, loaded into every session
+├── MEMORY.md           # Index, one line per memory, loaded at session start
 ├── user_role.md        # One memory
 ├── feedback_testing.md # One memory
 └── ...                 # Any other topic files Claude creates
@@ -547,7 +547,7 @@ Claude Code deletes old session transcripts after the [`cleanupPeriodDays`](http
 
 ### How it works
 
-The first 200 lines of `MEMORY.md`, or the first 25KB, whichever comes first, are loaded at the start of every conversation. Content beyond that threshold is not loaded at session start. Claude keeps `MEMORY.md` concise by moving detailed notes into separate topic files.
+While auto memory is on, the first 200 lines or 25KB of `MEMORY.md`, whichever comes first, load at session start. Content beyond that threshold is not loaded at session start. Claude keeps `MEMORY.md` concise by moving detailed notes into separate topic files.
 
 After Claude writes to `MEMORY.md`, Claude Code measures the file against the 200-line and 25KB read limits. If the file is near a limit, Claude Code reminds Claude to shorten it: keep one line per entry, move detail into topic files, and merge or drop stale entries. If the file is over a limit, the write still succeeds, but Claude Code returns an [error telling Claude to rewrite the index](https://code.claude.com/docs/en/errors.md#memory-index-is-over-its-read-limit), because everything past the limit is dropped on the next load.
 

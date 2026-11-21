@@ -181,8 +181,8 @@ The prompt box supports several features:
 * **Files Claude sends you**: when the session is connected to [Remote Control](https://code.claude.com/docs/en/remote-control.md#start-a-remote-control-session) and Claude sends you files with the [`SendUserFile` tool](https://code.claude.com/docs/en/tools-reference), the conversation shows a row such as **Sent report.md, chart.png**. Click a file's name to open it in the editor. The row stays visible in Focus view. Requires Claude Code v2.1.295 or later.
 
   A file appears as a full path you can't click, such as `\\server\share\report.md`, when its path names a network host. Claude Code doesn't link that file because opening it would contact that host and, on Windows, [could send your Windows credentials to that host](https://code.claude.com/docs/en/permissions.md#read-only-commands).
-* **Context indicator**: the prompt box shows how much of Claude's context window you're using. Claude automatically compacts when needed, or you can run `/compact` manually.
-* **Prompt cache clock**: a clock icon next to the context indicator estimates how much time the conversation's [prompt cache](https://code.claude.com/docs/en/prompt-caching.md) has left before it expires. It counts down from the cache's five-minute or one-hour [lifetime](https://code.claude.com/docs/en/prompt-caching.md#cache-lifetime), and each response that uses the cache restarts the countdown. Apart from compaction, the [actions that invalidate the cache](https://code.claude.com/docs/en/prompt-caching.md#actions-that-invalidate-the-cache) don't reset the clock, so it can still show minutes left after you switch models.
+* **Context indicator**: the prompt box shows how much of Claude's context window you're using once usage exceeds [`contextUsageThreshold`](#extension-settings), 50% by default. Claude automatically compacts when needed, or you can run `/compact` manually.
+* **Prompt cache clock**: a clock icon in the prompt box estimates how much time the conversation's [prompt cache](https://code.claude.com/docs/en/prompt-caching.md) has left before it expires. It counts down from the cache's five-minute or one-hour [lifetime](https://code.claude.com/docs/en/prompt-caching.md#cache-lifetime), and each response that uses the cache restarts the countdown. Apart from compaction, the [actions that invalidate the cache](https://code.claude.com/docs/en/prompt-caching.md#actions-that-invalidate-the-cache) don't reset the clock, so it can still show minutes left after you switch models.
   * Until the countdown runs out, the icon shows the minutes left, such as **12m**.
   * When the countdown runs out, the minutes disappear and the icon turns red, or your theme's error color, until the next response. The cache has likely expired, so expect a slower, more expensive response to your next message while the cache rebuilds. If the five-minute lifetime keeps running out between your messages, see [Choose the TTL yourself](https://code.claude.com/docs/en/prompt-caching.md#choose-the-ttl-yourself).
   * Right after the conversation is [compacted](https://code.claude.com/docs/en/prompt-caching.md#compacting-the-conversation), the icon also turns red without minutes until the next response, because the cache doesn't cover the compacted conversation yet.
@@ -192,9 +192,9 @@ The prompt box supports several features:
 
   The map also lists the session's other [background tasks](https://code.claude.com/docs/en/tools-reference.md#background-commands), such as background shell commands and [monitors](https://code.claude.com/docs/en/tools-reference.md#monitor-tool), below the agents. Click a row to open the task's card and stop it there.
 
-  To open the map when no agent count is showing, such as when Claude has started a background shell but no subagents, type `/tasks` in the prompt box. Background tasks in the map and the typed `/tasks` require Claude Code v2.1.277 or later.
+  To open the map when no agent count is showing, such as when Claude has started a background shell but no subagents, type `/tasks` or `/workflows` in the prompt box. Background tasks in the map and the typed `/tasks` require Claude Code v2.1.277 or later. The typed `/workflows` requires Claude Code v2.1.330 or later.
 
-  With Claude Code v2.1.286 or later, when you click **Stop** or press `Esc`, the current turn ends. Background agents keep running until they finish or you stop them from the map.
+  With Claude Code v2.1.286 or later, when you stop Claude, the current turn ends. Background agents keep running until they finish or you stop them from the map.
 * **Extended thinking**: lets Claude spend more time reasoning through complex problems. To turn it off or back on, use the **Thinking** switch in the Model section of the command menu (`/`). On models where [thinking can't be turned off](https://code.claude.com/docs/en/model-config.md#extended-thinking), the menu has no **Thinking** switch and thinking stays on.
 
   A thinking block that shows only a label, such as `Thought for 12s`, has no text and doesn't open when you click it. To see thinking summaries, set [`showThinkingSummaries`](https://code.claude.com/docs/en/settings-reference#showthinkingsummaries) to `true` in `~/.claude/settings.json`, then run **Developer: Reload Window** from the Command Palette.
@@ -375,6 +375,8 @@ The VS Code extension supports checkpoints, which track Claude's file edits and 
 * **Fork conversation from here**: start a new conversation branch from this message while keeping all code changes intact
 * **Rewind code to here**: revert file changes back to this point in the conversation while keeping the full conversation history
 * **Fork conversation and rewind code**: start a new conversation branch and revert file changes to this point
+
+To fork from the latest message, type `/fork` in the prompt box once Claude finishes responding. Text you add, as in `/fork try the other approach`, waits unsent in the fork's prompt box. Requires Claude Code v2.1.330 or later.
 
 For full details on how checkpoints work and their limitations, see [Checkpointing](https://code.claude.com/docs/en/checkpointing.md).
 
@@ -669,7 +671,7 @@ When a subagent shows as one status line with no tool calls, type `/tasks` in th
 
 To open the Command Palette, press `Cmd+Shift+P` on Mac or `Ctrl+Shift+P` on Windows/Linux. Type "Claude Code" there to see the extension's Command Palette commands.
 
-Some shortcuts depend on which panel is "focused" (receiving keyboard input). When your cursor is in a code file, the editor is focused. When your cursor is in Claude's prompt box, Claude is focused. Use `Cmd+Esc` / `Ctrl+Esc` to toggle between them.
+Some shortcuts depend on which panel is "focused" (receiving keyboard input). When your cursor is in a code file, the editor is focused. When your cursor is in Claude's prompt box, Claude is focused.
 
 > [!NOTE]
 >
@@ -679,7 +681,7 @@ Some shortcuts depend on which panel is "focused" (receiving keyboard input). Wh
 | - | - | - |
 | Focus Input | `Cmd+Esc` (Mac) / `Ctrl+Esc` (Windows/Linux) | Toggle focus between editor and Claude |
 | Focus last message | - | Move keyboard focus to the newest message in the conversation, or to a waiting permission prompt, so you can read from there with the keyboard or a screen reader. Not available in [terminal mode](#switch-to-terminal-mode). Requires Claude Code v2.1.268 or later |
-| Open in Side Bar | - | Open Claude in the sidebar |
+| Open in Side Bar | - | Open Claude in the sidebar. To prefill a new conversation on Claude Code v2.1.330 or later, bind a key to `claude-vscode.sidebar.open` with `"args": { "prompt": "Review this file" }` |
 | Open in Terminal | - | Open Claude in terminal mode |
 | Open in New Tab | `Cmd+Shift+Esc` (Mac) / `Ctrl+Shift+Esc` (Windows/Linux) | Open a new conversation as an editor tab |
 | Open in New Window | - | Open a new conversation in a separate window |
@@ -765,16 +767,19 @@ VS Code reads `initialPermissionMode` from your user settings and ignores worksp
 | `useTerminal` | `false` | Launch Claude in terminal mode instead of graphical panel |
 | `initialPermissionMode` | - | Controls approval prompts for new conversations: `default`, `plan`, `acceptEdits`, or `bypassPermissions`. `manual` is an alias for `default` and selects the mode labeled **Manual** in the mode indicator. When you leave it unset, the extension chooses the starting permission mode as described in [Switch permission modes](https://code.claude.com/docs/en/permission-modes.md#switch-permission-modes). |
 | `preferredLocation` | `panel` | Where Claude opens: `sidebar` (right) or `panel` (new tab) |
-| `lockEditorGroups` | `true` | [Lock the editor groups Claude starts for its tabs](#choose-where-claude-lives), so files you open while a Claude tab is focused go to another group. When off, the extension never locks an editor group. Requires Claude Code v2.1.274 or later |
+| `lockEditorGroups` | `true` | [Lock the editor groups Claude starts for its tabs](#choose-where-claude-lives), so files you open while a Claude tab is focused go to another group. Requires Claude Code v2.1.274 or later |
 | `autosave` | `true` | Auto-save files before the Read, Edit, and Write tools run |
 | `attachOpenFile` | `true` | Add the file that is open in the editor to your messages and show it in the prompt box. When off, the file is added only along with text you select. Requires Claude Code v2.1.271 or later |
 | `attachSelection` | `true` | Add the text you select in the editor to your messages and show it in the prompt box. When off, you can still [add a selection as an @-mention](#automatic-context-from-your-selection-and-open-file). Requires Claude Code v2.1.300 or later |
 | `useCtrlEnterToSend` | `false` | Use Ctrl/Cmd+Enter instead of Enter to send prompts |
 | `scrollToBottomOnSend` | `true` | Scroll the conversation to the bottom when you send a message. When off, the conversation stays where you left it. Requires Claude Code v2.1.275 or later |
+| `pinPrompt` | `true` | Keep your message pinned at the top while you scroll through Claude's reply. Requires Claude Code v2.1.330 or later |
 | `showMessageTimestamps` | `true` | Show when each message was sent. A date line marks where the day changes. Requires Claude Code v2.1.284 or later. Before v2.1.290, the default was `false` |
 | `spinnerVerbs` | `{"mode": "append", "verbs": []}` | Set the verbs the conversation spinner rotates through while a turn runs, with the same `mode` and `verbs` fields as the CLI's [`spinnerVerbs`](https://code.claude.com/docs/en/settings-reference#spinnerverbs). |
+| `escapeStopsClaude` | `true` | Stop Claude mid-turn with `Esc`. When off, click **Stop** instead. `Esc` still closes menus and declines permission requests and questions. Requires Claude Code v2.1.330 or later |
+| `contextUsageThreshold` | `50` | Show the context indicator when context usage exceeds this percentage. Requires Claude Code v2.1.330 or later |
 | `enableNewConversationShortcut` | `false` | Enable Cmd/Ctrl+N to start a new conversation |
-| `enableReopenClosedSessionShortcut` | `true` | Use Cmd/Ctrl+Shift+T to reopen the most recently closed Claude session tab. When the last closed tab wasn't a Claude session, the shortcut runs VS Code's normal reopen-closed-editor command instead. |
+| `enableReopenClosedSessionShortcut` | `true` | Use Cmd/Ctrl+Shift+T to [reopen the most recently closed Claude session tab](#vs-code-commands-and-shortcuts). |
 | `archiveInactiveSessions` | `14` | [Archive a session automatically](#resume-past-conversations) after this many days without activity: `1`, `2`, `7`, or `14`. Set `0` to turn it off. Requires Claude Code v2.1.265 or later |
 | `continueAfterReload` | `true` | After a window reload, Claude [continues the step that was interrupted](#continue-conversations-after-a-reload) in the restored session. Requires Claude Code v2.1.274 or later |
 | `hideOnboarding` | `false` | Hide the onboarding checklist (graduation cap icon) |

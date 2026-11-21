@@ -203,13 +203,13 @@ If the send fails, see [Errors when sending to a cloud session](#errors-when-sen
 
 Pull a cloud session into your terminal using any of these:
 
-* **Using `--teleport`**: from the command line, run `claude --teleport` for an interactive session picker, or `claude --teleport <session-id>` to resume a specific session directly. If you have uncommitted changes, you'll be prompted to stash them first. [`--resume`](https://code.claude.com/docs/en/sessions#resume-a-session) reopens a conversation from this machine's local history and doesn't list cloud sessions.
+* **Using `--teleport`**: from the command line, run `claude --teleport` for an interactive session picker, or `claude --teleport <session-id>` to resume a specific session directly. [`--resume`](https://code.claude.com/docs/en/sessions#resume-a-session) reopens a conversation from this machine's local history and doesn't list cloud sessions.
 * **Using `/teleport`**: inside an existing CLI session, run `/teleport` or `/tp` to open the same session picker without restarting Claude Code.
 * **From `/tasks`**: run `/tasks` to see your background sessions, then press `t` to teleport into one.
 * **From claude.ai/code**: select **Open in > Terminal** from the session menu to copy a command you can paste into your terminal.
 * **From inside the cloud session**: type `/teleport` and Claude Code replies with the exact `claude --teleport <session-id>` command for that session, ready to run from a checkout of the repository.
 
-When you teleport a session, Claude verifies you're in the correct repository, fetches and checks out the branch from the cloud session, and loads the conversation into your terminal.
+When you teleport a session, Claude verifies you're in the correct repository and loads the conversation into your terminal. To get the session's branch too, check the [requirements](#teleport-requirements) and run `claude --teleport`.
 
 > [!NOTE]
 >
@@ -219,13 +219,13 @@ The terminal gets its own copy of the session: new work there stays local and do
 
 #### Teleport requirements
 
-Teleport checks these requirements before resuming a session. If any requirement isn't met, you'll see an error or be prompted to resolve the issue.
+Check these requirements before you teleport a session.
 
 | Requirement | Details |
 | - | - |
-| Clean git state | Your working directory must have no uncommitted changes. Teleport prompts you to stash changes if needed. |
+| Clean git state | Commit your changes first, or stash them when Teleport prompts you. |
 | Correct repository | You must run `--teleport` from a checkout of the same repository, not a fork. If you run it from a checkout of a different repository, Claude Code shows an error that names both the session's repository and your checkout's. If Claude Code can't parse your remote into a hostname, for example an SSH host alias like `git@work:owner/repo.git`, it asks you to confirm, and accepts the checkout when the remote's owner and repository name match the session's repository. |
-| Branch available | The branch from the cloud session must have been pushed to the remote. Teleport automatically fetches and checks it out. |
+| Branch available | The branch from the cloud session must have been pushed to the remote. If `claude --teleport` prints `was not checked out`, stop any commands Claude is still running in your checkout, then run the git commands it prints in your own terminal. |
 | Same account | You must be authenticated to the same claude.ai account used in the cloud session. |
 
 When teleport fetches the session's branch, the fetch never waits for input in your terminal. If git or ssh would ask for a password, a key passphrase, or confirmation of a new SSH host, the fetch fails, and the checkout then works only if your local clone already has the branch. For the two SSH cases, load your key into `ssh-agent` and run `git fetch` once by hand first to record the host.
@@ -299,7 +299,9 @@ Auto-compaction runs automatically when the context window approaches capacity. 
 
 To change the auto-compact window instead, set [`CLAUDE_CODE_AUTO_COMPACT_WINDOW`](https://code.claude.com/docs/en/env-vars) in your environment variables, or run [`/autocompact`](https://code.claude.com/docs/en/commands#all-commands) with a token count in a session where the variable isn't set.
 
-[Subagents](https://code.claude.com/docs/en/sub-agents.md) work the same way they do locally. Claude can spawn them with the Agent tool to offload research or parallel work into a separate context window, keeping the main conversation lighter. Outside a [project](https://code.claude.com/docs/en/claude-projects.md#what-threads-pick-up-from-your-repositories)'s threads, subagents defined in your repo's `.claude/agents/` load automatically.
+#### Use subagents and agent teams
+
+[Subagents](https://code.claude.com/docs/en/sub-agents.md) work the same way they do locally. Claude can spawn them with the Agent tool to offload research or parallel work into a separate context window, keeping the main conversation lighter. Subagents defined in your repo's `.claude/agents/` load automatically. For a project, check [which threads load them](https://code.claude.com/docs/en/claude-projects.md#what-threads-pick-up-from-your-repositories).
 
 [Agent teams](https://code.claude.com/docs/en/agent-teams.md) are off by default but can be enabled by adding `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` to your [environment variables](https://code.claude.com/docs/en/cloud-environments.md#set-environment-variables).
 
@@ -475,6 +477,7 @@ These errors come from running `claude` with [`--cloud <session-id>`](#send-foll
 | `Attaching to an existing cloud session is not enabled for your account.` | You ran `--cloud <session-id>` without `-p`. Send the message with `claude -p "your message" --cloud <session-id>`. |
 | `Session not found: <id>` | The ID or URL doesn't match a session you can access. Check it against the session's claude.ai/code URL. |
 | `cloud session <id> is archived and cannot accept new messages` | The session has been archived. Start a new session instead. |
+| `--fork-session can't fork a cloud session, so nothing was opened or sent.` | To message the existing cloud session, run `claude -p "your message" --cloud <session-id>` without `--fork-session`. |
 
 ### Environment expired
 

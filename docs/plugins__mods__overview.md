@@ -43,7 +43,7 @@ A mod installs as a plugin, from a marketplace. Give the plugin's name, an `@`, 
 * In a Claude Code session, run `/plugin install token-chart@your-org`.
 * In your shell, run `claude plugin install token-chart@your-org`.
 
-[Install plugins](https://code.claude.com/docs/en/plugins/install.md) covers marketplaces, scopes, the VS Code extension and the Desktop app, and [keeping plugins updated](https://code.claude.com/docs/en/plugins/install.md#keep-plugins-updated), all of which apply to a plugin that contains a mod without changes.
+[Install plugins](https://code.claude.com/docs/en/plugins/install.md) covers marketplaces, scopes, the VS Code extension and the Desktop app, and [keeping plugins updated](https://code.claude.com/docs/en/plugins/install.md#keep-plugins-updated).
 
 If you install or update a mod from your shell while a session is open, run `/reload-plugins` in that session to load it. Otherwise it loads the next time you start Claude Code.
 
@@ -184,17 +184,18 @@ For the code behind each choice, see [React to events](https://code.claude.com/d
 
 ### Where mods run
 
-A mod's hooks run in every kind of session that loads the plugin, whichever provider serves the model, including Amazon Bedrock, Google Cloud's Agent Platform, and Microsoft Foundry. Drawing is narrower: what a mod draws appears in the terminal, the Desktop app, and the VS Code extension. This table lists each place you might run Claude Code:
+A mod's hooks run whichever provider serves the model, including Amazon Bedrock, Google Cloud's Agent Platform, and Microsoft Foundry. This table lists each place you might run Claude Code:
 
 | Where you run Claude Code | Hooks run | What the mod draws appears |
 | :- | :- | :- |
 | `claude` in a terminal, including an editor's integrated terminal and the JetBrains plugin | Yes | Yes |
-| The Code tab of the Desktop app, except in a WSL session | Yes | Yes, except elements the [elements table](https://code.claude.com/docs/en/plugins/mods/reference.md#elements) marks terminal-only |
+| The Code tab of the Desktop app, except in a WSL or SSH session | Yes | Yes, except elements the [elements table](https://code.claude.com/docs/en/plugins/mods/reference.md#elements) marks terminal-only |
 | A [WSL session](https://code.claude.com/docs/en/desktop-wsl.md) in the Desktop app | No, because plugins aren't available in WSL sessions | No |
+| An [SSH session](https://code.claude.com/docs/en/desktop.md#ssh-sessions) in the Desktop app, for a mod installed only on your computer | No, because Desktop doesn't copy its hooks to the remote machine | No |
 | The VS Code extension's chat panel | Yes | Yes, with extension version 2.1.299 or later. A session that [doesn't fetch feature flags](https://code.claude.com/docs/en/env-vars.md#features-that-need-feature-flag-fetching), such as one on Amazon Bedrock, needs 2.1.304 or later. The [render sites](https://code.claude.com/docs/en/plugins/mods/reference.md#render-sites) and [elements](https://code.claude.com/docs/en/plugins/mods/reference.md#elements) tables mark what the panel draws. |
 | `claude -p` and the [Agent SDK](https://code.claude.com/docs/en/agent-sdk/overview.md) | Yes | No |
 | [Remote Control](https://code.claude.com/docs/en/remote-control.md) from claude.ai or the mobile app | Yes, in the session on your machine | In the terminal on your machine |
-| A [cloud session](https://code.claude.com/docs/en/claude-code-on-the-web.md) | Yes, for a plugin that [reaches the cloud session](https://code.claude.com/docs/en/cloud-environments.md#what-carries-over-from-your-setup) | No |
+| A [cloud session](https://code.claude.com/docs/en/claude-code-on-the-web.md) | Yes, for a plugin that [reaches the cloud session](https://code.claude.com/docs/en/cloud-environments.md#what-carries-over-from-your-setup) | Not in every session |
 
 A mod that draws can check which app it's running in, and fall back to a line in the transcript or a command's text reply where nothing draws.
 
@@ -230,10 +231,19 @@ This table lists some of the **Built-in** entries by the name `/plugin` shows:
 | `cc-plugin-sec-default` | Guards what your organization manages from the mods a user installs | [Where the guard loads](https://code.claude.com/docs/en/plugins/mods/admin.md#know-what-happens-by-default) | You can't. An administrator [sets the order](https://code.claude.com/docs/en/plugins/mods/admin.md#install-your-organizations-mods) in managed settings |
 | `cc-plugin-telemetry` | Sends the analytics records that Claude Code and its built-in mods log | Wherever Claude Code's own analytics are on | Disable it in `/plugin`, or turn analytics off, for example with [`DISABLE_TELEMETRY`](https://code.claude.com/docs/en/env-vars) |
 | `cc-plugin-you-should-know` | [You should know](https://code.claude.com/docs/en/interactive-mode.md#you-should-know-suggestions): a side agent shows a note above the prompt when it finds something you might have missed | Off until you [turn it on](https://code.claude.com/docs/en/interactive-mode.md#you-should-know-suggestions) | Disable it in `/plugin` |
+| `cc-plugin-easel` | Gives Claude a tool for drawing charts, and draws a chart automatically under MCP results in a supported time-series format, such as a Prometheus range query result | Sessions that meet its [requirements](#check-the-charts-mod-requirements) | Disable it in `/plugin`. To stop only the automatic charts, turn off **Auto charts** in `/config`. |
 
 For a **Built-in** plugin that isn't in the table, [open its details in `/plugin`](https://code.claude.com/docs/en/plugins/install#manage-installed-plugins) to read what it does.
 
 The settings and flags that stop installed mods, such as `disableAllHooks`, `--bare`, and `--safe-mode`, don't stop built-in mods.
+
+### Check the charts mod requirements
+
+If `cc-plugin-easel` isn't in `/plugin`, check its requirements, which include these:
+
+* **Sign-in**: a claude.ai subscription
+* **Version**: Claude Code v2.1.321 or later. Team and Enterprise require v2.1.326 or later.
+* **Platform**: macOS or Linux outside WSL
 
 ### Read the source of built-in mods
 

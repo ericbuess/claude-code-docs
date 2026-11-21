@@ -175,7 +175,7 @@ The evaluator runs on whichever provider your session is configured for. It does
 
 > [!NOTE]
 >
-> Evaluation tokens are billed on the small fast model configured for your provider and are typically negligible compared to main-turn spend.
+> Evaluation tokens are billed in addition to main-turn spend.
 
 ## Requirements
 

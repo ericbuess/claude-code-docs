@@ -187,7 +187,9 @@ Claude Code sends the strings your hook passes to `next` and uses the arrays you
 
 ## Run work in the background
 
-Work that outlives one event, such as checking on something once a minute, runs on a timer you start from `session.start`. A hook itself runs for one event and has a [time limit](https://code.claude.com/docs/en/plugins/mods/reference.md#limits) on its own execution time. Time spent waiting on `next` or on a mods API call doesn't count, except a `$.clock.sleep`. `$.clock.every` and `$.clock.after` take the place of `setInterval` and `setTimeout`, with the delay in milliseconds first: `$.clock.after(5000, fn)` calls `fn` once, five seconds from now. Each returns a timer with a `cancel()` method, and `await $.clock.now()` gives the time in milliseconds.
+Work that outlives one event, such as checking on something once a minute, runs on a timer you start from `session.start`. A hook itself runs for one event and has a [time limit](https://code.claude.com/docs/en/plugins/mods/reference.md#limits) on its own execution time.
+
+`$.clock.every` and `$.clock.after` take the place of `setInterval` and `setTimeout`, with the delay in milliseconds first: `$.clock.after(5000, fn)` calls `fn` once, five seconds from now. Each returns a timer with a `cancel()` method, and `await $.clock.now()` gives the time in milliseconds.
 
 This hook looks up a pull request's checks once a minute and shows the result under the prompt. `summarize` is a function of your own that turns the command's JSON output into a few words:
 
@@ -421,10 +423,11 @@ A mod reaches the file system, processes, and the network through the mods API, 
 | `$.settings` | `read()` resolves to all settings, merged into one object. With `{ source }` or `{ key }`, it resolves to [one source's settings or one key's value](#read-one-source-or-one-key) instead. |
 | `$.session` | `messages()` returns the transcript as a list of `{ role, text, toolUses }`. Also the working directory, model, and more. [`usage()`](https://code.claude.com/docs/en/plugins/mods/reference#mods-api-methods) returns context window use and plan limits. |
 | `$.mcp` | `call` a tool on a connected MCP server |
+| `$.wasm` | `compile('./engine.wasm')` turns a file of up to 64 MiB into a module you pass to `WebAssembly.instantiate`. Write the path as a string literal, relative to the calling file. Requires Claude Code v2.1.326 or later. |
 
 Files, processes, and requests have a few rules of their own:
 
-* **Paths**: a relative path resolves against the working directory of the session, or of the subagent whose event the hook is handling
+* **Paths**: in `$.fs` and `$.process`, a relative path resolves against the working directory of the session, or of the subagent whose event the hook is handling
 * **`$.fs.list`**: returns one directory's entries as `{ name, kind, size, isLink }` and isn't recursive
 * **`$.process.run`**: takes an argument list and uses no shell. It resolves to `{ exitCode, stdout, stderr }` whatever the exit code. It rejects if the program can't start or is still running at the timeout, which is 30 seconds by default, so wrap it in `try` and `catch`.
 * **`$.http.fetch`**: follows up to five redirects. On a redirect to a different origin, it keeps only the `accept`, `accept-language`, `content-type`, and `user-agent` request headers you set and drops the rest, so a request that depends on another header, such as `Authorization`, can fail after that redirect. The [limits](https://code.claude.com/docs/en/plugins/mods/reference.md#limits) give its timeout and body sizes.
