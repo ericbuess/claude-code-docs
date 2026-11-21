@@ -652,7 +652,7 @@ To check on the task or stop it in the meantime, type `/tasks` in the prompt box
 
 #### The Run in background action is missing under a subagent
 
-By default in VS Code, subagents don't show this action. To see why for one subagent, open its card in the [agent map](#use-the-prompt-box) and read the `Spawned by` line:
+By default in VS Code, most subagents don't show this action. To see why for one subagent, open its card in the [agent map](#use-the-prompt-box) and read the `Spawned by` line:
 
 * **`Spawned by the main agent`**: the subagent started in the background, so Claude isn't waiting for it and you don't need to do anything. To have Claude wait for subagents instead, see [Let Claude wait for a subagent](https://code.claude.com/docs/en/sub-agents.md#let-claude-wait-for-a-subagent).
 * **`Spawned by` names another subagent**: the action appears only for subagents the main agent spawned, not a [nested subagent](https://code.claude.com/docs/en/sub-agents.md#let-subagents-spawn-their-own-subagents) another subagent waits for. To end the nested subagent early, click **Stop agent** on its card. The waiting subagent then carries on without that result.

@@ -628,11 +628,15 @@ The following sections cover the order Claude Code evaluates an action in, how t
 
 > [accordion] How auto mode handles subagents
 >
-> The classifier checks [subagent](https://code.claude.com/docs/en/sub-agents.md) work at three points:
+> When Claude starts a [subagent](https://code.claude.com/docs/en/sub-agents.md) with the Agent tool, the classifier checks the subagent's work at three points:
 >
 > 1. Before a subagent starts, the delegated task description is evaluated, so a dangerous-looking task is blocked at spawn time.
 > 2. While the subagent runs, each of its actions goes through the same [decision order](#how-the-classifier-evaluates-actions) as in the parent session, with the same block and allow rules. Any `permissionMode` in the subagent's frontmatter is ignored.
-> 3. When the subagent finishes, the classifier reviews its work and its final report before the parent reads the report. When the classifier flags the subagent's work or report, or a separate API safety check refuses the review, the report is still delivered, prepended with a security warning. When the classifier is unavailable for the review, the report arrives with a note to verify the subagent's work before acting on it.
+> 3. When a subagent other than an [agent team](https://code.claude.com/docs/en/agent-teams.md) teammate finishes, the classifier reviews its work and its final report before the parent reads the report.
+>
+>    When the classifier flags the subagent's work or report, or a separate API safety check refuses the review, the report is still delivered, prepended with a security warning. When the classifier is unavailable for the review, the report arrives with a note to verify the subagent's work before acting on it.
+>
+> For the [`web-fetch` subagent](https://code.claude.com/docs/en/tools-reference#web-fetch-subagent), Claude Code can skip the first two checks when your `WebFetch(domain:...)` allow rules or the [preapproved domains](https://code.claude.com/docs/en/tools-reference.md#webfetch-tool-behavior) cover every URL in its task. The subagent then starts in [`dontAsk` mode](#allow-only-pre-approved-tools-with-dontask-mode), so any other fetch that needs approval is denied. The third check still runs.
 
 > [accordion] Cost and latency
 >
