@@ -337,7 +337,7 @@ If the paste carries [invisible Unicode characters](https://code.claude.com/docs
 
 ### How Claude treats pasted text
 
-When you submit, Claude sees the content behind each `[Pasted text #N]` placeholder marked as text you pasted from somewhere else rather than typed. Claude is told that a paste can contain instructions you didn't write, and to follow instructions inside it only where the message you typed asks it to. Pastes can reach Claude unmarked, such as in your [first session after an install](https://code.claude.com/docs/en/env-vars.md#first-session-after-an-install-or-upgrade).
+When you submit, Claude sees the content behind each `[Pasted text #N]` placeholder marked as text you pasted from somewhere else rather than typed. Pastes can reach Claude unmarked, such as in your [first session after an install](https://code.claude.com/docs/en/env-vars.md#first-session-after-an-install-or-upgrade).
 
 ### Delete and restore a collapsed paste
 

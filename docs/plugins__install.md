@@ -123,7 +123,7 @@ Pick the tab for where you run Claude Code.
 
 > [tab] Cloud session
 >
-> A [cloud session](https://code.claude.com/docs/en/cloud-environments.md), including [the browser at claude.ai/code](https://code.claude.com/docs/en/claude-code-on-the-web.md), has no plugin browser and doesn't load the plugins you installed on your own machine or the ones your repository's `.claude/settings.json` turns on. For plugins your organization distributes through managed settings, see [Manage plugins for your organization](https://code.claude.com/docs/en/plugins/org.md).
+> A [cloud session](https://code.claude.com/docs/en/cloud-environments.md), including [the browser at claude.ai/code](https://code.claude.com/docs/en/claude-code-on-the-web.md), has no plugin browser and doesn't load the plugins you installed at user or local scope. For plugins your organization distributes through managed settings, see [Manage plugins for your organization](https://code.claude.com/docs/en/plugins/org.md).
 >
 > See [which parts of your setup are also available in a cloud session](https://code.claude.com/docs/en/cloud-environments.md#what-carries-over-from-your-setup) for the rest of your setup.
 

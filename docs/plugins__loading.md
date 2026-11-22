@@ -69,7 +69,7 @@ A marketplace plugin has two names, and they can differ:
 
 To share a plugin through a repository, list it under `enabledPlugins` in `.claude/settings.json` or place it under `.claude/skills/`. Claude Code doesn't scan a project's `.claude/plugins/` directory.
 
-A cloud session doesn't add the marketplaces a repository lists under [`extraKnownMarketplaces`](https://code.claude.com/docs/en/settings-reference#extraknownmarketplaces), because that requires the workspace trust dialog, which a cloud session never shows.
+An Anthropic-hosted cloud session doesn't add the marketplaces a repository lists under [`extraKnownMarketplaces`](https://code.claude.com/docs/en/settings-reference#extraknownmarketplaces), because that requires the workspace trust dialog, which the session doesn't show.
 
 #### Trust check and component limits for repository plugins
 
