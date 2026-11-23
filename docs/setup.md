@@ -40,7 +40,7 @@ To install Claude Code, open a terminal and run the command for your system. If 
 >
 > **macOS, Linux, WSL:**
 >
-> ```bash theme={null}
+> ```bash theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null}
 > curl -fsSL https://claude.ai/install.sh | bash
 > ```
 >
@@ -48,13 +48,13 @@ To install Claude Code, open a terminal and run the command for your system. If 
 >
 > **Windows PowerShell:**
 >
-> ```powershell theme={null}
+> ```powershell theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null}
 > irm https://claude.ai/install.ps1 | iex
 > ```
 >
 > **Windows CMD:**
 >
-> ```batch theme={null}
+> ```batch theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null}
 > curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd && del install.cmd
 > ```
 >
@@ -72,7 +72,7 @@ To install Claude Code, open a terminal and run the command for your system. If 
 
 > [tab] Homebrew
 >
-> ```bash theme={null}
+> ```bash theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null}
 > brew install --cask claude-code
 > ```
 >
@@ -84,7 +84,7 @@ To install Claude Code, open a terminal and run the command for your system. If 
 
 > [tab] WinGet
 >
-> ```powershell theme={null}
+> ```powershell theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null} theme={null}
 > winget install Anthropic.ClaudeCode
 > ```
 >
@@ -185,12 +185,6 @@ Claude Code checks for updates on startup and periodically while running. Update
 
 Run `claude doctor` in your shell to see the result of the last update attempt Claude Code recorded. On a native installation, if it reports a failed attempt, see [`Auto-update failed` in the session footer](https://code.claude.com/docs/en/troubleshoot-install#auto-update-failed) for what to do next.
 
-On macOS and Linux, the native installer manages the launcher at `~/.local/bin/claude` as a symlink into `~/.local/share/claude/versions/`. If you replace that launcher with your own script or symlink, auto-update and `claude update` leave it in place: new versions still install under the `versions/` directory, and your launcher decides which version runs.
-
-With a custom launcher, Claude Code also keeps every installed version on disk because it can't tell which version the launcher needs. `claude doctor` reports a launcher that the native installer didn't create.
-
-To let Claude Code manage the launcher again, remove `~/.local/bin/claude` and run `claude update`.
-
 If an npm global install can't auto-update because the npm global directory isn't writable, Claude Code shows a one-time notice at startup, and `claude doctor` lists the available fixes. See [permission errors during installation](https://code.claude.com/docs/en/troubleshoot-install.md#permission-errors-during-installation) for details.
 
 > [!NOTE]
@@ -204,6 +198,32 @@ If an npm global install can't auto-update because the npm global directory isn'
 > **Known issue:** Claude Code may notify you of updates before the new version is available in these package managers. If an upgrade fails, wait and try again later.
 >
 > Homebrew keeps old versions on disk after upgrades. Run `brew cleanup` periodically to reclaim disk space.
+
+#### Custom launchers
+
+On macOS and Linux, the native installer manages the launcher at `~/.local/bin/claude` as a symlink into `~/.local/share/claude/versions/`. If you replace it with your own script, your script stays in place through auto-update and `claude update`. New versions still install under `versions/`, but you keep running whichever version your launcher starts.
+
+With a custom launcher, Claude Code also keeps every installed version on disk because it can't tell which version the launcher needs. `claude doctor` reports that the launcher `was not created by the native installer`.
+
+#### Restore the managed launcher
+
+To let Claude Code manage `~/.local/bin/claude` again, replace your custom launcher with a symlink to an installed version:
+
+1. If you want to keep your launcher, copy `~/.local/bin/claude` to another folder. Step 3 overwrites it.
+
+2. In your shell, list the installed versions:
+
+   ```bash theme={null}
+   ls ~/.local/share/claude/versions/
+   ```
+
+3. Create the symlink. For `VERSION`, use a version number from the list.
+
+   ```bash theme={null}
+   ln -sfn ~/.local/share/claude/versions/VERSION ~/.local/bin/claude
+   ```
+
+4. Run `claude doctor` and check that the launcher warning is gone.
 
 ### Configure release channel
 
@@ -481,7 +501,9 @@ When home directories live on network storage, such as an NFS home mounted on se
 * **Delete an old version only when no machine can still be running it**: a machine can't see processes running on other machines, so checking for running processes before you delete isn't enough.
 * **Turn off Claude Code's own updates**: set [`DISABLE_UPDATES`](https://code.claude.com/docs/en/env-vars) and install new versions with your own tooling. Otherwise an auto-update of an npm installation on one machine runs the same in-place upgrade and removes the binary that sessions on other machines are running. Setting `DISABLE_AUTOUPDATER` alone isn't enough, because users can still run `claude update` and `claude install`. See [Disable auto-updates](#disable-auto-updates).
 
-The native installer deletes old versions from `~/.local/share/claude/versions/` on its own, which matters when that directory is on shared storage. Besides the version the launcher points to and any version a session on the same machine is running, it keeps the two newest versions and deletes the rest. A session on another machine that is running a deleted version loses its binary. With a [custom launcher](#auto-updates), Claude Code keeps every installed version and leaves cleanup to you.
+The native installer deletes old versions from `~/.local/share/claude/versions/` on its own, which matters when that directory is on shared storage. Besides the version the launcher points to and any version a session on the same machine is running, it keeps the two newest versions and deletes the rest.
+
+A session on another machine that is running a deleted version loses its binary. With a [custom launcher](#custom-launchers), Claude Code keeps every installed version and leaves cleanup to you.
 
 ### Binary integrity and code signing
 

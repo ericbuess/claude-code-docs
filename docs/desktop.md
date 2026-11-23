@@ -264,6 +264,8 @@ The session details panel is a set of cards beside the chat that show where the 
 
 To hide or show the panel, click **Hide session rail** or **Show session rail** in the session's title bar, or in the bar's **⋮** menu. If you see neither name, click **Activity panel** in the title bar. If you still don't see the panel, [check which Code tab layout you have](#check-which-layout-you-have).
 
+If the panel disappears when a mod's [backdrop](https://code.claude.com/docs/en/plugins/mods/interface.md#put-a-backdrop-behind-the-conversation) shows, click **Show session rail** or **Activity panel** to bring it back.
+
 ### Minimize a pane
 
 To keep the Terminal, Browser, [iOS Simulator](https://code.claude.com/docs/en/desktop-ios-simulator.md), or a [side chat](#ask-a-side-question-without-derailing-the-session) in view at a small size, click **Minimize** in the pane's header. The button requires Claude Desktop v4.0.0 or later. With a [third-party provider](https://code.claude.com/docs/en/third-party-integrations.md) it requires v5.11492.0 or later, so [check your version](#check-your-version). The Browser pane has the button only in local sessions.

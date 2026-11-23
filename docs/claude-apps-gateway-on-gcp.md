@@ -118,7 +118,7 @@ gcloud services vpc-peerings connect \
   --ranges="google-managed-services-${VPC}" --network="$VPC"
 
 gcloud sql instances create claude-gateway-db \
-  --database-version=POSTGRES_16 --tier=db-g1-small --region="$REGION" \
+  --database-version=POSTGRES_16 --edition=enterprise --tier=db-g1-small --region="$REGION" \
   --network="projects/${PROJECT_ID}/global/networks/${VPC}" --no-assign-ip
 gcloud sql databases create claude_gateway --instance=claude-gateway-db
 PGPASS="$(openssl rand -hex 24)"
@@ -270,6 +270,8 @@ How the secrets reach the container differs by track:
 > kubectl annotate serviceaccount gateway -n claude-gateway \
 >   iam.gke.io/gcp-service-account="claude-gateway@${PROJECT_ID}.iam.gserviceaccount.com"
 > ```
+>
+> An internal Ingress needs a proxy-only subnet in `$REGION` on the VPC, and a firewall rule that allows traffic from that subnet to port `8080` on the gateway pods. Create both as Google's [internal Ingress guide](https://cloud.google.com/kubernetes-engine/docs/how-to/internal-load-balance-ingress) describes.
 >
 > Deploy the gateway as a standard Deployment plus a Service and an internal Ingress, class `gce-internal`, as described in [Kubernetes deployment](https://code.claude.com/docs/en/claude-apps-gateway-deploy.md#kubernetes), with:
 >

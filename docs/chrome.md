@@ -111,6 +111,8 @@ Claude Code starts normally when Chrome isn't running.
 >
 > Enabling Chrome by default increases context usage since the browser tools and their instructions are always loaded. If you notice increased context consumption, turn the setting off and connect only when needed, with `--chrome` in the CLI or by typing [`@browser`](https://code.claude.com/docs/en/vs-code#automate-browser-tasks-with-chrome) in the VS Code prompt box.
 
+To start one CLI session without Chrome and leave the setting on, run [`claude --no-chrome`](https://code.claude.com/docs/en/cli-reference#cli-flags) in your terminal.
+
 ### Answer the startup dialog
 
 If the "Claude in Chrome extension detected" dialog appears when you start `claude`, your answer changes the [**Enabled by default** setting](#enable-chrome-by-default):

@@ -138,12 +138,12 @@ This config is enough for a working sign-in loop with the default Amazon Bedrock
 
 **4. Run it**
 
-Build a container image around the `claude` binary that meets the [image requirements](https://code.claude.com/docs/en/claude-apps-gateway-deploy.md#container-image), then run it alongside Postgres. The Compose file references the image as `registry.example.com/claude-gateway:2.1.198`; substitute your own registry and image tag:
+Build a container image around the `claude` binary that meets the [image requirements](https://code.claude.com/docs/en/claude-apps-gateway-deploy.md#container-image), then run it alongside Postgres. The Compose file references the image as `registry.example.com/claude-gateway:<version>`; substitute your own registry and image tag:
 
 ```yaml docker-compose.yaml theme={null}
 services:
   gateway:
-    image: registry.example.com/claude-gateway:2.1.198
+    image: registry.example.com/claude-gateway:<version>
     ports: ["8080:8080"]
     volumes: ["./gateway.yaml:/etc/claude/gateway.yaml:ro"]
     environment:
@@ -185,7 +185,7 @@ Watch stderr for the boot sequence. By default, log lines use the format `[gatew
 [gateway] 2026-06-10T17:03:21.512Z info claude gateway listening on http://0.0.0.0:8080
 ```
 
-The gateway also logs a warning that `access_control.allow_cidrs` is empty. That's expected here, because nothing limits which client addresses the gateway serves until you set an allow list. The [`access_control` reference](https://code.claude.com/docs/en/claude-apps-gateway-config#http-tuning) has the recommended ranges.
+The startup banner reminds you each time to keep the gateway on your private network. With this config, the gateway serves any client address. To limit which addresses it serves, set `access_control`; the [`access_control` reference](https://code.claude.com/docs/en/claude-apps-gateway-config#http-tuning) has the recommended ranges.
 
 If boot exits before the `claude gateway listening on` line, the last line of stderr names the problem:
 

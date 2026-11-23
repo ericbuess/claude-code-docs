@@ -1472,10 +1472,10 @@ A [`models`](#models) entry gets no 1M option when:
 
 To change what the picker offers, use one of these:
 
-* **Start users on the 1M option**: set `modelPrefer1mContext: true` in the policy's `desktop` block. Users who haven't yet chosen a model start on the 1M option when the first listed model has one. Users who already chose a model keep their choice.
+* **Show only the 1M option**: set [`modelPrefer1mContext`](https://claude.com/docs/third-party/claude-desktop/configuration#modelprefer1mcontext) to `true` in the policy's `desktop` block. You need Claude Desktop 2.31226.0 or later on members' machines.
 * **Offer the option by hand**: do this if your gateway server runs a version older than v2.1.284, or an entry names no Claude model. List the model twice in `models`, once with its plain ID and once with `[1m]` appended, both with the same `upstream_model` map. Claude Desktop shows the pair as one model with a 1M option. The gateway serves a `[1m]` entry without checking it, so add one only for a model your upstreams serve at 1M.
 
-This example offers the option by hand for a custom alias routed to an application inference profile, and starts new users on it:
+This example lists a custom alias and its `[1m]` variant, both routed to an application inference profile, and sets `modelPrefer1mContext`:
 
 ```yaml theme={null}
 models:
@@ -1697,10 +1697,16 @@ Four optional top-level blocks, `access_control`, `limits`, `timeouts`, and `rat
 
 If you leave both `access_control` lists empty, which is the default, the gateway serves any client address, so only your network restricts who can reach it. That matters because a gateway can push [managed settings](#managed) that run commands on developer machines.
 
-While `allow_cidrs` is empty, the gateway warns in two places, without changing how it answers any request:
+To refuse clients from outside your network, set `allow_cidrs` to these private ranges, plus any other internal ranges your developers connect from:
 
-* **At boot**: a warning in the operational log recommends allowing only the private ranges `10.0.0.0/8`, `172.16.0.0/12`, `192.168.0.0/16`, `100.64.0.0/10`, `127.0.0.0/8`, `::1/128`, and `fc00::/7`, plus any other internal ranges your developers connect from. If you bind the gateway to a loopback address and set neither `trusted_proxies` nor `public_url`, as in local development, the warning doesn't appear.
-* **At runtime**: the first time a request arrives from an address outside those private ranges, the gateway logs a warning and emits an [`access.public_client` audit event](https://code.claude.com/docs/en/claude-apps-gateway-deploy#logs) carrying the client IP. Both fire once per process. Link-local addresses, `169.254.0.0/16` and `fe80::/10`, don't count as public. The gateway answers `/healthz` and `/readyz` before this check runs, so health probes from public ranges don't trigger it.
+* **IPv4**: `10.0.0.0/8`, `172.16.0.0/12`, `192.168.0.0/16`, `100.64.0.0/10`, and `127.0.0.0/8`
+* **IPv6**: `::1/128` and `fc00::/7`
+
+While `allow_cidrs` is empty, the gateway watches for requests from outside the private ranges above, without changing how it answers them:
+
+* **Once per process**: when it serves such a request, the gateway logs a warning and emits an [`access.public_client` audit event](https://code.claude.com/docs/en/claude-apps-gateway-deploy#logs) carrying the client IP.
+* **Not counted as public**: link-local addresses, `169.254.0.0/16` and `fe80::/10`.
+* **Not checked**: health probes to `/healthz` and `/readyz`, which the gateway answers before this check runs.
 
 Both signals use the client address as the gateway resolves it. If a load balancer, port-forward, or tunnel relays traffic and isn't listed in `listen.trusted_proxies`, the gateway sees the relay's address, which is usually private, so neither the runtime warning nor a private allow list catches traffic relayed through it.
 

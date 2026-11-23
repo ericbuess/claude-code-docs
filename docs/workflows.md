@@ -122,7 +122,11 @@ If the run does what you wanted, you can [save it as a command](#save-the-workfl
 
 #### Dismiss or turn off the keyword
 
-If you didn't mean to start a workflow, press `Option+W` on macOS or `Alt+W` on Windows and Linux to dismiss the highlight for this prompt, or press backspace while the cursor is right after the highlighted keyword. To stop the keyword from triggering at all, turn off Ultracode keyword trigger in `/config`.
+To use the word `ultracode` without asking for a workflow, skip the keyword for one prompt or turn the keyword off for every prompt:
+
+* **One prompt, as you type**: put the word in backticks.
+* **One prompt, already highlighted in your terminal**: press Backspace right after the word, or press `Alt+W`. On macOS, that key is `Option+W` with [Option as Meta](https://code.claude.com/docs/en/terminal-config.md#enable-option-key-shortcuts-on-macos).
+* **Every prompt**: turn off [**Ultracode keyword trigger**](https://code.claude.com/docs/en/settings-reference.md#workflowkeywordtriggerenabled) in `/config`.
 
 #### Where the keyword works
 

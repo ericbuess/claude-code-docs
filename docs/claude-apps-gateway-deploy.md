@@ -185,6 +185,8 @@ Each operational log line is then one object with `severity`, `time`, and `messa
 
 `severity` is the log level in capitals, with `warn` written as `WARNING`. A failed start is an `ERROR` line.
 
+On every start, the gateway also writes one `WARNING` line reminding you to keep it off the public internet, whatever your network setup. To hide it, set `CLAUDE_GATEWAY_LOG_LEVEL=error` in the gateway's environment; your collector then gets only the operational log's `ERROR` lines.
+
 Audit events, which also go to stderr, don't change. They carry `ts` and `evt`, and no `severity`.
 
 ### Health

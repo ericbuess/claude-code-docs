@@ -274,7 +274,7 @@ Multiple Claude Code installations can cause version mismatches or unexpected be
 > ls -la ~/.local/bin/claude
 > ```
 >
-> A native install shows a symlink into `~/.local/share/claude/versions/`. A script or a symlink you created yourself at this path is a custom launcher, which [auto-update leaves in place](https://code.claude.com/docs/en/setup.md#auto-updates).
+> A native install shows a symlink into `~/.local/share/claude/versions/`. If you put your own launcher at this path, see [Custom launchers](https://code.claude.com/docs/en/setup.md#custom-launchers).
 >
 > If either `ls` command prints `No such file or directory`, that's not an error. It means nothing is installed at that location, so move on to the next check.
 >

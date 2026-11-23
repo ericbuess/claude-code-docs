@@ -54,10 +54,11 @@ Before you turn on Code Mode, check that you can accept these limits:
 * **Model**: Claude Opus 5.5, Sonnet 5.5, Haiku 5.5, or Fable 5.2
 * **Surface**: an interactive `claude` session in a terminal. Code Mode doesn't work with the VS Code panel, the Desktop app, or cloud sessions
 * **Agent teams**: to use Code Mode with [agent teams](https://code.claude.com/docs/en/agent-teams.md) on, you need v2.1.326 or later. Teammates run in Code Mode in the default [in-process display mode](https://code.claude.com/docs/en/agent-teams.md#choose-a-display-mode), and start without it in split panes
+* **Telemetry settings**: to use Code Mode with [feature-flag fetching off](https://code.claude.com/docs/en/env-vars.md#features-that-need-feature-flag-fetching) or [OpenTelemetry](https://code.claude.com/docs/en/monitoring-usage.md) events and metrics on, you need v2.1.329 or later. Keep [tracing](https://code.claude.com/docs/en/monitoring-usage.md#traces-beta) off on any version
 * **Installation**: the [native build](https://code.claude.com/docs/en/setup.md) of Claude Code
 * **Windows**: [Git for Windows](https://git-scm.com/downloads/win) is installed
 
-You also can't start Code Mode with some settings on, such as an API key helper, OpenTelemetry export, or `DISABLE_TELEMETRY`. For the fix for each, see [Code Mode doesn't start](#code-mode-doesnt-start).
+You also can't start Code Mode with some settings on, such as an API key helper. For the fix for each, see [Code Mode doesn't start](#code-mode-doesnt-start).
 
 ## Try Code Mode
 
@@ -141,6 +142,14 @@ Add `CLAUDE_CODE_EXPERIMENTAL_CODE_MODE` with the value `0` to your [managed set
 ```
 
 Users who are in a Code Mode session stay in it until they exit or restart Claude Code. After that, your users start without Code Mode and can't resume their Code Mode sessions while the `0` is in place. You can't turn on Code Mode for your users from managed settings.
+
+### Monitor Code Mode with OpenTelemetry
+
+If you collect [OpenTelemetry events](https://code.claude.com/docs/en/monitoring-usage.md#events), your backend receives `tool_decision` and `tool_result` events for the tool calls in the code that Claude writes, under each tool's usual name, such as `Bash`. Update your queries and settings for these calls:
+
+* **Find calls from code**: filter on `tool_use_id` values that start with `repl_` or `toolu_cc_`. The `REPL` tool, which runs the code, has events of its own without either prefix
+* **Read classifier verdicts**: in auto mode, a call that the classifier's [review of the code](#permission-checks) covers has no `classifier_verdict`. Look for the verdict on the `REPL` tool's `tool_decision` events that have that call's `request_id`. If you find more than one, the events don't show which piece of code made the call
+* **Keep secrets out of your backend**: code can read a value, such as a token in a file, and pass it to another call. Leave `OTEL_LOG_TOOL_DETAILS` unset if your backend shouldn't receive those values
 
 ## Permissions and long-running code
 
@@ -295,12 +304,14 @@ If you check code output in a [`UserPromptSubmit` hook](https://code.claude.com/
 | Reason includes | What to do |
 | :- | :- |
 | `it isn't open to your account in this version` or `it isn't open to your account yet` | If your version is older than v2.1.323, [update](#try-code-mode). Otherwise, check your network connection and start again. If the reason stays, try again another day |
+| `Anthropic has turned it off for now` | [Update Claude Code](https://code.claude.com/docs/en/setup.md#update-claude-code), or start again later |
 | `it only works directly with the Anthropic API` or `it only works with the Anthropic API` | Remove the settings that route requests through a cloud provider, a gateway, or a custom `ANTHROPIC_BASE_URL` |
 | `it doesn't work with an API key helper` | Remove `apiKeyHelper`, `ANTHROPIC_AUTH_TOKEN`, and any `Authorization` or `X-Api-Key` header in `ANTHROPIC_CUSTOM_HEADERS`. Then sign in or set `ANTHROPIC_API_KEY` |
 | `it only works with Opus 5.5, Sonnet 5.5 and later models` | Start with a [supported model](#requirements), for example with `--model opus`. Haiku 5.5 and Fable 5.2 also work |
 | `it doesn't work in background jobs` | Start in the foreground, without `--remote-control`. If the reason shows in a teammate's split pane, use the [in-process display mode](https://code.claude.com/docs/en/agent-teams.md#choose-a-display-mode) to run teammates in Code Mode |
-| `it needs settings that Claude Code downloads from Anthropic` | Unset the variable that [turns off feature-flag fetching](https://code.claude.com/docs/en/env-vars.md#features-that-need-feature-flag-fetching), such as `DISABLE_TELEMETRY` |
-| `OpenTelemetry is on` | Unset `CLAUDE_CODE_ENABLE_TELEMETRY` and `ENABLE_BETA_TRACING_DETAILED` if you can work without [OpenTelemetry export](https://code.claude.com/docs/en/monitoring-usage.md) |
+| `it needs settings that Claude Code downloads from Anthropic` | [Update Claude Code](https://code.claude.com/docs/en/setup.md#update-claude-code) to meet the [telemetry settings requirement](#requirements). To stay on your version, unset the variable that [turns off feature-flag fetching](https://code.claude.com/docs/en/env-vars.md#features-that-need-feature-flag-fetching), such as `DISABLE_TELEMETRY` |
+| `OpenTelemetry tracing is on` | Unset `CLAUDE_CODE_ENHANCED_TELEMETRY_BETA`, `ENABLE_ENHANCED_TELEMETRY_BETA`, and `ENABLE_BETA_TRACING_DETAILED` if you can work without [traces](https://code.claude.com/docs/en/monitoring-usage.md#traces-beta) |
+| `OpenTelemetry is on` | To keep events and metrics on, [update Claude Code](https://code.claude.com/docs/en/setup.md#update-claude-code) and meet the [telemetry settings requirement](#requirements). To stay on your version, unset `CLAUDE_CODE_ENABLE_TELEMETRY` and `ENABLE_BETA_TRACING_DETAILED` if you can work without [OpenTelemetry export](https://code.claude.com/docs/en/monitoring-usage.md) |
 | `it doesn't yet work with the plugin` | In a session, run `/plugin` and disable each plugin that the reason names. If your organization turned one on, ask your administrator to turn it off |
 | `it doesn't yet work with an installed mod` | Turn off the [mod](https://code.claude.com/docs/en/plugins/mods/overview.md) that checks tool calls |
 | `it can't be used together with agent teams yet` | To keep agent teams on, [update Claude Code](https://code.claude.com/docs/en/setup.md#update-claude-code) to v2.1.326 or later. To stay on your version, unset `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` |
