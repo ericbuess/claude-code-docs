@@ -367,7 +367,7 @@ If cloud threads need to reach an internal API or a private package registry, or
 Cloud threads don't have the skills, MCP servers, plugins, and tools installed only on your machine. A thread that Claude runs on your machine through [Remote Control](https://code.claude.com/docs/en/remote-control.md) uses what's installed there. To make each of these available to cloud threads:
 
 * Skills: enable them for your claude.ai account, and cloud threads load the [skills you enable there](https://code.claude.com/docs/en/skills.md#skills-in-cowork-and-cloud-sessions), apart from [some threads in a self-hosted environment](https://code.claude.com/docs/en/self-hosted-environments-configuration.md#how-each-session’s-config-is-assembled). For skills committed to a repository, see [What threads pick up from your repositories](#what-threads-pick-up-from-your-repositories).
-* Plugins: enable them for your claude.ai account, and cloud threads load them, apart from scheduled tasks Claude set up.
+* Plugins: enable them for your claude.ai account at [claude.ai/customize/plugins](https://claude.ai/customize/plugins), and the cloud threads that Claude starts load them.
 * MCP servers: cloud threads get their MCP tools from the connectors on your claude.ai account, which are MCP servers you connect once at [claude.ai/customize/connectors](https://claude.ai/customize/connectors). Every cloud thread can use all of them with no per-project setup. The project conversation itself has no connectors, so send work that needs one as a task for a cloud thread. [How connectors reach Claude Code](https://code.claude.com/docs/en/mcp.md#how-connectors-reach-claude-code) lists the rules for cloud sessions and the settings that turn connectors off.
 * Command-line tools and packages: install them in the environment's [setup script](https://code.claude.com/docs/en/cloud-environments.md#setup-scripts).
 
@@ -469,9 +469,9 @@ When several threads come back having assumed something wrong, worked around mis
 2. For threads that started from a wrong assumption, open the thread from the **Threads** tab and mark it resolved from its menu, or tell it what to do instead. Its branch and any pull request stay on GitHub until you delete them.
 3. Fix the gap once, in [project instructions](#give-a-project-standing-context) or the [environment](#choose-an-environment-for-threads), then send one thread before sending the rest of the work again as new threads.
 
-### Claude hasn't responded
+### Claude's replies aren't getting through
 
-The project conversation shows a "Claude hasn't responded" banner when Claude is running but its replies aren't reaching the project. Click **Restart Claude** on the banner, or go to **Project settings > Advanced** and click **Restart** in the **Restart Claude** row. Claude reconnects to the conversation; any reply it was in the middle of writing is lost, and threads aren't affected.
+If the project conversation shows a "Claude's replies aren't getting through" banner, click **Restart Claude** on it. You can also go to **Project settings > Advanced** and click **Restart** in the **Restart Claude** row. Claude reconnects to the conversation; any reply it was in the middle of writing is lost, and threads aren't affected.
 
 ### Repository access errors
 

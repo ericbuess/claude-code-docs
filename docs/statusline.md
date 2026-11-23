@@ -217,7 +217,7 @@ Claude Code sends the following JSON fields to your script via stdin:
 | `agent.name` | Agent name when running with the `--agent` flag or agent settings configured |
 | `pr.number`, `pr.url` | Open pull request for the current branch. Mirrors the PR badge in the footer. In a repository with a GitLab remote, Claude Code fills these fields from the branch's open [merge request](https://code.claude.com/docs/en/interactive-mode.md#gitlab-merge-requests) instead, so `pr.number` is the merge request number. Merge request data requires Claude Code v2.1.234 or later. Absent when not in a git repository, until a pull request or merge request is found, or once it merges or closes |
 | `pr.review_state` | Review status of the open PR: `approved`, `pending`, `changes_requested`, or `draft`. May be independently absent even when `pr` is present |
-| `pr.kind` | `mr` when `pr` describes a [GitLab merge request](https://code.claude.com/docs/en/interactive-mode.md#gitlab-merge-requests). Absent for GitHub pull requests, so scripts written before this field keep working. For a merge request, Claude Code sets `review_state` to `approved` when GitLab reports it mergeable, `pending` for any other open state, and `draft` for a draft. Requires Claude Code v2.1.234 or later |
+| `pr.kind` | `mr` when `pr` describes a [GitLab merge request](https://code.claude.com/docs/en/interactive-mode.md#gitlab-merge-requests). Absent for GitHub pull requests. For a merge request, Claude Code sets `review_state` to `approved` when GitLab reports it mergeable, `pending` for any other open state, and `draft` for a draft. Requires Claude Code v2.1.234 or later |
 | `worktree.name` | Name of the active worktree. Present only while the session is in a [worktree session](https://code.claude.com/docs/en/worktrees.md) |
 | `worktree.path` | Absolute path to the worktree directory |
 | `worktree.branch` | Git branch name for the worktree (for example, `"worktree-my-feature"`). Absent for hook-based worktrees |
@@ -379,7 +379,7 @@ The `current_usage` object contains:
 
 For what the cache fields mean and how they're billed, see [check cache performance](https://code.claude.com/docs/en/prompt-caching.md#check-cache-performance).
 
-The `used_percentage` field is calculated from input tokens only: `input_tokens + cache_creation_input_tokens + cache_read_input_tokens`. It does not include `output_tokens`.
+The `used_percentage` field is calculated from input tokens only: `input_tokens + cache_creation_input_tokens + cache_read_input_tokens`.
 
 If you calculate context percentage manually from `current_usage`, use the same input-only formula to match `used_percentage`.
 

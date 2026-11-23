@@ -128,7 +128,7 @@ To let Claude act on a site, approve it when Claude Code asks. In [auto mode](ht
 
 ### Permission prompts in VS Code sessions
 
-In a VS Code session, when Claude Code asks before a browser action, the prompt appears as a card in the chat panel. When the action targets a site you haven't allowed, the card also offers to allow that site.
+In a VS Code session, when Claude Code asks before a browser action, the prompt appears as a card in the chat panel.
 
 In a session that connected to your browser at start because [Enabled by default](#enable-chrome-by-default) is on, Claude Code asks you before browser actions on a site you haven't allowed, in Manual, Edit automatically, Auto, and Bypass permissions modes. In Auto and Bypass permissions modes, this applies until you type `@browser` in that session.
 

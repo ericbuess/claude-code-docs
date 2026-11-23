@@ -4,7 +4,7 @@
 
 # Plugin manifest reference
 
-> Complete reference for plugin.json: fields with types and defaults, accepted path forms, and the userConfig and environment variable schemas.
+> Reference for plugin.json: fields with types and defaults, accepted path forms, and the userConfig and environment variable schemas.
 
 A plugin manifest is the `plugin.json` file in a plugin's `.claude-plugin/` directory. It carries the plugin's metadata and the [`userConfig`](#user-configuration) values that Claude Code prompts the user for. It also declares any component that you define inline or keep outside its [default location](#standard-layout).
 

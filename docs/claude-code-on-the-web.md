@@ -281,7 +281,7 @@ To add a missing change to the list, ask Claude to commit and push.
 
 ### Manage context
 
-Cloud sessions support [built-in commands](https://code.claude.com/docs/en/commands.md) that produce text output. Commands that only run in the terminal interface, such as `/plugin` or `/resume`, aren't available. Commands that open a picker or panel in the terminal behave differently in cloud sessions:
+Cloud sessions support [built-in commands](https://code.claude.com/docs/en/commands.md) that produce text output. Commands that only run in the terminal interface, such as `/resume`, aren't available. Commands that open a picker or panel in the terminal behave differently in cloud sessions:
 
 * **`/model`, `/effort`, `/color`, and `/rename`**: pass the value as an argument, for example `/model sonnet`, instead of opening the terminal picker or slider. The argument forms follow each command's [availability notes](https://code.claude.com/docs/en/commands.md#all-commands).
 * **`/fast`**: toggles [fast mode](https://code.claude.com/docs/en/fast-mode.md#use-fast-mode-in-cloud-sessions) for the session when fast mode is [available on your account](https://code.claude.com/docs/en/fast-mode.md#requirements). Requires Claude Code v2.1.271 or later in the session's environment.
@@ -335,27 +335,7 @@ If Claude has already read the message, it stays in the conversation.
 
 ### Share sessions
 
-To share a session, toggle its visibility according to the account types below. After that, share the session link as-is. Recipients see the latest state when they open the link, but their view doesn't update in real time.
-
-#### Share from an Enterprise or Team account
-
-Sharing works as follows for Enterprise and Team accounts:
-
-* **Visibility options**: **Private** and **Team**. Team visibility makes the session visible to other members of your claude.ai organization
-* **Repository access**: verification is enabled by default, based on the GitHub account connected to the recipient's account
-* **Your name**: your account's display name is visible to all recipients with access
-* **Slack sessions**: [Claude in Slack](https://code.claude.com/docs/en/slack.md) sessions are automatically shared with Team visibility
-
-#### Share from a Max, Ultra, or Pro account
-
-* **Visibility options**: **Private** and **Public**. Public visibility makes the session visible to any user logged into claude.ai
-* **Repository access**: verification isn't enabled by default
-* **Sensitive content**: check your session before sharing. Sessions may contain code and credentials from private GitHub repositories
-
-To require recipients to have repository access, or to hide your name from shared sessions, open Settings on claude.ai, then:
-
-* **If the Settings menu shows Code instead of Claude Code**: go to [**Privacy**](https://claude.ai/settings/data-privacy-controls), which has these settings
-* **Otherwise**: go to [**Claude Code > Sharing settings**](https://claude.ai/settings/claude-code)
+See [Share a cloud or Remote Control session](https://code.claude.com/docs/en/share-sessions.md) for how to share a session by link, what recipients can read, and how to stop sharing.
 
 ### Archive sessions
 
@@ -391,6 +371,8 @@ There are a few ways to turn on auto-fix depending on where the PR came from and
 * **Any existing PR**: paste the PR URL into a session and tell Claude to auto-fix it
 
 To stop monitoring, turn off **Auto-fix** in the pull request's **⋮** menu in the session's [**Changes** card](#review-changes), or tell Claude to stop watching the PR.
+
+In a repository where PR Steward works on your pull requests, the **Auto-fix** toggle is unavailable. A request to auto-fix a pull request that PR Steward is watching fails. See [Auto-fix is unavailable](https://code.claude.com/docs/en/pr-steward-troubleshooting.md#auto-fix-is-unavailable).
 
 ### How Claude responds to PR activity
 

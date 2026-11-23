@@ -618,7 +618,7 @@ The command shows configuration, not traffic. To confirm the requests themselves
 A session that sends model requests to Amazon Bedrock or Google Cloud's Agent Platform differs from a session on the Anthropic API in these ways:
 
 * **Policy from claude.ai**: [server-managed settings](https://code.claude.com/docs/en/server-managed-settings.md) don't reach these sessions. Neither do the organization policies an Owner sets in Claude Code admin settings, so Claude Code doesn't enforce them inside the session. Put the rules you rely on in the runner image's [managed settings file](https://code.claude.com/docs/en/managed-settings.md#delivery-mechanisms).
-* **Account skills**: these sessions don't download the skills enabled for a person's claude.ai account. See [How each session's config is assembled](#how-each-session’s-config-is-assembled).
+* **Account skills and plugins**: these sessions don't download the skills or plugins enabled for a person's claude.ai account. See [How each session's config is assembled](#how-each-session’s-config-is-assembled).
 * **Files**: files that people attach to a session in claude.ai or the mobile or desktop app don't reach it, and Claude can't send files back with the [`SendUserFile` tool](https://code.claude.com/docs/en/tools-reference). Put input files in the repository or on the runner instead.
 * **Model selection**: Anthropic's control plane sends each session's model, and when a session starts without one, Claude Code uses its default for the provider. You can't choose the model with `ANTHROPIC_MODEL` or `ANTHROPIC_DEFAULT_MODEL` in the runner's environment, but you can pin what an alias resolves to:
   * **`ANTHROPIC_MODEL` and `ANTHROPIC_DEFAULT_MODEL`**: the runner removes them from the environment it passes to sessions, even though the provider pages' examples set `ANTHROPIC_MODEL`.
@@ -861,7 +861,7 @@ To pre-approve specific tools, append `--allowed-tools` with your rules after `"
 
 ### How each session's config is assembled
 
-The runner gives each session its own config directory, seeded from a snapshot of the host's `~/.claude/` that the runner captures once at startup: `settings.json`, `CLAUDE.md`, hooks, agents, commands, and skills in your runner image apply to every session as the user-level baseline. If you change config on a running host, the change takes effect only after you restart the runner.
+A self-hosted runner gives each session its own config directory, seeded from a snapshot of the host's `~/.claude/` that the runner captures once at startup. The `settings.json`, `CLAUDE.md`, hooks, agents, commands, and skills in your runner image apply to sessions as the user-level baseline. If you change config on a running host, the change takes effect only after you restart the runner.
 
 Set `SELF_HOSTED_RUNNER_HOST_CONFIG_DIR` to seed from a different path, or point it at an empty directory to disable seeding.
 
@@ -871,6 +871,10 @@ Sessions also read these settings files:
 * **Managed settings**: sessions read [`managed-settings.json`](https://code.claude.com/docs/en/settings#where-settings-live) from the standard system path in your runner image. For whether its keys apply alongside [server-managed settings](https://code.claude.com/docs/en/server-managed-settings.md), see [how Claude Code combines managed sources](https://code.claude.com/docs/en/managed-settings.md#how-claude-code-combines-managed-sources).
 
 For the order these sources apply in, see [settings precedence](https://code.claude.com/docs/en/settings.md#settings-precedence).
+
+> [!NOTE]
+>
+> In a [PR Steward](https://code.claude.com/docs/en/pr-steward-setup.md#choose-the-environment-pr-steward-runs-in) session, Claude Code loads no `CLAUDE.md` or rules file from the runner. That covers your runner image and the repository's checkout. PR Steward reads the repository's instruction files [from its default branch](https://code.claude.com/docs/en/pr-steward-pull-requests.md#save-pr-steward-instructions-for-everyone-in-a-repository), so put what it should follow there.
 
 When Anthropic's control plane supplies a session with [Claude Code hooks](https://code.claude.com/docs/en/hooks.md), the runner installs them alongside, not over, your own configuration. Requires Claude Code v2.1.229 or later; older runners ignore supplied hooks. The supplied hooks run `python3`, so install `python3` in your [runner image](https://code.claude.com/docs/en/self-hosted-environments-deploy.md#build-the-runner-image).
 
@@ -914,7 +918,7 @@ In any other session with several repositories, Claude Code reads project settin
 * **`--capacity 1`, the default, with the built-in checkout**: the session starts in the first repository in its list of repositories. That repository's `.claude/settings.json` takes effect as project settings and its [`.mcp.json`](#mcp-servers) loads, and the other repositories' don't.
 * **A `--capacity` above one, or a [`checkout` hook](#checkout)**: the session starts in a per-session directory that contains the checkouts. No repository's `.claude/settings.json` takes effect as project settings, no repository's `.mcp.json` loads, and [`$CLAUDE_PROJECT_DIR`](https://code.claude.com/docs/en/hooks#reference-scripts-by-path) in a hook command is that directory, not a checkout.
 
-Each repository's `CLAUDE.md` loads wherever the session starts. Outside a project thread, its skills load too. The runner passes every repository to Claude Code as an [additional directory](https://code.claude.com/docs/en/permissions.md#additional-directories-grant-file-access-not-configuration), so outside a project thread, Claude Code also reads the `enabledPlugins` and `extraKnownMarketplaces` keys from each repository's `.claude/settings.json`. If you start the runner with [`--trust-workspace false`](https://code.claude.com/docs/en/self-hosted-environments-reference#runner-cli-flags), Claude Code skips both keys. Skipping `enabledPlugins` requires Claude Code v2.1.323 or later.
+Each repository's `CLAUDE.md` loads wherever the session starts. Outside a project thread, its skills load too. The runner passes every repository to Claude Code as an [additional directory](https://code.claude.com/docs/en/permissions.md#additional-directories-grant-file-access-not-configuration). Outside a project thread, the `enabledPlugins` and `extraKnownMarketplaces` keys can also come from each repository's `.claude/settings.json`. If you start the runner with [`--trust-workspace false`](https://code.claude.com/docs/en/self-hosted-environments-reference#runner-cli-flags), Claude Code skips both keys. Skipping `enabledPlugins` requires Claude Code v2.1.323 or later.
 
 To run a hook or apply a permission rule in every session, put it in `~/.claude/settings.json` on the runner host. The runner [seeds the host file into every session](#how-each-session’s-config-is-assembled), wherever the session starts. Write a path in a `Read` or `Edit` rule as a `//` absolute or `~/` home-relative [pattern](https://code.claude.com/docs/en/permissions.md#read-and-edit), because other patterns anchor at the settings source or the current directory.
 

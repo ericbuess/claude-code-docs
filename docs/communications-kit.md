@@ -517,7 +517,7 @@ Share these starter prompts with engineers who have installed but aren't sure wh
 | Write tests | "write tests for \[file] that cover the edge cases around \[scenario]" |
 | Review before commit | "look at my working diff and tell me what looks risky" |
 | Open a PR | "fix \[issue], write a conventional commit, and open a PR with a summary" |
-| Make a skill | "make me a /ship skill that runs tests and lint before commit" |
+| Make a skill | "make me a /precommit skill that runs tests and lint before commit" |
 | Debug a stack trace | "here's the stack trace, find the root cause, don't just paper over it" |
 
 > [!TIP]

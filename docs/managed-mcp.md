@@ -369,7 +369,7 @@ Before loading a server, including one from `managed-mcp.json`, Claude Code runs
 Three groups of servers skip the allowlist check, in addition to the in-process `type: "sdk"` servers that skip [all three checks](#how-a-server-is-evaluated):
 
 * The organization's own servers: every `managedMcpServers` entry, and any `managed-mcp.json` entry whose values use no `${VAR}` expansion outside `env`.
-* Built-in servers, such as Claude in Chrome, the `ide` server Claude Code connects to in a running VS Code or JetBrains IDE, and servers the CLI itself configures.
+* Some built-in servers, such as the `ide` server Claude Code connects to in a running VS Code or JetBrains IDE, and Claude in Chrome in terminal sessions.
 * A [Claude Tag](https://code.claude.com/docs/en/claude-tag.md) session's Slack tools: the servers it uses to read the thread and post its replies load without an allowlist entry.
 
 A `managed-mcp.json` server that uses `${VAR}` expansion in its command, arguments, URL, or headers is still checked. Claude Code also checks every server a user, a plugin, or claude.ai adds, and every server a user passes with `--mcp-config`. For the versions that changed which `managed-mcp.json` servers are checked, and how to keep one from loading, see [How allowlists and denylists apply to the managed set](#how-allowlists-and-denylists-apply-to-the-managed-set).

@@ -27,7 +27,7 @@ In a terminal Claude Code session, install from the [official Anthropic marketpl
 /plugin install security-guidance@claude-plugins-official
 ```
 
-`/plugin` opens an interactive panel in the terminal CLI. If Claude replies that `/plugin` isn't available in this environment, install another way:
+`/plugin` opens an interactive panel in the terminal CLI. Outside the terminal, install another way:
 
 * **Claude desktop app, local or SSH session**: use the **Desktop app** tab under [Install a plugin](https://code.claude.com/docs/en/plugins/install.md#install-a-plugin)
 * **VS Code extension**: install from the [**Manage plugins** dialog](https://code.claude.com/docs/en/vs-code.md#manage-plugins)

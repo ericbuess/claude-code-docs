@@ -237,7 +237,7 @@ After you stop the code, check `/tasks` for [subagents](https://code.claude.com/
 
 ### Check code output with a hook
 
-To check or redact what the code returns before Claude reads it, write a [`PostToolUse` hook](https://code.claude.com/docs/en/hooks#posttooluse) that matches `REPL`, the tool that runs the code. The same hook runs when [background code](#long-running-code) finishes and when code throws an error.
+To check or redact what the code returns, write a [`PostToolUse` hook](https://code.claude.com/docs/en/hooks#posttooluse) that matches `REPL`, the tool that runs the code. The same hook runs when [background code](#long-running-code) finishes and when code throws an error.
 
 #### Read code output in the hook
 

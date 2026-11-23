@@ -52,7 +52,7 @@ Features range from always-on context that Claude sees every session, to on-dema
 
 ### Build your setup over time
 
-You don't need to configure everything up front. Each feature has a recognizable trigger, and most teams add them in roughly this order:
+Each feature has a recognizable trigger, and most teams add them in roughly this order:
 
 | Trigger | Add |
 | :- | :- |

@@ -6,9 +6,9 @@
 
 > Turn on Code Review for your Claude organization: connect GitHub, install the Claude GitHub App, choose repositories, and set when reviews run
 
-As an Owner of your Claude organization, you turn on Code Review in [**Admin settings > Claude Code**](https://claude.ai/admin-settings/claude-code#code-review) on claude.ai. Reviews run on Anthropic infrastructure, so you don't add workflow files to your repositories.
+An Owner of your Claude organization turns on Code Review in [**Organization settings > Claude Ship**](https://claude.ai/admin-settings/claude-code#code-review) on claude.ai. Reviews run on Anthropic infrastructure, so you don't add workflow files to your repositories.
 
-After setup, you choose how thorough reviews are and when they run in each repository. You spend more at a higher review level and when reviews run more often. See [Code Review costs](https://code.claude.com/docs/en/code-review-costs.md#pricing).
+After setup, an Owner chooses how thorough reviews are and when they run in each repository. You spend more at a higher review level and when reviews run more often. See [Code Review costs](https://code.claude.com/docs/en/code-review-costs.md#pricing).
 
 ## What you need to turn on Code Review
 
@@ -22,11 +22,11 @@ First check that your organization [qualifies for Code Review](https://code.clau
 
 ## Turn on Code Review
 
-**1. Click the Allow code review switch**
+**1. Turn on the switch under Review**
 
-Go to the **Code review** section of [**Admin settings > Claude Code**](https://claude.ai/admin-settings/claude-code#code-review) and click the **Allow code review** switch.
+Go to [**Organization settings > Claude Ship**](https://claude.ai/admin-settings/claude-code#code-review) and turn on the switch under **Review**. In the **Turn on Code review** dialog, click **Turn on**.
 
-If Code Review turns on right away with no dialog, your organization already has the Claude GitHub App linked or repositories added. Go to [Add more repositories](#add-more-repositories), then come back for the last step.
+If your organization already has the Claude GitHub App linked or repositories added, no other dialog follows and Code Review is on. Go to [Add more repositories](#add-more-repositories), then come back for the last step.
 
 **2. Connect your GitHub account**
 
@@ -49,9 +49,11 @@ If the repositories you want are listed in the **Add a repository** dialog, or y
 
 Select the repositories you want reviewed, then click the button that adds them, which reads **Add 2 repositories** when you've selected two. Adding a repository needs write access to it from the GitHub account you connected. You can [add more repositories](#add-more-repositories) later.
 
-**5. Click Finish**
+**5. Click Turn on**
 
-A **Code review is set up** dialog follows. Click **Finish** to turn Code Review on. If you close the dialog any other way, your repositories stay added but **Allow code review** stays off, and you turn it on from the switch.
+In the **Choose what Claude does on these repositories** dialog, leave **Code review** selected. If **Steward** is selected and you can change it, clear it unless you also want [PR Steward](https://code.claude.com/docs/en/pr-steward.md) on these repositories. Then click **Turn on**, which is the click that turns Code Review on.
+
+If you close the dialog any other way, your repositories stay added and nothing is turned on. To turn Code Review on then, use the switch under **Review** again.
 
 Each repository starts set to review after every push, which runs the most reviews. To run fewer, [set when reviews run](#set-when-reviews-run).
 
@@ -65,7 +67,7 @@ Once the review arrives, send your developers [Read and request reviews on a pul
 
 ## Set defaults for your organization
 
-As an Owner, you decide how thorough reviews are and how often they run. Both are in the **Code review** section of [**Admin settings > Claude Code**](https://claude.ai/admin-settings/claude-code#code-review).
+An Owner decides how thorough reviews are and how often they run. Set both in [**Organization settings > Claude Ship**](https://claude.ai/admin-settings/claude-code#code-review): the default review level for your Claude organization, and when reviews run for each repository or for [a whole GitHub organization](#cover-a-whole-github-organization).
 
 ### Set the default review level
 
@@ -92,10 +94,15 @@ Each repository has its own **Review runs** setting, which decides when its pull
 
 Manual is useful for high-traffic repositories where you want to opt specific pull requests into review, or to start reviewing pull requests only once they're ready. To compare what each option does to spend, see [How often reviews run](https://code.claude.com/docs/en/code-review-costs.md#how-often-reviews-run).
 
-To change the setting, click **Edit** on the repository's row in the **Repositories** table and select a **Review runs** option. The choice saves as soon as you select it, and the table's **Review runs** column shows it shortened to Once per PR, Every push, or Manual.
+To change the setting on the [**Claude Ship**](https://claude.ai/admin-settings/claude-code#code-review) page, click **Edit** on the repository's row in the **Repositories** table and select a **Review runs** option:
+
+![A repository's Edit dialog with the Review runs menu open, listing Once after PR creation, After every push, which is selected, and Manual (@claude review).](https://mintcdn.com/claude-code/cMjxXVBUSLLh9iVu/images/code-review-setup-review-runs-light.png?fit=max\&auto=format\&n=cMjxXVBUSLLh9iVu\&q=85\&s=fe7c63cddcc105ddf7bab4e10e104ba7)
+
+Your choice saves as soon as you select it. The **Repositories** table's **Code review** column shows it shortened to Once per PR, Every push, or Manual.
 
 * **Drafts and pull requests from forks**: whichever option you choose, [automatic reviews skip both](https://code.claude.com/docs/en/code-review-pull-requests.md#review-drafts-and-pull-requests-from-forks)
 * **New repositories**: a repository you add from the **Add a repository** dialog starts at **After every push**. If its GitHub organization is [covered as a whole](#cover-a-whole-github-organization), it takes that organization row's setting instead.
+* **A [Claude Approvals](https://code.claude.com/docs/en/approvals.md) policy file**: in a repository that has one, [reviews can start](https://code.claude.com/docs/en/approvals-setup.md#what-approvals-costs) that this setting wouldn't start, and [automatic ones can stop](https://code.claude.com/docs/en/approvals-policy.md#advisory)
 
 ### Turn tip comments on or off
 
@@ -124,10 +131,12 @@ You can add repositories one at a time or cover a whole GitHub organization at o
 
 ### Add more repositories
 
-To add repositories after setup, click **Add** above the **Repositories** table in the **Code review** section. The **Add a repository** dialog opens. Select repositories and click the button that adds them, which reads **Add 2 repositories** when you've selected two.
+To add repositories after setup, click **Add** above the **Repositories** table in [**Organization settings > Claude Ship**](https://claude.ai/admin-settings/claude-code#code-review). The **Add a repository** dialog opens. Select repositories and click the button that adds them, which reads **Add 2 repositories** when you've selected two.
 
+* **A Connect GitHub dialog opens first**: follow the step [Connect your GitHub account](#turn-on-code-review), which ends with **Add a repository** open
 * **A repository isn't listed**: see [A repository isn't listed in Add a repository](https://code.claude.com/docs/en/code-review-troubleshooting.md#a-repository-isn’t-listed-in-add-a-repository).
 * **You want every repository in a GitHub organization**: [cover the organization](#cover-a-whole-github-organization) instead of selecting repositories one at a time
+* **These are your organization's first repositories**: the **Choose what Claude does on these repositories** dialog follows. Set its checkboxes as in the step [Click Turn on](#turn-on-code-review), then click its button, which reads **Turn on** or **Done**. Either way, Code Review is on afterward.
 
 ### Cover a whole GitHub organization
 
@@ -148,12 +157,14 @@ After you confirm, these changes take effect:
 
 ### Turn off Code Review or remove a repository
 
-In the **Code review** section of [**Admin settings > Claude Code**](https://claude.ai/admin-settings/claude-code#code-review), pick the control that matches what you want to stop:
+In [**Organization settings > Claude Ship**](https://claude.ai/admin-settings/claude-code#code-review), pick the control that matches what you want to stop:
 
 * **One repository, keeping it in the list**: click **Edit** on its row and turn off **Code review**. The table shows the repository as Off.
-* **One repository, removing it**: click **Edit** on its row, then **Remove repository** at the bottom of the dialog. Reviews stop there, and another Claude organization can then set that repository up. While the repository's GitHub organization is covered as a whole, you can't remove it; turn off its **Code review** switch instead.
+* **One repository, removing it**: click **Edit** on its row, then **Remove repository** at the bottom of the dialog. Another Claude organization can then set that repository up. While the repository's GitHub organization is covered as a whole, you can't remove it; turn off its **Code review** switch instead.
 * **A whole GitHub organization**: click **Edit** on the organization's row and select **Off**. This also turns off repositories in that organization that you added one at a time.
-* **Everything**: turn off **Allow code review**. No new reviews start in any repository, and your repository list stays so you can turn it back on later.
+* **Everything**: turn off the switch under **Review**. Your repository list stays so you can turn the switch back on later.
+
+With a repository's **Code review** switch off, or with the switch under **Review** off, a [Claude Approvals](https://code.claude.com/docs/en/approvals-setup.md#what-approvals-costs) policy can start billed reviews. To stop those, change the policy or [turn off Approvals](https://code.claude.com/docs/en/approvals-setup.md#turn-off-approvals). Code Review's spend limit applies to them.
 
 ## Related resources
 

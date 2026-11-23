@@ -52,6 +52,8 @@ These require signing in with a claude.ai account and are not reachable with an 
 * [Cloud scheduled tasks](https://code.claude.com/docs/en/routines.md) (`/schedule`)
 * [Ultrareview](https://code.claude.com/docs/en/ultrareview.md)
 * [Code Review](https://code.claude.com/docs/en/code-review.md): Team and Enterprise plans
+* [PR Steward](https://code.claude.com/docs/en/pr-steward.md): Team and Enterprise plans
+* [Claude Approvals](https://code.claude.com/docs/en/approvals.md): Team and Enterprise plans
 * [Remote Control](https://code.claude.com/docs/en/remote-control.md)
 * [Chrome extension](https://code.claude.com/docs/en/chrome.md)
 * [Computer use](https://code.claude.com/docs/en/computer-use.md): Pro, Max, and Ultra plans
@@ -347,6 +349,8 @@ In Enterprise organizations with the [HIPAA configuration](https://code.claude.c
 | [Computer use](https://code.claude.com/docs/en/computer-use.md) | ✓ | ✓ | ✓ | ✗ | ✗ |
 | Dispatch ([Desktop](https://code.claude.com/docs/en/desktop.md#sessions-from-dispatch)) | Not available to new users | Not available to new users | Not available to new users | ✗ | ✗ |
 | [Code Review](https://code.claude.com/docs/en/code-review.md) | ✗ | ✗ | ✗ | ✓ | ✓ |
+| [PR Steward](https://code.claude.com/docs/en/pr-steward.md) | ✗ | ✗ | ✗ | ✓ | ✓ |
+| [Claude Approvals](https://code.claude.com/docs/en/approvals.md) | ✗ | ✗ | ✗ | ✓ | ✓ |
 | [Artifacts](https://code.claude.com/docs/en/artifacts.md) | ✓ | ✓ | ✓ | ✓ | ✓ |
 | [Analytics dashboard and contribution metrics](https://code.claude.com/docs/en/analytics.md) | ✗ | ✗ | ✗ | ✓ | ✓ |
 | [Enterprise Analytics API](https://code.claude.com/docs/en/analytics.md#access-data-programmatically) | ✗ | ✗ | ✗ | ✗ | ✓ |

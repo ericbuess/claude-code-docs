@@ -8,7 +8,7 @@
 
 With Code Review, Claude reviews the pull requests in your GitHub repositories. Several agents read each change alongside the surrounding code, looking for issues such as logic errors, security vulnerabilities, or broken edge cases. A verification step checks findings against the code before they're reported.
 
-Findings arrive as inline comments on the lines concerned, ranked by [severity](https://code.claude.com/docs/en/code-review-pull-requests.md#severity-levels), with a summary and a check run on the pull request. A review never approves or blocks the pull request, so the decision to merge stays with your team.
+Findings arrive as inline comments on the lines concerned, ranked by [severity](https://code.claude.com/docs/en/code-review-pull-requests.md#severity-levels), with a summary and a check run on the pull request. By itself, a review doesn't approve or block the pull request. Its result counts toward approvals in a repository whose [Claude Approvals](https://code.claude.com/docs/en/approvals.md) policy file uses it.
 
 ![Diagram of a review in four stages. A pull request on GitHub goes to several agents that search in parallel on Anthropic infrastructure. A verification step drops false positives, the remaining findings are deduplicated and ranked by severity, and the review posts inline comments, a summary, and a check run back on GitHub.](https://mintcdn.com/claude-code/gLJVaPQEgKC8ZyUD/images/code-review-pipeline.svg?fit=max\&auto=format\&n=gLJVaPQEgKC8ZyUD\&q=85\&s=0351c96df9efa3105172eb00a672f130)
 

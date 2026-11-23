@@ -81,8 +81,6 @@ Ask Claude to revise the page, or let a long-running task republish as it makes 
 Add a per-region breakdown below the summary chart and republish.
 ```
 
-Anyone with the page open sees the update in place. Each publish becomes a version, and from the **Share** control in the page header you can choose which version viewers see.
-
 To update an artifact from a different session, give Claude its URL, or attach it with [`/artifacts`](#find-an-artifact-again). Without either, a new session creates a new artifact instead of updating one.
 
 ```text wrap theme={null}

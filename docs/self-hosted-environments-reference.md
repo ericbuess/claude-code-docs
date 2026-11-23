@@ -4,7 +4,7 @@
 
 # Self-hosted environments reference
 
-> Complete reference for the self-hosted runner and orchestrator: CLI flags, environment variables, and Prometheus metrics.
+> Reference for the self-hosted runner and orchestrator: CLI flags, environment variables, and Prometheus metrics.
 
 > [!NOTE]
 >
@@ -12,7 +12,7 @@
 
 This page is the reference for the two processes you run in a [self-hosted environment](https://code.claude.com/docs/en/self-hosted-environments): the runner, which executes Claude Code [cloud sessions](https://code.claude.com/docs/en/claude-code-on-the-web.md) on your hosts, and the optional autoscaling orchestrator, which starts runners as sessions queue. Each has its own flag table. Both run on Linux or macOS hosts, which the defaults such as `/workspace` and `~/.claude` assume. Run `claude self-hosted-runner --help` for the authoritative list on your installed version.
 
-Metric series and a few API fields still use `pool` for what these pages call an environment; both terms name the same thing. The environment ID is the `pool_id` field, with the form `ccpool_...`: wherever these pages show a `pool` identifier, it names the environment. CLI flags and environment variables spell it `environment`, such as `--environment-secret-file`; the deprecated `pool` spellings still work, as the [`--environment-secret-file` row](#runner-cli-flags) describes.
+Metric series and a few API fields still use `pool` for what these pages call an environment. The environment ID is the `pool_id` field, with the form `ccpool_...`: wherever these pages show a `pool` identifier, it names the environment. CLI flags and environment variables spell it `environment`, such as `--environment-secret-file`; the deprecated `pool` spellings still work, as the [`--environment-secret-file` row](#runner-cli-flags) describes.
 
 ## Runner CLI flags
 

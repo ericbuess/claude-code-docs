@@ -20,21 +20,26 @@ Find the **Claude Code Review** check run on your pull request, then match its t
 | **Code review skipped — no new changes** | An automatic review didn't run on your latest push | To get a review anyway, comment `@claude review` |
 | **Code review not repeated — earlier findings still open** | An automatic review didn't run on your latest push, and Important findings from the earlier review are still open | Push a fix, or to get a review anyway, comment `@claude review`. See [When a push keeps the earlier result](https://code.claude.com/docs/en/code-review-pull-requests.md#when-a-push-keeps-the-earlier-result) |
 | **Code review failed** or **Code review timed out** | The review didn't finish | To run it again, see [Retrigger a failed or timed-out review](#retrigger-a-failed-or-timed-out-review) |
+| **Code review not run: no policy rule uses it** | An automatic review didn't run, because of the repository's Claude Approvals policy | See [Code review not run: no policy rule uses it](#code-review-not-run-no-policy-rule-uses-it) |
 | **Code review declined** | The review didn't run | Read the check run's summary. If it names a budget or a spend limit, see [Review didn't run and the PR shows a budget message](#review-didn’t-run-and-the-pr-shows-a-budget-message) |
 | No check run | No review started | Comment `@claude review`. If no check run appears after that, see [A comment command didn't start a review](#a-comment-command-didn’t-start-a-review) |
 
 ## A review didn't start
 
-Check these cases when no **Claude Code Review** check run appears, or when Claude posts a comment saying the review was skipped.
+Check these cases when no **Claude Code Review** check run appears, or when Claude posts a comment saying the review was skipped. One case covers a check run whose title says that no review ran.
 
 ### A comment command didn't start a review
 
 After you comment `@claude review`, look for a **Claude Code Review** check run titled **Code review queued...** or **Code review in progress...** on the pull request. An 👀 reaction on your comment doesn't confirm a review is coming. If no check run appears, check for each of these causes:
 
-* **Code Review isn't on for this repository**: Claude posts no comment and no check run in response to the command. Ask an Owner to [add the repository](https://code.claude.com/docs/en/code-review-setup.md#add-more-repositories).
+* **Code Review isn't on for this repository**: Claude posts no comment and no check run in response to the command. Ask an Owner to [add the repository](https://code.claude.com/docs/en/code-review-setup.md#add-more-repositories). Where a [Claude Approvals](https://code.claude.com/docs/en/approvals.md) policy reads Claude's review, a new comment with only `@claude review` can still start one.
 * **The comment doesn't meet a condition**: it was an inline comment or a review body rather than a new top-level comment, or the command wasn't at the start of the comment. Editing an earlier comment instead of posting a new one doesn't count either, and the pull request has to be open. See the [conditions for comment commands](https://code.claude.com/docs/en/code-review-pull-requests.md#comment-commands) and post a new comment that meets them.
 * **You don't have write access**: you need write, maintain, or admin permission on the repository. On a pull request from a fork, the permission that counts is on the base repository. Unless the pull request is yours, Claude can reply with a [tip](https://code.claude.com/docs/en/code-review-setup.md#turn-tip-comments-on-or-off): "No review was started: manual reviews can only be requested by someone with write access to this repository." Ask someone with write access to comment instead.
 * **The budget ran out**: Claude posts a comment that begins with "⚠️ Code review skipped". See [Review didn't run and the PR shows a budget message](#review-didn’t-run-and-the-pr-shows-a-budget-message).
+
+### Code review not run: no policy rule uses it
+
+This title on the **Claude Code Review** check means that the repository has a [Claude Approvals](https://code.claude.com/docs/en/approvals.md) policy file, and the policy asks for no review on this pull request. To get a review anyway, comment `@claude review` on the pull request. To bring automatic reviews back, [name Code Review in a rule that has a `verdict` and matches the changed files](https://code.claude.com/docs/en/approvals-policy#advisory).
 
 ### Review didn't run and the PR shows a budget message
 
@@ -88,7 +93,7 @@ Search for the repository by name first, because the dialog doesn't load a long 
 
 ### No check run appears on the test pull request
 
-Confirm that **Allow code review** is on, that the repository is listed under **Repositories** in the **Code review** section, and that the Claude GitHub App has access to it. Automatic reviews skip draft pull requests, and a repository set to **Manual (@claude review)** needs an `@claude review` comment to start the first review.
+In [**Organization settings > Claude Ship**](https://claude.ai/admin-settings/claude-code#code-review), confirm that the switch under **Review** is on and that the repository is listed under **Repositories**. Also confirm that the Claude GitHub App has access to it. Automatic reviews skip draft pull requests, and a repository set to **Manual (@claude review)** needs an `@claude review` comment to start the first review.
 
 ## Related resources
 

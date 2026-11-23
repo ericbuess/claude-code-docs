@@ -68,13 +68,15 @@ Each of these follows `hooks module`, the mod's name, and `not loaded:` in the d
 
 ### Messages from the built-in guard
 
-Where the [built-in guard](https://code.claude.com/docs/en/plugins/mods/admin.md#know-what-happens-by-default) loads, it can refuse a mod or one of its answers. Some messages name the option your organization's administrator sets to change the rule.
+Where the [built-in guard](https://code.claude.com/docs/en/plugins/mods/admin.md#know-what-happens-by-default) loads, it can refuse a mod or one of its answers or calls. Some messages name the option your organization's administrator sets to change the rule.
 
 | Message contains | What it means | Where it appears |
 | :- | :- | :- |
 | `mods are limited to your organization's by policy (allowManagedModsOnly)` | Your organization allows only [its own mods](https://code.claude.com/docs/en/plugins/mods/admin.md#install-your-organizations-mods), so yours was refused | The debug log, and the transcript in a [session that hot-reloads a plugin directory](#find-out-why-a-mod-does-nothing) |
-| `tried to lift a deny rule in your settings` | Your mod's [`tool.check`](https://code.claude.com/docs/en/plugins/mods/reference#tools) hook approved a call that a `deny` rule refuses. The call stays denied. | The transcript and the debug log, once for each mod in a session. In a `claude -p` run, the debug log. |
+| `tried to lift` or `tried to reword`, such as `tried to lift a deny rule in your settings` | A hook in your mod, such as [`tool.check`](https://code.claude.com/docs/en/plugins/mods/events#approve-or-refuse-a-tool-call-before-the-user-is-asked), tried to loosen or reword the decision the message names. That decision stands. Return what `await next(e)` gives you, or a stricter decision. | The transcript and the debug log. In a `claude -p` run, the debug log. |
 | `the rules and hooks in your settings could not be checked for this call, so it is refused` | The guard failed while checking a call that a mod approved, so it refused the call | The reason Claude reads for the denied call |
+| `is not for plugins outside policy to change` | Your mod tried to change an environment variable the guard refuses. Remove that `$.env.set` call. | The error `$.env.set` throws |
+| `would be named as a tool of one of the organization's servers` | One cause is a plugin name that matches one of your organization's MCP server or plugin names. Rename the plugin and update hooks that match the tool's old [full name](https://code.claude.com/docs/en/plugins/mods/api.md#add-a-tool). If the error stays, ask an administrator whether [`managed-mcp.json`](https://code.claude.com/docs/en/managed-mcp#deploy-managed-mcp-json) is readable and valid. | The error `$.tool.register` throws |
 
 ### `validate` passes and lists no `hooks` line
 

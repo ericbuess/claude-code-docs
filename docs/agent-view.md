@@ -60,7 +60,7 @@ To move a session you already have open into agent view, run `/bg` inside it, or
 
 In a regular `claude` session, pressing `←` on an empty prompt opens agent view, and a `←` hint in the footer reports on your background sessions:
 
-* **Hint**: the footer shows `← for agents` for ten seconds after the session opens. Pressing `←` still works after the hint disappears
+* **Hint**: the footer shows `← for agents` for ten seconds after the session opens
 * **Waiting count**: while background sessions wait on your input, the same spot counts them, such as `← 2 agents`, or `← 99+ agents` when more than 99 wait. The count refreshes about every ten seconds while the terminal is focused and immediately when focus returns
 * **Finished count**: when background sessions finish successfully while none wait on your input, the footer briefly shows how many finished, such as `← 2 done` for two
 
@@ -839,7 +839,7 @@ To check which kind of session you're in, run [`/status`](https://code.claude.co
 
 ### The supervisor process
 
-The supervisor is a background service that runs your background sessions so they keep working after you close agent view or your terminal. Claude Code starts it the first time you background a session or open agent view, and you don't need to manage it yourself.
+The supervisor is a background service that runs your background sessions so they keep working after you close agent view or your terminal. Claude Code starts it the first time you background a session or open agent view.
 
 Each session is its own Claude Code process under the supervisor, and what happens to that process depends on the session's state:
 
@@ -912,7 +912,7 @@ Run `/tasks` to see everything that's running, then confirm to background anyway
 
 This notice names a background [subagent](https://code.claude.com/docs/en/sub-agents.md) that isn't running in this session.
 
-Claude sees the notice and replies on its own, so you don't need to prompt it. If you still need that subagent's work after reading Claude's reply, ask Claude for it.
+Claude sees the notice and replies on its own. If you still need that subagent's work after reading Claude's reply, ask Claude for it.
 
 ### Prompt rejected as too short
 
@@ -929,7 +929,7 @@ Shutting down or restarting your machine stops running background sessions. A se
 
 When [transcript cleanup](https://code.claude.com/docs/en/settings-reference.md#cleanupperioddays) has removed a stopped session's saved conversation, Claude Code refuses to open the row: the message says there is nothing to resume. `claude rm <id>` deletes the row, unless [Claude Code refuses](#what-deleting-a-session-removes), and `claude respawn <id>` runs its original prompt again. See [This session's saved conversation is no longer on disk](https://code.claude.com/docs/en/errors.md#this-sessions-saved-conversation-is-no-longer-on-disk).
 
-Sleep alone doesn't stop sessions. Sessions are preserved across sleep and the supervisor reconnects to them on wake.
+Sessions are preserved across sleep and the supervisor reconnects to them on wake.
 
 ### Opening a session says the conversation is already open
 

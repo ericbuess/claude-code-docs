@@ -547,7 +547,7 @@ Claude Code deletes old session transcripts after the [`cleanupPeriodDays`](http
 
 ### How it works
 
-While auto memory is on, the first 200 lines or 25KB of `MEMORY.md`, whichever comes first, load at session start. Content beyond that threshold is not loaded at session start. Claude keeps `MEMORY.md` concise by moving detailed notes into separate topic files.
+While auto memory is on, the first 200 lines or 25KB of `MEMORY.md`, whichever comes first, load at session start. Claude keeps `MEMORY.md` concise by moving detailed notes into separate topic files.
 
 After Claude writes to `MEMORY.md`, Claude Code measures the file against the 200-line and 25KB read limits. If the file is near a limit, Claude Code reminds Claude to shorten it: keep one line per entry, move detail into topic files, and merge or drop stale entries. If the file is over a limit, the write still succeeds, but Claude Code returns an [error telling Claude to rewrite the index](https://code.claude.com/docs/en/errors.md#memory-index-is-over-its-read-limit), because everything past the limit is dropped on the next load.
 

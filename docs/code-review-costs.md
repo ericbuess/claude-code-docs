@@ -30,13 +30,15 @@ Comment commands, drafts, and pull requests from forks adjust those counts:
 * **`@claude review`**: runs a single review without subscribing to future pushes
 * **Drafts and pull requests from forks**: [automatic reviews skip both](https://code.claude.com/docs/en/code-review-pull-requests.md#review-drafts-and-pull-requests-from-forks), so pushes to them don't add reviews
 
+In a repository with a [Claude Approvals](https://code.claude.com/docs/en/approvals-setup.md#what-approvals-costs) policy file, reviews can start that the **Review runs** setting wouldn't start, and [automatic ones can stop](https://code.claude.com/docs/en/approvals-policy.md#advisory).
+
 ## Estimate your spend
 
 Before a wide rollout, run a small pilot to estimate monthly spend from your own pull requests.
 
 1. Set a [monthly spend limit](#limit-your-spend) for the pilot.
 2. Turn on Code Review for a few representative repositories with **Review runs** set to **Once after PR creation** or **Manual (@claude review)**.
-3. After several reviews have run, read each repository's average cost per review in the **Average cost** column of the **Repositories** table, in the **Code review** section of [**Admin settings > Claude Code**](https://claude.ai/admin-settings/claude-code#code-review).
+3. After several reviews have run, go to [**Organization settings > Claude Ship**](https://claude.ai/admin-settings/claude-code#code-review) and click **Edit** on each repository's row in the **Repositories** table. Read its average cost per review under **Cost**.
 4. Multiply that average by the number of pull requests the repository opens in a month. For **After every push**, multiply again by the typical number of pushes per pull request.
 
 A repository's average moves with the size of its pull requests and with the review level you choose.

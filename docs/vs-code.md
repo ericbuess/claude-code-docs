@@ -857,7 +857,7 @@ Within a turn, your screen reader announces whose message you're on as you move 
 
 Because the extension exposes the transcript as a labeled region, you can also move focus to the transcript itself with `Tab` and read it at your own pace. To move focus to the newest message or a waiting permission prompt instead, run **Claude Code: Focus last message** from the [Command Palette](#vs-code-commands-and-shortcuts).
 
-When a permission prompt option saves a permission rule or directory access, its label ends by naming where the approval is saved, such as "all projects" or "this session". To change the destination:
+When a permission prompt option saves a permission rule or directory access, its label names where the approval is saved, such as "all projects" or "this session". To change the destination:
 
 * With that option focused, press the `Left` or `Right` arrow key. The extension announces each destination as you move to it. The arrow keys require Claude Code v2.1.268 or later.
 * Click the destination in the label.

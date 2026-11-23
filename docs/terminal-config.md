@@ -6,7 +6,7 @@
 
 > Fix Shift+Enter for newlines, get a terminal bell when Claude finishes, configure tmux, match the color theme, and enable Vim mode in the Claude Code CLI.
 
-Claude Code works in any terminal without configuration. This page is for when something specific is not behaving the way you expect. Find your symptom below. If everything already feels right, you do not need this page.
+Claude Code works in any terminal without configuration. This page is for when something specific isn't behaving the way you expect. Find your symptom below.
 
 * [Shift+Enter submits instead of inserting a newline](#enter-multiline-prompts)
 * [Option-key shortcuts do nothing on macOS](#enable-option-key-shortcuts-on-macos)
@@ -41,7 +41,7 @@ In Zed, `/terminal-setup` updates your `keymap.json` in place:
 * If Claude Code can't read or parse the keymap, can't back it up, or can't verify the merged result, it [leaves the file unchanged and prints the keybinding block to add yourself](https://code.claude.com/docs/en/errors.md#terminal-setup-left-your-zed-keymap-unchanged)
 * If the keymap is a symlink, [add the keybinding yourself](https://code.claude.com/docs/en/errors.md#terminal-setup-left-your-zed-keymap-unchanged)
 
-If you are running inside tmux, Shift+Enter also requires the [tmux configuration below](#configure-tmux) even when the outer terminal supports it.
+If you are running inside tmux, Shift+Enter also requires the [tmux configuration below](#configure-tmux).
 
 To bind newline to a different key, or to swap behavior so Enter inserts a newline and Shift+Enter submits, map the `chat:newline` and `chat:submit` actions in your [keybindings file](https://code.claude.com/docs/en/keybindings.md).
 
@@ -169,7 +169,7 @@ Each custom theme is a JSON file in `~/.claude/themes/`. The filename without th
 | `base` | string | Built-in preset the theme starts from: `dark`, `light`, `dark-daltonized`, `light-daltonized`, `dark-ansi`, or `light-ansi`. Defaults to `dark` |
 | `overrides` | object | Map of color token names to color values. Tokens not listed here fall through to the base preset |
 
-Color values accept `#rrggbb`, `#rgb`, `rgb(r,g,b)`, `ansi256(n)`, or `ansi:<name>` where `<name>` is one of the 16 standard ANSI color names such as `red` or `cyanBright`. Unknown tokens and invalid color values are ignored, so a typo cannot break rendering.
+Color values accept `#rrggbb`, `#rgb`, `rgb(r,g,b)`, `ansi256(n)`, or `ansi:<name>` where `<name>` is one of the 16 standard ANSI color names such as `red` or `cyanBright`. Unknown tokens and invalid color values are ignored.
 
 The following example defines a theme that keeps the dark preset but recolors the prompt accent, error text, and success text:
 
@@ -185,7 +185,7 @@ The following example defines a theme that keeps the dark preset but recolors th
 }
 ```
 
-Claude Code watches `~/.claude/themes/` and reloads when a file is added or changed, so edits made in your editor apply to a running session without a restart. If the `~/.claude/themes/` folder itself didn't exist when Claude Code started, restart once after creating your first theme file. After that, changes apply without a restart.
+Claude Code watches `~/.claude/themes/` and reloads when a file is added or changed, so edits made in your editor apply to a running session without a restart. If the `~/.claude/themes/` folder itself didn't exist when Claude Code started, restart once after creating your first theme file.
 
 The reference below covers the tokens you can set in `overrides`. The interactive editor in `/theme` shows the same tokens with a live preview, plus a few single-purpose accents such as onboarding screen colors that are omitted here.
 

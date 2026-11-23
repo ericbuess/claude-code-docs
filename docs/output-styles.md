@@ -59,7 +59,7 @@ Claude still writes at full length in these cases:
 
 ### Explanatory
 
-In the Explanatory style, Claude does the task the way it does in the Default style and adds short explanations of why it made the choices it made. Each explanation appears in the conversation, before or after the code it's about, in a block labeled `Insight`. The explanations aren't written into your files as comments.
+In the Explanatory style, Claude does the task the way it does in the Default style and adds short explanations of why it made the choices it made. Each explanation appears in the conversation, before or after the code it's about, in a block labeled `Insight`.
 
 An `Insight` block carries two or three points about your codebase or the code Claude wrote, such as this one after adding an API endpoint:
 
@@ -164,7 +164,7 @@ Configure an output style with YAML [frontmatter](https://code.claude.com/docs/e
 | `name` | No | Name of the output style, shown in the `/config` picker. Default: the file name |
 | `description` | No | Description of the output style, shown in the `/config` picker |
 | `keep-coding-instructions` | No | Set to `true` to keep Claude Code's section of built-in software engineering instructions, which only the full system prompt includes, alongside your style. See [How output styles work](#how-output-styles-work). Default: `false` |
-| `force-for-plugin` | No | Plugin output styles only. Set to `true` to apply this style automatically whenever the plugin is enabled, without requiring users to select it. Overrides the user's `outputStyle` setting. If multiple enabled plugins set this, Claude Code uses the first one loaded. Default: `false` |
+| `force-for-plugin` | No | Plugin output styles only. Set to `true` to apply this style automatically whenever the plugin is enabled. Overrides the user's `outputStyle` setting. If multiple enabled plugins set this, Claude Code uses the first one loaded. Default: `false` |
 
 ## Choose between an output style and other features
 
