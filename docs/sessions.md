@@ -243,7 +243,7 @@ For how compaction interacts with CLAUDE.md, skills, and rules, see the [context
 
 ## Export and locate session data
 
-Run `/export` to open a menu that lets you copy the current conversation to your clipboard or save it as a plain-text file, with messages and tool outputs rendered as readable text. Pass a filename to skip the menu and write directly to that file.
+Run `/export` to open a menu that lets you copy the current conversation to your clipboard or save it as a plain-text file. Pass a filename to skip the menu and write directly to that file. On v2.1.327 or later, that file can't already exist.
 
 ### Access conversations from scripts
 

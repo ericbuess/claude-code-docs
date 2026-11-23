@@ -342,7 +342,6 @@ Cloud threads can load each repository's skills, agents, and commands. A cloud t
 | `CLAUDE.md`, `.claude/CLAUDE.md`, and `.claude/rules/` at the repository root | Loaded from every repository when the thread starts. [Path-specific rules](https://code.claude.com/docs/en/memory.md#path-specific-rules) don't load at the start |
 | Skills, agents, and commands under `.claude/` | Loaded from every repository, except in [threads that skip them](#threads-that-skip-repository-skills) |
 | MCP servers in `.mcp.json` | Not loaded. Use the connectors on your claude.ai account instead, as [Get skills, plugins, connectors, and tools into threads](#get-skills-plugins-connectors-and-tools-into-threads) describes |
-| Plugins enabled in `.claude/settings.json` | Not loaded. Add the plugin in **Project settings > Plugins** instead |
 | Permission rules in `.claude/settings.json` | Not applied. Approve tool calls inside the thread, as [Unblock a thread waiting on approval](#unblock-a-thread-waiting-on-approval) describes, or [run the thread on your own computer](#run-a-thread-on-your-own-computer) |
 | Hooks in `.claude/settings.json` | Not run. To use your hooks, [run the thread on your own computer](#run-a-thread-on-your-own-computer) |
 | `env` in `.claude/settings.json` | Not applied. Set environment variables in the [cloud environment](#choose-an-environment-for-threads) |
@@ -366,7 +365,7 @@ If cloud threads need to reach an internal API or a private package registry, or
 Cloud threads don't have the skills, MCP servers, plugins, and tools installed only on your machine. A thread that Claude runs on your machine through [Remote Control](https://code.claude.com/docs/en/remote-control.md) uses what's installed there. To make each of these available to cloud threads:
 
 * Skills: enable them for your claude.ai account, and cloud threads load the [skills you enable there](https://code.claude.com/docs/en/skills.md#skills-in-cowork-and-cloud-sessions), apart from [some threads in a self-hosted environment](https://code.claude.com/docs/en/self-hosted-environments-configuration.md#how-each-session’s-config-is-assembled). For skills committed to a repository, see [What threads pick up from your repositories](#what-threads-pick-up-from-your-repositories).
-* Plugins: add them in **Project settings > Plugins**; they load into each new cloud thread. Plugins that a repository declares in its `.claude/settings.json` [don't load in cloud threads](https://code.claude.com/docs/en/cloud-environments.md#what-carries-over-from-your-setup).
+* Plugins: add them in **Project settings > Plugins**; they load into each new cloud thread.
 * MCP servers: cloud threads get their MCP tools from the connectors on your claude.ai account, which are MCP servers you connect once at [claude.ai/customize/connectors](https://claude.ai/customize/connectors). Every cloud thread can use all of them with no per-project setup. The project conversation itself has no connectors, so send work that needs one as a task for a cloud thread. [How connectors reach Claude Code](https://code.claude.com/docs/en/mcp.md#how-connectors-reach-claude-code) lists the rules for cloud sessions and the settings that turn connectors off.
 * Command-line tools and packages: install them in the environment's [setup script](https://code.claude.com/docs/en/cloud-environments.md#setup-scripts).
 

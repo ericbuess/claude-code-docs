@@ -986,17 +986,15 @@ If the stop command instead printed one of these four messages, the old process 
 | `was not sent SIGKILL` | macOS, Linux | Run the stop command again. If the process remains, check it with `ps -ww -o args= -p <pid>`: Claude Code started with `daemon` is a supervisor, so run `kill -9 <pid>`. Leave anything else; if `claude agents` then can't start a supervisor, delete `~/.claude/daemon.lock`. |
 | `supervisor (pid=<pid>) is still running` | Windows | End the process with `taskkill /PID <pid>` |
 
-### Dispatch fails with `Could not resolve authentication method`
+### A background session shows `Not logged in`
 
-If a background dispatch fails with `Could not resolve authentication method` while interactive sessions authenticate normally, the worker that received the dispatch didn't pick up credentials. Background sessions get their credentials from the [supervisor](#the-supervisor-process), so this error means no stored credential was available to the supervisor process itself. Confirm you have run `/login` or configured an API key, then stop the supervisor:
+If a background session shows [`Not logged in`](https://code.claude.com/docs/en/errors#not-logged-in) while interactive sessions authenticate normally, confirm you have run `/login` or configured an API key, then stop the [supervisor](#the-supervisor-process):
 
 ```bash theme={null}
 claude daemon stop --any --keep-workers
 ```
 
-Within [about a minute](#the-supervisor-process), run `claude agents` or `claude --bg` in your shell to start a fresh supervisor that reads your stored credentials. If you authenticate with an environment variable such as `ANTHROPIC_API_KEY` rather than `/login`, run that next command from a shell where the variable is set.
-
-See the [error reference](https://code.claude.com/docs/en/errors.md#could-not-resolve-authentication-method) for the full list of causes and fixes.
+Within [about a minute](#the-supervisor-process) of stopping it, run `claude agents` in your shell to start a fresh supervisor. If you authenticate with an environment variable such as `CLAUDE_CODE_OAUTH_TOKEN`, run `claude agents` from a shell where the variable is set. Then run [`claude respawn <id>`](#manage-sessions-from-the-shell) to restart the session, and resend your message.
 
 ### A background session shows `No LLM gateway`
 

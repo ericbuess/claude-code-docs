@@ -420,7 +420,7 @@ A bundle's own manifest can declare settings the server needs from the user in a
 
 Users supply the values in one of two ways:
 
-* **In `/plugin`**: select the plugin on the **Installed** tab and choose **Configure**
+* **In `/plugin`**: for a plugin from a marketplace, select it on the **Installed** tab and choose **Configure**
 * **At install, from the shell**: pass [`--config <server>.<key>=<value>`](https://code.claude.com/docs/en/plugins/cli-reference#plugin-install) to `claude plugin install`. Requires Claude Code v2.1.285 or later, and works only for a bundle packaged inside the plugin.
 
 For transports and authentication, see [MCP](https://code.claude.com/docs/en/mcp.md#plugin-provided-mcp-servers).

@@ -23,7 +23,7 @@ This page is for the person who deploys managed settings for Claude Code, whethe
 
 ## Stop user-installed mods from loading
 
-To keep every mod your users bring from running its hooks, set the `allowManagedModsOnly` option on the [built-in guard](#know-what-happens-by-default), a policy mod that Claude Code loads ahead of every mod a user installs. The option goes in managed settings under `pluginConfigs`, keyed by `cc-plugin-sec-default@builtin`:
+To refuse users' mods, set the `allowManagedModsOnly` option on the [built-in guard](#know-what-happens-by-default), a policy mod that Claude Code loads ahead of every mod a user installs. The option goes in managed settings under `pluginConfigs`, keyed by `cc-plugin-sec-default@builtin`:
 
 ```json managed-settings.json theme={null}
 {
@@ -39,7 +39,7 @@ To keep every mod your users bring from running its hooks, set the `allowManaged
 
 With the option set in managed settings:
 
-* **No mod a user brings runs its hooks**: that covers a mod in a plugin the user installed, a mod loaded with `--plugin-dir`, and a mod [Claude wrote during a session](https://code.claude.com/docs/en/plugins/mods/create.md#ask-claude-for-a-mod)
+* **The guard refuses these mods**: a mod in a plugin only the user enabled, a mod loaded with `--plugin-dir`, and a mod [Claude wrote during a session](https://code.claude.com/docs/en/plugins/mods/create.md#ask-claude-for-a-mod)
 * **Your organization's mods still run**: a mod that [counts as your organization's](#install-your-organizations-mods) isn't checked. Every other mod counts as a user's and is refused. That includes a mod your organization turns on for its members on claude.ai. If none counts as yours, no installed mod runs its hooks.
 * **Claude Code ignores the option in other settings files**: if someone sets it in a user, project, local, or `--settings` file, your value still applies
 * **A file or MDM policy covers every provider**: when you deliver the option as a file or through MDM, it works the same way on Amazon Bedrock, Google Cloud's Agent Platform, and Microsoft Foundry. For delivery from the claude.ai admin console, see [Platform availability](https://code.claude.com/docs/en/server-managed-settings.md#platform-availability)
@@ -200,7 +200,7 @@ Mod policies range from no installed mods at all to any mod a user chooses, with
 
 | What you want | Settings |
 | :- | :- |
-| No installed mod runs, with settings hooks untouched | Set [`allowManagedModsOnly`](#set-options-on-the-built-in-guard) and deploy no mods of your own |
+| No installed mod runs, with settings hooks untouched | In managed settings, set [`allowManagedModsOnly`](#set-options-on-the-built-in-guard) and don't enable a plugin that contains a mod |
 | No installed mods and no hooks at all, your managed hooks included | Set `disableAllHooks` to `true` |
 | Only your organization's mods | Set the guard's [`allowManagedModsOnly` option](#stop-user-installed-mods-from-loading), and [install your mods](#install-your-organizations-mods) so that they count as yours |
 | Any mod from marketplaces you approve outside claude.ai | Set a [marketplace allowlist](https://code.claude.com/docs/en/plugins/org.md#restrict-what-users-can-install) without `skills-dir`, set `disableSideloadFlags` to `true`, and set [`syncClaudeAiPlugins`](https://code.claude.com/docs/en/settings-reference#syncclaudeaiplugins) to `false` |
@@ -262,7 +262,7 @@ A mod is a plugin, so the ways you [manage plugins for your organization](https:
 * **Give one group a different policy, such as a pilot**: [Plan for what managed settings can't enforce](https://code.claude.com/docs/en/plugins/org.md#plan-for-what-managed-settings-can’t-enforce)
 * **Check which apps and session kinds apply the plugin keys**: [When each surface applies the plugin keys](https://code.claude.com/docs/en/plugins/org.md#when-each-surface-applies-the-plugin-keys)
 * **Set up CI and containers**: [Seed containers and CI](https://code.claude.com/docs/en/plugins/org.md#seed-containers-and-ci)
-* **Offer mods your users may install**: [Host a marketplace](https://code.claude.com/docs/en/plugins/host-marketplace.md). A mod that Claude Code copies from a GitHub, git, URL, or npm source counts as a user's unless you [install it as your organization's](#install-your-organizations-mods).
+* **Offer mods your users may install**: [Host a marketplace](https://code.claude.com/docs/en/plugins/host-marketplace.md)
 
 ### Set options on the built-in guard
 
@@ -333,7 +333,7 @@ The manifest lists the plugin by its path relative to that directory:
 }
 ```
 
-An installed plugin that meets neither set of conditions counts as a user's, even when managed `enabledPlugins` enables it. Its mod runs among users' mods, `prependPlugins` and `appendPlugins` skip it, `allowManagedModsOnly` refuses it, and `allowManagedHooksOnly` keeps it from loading. When managed settings enable it, the user's debug log has a line that starts with the plugin's id and `is enabled by managed settings, but`.
+A plugin you enable in managed `enabledPlugins` can still count as a user's, as a directory plugin that misses a condition does. Its mod then runs among users' mods, `prependPlugins` and `appendPlugins` skip it, `allowManagedModsOnly` refuses it, and `allowManagedHooksOnly` keeps it from loading. To see why, search the user's debug log for a line that starts with the plugin's id and `is enabled by managed settings, but`.
 
 Claude Code fires an event each time it's about to act, such as run a tool, and passes it to each mod in turn. A mod that meets the directory conditions [runs before users' mods](https://code.claude.com/docs/en/plugins/mods/events.md#the-order-mods-run-in) even when you list it nowhere. To set its place, list its id in one of two settings. The id is the plugin's name, `@`, and the marketplace's name, such as `acme-guard@acme-tools`.
 

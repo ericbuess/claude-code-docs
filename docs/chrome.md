@@ -78,7 +78,7 @@ type "hooks", and tell me what results appear
 
 If Claude Code asks for permission before a browser action, approve it. The dialog starts with `Claude in Chrome wants to` and offers an option to allow all actions on that site for the session. Claude opens a new tab and starts the task.
 
-Run `/chrome` at any time to check the connection status, manage permissions, reconnect the extension, or choose which connected browser to use. The integration is working when the status panel shows "Status: Enabled" and "Extension: Installed".
+Run `/chrome` at any time to check the connection status, manage permissions, reconnect the extension, or choose which connected browser to use.
 
 If more than one browser is connected, you choose which one Claude uses. When a browser action starts before you've chosen, Claude prompts you to pick one. To switch browsers later, run `/chrome` and choose another browser. Claude keeps using your choice even when another browser connects.
 
