@@ -285,7 +285,7 @@ Cloud sessions support [built-in commands](https://code.claude.com/docs/en/comma
 
 * **`/model`, `/effort`, `/color`, and `/rename`**: pass the value as an argument, for example `/model sonnet`, instead of opening the terminal picker or slider. The argument forms follow each command's [availability notes](https://code.claude.com/docs/en/commands.md#all-commands).
 * **`/fast`**: toggles [fast mode](https://code.claude.com/docs/en/fast-mode.md#use-fast-mode-in-cloud-sessions) for the session when fast mode is [available on your account](https://code.claude.com/docs/en/fast-mode.md#requirements). Requires Claude Code v2.1.271 or later in the session's environment.
-* **`/config`**: in your browser at claude.ai/code, opens **Settings > Code** or **Settings > Claude Code** instead of setting a value. To change a setting for a cloud session, set an [environment variable](https://code.claude.com/docs/en/cloud-environments.md#set-environment-variables) on the environment. In a session with one repository outside a [project](https://code.claude.com/docs/en/claude-projects.md)'s threads, commit the key to that repository's `.claude/settings.json` instead. [Settings in cloud sessions](https://code.claude.com/docs/en/settings.md#settings-in-cloud-sessions) lists what each session reads.
+* **`/config`**: in your browser at claude.ai/code, opens **Settings > Code** instead of setting a value. To change a setting for a cloud session, set an [environment variable](https://code.claude.com/docs/en/cloud-environments.md#set-environment-variables) on the environment. In a session with one repository outside a [project](https://code.claude.com/docs/en/claude-projects.md)'s threads, commit the key to that repository's `.claude/settings.json` instead. [Settings in cloud sessions](https://code.claude.com/docs/en/settings.md#settings-in-cloud-sessions) lists what each session reads.
 
 For context management in a cloud session outside a [project's threads](https://code.claude.com/docs/en/claude-projects.md#choose-models-and-let-claude-manage-context):
 
@@ -467,8 +467,8 @@ Cloud sessions stop after a period of inactivity and the session's VM is reclaim
 
 Reopen the session from [claude.ai/code](https://claude.ai/code) to provision a fresh VM:
 
-* **Restored**: your conversation history
-* **Not restored**: background work that was still running or pending when the VM was reclaimed, including:
+* **Restored**: your conversation history, and tracking of [MCP tasks](https://code.claude.com/docs/en/mcp.md#mcp-task-results-in-the-cloud) still running on a connector
+* **Not restored**: other background work that was still running or pending when the VM was reclaimed, including:
   * **Shell commands**: Claude Code tells Claude which commands stopped. Ask Claude to rerun the ones you still need.
   * **Subagents**: Claude Code tells Claude which subagents stopped, and which of those can be [resumed](https://code.claude.com/docs/en/sub-agents.md#resume-subagents) instead of started over. Ask Claude to continue their work.
   * **Session-scoped scheduled tasks**: tasks you [scheduled in the session](https://code.claude.com/docs/en/scheduled-tasks.md) and a `/loop` waiting for its next iteration don't carry over to the reopened session. Ask Claude to schedule the tasks again, or run `/loop` again to restart the loop.

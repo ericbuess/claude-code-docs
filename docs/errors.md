@@ -330,6 +330,9 @@ Match the message you see to a section below.
 | `Failed to resume the conversation` | [Command-line errors](#failed-to-resume-the-conversation) |
 | `No conversation found with session ID: <session-id>` | [Command-line errors](#no-conversation-found-with-the-session-id) |
 | `Windows reported an error (EBADF) when Claude Code read this session's transcript file` | [Command-line errors](#windows-reported-an-error-ebadf) |
+| `Failed to resolve base branch "HEAD"` / `Failed to resolve HEAD in <folder>` | [Run parallel sessions with worktrees](https://code.claude.com/docs/en/common-workflows.md#run-parallel-sessions-with-worktrees) |
+| `points to a bare repository` | [Manage worktrees manually](https://code.claude.com/docs/en/worktrees.md#manage-worktrees-manually) |
+| `Cannot use PR/MR #<number>` | Follow the fix in the message. |
 | `Cannot switch renderers in this session` | [Command-line errors](#cannot-switch-renderers-in-this-session) |
 | `Cannot switch renderers while work is running in the background` | [Command-line errors](#cannot-switch-renderers-in-this-session) |
 | `Can't restart while work is running in the background` | [Command-line errors](#cant-restart-while-work-is-running-or-remote-control-is-connected) |
@@ -350,6 +353,7 @@ Match the message you see to a section below.
 | `Marketplace "<name>" is registered from an untrusted source` | [Plugin errors](#marketplace-is-registered-from-an-untrusted-source) |
 | `Claude Code refuses the marketplace name "<name>"` | [Plugin errors](#claude-code-refuses-the-marketplace-name) |
 | `Marketplace name impersonates an official Anthropic/Claude marketplace` | [Plugin errors](#claude-code-refuses-the-marketplace-name) |
+| `Can't use the marketplace name "<name>"` | [Reserved names](https://code.claude.com/docs/en/plugins/marketplace-reference.md#reserved-names) |
 | `Marketplace "<name>" is already added from a different source` | [Plugin errors](#marketplace-is-already-added-from-a-different-source) |
 | `"<name>" is another spelling of "<reserved>", a reserved marketplace name` | [Plugin errors](#marketplace-name-is-another-spelling-of-a-reserved-name) |
 | `Cannot add marketplace "<name>": Claude Code cannot install plugins from a marketplace with this name` | [Plugin troubleshooting](https://code.claude.com/docs/en/plugins/troubleshooting.md#cannot-install-plugins-from-a-marketplace-with-this-name) |
@@ -367,6 +371,8 @@ Match the message you see to a section below.
 | `does not load (...), so Claude Code ignores the whole file` | [Plugin troubleshooting](https://code.claude.com/docs/en/plugins/troubleshooting.md#does-not-load-so-claude-code-ignores-the-whole-file) |
 | `path escapes plugin directory` | [Plugin errors](#path-escapes-plugin-directory) |
 | `path not read: <path> is absolute or has a ".." part` | [Plugin errors](#server-file-path-not-read) |
+| `Plugin path not found: <path>` | Fix the plugin path you started the session with. For a plugin synced from claude.ai, restart Claude Code. |
+| `commands path not found: <path>` | [Plugin troubleshooting](https://code.claude.com/docs/en/plugins/troubleshooting.md#commands-path-not-found) |
 | `Plugin not loaded: its manifest <path> was not read` | [Plugin errors](#plugin-not-loaded-its-manifest-was-not-read) |
 | `path couldn't be checked` / `path could not be checked` | [Plugin errors](#path-could-not-be-checked) |
 | `its marketplace entry path does not stay inside the marketplace directory` | [Plugin errors](#marketplace-entry-path-does-not-stay-inside-the-marketplace-directory) |
@@ -407,6 +413,7 @@ Match the message you see to a section below.
 | `Sandbox is required (sandbox.failIfUnavailable) and stopped being available in this session: <reason>` | [Sandboxing troubleshooting](https://code.claude.com/docs/en/sandboxing.md#commands-refused-with-sandbox-is-required) |
 | `pkill: refusing to run` | [Tool errors](#pkill-pattern-matches-the-claude-code-process) |
 | `Sandbox settings can't be changed here` / `Sandbox settings are overridden by a higher-priority configuration` | [Sandboxing troubleshooting](https://code.claude.com/docs/en/sandboxing.md#sandbox-settings-overridden) |
+| `GH_HOST names a host other than github.com` / `GH_REPO names a host other than github.com` | Ask Claude to pass `--hostname <host>` on the `gh api` command, as in `gh api --hostname ghe.example.com repos/my-org/my-repo/pulls`. For `GH_REPO`, also have Claude replace the command's `{owner}` and `{repo}` with real names. |
 | `Failed to write to <name>'s inbox — nothing was sent` | [Tool errors](#failed-to-write-to-a-teammate-inbox) |
 | `Failed to write the plan approval request to the lead's inbox — plan not submitted` | [Tool errors](#failed-to-write-to-a-teammate-inbox) |
 | `Its agent definition was not restored: the folder its definition file came from is not trusted` | [Tool errors](#teammate-agent-definition-not-restored) |
@@ -523,6 +530,7 @@ Match the message you see to a section below.
 | `Managed settings drop-in directory could not be read` | [Configuration warnings](#managed-settings-document-could-not-be-parsed) |
 | `Unable to read managed policy settings` | [Configuration warnings](#unable-to-read-managed-policy-settings) |
 | `Managed settings contain invalid entries, including PreToolUse/PermissionRequest hooks that are NOT loaded; fix or remove each entry:` | [Configuration warnings](#managed-settings-hooks-not-loaded) |
+| `did not load, so nothing in them is in effect` / `These settings entries were skipped` in a `-p` run | [Broken settings in a `-p` run](https://code.claude.com/docs/en/settings#broken-settings-in-a-p-run) |
 | `otelHeadersHelper failed; telemetry is not being exported. See /status: ...` | [Configuration warnings](#otelheadershelper-failed) |
 | `apply_flag_settings: nothing in this request was applied and earlier settings stay in force. Fix or remove these invalid settings and send it again` | [`applyFlagSettings()`](https://code.claude.com/docs/en/agent-sdk/typescript#applyflagsettings) |
 | `Invalid JSON provided to --settings` / `Invalid JSON provided to the settings option` | [`--settings` flag](https://code.claude.com/docs/en/cli-reference#cli-flags) or [`settings` option](https://code.claude.com/docs/en/agent-sdk/typescript#options) |
@@ -615,8 +623,8 @@ You can tune retry behavior with these environment variables:
 
 | Variable | Default | Effect |
 | :- | :- | :- |
-| [`CLAUDE_CODE_MAX_RETRIES`](https://code.claude.com/docs/en/env-vars) | 10 | Number of retry attempts. Capped at 15 as of v2.1.186; as of v2.1.199 `CLAUDE_CODE_RETRY_WATCHDOG` raises the default and removes the cap. Lower it to surface failures faster in scripts. |
-| [`CLAUDE_CODE_RETRY_WATCHDOG`](https://code.claude.com/docs/en/env-vars) | unset | Set to `1` in unattended sessions such as CI jobs to retry `429` and `529` capacity errors indefinitely instead of failing after `CLAUDE_CODE_MAX_RETRIES` attempts. Claude Code fails at once when a standard-speed request gets a `429` that reports a spend limit or exhausted usage credits, even one from a [gateway spend cap](#spend-limit-reached) that resets on a schedule. Before v2.1.239, the watchdog retried these indefinitely. For fast mode requests, see [Handle rate limits](https://code.claude.com/docs/en/fast-mode.md#handle-rate-limits). On v2.1.199 or later it also raises the default retry count for other transient errors, such as server errors, timeouts, and dropped connections, to 300, roughly three hours of backoff, and removes the cap of 15 on `CLAUDE_CODE_MAX_RETRIES` if you set that variable explicitly. |
+| [`CLAUDE_CODE_MAX_RETRIES`](https://code.claude.com/docs/en/env-vars) | 10 | Number of retry attempts, capped at 15. Lower it to surface failures faster in scripts. With `CLAUDE_CODE_RETRY_WATCHDOG` set on v2.1.199 or later, the cap doesn't apply, and the default for transient errors other than capacity errors is 300. |
+| [`CLAUDE_CODE_RETRY_WATCHDOG`](https://code.claude.com/docs/en/env-vars) | unset | Set to `1` in unattended sessions such as CI jobs to keep retrying `429` and `529` capacity errors past `CLAUDE_CODE_MAX_RETRIES`. For exceptions, see [When the retry watchdog stops retrying](#when-the-retry-watchdog-stops-retrying). For fast mode requests, see [Handle rate limits](https://code.claude.com/docs/en/fast-mode.md#handle-rate-limits). |
 | [`CLAUDE_CODE_RETRY_WATCHDOG_MAX_WAIT_MS`](https://code.claude.com/docs/en/env-vars) | unset | Maximum time in milliseconds that each API request spends waiting out `429` and `529` errors when `CLAUDE_CODE_RETRY_WATCHDOG` is set. When unset, the wait has no limit. Requires Claude Code v2.1.295 or later. |
 | `CLAUDE_CODE_RETRY_WATCHDOG_MAX_USAGE_LIMIT_WAIT_MS` | no cap | With `CLAUDE_CODE_RETRY_WATCHDOG` set, the longest time in milliseconds one request waits for your plan's [usage limit](#youve-hit-your-session-limit), such as the session or weekly limit, to reset. When the reset is further away than this cap, the request fails at once, unless usage credits have room or the API couldn't check them. In those cases it's retried, and fails if the cap passes before it succeeds. Requires Claude Code v2.1.301 or later. |
 | [`CLAUDE_CODE_RETRY_WATCHDOG_USAGE_LIMIT_RECHECK_MS`](https://code.claude.com/docs/en/env-vars) | unset | Minimum interval in milliseconds between checks of whether a [usage limit](#youve-hit-your-session-limit) was already lifted, while a request waits for that limit to reset with `CLAUDE_CODE_RETRY_WATCHDOG` set. When a check finds the limit lifted, the request goes out at once. Give plain digits from `60000` to `10800000`. When unset or outside that range, no checks are made. For when Claude Code skips these checks, see the [environment variables reference](https://code.claude.com/docs/en/env-vars.md). Requires Claude Code v2.1.305 or later. |
@@ -625,6 +633,16 @@ You can tune retry behavior with these environment variables:
 | [`API_TIMEOUT_MS`](https://code.claude.com/docs/en/env-vars) | 600000 | Time in milliseconds that each request attempt has to receive its response headers. It doesn't limit how long a streaming response runs after that. Raise it for slow networks or proxies. For how it caps the first-byte deadline, see [No response from API](#no-response-from-api). |
 | [`CLAUDE_CODE_NONSTREAMING_TIMEOUT_RETRIES`](https://code.claude.com/docs/en/env-vars) | unset | Limit on re-sends of a [non-streaming request](#streaming-response-ended-before-any-complete-data-was-received) that times out. At the limit, the request fails. A response from Claude that takes longer than the timeout to generate times out again on every re-send, so set a low number such as `0` to fail sooner. For each attempt's timeout, see [How long a non-streaming attempt waits](#how-long-a-non-streaming-attempt-waits). Requires Claude Code v2.1.285 or later. |
 | [`CLAUDE_STREAM_FIRST_BYTE_TIMEOUT_MS`](https://code.claude.com/docs/en/env-vars) | unset | Deadline in milliseconds for the first response byte of a streaming request. Requires Claude Code v2.1.242 or later. For how Claude Code picks the deadline when this is unset, see [No response from API](#no-response-from-api). |
+
+#### When the retry watchdog stops retrying
+
+With `CLAUDE_CODE_RETRY_WATCHDOG` set, Claude Code stops retrying a request outside fast mode on responses such as these:
+
+* **Spend limit**: a `429` for a [usage-credit spend limit](#youve-hit-your-monthly-spend-limit), or for a [gateway spend cap](#spend-limit-reached) that resets on a schedule.
+* **Exhausted [usage credits](https://code.claude.com/docs/en/costs.md#add-usage-credits-to-your-subscription)**: an out-of-credits `429` with no `anthropic-ratelimit-unified-overage-status` or `anthropic-ratelimit-unified-representative-claim` header.
+* **Marked not retryable**: a `429` or `529` with the [`x-should-retry: false`](https://code.claude.com/docs/en/llm-gateway-protocol#response-headers) header. Claude Code still retries the request when the API couldn't check your usage credits.
+
+The spend limit and usage credit cases require Claude Code v2.1.239 or later. The `x-should-retry` case requires v2.1.311 or later.
 
 #### How long a non-streaming attempt waits
 
@@ -3938,7 +3956,7 @@ build.sh --target�dist
 
 A message with `more than 4,000,000 characters` means a skill, a command, or a [prompt or agent hook](https://code.claude.com/docs/en/hooks.md#prompt-and-agent-hook-fields) didn't run. If you pasted long text as arguments, save it to a file, run `/clear`, since the text stays in the conversation, then pass its path.
 
-If your `PreToolUse` prompt or agent hook is over the limit, a tool call that Claude makes directly isn't blocked. Use a [command hook](https://code.claude.com/docs/en/hooks.md#command-hook-fields), which has no such limit. For a call from code in Code Mode, see [Tool call refused by a hook](https://code.claude.com/docs/en/code-mode.md#tool-call-refused-by-a-hook).
+If your `PreToolUse` prompt or agent hook is over the limit, a tool call that Claude makes directly isn't blocked. Use a [command hook](https://code.claude.com/docs/en/hooks.md#command-hook-fields), which has no such limit. For a call from code in Code Mode, see [Tool call ran after a hook failed](https://code.claude.com/docs/en/code-mode.md#tool-call-ran-after-a-hook-failed).
 
 ### Input must be provided when using `--print`
 
@@ -4642,7 +4660,7 @@ Claude Code asked the operating system whether a plugin path exists and got an e
 * One of a plugin's [default component locations](https://code.claude.com/docs/en/plugins/manifest-reference.md#standard-layout), such as the `skills/` folder, the `monitors/monitors.json` file, or a [`SKILL.md` at the plugin root](https://code.claude.com/docs/en/plugins/components#skills): the plugin's other components still load
 * The plugin's own directory: nothing from that plugin loads
 
-You don't see this error for a path that doesn't exist at all. In `/plugin`, the error appears under the plugin and names the path and the code the operating system returned:
+In `/plugin`, the error names the path and the code the operating system returned:
 
 ```text theme={null}
 skills path couldn't be checked: /home/user/my-plugin/skills (ELOOP)

@@ -34,7 +34,6 @@ Find the words of Claude's comment, then take the step beside them:
 | :- | :- |
 | Approvals "did not run on this change" | Do what the comment says. One cause is a pull request that moves a file into or out of the paths that the policy's rules cover. Make that move in two pull requests, one that adds the file under its new name and one that removes the old one |
 | "More than one Claude organization is connected to this GitHub account" | Ask an Owner of the Claude organization that should run Approvals to click **Connect** next to the repository's GitHub organization on [**Organization settings > Claude Ship**](https://claude.ai/admin-settings/claude-ship). Then push a commit |
-| "Claude Approvals can't start in this repository yet" | Tell an Owner that the organization has no usage credits available |
 
 ### Ask an Owner to check your Claude organization
 
@@ -45,6 +44,12 @@ Ask an Owner to check each of these for your Claude organization:
 | Whether the organization qualifies | [Availability](https://code.claude.com/docs/en/approvals.md#availability) |
 | Whether the [Claude GitHub App](https://github.com/apps/claude) can access the repository and is linked | [**Organization settings > Git providers**](https://claude.ai/admin-settings/source-control) |
 | Whether Approvals is turned off here | The **Approvals** column and the **Approve** row on [**Organization settings > Claude Ship**](https://claude.ai/admin-settings/claude-ship) |
+
+### Check for a GitHub IP allow list
+
+GitHub refuses Approvals' requests from an address that isn't on an organization's IP allow list, which can leave no check or comment.
+
+Ask an owner of the repository's GitHub organization or enterprise whether it restricts access by IP address. If it does, ask the owner to allow all of Anthropic's outbound addresses, as [GitHub allow lists and firewalls](https://code.claude.com/docs/en/network-config.md#github-allow-lists-and-firewalls) describes. Once the addresses are allowed, push a commit to your pull request.
 
 ## Approvals doesn't pass after you resolve a review thread
 

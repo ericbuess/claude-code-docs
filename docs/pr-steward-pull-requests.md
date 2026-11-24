@@ -101,7 +101,7 @@ This comment asks PR Steward to fix one kind of failure:
 
 ### Turn off or limit PR Steward on all your pull requests
 
-Go to [**PR Steward**](https://claude.ai/settings/claude-code#pr-steward) in **Settings > Code** or **Settings > Claude Code** on claude.ai and select how much PR Steward does on the pull requests that you open. To change the setting, you need a [connected GitHub account](https://code.claude.com/docs/en/web-quickstart.md#connect-github).
+Go to [**PR Steward**](https://claude.ai/settings/claude-code#pr-steward) in **Settings > Code** on claude.ai and select how much PR Steward does on the pull requests that you open. To change the setting, you need a [connected GitHub account](https://code.claude.com/docs/en/web-quickstart.md#connect-github).
 
 | Option | What PR Steward does on your pull requests |
 | :- | :- |
@@ -118,7 +118,7 @@ PR Steward reads your settings when it starts on a pull request, so a change app
 
 To tell PR Steward what to work on, for every pull request that you open, use the toggles in your settings. A repository's `.claude/skills/steward/SKILL.md` can say something else, so see [which instructions take priority](#which-pr-steward-instructions-take-priority).
 
-1. Go to [**PR Steward**](https://claude.ai/settings/claude-code#pr-steward) in **Settings > Code** or **Settings > Claude Code** on claude.ai
+1. Go to [**PR Steward**](https://claude.ai/settings/claude-code#pr-steward) in **Settings > Code** on claude.ai
 2. For **How much should Steward do on its own?**, select [**Customize**](#turn-off-or-limit-pr-steward-on-all-your-pull-requests)
 3. Turn off the toggle for each thing that you don't want PR Steward to do. Each toggle is on until you turn it off:
    * **Failing CI and merge conflicts**
@@ -141,7 +141,7 @@ While **Failing CI and merge conflicts** is on, you can also say when PR Steward
 
 ### Save PR Steward instructions for every pull request you open
 
-To give PR Steward the same instructions on every pull request that you open, go to [**PR Steward**](https://claude.ai/settings/claude-code#pr-steward) in **Settings > Code** or **Settings > Claude Code** on claude.ai. Under **My instructions for Steward**, enter up to 1,000 characters.
+To give PR Steward the same instructions on every pull request that you open, go to [**PR Steward**](https://claude.ai/settings/claude-code#pr-steward) in **Settings > Code** on claude.ai. Under **My instructions for Steward**, enter up to 1,000 characters.
 
 These instructions ask for small commits and no replies to reviewers:
 

@@ -320,6 +320,19 @@ What Claude Code does with a synced skill's body depends on where the session ru
 * In a Cowork session on your desktop, the body keeps the behavior a local skill has, except that Claude Code replaces every `!` command line with the [`disableSkillShellExecution` placeholder](#inject-dynamic-context), as it does for every skill you supply there.
 * In a terminal or VS Code session, Claude Code doesn't run [`!` commands](#inject-dynamic-context), doesn't attach the files that `@` references name, and doesn't substitute the `${CLAUDE_PROJECT_DIR}` and `${CLAUDE_SESSION_ID}` placeholders. The `@` references and both placeholders reach Claude as literal text. A `!` command line reaches Claude as literal text too, or as the `disableSkillShellExecution` placeholder when that setting is on. This handling requires Claude Code v2.1.228 or later.
 
+### Skills from MCP servers
+
+[MCP servers can provide skills](https://code.claude.com/docs/en/mcp.md#use-skills-from-mcp-servers). Using them requires Claude Code v2.1.331 or later. Claude reads a skill's supporting files from the server as [MCP resources](https://code.claude.com/docs/en/mcp.md#use-mcp-resources). For prompts and rules, see [Approvals for MCP skills](https://code.claude.com/docs/en/mcp.md#approvals-for-mcp-skills).
+
+#### Skill features that don't apply
+
+Because the server supplies the content, you can't use these features of [local skills](#where-skills-live) in an MCP skill:
+
+* **Frontmatter fields**: Claude Code ignores `allowed-tools`, `disallowed-tools`, `hooks`, `model`, `effort`, `context`, `agent`, `background`, `shell`, `paths`, and `metadata`
+* **[`!` commands](#inject-dynamic-context)**: they don't run
+* **`@` references**: the files aren't attached
+* **`${CLAUDE_PROJECT_DIR}` and `${CLAUDE_SESSION_ID}`**: they aren't substituted
+
 ### Edit a skill during a session
 
 Claude Code watches skill directories for file changes, except in [bare mode](https://code.claude.com/docs/en/headless.md#start-faster-with-bare-mode). When you add, edit, or remove a skill under `~/.claude/skills/`, the project `.claude/skills/`, or a `.claude/skills/` inside an `--add-dir` directory, Claude Code picks up the change within the current session.
@@ -675,9 +688,14 @@ Fix GitHub issue $ARGUMENTS following our coding standards.
 5. Create a commit
 ```
 
-When you run `/fix-issue 123`, Claude receives "Fix GitHub issue 123 following our coding standards..."
+When you run `/fix-issue 123`, Claude receives `Fix GitHub issue 123 following our coding standards...`
 
-If you invoke a skill with arguments but no placeholder in the skill's content receives one, Claude Code appends `ARGUMENTS: <your input>` to the end of the skill content so Claude still sees what you typed. A placeholder is `$ARGUMENTS`, an indexed form such as `$1`, or a named argument. An indexed placeholder with no argument at its position stays as literal text and doesn't count as receiving one. A named placeholder counts even when its position has no argument, because it expands to an empty string.
+If you invoke a skill with arguments but no placeholder in the skill's content receives one, Claude Code appends `ARGUMENTS: <your input>` to the end of the skill content so Claude still sees what you typed. A placeholder is `$ARGUMENTS`, an indexed form such as `$1`, or a named argument.
+
+With no argument at its position, a placeholder counts as receiving one only if it's named:
+
+* **Indexed placeholder, such as `$1`**: stays as literal text
+* **Named placeholder, such as `$issue`**: expands to an empty string
 
 To access individual arguments by position, use `$ARGUMENTS[N]` or the shorter `$N`:
 
@@ -871,9 +889,11 @@ The `agent` field specifies which subagent configuration to use. Options include
 
 ### Restrict Claude's skill access
 
-By default, Claude can invoke any skill that doesn't have `disable-model-invocation: true` set. Skills that define [`allowed-tools`](#pre-approve-tools-for-a-skill) grant Claude access to those tools without per-use approval during the turn that invokes the skill; the grant clears when you send your next message. Your [permission settings](https://code.claude.com/docs/en/permissions.md) still govern baseline approval behavior for all other tools. A few built-in commands are also available through the Skill tool, including `/init` and `/security-review`. Other built-in commands such as `/compact` are not.
+By default, Claude can invoke any skill that doesn't have `disable-model-invocation: true` set. Skills that define [`allowed-tools`](#pre-approve-tools-for-a-skill) grant Claude access to those tools without per-use approval during the turn that invokes the skill; the grant clears when you send your next message. Your [permission settings](https://code.claude.com/docs/en/permissions.md) still govern baseline approval behavior for all other tools. With a [skill from an MCP server](#skills-from-mcp-servers), Claude gets no `allowed-tools` grant.
 
-Three ways to control which skills Claude can invoke:
+A few built-in commands are also available through the Skill tool, including `/init` and `/security-review`. Other built-in commands such as `/compact` aren't.
+
+You can control which skills Claude invokes in these ways:
 
 **Disable all skills** by denying the Skill tool in `/permissions`:
 
@@ -912,6 +932,8 @@ Claude Code matches an `allow` rule only against the skill's own name and the na
 * `Skill(anthropic-skills:pdf)` approves the synced `pdf` skill
 * `Skill(anthropic-skills *)` approves every synced skill
 * `Skill(anthropic *)` doesn't cover `anthropic-skills:pdf`, because a prefix outside the namespace doesn't match the names inside it
+
+For a [skill from an MCP server](#skills-from-mcp-servers), [set a rule for its server](https://code.claude.com/docs/en/mcp.md#block-a-servers-skills-or-ask-first) instead. You can't skip its prompt with an `allow` rule for the skill's name.
 
 **Hide individual skills** by adding `disable-model-invocation: true` to their frontmatter. This removes the skill from Claude's context entirely.
 

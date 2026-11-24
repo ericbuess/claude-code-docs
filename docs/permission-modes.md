@@ -760,7 +760,7 @@ A small set of paths holds repository state and Claude's own configuration, so e
 | Mode | Protected-path writes |
 | :- | :- |
 | `default`, `acceptEdits` | Prompted |
-| `plan` | Allowed in interactive terminal sessions with [bypass permissions](#skip-all-checks-with-bypasspermissions-mode) available. Otherwise, routed to the classifier when [auto mode](#eliminate-prompts-with-auto-mode) is available during planning, and prompted when it isn't |
+| `plan` | Can be allowed in interactive terminal sessions with [bypass permissions](#skip-all-checks-with-bypasspermissions-mode) available. Otherwise, routed to the classifier when [auto mode](#eliminate-prompts-with-auto-mode) is available during planning, and prompted when it isn't |
 | `auto` | Routed to the classifier, which decides |
 | `dontAsk` | Denied |
 | `bypassPermissions` | Allowed |

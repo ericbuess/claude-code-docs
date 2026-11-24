@@ -64,7 +64,7 @@ With `awsAuthRefresh` configured, run `/login`, select **3rd-party platform**, t
 A workspace API key is a long-lived secret, useful when you don't want to manage federated AWS credentials. Generate one in the AWS Console under **Claude Platform on AWS → API keys** and set it as `ANTHROPIC_AWS_API_KEY`:
 
 ```bash theme={null}
-export ANTHROPIC_AWS_API_KEY=sk-ant-xxxxx
+export ANTHROPIC_AWS_API_KEY=your-workspace-api-key
 ```
 
 The key is sent as `x-api-key` and takes precedence over SigV4, so any AWS credentials in your environment are ignored. API keys from a separate Claude Console organization won't work here.

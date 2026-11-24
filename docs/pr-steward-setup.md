@@ -128,7 +128,7 @@ Billing [continues while usage credits are turned off](https://code.claude.com/d
 
 ### See what PR Steward spent
 
-To see the average for each merged pull request, open a repository's **Edit** dialog. For your organization's total over the last 30 days, go to [claude.ai/analytics/pr-steward](https://claude.ai/analytics/pr-steward).
+To see a repository's estimated spend on PR Steward, open its **Edit** dialog. For your organization's estimated total over the last 30 days, go to [claude.ai/analytics/pr-steward](https://claude.ai/analytics/pr-steward).
 
 ### Set PR Steward's spend limits
 

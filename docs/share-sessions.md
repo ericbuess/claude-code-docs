@@ -59,10 +59,7 @@ On Max, Ultra, and Pro plans, anyone who has the link and is signed in to claude
 * **Visibility options**: **Private** and **Public**
 * **Repository access**: **Require repository access** is off by default. Turn it on to limit the cloud sessions you share to recipients with access to each session's private repositories. People without repository access may be able to open a Remote Control session's link.
 
-To turn on **Require repository access** or turn off **Show your name**, open Settings on claude.ai, then:
-
-* **If the Settings menu shows Code instead of Claude Code**: go to [**Privacy**](https://claude.ai/settings/data-privacy-controls)
-* **Otherwise**: go to [**Claude Code > Sharing settings**](https://claude.ai/settings/claude-code)
+To turn on **Require repository access** or turn off **Show your name**, go to [**Settings > Privacy**](https://claude.ai/settings/data-privacy-controls) on claude.ai and click **Manage** next to **Shared Code sessions**.
 
 ## Stop sharing a session
 

@@ -42,7 +42,7 @@ PR Steward works on failing checks, merge conflicts, review feedback, and the Cl
 
 ### Stop or limit PR Steward
 
-To stop PR Steward on one pull request, remove the `claude-pr-steward-watching` label or [comment `@claude stop`](https://code.claude.com/docs/en/pr-steward-pull-requests#start-or-stop-pr-steward-on-one-pull-request). To turn off or limit PR Steward on the pull requests that you open later, go to [**PR Steward**](https://claude.ai/settings/claude-code#pr-steward) in **Settings > Code** or **Settings > Claude Code**.
+To stop PR Steward on one pull request, remove the `claude-pr-steward-watching` label or [comment `@claude stop`](https://code.claude.com/docs/en/pr-steward-pull-requests#start-or-stop-pr-steward-on-one-pull-request). To turn off or limit PR Steward on the pull requests that you open later, go to [**PR Steward**](https://claude.ai/settings/claude-code#pr-steward) in **Settings > Code** on claude.ai.
 
 ## Decide whether PR Steward fits your team
 

@@ -485,12 +485,12 @@ The per-call limits still apply while the call runs in the background: the wall-
 
 To change or turn off automatic backgrounding:
 
-* Set the [`CLAUDE_CODE_MCP_AUTO_BACKGROUND_MS`](https://code.claude.com/docs/en/env-vars) environment variable in milliseconds to change the threshold, or set it to `0` to turn automatic backgrounding off. With `0`, Claude also [waits for MCP tasks](#make-claude-wait-for-the-result-of-an-mcp-task) in an interactive session
+* Set the [`CLAUDE_CODE_MCP_AUTO_BACKGROUND_MS`](https://code.claude.com/docs/en/env-vars) environment variable in milliseconds to change the threshold, or set it to `0` to turn automatic backgrounding off. With `0`, Claude also [waits for MCP tasks](#make-claude-wait-for-the-result-of-an-mcp-task) in an interactive terminal session
 * Set [`CLAUDE_CODE_DISABLE_BACKGROUND_TASKS`](https://code.claude.com/docs/en/env-vars) to `1` to turn off automatic backgrounding and [background commands](https://code.claude.com/docs/en/tools-reference.md#background-commands)
 
 Some calls never move to the background:
 
-* Calls from [subagents](https://code.claude.com/docs/en/sub-agents.md); Claude Code backgrounds only main-conversation calls
+* Calls from [subagents](https://code.claude.com/docs/en/sub-agents.md), except an [MCP task in the cloud](#mcp-tasks-in-the-cloud)
 * Calls to IDE servers
 * Calls in [non-interactive mode](https://code.claude.com/docs/en/headless.md), unless `CLAUDE_AUTO_BACKGROUND_TASKS` is set to `1`, since a one-shot run can end before the result arrives
 
@@ -498,13 +498,13 @@ A call waiting on an open [elicitation dialog](#respond-to-mcp-elicitation-reque
 
 ### MCP tasks that run on the server
 
-An MCP task is a long job, such as a report export or a build, that an MCP server runs itself using the [MCP tasks extension](https://modelcontextprotocol.io/extensions/tasks/overview). Claude's tool call returns once the server accepts the job, so Claude keeps working unless you [make Claude wait](#make-claude-wait-for-the-result-of-an-mcp-task). When the job ends, the transcript says so and Claude gets the result. Ask Claude for it.
+An MCP task is a long job, such as a report export or a build, that an MCP server runs itself using the [MCP tasks extension](https://modelcontextprotocol.io/extensions/tasks/overview). In the main conversation, Claude's tool call returns once the server accepts the job, so Claude keeps working unless you [make Claude wait](#make-claude-wait-for-the-result-of-an-mcp-task). When the job ends, the transcript says so and Claude gets the result. Ask Claude for it.
 
 Meanwhile, the footer shows a count such as `1 MCP task`, and Claude Code follows the task by checking its status with the server. A task on a remote server keeps running after you exit. To follow it again, [resume the same session](#exit-clear-or-resume-while-an-mcp-task-runs).
 
 > [!NOTE]
 >
-> MCP tasks are in public beta and require Claude Code v2.1.304 or later. [What a call needs to become an MCP task](#requirements-for-mcp-tasks) lists the sessions and servers that get them.
+> MCP tasks require Claude Code v2.1.304 or later. [What a call needs to become an MCP task](#requirements-for-mcp-tasks) lists the sessions and servers that get them.
 
 #### Stop an MCP task or get its result
 
@@ -516,7 +516,7 @@ When the task ends, a line such as this one appears in the transcript:
 MCP task <server task id> (<server>/<tool>) completed.
 ```
 
-The result goes to Claude, not into the transcript, so ask Claude for it. If Claude is idle when the result arrives, Claude starts on it unprompted.
+The result goes to Claude, not into the transcript, so ask Claude for it. If Claude is idle when the result arrives, Claude starts on it unprompted. When a [subagent's call](#requirements-for-mcp-tasks) becomes a task in a terminal session, the subagent waits for the result.
 
 #### Answer a question from an MCP task
 
@@ -524,7 +524,11 @@ A running task can open an [elicitation dialog](#respond-to-mcp-elicitation-requ
 
 Unless you've set Claude to [wait for the result](#make-claude-wait-for-the-result-of-an-mcp-task), press `Esc` in the dialog to answer later. To reopen the question, run `/tasks`, open the task's details, and press `Enter`. Answering later requires Claude Code v2.1.324 or later.
 
-In a [non-interactive](https://code.claude.com/docs/en/headless.md) session, Claude Code asks the server to cancel a task that requests input, without running your [`Elicitation` hooks](https://code.claude.com/docs/en/hooks#elicitation) or calling the Agent SDK's `onElicitation` callback.
+Outside an interactive terminal session, check whether you can answer, because some sessions cancel the task:
+
+* **[`claude -p`](https://code.claude.com/docs/en/headless) runs and Agent SDK sessions**: Claude Code asks the server to cancel the task, without running your [`Elicitation` hooks](https://code.claude.com/docs/en/hooks#elicitation) or calling the Agent SDK's `onElicitation` callback
+* **VS Code and local desktop app sessions**: see [MCP tasks in VS Code and the desktop app](#mcp-tasks-in-vs-code-and-desktop)
+* **Cloud sessions and claude.ai chats**: see [Answer an MCP task's question in the cloud](#mcp-task-questions-in-the-cloud)
 
 #### Exit, clear, or resume while an MCP task runs
 
@@ -540,16 +544,17 @@ A task on a remote server keeps running after you exit. A stdio server's process
 
 #### What a call needs to become an MCP task
 
-A tool call becomes an MCP task only when all of these conditions hold:
+For the cloud, see [MCP tasks in cloud sessions and claude.ai chats](#mcp-tasks-in-the-cloud). Elsewhere, a tool call becomes an MCP task only when it meets all of these conditions:
 
 * The server supports tasks
 * The server is an HTTP, stdio, or claude.ai connector server connected on [protocol revision 2026-07-28](#mcp-client-runtimes). Setting [`MCP_SDK_GENERATION=v1` or `MCP_PROTOCOL_NEGOTIATION=legacy`](https://code.claude.com/docs/en/env-vars) rules that out
-* The session [fetches feature flags](https://code.claude.com/docs/en/env-vars.md#features-that-need-feature-flag-fetching), so not on a third-party provider such as Amazon Bedrock, and not with telemetry or flag fetching turned off
 * Anthropic has turned MCP tasks on for your kind of session:
   * Terminal CLI sessions, [Agent SDK](https://code.claude.com/docs/en/agent-sdk/overview.md) sessions, and [GitHub Actions](https://code.claude.com/docs/en/github-actions.md) runs have them on v2.1.304 or later
-  * [Cloud sessions](https://code.claude.com/docs/en/claude-code-on-the-web.md), including ones you open in the desktop app, have them only if Anthropic has turned them on for your account or organization. You can't turn them on or look up their state in a setting
-  * Some other Claude Code surfaces, such as the [VS Code extension](https://code.claude.com/docs/en/vs-code.md) and local sessions in the [desktop app](https://code.claude.com/docs/en/desktop.md), don't have them
-* The call comes from the main conversation, not from a [subagent](https://code.claude.com/docs/en/sub-agents.md)
+  * For the VS Code extension and local sessions in the desktop app, see [MCP tasks in VS Code and the desktop app](#mcp-tasks-in-vs-code-and-desktop)
+* If [feature-flag fetching is off](https://code.claude.com/docs/en/env-vars.md#features-that-need-feature-flag-fetching), for example on Amazon Bedrock or with telemetry turned off, you need an interactive terminal session on Claude Code v2.1.317 or later
+* The call comes from one of these:
+  * The main conversation
+  * A non-[fork](https://code.claude.com/docs/en/sub-agents.md#fork-the-current-conversation) [subagent](https://code.claude.com/docs/en/sub-agents.md) that the main conversation started, in an interactive terminal session that [fetches feature flags](https://code.claude.com/docs/en/env-vars.md#features-that-need-feature-flag-fetching), on v2.1.331 or later. The server can't be one [defined in the subagent's own file](https://code.claude.com/docs/en/sub-agents.md#scope-mcp-servers-to-a-subagent)
 * Either the session is interactive, or an [Agent SDK](https://code.claude.com/docs/en/agent-sdk/overview.md) session or a `claude -p` run reading `--input-format stream-json` has:
   * [`CLAUDE_AUTO_BACKGROUND_TASKS`](https://code.claude.com/docs/en/env-vars) at `1`
   * `CLAUDE_CODE_DISABLE_MCP_TASK_BACKGROUND` not `1`
@@ -558,6 +563,74 @@ A tool call becomes an MCP task only when all of these conditions hold:
 Any other call is a plain tool call, and [Automatic backgrounding of long tool calls](#automatic-backgrounding-of-long-tool-calls) says which of those move to the background.
 
 Keep an Agent SDK or stream-json session's input open, because the run [doesn't wait for MCP tasks](https://code.claude.com/docs/en/headless.md#mcp-work-when-a-non-interactive-run-ends) after input closes. A one-shot `claude -p "<prompt>"` run doesn't get MCP tasks.
+
+#### MCP tasks in VS Code and the desktop app
+
+MCP tasks can work in the [VS Code extension](https://code.claude.com/docs/en/vs-code.md) and in local [desktop app](https://code.claude.com/docs/en/desktop.md) sessions. In both, you need Claude Code v2.1.331 or later and a session that [fetches feature flags](https://code.claude.com/docs/en/env-vars.md#features-that-need-feature-flag-fetching).
+
+Use a terminal session in these cases:
+
+* **claude.ai connector in the desktop app**: it gets no tasks in local sessions
+* **Server from `claude_desktop_config.json`**: it gets no tasks either, so [add it to the CLI](#installing-mcp-servers) first
+* **Task that asks questions**: neither app shows a task's question, and Claude Code asks the server to cancel the task unless an [`Elicitation` hook](https://code.claude.com/docs/en/hooks#elicitation) accepts the request
+
+Once the server accepts the job, you can see or stop the task in VS Code's [`/tasks`](https://code.claude.com/docs/en/vs-code#monitor-background-processes) or the desktop app's [**Background tasks** pane](https://code.claude.com/docs/en/desktop.md#watch-background-tasks). If no row appears while Claude waits on the call, or the tool fails, check these causes:
+
+* **`CLAUDE_CODE_MCP_AUTO_BACKGROUND_MS` at `0` or `CLAUDE_CODE_DISABLE_MCP_TASK_BACKGROUND` at `1`**: remove it, for example from `env` in [`settings.json`](https://code.claude.com/docs/en/settings), and start a new session
+* **Claude Code earlier than v2.1.331**: check the version in [VS Code](https://code.claude.com/docs/en/vs-code.md#install-the-extension) or the [desktop app](https://code.claude.com/docs/en/desktop.md#claude-code-version-in-the-code-tab), then update the extension or app and start a new session. If the latest update still carries an earlier version, use a terminal session until an update brings v2.1.331 or later.
+* **First session after an update**: MCP tasks [can be missing in that session](https://code.claude.com/docs/en/env-vars.md#first-session-after-an-install-or-upgrade), so start another one
+
+If the call still doesn't become a task after these checks, use a terminal session. If it doesn't become one there either, see [What a call needs to become an MCP task](#requirements-for-mcp-tasks).
+
+#### MCP tasks in cloud sessions and claude.ai chats
+
+MCP tasks work in the cloud with [claude.ai connectors](#use-mcp-servers-from-claude-ai) that support them on [protocol revision 2026-07-28](#mcp-client-runtimes). Tool calls can become tasks in these places:
+
+* [Cloud sessions](https://code.claude.com/docs/en/claude-code-on-the-web.md) you start yourself in Anthropic-hosted environments
+* New chats in the [unified Claude experience](https://support.claude.com/en/articles/16761823-claude-cowork-and-chat-are-one-claude) on Pro, Max, Ultra, and Team plans
+
+Not every existing chat has tasks. If a tool that works only as a task fails in an existing chat on one of those plans, try a new chat.
+
+Only some accounts get MCP tasks in these other places:
+
+* New chats in the unified Claude experience on Free and Enterprise plans
+* The **Cowork** option, on accounts without the unified experience, where the message box offers a choice of **Chat** or **Cowork**
+* [Recurring work that you schedule](https://support.claude.com/en/articles/13854387-schedule-recurring-tasks-in-cowork) from a chat or from Cowork
+
+You can't turn MCP tasks on for your account in a setting. If a tool that works only as a task fails in one of those places, run it from a terminal session on a paid plan.
+
+In cloud sessions, servers from `.mcp.json` or a plugin get no tasks, so a tool that works only as a task returns the server's error. Add a remote server as a connector instead.
+
+Expect calls without tasks in cases such as these, and run a tool that needs tasks from a terminal session:
+
+* [Project](https://code.claude.com/docs/en/claude-projects.md) threads
+* Incognito chats
+* Claude Code's [cloud scheduled tasks](https://code.claude.com/docs/en/routines.md)
+
+In cloud sessions and chats that have tasks, a [subagent](https://code.claude.com/docs/en/sub-agents.md)'s call can become a task too. This needs a subagent that the main conversation started and that isn't a [fork](https://code.claude.com/docs/en/sub-agents.md#fork-the-current-conversation). The subagent gets the result if the task ends within two minutes. For a longer task, expect Claude to pick up the result in the main conversation.
+
+#### Answer an MCP task's question in the cloud
+
+When a task asks you a question in a cloud session or chat, select **Allow** on the permission prompt, then answer in the form that opens. If the prompt is denied, or if the form closes before you answer, the task keeps waiting, so ask Claude to show the question again.
+
+You can't answer in the **Cowork** option or in recurring work that you schedule. If Claude reports there, or in any other session or chat, that the question cancelled the task, start the task again from an interactive terminal session.
+
+#### Check or stop an MCP task in the cloud
+
+To check on or stop a running MCP task, ask Claude in the cloud session or claude.ai chat that started it, for example `stop the export task`. In a claude.ai chat on a computer, you can also hover over the tool call that started the task and select **Stop** if it appears.
+
+The server may still finish the job after either kind of stop, so ask Claude to check the task afterward. If the job still runs, look for a way to cancel it in the server's other tools or in the service that runs it.
+
+#### Get an MCP task's result in the cloud
+
+If a task's result hasn't arrived in a cloud session or chat, send a message so Claude Code checks the task again. You can leave while a task runs. When it completes or fails, Claude usually picks up the result unprompted, even in a session that stopped for inactivity.
+
+If Claude reports one of these problems with the task, take the step that matches its report:
+
+* **The task was cancelled because it asked you a question**: you [can't answer](#mcp-task-questions-in-the-cloud) in that session or chat, so start the task again from an interactive terminal session
+* **Tracking stopped after failed status checks**: the job can still be running, so ask Claude to check it again. If no result follows, ask Claude to find the outcome with the server's other tools
+* **The server no longer knows the task**: the result may be lost, so ask Claude to find the outcome with the server's other tools before you run the job again
+* **The task reached the seven-day tracking limit**: the job can still be running. In a cloud session, ask Claude to check it again. In a chat, ask Claude to find the outcome with the server's other tools
 
 #### Status messages on an MCP task
 
@@ -578,11 +651,11 @@ These messages, in a task's `/tasks` entry or its closing transcript line, mean 
 
 #### Time limits on MCP tasks
 
-By default, a task in the background has no Claude Code time limit. The [tool call time limits](#time-limits-on-mcp-tool-calls), including the wall-clock limit and the idle timeout, apply until the server answers the call with the task. If you [make Claude wait](#make-claude-wait-for-the-result-of-an-mcp-task), they apply for the whole task. Answered status checks count as activity for the idle timeout.
+Outside [cloud sessions and claude.ai chats](#mcp-task-results-in-the-cloud), a task in the background has no Claude Code time limit by default. The [tool call time limits](#time-limits-on-mcp-tool-calls), including the wall-clock limit and the idle timeout, apply until the server answers the call with the task. If you [make Claude wait](#make-claude-wait-for-the-result-of-an-mcp-task), they apply for the whole task. Answered status checks count as activity for the idle timeout.
 
 #### Make Claude wait for the result of an MCP task
 
-To make Claude wait for a task's result in an interactive session, set one of two environment variables, for example in the `env` block of [`settings.json`](https://code.claude.com/docs/en/settings):
+To make Claude wait for a task's result in an interactive terminal session, set one of two environment variables, for example in the `env` block of [`settings.json`](https://code.claude.com/docs/en/settings):
 
 * **[`CLAUDE_CODE_MCP_AUTO_BACKGROUND_MS`](https://code.claude.com/docs/en/env-vars) set to `0`**: Claude waits for every MCP tool call until the call ends
 * **[`CLAUDE_CODE_DISABLE_MCP_TASK_BACKGROUND`](https://code.claude.com/docs/en/env-vars) set to `1`**: Claude waits for a task's result. While [automatic backgrounding](#automatic-backgrounding-of-long-tool-calls) is on, it moves the call after two minutes by default, so short tasks finish in place and long ones don't block you. The moved call is a plain background call rather than an MCP task. It doesn't survive exiting the session
@@ -626,7 +699,7 @@ Answer with a task only when the request carries the extension, or the call fail
 | `taskId` | Required. At most 128 printable ASCII characters with no spaces, or Claude gets a tool error beginning `MCP server "<name>" returned a malformed task handle for tool "<tool>"`. Keep the ID answerable across connections, because after a resume Claude Code asks about it on a new connection |
 | `status` | Required. One of `working`, `input_required`, `completed`, `failed`, or `cancelled`. Another value gives the `Unsupported result type` error |
 | `createdAt`, `lastUpdatedAt`, `ttlMs` | Required by the tasks extension, and `ttlMs` may be `null`. Claude Code doesn't drop a task because its `ttlMs` has passed |
-| `pollIntervalMs` | Optional. Milliseconds between `tasks/get` requests, clamped to between 250 and 30000. Claude Code uses 2000 when the field is absent or `null`, and reads the value again from each `tasks/get` response |
+| `pollIntervalMs` | Optional. Milliseconds between `tasks/get` requests, read again from each `tasks/get` response. Outside the cloud, Claude Code clamps the value to between 250 and 30000, and uses 2000 when the field is absent or `null`. For the cloud, see [Choose a time to live and a poll interval](#choose-a-time-to-live-and-a-poll-interval) |
 | `statusMessage` | Optional. `/tasks` shows the value from your latest `tasks/get` response, not this first one, and a response that omits the field clears it. A [status message from Claude Code](#status-messages-on-an-mcp-task) can take its place |
 
 Claude Code accepts a task answer that omits `createdAt`, `lastUpdatedAt`, or `ttlMs`, or that sets `pollIntervalMs` to `null`. Before v2.1.317, the call failed with the `Unsupported result type` error instead. To work with those versions too, send the three fields that the tasks extension requires, and send `pollIntervalMs` as a number or not at all.
@@ -635,7 +708,9 @@ On an HTTP or claude.ai connector server, the task answer has to start within th
 
 #### Report status, results, and questions
 
-Right after the task answer, Claude Code sends `tasks/get` with `{ "taskId": ... }`, then repeats it once per poll interval. The tasks extension requires your response to carry `"resultType": "complete"` along with `taskId`, `status`, `createdAt`, `lastUpdatedAt`, and `ttlMs`. `ttlMs` may be `null`, and `statusMessage` and `pollIntervalMs` are optional. This example reports the build as done:
+Right after the task answer, Claude Code sends `tasks/get` with `{ "taskId": ... }`, then repeats it once per [poll interval](#choose-a-time-to-live-and-a-poll-interval). The tasks extension requires your response to carry `"resultType": "complete"` along with `taskId`, `status`, `createdAt`, `lastUpdatedAt`, and `ttlMs`. `ttlMs` may be `null`, and `statusMessage` and `pollIntervalMs` are optional.
+
+This example reports the build as done:
 
 ```json theme={null}
 {
@@ -658,9 +733,9 @@ Right after the task answer, Claude Code sends `tasks/get` with `{ "taskId": ...
 | `failed` | Tells Claude the `message` of the top-level `error` object `{ code, message, data }`, which the tasks extension requires on a failed task. Without that `message`, Claude gets `statusMessage` instead, or else `Task failed` |
 | `cancelled` | Tells Claude `statusMessage`, or else `Task was cancelled by the server` |
 | `input_required` | Reads `inputRequests`, an object that maps a key you choose to `{ method, params }`. Claude Code answers each key once through `tasks/update` with `{ taskId, inputResponses }`, where `inputResponses` maps the same key to that request's result. Keys beyond 16 per task are ignored |
-| Methods in `inputRequests` | `elicitation/create` is served only in interactive terminal sessions, and `roots/list` everywhere. When Claude Code can't serve a request, it asks the server to cancel the task |
+| Methods in `inputRequests` | `elicitation/create` reaches a person in interactive terminal sessions. For the cloud, see [where a person can answer](#mcp-task-questions-in-the-cloud). `roots/list` is served outside the cloud. Don't depend on it in [cloud sessions and claude.ai chats](#mcp-tasks-in-the-cloud). When Claude Code can't serve a request, it asks the server to cancel the task |
 | Another `status` value | Claude Code asks the server to cancel the task and reports it to Claude as failed |
-| JSON-RPC error `-32602` | Read as an unknown task ID. For a task in the background, Claude Code keeps asking for up to five minutes, then reports the outcome to Claude as unknown |
+| JSON-RPC error `-32602` | Read as an unknown task ID. For a task in the background outside the cloud, Claude Code keeps asking for up to five minutes, then reports the outcome to Claude as unknown. In cloud sessions and claude.ai chats, expect about five minutes of retries too, then a report that [the server no longer knows the task](#mcp-task-results-in-the-cloud) |
 | `tasks/cancel` | Sent, for example, when Claude or the person stops the task while the server is connected. Not sent on exit |
 | `tasks/result`, `tasks/list`, `notifications/tasks` | Not used, so put the outcome in your `tasks/get` responses |
 
@@ -672,6 +747,12 @@ Set `ttlMs` and `pollIntervalMs`, both in milliseconds, in your `tools/call` ans
 
 * **`ttlMs`**: report how long your server keeps the task, counted from the task's creation. Send your longest run time plus the time you keep the result, such as `5400000` for a 30-minute job and one hour. Send `null` if your server keeps tasks with no time limit
 * **`pollIntervalMs`**: send 10000 to 30000 for a job that runs longer than a minute, so your server answers fewer status checks. For a shorter job, send 2000 so Claude gets the result sooner
+
+In [cloud sessions and claude.ai chats](#mcp-tasks-in-the-cloud), status checks can come less often than your `pollIntervalMs` asks, so plan for these intervals:
+
+* **A new task**: expect checks to follow a `pollIntervalMs` from 1000 to 30000. A lower value can be raised to 1000. If you omit the field, expect at most 10 seconds between checks
+* **An older task**: allow for checks that slow to every 10 seconds once the task is a minute old, and to every 30 seconds after 10 minutes
+* **A value above 30000**: checks can follow it as sent and delay the result, so stay at 30000 or below
 
 ### Plugin-provided MCP servers
 
@@ -1747,6 +1828,129 @@ Compare @postgres:schema://users with @docs:file://database/user-model
 > * Resources can contain any type of content that the MCP server provides (text, JSON, structured data, etc.)
 
 MCP Apps UI resources are entries with a `ui://` URI or the `text/html;profile=mcp-app` media type: pages for a host application to render rather than content for Claude to read. They don't appear in the `@` suggestions or in the resource list tool's results, and a server that offers only UI resources shows an empty resource list. Reading a UI resource by its URI still works.
+
+## Use skills from MCP servers
+
+With Skills over MCP, a server can provide [skills](https://code.claude.com/docs/en/skills.md) alongside its tools. This works for [claude.ai connectors](#use-mcp-servers-from-claude-ai), [servers you add](#installing-mcp-servers), and [servers from plugins](#plugin-provided-mcp-servers). To serve skills from a server you build, implement the [Skills extension](https://modelcontextprotocol.io/extensions/skills/overview), an extension to MCP that defines how servers list and deliver skills.
+
+> [!NOTE]
+>
+> MCP skills are in public beta and require Claude Code v2.1.331 or later. In the Desktop app, check the [Code tab's Claude Code version](https://code.claude.com/docs/en/desktop.md#claude-code-version-in-the-code-tab). See [where they're supported](#requirements-for-skills-from-mcp-servers).
+
+### Find and call MCP skills by name
+
+To find a skill, type `/` at the prompt in the terminal, VS Code, or the Desktop app's Code tab. In the terminal or VS Code, you can also run `/skills`. To use a skill, ask Claude, or type its name as a command. A skill's name is `<server>:<skill>`.
+
+For example, if you added a server named `docs` that has a `pdf` skill, the skill's name is `docs:pdf`, and this command runs it on `report.pdf`:
+
+```text theme={null}
+/docs:pdf report.pdf
+```
+
+Connector and plugin servers add a prefix, such as `claude_ai_Docs:pdf` for a connector named Docs, or `plugin_my-plugin_docs:pdf` for a `docs` server from `my-plugin`. In `<server>`, spaces and punctuation other than `-` become `_`.
+
+### Approvals for MCP skills
+
+When Claude loads an MCP skill in [auto mode](https://code.claude.com/docs/en/permission-modes.md#eliminate-prompts-with-auto-mode), the default, you don't see a prompt. The classifier decides whether the skill loads, without reading it. In Manual or `acceptEdits` mode, you see a prompt. Select **Allow this version** to skip the prompt and the classifier until the server changes the skill's files. To remove that approval in the terminal, delete its rule in `/permissions`.
+
+With an [ask rule](#block-a-servers-skills-or-ask-first) or a connector set to [**Restrict to Ask**](#restrict-mcp-skills-for-organizations), Claude needs your approval each time, including in auto and `bypassPermissions` modes. In plan mode, you see the prompt even for a version you allowed, unless your terminal session has [bypass available](https://code.claude.com/docs/en/permission-modes.md#skip-all-checks-with-bypasspermissions-mode). Typing a skill's command at the prompt doesn't need approval. For Remote Control, see [Where MCP skills are supported](#where-mcp-skills-are-supported).
+
+#### Set rules for a server's skills
+
+Add a [permission rule](https://code.claude.com/docs/en/permissions.md) to block an MCP server's skills, see a prompt each time Claude loads one, or skip the prompt. In the terminal, run `/permissions` to add one.
+
+These example rules use `docs` as the [server name](#run-an-mcp-skill):
+
+| To | Add to | Rule |
+| :- | :- | :- |
+| Block its skills, including typed commands | `deny` | `Skill(mcp__docs__*)` |
+| Block only its `pdf` skill | `deny` | `Skill(docs:pdf)` |
+| Block its skills and tools | `deny` | `mcp__docs` |
+| See a prompt each time Claude loads one | `ask` | `Skill(mcp__docs__*)` |
+| Approve all versions of its skills | `allow` | `Skill(mcp__docs__*)` |
+
+Add the `allow` rule to user or managed settings. It works for servers you added at user or local scope and for managed servers, but not for connectors, `.mcp.json` servers, or plugin servers. `Skill(mcp__docs__*)` rules require Claude Code v2.1.331 or later.
+
+With `deny` rules, normal [resource reads](#use-mcp-resources) from the server are still allowed. To stop Claude from reading any server's resources, including allowed skills' supporting files, deny `ReadMcpResourceTool`.
+
+### Security scanning for MCP skills
+
+Anthropic scans skills from some connectors, with [exceptions and limitations](#limitations-of-mcp-skills). For these connectors, a version loads only after it passes the scan:
+
+* Third-party [Directory](https://claude.ai/directory) connectors you add on claude.ai
+* Custom connectors, while your Enterprise organization keeps **Skill and plugin security scanning** on in [**Organization settings > Plugins & skills > Policy**](https://claude.ai/admin-settings/skills?tab=policy)
+
+Anthropic doesn't scan skills from other connectors or servers, including Directory servers added with `claude mcp add`.
+
+> [!WARNING]
+>
+> Skills can direct Claude to run code. Servers can change skills at any time. Add only servers you trust.
+
+### MCP skill availability
+
+When you sign in with `/login` on a Pro, Max, or Ultra plan, MCP skills are on. With `/login` on a Team or Enterprise plan, they're off until your organization [turns them on](#turn-on-skills-for-an-organization).
+
+With a [long-lived token](https://code.claude.com/docs/en/authentication.md#generate-a-long-lived-token) from any of these plans, MCP skills are on. With an API key or a Console login, they're rolling out: off now, and on by default when the rollout reaches you. For a token, a key, or a Console login, claude.ai connectors don't load, so you can use skills only from other MCP servers.
+
+#### Where MCP skills are supported
+
+You can use MCP skills in a terminal, including in JetBrains IDEs, and in local sessions you start in the Desktop app. In the VS Code extension, they're rolling out and turn on without a setting. When you control an interactive terminal session over [Remote Control](https://code.claude.com/docs/en/remote-control.md), ask Claude to use a skill instead of sending its command.
+
+You also need a Fable model, or Claude Opus 4.8, Sonnet 5, Haiku 5.5, or later, and a direct connection to Anthropic with [feature flag fetching](https://code.claude.com/docs/en/env-vars.md#features-that-need-feature-flag-fetching) on. If your setup matches one of these, MCP skills aren't supported:
+
+* **Sessions**: cloud sessions, `claude -p`, `claude remote-control` server mode, [GitHub Actions](https://code.claude.com/docs/en/github-actions.md), and the Agent SDK
+* **Servers in the Desktop app**: connectors, Desktop extensions, and servers from [`claude_desktop_config.json`](https://code.claude.com/docs/en/desktop#mcp-servers-from-the-claude-desktop-chat-app)
+* **Connections**: cloud providers, a custom `ANTHROPIC_BASE_URL`, `apiKeyHelper`, and `ANTHROPIC_AUTH_TOKEN`
+* **Compliance settings**: organizations with a setting such as [HIPAA](https://code.claude.com/docs/en/hipaa-setup.md) or [zero data retention](https://code.claude.com/docs/en/zero-data-retention.md). For connectors, this includes [customer-managed encryption keys](https://platform.claude.com/docs/en/manage-claude/cmek).
+
+### MCP skill limitations
+
+Each server shows up to 100 skills. [Scanned skills](#safety-of-mcp-skills) have limits:
+
+* **Size**: 100 KB per text file, 400 KB per skill
+* **Unscanned files**: PNG, JPEG, GIF, BMP, ICO, SVG, PDF, WOFF, WOFF2, TTF, EOT, MP3, MP4, WAV, AVI, MOV, and dependency lock files aren't scanned or counted
+* **Unsupported files**: skills with an archive, another binary file such as WebP or OTF, or text in folders such as `dist/` don't load
+
+### Turn on MCP skills for organizations
+
+To turn on MCP skills for Team or Enterprise members who sign in with `/login`:
+
+* **Connectors**: an [Owner](https://code.claude.com/docs/en/server-managed-settings.md#access-control) turns on **Skills over MCP** in [**Organization settings > Connectors**](https://claude.ai/admin-settings/connectors). Your organization's [**Skills** setting](https://claude.ai/admin-settings/skills?tab=policy) must also be on.
+* **Other servers**: set [`disableDirectMcpSkills`](https://code.claude.com/docs/en/settings-reference#disabledirectmcpskills) to `false` in [managed settings](https://code.claude.com/docs/en/managed-settings.md), in the highest-ranked [admin source](https://code.claude.com/docs/en/managed-settings.md#how-claude-code-combines-managed-sources) you use
+
+> [!WARNING]
+>
+> Turn skills on only if you trust your members' servers: skill instructions or code can make Claude take unintended actions, including through [prompt injection](https://code.claude.com/docs/en/security.md#protect-against-prompt-injection).
+
+#### Restrict MCP skills for organizations
+
+To restrict one connector's skills, open the connector in [**Organization settings > Connectors**](https://claude.ai/admin-settings/connectors) and change **Default restriction for unconfigured tools**:
+
+* **Restrict to Ask**: Claude needs approval each time it loads a skill
+* **Restrict to Blocked**: no skill loads, including typed commands
+
+Either way, you also restrict the connector's tools that have no restriction of their own. [Per-tool controls](#organization-controls-on-connector-tools) don't apply to skills.
+
+On devices you manage, people can also sign in with a personal plan, an API key, or a long-lived token, where your organization's defaults don't apply. To turn skills off on those devices, set these keys to `true` in a [managed settings file or MDM policy](https://code.claude.com/docs/en/server-managed-settings.md#platform-availability):
+
+* **`disableDirectMcpSkills`**: turns off skills from servers other than connectors
+* **[`disableClaudeAiConnectors`](#disable-claude-ai-connectors)**: turns off the connectors Claude Code fetches, including their skills and tools
+
+Normal [resource reads](#use-mcp-resources) from MCP servers are still allowed when skills are turned off.
+
+### Troubleshoot MCP skills
+
+If skills from MCP servers are missing, check the [supported setups](#requirements-for-skills-from-mcp-servers), [approval](#approvals-for-mcp-skills), the [`claude --debug=mcp` log](https://code.claude.com/docs/en/debug-your-config#check-mcp-servers), and these cases:
+
+| What you see | What to do |
+| :- | :- |
+| A **Features** row in `/status` that names a variable, such as `DISABLE_TELEMETRY` | Unset the variable to turn [feature flag fetching](https://code.claude.com/docs/en/env-vars.md#features-that-need-feature-flag-fetching) on, then restart Claude Code |
+| `Unknown command`, or Claude treats the command as text | Send it again. |
+| `Claude Code could not read whether your organization limits this connector` in a prompt | Restart Claude Code |
+| `scan of this skill has no result yet` | Retry in a minute, then tell the server's owner. Some [unsupported files](#limitations-of-mcp-skills) get no result. |
+| `scan cannot take it` or `scan stopped this version` | Tell the server's owner |
+| A connector shows tools but no skills | Ask its provider whether it serves skills to Claude Code. During the beta, Anthropic keeps skills off for some connectors, and no setting changes that. |
+| No **Protocol** row on a connected server's `/mcp` page | Confirm the server supports [MCP revision](#mcp-client-runtimes) 2026-07-28 or later, over HTTP or stdio. If a stdio server takes over 3 seconds to start, change its command from `npx` to the installed program, then select **Reconnect**. |
 
 ## Scale with MCP tool search
 

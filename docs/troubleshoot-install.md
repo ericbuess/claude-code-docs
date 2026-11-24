@@ -67,7 +67,7 @@ If your issue isn't listed, work through the diagnostic checks below to narrow d
 
 > [!TIP]
 >
-> If you'd rather skip the terminal entirely, the [Claude Code Desktop app](https://code.claude.com/docs/en/desktop-quickstart.md) lets you install and use Claude Code through a graphical interface. Download it for [macOS](https://claude.ai/api/desktop/darwin/universal/dmg/latest/redirect?utm_source=claude_code\&utm_medium=docs) or [Windows](https://claude.com/download?utm_source=claude_code\&utm_medium=docs) and start coding without any command-line setup. On Linux, install the app with apt by following the [Linux install instructions](https://code.claude.com/docs/en/desktop-linux.md).
+> If you'd rather skip the terminal entirely, the [Claude Code Desktop app](https://code.claude.com/docs/en/desktop-quickstart.md) lets you install and use Claude Code through a graphical interface. Download it for [macOS](https://claude.ai/claude-code/desktop-download?platform=mac\&utm_source=claude_code\&utm_medium=docs) or [Windows](https://claude.ai/claude-code/desktop-download?platform=win\&utm_source=claude_code\&utm_medium=docs) and start coding without any command-line setup. On Linux, install the app with apt by following the [Linux install instructions](https://code.claude.com/docs/en/desktop-linux.md).
 
 ## Run diagnostic checks
 

@@ -323,7 +323,7 @@ MCP tools, WebFetch, and WebSearch record this event too, on Claude Code v2.1.28
 Claude Code writes this event from a tool call's successful return, so a call that raises an error records nothing, whatever the tool. Among the calls that do return, it records no `tool.output` event for:
 
 * A call to any tool other than Read, Edit, Write, Bash, WebFetch, WebSearch, and MCP tools
-* A Read that returns anything other than file text, such as an image, a PDF, or a re-read of a file whose contents haven't changed
+* A Read that returns anything other than file text, such as an image or a PDF
 * An Edit or Write call, unless you also set `OTEL_LOG_TOOL_DETAILS=1`
 * A WebFetch or WebSearch call that Claude Code moved to the background while it ran so that a waiting message could reach Claude. The result that arrives later isn't recorded either. To learn when Claude Code moves a call, see [When Claude Code sends what you queued](https://code.claude.com/docs/en/interactive-mode.md#when-claude-code-sends-what-you-queued) for the terminal and the [`priority` field](https://code.claude.com/docs/en/agent-sdk/typescript#sdkusermessage) for Agent SDK sessions
 
