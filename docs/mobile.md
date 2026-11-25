@@ -24,7 +24,7 @@ Install the Claude app for [iOS](https://apps.apple.com/us/app/claude-by-anthrop
 
 **2. Sign in**
 
-Sign in with the same claude.ai account and organization you use for Claude Code. Cloud sessions and Remote Control require a claude.ai account, so they aren't reachable with an Anthropic Console API key or from a third-party provider such as Amazon Bedrock.
+Sign in with the same claude.ai account you use for Claude Code, and the same organization if you belong to one. Cloud sessions and Remote Control require a claude.ai account, so they aren't reachable with an Anthropic Console API key or from a third-party provider such as Amazon Bedrock.
 
 **3. Open the Code tab**
 
@@ -86,4 +86,3 @@ The mobile client covers most of what a session needs, with a few limitations:
 * [Remote Control](https://code.claude.com/docs/en/remote-control.md): continue a local session from any device
 * [Sessions from Dispatch](https://code.claude.com/docs/en/desktop.md#sessions-from-dispatch): how Dispatch tasks become Code sessions in the Desktop app
 * [Channels](https://code.claude.com/docs/en/channels.md): ask Claude something from your phone via Telegram, Discord, or iMessage while the work runs on your machine
-* [Claude Code in Slack](https://code.claude.com/docs/en/slack.md): delegate coding tasks from your Slack workspace by mentioning `@Claude`

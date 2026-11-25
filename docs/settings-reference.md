@@ -17,7 +17,7 @@ Every key below links to its entry. Scope lists the [files](https://code.claude.
 | Key | Description | Topic | Scope |
 | :- | :- | :- | :- |
 | [`advisorModel`](#advisormodel) | Pick which model answers when Claude asks the [advisor tool](https://code.claude.com/docs/en/advisor.md) | Model and responses | Any file |
-| [`agent`](#agent) | Start every session as a named [subagent](https://code.claude.com/docs/en/sub-agents.md) with its prompt, tools, and model | Agents, sessions, and worktrees | Any file |
+| [`agent`](#agent) | Start sessions as a named [subagent](https://code.claude.com/docs/en/sub-agents.md) with its prompt, tools, and model | Agents, sessions, and worktrees | Any file |
 | [`agentPushNotifEnabled`](#agentpushnotifenabled) | Let Claude send a [push notification to your phone](https://code.claude.com/docs/en/remote-control.md#mobile-push-notifications) when it decides to | Remote, desktop, and notifications | Any file |
 | [`allowAllClaudeAiMcps`](#allowallclaudeaimcps) | Load the [claude.ai connectors](https://code.claude.com/docs/en/mcp.md) Claude Code fetches itself alongside a deployed [`managed-mcp.json`](https://code.claude.com/docs/en/managed-mcp#exclusive-control-with-managed-mcp-json) | MCP | Managed |
 | [`allowClaudeInChromeWithManagedMcp`](#allowclaudeinchromewithmanagedmcp) | Let the built-in [Claude in Chrome](https://code.claude.com/docs/en/chrome.md) server run alongside a deployed [`managed-mcp.json`](https://code.claude.com/docs/en/managed-mcp#exclusive-control-with-managed-mcp-json) | MCP | Managed |
@@ -2527,7 +2527,7 @@ Have Claude Code snapshot files before each edit so [`/rewind`](https://code.cla
 }
 ```
 
-In a `-p` run or an Agent SDK session, Claude Code ignores this key. The SDK turns checkpointing on with its `enableFileCheckpointing` option, and a bare `-p` run needs `CLAUDE_CODE_ENABLE_SDK_FILE_CHECKPOINTING=true`. See [File checkpointing in the Agent SDK](https://code.claude.com/docs/en/agent-sdk/file-checkpointing.md).
+In a `-p` run or an Agent SDK session, Claude Code ignores this key unless your organization's [managed settings](https://code.claude.com/docs/en/managed-settings.md) set it to `false`, and then checkpointing stays off. That exception requires Claude Code v2.1.331 or later. Without that `false`, turn checkpointing on with the SDK's `enableFileCheckpointing` option, or with `CLAUDE_CODE_ENABLE_SDK_FILE_CHECKPOINTING=true` in a bare `-p` run. See [File checkpointing in the Agent SDK](https://code.claude.com/docs/en/agent-sdk/file-checkpointing.md).
 
 ### `idleCompaction`
 

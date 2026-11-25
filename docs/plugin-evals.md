@@ -199,7 +199,7 @@ With both files saved, run the case the way the [quickstart](#create-your-first-
 
 ### Set run limits and tools in prompt.md
 
-Set a case's `max_turns`, `timeout_seconds`, `model`, `tags`, and the `allowed_tools` it may use in `prompt.md` frontmatter; the [prompt.md frontmatter](#prompt-md-fields) reference lists every field and its default.
+Set a case's `max_turns`, `timeout_seconds`, `model`, `tags`, and `allowed_tools` in `prompt.md` frontmatter. For the other fields and the defaults, see the [prompt.md frontmatter](#prompt-md-fields) reference.
 
 Claude receives the body exactly as you wrote it. `@path` mentions in it aren't expanded into file attachments, so if Claude needs to read a file, grant a tool for it in `allowed_tools`.
 
@@ -338,19 +338,25 @@ Most of the time you run `claude plugin eval .` from the plugin root, which runs
 
 Add `--case <glob>` to filter by case name and `--tag <tag>` to keep cases with any of the given tags.
 
-Put the target before `--tag`, `--allow-tools`, and `--json`. The first two take a list and `--json` takes an optional path, so each of them reads a target that follows as its own value.
+Put the target before `--tag`, `--allow-tools`, `--disallow-tools`, and `--json`. The first three take a list and `--json` takes an optional path, so each of them reads a target that follows as its own value.
 
 ### Grant tools
 
 Runs never stop to ask for permission. Built-in tools that need a grant you didn't give, such as `Bash`, `Write`, `Edit`, `WebFetch`, and `WebSearch`, are removed from the session, so Claude can't call them at all.
 
-A run allows only the read-only tools the case lists in `allowed_tools`, from `Read`, `Glob`, `Grep`, `NotebookRead`, `Skill`, `AskUserQuestion`, `Agent`, `TodoWrite`, and the task tools `TaskCreate`, `TaskGet`, `TaskList`, `TaskUpdate`, and `TaskStop`, plus whatever you grant with `--allow-tools`. That grant applies to every case in the run. To let cases use `Bash`, `Write`, `Edit`, `WebFetch`, or `WebSearch`, grant them yourself:
+A run pre-approves the read-only tools the case lists in `allowed_tools`, from `Read`, `Glob`, `Grep`, `NotebookRead`, `Skill`, `AskUserQuestion`, `Agent`, `TodoWrite`, and the task tools `TaskCreate`, `TaskGet`, `TaskList`, `TaskUpdate`, and `TaskStop`, plus whatever you grant with `--allow-tools`. That grant applies to every case in the run.
+
+To let cases use `Bash`, `Write`, `Edit`, `WebFetch`, or `WebSearch`, grant them with `--allow-tools`:
 
 ```bash theme={null}
 claude plugin eval . --allow-tools Write Edit "Bash(npm test *)"
 ```
 
 When a case asked for a tool you didn't grant, the progress output lists it as `not granted`. Tools on a [mocked](#mock-mcp-servers) MCP server need no grant. Tools on a real plugin MCP server need both the server started, with `--allow-real-servers` or `--mocks off`, and a grant by name, such as `--allow-tools "mcp__plugin_my-plugin_github__*"`; a plugin's MCP tools are named `mcp__plugin_<plugin>_<server>__<tool>`.
+
+#### Pre-approve reads from another path
+
+To pre-approve reads under a folder such as `/data`, grant a [`Read` rule](https://code.claude.com/docs/en/permissions#read-and-edit) with a leading `//`, as in `--allow-tools "Read(//data/**)"`. On native Windows, the same grant for `C:\data` is `Read(//c/data/**)`. Listing `Read`, `Glob`, or `Grep` alone doesn't pre-approve every path on your machine.
 
 #### Shell grants need a sandbox
 
@@ -367,6 +373,20 @@ When a managed key is the cause, the message ends with `this machine's managed s
 
 Ask your administrator whether that setting can change for your machine, or drop the shell grant from that run.
 
+### Remove a built-in tool from runs
+
+To remove a built-in tool from every case, pass its [exact name](https://code.claude.com/docs/en/tools-reference.md) to `--disallow-tools`. For one case, list the name in that case's [`disallowed_tools`](#prompt-md-fields) field. Requires Claude Code v2.1.299 or later.
+
+If you only omit `Agent` from `allowed_tools`, Claude can still call it.
+
+To remove `Agent` and `TaskStop` from every case, run this in your shell:
+
+```bash theme={null}
+claude plugin eval . --disallow-tools Agent TaskStop
+```
+
+The output lists both tools after `Removed from Claude's tools in every case`.
+
 ### Command options
 
 This table covers the options for run count, models, scoring, cost, tool grants, mocks, and output. Run `claude plugin eval --help` for the complete list, which also includes `--case`, `--tag`, `--eval-dir`, `--no-scaffold`, `--report`, and `--verbose`.
@@ -381,6 +401,7 @@ This table covers the options for run count, models, scoring, cost, tool grants,
 | `--threshold <0..1>` | `1.0` | A case passes when its with-arm score is at least this. Any case below it makes the command exit 1 |
 | `--max-cost-usd <usd>` | No ceiling | A ceiling on the run's list-price cost estimate, not on plan usage. Checked before each run starts. Once spent, nothing further starts; runs that already started finish, so spend can pass the ceiling by those runs. If any run is left unstarted, the command exits 2 with partial results |
 | `--allow-tools <tools...>` | None | Grant tools beyond the read-only set. See [Grant tools](#grant-tools) |
+| `--disallow-tools <tools...>` | None | Remove built-in tools from every case. See [Remove a built-in tool from runs](#disallow-tools) |
 | `--scaffold` | Off | Run each case's [`scaffold_script`](#add-setup-or-history-with-case-yaml) |
 | `--trust-plugin` | Off | Skip the first-run trust prompt for a plugin whose code and suite you'd run yourself. Pass it in CI so the job is never refused by or left waiting at the prompt. See [What a run can access](#security) |
 | `--mocks <mode>` | `record` | `record` answers MCP tool calls from [mocks](#mock-mcp-servers), doesn't start the plugin's real servers, and saves agent-mock answers for replay. `off` ignores mocks and starts the plugin's real MCP servers |
@@ -541,13 +562,16 @@ evals/
 | `model` | The child session's default | Model for the agent under test. `--model` overrides it |
 | `max_turns` | `10` | Turn cap, up to 200. Hitting it is recorded as a run error and usually lowers the score, so set it generously |
 | `timeout_seconds` | `300` | Wall-clock cap per run, up to 3600 |
-| `allowed_tools` | `[]` | Tools the case wants, such as `[Read, Glob, Grep, Skill]`. Read-only tools are granted when listed here; for anything else, see [Grant tools](#grant-tools) |
+| `allowed_tools` | `[]` | Tools the case wants, such as `[Read, Glob, Grep, Skill]`. See [Grant tools](#grant-tools) |
+| `disallowed_tools` | | Exact built-in tool names to [remove from this case](#disallow-tools), such as `[Agent, TaskStop]` |
 | `append_system_prompt` | | Text appended to the child session's system prompt |
 | `env` | `{}` | Extra environment variables for the child session. Keys must match `EVAL_[A-Z0-9_]*`; any other key fails the run. The run inherits only an allowlist from your shell: basics such as `PATH` and locale, proxy and certificate settings, the variables that select and authenticate your model provider, most `ANTHROPIC_*` and `CLAUDE_CODE_*` configuration, and `EVAL_*`. To pass the plugin anything else, such as a toolchain setting, export it as an `EVAL_*` variable |
 
 ### case.yaml fields
 
-`case.yaml` is an alternative or companion to `prompt.md`: it describes a case in YAML and adds the fields that point at other files. It requires `schema_version: "1.1"` and `name`. The `prompt.md` fields `description`, `tags`, `plugins`, `runs`, and `expected_outcome` go at the top level; `model`, `max_turns`, `timeout_seconds`, `allowed_tools`, `append_system_prompt`, and `env` go under `execution:`. When both files exist, `prompt.md` frontmatter overrides the matching `case.yaml` fields, the `prompt.md` body is the prompt, and `graders/*.md` are added after any graders listed in `case.yaml`.
+`case.yaml` is an alternative or companion to `prompt.md`: it describes a case in YAML and adds the fields that point at other files. It requires `schema_version: "1.1"` and `name`. The `prompt.md` fields `description`, `tags`, `plugins`, `runs`, and `expected_outcome` go at the top level; `model`, `max_turns`, `timeout_seconds`, `allowed_tools`, `disallowed_tools`, `append_system_prompt`, and `env` go under `execution:`.
+
+When both files exist, `prompt.md` frontmatter overrides the matching `case.yaml` fields other than `disallowed_tools`, where the two lists combine. The `prompt.md` body is the prompt, and `graders/*.md` are added after any graders listed in `case.yaml`.
 
 These fields exist only in `case.yaml`:
 
@@ -681,7 +705,9 @@ By default each case runs both with your plugin and without it, and the runs wit
 
 The error is expected, since `Δ` compares your plugin's runs against the baseline. In the JSON result, the baseline runs are under `cases[].arms.without`.
 
-In runs with your plugin loaded, a case that lists `Agent` in `allowed_tools` can dispatch one of your plugin's agents by its namespaced name, such as `my-plugin:code-reviewer` for the `code-reviewer` agent in a plugin named `my-plugin`. To skip the baseline runs, pass `--ablation none`.
+> [!NOTE]
+>
+> In runs with your plugin loaded, Claude can dispatch one of your plugin's agents by its namespaced name, such as `my-plugin:code-reviewer` for the `code-reviewer` agent in a plugin named `my-plugin`. To skip the baseline runs, pass `--ablation none`.
 
 ### Everything scores zero although the right files were produced
 

@@ -47,18 +47,18 @@ If you want something else, such as a review alone or fixes from a cloud session
 Install or update these tools:
 
 * Claude Code v2.1.330 or later. If `/ship` is missing, see [/ship isn't available in your session](https://code.claude.com/docs/en/ship-command-troubleshooting.md#%2Fship-isn’t-available-in-your-session)
-* The [GitHub CLI](https://cli.github.com) 2.63 or later, signed in with `gh auth login`. With an older version, Claude can't push fixes
-* git 2.38 or later, to merge new commits into your branch. With an older git, Claude leaves those merges to you
+* For a repository on GitHub, the [GitHub CLI](https://cli.github.com) 2.63 or later, signed in with `gh auth login`. With an older version, no watch starts. Before v2.1.331, a watch starts and Claude can't push fixes
+* git 2.38 or later, to merge new commits into your branch. With an older git, Claude leaves those merges to you, and no watch starts [on another host](#watch-a-branch-on-another-host)
 
 Then get your change and your session ready:
 
-* **A finished change, for `/ship`**: have it in your local clone of a repository on GitHub. It can be uncommitted, committed on a branch other than the default branch, or already in an open pull request of yours. If the repository is hosted somewhere other than GitHub, `/ship` opens no pull request, and Claude reviews your change
+* **A finished change, for `/ship`**: have it in your local clone of a repository on GitHub. It can be uncommitted, committed on a branch other than the default branch, or already in an open pull request of yours. If the repository is hosted somewhere other than GitHub, `/ship` opens no pull request. Claude reviews your change, and can then [watch your branch](#watch-a-branch-on-another-host). Before v2.1.331, no watch starts there
 * **Only the files that you want in the pull request, for `/ship`**: `/ship` can commit all your uncommitted changes, new files included. In your shell, run `git status`. Delete each new file that you don't want in the pull request, or stash the file with `git stash push -u -- <file>`
 * **No secrets in those files, for `/ship`**: `/ship` looks for secrets by file name, such as `.env`, so look inside your files yourself. A deny rule such as `Read(./notes.txt)` doesn't keep a file out of the commit
-* **An open pull request on GitHub, for `/steward`**: it has to be your own, with its branch checked out in your local clone
-* **Permission mode**: choose [auto mode](https://code.claude.com/docs/en/permission-modes.md#eliminate-prompts-with-auto-mode) if you want Claude to work on the pull request unattended. In most other permission modes, Claude waits at each prompt. In `bypassPermissions` mode, no watch starts
+* **An open pull request on GitHub, for `/steward`**: it has to be your own, with its branch checked out in your local clone. On a host other than GitHub, see [Watch a branch on another host](#watch-a-branch-on-another-host)
+* **Permission mode**: choose [auto mode](https://code.claude.com/docs/en/permission-modes.md#eliminate-prompts-with-auto-mode) if you want Claude to work on the pull request unattended. In [Manual mode and `acceptEdits` mode](https://code.claude.com/docs/en/permission-modes#available-modes), Claude waits at each prompt. In `bypassPermissions` mode, no watch starts. With v2.1.331 or later, `/ship` doesn't start in plan mode
 
-On native Windows, [no watch starts](https://code.claude.com/docs/en/ship-command-troubleshooting.md#cases-where-no-watch-can-start).
+On native Windows, [no watch starts](https://code.claude.com/docs/en/ship-command-troubleshooting.md#cases-where-no-watch-can-start). In a [background session](https://code.claude.com/docs/en/agent-view.md), [no watch starts](https://code.claude.com/docs/en/ship-command-troubleshooting.md#a-session-setting-blocks-a-watch) either. Before v2.1.331, one can start there.
 
 > [!WARNING]
 >
@@ -82,11 +82,13 @@ If you cancel before the push, a commit that `/ship` made stays. To undo it and 
 
 In a repository on github.com that isn't a fork, `/ship` can commit your uncommitted changes, push the branch, and open the pull request before the review. On the default branch, it commits on a new branch and switches your checkout to that branch. If your work is already committed on another branch, `/ship` pushes that branch and opens the pull request.
 
-`/ship` doesn't commit your uncommitted changes in these cases. Take the first one that fits:
+`/ship` does something else in these cases. Take the first one that fits:
 
-* **A pull request is already open for the branch**: commit and push anything that you want in the pull request
-* **The repository is public**: if you're on a branch other than the default branch and it has commits of its own, `/ship` pushes those and opens a pull request without your uncommitted changes. Otherwise, commit your work on a branch other than the default branch, then run `/ship` again
+* **Someone else's pull request is open for the branch**: `/ship` doesn't commit or push your work, and no watch starts
 * **An uncommitted file's name suggests a secret, such as `.env`**: in a repository that isn't public, `/ship` doesn't commit or push anything. See [/ship committed or pushed nothing](https://code.claude.com/docs/en/ship-command-troubleshooting.md#%2Fship-committed-or-pushed-nothing)
+* **Your own pull request is already open for the branch**: `/ship` can commit your uncommitted changes, then push them and your unpushed commits onto it. [In some cases](https://code.claude.com/docs/en/ship-command-troubleshooting.md#your-pull-request-is-already-open), such as a public repository or auto-merge turned on, it doesn't commit your changes. If a watch then starts, your unpushed commits [can go up with Claude's next push](#keep-working-while-a-watch-runs). Before v2.1.331, `/ship` doesn't commit or push here
+* **The repository is public**: `/ship` doesn't commit your uncommitted changes. If you're on a branch other than the default branch and it has commits of its own, `/ship` pushes those and opens a pull request without your uncommitted changes. Otherwise, commit your work on a branch other than the default branch, then run `/ship` again
+* **Your commits are on the default branch, with nothing uncommitted**: in a repository that isn't public, `/ship` makes a new branch for them, pushes that branch, opens a pull request, and switches your checkout to the new branch. Before v2.1.331, `/ship` pushes nothing, so put the commits on a branch other than the default branch, then run `/ship` again
 
 Open the pull request yourself, then run `/ship`, if you want any of these:
 
@@ -105,9 +107,9 @@ To start a watch with no review first, type `/steward` at the Claude Code prompt
 
 ## What Claude does during a watch
 
-A watch is Claude's ongoing work on your pull request, which starts after `/ship`'s review or when you type `/steward`. Claude uses your `gh` and `git` sign-ins, so its work on GitHub appears under your name.
+A watch is Claude's ongoing work on your pull request, which starts after `/ship`'s review or when you type `/steward`. On a host other than GitHub, see [Watch a branch on another host](#watch-a-branch-on-another-host). Claude uses your `gh` and `git` sign-ins, so its work on GitHub appears under your name.
 
-In auto mode, Claude takes these actions without asking:
+In auto mode, on a GitHub pull request, Claude takes these actions without asking:
 
 * Works on the review findings that it judges to be problems
 * Can post one comment that sums up its review
@@ -116,13 +118,52 @@ In auto mode, Claude takes these actions without asking:
 * Works on failing checks, and re-runs failed ones
 * Answers review comments, resolves threads, and re-requests reviews
 
-Claude reads comments from you and from people with write access. On github.com, it also reads comments from Claude's bot. To have Claude read another bot's comments, type `/steward +` and the bot's name, as in `/steward +my-lint-bot`.
+On GitHub, Claude reads comments from you and from people with write access. On github.com, it also reads comments from Claude's bot. To have Claude read another bot's comments, type `/steward +` and the bot's name, as in `/steward +my-lint-bot`.
 
 When checks pass and comments are answered, Claude says so in the session. Merge the pull request yourself. What can merge depends on your permissions and your repository's branch rules. See [When a watch can lead to a merge](#when-a-watch-can-lead-to-a-merge).
 
+### Watch a branch on another host
+
+On a host other than GitHub, such as GitLab, Bitbucket, or Azure DevOps, Claude can watch your branch for up to seven days. The watch needs git 2.38 or later, and works without the GitHub CLI. `/ship` and `/steward` don't commit, push, or open anything when they start. Before v2.1.331, `/ship` reviews your change there, and no watch starts.
+
+Commit your change first, then push your branch with an upstream from your shell:
+
+```bash theme={null}
+git push -u origin <branch>
+```
+
+On gitlab.com, bitbucket.org, or dev.azure.com, open your merge request or pull request next. Claude Code can then [read its checks and comments with your git sign-in](#checks-and-comments-on-gitlab-bitbucket-and-azure-devops). Then type `/ship` at the Claude Code prompt, or `/steward` for a watch with no review first.
+
+With your git sign-in, Claude can take actions such as these, in auto mode without asking:
+
+* Merge the base branch into yours to resolve a conflict
+* Merge in other people's pushes to your branch
+* Push commits to your branch
+
+The watch gives Claude no command to reply to comments, re-run a check, or read CI logs there. To see what Claude may do there, type `/ship terms` at the prompt while the watch runs.
+
+#### Checks and comments on GitLab, Bitbucket, and Azure DevOps
+
+In a terminal session, Claude Code can read details such as your open merge request or pull request, its checks, and its comments. To do so, it asks git for the sign-in that git keeps for the remote that your branch pushes to. That sign-in goes to the API of gitlab.com, bitbucket.org, or dev.azure.com in `GET` requests. You aren't asked first.
+
+A line such as this one appears before the first read, which can go out as soon as you run `/ship` or `/steward`:
+
+```text theme={null}
+Claude Code is about to read gitlab.com's web API with the sign-in that git keeps for it. It only reads.
+```
+
+A watch that reads the host repeats these reads until it ends. To see whether they apply to your checkout, run `git remote -v` in your shell. They can happen only when the `(fetch)` line of the remote that your branch pushes to shows an `https` address on one of those hosts.
+
+To prevent them, switch the remote to SSH or deny the host in your settings before you run `/ship` or `/steward`. If a watch is running, type `/ship stop` first:
+
+* Have the remote that your branch pushes to fetch over SSH, as in `git remote set-url origin git@gitlab.com:<group>/<project>.git` in your shell, with that remote's name in place of `origin`. Then check that `git remote -v` shows no `https` address on its `(fetch)` line
+* Add the host to [`sandbox.network.deniedDomains`](https://code.claude.com/docs/en/settings-reference#sandbox-network-denieddomains). The `about to read` notice still appears, but Claude Code doesn't ask git for the sign-in or call the web API. The watch's own git commands, which Claude Code runs outside the [sandbox](https://code.claude.com/docs/en/sandboxing.md), still contact the host with git's sign-in. With the sandbox on, Claude also can't fetch from or push to that host
+
+At the watch's start, the host can refuse the sign-in, or show no open merge request or pull request of yours for the branch. The watch can then go on with git alone, and the lines at its start include `Claude can't see checks or comments on gitlab.com, so watch those yourself`. If you close yours without merging it, that watch continues, so type `/ship stop`.
+
 ### Keep working while a watch runs
 
-While a watch runs, keep the session open and [in the foreground](https://code.claude.com/docs/en/agent-view.md#send-the-session-to-the-background), the computer awake, and your pull request's branch checked out. Claude edits files in the same checkout as you.
+While a watch runs, keep the session open, the computer awake, and your pull request's branch checked out. Before v2.1.331, also keep the session [in the foreground](https://code.claude.com/docs/en/agent-view.md#send-the-session-to-the-background). Claude edits files in the same checkout as you.
 
 * **To start your next change**: work in another folder, such as a second clone of the repository, and open another Claude Code session there
 * **To push your own commits**: name the remote and branch, as in `git push origin <branch>`. If you change git's settings, for example with `git push -u` or `git branch -u`, the watch ends
@@ -161,23 +202,24 @@ Type `/tasks` at the Claude Code prompt. Once the review is done and while Claud
 
 ### What ends a watch
 
-After a watch ends, look for a line that starts `Stopped watching pull request`. [A watch stopped](https://code.claude.com/docs/en/ship-command-troubleshooting.md#a-watch-stopped) lists reasons that it gives.
+After a watch ends, look for a line that starts `Stopped watching`. [A watch stopped](https://code.claude.com/docs/en/ship-command-troubleshooting.md#a-watch-stopped) lists reasons that it gives.
 
 The watch ends in cases such as these:
 
 | Where | What ends the watch |
 | :- | :- |
-| On the pull request | It's merged or closed, [PR Steward](https://code.claude.com/docs/en/pr-steward.md) labels it, or seven days pass |
+| On a GitHub pull request | It's merged or closed, [PR Steward](https://code.claude.com/docs/en/pr-steward.md) labels it, or seven days pass |
+| On another host | Your branch is gone from its remote or adds nothing to its base any more, or seven days pass. Where Claude Code reads your merge request or pull request, the watch also ends when it's merged or closed. Otherwise, if you close it without merging it, [the watch can go on](#checks-and-comments-on-gitlab-bitbucket-and-azure-devops) |
 | At the keyboard | You press `Esc` or `Ctrl+C` at the prompt or while Claude is working. One press can end the watch, with no confirmation |
 | In your checkout | You check out another branch, or change git's settings |
-| In the session | The session ends, you send it to the background, you start another watch or a `/loop` with a task, or you run `/clear`, `/resume`, or `/branch` |
+| In the session | The session ends, you start another watch or a `/loop` with a task, you run `/clear`, `/resume`, or `/branch`, or the session is in plan mode when Claude next checks the pull request. Before v2.1.331, a watch goes on in plan mode, and ends when you send the session to the background |
 | After a failure | An error, a declined prompt, or a usage limit can end it early |
 
 ### Stop or restart a watch
 
 To end a watch, type `/ship stop` at the Claude Code prompt in the session that runs it. If Claude is working when you type it, the watch ends when the current turn does, so what Claude pushes or posts in that turn still reaches the pull request. To stop the turn as well, press `Esc`.
 
-To start a watch again, type [`/steward`](#start-a-watch-with-%2Fsteward).
+To start a watch again, type [`/steward`](#start-a-watch-with-%2Fsteward). On a host other than GitHub, add any base that you named, as in `/steward origin/main`.
 
 ## Decide where to run a watch
 
@@ -211,9 +253,9 @@ Cases such as these can lead to a merge:
 
 | Case | What happens |
 | :- | :- |
-| Auto-merge is on for the pull request | GitHub merges once the checks and reviews allow. What Claude does during the watch, such as pushing a fix, can bring that about. To turn it off, run `gh pr merge --disable-auto <number>` in your shell |
+| Auto-merge is on for the pull request | The host merges once the checks and reviews allow. What Claude does during the watch, such as pushing a fix, can bring that about. To turn it off on GitHub, run `gh pr merge --disable-auto <number>` in your shell |
 | In a terminal session, you type a message while Claude is idle | [Claude Code's limits](#what-claude-code-blocks-during-a-watch) are off while Claude answers your message. They're also off while Claude handles a background task's result that arrives during that time. In auto mode, Claude may then be allowed to merge |
-| You send a session that you started in your terminal to the background during the review or the watch, for example by pressing `←` | The watch ends. Work under way can go on there without these limits. To end that work, [stop that session](https://code.claude.com/docs/en/agent-view.md#manage-sessions-from-the-shell) |
+| Before v2.1.331, you send a session that you started in your terminal to the background during the review or the watch, for example by pressing `←` | The watch ends. Work under way can go on there without these limits. To end that work, [stop that session](https://code.claude.com/docs/en/agent-view.md#manage-sessions-from-the-shell) |
 
 ### Permission rules and hooks that apply to /ship and /steward
 
@@ -244,6 +286,8 @@ This example turns off both:
 }
 ```
 
+You can also set [`CLAUDE_CODE_DISABLE_SHIP`](https://code.claude.com/docs/en/env-vars#variables) to `1`, for example under `env` in managed settings. Requires Claude Code v2.1.331 or later.
+
 To stop `/ship`'s own pushes, put a [deny rule](https://code.claude.com/docs/en/permissions.md#manage-permissions) such as `Bash(git push *)` in managed settings. With that rule, no watch starts.
 
 ## Arguments for /ship and /steward
@@ -253,10 +297,11 @@ Type an argument after `/ship` or `/steward` at the Claude Code prompt. To combi
 | You type | Commands | What it does |
 | :- | :- | :- |
 | `low`, `medium`, `high`, `xhigh`, or `max` | `/ship` | Asks for a review at that effort level. The default is `high` |
-| `41`, or a pull request's URL | `/ship`, `/steward` | Works on that pull request. For a watch, it has to be your own, with its branch checked out |
-| `+botname` | `/ship`, `/steward` | Also reads that bot's comments. Repeat it when you start a watch again |
+| `41`, or a pull request's URL | `/ship`, `/steward` | On GitHub, works on that pull request. For a watch, it has to be your own, with its branch checked out |
+| `+botname` | `/ship`, `/steward` | On GitHub, also reads that bot's comments. Repeat it when you start a watch again |
+| `origin/main`, or another remote and branch | `/ship`, `/steward` | On [a host other than GitHub](#watch-a-branch-on-another-host), names the branch that your change goes into. Requires Claude Code v2.1.331 or later |
 | `stop` | `/ship`, `/steward` | Ends the watch |
-| `terms` | `/ship`, `/steward` | Shows what Claude may do during a watch and what limits it |
+| `terms` | `/ship`, `/steward` | Shows what Claude may do during a watch and what limits it. On [another host](#watch-a-branch-on-another-host), type it while the watch runs |
 
 ## Related resources
 

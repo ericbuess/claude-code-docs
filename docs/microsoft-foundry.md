@@ -11,6 +11,15 @@
 View plans
 Contact sales
 
+This page covers setting up Microsoft Foundry for the Claude Code CLI.
+
+> [!NOTE]
+>
+> To use Microsoft Foundry in the **Code** tab of the Claude Desktop app, you or your administrator configures the app:
+>
+> * **Your organization installed the app**: ask your administrator to [configure it for Microsoft Foundry](https://claude.com/docs/third-party/claude-desktop/foundry)
+> * **You install the app yourself**: follow the [single-machine setup steps](https://claude.com/docs/third-party/claude-desktop/installation#single-machine-setup) and enter the [connection and model values for Microsoft Foundry](https://claude.com/docs/third-party/claude-desktop/foundry#configure-the-app)
+
 ## Prerequisites
 
 Before configuring Claude Code with Microsoft Foundry, ensure you have:

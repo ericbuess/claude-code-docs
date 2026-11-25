@@ -117,7 +117,7 @@ Turn the setting off to stop these comments.
 
 ### What developers can change
 
-Developers come to you to change the review level, the **Review runs** setting, or which repositories get reviews. From GitHub, without the Owner role, they can do these:
+Developers ask an Owner to change the review level, the **Review runs** setting, or which repositories get reviews. From GitHub, without the Owner role, they can do these:
 
 * **Request a review**: comment [`@claude review`](https://code.claude.com/docs/en/code-review-pull-requests#comment-commands) on a pull request. This needs write access to the repository, and it works on [drafts and pull requests from forks](https://code.claude.com/docs/en/code-review-pull-requests.md#review-drafts-and-pull-requests-from-forks), which automatic reviews skip.
 * **Subscribe one pull request to a review on each push**: comment `@claude review always` on a pull request that isn't [a draft or from a fork](https://code.claude.com/docs/en/code-review-pull-requests.md#review-drafts-and-pull-requests-from-forks), such as in a repository set to Manual

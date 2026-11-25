@@ -60,6 +60,8 @@ Match the message you see to a section below.
 | `Sign in again to take your previous account or API key off the config file.` | [Authentication](#sign-in-again-to-take-your-previous-account-or-api-key-off-the-config-file) |
 | `Your account or API key may still be in the config file. Run claude auth logout.` | [Authentication](#your-account-or-api-key-may-still-be-in-the-config-file) |
 | `Authentication required · Sign in again to continue` | [Authentication](#not-logged-in) |
+| `Sign in again to continue` followed by `For security, Claude Code needs a recent sign-in.` | [Wrapper and IDE errors](#claude-code-needs-a-recent-sign-in) |
+| `Claude Code needs a recent sign-in. Signing in won’t stop sessions.` | [Wrapper and IDE errors](#claude-code-needs-a-recent-sign-in) |
 | `Could not resolve authentication method` | [Authentication](#could-not-resolve-authentication-method) |
 | `Invalid API key` | [Authentication](#invalid-api-key) |
 | `Your apiKeyHelper script is failing` | [Authentication](#your-apikeyhelper-script-is-failing) |
@@ -99,19 +101,22 @@ Match the message you see to a section below.
 | `Your account does not have access to Claude. Please login again or contact your administrator.` | [Authentication](#oauth-token-revoked-or-expired) |
 | `API Error: 401 Invalid authentication credentials` | [Authentication](#api-error-401-invalid-authentication-credentials) |
 | `Login expired · Please run /login` | [Authentication](#login-expired) |
+| `Authentication error · This may be a temporary network issue` in a cloud session | Send your message again. |
+| `login required — run /login` in agent view | If a message listed in this table follows it, use that row. Otherwise run `/login`. |
 | `Warning: this sign-in` | [Check when a stored login ends](https://code.claude.com/docs/en/authentication.md#check-when-a-stored-login-ends) |
 | `The browser can't return the sign-in to Claude Code automatically` | [Authentication](#couldnt-start-the-local-sign-in-listener) |
 | `Couldn't start the local listener that receives the browser sign-in. Try again.` | [Authentication](#couldnt-start-the-local-sign-in-listener) |
 | `Failed to start OAuth callback server` | [Authentication](#failed-to-start-oauth-callback-server) |
 | `Claude login not accepted · Run /login, then try again` | [Authentication](#claude-login-not-accepted) |
 | `Artifacts need a claude.ai login` | [Authentication](#artifacts-need-a-claude-ai-login) |
+| `Your authentication token belongs to organization` | [Restrict login to your organization](https://code.claude.com/docs/en/authentication.md#restrict-login-to-your-organization) |
 | `Not signed in to the Cloud gateway — run /login.` | [Authentication](#administrator-policy-requires-a-cloud-gateway-sign-in) |
 | `Administrator policy requires a Cloud gateway sign-in on this machine` | [Authentication](#administrator-policy-requires-a-cloud-gateway-sign-in) |
 | `Managed settings on this machine configure a Cloud gateway sign-in; run interactive /login to authenticate.` | [`claude auth login`](https://code.claude.com/docs/en/cli-reference#cli-commands) |
 | `You chose an organization that is managed in Anthropic's Enterprise Admin Console` | [Turn on sign-in from Claude Code](https://claude.com/docs/third-party/claude-desktop/admin-console-claude-code#turn-on-sign-in-from-claude-code) |
 | `The organization's settings won't apply on this computer` | [Which settings take priority](https://claude.com/docs/third-party/claude-desktop/admin-console-claude-code#which-settings-take-priority) |
 | `no usable organization sign-in` / `no readable organization sign-in` | [When a sign-in ends](https://claude.com/docs/third-party/claude-desktop/admin-console-claude-code#when-a-sign-in-ends) |
-| `the session no longer runs under that sign-in` / `This Claude Code process ran under your organization` / `After a sign-in to your organization, only a new session sends requests` | [Log in to Claude Code](https://code.claude.com/docs/en/authentication.md#log-in-to-claude-code) |
+| `the session no longer runs under that sign-in` / `This Claude Code process ran under your organization` / `After a sign-in to your organization, only a new session sends requests` / `Claude Code needs to restart to use it` | [Log in to Claude Code](https://code.claude.com/docs/en/authentication.md#log-in-to-claude-code) |
 | `This conversation ran under organization` / `This conversation ran under more than one organization` | [Log in to Claude Code](https://code.claude.com/docs/en/authentication.md#log-in-to-claude-code) |
 | `Claude Code could not read the managed settings that apply to this computer, which may require a sign-in to Anthropic` | [`enforceAnthropicSignIn`](https://code.claude.com/docs/en/settings-reference#enforceanthropicsignin) |
 | `This computer's managed settings require a sign-in to Anthropic` / `This computer's settings require a sign-in to Anthropic that this app cannot use` | [Require the sign-in](https://claude.com/docs/third-party/claude-desktop/admin-console-claude-code#require-the-sign-in-with-managed-settings) |
@@ -349,6 +354,7 @@ Match the message you see to a section below.
 | `/feedback is disabled by your organization's policy`, or the same for `/bug` or `/share` | [Command-line errors](#feedback-is-disabled-by-your-organizations-policy) |
 | `` `plugin eval` is currently in early access `` / `` `plugin eval` is currently unavailable `` | [Plugin errors](#plugin-eval-is-currently-in-early-access) |
 | `credential store on this machine holds a symbolic link inside it` | [Grant tools](https://code.claude.com/docs/en/plugin-evals.md#grant-tools) |
+| `cannot be disallowed`, from `claude plugin eval` | Use a built-in tool's [exact name](https://code.claude.com/docs/en/plugin-evals.md#disallow-tools), and [put the target before `--disallow-tools`](https://code.claude.com/docs/en/plugin-evals#choose-what-to-evaluate) |
 | `cannot be evaluated where sessions load it` | [Test plugins with evals](https://code.claude.com/docs/en/plugin-evals.md#cannot-be-evaluated-where-sessions-load-it) |
 | `Marketplace "<name>" is registered from an untrusted source` | [Plugin errors](#marketplace-is-registered-from-an-untrusted-source) |
 | `Claude Code refuses the marketplace name "<name>"` | [Plugin errors](#claude-code-refuses-the-marketplace-name) |
@@ -375,6 +381,8 @@ Match the message you see to a section below.
 | `commands path not found: <path>` | [Plugin troubleshooting](https://code.claude.com/docs/en/plugins/troubleshooting.md#commands-path-not-found) |
 | `Plugin not loaded: its manifest <path> was not read` | [Plugin errors](#plugin-not-loaded-its-manifest-was-not-read) |
 | `path couldn't be checked` / `path could not be checked` | [Plugin errors](#path-could-not-be-checked) |
+| `Couldn't load hooks from <path>` / `Failed to load hooks from <path>` / `Hook load failed` | [Plugin troubleshooting](https://code.claude.com/docs/en/plugins/troubleshooting.md#failed-to-load-hooks-from-and-hooks-that-dont-fire) |
+| `hooks.json declares PreToolUse/PermissionRequest` | Put the events under a `hooks` key, as in the [plugin hooks example](https://code.claude.com/docs/en/plugins/components.md#hooks). |
 | `its marketplace entry path does not stay inside the marketplace directory` | [Plugin errors](#marketplace-entry-path-does-not-stay-inside-the-marketplace-directory) |
 | `Plugin source path refused` | [Plugin errors](#marketplace-entry-path-does-not-stay-inside-the-marketplace-directory) |
 | `Failed to load marketplace configuration` | [Plugin errors](#failed-to-load-marketplace-configuration) |
@@ -388,10 +396,16 @@ Match the message you see to a section below.
 | `Skipping connection (recent failure cached; retries automatically in 15 min, or edit the plugin config to retry now)` | [Plugin errors](#skipping-connection-recent-failure-cached) |
 | `is not added on this machine, so your organization's marketplace policy keeps its plugins off` | [Add a marketplace](https://code.claude.com/docs/en/plugins/install.md#add-a-marketplace) |
 | `A mod's http.fetch hook stopped this request` | [Turn mods on or off](https://code.claude.com/docs/en/plugins/mods/overview.md#turn-mods-on-or-off) |
+| `hook was skipped. "<mod>" runs first and sent the event on past it.` | If you listed the quoted mod in [`prependPlugins`](https://code.claude.com/docs/en/settings-reference#prependplugins) in your user settings, change that mod. Otherwise, ask your administrator. |
+| `<file>: changed while it was read` | If `claude plugin validate` printed this, rerun it. Otherwise, restart the session. |
+| `installed mods are off for now` | [Check whether mods can load](https://code.claude.com/docs/en/plugins/mods/troubleshoot.md#check-whether-mods-can-load) |
+| `the hooks worker was lost with <mod>'s <event> hook in flight` | Fix the named mod. For one cause, see [`it crashed the hooks worker`](https://code.claude.com/docs/en/plugins/mods/troubleshoot#it-crashed-the-hooks-worker). |
+| `dispatches in a row for fills by <mods>` | Change the named mods so they fill the prompt box at most eight times in a row. |
 | `Error: No such tool available: <tool name>` | [Tool errors](#no-such-tool-available) |
 | `MCP server "<name>" connection closed before the tool call was answered` | [Tool errors](#connection-closed-before-the-tool-call-was-answered) |
 | `MCP server "<name>" is disabled — re-enable it via /mcp to use its tools` | [Tool errors](#mcp-server-is-disabled) |
 | `MCP server "<name>" tool "<tool>" timed out after <N>s. The server asked the user a question, and no answer came before the time limit.` | [Tool errors](#mcp-tool-call-timed-out-with-the-servers-question-unanswered) |
+| `The server's response is not a valid MCP response, so it was not read` | Before retrying, check whether the request ran. Report the error to the MCP server's author. |
 | `Permission prompt tool returned an invalid result` | [Tool errors](#permission-prompt-tool-returned-an-invalid-result) |
 | `would be spawned with zero tools — refusing` | [Tool errors](#agent-would-be-spawned-with-zero-tools) |
 | `File is covered by a Read deny rule in your permission settings` | [Tool errors](#file-is-covered-by-a-read-deny-rule) |
@@ -437,6 +451,7 @@ Match the message you see to a section below.
 | `Disk full: this computer's volume holding <dir> (Claude Code's temporary directory) has <n> MB free` / `Nearly out of inodes: this computer's volume holding <dir>` | [Tool errors](#disk-quota-or-temp-filesystem-is-full) |
 | `Disk full: a test write beside this command's output file` / `Disk quota used up: a test write beside this command's output file` | [Tool errors](#disk-quota-or-temp-filesystem-is-full) |
 | `The command was not started: this computer's disk is full (ENOSPC)` / `the user's disk quota is used up (EDQUOT)` | [Tool errors](#disk-quota-or-temp-filesystem-is-full) |
+| `The sandbox could not create <dir>, a folder it must protect from the command, because the temp disk is full` | Free space on the temp disk or repair it, then have Claude run the command again. |
 | `Your disk quota is full on the filesystem with Claude Code's temp directory <dir> (EDQUOT)` / `The filesystem with Claude Code's temp directory <dir>, or your disk quota on it, is full (ENOSPC)` | [Tool errors](#disk-quota-or-temp-filesystem-is-full) |
 | `Command output was lost: the temp filesystem at <dir> is full` / `is out of inodes` | [Tool errors](#disk-quota-or-temp-filesystem-is-full) |
 | `File is not valid UTF-8. It may use a legacy encoding such as Windows-1252, Shift-JIS or GBK, or be binary` | [Tool errors](#file-is-not-valid-utf-8) |
@@ -489,12 +504,19 @@ Match the message you see to a section below.
 | `Subprocess initialization did not complete within 60000ms` | [Wrapper and IDE errors](#subprocess-initialization-did-not-complete-within-60000ms) |
 | `Claude Code did not finish starting` | [Wrapper and IDE errors](#subprocess-initialization-did-not-complete-within-60000ms) |
 | `The connection to Claude Code ended before this message completed` | [Wrapper and IDE errors](#the-connection-to-claude-code-ended-before-this-message-completed) |
+| `Dictation error: The speech service refused the connection` / `Dictation error: The connection to the speech service was lost` / `Dictation error: Couldn’t connect to the speech service`, in VS Code | Run **Claude Code: Show Logs** from the Command Palette and search for `Speech-to-text`. |
+| `The last request was refused`, on the VS Code sign-in screen | Select **Cancel**, then look up the conversation's error in this table. |
+| `Plan not copied: The new session starts without a plan file.`, in VS Code | If you need the plan, ask Claude to write it again in the new session. |
+| `A message is still queued` / `A /clear is still queued`, when you rewind code in VS Code | Stop Claude, then follow the rest of the message. |
+| `Couldn’t load the diff view or code colors`, in VS Code | Click a diff to try again, or reload the window. |
+| `Settings file is empty, and another program may still be writing it: <path>`, in VS Code | Try again in a minute. If the message repeats, put `{}` in the file. |
 | `Could not locate the Claude CLI on PATH` | [Wrapper and IDE errors](#could-not-locate-the-claude-cli-on-path) |
 | `Claude Code could not be started from <command>: it is the <system> build, and this computer needs the <build> build` | If you set [`claudeCode.claudeProcessWrapper`](https://code.claude.com/docs/en/vs-code#extension-settings), point it at a program built for `<build>`. Otherwise, install the VS Code extension package for `<build>`. |
 | `The Claude Code program for this computer, the <build> build, could not be found` | [Wrapper and IDE errors](#the-claude-code-program-for-this-computer-could-not-be-found) |
 | `Restored the code, but skipped N files` | [Rewind warnings and errors](#restored-the-code-but-skipped-files) |
 | `No files were restored: N files failed (backup missing, or the file could not be updated)` | [Rewind warnings and errors](#no-files-were-restored) |
 | `Couldn't restore N files: the backup is missing or the file can't be written` | Make the files that failed writable, then restore them from version control. |
+| `Kept N files created since then, because a restore failed` | If you don't want the files Claude created after the checkpoint, delete them. |
 | `The file backups are still being copied. Nothing was changed. Try again in a moment.` | Select the same point in [`/rewind`](https://code.claude.com/docs/en/checkpointing) again. When you restore code soon after [`/branch`](https://code.claude.com/docs/en/sessions#branch-a-session), Claude Code can still be copying the file backups to the new session. |
 | `Transcript writes are failing (...)` | [Session saving warnings](#transcript-writes-are-failing) |
 | `Transcript saving is off — CLAUDE_CODE_SKIP_PROMPT_HISTORY is set` | [Session saving warnings](#transcript-saving-is-off-skip-prompt-history) |
@@ -539,6 +561,7 @@ Match the message you see to a section below.
 | `headersHelper not run — this workspace has no persisted trust` | [Configuration warnings](#headershelper-not-run) |
 | `Invalid permission rule "..." was skipped: Malformed Tool(content) rule` | [Configuration warnings](#malformed-tool-content-rule) |
 | `matches no tool · check for typos` / `matches no known tool — check for typos` | [Configuration warnings](#matches-no-tool) |
+| `lets <tool> run without asking only in the working directories` / `adds nothing to <tool>'s default` | [Allow a file tool outside the working directories](https://code.claude.com/docs/en/permissions.md#allow-a-file-tool-outside-the-working-directories) |
 | `... is not matched by file permission checks` | [Configuration warnings](#is-not-matched-by-file-permission-checks) |
 | `Write(<path>) never matches · use Edit(<path>)` / `Glob(<path>) never matches · use Read(<path>)` | [Configuration warnings](#is-not-matched-by-file-permission-checks) |
 | `... has a wildcard before the rest of the command` | [Configuration warnings](#has-a-wildcard-before-the-rest-of-the-command) |
@@ -5973,6 +5996,31 @@ The connection to Claude Code ended before this message completed — it may not
 * Send the message again. The next message starts a fresh `claude` process that resumes the conversation.
 * If it repeats, run `claude` in a terminal in the same project. A failure that keeps ending the process usually reproduces there with its real error message.
 
+### Claude Code needs a recent sign-in
+
+When a local, WSL, or SSH session in the Code tab needs a new saved sign-in and you haven't signed in recently, the [Claude Desktop app](https://code.claude.com/docs/en/desktop.md) shows this message:
+
+```text theme={null}
+For security, Claude Code needs a recent sign-in.
+```
+
+For these sessions, being asked up to about once a month for each account and organization on each computer is routine, with or without single sign-on (SSO).
+
+**What to do:**
+
+* Click **Sign in again** on the card, then sign in
+* If a banner at the top of the Code tab says `Claude Code needs a recent sign-in. Signing in won’t stop sessions.`, click **Sign in again** on the banner
+* If you're asked again within three weeks for these sessions, with the same account and organization on the same computer, [check your version](https://code.claude.com/docs/en/desktop.md#check-your-version) of Claude Desktop. If it's older than v5.11492.0, update it:
+  * **macOS**: select **Claude > Check for Updates…**
+  * **Windows**: select **Help > Check for Updates…**, or update through the Microsoft Store if you installed the app from there
+  * **Linux**: [update through apt](https://code.claude.com/docs/en/desktop-linux.md#update)
+  * **Managed updates**: if your organization [turns off auto-updates](https://code.claude.com/docs/en/desktop.md#device-management-policies), ask your administrator for v5.11492.0 or later
+* If that continues on v5.11492.0 or later, [contact support](https://code.claude.com/docs/en/desktop.md#still-stuck)
+
+If you see the card in a Remote Control session, see [Trusted Devices](https://code.claude.com/docs/en/remote-control.md#trusted-devices), which can ask for a more recent sign-in.
+
+Before Claude Desktop v5.11492.0, the Code tab could lose its saved sign-in when a company proxy or gateway answered its background renewal with a JSON error.
+
 ## Rewind warnings and errors
 
 These messages come from a [`/rewind`](https://code.claude.com/docs/en/checkpointing) code restore. `Restored the code, but skipped N files` is a warning that Claude Code skipped some paths. `No files were restored` is an error that means it restored nothing.
@@ -5999,7 +6047,7 @@ Restored the code, but skipped 2 files: the tracked path is (or became) a link o
 
 ### No files were restored
 
-Claude Code shows this message when you restore code with [`/rewind`](https://code.claude.com/docs/en/checkpointing) and it can't restore any of the files in that checkpoint. For each file, either the backup Claude Code saved before editing it is missing, or Claude Code couldn't write to or delete the file.
+You see this message when a [`/rewind`](https://code.claude.com/docs/en/checkpointing) code restore fails on at least one file and restores no files.
 
 ```text theme={null}
 Failed to restore the code:

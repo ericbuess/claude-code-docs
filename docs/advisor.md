@@ -50,7 +50,7 @@ The command also works where there is no terminal picker: in [non-interactive mo
 * Run `/advisor` with a model, such as `/advisor opus`, to set it.
 * Run `/advisor off` to turn it off.
 
-Claude Code doesn't invoke a saved advisor that your organization's [`availableModels`](https://code.claude.com/docs/en/model-config#restrict-model-selection) allowlist excludes. To use the advisor, pick an allowed model with `/advisor`.
+Claude Code doesn't invoke a saved advisor that an [`availableModels`](https://code.claude.com/docs/en/model-config#restrict-model-selection) allowlist in your settings excludes. To use the advisor, pick an allowed model with `/advisor`.
 
 Claude Code still saves an advisor that your current main model doesn't support. That advisor activates after you switch to a [compatible main model](#choose-an-advisor-model) with [`/model`](https://code.claude.com/docs/en/model-config#setting-your-model). If the API already refused the saved advisor in the current conversation, it stays off until `/clear` or `/compact`, even after you switch models.
 
@@ -78,7 +78,7 @@ Claude Code uses the flag instead of the `advisorModel` setting for that session
 
 * The session's main model doesn't support the advisor
 * The requested model, such as Haiku 4.5, can't act as an advisor
-* Your organization's [`availableModels`](https://code.claude.com/docs/en/model-config#restrict-model-selection) allowlist excludes the requested model
+* An [`availableModels`](https://code.claude.com/docs/en/model-config#restrict-model-selection) allowlist excludes the requested model
 * You requested Fable and your account still requires the [usage-credits consent](#fable-advisor-and-usage-credits)
 
 If you start a [background session](https://code.claude.com/docs/en/agent-view.md) with `--advisor` and one of these applies, Claude Code starts the session without the advisor instead of exiting.

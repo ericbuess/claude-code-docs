@@ -12,7 +12,7 @@ The command works on any plan. The review runs in your own session, so it counts
 
 > [!NOTE]
 >
-> To have every pull request in a repository reviewed automatically on GitHub, see [Code Review](https://code.claude.com/docs/en/code-review.md), a managed service that an Owner turns on for your organization.
+> To have every pull request in a repository reviewed automatically on GitHub, see [Code Review](https://code.claude.com/docs/en/code-review.md), a managed service that an Owner of a Claude organization turns on.
 
 `/review` is an alias of `/code-review`.
 

@@ -123,7 +123,7 @@ Some features can seem similar. For a deeper walkthrough of choosing between the
 >
 > **Use an output style** if it's about the response itself and you might want it off again: length, format, how much Claude explains, or a different role such as a writing assistant. Claude Code includes [built-in styles](https://code.claude.com/docs/en/output-styles.md#built-in-output-styles), and you can write your own.
 >
-> **They combine.** CLAUDE.md stays loaded whichever style you pick. Claude follows both as instructions, so neither is enforced. For anything that has to happen every time, use a [hook](https://code.claude.com/docs/en/hooks-guide.md).
+> **They combine.** Claude follows both as instructions, so neither is enforced. For anything that has to happen every time, use a [hook](https://code.claude.com/docs/en/hooks-guide.md).
 
 > [tab] CLAUDE.md vs Rules vs Skills
 >
@@ -252,7 +252,7 @@ Each feature loads at different points in your session. The tabs below explain w
 
 > [tab] Skills
 >
-> Skills are extra capabilities in Claude's toolkit. They can be reference material (like an API style guide) or invocable workflows you trigger with `/<name>` (like `/deploy`). Claude Code includes [bundled skills](https://code.claude.com/docs/en/commands.md) like `/code-review`, `/batch`, and `/debug` that work without setup. You can also create your own.
+> Skills are extra capabilities in Claude's toolkit. They can be reference material (like an API style guide) or invocable workflows you trigger with `/<name>` (like `/deploy`). Claude Code includes [bundled skills](https://code.claude.com/docs/en/commands.md) like `/code-review`, `/batch`, and `/debug`. You can also create your own.
 >
 > **When:** Depends on the skill's configuration. By default, descriptions load at session start and full content loads when used. For user-only skills (`disable-model-invocation: true`), nothing loads until you invoke them.
 >

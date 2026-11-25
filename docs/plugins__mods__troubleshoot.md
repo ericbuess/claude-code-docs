@@ -10,9 +10,9 @@ When a mod's module or one of its hooks fails, Claude Code skips it and the sess
 
 ## Find out why a mod does nothing
 
-When a mod does nothing, check what Claude Code reads from the mod's files, and the line it writes when it skips something. For the first, in your shell run [`claude plugin validate`](https://code.claude.com/docs/en/plugins/mods/create#check-what-claude-code-reads-from-your-mod) with the mod's directory, as in `claude plugin validate ./first-mod`. It catches a misspelled event, a bad manifest, and a module Claude Code can't read, without starting a session.
+When a mod does nothing, check what Claude Code reads from the mod's files, and the line it writes when it skips something. To check the files, in your shell run [`claude plugin validate`](https://code.claude.com/docs/en/plugins/mods/create#check-what-claude-code-reads-from-your-mod) with the mod's directory, as in `claude plugin validate ./first-mod`. It catches a bad manifest and a module Claude Code can't read, without starting a session.
 
-When a module doesn't load, a hook is skipped, or another mod refuses yours, Claude Code writes one line that names your mod. Where you read that line depends on the session:
+Claude Code writes one line naming your mod in cases such as a code error that stops it from loading, a skipped hook, or a refusal by another mod. Look for that line in the transcript, the debug log, or stderr, by session type:
 
 * **A session that hot-reloads a plugin directory**: a dim line in the transcript. That's an interactive session you started with `--plugin-dir`, or one where [hot reloading is on](https://code.claude.com/docs/en/plugins/mods/create.md#ask-claude-for-a-mod) for mods Claude wrote.
 * **Any other interactive session, such as one that runs a mod you installed from a marketplace**: the [debug log](#read-the-debug-log). To get one, start the session with `claude --debug`.
@@ -61,6 +61,7 @@ Each of these follows `hooks module`, the mod's name, and `not loaded:` in the d
 | :- | :- |
 | `hooks modules are turned off for installed plugins in this process: the rollout switch served off` | Anthropic has turned installed mods off remotely. |
 | `hooks modules are turned off for installed plugins in this process: the rollout switch was saved off by an earlier session` | The session used a value an earlier session saved, which may be out of date. Start Claude Code again to refresh it. |
+| `hooks modules a person installed wait for the rollout switch in this process` | In a [cloud session](https://code.claude.com/docs/en/claude-code-on-the-web.md), your mods are waiting to load, so send another message. If the line includes `could not be read`, or you see `Mods you installed aren't running in this session`, start a new session instead. |
 | `disableAllHooks in managed settings` | Your organization turned off hooks from installed plugins |
 | `only managed plugins and built-in plugins run` | `allowManagedHooksOnly` is set, or `disableAllHooks` is set in a settings file other than managed settings |
 | `installed plugins that are not managed load no hooks module in this mode (--bare)` | You started Claude Code with `--bare` |
@@ -144,6 +145,17 @@ To run the mod, [copy its directory out of the mods folder](https://code.claude.
 The line names the mod and the event, then says `hook skipped:` and a reason, as in `first-mod: tool.call hook skipped: threw Error: boom`. A hook threw, exceeded its [time limit](https://code.claude.com/docs/en/plugins/mods/reference.md#limits), or returned a result of the wrong shape. The line appears once for each event and kind of failure until the mod reloads.
 
 Fix the error. The debug log has a line for every occurrence.
+
+### `call refused` or `result withheld`
+
+Either line means Claude Code couldn't copy a value to or from a hook that checks an action, such as a `tool.call` hook. Match the [transcript or debug log line](#find-out-why-a-mod-does-nothing) to see whether the action ran:
+
+* `call refused`: Claude Code refused the action in your hook's place
+* `result withheld`: what the tool did stays done, and Claude reads a note in place of its result
+
+What Claude gets back can include `could not be given to a hook that checks it` or `a hook that checks this result could not hand back its answer`.
+
+If the line includes `could not be given its argument`, your hook didn't run, so leave it as it is. If it includes `is not plain data: nesting deeper than 28000 levels`, reduce the nesting in the values your hook returns or passes on.
 
 ### `no command.run hook answered it`
 
@@ -296,9 +308,10 @@ Before v2.1.289, the line showed `Error` as the reason instead.
 
 ### `$.ui.open` runs and no pane appears
 
-The call didn't come from something the user did, and the terminal is narrower than [the width that pane needs](https://code.claude.com/docs/en/plugins/mods/interface.md#when-a-pane-waits-for-a-wider-terminal).
+Check the call's result. When `isPlaced` is `false`, the start of `reason` says why, as in these cases:
 
-Open the pane from a command or a button, or check the call's `isPlaced` result. See [Open a pane at the right time](https://code.claude.com/docs/en/plugins/mods/interface.md#open-a-pane-at-the-right-time).
+* **`unasked below`**: open the pane from a command or a button, or use [a wider terminal](https://code.claude.com/docs/en/plugins/mods/interface.md#when-a-pane-waits-for-a-wider-terminal).
+* **`no-surface`**: nothing is attached to draw on, as in a `claude -p` or Agent SDK run. From a `command.run` hook, return `{ text }` instead.
 
 ### A toast doesn't appear
 
@@ -341,7 +354,7 @@ The mod runs, and a change you made or a value it kept isn't there.
 
 ### Your edits don't take effect
 
-You're editing a plugin you installed. Claude Code runs the cached copy for the installed version.
+If your plugin was [copied at install](https://code.claude.com/docs/en/plugins/loading.md#in-place-and-copied-plugins), Claude Code runs that copy.
 
 Develop with `--plugin-dir` pointed at your working copy, as in `claude --plugin-dir ./first-mod`, which reloads when you save.
 
@@ -369,10 +382,10 @@ For another key, check [which mods get `settings.read` and from which version](h
 | `settings.read bypassed by cc-plugin-sec-default`, on a line that names your mod ahead of it | The [built-in guard](https://code.claude.com/docs/en/plugins/mods/admin.md#know-what-happens-by-default) skipped your hook. Ask your organization's administrator to [install the mod as one of the organization's mods](https://code.claude.com/docs/en/plugins/mods/admin.md#install-your-organizations-mods). |
 | `settings.read: the answer for <key> is no value the key can hold` | Claude Code refused the value a hook returned for that key. The hook may be yours or another mod's. Follow [the step for your case](#settings-read-key-refused). |
 | `settings.read: the merge never settles for <key>` | The keys the line names keep the settings sources' values. Set them in a settings file. |
-| `answered settings.read without next()`, after a mod's name | Your hook is affected if the named mod [runs before yours](https://code.claude.com/docs/en/plugins/mods/events.md#the-order-mods-run-in). Then your hook didn't run on that read. [Turn that mod off](https://code.claude.com/docs/en/plugins/mods/overview.md#turn-mods-on-or-off), or if your organization deployed it, ask its administrator to. |
+| `answered settings.read without next()`, after a mod's name | Your hook is affected if the named mod [runs before yours](https://code.claude.com/docs/en/plugins/mods/events.md#the-order-mods-run-in). Then your hook didn't run on that read. [Turn that mod off](https://code.claude.com/docs/en/plugins/mods/overview.md#turn-mods-on-or-off), or if you're in an organization that deployed it, ask your administrator to. |
 | `settings.read: refused to the engine` | Your value didn't apply because Claude Code's own read was refused. [Find what refused it](#settings-read-refused). |
 
-If no line explains the key, check the mods that run before yours for a `settings.read` hook that [changes the key](https://code.claude.com/docs/en/plugins/mods/events.md#settings-read-example). Turn that mod off, or ask your organization's administrator to. If no hook does, set the key in a settings file.
+If no line explains the key, check the mods that run before yours for a `settings.read` hook that [changes the key](https://code.claude.com/docs/en/plugins/mods/events.md#settings-read-example). Turn that mod off, or if you're in an organization that deployed it, ask your administrator to. If no hook does, set the key in a settings file.
 
 ### `the answer for <key> is no value the key can hold`
 
@@ -400,7 +413,7 @@ settings.read: refused to the engine (engine: $.settings.read: <reason>); the se
 Search your code for the reason in the parentheses:
 
 * **Your code has it**: your hook refused the read. Make it return `{ value }` when [`next.origin`](https://code.claude.com/docs/en/plugins/mods/events#settings-read-origin) shows Claude Code's own read.
-* **Your code doesn't have it**: [turn off](https://code.claude.com/docs/en/plugins/mods/overview.md#turn-mods-on-or-off) your other mods one at a time. If your organization deployed a mod, ask its administrator to turn it off. After each:
+* **Your code doesn't have it**: [turn off](https://code.claude.com/docs/en/plugins/mods/overview.md#turn-mods-on-or-off) your other mods one at a time, or if you're in an organization that deployed one, ask your administrator to. After each:
   1. Start the session from your shell with `claude --debug-file ./settings-read-2.log`, followed by the flags it started with. Use a new path each time.
   2. Search that file for `refused to the engine`. If the line is there, turn off the next mod. If not, the last mod you turned off refused the read, so keep it off.
 

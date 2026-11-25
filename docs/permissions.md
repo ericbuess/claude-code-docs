@@ -106,6 +106,16 @@ To match all uses of a tool, use only the tool name without parentheses:
 
 The label shown for a tool in the transcript and permission dialog can differ from its canonical name. For example, the tool labeled `Stop Task` in the transcript has the canonical name `TaskStop`. Permission rules and [hook matchers](https://code.claude.com/docs/en/hooks.md) don't match the label, so a rule written as `Stop Task` doesn't match. For deny and ask rules, a [startup warning](https://code.claude.com/docs/en/errors.md#matches-no-tool) says so. Use the canonical names listed in the [tools reference](https://code.claude.com/docs/en/tools-reference.md).
 
+#### Allow a file tool outside the working directories
+
+With an `Edit(*)`, `Write(*)`, or `NotebookEdit(*)` allow rule, you pre-approve the tool only in the [working directories](#working-directories). To pre-approve paths outside them too, write the bare name of each tool you want, such as `Edit` or `Read`. Some calls still aren't pre-approved, such as writes to [protected paths](https://code.claude.com/docs/en/permission-modes.md#protected-paths) and reads from [network paths](#network-paths).
+
+When the startup warning says your `Read(*)` rule `adds nothing to Read's default`, you can delete the rule from your settings file.
+
+> [!WARNING]
+>
+> Don't rely on a file-tool `(*)` allow rule to keep the tool in the working directories. Versions before v2.1.317 treat the rule as the bare name, and later versions can too if Anthropic turns the working-directory limit off. Instead, [block file-tool reads and writes outside the working directories](#block-file-tool-reads-and-writes-outside-the-working-directories).
+
 ### Use specifiers for fine-grained control
 
 Add a specifier in parentheses to match specific tool uses:
@@ -564,7 +574,7 @@ Each row shows what a rule does in the `allow` list and in the `deny` list:
 | `WebFetch` | Claude fetches without prompting you. Doesn't change which hosts sandboxed commands can reach. | Claude Code removes the `WebFetch` tool, so Claude can't fetch at all. Doesn't change which hosts sandboxed commands can reach. |
 | `WebFetch(domain:*)` | Claude fetches without prompting you, and sandboxed commands can reach any host. | Claude Code keeps the tool and refuses each fetch, and sandboxed commands can't reach any host. |
 
-The two forms also differ on reads of [artifacts](https://code.claude.com/docs/en/artifacts.md), the pages the Artifact tool publishes on claude.ai. A bare `WebFetch` deny or ask rule doesn't apply to those reads. A `domain:` rule covering `claude.ai` or the `*.claudeusercontent.com` content host, such as `WebFetch(domain:claude.ai)` or `WebFetch(domain:*)`, denies each read or prompts before it. An [`Artifact` rule](https://code.claude.com/docs/en/artifacts#disable-artifacts) does the same.
+The two forms also differ on reads of [artifacts](https://code.claude.com/docs/en/artifacts.md), the pages the Artifact tool publishes on claude.ai. A bare `WebFetch` deny or ask rule doesn't apply to Artifact tool reads. A `domain:` rule covering `claude.ai` or the `*.claudeusercontent.com` content host, such as `WebFetch(domain:claude.ai)` or `WebFetch(domain:*)`, denies each read or prompts before it.
 
 When a rule blocks a read, the denial names the rule. Before v2.1.268, a bare `WebFetch` deny rule blocked every artifact read, and a bare ask rule prompted before each one.
 

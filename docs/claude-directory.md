@@ -6,7 +6,7 @@
 
 > Where Claude Code reads CLAUDE.md, settings.json, hooks, skills, commands, subagents, workflows, rules, and auto memory. Explore the .claude directory in your project and ~/.claude in your home directory.
 
-Claude Code reads instructions, settings, skills, subagents, and memory from your project directory and from `~/.claude` in your home directory. Commit project files to git to share them with your team; files in `~/.claude` are personal configuration that applies across all your projects.
+Claude Code reads instructions, settings, skills, subagents, and memory from your project directory and from `~/.claude` in your home directory. Commit project files to git to share them; files in `~/.claude` are personal configuration that applies across all your projects.
 
 On Windows, `~/.claude` resolves to `%USERPROFILE%\.claude`. If you set [`CLAUDE_CONFIG_DIR`](https://code.claude.com/docs/en/env-vars), every `~/.claude` path on this page lives under that directory instead. The same applies to `.claude.json`, which otherwise sits at `~/.claude.json`.
 
@@ -38,7 +38,7 @@ Lists gitignored files to copy from your main repository into each new worktree.
 
 **`.claude/`**
 
-Project settings, rules, skills, subagents, and other configuration. If you use git, commit most of these files so your team shares them, and keep personal ones such as `settings.local.json` out of your commits.
+Project settings, rules, skills, subagents, and other configuration. If you use git, commit most of these files to share them, and keep personal ones such as `settings.local.json` out of your commits.
 
 **`.claude/settings.json`**
 
@@ -78,7 +78,7 @@ Holds single-file commands: a prompt saved as `.claude/commands/deploy.md` runs 
 
 **When it loads**: Read at startup in the terminal, so restart Claude Code after you add or edit a style
 
-Each Markdown file defines an [output style](https://code.claude.com/docs/en/output-styles.md#how-output-styles-work), a set of instructions that adjusts how Claude works. Put a style here if your team shares it, like a review mode everyone uses. See [`~/.claude/output-styles/`](#ce-global-output-styles) for how to select one.
+Each Markdown file defines an [output style](https://code.claude.com/docs/en/output-styles.md#how-output-styles-work), a set of instructions that adjusts how Claude works. To share a style, such as a review mode, with everyone on the project, commit it here. See [`~/.claude/output-styles/`](#ce-global-output-styles) for how to select one.
 
 **`.claude/agents/`**
 

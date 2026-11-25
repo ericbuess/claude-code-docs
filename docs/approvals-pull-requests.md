@@ -26,7 +26,7 @@ To get to a passing check:
 
 The **Claude Approvals** check gives your pull request's approval status in its title, the text beside its name in the list of checks. Find your check's title in these tables to see what it means and what to do next.
 
-For a title that isn't here, open the **Claude Approvals** check's summary, which gives the cause and the next step. To find who maintains the policy file, `.claude/approvals.yml`, see who last changed it on the default branch.
+For any other title, open the **Claude Approvals** check's summary, which gives the cause and the next step. To find who maintains the policy file, `.claude/approvals.yml`, see who last changed it on the default branch.
 
 ### Approvals waits for people
 
@@ -40,20 +40,20 @@ With these titles, Approvals is waiting for a person. Outside observe mode, GitH
 
 ### Approvals waits for Code Review or a classifier
 
-With these titles, Approvals is waiting for an answer from [Code Review](https://code.claude.com/docs/en/code-review-pull-requests.md) or a [classifier](https://code.claude.com/docs/en/approvals-classifiers.md), or didn't get one:
+With these titles, Approvals needs an answer from [Code Review](https://code.claude.com/docs/en/code-review-pull-requests.md) or a [classifier](https://code.claude.com/docs/en/approvals-classifiers.md):
 
 | Title | What to do |
 | :- | :- |
-| **Waiting for Code Review**, **Waiting for repo/change\_risk**, **Waiting for classifiers** | Nothing yet |
-| **A classifier had no result**, **A classifier has not run**, or a name in place of "A classifier", as in **repo/change\_risk has not run** | [Rerun the Claude Approvals check](#comment-commands-for-approvals). See [when a run gives no answer](https://code.claude.com/docs/en/approvals-classifiers.md#what-a-rule-sees-when-a-classifier-run-gives-no-answer) |
+| **Waiting for Code Review**, **Waiting for repo/change\_risk**, **Waiting for classifiers** | Wait for the result |
+| **A classifier had no result**, **A classifier has not run**, or a name in place of "A classifier", as in **repo/change\_risk has not run** | [Rerun the Claude Approvals check](#comment-commands-for-approvals). See [what a rule sees without an answer](https://code.claude.com/docs/en/approvals-classifiers.md#what-a-rule-sees-when-a-classifier-run-gives-no-answer) |
 
 ### A rule or a policy file keeps Approvals from passing
 
-With these titles, a rule holds the pull request, no rule applies to a changed file, or a policy file can't be used:
+With these titles, a rule holds the pull request or the policy needs a fix:
 
 | Title | What to do |
 | :- | :- |
-| **Held by Code Review's findings** | Fix the findings that Code Review posted on the pull request, then push. If the policy's [`findings`](https://code.claude.com/docs/en/approvals-policy#findings) list names you, you can resolve the findings' threads. If the **Claude Approvals** check doesn't pass after you resolve them, push a fix |
+| **Held by Code Review's findings** | Fix the findings that Code Review posted on the pull request, then push. If the policy's [`findings`](https://code.claude.com/docs/en/approvals-policy#findings) list names you, you can resolve the findings' threads. If the **Claude Approvals** check is still held after you resolve them, push a fix |
 | **Held by** and a rule's purpose in quotes, **Held by a policy rule** | Ask whoever maintains the policy file what the rule in the check's summary needs, then push a fix |
 | **No rule applies to** and a file's name in quotes, **No rule applies to a changed file** | Ask whoever maintains the policy file for a rule with no `if` that covers the file. Rerun the check once that rule merges |
 | **This change breaks a policy file**, **Default branch policy file cannot be used** | [Fix the policy file](https://code.claude.com/docs/en/approvals-troubleshooting.md#fix-a-policy-file-that-approvals-refuses) |
@@ -67,10 +67,10 @@ With these titles, Approvals passed or didn't evaluate the pull request:
 | Title | What to do |
 | :- | :- |
 | **Passed; no approval from Claude** | If GitHub requires an approval, ask a person |
-| **Nothing ran, not blocking: no file is covered** | Nothing. If someone should review the files that the pull request changes, ask whoever maintains the [policy file](https://code.claude.com/docs/en/approvals-policy.md) to cover them |
+| **Nothing ran, not blocking: no file is covered** | If someone should review the files that the pull request changes, ask whoever maintains the [policy file](https://code.claude.com/docs/en/approvals-policy.md) to cover them |
 | **Observe mode ended: not evaluated yet** | Push a commit or [rerun the Claude Approvals check](#comment-commands-for-approvals). If it passes, a pull request with auto-merge on or in a merge queue can merge at once |
 
-Under **Passed; no approval from Claude**, Claude posts no approval in cases such as these:
+If you see **Passed; no approval from Claude**, check for causes such as these:
 
 * A rule says `claude: comments`
 * A changed file has no rule, or is a [symlink, submodule pointer, or `.gitattributes` file](https://code.claude.com/docs/en/approvals-policy#protected-files)
@@ -80,13 +80,13 @@ Under **Passed; no approval from Claude**, Claude posts no approval in cases suc
 
 In observe mode, the **Claude Approvals** check ends neutral, which GitHub counts as passing, with a title that starts **(observe mode)**.
 
-The check isn't neutral in cases such as these:
+The check can wait, fail, be withheld, or be missing in cases such as these:
 
 | Case | What the check does |
 | :- | :- |
 | The pull request changes a policy or classifier file | It can wait for one person, who can be the author. It fails if the change breaks one of those files |
 | The default branch's policy file can't be used | It fails until you [fix the policy file](https://code.claude.com/docs/en/approvals-troubleshooting.md#fix-a-policy-file-that-approvals-refuses) |
-| The title says Withheld | Approvals holds back a passing check, for example because another open pull request has the same latest commit. The check's summary says what clears it |
+| The title says Withheld | Approvals holds back a passing check, for example because another open pull request has the same latest commit. Read the check's summary for what clears it |
 | The pull request targets another branch than the default | No check appears, unless the pull request changes a policy or classifier file |
 
 ## Comment commands for Approvals
@@ -105,22 +105,22 @@ Comment `@claude approve` on your own pull request when the check's summary says
 
 ## Pull requests from Claude, forks, and outside contributors
 
-A pull request that `claude[bot]` opened needs a second GitHub App before Claude can approve it. A pull request from a fork, or from a person without write access, can need a maintainer.
+Before Claude can approve a pull request that `claude[bot]` opened, you need a second GitHub App. A pull request from a fork, or from a person without write access, can need a maintainer.
 
 ### Pull requests that Claude opens
 
-GitHub doesn't let the account that opened a pull request approve it. Without a second app, Claude gives no approval on a pull request that `claude[bot]` opened, and the **Claude Approvals** check can pass with the title **Passed; no approval from Claude**.
+Until you add a second GitHub App, the **Claude Approvals** check on a pull request that `claude[bot]` opened can pass with the title **Passed; no approval from Claude**.
 
 To get Claude's approval on those pull requests, add a second app:
 
 1. **Install it**: ask an owner of your GitHub organization to install the [Claude Approvals GitHub App](https://github.com/apps/claude-approvals/installations/new) on the repository.
-2. **Link it**: [link the app to your Claude organization](https://claude.ai/settings/claude-approvals/github/finish). That takes someone who is an owner of the GitHub organization and an Owner or Primary Owner of the Claude organization. If nobody is both, contact [Anthropic support](https://support.claude.com).
+2. **Link it**: ask someone who is an owner of the GitHub organization and an Owner or Primary Owner of the Claude organization to [link the app to your Claude organization](https://claude.ai/settings/claude-approvals/github/finish). If they can't link it, contact [Anthropic support](https://support.claude.com).
 
 Then [rerun the check](#comment-commands-for-approvals) on an open pull request that `claude[bot]` opened. Leave the required check's source as it is, because the [Claude GitHub App](https://github.com/apps/claude) still reports the check.
 
 ### Pull requests from forks and outside contributors
 
-Approvals can't confirm that someone with write access pushed a fork's commits. On a fork's pull request, Approvals can wait for a maintainer, meaning someone with write access:
+On a fork's pull request, Approvals can wait for a maintainer, meaning someone with write access:
 
 * **Until a maintainer vouches for a commit**: no classifier's answer counts, Code Review's included. Where a rule depends on one, the **Claude Approvals** check's title can read **No classifier result counts on this commit**.
 * **To vouch for a commit**: outside observe mode, if you have write access, read the change. Then comment `@claude approvals rerun` followed by the latest commit's full SHA, as the comment's only text. Classifiers can then run for that commit. With no SHA, the command can cover the commit that was latest when you commented.

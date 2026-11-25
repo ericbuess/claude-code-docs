@@ -200,7 +200,7 @@ By default, a plugin enabled only in your project's `.claude/settings.json` does
 
 > [!NOTE]
 >
-> If the marketplace isn't on your machine yet, [add it](https://code.claude.com/docs/en/plugins/install.md#add-a-marketplace) before you install. Find its source in the `extraKnownMarketplaces` setting of `.claude/settings.json`, or ask your maintainer.
+> If the marketplace isn't on your machine yet, [add it](https://code.claude.com/docs/en/plugins/install.md#add-a-marketplace) before you install. Find its source in the `extraKnownMarketplaces` setting of `.claude/settings.json`, or ask the project's maintainer.
 
 To install, run this in a shell from the project, using the plugin's key in `enabledPlugins`:
 

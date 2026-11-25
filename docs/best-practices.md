@@ -40,7 +40,7 @@ When a session doesn't go the way you expected, it's almost always one of these:
 
 Every instruction you give Claude Code is one of these:
 
-1. Non-deterministic: you write the instruction, and Claude (the model) reads it. This can be your prompt, `CLAUDE.md`, or a skill. The model then decides what to do with this information. It usually follows your commands, and current models are good at understanding your intent without much context, but there's no *guarantee* that it'll follow your instructions. It can still decide not to do things, or do other things.
+1. Non-deterministic: you write the instruction, and Claude (the model) reads it. This can be your prompt, `CLAUDE.md`, or a skill. The model then decides what to do with this information. It usually follows your commands, and current models are good at understanding your intent without much context, but there's no *guarantee* that it'll follow your instructions.
 2. Deterministic: you configure the instruction, and Claude Code (the harness) *has* to execute this. This can be a hook, a deny rule, or a managed setting. Claude Code applies this every time, no matter what the model decided to do.
 
 Most things in Claude Code come in both forms:
@@ -596,8 +596,7 @@ Keep it to small files: it copies rather than links, so `node_modules` in there 
 You rarely have to clean any of this up yourself:
 
 * When you exit an unnamed worktree session, Claude Code [removes a worktree it created with git](https://code.claude.com/docs/en/worktrees.md#clean-up-worktrees) if there's nothing in it. For a named session, or one with changes, it asks what to do.
-* Subagent worktrees disappear when the subagent finishes without changes.
-* Subagent and background-session worktrees that do get left behind are swept once they're older than `cleanupPeriodDays` and hold no work.
+* Subagent and background-session worktrees that get left behind [can be removed automatically](https://code.claude.com/docs/en/worktrees.md#clean-up-subagent-and-background-session-worktrees) once they're older than `cleanupPeriodDays` and hold no work.
 
 > [!NOTE]
 >

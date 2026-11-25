@@ -856,10 +856,10 @@ A plugin's hooks don't run, or one blocks an action. Either the **Errors** tab s
 
 #### Hooks fail to load
 
-The **Errors** tab shows one of these messages:
+The **Errors** tab or `claude plugin list` shows messages such as these:
 
-* **`Couldn't load hooks from <path>: <reason>`** or **`Failed to load hooks from <path>: <reason>`**: fix the problem that `<reason>` names, such as invalid JSON or a missing top-level `hooks` key. To catch a JSON syntax problem in `hooks/hooks.json` before you publish the plugin, run `claude plugin validate <plugin-directory>` in your shell
-* **`hooks path not found: <path>`**: the manifest's `hooks` field names a file that doesn't exist at that path relative to the plugin root. Fix the path or add the file
+* **`Couldn't load hooks from <path>`**, **`Failed to load hooks from <path>`**, or **`Hook load failed`**: fix the named problem, such as invalid JSON or a missing top-level `hooks` key. To catch a JSON syntax problem in `hooks/hooks.json` before you publish the plugin, run `claude plugin validate <plugin-directory>` in your shell
+* **`hooks path not found: <path>`** or **`Path not found: <path> (hooks)`**: no file exists at `<path>`. Fix the path or add the file
 * **`hooks path escapes plugin directory: <path>`**: see [Path escapes plugin directory](https://code.claude.com/docs/en/errors.md#path-escapes-plugin-directory)
 
 #### `hook error` notices in the transcript
@@ -1183,6 +1183,11 @@ The same managed settings that block a [marketplace source](#marketplace-source-
 An install was refused with this line, an enable with the same line ending `cannot be enabled`, or an install or update with one naming the reason: `Plugin "<name>" is from marketplace "<marketplace>", which is blocked by your organization's policy`, or `Plugin "<name>" depends on "<dep>", which is blocked by your organization's policy`.
 
 Managed settings block this plugin, its marketplace, or a dependency it needs. Ask your administrator which entry applies. A blocked dependency means the plugin can't install until the dependency's marketplace is allowed.
+
+When you install from `/plugin`, ask your administrator about other forms of the message too, such as:
+
+* `Plugin "<name>" is blocked by your organization's policy and can't be installed`
+* `Can't install "<name>": dependency "<dep>" is blocked by your organization's policy`
 
 ### `--plugin-dir is disabled by your organization's managed settings (disableSideloadFlags)`
 

@@ -18,7 +18,7 @@ When you give Claude a task, it works through three phases: **gather context**, 
 
 The loop adapts to what you ask. A question about your codebase might only need context gathering. A bug fix cycles through all three phases repeatedly. A refactor might involve extensive verification. Claude decides what each step requires based on what it learned from the previous step, chaining dozens of actions together and course-correcting along the way.
 
-You're part of this loop too. You can interrupt at any point to steer Claude in a different direction, provide additional context, or ask it to try a different approach. Claude works autonomously but stays responsive to your input.
+You're part of this loop too. You can interrupt at any point to steer Claude in a different direction, provide additional context, or ask it to try a different approach.
 
 The agentic loop is powered by two components: [models](#models) that reason and [tools](#tools) that act. Claude Code is the layer around the model that provides the tools and manages the context the model sees. This surrounding layer is what the term agentic harness refers to.
 
@@ -88,7 +88,7 @@ Claude Code runs in three environments, each with different tradeoffs for where 
 
 ### Interfaces
 
-You can access Claude Code through the terminal, the [desktop app](https://code.claude.com/docs/en/desktop.md), [IDE extensions](https://code.claude.com/docs/en/vs-code.md), [claude.ai/code](https://claude.ai/code), [Remote Control](https://code.claude.com/docs/en/remote-control.md), [Slack](https://code.claude.com/docs/en/slack.md), and [CI/CD pipelines](https://code.claude.com/docs/en/github-actions.md). The interface determines how you see and interact with Claude, but the underlying agentic loop is identical. See [Use Claude Code everywhere](https://code.claude.com/docs/en/overview.md#use-claude-code-everywhere) for the full list.
+You can access Claude Code through the terminal, the [desktop app](https://code.claude.com/docs/en/desktop.md), [IDE extensions](https://code.claude.com/docs/en/vs-code.md), [claude.ai/code](https://claude.ai/code), [Remote Control](https://code.claude.com/docs/en/remote-control.md), and [CI/CD pipelines](https://code.claude.com/docs/en/github-actions.md). The interface determines how you see and interact with Claude, but the underlying agentic loop is identical. See [Use Claude Code everywhere](https://code.claude.com/docs/en/overview.md#use-claude-code-everywhere) for the list.
 
 ## Work with sessions
 
@@ -131,7 +131,7 @@ To change or remove the attribution lines, set [`attribution`](https://code.clau
 
 #### When context fills up
 
-Claude Code manages context automatically as you approach the limit. It compacts the conversation into a summary. The summary keeps your requests and key code snippets, but detailed instructions from early in the conversation may be lost. Put persistent rules in CLAUDE.md rather than relying on conversation history.
+Claude Code manages context automatically as you approach the limit. It compacts the conversation into a summary. The summary keeps your requests and key code snippets, but detailed instructions from early in the conversation may be lost. Put persistent rules in CLAUDE.md.
 
 To control what's preserved during compaction, add a "Compact Instructions" section to CLAUDE.md or run `/compact` with a focus (like `/compact focus on the API changes`).
 

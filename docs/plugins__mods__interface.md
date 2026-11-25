@@ -201,21 +201,21 @@ A mod can also [place a row of its own in the transcript](#place-a-row-in-the-tr
 
 ### Change what Claude Code already draws
 
-Claude Code draws most of its interface itself: messages, tool call rows, the spinner, and more. Each of those parts is a render site too, so a mod can restyle or replace it. To change one, filter your `ui.render` hook on its name from this table:
+To change a part Claude Code draws, filter your `ui.render` hook on a render site from this table:
 
 | Site | What it is |
 | :- | :- |
 | `UserMessage`, `AssistantMessage` | A message in the transcript |
 | `ToolUse`, `ToolResult`, `ToolGroup` | A tool call's row, its result, and a collapsed group of calls |
 | `CommandOutput` | The row a command printed |
-| `AskUserQuestion` | The dialog Claude opens to ask you a question |
+| `AskUserQuestion` | The dialog Claude opens to ask you a question. A `ui.render` hook can't replace it. |
 | `Spinner`, `ToolProgress`, `TurnDuration` | Status lines for a turn: the line that animates while Claude works, a running tool's live progress line, and the line that closes a turn |
 | `InfoNotice`, `SessionMode`, `PromptHint` | Status lines under the logo, the mode labels in the footer, and the hint line under the prompt |
 | `AgentRow` | A subagent's or teammate's row in the agent panel |
 
-`Pane`, `AskUserQuestion`, `Spinner`, `UserMessage`, `AssistantMessage`, and the tool call sites work in the terminal, the Desktop app, and the VS Code extension. The [render sites table](https://code.claude.com/docs/en/plugins/mods/reference.md#render-sites) lists where each of the others is raised.
+`Pane`, `AbovePrompt`, `AskUserQuestion`, `Spinner`, `UserMessage`, `AssistantMessage`, and the tool call sites work in the terminal, the Desktop app, and the VS Code extension. The [render sites table](https://code.claude.com/docs/en/plugins/mods/reference.md#render-sites) lists where each of the others is raised.
 
-At a site Claude Code already draws, your hook can change a detail, replace the drawing, or leave it alone. Select a tab to see each one applied to the spinner. The examples read a `calls` variable that another hook counts, as in the [tutorial mod](https://code.claude.com/docs/en/plugins/mods/create.md#write-a-mod-yourself).
+Select a tab to see a hook change a spinner detail, replace the spinner, or leave it alone. The examples read a `calls` variable that another hook counts, as in the [tutorial mod](https://code.claude.com/docs/en/plugins/mods/create.md#write-a-mod-yourself).
 
 > [tab] Change a detail
 >

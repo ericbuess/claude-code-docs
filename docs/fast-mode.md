@@ -259,7 +259,7 @@ Fast mode for Claude Opus 5 and Claude Opus 4.8 is a research preview feature, w
 * Availability and pricing are subject to change
 * The underlying API configuration may evolve
 
-Report issues or feedback through your usual Anthropic support channels.
+Report issues or feedback through Anthropic support.
 
 ## See also
 

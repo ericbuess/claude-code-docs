@@ -41,7 +41,7 @@ Each example pairs a trigger type with the kind of work scheduled tasks are suit
 
 * **Backlog maintenance**: a schedule trigger runs every weeknight in your repository, with your issue tracker added as a connector. The scheduled task reads issues opened since the last run, applies labels, and assigns owners based on the area of code referenced. It then posts a summary to Slack so the team starts the day with a groomed queue.
 * **Alert triage**: your monitoring tool calls the scheduled task's API endpoint when an error threshold is crossed, passing the alert body as `text`. The task's prompt tells Claude to investigate the alert in the fire payload, so it pulls the stack trace and correlates it with recent commits in the repository. It then opens a draft pull request with a proposed fix and a link back to the alert. On-call reviews the PR instead of starting from a blank terminal.
-* **Bespoke code review**: a GitHub trigger runs on `pull_request.opened`. The scheduled task applies your team's own review checklist and leaves inline comments for security, performance, and style issues. It also adds a summary comment so human reviewers can focus on design instead of mechanical checks.
+* **Bespoke code review**: a GitHub trigger runs on `pull_request.opened`. The scheduled task applies your own review checklist and leaves inline comments for security, performance, and style issues. It also adds a summary comment so human reviewers can focus on design instead of mechanical checks.
 * **Deploy verification**: your CD pipeline calls the scheduled task's API endpoint after each production deploy. The task runs smoke checks against the new build, scans error logs for regressions, and posts a go or no-go to the release channel before the deploy window closes.
 * **Docs drift**: a schedule trigger runs weekly. The scheduled task scans merged PRs since the last run, flags documentation that references changed APIs, and opens update PRs against the docs repository for an editor to review.
 * **Library port**: a GitHub trigger runs on `pull_request.closed` filtered to merged PRs in one SDK repository. The scheduled task ports the change to a parallel SDK in another language and opens a matching PR, keeping the two libraries in step without a human re-implementing each change.
@@ -344,7 +344,7 @@ Under **History** on the task's detail page, each finished run's row ends with *
 * **Failed**: the session didn't finish normally. For example, it stopped unexpectedly, ended on an error, or was archived before the run started
 * **Cancelled**: the run didn't fail, and its session was archived. If you archive the session of a run that succeeded, the run changes to **Cancelled**. Nothing in the task needs to change
 
-If a warning appears under **History**, see ["The last run" warnings](#the-last-run-didnt-start).
+If a warning appears under **History**, see [Warnings under History](#the-last-run-didnt-start).
 
 ### Edit and control scheduled tasks
 
@@ -510,14 +510,14 @@ If the cause is your CLI sign-in or being inside a cloud session, you can still 
 
 Cloud scheduled tasks are off for your organization, and you can't change that from your local configuration. Ask your Team or Enterprise Owner whether they can turn on the **Scheduled tasks (Was Routines)** or **Routines** toggle at [**Organization settings > Capabilities > Remote sessions**](https://claude.ai/admin-settings/capabilities).
 
-### "The last run" warnings
+### Warnings under History
 
-When a warning under **History** begins with "The last run", find it in the first column and do what its row says. The warning clears once a later run starts.
+When a warning under **History** begins with "The last run" or "This didn't run", find it in the first column and do what its row says. The warning clears once a later run starts.
 
 | Warning | What to do |
 | :- | :- |
-| "The last run didn't start because your organization had reached its limit on cloud sessions running at once." | The task needs no change. Click **Run now** later, or wait for the next run |
-| "The last run didn't start because its cloud environment couldn't be found or used." | On the task's detail page, open the menu next to its name, select **Edit**, and find the [cloud environment selector](#environments-and-network-access). If it reads **Unavailable environment**, that environment was archived or is no longer available to your account, so choose another one there and save your changes. Otherwise, retry with **Run now** on the detail page, or pick another environment in the selector and save your changes |
+| "This didn't run" followed by the run's time, then "You were at the limit for tasks Claude can work on at the same time." or "Your organization was at its limit for tasks Claude can work on at the same time." | The task needs no change. Click **Run now** later, or wait for the next run |
+| "The last run didn't start because its environment couldn't be found or used." | On the task's detail page, open the menu next to its name, select **Edit**, and find the [cloud environment selector](#environments-and-network-access). If it reads **Unavailable environment**, that environment was archived or is no longer available to your account, so choose another one there and save your changes. Otherwise, retry with **Run now** on the detail page, or pick another environment in the selector and save your changes |
 | "The last run was blocked because it couldn't access something it needs, or your organization's policy doesn't allow it." | Check that your [GitHub access](#repositories-and-branch-permissions) covers the task's repositories. If it does, ask an [Owner](https://code.claude.com/docs/en/server-managed-settings.md#access-control) of your Claude organization whether a policy blocks the task |
 | "The last run didn't start because of a problem that's usually temporary." | Click **Run now** to try again, or wait for the next run |
 | "The last run didn't start because its repository or branch wasn't available." | Check on GitHub that each repository in the task has the [branch the run starts from](#repositories-and-branch-permissions). Also check that your [GitHub access](#repositories-and-branch-permissions) covers each repository, and reconnect GitHub if your connection expired |

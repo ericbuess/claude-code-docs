@@ -15,7 +15,7 @@ Session-scoped scheduled tasks let Claude re-run a prompt automatically on an in
 > * **Reacting to events as they happen instead of polling**: see [Channels](https://code.claude.com/docs/en/channels.md). Your CI can push the failure into the session directly.
 > * **Keeping the session working turn after turn toward a condition rather than on an interval**: see [`/goal`](https://code.claude.com/docs/en/goal).
 
-Tasks are session-scoped. When you resume with `--resume` or `--continue`, Claude Code restores tasks that haven't [expired](#seven-day-expiry), except those listed under [Limitations](#limitations). For scheduling that survives independently of any session, create a [cloud scheduled task](https://code.claude.com/docs/en/routines.md), set up a [Desktop scheduled task](https://code.claude.com/docs/en/desktop-scheduled-tasks.md), or use [GitHub Actions](https://code.claude.com/docs/en/github-actions.md).
+Tasks are session-scoped. When you resume with `--resume` or `--continue`, Claude Code restores tasks that haven't [expired](#recurring-task-expiry), except those listed under [Limitations](#limitations). For scheduling that survives independently of any session, create a [cloud scheduled task](https://code.claude.com/docs/en/routines.md), set up a [Desktop scheduled task](https://code.claude.com/docs/en/desktop-scheduled-tasks.md), or use [GitHub Actions](https://code.claude.com/docs/en/github-actions.md).
 
 ## Compare scheduling options
 
@@ -78,7 +78,7 @@ The example below checks CI and review comments, with Claude waiting longer betw
 
 In a session where the [Monitor tool is available](https://code.claude.com/docs/en/tools-reference.md#monitor-tool), Claude may use it directly when you ask for a dynamic `/loop` schedule. Monitor runs a background script and streams each output line back, which avoids polling altogether and is often more token-efficient and responsive than re-running a prompt on an interval.
 
-A dynamically scheduled loop appears in your [scheduled task list](#manage-scheduled-tasks) like any other task, so you can list or cancel it the same way. The list shows its pending wakeup as a one-shot task, so a wakeup scheduled for `:00` or `:30` can [run a little early](#when-a-one-shot-task-runs-early). The [seven-day expiry](#seven-day-expiry) applies to the loop too.
+A dynamically scheduled loop appears in your [scheduled task list](#manage-scheduled-tasks), so you can ask Claude to list or cancel it. The list shows its pending wakeup as a one-shot task, so a wakeup scheduled for `:00` or `:30` can [run a little early](#when-a-one-shot-task-runs-early). The loop [expires 30 days after it starts](#recurring-task-expiry).
 
 > [!NOTE]
 >
@@ -127,7 +127,7 @@ Edits to `loop.md` take effect on the next iteration, so you can refine the inst
 ### Stop a loop
 
 * **[Self-paced loop](#let-claude-choose-the-interval)**: while the loop is waiting for its next iteration, press `Esc` on an empty prompt to stop it. You can also stop it with `Ctrl+C` while Claude is idle, except in a [background session you've attached to](#detach-without-stopping-a-loop). A `Pending wakeup cancelled` notice confirms that the loop won't fire again.
-* **[Fixed-interval loop](#run-on-a-fixed-interval)**: to stop a loop such as `/loop 5m`, ask Claude to cancel it, for example `cancel the deploy check loop`. `Esc` and `Ctrl+C` don't stop it, or any task you [scheduled by asking Claude directly](#manage-scheduled-tasks). A loop you don't cancel ends when [seven days elapse](#seven-day-expiry).
+* **[Fixed-interval loop](#run-on-a-fixed-interval)**: to stop a loop such as `/loop 5m`, ask Claude to cancel it, for example `cancel the deploy check loop`. `Esc` and `Ctrl+C` don't stop it, or any task you [scheduled by asking Claude directly](#manage-scheduled-tasks). A loop you don't cancel ends [30 days after you start it](#recurring-task-expiry).
 
 In [self-paced mode](#let-claude-choose-the-interval), Claude can also end the loop on its own once the task is complete. Claude calls the [`ScheduleWakeup` tool](https://code.claude.com/docs/en/tools-reference) with `stop: true`, which cancels the pending wakeup immediately.
 
@@ -208,9 +208,11 @@ For example, `7,37 * * * *` schedules a task for `:07` and `:37`, which are 30 m
 
 A one-shot task scheduled for `:00` or `:30` runs up to 90 seconds early. Claude Code doesn't shift a one-shot task scheduled for any other minute, so when the timing matters, schedule it off the hour and half hour: `3 9 * * *` instead of `0 9 * * *`.
 
-### Seven-day expiry
+### Recurring task expiry
 
-Recurring tasks automatically expire 7 days after creation. The task fires one final time, then deletes itself. This bounds how long a forgotten loop can run. If you need a recurring task to last longer, cancel and recreate it before it expires, or use [cloud scheduled tasks](https://code.claude.com/docs/en/routines.md) or [Desktop scheduled tasks](https://code.claude.com/docs/en/desktop-scheduled-tasks.md) for durable scheduling.
+Recurring tasks automatically expire 30 days after creation. The task fires one final time, then deletes itself. This bounds how long a forgotten loop can run. Before v2.1.330, the limit was 7 days, and recurring tasks created with `CronCreate` on those versions keep it.
+
+If you need a recurring task to last longer, cancel and recreate it before it expires, or use [cloud scheduled tasks](https://code.claude.com/docs/en/routines.md) or [Desktop scheduled tasks](https://code.claude.com/docs/en/desktop-scheduled-tasks.md) for durable scheduling.
 
 ## Cron expression reference
 

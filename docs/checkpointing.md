@@ -17,7 +17,7 @@ As you work with Claude, checkpointing automatically captures the state of your 
 Claude Code tracks all changes made by its file editing tools:
 
 * Every prompt you send that starts a turn creates a new checkpoint
-* Claude Code keeps file snapshots for the 100 most recent checkpoints in a session. Discarding an older checkpoint deletes the snapshot files that no remaining checkpoint references, except each file's first snapshot, which the VS Code extension uses as the baseline for its session diffs.
+* Claude Code keeps file snapshots for the 100 most recent checkpoints in a session. Discarding an older checkpoint deletes the snapshot files that no remaining checkpoint references, except each file's first snapshot.
 * Claude Code saves checkpoints with the conversation, so you can still run `/rewind` after you resume a session
 * Claude Code deletes a session's file snapshots in the [retention sweep](https://code.claude.com/docs/en/claude-directory.md#cleaned-up-automatically), by default about 30 days after the session last saved one. Rewinding to a checkpoint whose snapshots are gone can fail with [`No files were restored`](https://code.claude.com/docs/en/errors#no-files-were-restored). To keep snapshots longer, set [`cleanupPeriodDays`](https://code.claude.com/docs/en/settings-reference#cleanupperioddays).
 

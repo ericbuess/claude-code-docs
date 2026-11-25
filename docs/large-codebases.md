@@ -35,7 +35,7 @@ Each setting below is independent. They layer rather than replace each other, so
 
 ### The example monorepo
 
-The examples throughout this page refer to a monorepo with three packages. The same patterns work in a large single-tree codebase: where an example uses `packages/api/`, substitute your own subsystem directory such as `src/backend/` or `lib/core/`.
+The examples throughout this page refer to a monorepo with three packages. Where an example uses `packages/api/`, substitute your own subsystem directory such as `src/backend/` or `lib/core/`.
 
 ```text theme={null}
 monorepo/

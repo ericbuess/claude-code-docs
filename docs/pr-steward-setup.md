@@ -147,11 +147,11 @@ Choose an environment for PR Steward when it needs more to build and test your c
 
 To add a setup script, environment variables, or different network access, use an [organization-shared environment](https://code.claude.com/docs/en/cloud-environments.md#organization-shared-environments). On the **Claude Ship** page, select a **Default environment** under **Where it runs**. To override it for one repository, click **Change** beside **Environment** in the **Edit** dialog.
 
-With neither set, PR Steward can use your organization's [default environment](https://code.claude.com/docs/en/cloud-environments.md#the-default-environment). Without one, it runs in an Anthropic-hosted environment with no setup script and no environment variables.
+With neither set, PR Steward can use your organization's [default environment](https://code.claude.com/docs/en/cloud-environments.md#the-default-environment). If that default is [self-hosted](#run-pr-steward-in-a-self-hosted-environment), select it or another environment for PR Steward under **Where it runs**. Until you do, pull requests can get a [comment that PR Steward hasn't started](https://code.claude.com/docs/en/pr-steward-troubleshooting.md#pr-steward-posted-a-comment-that-says-why). If your organization has no default, PR Steward runs in an Anthropic-hosted environment with no setup script and no environment variables.
 
 ### Run PR Steward in a self-hosted environment
 
-For the environment that PR Steward runs in, you can select a [self-hosted environment](https://code.claude.com/docs/en/self-hosted-environments). The [limits on approvals and merges](https://code.claude.com/docs/en/pr-steward-security.md#limits-on-approvals-and-merges) are described for Anthropic-hosted sessions only. On a runner without [Anthropic-managed git](https://code.claude.com/docs/en/self-hosted-environments-deploy.md#use-the-anthropic-git-proxy), PR Steward pushes with the runner's own git credentials.
+For the environment that PR Steward runs in, you can select a [self-hosted environment](https://code.claude.com/docs/en/self-hosted-environments). Its runners need Claude Code v2.1.317 or later. The [limits on approvals and merges](https://code.claude.com/docs/en/pr-steward-security.md#limits-on-approvals-and-merges) are described for Anthropic-hosted sessions only. On a runner without [Anthropic-managed git](https://code.claude.com/docs/en/self-hosted-environments-deploy.md#use-the-anthropic-git-proxy), PR Steward pushes with the runner's own git credentials.
 
 > [!WARNING]
 >

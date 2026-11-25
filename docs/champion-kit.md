@@ -130,7 +130,7 @@ The objective is to establish a small number of lightweight habits that allow mo
 
 ### Thirty-day playbook
 
-If a loose plan is helpful, the sequence below reflects what tends to work across most teams. Adjust freely to fit your context.
+If a loose plan is helpful, the sequence below reflects what tends to work across most teams.
 
 **1. Week 1: Seed the channel**
 

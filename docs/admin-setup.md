@@ -53,7 +53,7 @@ Managed settings define organization policy. Claude Code checks the four sources
 
 Claude Code fetches server-managed settings at startup and refreshes them hourly during the session, with no endpoint infrastructure to deploy. Delivery through the claude.ai admin console requires a Claude for Teams or Enterprise plan. Deployments on Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry can get the same remote delivery by running a [Claude apps gateway](https://code.claude.com/docs/en/claude-apps-gateway), or use one of the file-based or OS-level mechanisms instead.
 
-If you set your provider or gateway at claude.ai under **Organization settings > Desktop 3P**, see [which settings take priority](https://claude.com/docs/third-party/claude-desktop/admin-console-claude-code#which-settings-take-priority) in the Enterprise Admin Console guide.
+If you set your provider or gateway at claude.ai under [**Organization settings > Desktop 3P**](https://claude.ai/admin-settings/desktop-deployment), see [which settings take priority](https://claude.com/docs/third-party/claude-desktop/admin-console-claude-code#which-settings-take-priority) in the Enterprise Admin Console guide.
 
 If your organization mixes providers, configure [server-managed settings](https://code.claude.com/docs/en/server-managed-settings.md) for claude.ai users plus a [file-based or plist/registry fallback](https://code.claude.com/docs/en/managed-settings.md#delivery-mechanisms) so other users still receive managed policy.
 
@@ -158,7 +158,7 @@ When an account is linked, Claude can act on its repositories as the Claude GitH
 
 **1. Allow organizations**
 
-As an Owner on a Team or Enterprise plan, open the GitHub section of [**Organization settings > Git providers**](https://claude.ai/admin-settings/source-control) in your browser and click **Choose organizations**. Select the organizations you approve in the table and click **Allow**. Include ones that are already linked, because they aren't allowed automatically.
+On a Team or Enterprise plan, an [Owner](https://code.claude.com/docs/en/server-managed-settings.md#access-control) can set this up. Open the GitHub section of [**Organization settings > Git providers**](https://claude.ai/admin-settings/source-control) in your browser and click **Choose organizations**. Select the organizations you approve in the table and click **Allow**. Include ones that are already linked, because they aren't allowed automatically.
 
 **2. Allow other accounts by name**
 
@@ -189,7 +189,7 @@ Choose monitoring based on what you need to report on. The dashboards, APIs, and
 | Usage monitoring | OpenTelemetry export of sessions, tools, and tokens | All providers | [Monitoring usage](https://code.claude.com/docs/en/monitoring-usage.md) |
 | Analytics dashboard | Adoption and contribution metrics with a leaderboard on Teams / Enterprise; per-user usage and spend metrics on Console | Teams / Enterprise at [claude.ai/analytics](https://claude.ai/analytics/claude-code), Console at [platform.claude.com/claude-code](https://platform.claude.com/claude-code) | [Analytics](https://code.claude.com/docs/en/analytics.md) |
 | Programmatic reporting | Per-user usage and cost data over an API | [Enterprise Analytics API](https://platform.claude.com/docs/en/api/admin/analytics) for Enterprise, [Claude Code Analytics API](https://platform.claude.com/docs/en/build-with-claude/claude-code-analytics-api) for Console | [Costs](https://code.claude.com/docs/en/costs.md#manage-costs-for-your-organization) |
-| Spend controls | Spend limits and rate limits | Organization settings for Teams / Enterprise, workspace limits for Console; on third-party clouds, cloud budget controls or a [Claude apps gateway](https://code.claude.com/docs/en/claude-apps-gateway) with per-user [spend limits](https://code.claude.com/docs/en/claude-apps-gateway-spend-limits.md) | [Costs](https://code.claude.com/docs/en/costs.md#manage-costs-for-your-organization) |
+| Spend controls | Spend limits and rate limits | [Organization settings](https://claude.ai/admin-settings/usage) for Teams / Enterprise, workspace limits for Console; on third-party clouds, cloud budget controls or a [Claude apps gateway](https://code.claude.com/docs/en/claude-apps-gateway) with per-user [spend limits](https://code.claude.com/docs/en/claude-apps-gateway-spend-limits.md) | [Costs](https://code.claude.com/docs/en/costs.md#manage-costs-for-your-organization) |
 
 On Teams and Enterprise, per-user usage and spend numbers come from the [spend report](https://support.claude.com/en/articles/12883420-view-usage-analytics-for-team-and-enterprise-plans) in your organization's analytics settings, not the analytics dashboard. Cloud providers expose spend through AWS Cost Explorer, GCP Billing, or Azure Cost Management. For planning enterprise budgets across Claude chat, Claude Code, and Cowork, see the [Claude Enterprise consumption guide](https://support.claude.com/en/articles/14782391-claude-enterprise-consumption-guide).
 

@@ -11,9 +11,16 @@
 View plans
 Contact sales
 
+This page covers one of the two ways to use Claude through your Google Cloud project: Google Cloud's Agent Platform, formerly Vertex AI, which Google manages.
+
 > [!NOTE]
 >
-> This page covers one of the two ways to use Claude through your Google Cloud project: Google Cloud's Agent Platform, formerly Vertex AI, which Google manages. If you use Claude Models on Google Cloud (Anthropic managed), follow [its Claude Code setup page](https://code.claude.com/docs/en/claude-models-on-google-cloud-anthropic-managed.md) instead. To find out which one you use, see [Which offering are you using?](https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/overview#which-offering-are-you-using)
+> Use a different page in these cases:
+>
+> * **Claude Models on Google Cloud (Anthropic managed)**: follow [its Claude Code setup page](https://code.claude.com/docs/en/claude-models-on-google-cloud-anthropic-managed.md)
+> * **Not sure which Google Cloud offering you use**: see [Which offering are you using?](https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/overview#which-offering-are-you-using)
+> * **Code tab, when your organization installed the Claude Desktop app**: ask your administrator to [configure the app for Agent Platform](https://claude.com/docs/third-party/claude-desktop/vertex)
+> * **Code tab, when you install the Claude Desktop app yourself**: follow the [single-machine setup steps](https://claude.com/docs/third-party/claude-desktop/installation#single-machine-setup) and enter the [connection and model values for Agent Platform](https://claude.com/docs/third-party/claude-desktop/vertex#configure-the-app)
 
 ## Prerequisites
 

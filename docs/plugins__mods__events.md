@@ -46,7 +46,9 @@ The line now appears after each tool finishes. Claude reads the same result eith
 
 ### Rewrite an event
 
-To change what Claude Code acts on, such as the text of a prompt, call `next` with a modified copy of the event. The event itself is immutable: it's deeply frozen, and assigning to a field throws. This hook trims each prompt before it's sent:
+To change what Claude Code acts on, call `next` with a modified copy of the event.
+
+This hook trims a prompt before it's sent:
 
 ```javascript theme={null}
 on('prompt.submit', async ($, e, next) => {
@@ -55,7 +57,7 @@ on('prompt.submit', async ($, e, next) => {
 })
 ```
 
-Later handlers and Claude Code receive the trimmed prompt and never see the original. You can also change the result: `await next(e)`, then return a copy of the result with a field replaced.
+For a prompt typed as plain text, later handlers and Claude receive the trimmed prompt.
 
 ### Answer an event
 
@@ -150,7 +152,7 @@ Your hook can also change a call, retry it, answer it itself, or withhold its re
 * **Answer the call yourself**: return an object with a `result` field, without calling `next`, and for a built-in tool, give `result` the shape that tool's own result has in [the types for your build](https://code.claude.com/docs/en/plugins/mods/create.md#get-the-types-for-your-build). No permission prompt appears and the tool doesn't run, so the result you return is all Claude learns about what happened.
 * **Withhold the result from Claude**: return `{ deny: reason }` after `await next(e)`. Claude reads your reason in place of what `next` returned. When the tool ran, the deny keeps its result from Claude and undoes nothing the tool did. When the tool ran and succeeded, the reason follows a note such as `Bash ran, and a plugin withheld its result:`.
 
-Hooks in your organization's [managed settings](https://code.claude.com/docs/en/server-managed-settings.md) run before any mod's `tool.call` hook. When a managed hook blocks the call, no mod's `tool.call` hook runs for that call.
+Hooks in [managed settings](https://code.claude.com/docs/en/server-managed-settings.md) run before any mod's `tool.call` hook. When a managed hook blocks the call, no mod's `tool.call` hook runs for that call.
 
 #### Hold a tool call until the user decides
 
@@ -260,15 +262,15 @@ To limit which calls your hook handles by [`e.isReadOnly`](#check-whether-a-tool
 
 ### Rewrite or add to a prompt
 
-A `prompt.submit` hook sees each prompt before the turn starts, so it can rewrite the text or add to it. `e.text` is what was typed.
+To rewrite a prompt or add to it, handle `prompt.submit`, read the prompt from `e.text`, and return a value from this table:
 
 | To do this | Return this |
 | :- | :- |
-| Rewrite the prompt. The transcript and your [prompt history](https://code.claude.com/docs/en/interactive-mode.md#command-history) show the new text. | `next({ ...e, text: newText })` |
+| Rewrite a prompt typed as plain text. The transcript and your [prompt history](https://code.claude.com/docs/en/interactive-mode.md#command-history) show the new text. | `next({ ...e, text: newText })` |
 | Add text only Claude reads, after the prompt | `next({ ...e, context: [...(e.context ?? []), extraText] })` |
 | Stop the prompt from being sent | `{ drop: 'the reason' }` |
 
-This hook adds the current branch name for Claude whenever a prompt mentions a pull request:
+This hook adds the current branch name for Claude when a prompt mentions a pull request:
 
 ```javascript theme={null}
 on('prompt.submit', async ($, e, next) => {
@@ -284,10 +286,11 @@ on('prompt.submit', async ($, e, next) => {
 
 When you send a prompt such as `open a PR for this change`, your message looks the same in the transcript, and Claude also reads a line such as `Current branch: feature/auth` after it. A prompt that doesn't mention a pull request goes through unchanged, and `git` doesn't run.
 
-To stop a prompt, return `{ drop: 'the reason' }` without calling `next`. The text goes back into the user's prompt input, and they see `Prompt dropped by a hook:` followed by your reason, so address the reason to them. The prompt still goes through in these cases:
+To stop a prompt, return `{ drop: 'the reason' }` without calling `next`. The text goes back into the user's prompt input, and they see `Prompt dropped by a hook:` followed by your reason, so address the reason to them. Don't rely on `drop` to stop every prompt. For example, a prompt goes through in these cases:
 
 * **Your hook returns a `drop` after its `next(e)` call let the prompt through**: the turn still runs, and the hook [fails](#handle-a-hook-that-fails) with a message that includes `a drop after its next() was answered`
 * **Your hook throws or times out**: Claude Code skips it and sends the prompt. [Add a `.catch` handler](#handle-a-hook-that-fails) so that a failure doesn't send a prompt the hook would have stopped.
+* **The prompt is the `/command` for a [skill with `context: fork`](https://code.claude.com/docs/en/skills#run-skills-in-a-subagent)**: your hook doesn't run. To stop the command, return `{ text: 'the reason' }` from a [`command.run`](https://code.claude.com/docs/en/plugins/mods/api#add-a-command) hook without calling `next`.
 
 [Other events](https://code.claude.com/docs/en/plugins/mods/reference.md#prompts-and-what-claude-reads) cover the rest of what Claude reads: `prompt.section` for each section of the system prompt, `prompt.context` for the context sent with the first message, and `skill.prompt` for a skill's text. To change a section after a conversation has started, see [Send a changed system prompt section or tool description](https://code.claude.com/docs/en/plugins/mods/reference.md#break-prompt-cache). In a `skill.prompt` hook, you can also read [which plugin or file the skill came from](https://code.claude.com/docs/en/plugins/mods/reference.md#skill-prompt-fields).
 
@@ -297,9 +300,9 @@ A turn is everything Claude does in answer to one prompt. Handle `turn.start`, `
 
 | Event | When it fires | What a hook can do |
 | :- | :- | :- |
-| `turn.start` | A turn begins | Observe. `e.turnId` identifies the turn in the other two events. |
+| `turn.start` | A turn begins. A subagent's turn fires it with `e.agentId` set, which requires Claude Code v2.1.299 or later. | Observe. `e.turnId` identifies the turn in the other two events. |
 | `turn.step` | Claude Code is about to send one request to the model. A turn with tool calls has several. `e.agentId` is set for a subagent's request. | Read each request's token usage, send it to a different model with `next({ ...e, model })`, or answer without calling the model |
-| `turn.complete` | The turn ended, including a turn the user interrupted, where `e.isAborted` is `true`. `e.answer` is Claude's final text, `e.durationMs` how long it took, and `e.usage` the turn's token totals. A subagent's turn fires it with `e.agentId` set. | Observe, or return an object with a `text` field, such as `{ text: 'Done in 12 seconds' }`, to show a line under the answer |
+| `turn.complete` | The turn ended, including a turn the user interrupted, where `e.isAborted` is `true`. `e.answer` is Claude's final text, `e.durationMs` how long it took, and `e.usage` the turn's token totals. A subagent's turn fires it with `e.agentId` set. | Observe. In the main conversation, return an object with a `text` field, such as `{ text: 'Done in 12 seconds' }`, to show a line under the answer. |
 
 Write a `turn.step` hook as an async generator, because the event streams. `yield* next(e)` forwards the response as it streams and evaluates to the finished result. This hook logs how much of each request the Claude API served from the [prompt cache](https://code.claude.com/docs/en/prompt-caching.md):
 

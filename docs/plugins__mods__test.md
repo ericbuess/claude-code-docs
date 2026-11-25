@@ -163,7 +163,7 @@ The kit also exports ready-made mocks for the clock, the store, environment vari
 
 ### Look up what a stub returns
 
-Every mods API call your mod makes in a test needs a stub that answers in Claude Code's place, except the few the kit answers itself: [`$.ui.invalidate`](https://code.claude.com/docs/en/plugins/mods/interface#redraw-when-something-changes), [`$.state`](https://code.claude.com/docs/en/plugins/mods/interface#keep-state), and `$.session.append` calls. For `$.clock` calls, use `mock.clock(on)`, or your mod's `$.clock.now()` fails with `no implementation for clock.now`.
+[`$.ui.invalidate`](https://code.claude.com/docs/en/plugins/mods/interface#redraw-when-something-changes), [`$.state`](https://code.claude.com/docs/en/plugins/mods/interface#keep-state), and `$.session.append` calls need no stub. For `$.clock` calls, use `mock.clock(on)`, or your mod's `$.clock.now()` fails with `no implementation for clock.now`. A passing test [can hide](#follow-the-test-kit’s-rules) a `no implementation for` error, and each call that fails with it needs a stub.
 
 This table lists the ones mods use most. The first column is the call your mod makes or the event it passes on with `next(e)`. The second is the function to pass to `on` under that name, so the `$.store.get` row becomes `on('store.get', ($, e) => ({ value: saved.get(e.key) }))`. A `'...'` in a stub marks text for you to fill in:
 
@@ -176,7 +176,7 @@ This table lists the ones mods use most. The first column is the call your mod m
 | `$.ui.ask` | A `tool.call` stub, because the question reaches it as a call to the `AskUserQuestion` tool: `($, e) => ({ result: { answers: { [e.questions[0].question]: 'Run it' } } })`. Check `e.tool` first if your mod passes on other tool calls. |
 | `$.model.complete` | `() => ({ value: { isAnswered: true, text: '...', usage } })` |
 | `$.process.run` | `($, e) => ({ value: { exitCode: 0, stdout: '...', stderr: '' } })`. `e.argv` is the argument list and `e.init` holds `cwd` and `timeoutMs`. |
-| Any mods API call that should fail | `() => ({ deny: 'the reason' })`, which makes the call reject in your mod. A stub that throws is skipped instead. |
+| To fail a call whose stub returns `{ value }` | `() => ({ deny: 'the reason' })`, which makes the call reject in your mod. `ui.toast`, `ui.log`, and `ui.status` don't reject. A stub that throws is skipped. |
 | `session.start` | `() => ({ cwd: '/work' })` |
 | `turn.start` | `($, e) => ({ turnId: e.turnId })` |
 | `tool.call` | `() => ({ result: '...' })` |
@@ -316,6 +316,7 @@ The handle that `$.ui.mount` returns has these methods, which address elements b
 | `select({ key: 'size', value: 'large' })` | Picks the option with that value in the `Select` with that key |
 | `keepsBeneath()` | In a test with no `ui.render` stub, it resolves to `true` when the drawing includes what `next(e)` returned, and `false` when your hook left it out. In a test that registers one, use `find` to look for what the stub drew. Requires Claude Code v2.1.321 or later. |
 | `find({ key: 'more' })` or `find({ type: 'Text', text: 'Count: 2' })` | Returns the first matching element as `{ type, props, children }`, or `undefined`. `text` can be a string or a regular expression. |
+| `drawn()` | Returns the whole tree as last drawn |
 | `unmount()` | Removes the drawing |
 
 Each method resolves after your handler has finished, so you can check the result on the next line. Set `props` to what Claude Code would pass for that site. The [render sites table](https://code.claude.com/docs/en/plugins/mods/reference.md#render-sites) lists each site's props, and [the types for your build](https://code.claude.com/docs/en/plugins/mods/create.md#get-the-types-for-your-build) have their types.

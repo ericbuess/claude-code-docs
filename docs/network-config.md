@@ -85,7 +85,7 @@ export CLAUDE_CODE_CERT_STORE=system
 
 ## Custom CA certificates
 
-If your enterprise environment uses a custom CA, configure Claude Code to trust it directly:
+If your environment uses a custom CA, configure Claude Code to trust it directly:
 
 ```bash theme={null}
 export NODE_EXTRA_CA_CERTS=/path/to/ca-cert.pem
@@ -242,7 +242,7 @@ Claude Code requires access to the following URLs. Allowlist these in your proxy
 | `storage.googleapis.com` | Native installer and native auto-updater on versions prior to 2.1.116 |
 | `registry.npmjs.org` | Plugin installs (fetching npm-source plugin packages and installing plugins' Node.js package dependencies), `npx`-launched MCP servers, and the package registry for npm and bun installs of Claude Code itself |
 | `bridge.claudeusercontent.com` | [Claude in Chrome](https://code.claude.com/docs/en/chrome.md) extension WebSocket bridge |
-| `*.frame.claudeusercontent.com` | [Artifact](https://code.claude.com/docs/en/artifacts.md) content reads. The CLI fetches an artifact's files from this host when Claude opens one, and only when the Artifact tool is [available](https://code.claude.com/docs/en/artifacts.md#availability) for your account. To turn the tool off and drop this requirement, set [`"enableArtifact": false`](https://code.claude.com/docs/en/settings-reference#enableartifact) or [`CLAUDE_CODE_DISABLE_ARTIFACT=1`](https://code.claude.com/docs/en/env-vars) |
+| `*.frame.claudeusercontent.com` | [Artifact](https://code.claude.com/docs/en/artifacts.md) content reads. The CLI fetches an artifact's files from this host when Claude opens one. You need it only when the Artifact tool is [available](https://code.claude.com/docs/en/artifacts.md#availability) for your account. To turn the tool off and drop this requirement, set [`"enableArtifact": false`](https://code.claude.com/docs/en/settings-reference#enableartifact) or [`CLAUDE_CODE_DISABLE_ARTIFACT=1`](https://code.claude.com/docs/en/env-vars) |
 | `github.com` | Cloning GitHub-hosted [plugin marketplaces](https://code.claude.com/docs/en/plugins/overview.md) and plugins, including the official Anthropic marketplace, over HTTPS or SSH. To clone GitHub `owner/repo` sources over HTTPS only, set [`CLAUDE_CODE_PLUGIN_PREFER_HTTPS=1`](https://code.claude.com/docs/en/env-vars) |
 | `raw.githubusercontent.com` | Changelog feed for [`/release-notes`](https://code.claude.com/docs/en/commands). In interactive sessions, Claude Code also fetches it in the background at startup when its cached changelog doesn't yet cover the running version, such as the first start after an update; non-interactive and cloud sessions never fetch it |
 | `*-review.googlesource.com` | Gerrit change lookup on `googlesource.com` checkouts. When a Claude Desktop Code tab session starts or resumes on a [trusted](https://code.claude.com/docs/en/permissions.md#project-allow-rules-and-workspace-trust) checkout whose `origin` is a `googlesource.com` host, Claude Code asks that host's `-review` server anonymously for the open change matching HEAD's `Change-Id`, once per start or resume. Other session types skip the lookup, and no other Gerrit host is contacted. Optional: disable with [`CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC`](https://code.claude.com/docs/en/env-vars) |

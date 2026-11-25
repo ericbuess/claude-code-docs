@@ -6,7 +6,7 @@
 
 > Build your first Claude Code plugin from an empty directory, test it without a marketplace, and convert an existing .claude/ setup.
 
-A plugin is a directory of skills, agents, hooks, and MCP servers, plus a `plugin.json` file, called the manifest, that names the plugin. Claude Code loads the directory as one unit, so you can share it with teammates, install it in several projects, or publish it to a marketplace.
+A plugin is a directory of skills, agents, hooks, and MCP servers, plus a `plugin.json` file, called the manifest, that names the plugin. Claude Code loads the directory as one unit, so you can share it with others, install it in several projects, or publish it to a marketplace.
 
 This page is for people writing their own plugins.
 
@@ -25,7 +25,7 @@ Start from the section that matches what you already have:
 
 ## Decide when to use a plugin
 
-Skills, agents, hooks, and MCP servers all work standalone in your project or home directory. Keep that standalone setup while it serves one project or only you. Make a plugin when you want to share the setup with teammates, install it in several projects, or publish versioned releases.
+Skills, agents, hooks, and MCP servers all work standalone in your project or home directory. Keep that standalone setup while it serves one project or only you. Make a plugin when you want to share the setup with others, install it in several projects, or publish versioned releases.
 
 When you move standalone skills, agents, hooks, and MCP config into a plugin, their location and names change:
 

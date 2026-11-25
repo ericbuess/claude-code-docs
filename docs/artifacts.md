@@ -43,7 +43,7 @@ Make an artifact that walks through this PR with the diff annotated inline.
 Build a dashboard artifact of last week's deploy failures by service and keep it updated as you investigate.
 ```
 
-Unless you name a location, Claude writes the page to an HTML or Markdown file in a temporary directory outside your project, then publishes it. The artifact stays private to you until you [share it](#share-an-artifact).
+The artifact stays private to you until you [share it](#share-an-artifact).
 
 After the first publish, Claude prints the URL, and your browser opens to the new page.
 
@@ -58,7 +58,9 @@ If Claude responds that it can't publish, or writes a local HTML file without a 
 
 ### When Claude Code asks before publishing
 
-A new artifact that Claude publishes in response to a prompt you type goes through without a permission prompt or classifier review. In these cases Claude Code asks you first, or in [auto mode](https://code.claude.com/docs/en/permission-modes.md#eliminate-prompts-with-auto-mode) has the classifier review the publish:
+A new artifact that Claude publishes in response to a prompt you type can go through without a permission prompt or classifier review.
+
+Outside `bypassPermissions` mode, the publish needs your approval in cases such as these, or the classifier's review in [auto mode](https://code.claude.com/docs/en/permission-modes.md#eliminate-prompts-with-auto-mode):
 
 | When | What Claude Code does |
 | :- | :- |
@@ -66,16 +68,16 @@ A new artifact that Claude publishes in response to a prompt you type goes throu
 | The publish declares runtime capabilities for the page, such as [connector calls](#pull-live-data-with-mcp-connectors) or [file downloads](#offer-a-file-download) | Asks before that publish |
 | You shared the artifact publicly | Asks at least once per conversation before changing it, and before each reply to a comment on it |
 | Claude publishes in a turn that a [session-scoped scheduled task](https://code.claude.com/docs/en/scheduled-tasks.md) firing in your session started, rather than a prompt you typed | Asks before the first publish of each artifact |
-| Claude can't read the file without your approval | Asks before publishing it. An allow rule for the `Artifact` tool doesn't skip this prompt |
+| Claude publishes from a file it can't read without your approval | Asks before publishing, or refuses the file. An allow rule for the `Artifact` tool doesn't count as approval |
 | In [Manual](https://code.claude.com/docs/en/permission-modes.md) or `acceptEdits` mode, Claude makes a small change to an artifact's file it can't edit without your approval, such as a project file in Manual mode | Asks before publishing the change. You're asked even if an allow rule covers the `Artifact` tool, because the edit to the file needs your approval |
 
-To let Claude read a file outside your [working directories](https://code.claude.com/docs/en/permissions.md#working-directories) without your approval, add its folder as a working directory with [`--add-dir`](https://code.claude.com/docs/en/cli-reference#cli-flags) at launch or `/add-dir` during the session. Claude already reads files in those directories, and in the temporary directory it writes pages to, without asking.
+To let Claude read a file outside your [working directories](https://code.claude.com/docs/en/permissions.md#working-directories) without your approval, add its folder as a working directory with [`--add-dir`](https://code.claude.com/docs/en/cli-reference#cli-flags) at launch or `/add-dir` during the session.
 
 If a publish prompt includes a sentence such as `Also makes 1 edit to that file on disk.`, Claude is changing the artifact's file and publishing it in one step. When you approve the prompt, Claude Code publishes the page, then writes the change to your file.
 
 ## Update an artifact
 
-Ask Claude to revise the page, or let a long-running task republish as it makes progress. Claude edits the underlying file and publishes again to the same URL.
+Ask Claude to revise the page, or let a long-running task republish as it makes progress. Claude publishes again to the same URL.
 
 ```text wrap theme={null}
 Add a per-region breakdown below the summary chart and republish.
@@ -150,12 +152,12 @@ If an editor publishes while Claude holds an older copy of the page, Claude Code
 
 When someone shares an artifact with you, you can have Claude read it: give Claude its URL, or attach it from [`/artifacts`](#find-an-artifact-again).
 
-Claude reads a page someone else wrote the way it reads a web page with [WebFetch](https://code.claude.com/docs/en/tools-reference.md#webfetch-tool-behavior): it gets a summary of what it asked about rather than the raw page, and the summary reports instructions written into the page instead of relaying them. Claude Code also saves the page's full source to a local file, which Claude can open when it needs the exact content, such as to republish the artifact as an [editor](#let-someone-edit-with-you).
+Claude Code can save the page's full source to a local file, which Claude can open.
 
-Claude Code asks for your approval before Claude reads the artifact in these cases, in addition to any prompt your permission mode or rules call for:
+Claude Code can ask for your approval before the [Artifact tool](https://code.claude.com/docs/en/tools-reference.md) reads an artifact in these cases, in addition to any prompt your permission mode or rules call for:
 
 * **Cloud session without network access**: for a [cloud environment](https://code.claude.com/docs/en/cloud-environments.md#access-levels), that's the **None** level. In [auto mode](https://code.claude.com/docs/en/permission-modes.md#eliminate-prompts-with-auto-mode), the classifier can approve instead; in a [Cowork](https://claude.com/product/cowork) session, the approval is yours alone.
-* **Another organization's public artifact**: Claude Code asks you first, even in auto mode. Where Claude Code can't ask you, such as in `bypassPermissions` mode, Claude can't read the artifact. Claude can read these artifacts only while [feature-flag fetching](https://code.claude.com/docs/en/env-vars.md#features-that-need-feature-flag-fetching) is on.
+* **Another organization's public artifact**: the tool asks you first, even in auto mode. Where Claude Code can't ask you, such as in `bypassPermissions` mode, the tool can't read one you haven't approved in this conversation. The tool can read these artifacts only while [feature-flag fetching](https://code.claude.com/docs/en/env-vars.md#features-that-need-feature-flag-fetching) is on.
 * **Unconfirmed owner or network setting**: when Claude Code can't confirm who made the artifact, or can't confirm a cloud session's network setting, it asks, and your approval covers that one request. In [auto mode](https://code.claude.com/docs/en/permission-modes.md#eliminate-prompts-with-auto-mode), the classifier can approve or block the read instead of asking you.
 * **Plan mode**: in [plan mode](https://code.claude.com/docs/en/permission-modes.md#analyze-before-you-edit-with-plan-mode), Claude Code asks before the Artifact tool reads an artifact someone else in your organization made.
 
@@ -165,7 +167,7 @@ When Claude reads the artifact with WebFetch, WebFetch's own [prompting rules](h
 
 When you share an artifact within your organization, the people you share it with can leave comments on the page, and you can have Claude read those comments and reply to them. You need Claude Code v2.1.221 or later. Claude reads the comments in two cases:
 
-* **You ask Claude to read them**: give Claude the artifact's URL and ask for the comments. Claude lists each thread and marks the comments someone who can edit the artifact sent to it.
+* **You ask Claude to read them**: give Claude the artifact's URL and ask for the comments.
 * **Someone who can edit the artifact sends a comment to Claude**: in a thread on the page, they send a comment with **Send to Claude**, or mention `@claude` in one. Either way, they activate the thread.
 
 Claude can reply to or resolve only an activated thread. Other threads stay open until a person resolves them on the page. Viewers see each reply attributed to Claude, via you.
@@ -188,7 +190,7 @@ You need Claude Code v2.1.228 or later.
 
 Your [permission mode](https://code.claude.com/docs/en/permission-modes.md) decides what Claude does when a sent comment arrives:
 
-* **Claude replies on its own**: if you're in a permission mode that lets Claude post the reply without asking you, Claude reads the thread and replies. You see `Auto-replied to comment thread on Artifact: <name>`.
+* **Claude replies on its own**: if you're in a permission mode that lets Claude post the reply without asking you, Claude reads the thread and replies. You see a notice such as `Auto-replied to comment thread on Artifact: <name>`.
 * **Claude waits for you**: outside plan mode, when posting the reply [would need your approval](#when-claude-code-asks-before-publishing), you see `Comments are waiting on Artifact: <name>`. Claude then asks you for approval to read the thread, and again to post the reply.
 * **Claude pauses in plan mode**: you see `Comments are waiting on Artifact: <name>`, and Claude doesn't reply until you leave plan mode and ask it to read and reply.
 
@@ -202,9 +204,7 @@ You can stop Claude from replying on its own in any of these ways:
 * **Stop the task in `/tasks`**: Claude stops replying on that artifact until you ask it to resume replies there. Publishing the artifact again doesn't start replies again, and the stop still applies when you resume the session later.
 * **Press `Ctrl+X Ctrl+K` twice within 3 seconds**: the chord that [stops every running background subagent](https://code.claude.com/docs/en/interactive-mode.md#general-controls) also stops Claude from replying on every artifact for the rest of the session. Asking Claude to resume replies doesn't undo this stop.
 
-A watch that Claude Code started on its own can end after the artifact goes several hours without activity. You see `Stopped watching Artifact: <name> (idle)`. To start the watch again, publish the artifact again or ask Claude to watch it. If you see `(made room for a newer watch)` in place of `(idle)`, your session reached its limit of 25 watches. Publish again to restart that watch.
-
-If the service that delivers comments becomes unavailable or stops answering, Claude Code keeps trying to reconnect for a while, then stops watching each artifact your session was watching.
+If you see `Stopped watching Artifact: <name>` followed by `(idle)`, `(connection lost)`, or `(made room for a newer watch)`, ask Claude to republish the artifact to restart the watch. A watch that Claude Code started on its own can end after several hours without activity.
 
 ## Pull live data with MCP connectors
 
@@ -328,7 +328,7 @@ The [artifact templates](https://support.claude.com/en/articles/17153992-what-ar
 To use a template from Claude Code, you need:
 
 * A session where [artifacts are available](#availability)
-* On Team and Enterprise plans, the template turned on for your organization. If it's off, ask an Owner to [turn the template on](https://support.claude.com/en/articles/16994751-artifacts-admin-guide-for-team-and-enterprise-plans#h_6e06d8f1a8) under **Organization settings > Artifacts** on claude.ai.
+* On Team and Enterprise plans, the template turned on for your organization. If it's off, ask an Owner to [turn the template on](https://support.claude.com/en/articles/16994751-artifacts-admin-guide-for-team-and-enterprise-plans#h_6e06d8f1a8) under [**Organization settings > Artifacts**](https://claude.ai/admin-settings/artifacts) on claude.ai.
 * On Enterprise plans with custom roles, a role that [includes the template](https://support.claude.com/en/articles/16994751-artifacts-admin-guide-for-team-and-enterprise-plans#h_d830917488)
 * For the Docs and Sheets templates, the [Claude Docs connector](#write-a-document-with-claude-docs), which Claude uses to write the content of both. If you [turned the connector off](https://code.claude.com/docs/en/mcp.md#disable-claude-ai-connectors), turn it back on first.
 * Claude Code v2.1.265 or later, if you start the Design template with its [`/design` command](#draft-a-design-canvas)
@@ -355,7 +355,7 @@ A document that belongs in the codebase, such as a README, stays a file. To get 
 
 ## Page constraints
 
-Each artifact is one self-contained page. Claude Code wraps the file you publish in an HTML document shell and serves it under a strict Content Security Policy (CSP), which shapes what the page can do.
+Each artifact is served under a strict Content Security Policy (CSP) that limits what the page can do.
 
 | Constraint | Effect |
 | :- | :- |
@@ -386,7 +386,7 @@ Artifacts require every condition below. When one is not met, Claude writes a lo
 
 Whether artifacts are allowed for your organization comes from your organization's policy, which Claude Code loads from `api.anthropic.com`. When Claude Code can't load the policy, artifacts are unavailable. When you ask for one, Claude says why.
 
-If a proxy, VPN, or web filter is involved, ask your IT admin to let `api.anthropic.com` through. Claude Code keeps retrying in the background, and artifacts become available once the policy loads and allows them.
+If a proxy, VPN, or web filter is involved, ask whoever runs it to let `api.anthropic.com` through. Claude Code keeps retrying in the background, and artifacts become available once the policy loads and allows them.
 
 ## Disable artifacts
 

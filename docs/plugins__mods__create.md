@@ -298,16 +298,22 @@ For `first-mod`, the output includes these lines.
 
 Check the `hooks:` line for the events your module hooks, each with its filter in braces, and `calls:` for every mods API method it calls. If your module reads or sets environment variables, look for `env reads:` and `env writes:` lines too, and `state reads:` and `state writes:` if it uses [`$.state`](https://code.claude.com/docs/en/plugins/mods/interface#keep-state). You also see one line for each hook that can refuse an action, such as `gating hook without .catch: tool.call`, which says whether that hook has a [`.catch` handler](https://code.claude.com/docs/en/plugins/mods/events#handle-a-hook-that-fails).
 
-If an event you meant to handle is missing from the `hooks:` lines, Claude Code won't call that hook either. The usual cause is a misspelled event name, which the command reports as an error such as `"tool.calls" is not an event`.
+If an event you meant to handle is missing from the `hooks:` lines, Claude Code won't call that hook either. Check each event name against [the types for your build](#get-the-types-for-your-build), because validation doesn't catch every typo. For example, `tool.calls` fails with `"tool.calls" is not an event`, but `tol.call` passes validation and the mod then doesn't load.
 
 Follow these rules so that static analysis can find every hook and call:
 
-* Write each mods API call in full: `$`, the namespace, then the method, as in `$.store.get('notes')`. You can pass `$` to a function declared at the top level of the same file, and for a function of yours named `loadNotes`, the `calls:` line then reads `$.store.get (via loadNotes)`. Passing `$` to a method, a function defined inside the hook, or a function you import from another of your files fails validation. The `read` and `update` functions that [`$.state`](https://code.claude.com/docs/en/plugins/mods/interface#keep-state) uses are the imports that can take it. Don't assign `$` or one of its namespaces to a variable, destructure it, or index it with a computed name. `const ui = $.ui` fails with `$.ui is used as a value`.
+* Write each mods API call in full: `$`, the namespace, then the method, as in `$.store.get('notes')`. Don't assign `$` or one of its namespaces to a variable, destructure it, or index it with a computed name. `const ui = $.ui` fails with `$.ui is used as a value`.
 * Write the event name in each `on` call as a string literal, such as `'tool.call'`. A variable, or a loop over a list of names, fails with `the event name passed to on() is not a string literal`.
 * Inside `register`, don't declare a second variable or parameter named `on`. Validation fails with `"on" is declared again (shadowed)`.
 * Import only from files inside the plugin directory, by relative path. The one bare import allowed is `claude-code`, for types and a few helpers.
 * Use `import` declarations at the top of the file, as in `import { name } from './file.js'`. A dynamic `import()` fails with `a dynamic import(); a hooks module imports its own files with an import declaration`.
 * Write every file as an ES module, with `import` and not `require`. The [reference](https://code.claude.com/docs/en/plugins/mods/reference.md#files) lists the file extensions Claude Code loads.
+
+#### Pass `$` to your functions
+
+You can pass `$` to a function declared at the top level of your hook's file, and to the `read` and `update` functions that [`$.state`](https://code.claude.com/docs/en/plugins/mods/interface#keep-state) uses. For a function named `loadNotes` that calls `$.store.get`, the `calls:` line reads `$.store.get (via loadNotes)`. Passing `$` to a method or to a function defined inside the hook fails validation.
+
+On Claude Code v2.1.299 or later, you can also pass `$` to a function you import from another of your files. Declare it there with the `function` keyword, as in `export function loadNotes($) { ... }`. An imported arrow function fails with `a name bound to a function expression, outside the hook's own file`.
 
 ### Test the mod
 
@@ -362,7 +368,7 @@ A mod is a plugin, so you version it in the manifest and people install and upda
 
 Before you do, check the plugin's `name`: `claude plugin validate` fails a name that [looks like one of Anthropic's own](https://code.claude.com/docs/en/plugins/manifest-reference.md#name), such as one that starts with `claude-`. The events and methods can change between releases, so your README is the place to say which Claude Code version you tested with.
 
-Keep developing against the directory with `--plugin-dir`, not against an installed copy. Claude Code caches an installed plugin by version, so your edits don't reach the installed copy until you increment the version and install again.
+Keep developing against the directory with `--plugin-dir`, not against an [installed copy](https://code.claude.com/docs/en/plugins/loading.md#in-place-and-copied-plugins).
 
 ## Next steps
 

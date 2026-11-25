@@ -76,11 +76,16 @@ For each changed file, Approvals walks up from that file's directory. The first 
 * **Each policy file has its own `mode`**: while the root policy file observes, none of its rules count under a directory's enforcing policy file, the `nested: inherit` rules included
 * **Some custom classifiers go only under `advisory`**: that's a classifier whose [`tools`](https://code.claude.com/docs/en/approvals-classifiers#tools) list `reviewers` or `labels`, or that has an [input](https://code.claude.com/docs/en/approvals-classifiers.md#inputs) with no `merge`. List it in an enforced rule with no `if`. If a rule reads its result, the check on pull requests under a directory's policy file can read **Cannot evaluate: classifier outside advisory**
 
+## Rules for the whole file
+
+Follow these rules in every part of the file:
+
+* **Keys and fixed values**: write keys, and fixed values such as `observe` and `approves`, in lower case. Approvals refuses a file that has an unknown key
+* **Purposes, patterns, and conditions**: put double quotes around every purpose, `paths` pattern, and condition
+* **`!` items**: put double quotes around each `"!"` item outside a condition. Inside a condition, a `!` item takes single quotes. Approvals refuses a file that has an unquoted `!` item
+* **YAML**: keep the file to one YAML document, or Approvals refuses the file. Indent with spaces. Anchors, aliases, and `!!` tags draw at least a warning
+
 ## Top-level keys
-
-Approvals refuses a file that has an unknown key. Write keys, and fixed words such as `observe` and `approves`, in lower case. Put double quotes around every purpose, pattern, condition, and `"!"` item.
-
-Keep the file to one YAML document, quote each `!` item, and indent with spaces, or Approvals refuses the file. Anchors, aliases, and `!!` tags draw a warning.
 
 Write these keys at the top level of the file:
 
@@ -123,7 +128,7 @@ Write each pattern as a path from the directory that holds the `.claude` folder.
 | `*` | Any characters within one folder |
 | `**` | Any number of folders, dot folders too. It has to be a whole segment, as in `**/*.go` |
 | `{a,b}`, `[ab]`, `?` | Alternatives, one character of a set, and any one character |
-| `infra/**` | Every file in the folder. A bare `infra` matches no file in it |
+| `infra/**` | Every file in the folder. A bare `infra` matches no file in it, and `infra/` is refused |
 | `*.md` | Markdown files beside the policy file's `.claude` folder. For any depth, write `**/*.md` |
 | `"!docs/**"` | Takes the files out of this rule only. A rule needs at least one pattern with no `!` |
 
@@ -133,8 +138,8 @@ Write a condition as `true`, `false`, or one double-quoted string with a fact's 
 
 * **Operators**: `=`, `!=`, `<`, `<=`, `>`, `>=`
 * **Joining**: `AND` and `OR` in capitals. Use parentheses to mix the two.
-* **Lists**: write `ANY` or `ALL` before `pr/authors` and `pr/approved_by`. Where the condition leads to a lighter verdict, use `ALL`: with `ANY`, one listed author relaxes the rule for everyone else's commits. Where it leads to a stricter one, use `ANY`: with `ALL`, one unlisted author switches it off.
-* **Quotes**: single quotes around a login or a branch pattern, and none around a team, a `bot:` name, or a fact, as in `"ALL pr/authors = ['ana-acme', acme/payments]"`
+* **Lists**: write `ANY` or `ALL` before `pr/authors` and `pr/approved_by`. Where the condition leads to a lighter verdict, use `ALL`: with `ANY`, one listed author relaxes the rule for everyone else's commits. Where it leads to a stricter one, use `ANY`: with `ALL`, one unlisted author switches it off. To test for an empty list, write neither, as in `"pr/approved_by = empty"`.
+* **Quotes**: single quotes around a login, a branch pattern, or a whole `!` item in a [list of people](#people-lists), as in `"ANY pr/authors = [humans, '!acme/interns']"`. No quotes around a team, a `bot:` name, or a fact without a `!`, as in `"ALL pr/authors = ['ana-acme', acme/payments]"`
 * **Classifiers**: `claude/code_review = pass`, `repo/change_risk <= medium`, and the other forms under [Read a classifier's answer from a rule](https://code.claude.com/docs/en/approvals-classifiers.md#read-a-classifier’s-answer-from-a-rule)
 
 A fact comes from the pull request itself:
@@ -146,7 +151,7 @@ A fact comes from the pull request itself:
 | `rule/files_changed`, `rule/files_added`, `rule/files_removed` | `"rule/files_changed = pr/files_changed"` | Counts among the files that this rule's `paths` match |
 | `pr/authors` | `"ALL pr/authors = bot:dependabot"` | Accounts that wrote or pushed a commit, and the account that opened the pull request |
 | `pr/opened_by` | `"pr/opened_by = acme/release"` | The account that opened the pull request. After someone else pushes to a bot's pull request, an override on `pr/opened_by = bot:dependabot` stops lowering what the rule asks for |
-| `pr/approved_by` | `"ANY pr/approved_by = acme/security"` | People with write access who approved the current diff. Authors and bots aren't among them. Also takes `= empty` and `!= empty` |
+| `pr/approved_by` | `"ANY pr/approved_by = acme/security"` | People with write access who approved the current diff. Authors and bots aren't among them. Also takes `= empty` and `!= empty`, with no `ANY` or `ALL` |
 | `pr/base` | `"pr/base = 'release/**'"` | The branch that the pull request targets |
 
 ### `verdict`
@@ -175,7 +180,7 @@ A people list names accounts. Write one as a set's `from` under [`seats`](#verdi
 | `acme/payments` | A team of the repository's GitHub organization |
 | `bot:dependabot` | One bot, with no `[bot]` suffix. `bot:claude` means Claude's apps |
 | `pr/authors`, `pr/opened_by` | The accounts that the fact holds |
-| `"!pr/authors"` | Takes accounts away. Quote it, and put it beside an item with no `!` |
+| `"!pr/authors"` | Takes accounts away. Quote it, with single quotes in a condition, and put it beside an item with no `!` |
 
 If a set's `from` admits Claude, for example through `bots`, `everyone`, or `bot:claude`, and every rule that applies says `approves`, Approvals counts a seat in that set as filled before Claude approves. The **Claude Approvals** check can then pass with no person's approval.
 
@@ -357,7 +362,7 @@ Where a rule covers a changed file, Approvals normally [asks for a person](#who-
 * **Git files**: `.gitmodules`, `.gitattributes`, symlinks, and submodule pointers
 * **Code owners**: any file named `CODEOWNERS`
 
-Don't rely on other files being protected. Write a rule for the ones that matter to you, such as `.github/`, `CLAUDE.md`, `AGENTS.md`, `.mcp.json`, and the rest of `.claude/`.
+Don't rely on other files being protected. Write a rule for the ones that matter to you, such as the `.github` folder, `CLAUDE.md`, `AGENTS.md`, `.mcp.json`, and the rest of the `.claude` folder.
 
 ### Who has to approve a change to a protected file
 

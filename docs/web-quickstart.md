@@ -32,7 +32,7 @@ The steps below describe Anthropic-hosted sessions. In a [self-hosted environmen
 3. **Work**: Claude analyzes code, makes changes, runs tests, and checks its work. You can watch and steer throughout, or step away and come back when it's done.
 4. **Push the branch**: when Claude reaches a stopping point, it pushes its branch to GitHub. You review the diff, leave inline comments, create a PR, or send another message to keep going.
 
-The session doesn't close when the branch is pushed. PR creation and further edits all happen within the same conversation.
+PR creation and further edits all happen within the same conversation.
 
 ## Compare ways to run Claude Code
 

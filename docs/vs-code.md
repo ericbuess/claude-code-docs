@@ -70,7 +70,7 @@ Other ways to open Claude Code:
 
 * **Activity Bar**: click the Spark icon in the left sidebar to open the sessions list. Click any session to open it in your [preferred location](#extension-settings), or start a new one. This icon is always visible in the Activity Bar.
 * **Command Palette**: `Cmd+Shift+P` (Mac) or `Ctrl+Shift+P` (Windows/Linux), type "Claude Code", and select an option like "Open in New Tab"
-* **Status Bar**: click **✻ Claude Code** in the bottom-right corner of the window. This works even when no file is open.
+* **Status Bar**: click **✻ Claude Code** in the bottom-right corner of the window. This works without an open file.
 
 You can drag the Claude panel to reposition it anywhere in VS Code. See [Customize your workflow](#customize-your-workflow) for details.
 
@@ -688,6 +688,8 @@ Some shortcuts depend on which panel is "focused" (receiving keyboard input). Wh
 | New Conversation | `Cmd+N` (Mac) / `Ctrl+N` (Windows/Linux) | Start a new conversation. Requires Claude to be focused and `enableNewConversationShortcut` set to `true` |
 | Reopen Closed Session | `Cmd+Shift+T` (Mac) / `Ctrl+Shift+T` (Windows/Linux) | Reopen the most recently closed Claude session tab. Falls through to VS Code's normal reopen-closed-editor when the last closed tab wasn't a Claude session. Disable with `enableReopenClosedSessionShortcut` |
 | Insert @-Mention Reference | `Option+K` (Mac) / `Alt+K` (Windows/Linux) | Insert a reference to the current file and selection (requires editor to be focused) |
+| Add Cell to Chat | - | Add a notebook cell, its text output or error, and an @-mention of the notebook to the prompt box. Requires Claude Code v2.1.331 or later |
+| Resolve Merge Conflicts | - | Put a conflict-resolution request in the prompt box. Click this command's button in a conflicted file's **Editor Toolbar** or on Source Control's **Merge Changes**. Requires Claude Code v2.1.331 or later |
 | Accept Change at Cursor | - | Accept the change at the cursor while [reviewing a proposed edit](#get-started) one change at a time. Requires Claude Code v2.1.275 or later |
 | Reject Change at Cursor | - | Revert the change at the cursor while reviewing a proposed edit one change at a time. Requires Claude Code v2.1.275 or later |
 | Toggle Focus view | `Ctrl+Option+F` (Mac) / `Ctrl+Alt+F` (Windows/Linux) | Hide or show tool activity in the conversation. Works while a Claude panel or sidebar is visible. On Windows/Linux, `Ctrl+Alt+F` opens VS Code's Find instead while focus is in the Debug Console or a searchable list such as the Explorer. Focus an editor or the Claude panel and press it again. Requires Claude Code v2.1.221 or later |
@@ -771,6 +773,7 @@ VS Code reads `initialPermissionMode` from your user settings and ignores worksp
 | `autosave` | `true` | Auto-save files before the Read, Edit, and Write tools run |
 | `attachOpenFile` | `true` | Add the file that is open in the editor to your messages and show it in the prompt box. When off, the file is added only along with text you select. Requires Claude Code v2.1.271 or later |
 | `attachSelection` | `true` | Add the text you select in the editor to your messages and show it in the prompt box. When off, you can still [add a selection as an @-mention](#automatic-context-from-your-selection-and-open-file). Requires Claude Code v2.1.300 or later |
+| `showFixActions` | `true` | Show **Fix with Claude Code** on editor errors, warnings, and failed tests. Selecting it puts a fix request in the prompt box. Requires Claude Code v2.1.331 or later |
 | `useCtrlEnterToSend` | `false` | Use Ctrl/Cmd+Enter instead of Enter to send prompts |
 | `scrollToBottomOnSend` | `true` | Scroll the conversation to the bottom when you send a message. When off, the conversation stays where you left it. Requires Claude Code v2.1.275 or later |
 | `pinPrompt` | `true` | Keep your message pinned at the top while you scroll through Claude's reply. Requires Claude Code v2.1.330 or later |
@@ -793,7 +796,7 @@ VS Code reads `initialPermissionMode` from your user settings and ignores worksp
 
 ## Use third-party providers
 
-By default, Claude Code connects directly to Anthropic's API. If your organization uses Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry to access Claude, configure the extension to use your provider instead:
+By default, Claude Code connects directly to Anthropic's API. If you use Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry to access Claude, configure the extension to use your provider instead:
 
 **1. Disable login prompt**
 
@@ -996,6 +999,7 @@ Sign-in, network, and launch errors have their own entries on the install troubl
 | `Could not locate the Claude CLI on PATH` | [Could not locate the Claude CLI on PATH](https://code.claude.com/docs/en/errors.md#could-not-locate-the-claude-cli-on-path) |
 | `The connection to Claude Code ended before this message completed` | [The connection to Claude Code ended before this message completed](https://code.claude.com/docs/en/errors.md#the-connection-to-claude-code-ended-before-this-message-completed) |
 | `The Claude Code program for this computer, the <build> build, could not be found` | [The Claude Code program for this computer could not be found](https://code.claude.com/docs/en/errors.md#the-claude-code-program-for-this-computer-could-not-be-found) |
+| `Failed to set model: Settings file is not valid JSON` | [Fix a broken settings file](https://code.claude.com/docs/en/settings.md#fix-a-broken-settings-file) |
 | `claude` isn't found in VS Code's integrated terminal | [Run CLI in VS Code](#run-cli-in-vs-code) |
 
 ### Extension won't install
@@ -1008,13 +1012,13 @@ Sign-in, network, and launch errors have their own entries on the install troubl
 
 The Spark icon appears in the **Editor Toolbar** (top-right of editor) when you have a file open. If you don't see it:
 
-1. **Open a file**: The icon requires a file to be open. Having only a folder open isn't enough.
+1. **Open a file**: The icon requires a file to be open.
 2. **Check VS Code version**: Requires 1.94.0 or later. Check under **Help > About**
 3. **Restart VS Code**: Run "Developer: Reload Window" from the Command Palette
 4. **Disable conflicting extensions**: Temporarily disable other AI extensions (Cline, Continue, etc.)
 5. **Check workspace trust**: The extension doesn't work in Restricted Mode
 
-Alternatively, click **✻ Claude Code** in the **Status Bar** at the bottom-right corner of the window. This works even without a file open. You can also use the **Command Palette** (`Cmd+Shift+P` / `Ctrl+Shift+P`) and type "Claude Code".
+Alternatively, click **✻ Claude Code** in the **Status Bar** at the bottom-right corner of the window. This works without a file open. You can also use the **Command Palette** (`Cmd+Shift+P` / `Ctrl+Shift+P`) and type "Claude Code".
 
 ### Cmd+Esc does nothing on macOS
 

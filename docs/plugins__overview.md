@@ -42,7 +42,7 @@ For component types a plugin can hold, with an example of each, see [Plugin comp
 
 Skills, subagents, hooks, and MCP servers all work on their own, without a plugin. A skill you save in `~/.claude/skills/`, for example, is available in every project on your machine. To set one up on its own, see [Skills](https://code.claude.com/docs/en/skills.md), [Subagents](https://code.claude.com/docs/en/sub-agents.md), [Hooks](https://code.claude.com/docs/en/hooks-guide.md), or [MCP](https://code.claude.com/docs/en/mcp.md).
 
-Use a plugin when you want several skills, subagents, hooks, or MCP servers packaged as one unit. Install one to get a setup someone else built, with one command and updates from its marketplace. Make one to give your own setup to teammates, install it in many projects, or publish versioned releases.
+Use a plugin when you want several skills, subagents, hooks, or MCP servers packaged as one unit. Install one to get a setup someone else built, with one command and updates from its marketplace. Make one to share your own setup, install it in many projects, or publish versioned releases.
 
 ### What an enabled plugin adds to your sessions
 
@@ -122,6 +122,6 @@ Once you've installed or built a plugin, these pages cover what comes next:
 
 * **Share what you built**: [Publish and distribute a plugin](https://code.claude.com/docs/en/plugins/publish.md), through your own marketplace or [Anthropic's directory](https://code.claude.com/docs/en/plugins/publish.md#submit-to-anthropics-directory)
 * **Check whether it works and is used**: [Test plugins with evals](https://code.claude.com/docs/en/plugin-evals.md) and [Measure plugin cost and usage](https://code.claude.com/docs/en/plugins/measure.md)
-* **Run a marketplace for your team**: [Create a marketplace](https://code.claude.com/docs/en/plugins/create-marketplace.md), then [Host and maintain a marketplace](https://code.claude.com/docs/en/plugins/host-marketplace.md)
+* **Run a marketplace**: [Create a marketplace](https://code.claude.com/docs/en/plugins/create-marketplace.md), then [Host and maintain a marketplace](https://code.claude.com/docs/en/plugins/host-marketplace.md)
 * **Set plugin policy for an organization**: [Manage plugins for your organization](https://code.claude.com/docs/en/plugins/org.md)
 * **Fix a problem**: [Troubleshoot plugins](https://code.claude.com/docs/en/plugins/troubleshooting.md)

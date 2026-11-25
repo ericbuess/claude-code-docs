@@ -126,6 +126,14 @@ Press `Ctrl+O` and expand a **Code** row to see the JavaScript behind the tool c
 >
 > To resume a Code Mode session later, keep `CLAUDE_CODE_EXPERIMENTAL_CODE_MODE` set to `1` when you run `claude --continue` or `claude --resume`. With Code Mode off, Claude Code refuses to resume the session. Sessions that you started without Code Mode resume without Code Mode, even with the variable set.
 
+### Use Code Mode in subagents
+
+If your [subagent](https://code.claude.com/docs/en/sub-agents.md) has a `tools` list, add [`REPL`](https://code.claude.com/docs/en/tools-reference) to the list so that the subagent uses Code Mode:
+
+```yaml theme={null}
+tools: Read, Bash, REPL
+```
+
 ### Turn off Code Mode
 
 Remove `CLAUDE_CODE_EXPERIMENTAL_CODE_MODE` from your shell, `~/.claude/settings.json`, and any `--settings` file, then start a new session. You can also keep the variable and change its value to `0` in any of them. With a `0` in one place, Code Mode stays off even if you set `1` in another.

@@ -783,19 +783,14 @@ fi
 # shellcheck disable=SC2086  # $base is either "" or "FETCH_HEAD", intentional word-split
 unpushed=$(git -C "$d" rev-list HEAD --not $base --remotes=origin --count 2>/dev/null) || unpushed=0
 if [ "$unpushed" -gt 0 ]; then
-  branch=$(git -C "$d" symbolic-ref --short -q HEAD)
-  if [ -n "$branch" ]; then
-    # $branch is attacker-influenced — git-check-ref-format(1) allows `"`
-    # in ref names. `\` is forbidden (rule 10) but escaped anyway as cheap
-    # defense-in-depth.
-    # Escape JSON metacharacters before interpolating into the hand-built
-    # payload so a branch like x","continue":false can't inject keys into
-    # the hook-output JSON the harness parses. $unpushed is safe — the
-    # -gt guard above rejects anything that isn't a plain integer.
-    branch_esc=$(printf '%s' "$branch" | sed 's/\\/\\\\/g; s/"/\\"/g')
-    printf '{"decision":"block","reason":"There are %s unpushed commit(s) on branch '\''%s'\''. Please push these changes to the remote repository."}' "$unpushed" "$branch_esc"
-  else
+  # The branch name is not trusted text, so the message leaves it out.
+  # $unpushed is a count from git rev-list, or 0.
+  # With -q, symbolic-ref exits 1 on a detached HEAD.
+  git -C "$d" symbolic-ref -q HEAD >/dev/null 2>&1
+  if [ $? -eq 1 ]; then
     printf '{"decision":"block","reason":"There are %s unpushed commit(s) on a detached HEAD. Please create a branch and push it to the remote repository."}' "$unpushed"
+  else
+    printf '{"decision":"block","reason":"There are %s unpushed commit(s) on the branch checked out in the project directory. Please push these changes to the remote repository."}' "$unpushed"
   fi
   exit 0
 fi
@@ -825,14 +820,13 @@ The Stop hook checks which commit each submodule is on, not the files inside it:
 
 ### Replace an earlier copy of the Stop hook script
 
-Search your copy of `stop-hook-nudge.sh` for `GIT_OPTIONAL_LOCKS`. If it's missing, you have an earlier copy. Replace it with the [current script](#prompt-sessions-to-push-their-work) wherever you installed it, then restart the runners. Keep your Stop hook settings, except to raise `timeout` on a large checkout.
+Search your copy of `stop-hook-nudge.sh` for the text `checked out in the project directory`. If it's missing, you have an earlier copy. Replace it now with the [current script](#prompt-sessions-to-push-their-work) wherever you installed it, then restart the runners. Keep your Stop hook settings, except to raise `timeout` on a large checkout.
 
-* **When**: if your sessions run with the [Bash sandbox](https://code.claude.com/docs/en/sandboxing.md) on, replace it now. Otherwise, replace it at your next image build or runner restart.
-* **What changes**: uncommitted files in a submodule no longer prompt Claude. A new commit in a submodule that `.gitmodules` marks `ignore = all` now does.
+After you replace the script, the prompt about unpushed commits no longer includes the branch name. If your earlier copy prompted Claude about uncommitted files in a submodule, that prompt stops. For how the current script treats submodules, see [Submodules and the Stop hook](#submodules-and-the-stop-hook).
 
 > [!WARNING]
 >
-> Hooks run outside the Bash sandbox, so the current script's git calls skip some git features that can start a program named in the checkout's git settings. They don't skip them all. Don't count on the sandbox alone, and isolate sessions as [Harden your deployment](https://code.claude.com/docs/en/self-hosted-environments-deploy.md#harden-your-deployment) describes.
+> Hooks run outside the [Bash sandbox](https://code.claude.com/docs/en/sandboxing.md), so the current script's git calls skip some git features that can start a program named in the checkout's git settings. They don't skip them all. Don't count on the sandbox alone, and isolate sessions as [Harden your deployment](https://code.claude.com/docs/en/self-hosted-environments-deploy.md#harden-your-deployment) describes.
 
 ## Permissions and tool approval
 
