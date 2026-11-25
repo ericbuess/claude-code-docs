@@ -821,6 +821,8 @@ Outside [auto mode](https://code.claude.com/docs/en/permission-modes.md#eliminat
 
 In auto mode, a command that would otherwise need your approval doesn't abort the invocation. The skill loads with an instruction telling Claude to run the command first, and Claude's own call then goes through [auto mode's usual checks](https://code.claude.com/docs/en/permission-modes.md#how-the-classifier-evaluates-actions). The invocation still aborts in a [forked skill](#run-skills-in-a-subagent) that sets `agent`, and in a session where Claude doesn't have the [shell tool that runs injected commands](#how-injected-commands-run).
 
+`PreToolUse` hooks don't fire for injected commands that run as the skill loads. To log or block the ones that pass the permission check, use a [`PreSkillShellCommand` hook](https://code.claude.com/docs/en/hooks#preskillshellcommand).
+
 ### Run skills in a subagent
 
 Add `context: fork` to your frontmatter when you want a skill to run in isolation. Claude Code starts a new subagent of the type set in the `agent` field and gives it the skill content as its prompt. The subagent doesn't see your conversation history, so the skill's instructions have to stand on their own.

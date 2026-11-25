@@ -296,7 +296,7 @@ This PreToolUse hook trims test output to its last 100 lines:
 
 > [tab] settings.json
 >
-> Add this to your [settings.json](https://code.claude.com/docs/en/settings.md#where-settings-live) to run the hook before every Bash command:
+> Add this to your [settings.json](https://code.claude.com/docs/en/settings.md#where-settings-live) to run the hook before every Bash tool call:
 >
 > ```json theme={null}
 > {

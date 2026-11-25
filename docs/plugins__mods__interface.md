@@ -213,7 +213,7 @@ To change a part Claude Code draws, filter your `ui.render` hook on a render sit
 | `InfoNotice`, `SessionMode`, `PromptHint` | Status lines under the logo, the mode labels in the footer, and the hint line under the prompt |
 | `AgentRow` | A subagent's or teammate's row in the agent panel |
 
-`Pane`, `AbovePrompt`, `AskUserQuestion`, `Spinner`, `UserMessage`, `AssistantMessage`, and the tool call sites work in the terminal, the Desktop app, and the VS Code extension. The [render sites table](https://code.claude.com/docs/en/plugins/mods/reference.md#render-sites) lists where each of the others is raised.
+`Pane`, `AbovePrompt`, `AskUserQuestion`, `Spinner`, `UserMessage`, `AssistantMessage`, and the tool call sites work in the terminal, the Desktop app, and the VS Code extension. The [render sites table](https://code.claude.com/docs/en/plugins/mods/reference.md#render-sites) lists where each of the others is raised. To change the bubbles and font of messages in the Desktop app without a `ui.render` hook, [style the messages with a theme](#style-messages-in-the-desktop-app).
 
 Select a tab to see a hook change a spinner detail, replace the spinner, or leave it alone. The examples read a `calls` variable that another hook counts, as in the [tutorial mod](https://code.claude.com/docs/en/plugins/mods/create.md#write-a-mod-yourself).
 
@@ -439,7 +439,130 @@ Check what `backdrop` takes, what the call's result tells you, and what other mo
 
 * **The `backdrop` fields**: `scene` is a [name](https://code.claude.com/docs/en/plugins/mods/reference.md#limits) you choose for a backdrop your hook draws. For the other fields and `overrideColorScheme`, see [the types for your build](https://code.claude.com/docs/en/plugins/mods/create.md#get-the-types-for-your-build).
 * **Whether the backdrop is drawn**: `$.theme.set` resolves with `isDrawn: true` when a Desktop or mobile app connected to the session says it draws backdrops. Otherwise `isDrawn` is `false` and `reason` says why.
-* **One theme for each session**: a mod that calls `$.theme.set` replaces the session's backdrop and [colors](#change-the-colors-of-the-desktop-app), and a mod that calls `$.theme.clear()` removes them, whichever mod set them. Call `$.theme.clear()` only when the user asks for it.
+* **One theme for each session**: a mod that calls `$.theme.set` replaces the session's backdrop, [colors](#change-the-colors-of-the-desktop-app), [message style](#style-messages-in-the-desktop-app), and [sound](#add-sound-to-a-theme), and a mod that calls `$.theme.clear()` removes them, whichever mod set them. Call `$.theme.clear()` only when the user asks for it.
+
+### Animate a backdrop with a shader
+
+To make a [backdrop](#put-a-backdrop-behind-the-conversation) that moves and follows the user's pointer in the Desktop app's Code tab, wrap an `Svg` in a [`Shader`](https://code.claude.com/docs/en/plugins/mods/reference#elements) element. The element names a shader file, which is code that computes each pixel's color on the GPU. The app draws the result over the `Svg`. `Shader` requires Claude Code v2.1.326 or later in the Code tab, so [check the version there](https://code.claude.com/docs/en/desktop.md#claude-code-version-in-the-code-tab) first.
+
+These steps create a mod named `glow`. It draws a light under the pointer, and a click on the backdrop changes the color of the light.
+
+**1. Save the manifest and hooks.json**
+
+From [Write a mod yourself](https://code.claude.com/docs/en/plugins/mods/create.md#write-a-mod-yourself), save `.claude-plugin/plugin.json` and `hooks/hooks.json` in `~/.claude/skills/glow/`, and change `first-mod` to `glow` in both files. A mod [under `~/.claude/skills/`](https://code.claude.com/docs/en/plugins/create#scaffold-a-plugin-that-loads-every-session) loads when you start a session.
+
+**2. Write the shader**
+
+Save this file as `~/.claude/skills/glow/hooks/glow.ts`. Claude Code provides the `claude-code/shader` module it imports.
+
+The shader draws a light around the pointer, blue when `warm` is `0` and orange when it's `1`:
+
+```typescript glow/hooks/glow.ts theme={null}
+import {
+  length, max, min, mix, picture, pointers, shader, smoothstep, values, vec2, vec3, vec4,
+} from 'claude-code/shader'
+
+// Declare each number the mod sets through the Shader's values, with its range
+const { warm } = values({ warm: [0, 1] })
+
+// This function runs once for every pixel and returns that pixel's color
+const glow = picture(pixel => {
+  let light = 0
+  // The loop sees the mouse, each finger, and for one second each pointer that lifted
+  // A mouse that rests for half a second counts as lifted
+  for (const pointer of pointers) {
+    // Subtracting two positions subtracts their x and their y, in points
+    // The result is typed as a plain number, so vec2() marks it as a position again
+    const near = smoothstep(200, 0, length(vec2(pixel.point - pointer.at)))
+    // A pointer fades in over a quarter second, then out as gone counts from 0 to 1
+    const fade = min(pointer.age * 4, 1) * (1 - pointer.gone)
+    light = max(light, near * near * fade)
+  }
+  const color = mix(vec3(0.25, 0.55, 1), vec3(1, 0.45, 0), warm)
+  const alpha = 0.7 * light
+  // The color is premultiplied: red, green and blue are multiplied by alpha
+  return vec4(color * alpha, alpha)
+})
+
+// A shader runs its passes in order, and this one has a single pass
+export default shader({ passes: [glow] })
+```
+
+**3. Draw the backdrop**
+
+Save this file as `~/.claude/skills/glow/hooks/register.js`. The mod sets the theme when a session starts, and draws a `Shader` with one `Svg` child.
+
+The mod's [`ui.pointer`](https://code.claude.com/docs/en/plugins/mods/reference#interface) hook runs after a click, flips `warm`, and asks for a redraw:
+
+```javascript glow/hooks/register.js theme={null}
+const STILL =
+  '<svg xmlns="http://www.w3.org/2000/svg"' +
+  ' viewBox="0 0 1 1" preserveAspectRatio="none">' +
+  '<rect width="1" height="1" fill="#1a3a9c"/>' +
+  '</svg>'
+
+let warm = 0
+
+export function register(on) {
+  on('session.start', async ($, e, next) => {
+    // The scene is a name you choose for the backdrop your hook draws
+    await $.theme.set({ backdrop: { scene: 'glow' }, overrideColorScheme: 'dark' })
+    return next(e)
+  })
+
+  on('ui.render', { component: 'Backdrop' }, async ($, e, next) => {
+    // This hook runs for every mod's backdrop, so pass on the others
+    if (e.props.plugin !== $.plugin.name || e.props.scene !== 'glow') return next(e)
+    const { Shader, Svg } = $.ui.resolve(e)
+    // module must be a string literal, relative to this file
+    return Shader({
+      module: './glow.ts',
+      values: { warm },
+      children: [Svg({ source: STILL, alt: 'A dark blue background' })],
+    })
+  })
+
+  on('ui.pointer', async ($, e, next) => {
+    warm = 1 - warm
+    $.ui.invalidate('ui.render')
+    return next(e)
+  })
+}
+```
+
+**4. Check the shader**
+
+This step is optional and needs [the CLI](https://code.claude.com/docs/en/quickstart.md), which has its own version number. Go to `~/.claude/skills/` in your shell, run `claude plugin validate ./glow`, and look for `shader hooks/glow.ts: runs on any GPU` in the output. If the output names a line in `glow.ts` as an error, fix that line.
+
+A CLI older than v2.1.326 reports `"ui.pointer" is not an event`. If yours does, [update it](https://code.claude.com/docs/en/setup.md#update-claude-code) and run the command again.
+
+**5. Try the backdrop**
+
+Start a new local session in the Code tab by sending a message. The background turns dark blue. If it doesn't, turn off any other mod that sets a theme and start a new session, because a session has [one theme](#put-a-backdrop-behind-the-conversation). If the background still doesn't change, [find out why the mod does nothing](https://code.claude.com/docs/en/plugins/mods/troubleshoot.md#find-out-why-a-mod-does-nothing).
+
+Move the pointer. A blue light follows it, and fades when you stop. If no light appears, see [Fix a backdrop that shows only the `Svg`](#fix-a-backdrop-that-shows-only-the-svg). Click the empty space beside the conversation, then move the pointer again. The light is now orange. If it's still blue, answer any permission prompt or question from Claude, then click again quickly without dragging, away from messages and buttons.
+
+To try a change, save `glow.ts` or `register.js`, and the mod reloads in the running session. If the change doesn't show within a few seconds, send a message to load it. To turn the mod off, move `glow` out of `~/.claude/skills/` and start a new session.
+
+Follow these rules for pointer input, the shader, and the `Svg` when you build on the example:
+
+* **Clicks**: your mod gets `ui.pointer` when it has set the theme and the user clicks a part of the backdrop that the app doesn't cover. The app sends two clicks a second at most and drops the rest. To draw a press effect without changing your mod's state, use `pointer.down * (1 - pointer.gone)` in the shader, which is `1` during a press and then fades.
+* **Click position**: `e.x` and `e.y` run from `0` to `1`, starting at the backdrop's top left. In the shader, `pixel.uv` has the same scale and starts at the bottom left. To draw at the click, send `e.x` and `1 - e.y` through `values`.
+* **Movement**: read pointer movement from `pointers` in the shader, because moving the pointer doesn't fire `ui.pointer`. For motion over time, import `time`, the seconds since the shader started.
+* **Presses**: to time an effect from a press, check every pointer in the loop for `down` at `1` and read its `age`, the seconds since the press. A press arrives as a new pointer, so it isn't always first in `pointers`.
+* **`values`**: declare up to eight numbers in the shader file, and set them with the `values` prop. When your mod's state changes, call `$.ui.invalidate('ui.render')` to send the new numbers.
+* **The shader file**: write a subset of TypeScript without `while` loops, recursion, or imports from other files. For the full rules and the functions you can call, [get the type definitions with the CLI](https://code.claude.com/docs/en/plugins/mods/create.md#get-the-types-for-your-build) and search them for `claude-code/shader`.
+* **The `Svg`**: draw it as a finished picture, because users see it alone when the shader can't run.
+
+#### Fix a backdrop that shows only the `Svg`
+
+Check reduced motion first, because it keeps any shader from running, then these other causes:
+
+* **Reduced motion is on**: if you don't need reduced motion, turn it off in your system settings and set **Motion** to **System** in the Desktop app's **Settings > General**.
+* **The shader file breaks a rule**: in your shell, run `claude plugin validate` on the mod's directory and fix the line the output names.
+* **The shader is too heavy for the GPU**: if `claude plugin validate` prints `needs a fast GPU`, simplify the shader until the output says `runs on any GPU`. Start with the lines the output ranks as costing the most.
+* **The `Svg` holds content that blocks shaders**: replace the `Svg` source with `STILL` from the [`glow` example](#animate-a-backdrop-with-a-shader). If the shader then runs, restore your source without the content that blocks it, such as a lighting filter or `feTile`.
+* **A shader from any mod ran and then stopped**: after the app stops a shader for flashing or running too slowly, it starts no shader for up to five minutes. Keep large changes in brightness or color under three a second, or simplify a slow shader. Then wait five minutes and start a new session.
 
 ### Change the colors of the Desktop app
 
@@ -510,7 +633,7 @@ If you use a [third-party provider](https://code.claude.com/docs/en/third-party-
 * **Old version**: [update the Desktop app](https://code.claude.com/docs/en/desktop.md#claude-code-version-in-the-code-tab), restart it, and start a new local session in the Code tab. If Claude wrote the mod, ask for it again there.
 * **Mod not loaded**: if Claude wrote the mod, see when it loads in [Ask Claude for a mod](https://code.claude.com/docs/en/plugins/mods/create.md#ask-claude-for-a-mod). If you wrote it, compare your files and their paths with [Write a colors mod yourself](#write-a-colors-mod-yourself).
 * **Refused theme**: ask Claude to run the mod's [`makeColors`](#write-a-colors-mod-yourself) call. If the call throws an error, or its `problems` list has an entry that starts `Desktop won't paint this theme`, have Claude fix the theme. If you installed the mod, send what Claude finds to its author.
-* **Another `$.theme` call**: when any mod in the session calls `$.theme.set` or `$.theme.clear()`, the colors and [backdrop](#put-a-backdrop-behind-the-conversation) from an earlier call disappear. In your own mod, pass `colors` and `backdrop` in the same `$.theme.set` call. Use one mod at a time that sets a theme.
+* **Another `$.theme` call**: when any mod in the session calls `$.theme.set` or `$.theme.clear()`, the colors, [backdrop](#put-a-backdrop-behind-the-conversation), [message style](#style-messages-in-the-desktop-app), and [sound](#add-sound-to-a-theme) from an earlier call disappear. In your own mod, pass every part of the theme in the same `$.theme.set` call. Use one mod at a time that sets a theme.
 
 ### Remove mod colors from the Desktop app
 
@@ -529,6 +652,193 @@ Start a new local session in the Code tab.
 **3. Remove colors that stay**
 
 If the colors are still there, open **Settings** from the Code tab, and search there for `code appearance`. Open the result, and select **Remove colors**.
+
+### Style messages in the Desktop app
+
+To give messages in the Desktop app's Code tab their own bubbles, font, and text size, write a mod that calls `$.theme.set` with a `style` object. This requires Claude Code v2.1.329 or later in the Code tab, so [check the version there](https://code.claude.com/docs/en/desktop.md#claude-code-version-in-the-code-tab) first. The terminal, the VS Code extension, and the mobile app show messages without the style.
+
+This mod sets a serif font for messages and puts each message in a rounded bubble. If `$.theme.set` rejects the style, the mod writes the error to the transcript:
+
+```javascript theme={null}
+const style = {
+  Text: { fontFamily: ['serif'], fontSize: 15, lineHeight: 22 },
+  // The corners run top left, top right, bottom right, bottom left
+  UserMessage: { backgroundColor: '#1d5fd1', color: '#ffffff', radius: [18, 18, 4, 18], padding: 12 },
+  AssistantMessage: { backgroundColor: '#e9e9ec', color: '#1c1c1f', radius: [18, 18, 18, 4], padding: 12 },
+}
+
+export function register(on) {
+  on('session.start', async ($, e, next) => {
+    try {
+      await $.theme.set({ style })
+    } catch (error) {
+      $.ui.log(error.message)
+    }
+    return next(e)
+  })
+}
+```
+
+To try the example:
+
+**1. Save the mod**
+
+Save the code as `~/.claude/skills/bubbles/hooks/register.js`. From [Write a mod yourself](https://code.claude.com/docs/en/plugins/mods/create.md#write-a-mod-yourself), save `.claude-plugin/plugin.json` and `hooks/hooks.json` in `~/.claude/skills/bubbles/`, and change `first-mod` to `bubbles` in both files.
+
+**2. Turn off other theme mods**
+
+[Turn off any other mod](#remove-mod-colors-from-the-desktop-app) that calls `$.theme.set`, because each call replaces the whole theme. To use a style and colors together, see [Combine a style with colors or a backdrop](#combine-a-style-with-colors-or-a-backdrop).
+
+**3. Check the style**
+
+Start a new local session in the Code tab and send a message. Your message appears in a blue bubble and Claude's reply in a light gray one, both in a serif font. If nothing changes, see [Fix a missing message style](#fix-a-missing-message-style-in-the-desktop-app).
+
+To take the style off, move `~/.claude/skills/bubbles/` out of `~/.claude/skills/` and start a new session.
+
+#### Combine a style with colors or a backdrop
+
+To use a message style with [colors](#write-a-colors-mod-yourself) or a [backdrop](#put-a-backdrop-behind-the-conversation), pass them all in one call from one mod, as in `$.theme.set({ colors: theme, style })`. Claude Code versions before v2.1.329 reject a call that includes `style` or [`sound`](#add-sound-to-a-theme). To keep your colors and backdrop on those versions, catch the error, log it, and repeat the call without `style` and `sound`.
+
+#### Choose which parts of the conversation to style
+
+Each key in the `style` object you pass to `$.theme.set` names a part of the conversation.
+
+| Key | What it styles | What you can set |
+| :- | :- | :- |
+| `Text` | The words of your messages and Claude's replies, where `UserMessage` or `AssistantMessage` doesn't set the same property | Text properties |
+| `Heading` | Headings in Claude's replies, which otherwise use the reply's font | Text properties |
+| `UserMessage` | Your messages | Text properties, box properties, and `rotate` |
+| `AssistantMessage` | Each block of text in Claude's replies | Text properties, box properties, and `rotate` |
+| `ToolUse` | A tool call's row | `color`, `fontFamily`, and box properties |
+
+Other parts keep the app's look, such as permission prompts, the questions Claude asks in a dialog, code blocks, and the prompt box.
+
+Write sizes as numbers of points, such as `lineHeight: 22`. For the format and range of every value, see `ThemeStyle` in [the types for your build](https://code.claude.com/docs/en/plugins/mods/create.md#get-the-types-for-your-build).
+
+* **Text properties**: `color`, `fontFamily`, `fontSize`, `fontWeight`, `italic`, `letterSpacing`, and `lineHeight`. Write `fontFamily` as a one-item list, such as `['serif']`. The item must be `sans`, `serif`, `mono`, `cursive`, or `code`, and `$.theme.set` rejects any other value. Use `code` for the app's code font.
+* **Box properties**: `backgroundColor`, `radius`, `borderColor`, `borderWidth`, `shadow`, `fill`, and padding such as `padding` or `paddingTop`. Write a shadow as `{ x: 0, y: 2, blur: 8, color: 'rgba(0, 0, 0, 0.15)' }`. Use `fill` to draw a gradient or a vector drawing behind the text, as in `{ gradient: { stops: ['#dbe8ff', '#c4d6f5'] } }`.
+* **`rotate`**: the number of degrees to tilt a message, from `-3` to `3`
+
+To vary the bubbles, set `UserMessage` or `AssistantMessage` to a list of up to four objects. Each message gets one of the objects, in no set order, and keeps it.
+
+#### Set message colors for light mode and dark mode
+
+To give messages different colors in light mode and dark mode, add these message colors to `inputs.light` and `inputs.dark` in the theme that [`makeColors`](#write-a-colors-mod-yourself) returns:
+
+* **Your messages**: `bg-user-message` for the bubble and `text-user-message` for the text
+* **Claude's replies**: `bg-assistant-message` for the bubble and `text-assistant-message` for the text
+
+Before you add them to a mod that passes `style`, remove `color` and `backgroundColor` from the matching `UserMessage` or `AssistantMessage`, because those properties take precedence over message colors.
+
+This example colors your messages in the `paper` mod from [Write a colors mod yourself](#write-a-colors-mod-yourself). In that mod's `register.js`, add these lines between the `makeColors` call and the `register` function:
+
+```javascript theme={null}
+Object.assign(theme.inputs.light, { 'bg-user-message': '#d9c4a0', 'text-user-message': '#2a241d' })
+Object.assign(theme.inputs.dark, { 'bg-user-message': '#4a3a2b', 'text-user-message': '#f0e7d7' })
+```
+
+Put `paper` under `~/.claude/skills/`, and move other theme mods, such as `bubbles`, out of that directory. Start a new local session and send a message. Your bubble is tan in light mode and brown in dark mode. If it isn't, see [Fix missing mod colors](#fix-missing-mod-colors-in-the-desktop-app) and [Fix a missing message style](#fix-a-missing-message-style-in-the-desktop-app).
+
+#### Fix a missing message style in the Desktop app
+
+If all or part of a message style doesn't appear in the Code tab, check for these causes:
+
+* **Mod not loaded**: [find out why the mod does nothing](https://code.claude.com/docs/en/plugins/mods/troubleshoot.md#find-out-why-a-mod-does-nothing)
+* **Rejected call**: catch the error from `$.theme.set` and write it to the transcript, as the [example](#style-messages-in-the-desktop-app) does. If the error includes `theme.set does not know the attribute "style"`, [update Claude Code](https://code.claude.com/docs/en/plugins/mods/overview.md#turn-mods-on-or-off) in the app that shows the error. If it names a property, as in `style.Text.fontSize is a number of points, 11 to 28`, change that property's value.
+* **Another `$.theme` call**: if any mod in the session calls `$.theme.clear()`, or calls `$.theme.set` without your `style`, the style disappears. In your own mod, [pass the whole theme in one call](#combine-a-style-with-colors-or-a-backdrop). Turn off any other mod that sets a theme.
+* **Low contrast**: when text has less than 3:1 contrast with its background, that message, heading, or tool row shows in the app's own colors. `$.theme.set` reports no error. Pick colors that are further apart, and check both light mode and dark mode.
+* **Backdrop**: over a [backdrop](#put-a-backdrop-behind-the-conversation), a text color shows only on a background that's solid or nearly solid. Set a solid `backgroundColor` on `UserMessage`, `AssistantMessage`, and `ToolUse` wherever you color their text, including through `Text` or `Heading`.
+* **Accessibility settings**: with higher contrast turned on in the app or the operating system, messages show without the style. With an accessibility font such as OpenDyslexic, messages keep that font. To see the whole style, turn these settings off.
+* **Open prompt**: a new style waits while a permission prompt or a question from Claude is on screen. Answer it to see the style.
+
+### Add sound to a theme
+
+To give your theme background sound and short sounds for events in the Desktop app's Code tab, pass `sound` to [`$.theme.set`](https://code.claude.com/docs/en/plugins/mods/reference#mods-api-methods). `sound` requires Claude Code v2.1.329 or later in the Code tab, so [check the version there](https://code.claude.com/docs/en/desktop.md#claude-code-version-in-the-code-tab) first. The terminal, the VS Code extension, and the mobile app play no theme sound.
+
+You describe each sound as layers of tones and noise, with no audio file, and the Desktop app makes the audio.
+
+This mod sets dark mode, plays soft noise in the background, and plays three bell notes when Claude finishes a turn:
+
+```javascript theme={null}
+// The rest of the theme, which still works without sound
+const look = { overrideColorScheme: 'dark' }
+
+const sound = {
+  ambience: {
+    // A layer with drone: true plays without a break
+    // A layer with scatter plays now and then
+    // gain is how loud a layer is, from 0 to 1
+    layers: [{ wave: 'brown', drone: true, gain: 0.2 }],
+  },
+  cues: {
+    done: {
+      // step is the seconds from one note to the next
+      layers: [{ wave: 'bell', notes: ['C5', 'E5', 'G5'], step: 0.15, gain: 0.3 }],
+    },
+  },
+}
+
+export function register(on) {
+  on('session.start', async ($, e, next) => {
+    try {
+      await $.theme.set({ ...look, sound })
+    } catch (error) {
+      // A refused call sets nothing, so set the theme again without sound
+      $.ui.log(error.message)
+      await $.theme.set(look)
+    }
+    return next(e)
+  })
+}
+```
+
+For the other waves, fields, and ranges, see `ThemeSound` in [the types for your build](https://code.claude.com/docs/en/plugins/mods/create.md#get-the-types-for-your-build). To hear the example:
+
+**1. Start a session**
+
+Put the code in a [mod](https://code.claude.com/docs/en/plugins/mods/create.md#write-a-mod-yourself), and save the mod's directory [under `~/.claude/skills/`](https://code.claude.com/docs/en/plugins/create#scaffold-a-plugin-that-loads-every-session) so that it loads when you start a session. In the Code tab, send a first message to [start a local session](https://code.claude.com/docs/en/desktop.md#start-a-session). If no speaker button appears in the session's title bar, see [Fix a missing speaker button](#fix-a-missing-speaker-button).
+
+**2. Turn on theme sound**
+
+If the speaker button is crossed out, select it. The three notes play once to confirm that sound is on, and the noise fades in. To change the volume or turn off the noise, open the menu beside the button.
+
+**3. Hear the cue**
+
+Send another message. The three notes play when Claude finishes.
+
+#### When each theme sound plays
+
+Theme sound is off until the user turns it on with the speaker button. It then stays on for other sessions and themes on that device until the user turns it off, signs out, or switches accounts. Choose a `gain` that suits a user who hears your theme as soon as it loads.
+
+The Desktop app plays each sound by itself at these moments, and a mod can't trigger one:
+
+| Sound | When it plays |
+| :- | :- |
+| `ambience` | While the session's window has focus. It pauses after 10 minutes with no input and resumes at the next input. |
+| `cues.send` | The user sends a message |
+| `cues.tool` | Claude starts a tool call |
+| `cues.compact` | The conversation is compacted |
+| `cues.done` | Claude finishes a turn, unless the user stopped it or queued another message |
+| `cues.ask` | A permission prompt or a question appears |
+| `cues.error` | A turn ends in an error |
+| `cues.click` | The user clicks the background where no message, control, or panel covers it |
+
+When the user turns on sound or picks a volume, they also hear one cue, the first the theme has in this order: `send`, `done`, `tool`, `compact`, `ask`, `error`.
+
+Expect fewer of the table's sounds during an unanswered prompt, during speech, and in a window without focus. To hear all of them again:
+
+* **A permission prompt or a question is waiting**: answer it. Until then, only `cues.ask` can play.
+* **Dictation, a voice call, or a reply read aloud is in progress**: end it. Until then, the ambience and cues stay silent.
+* **The window doesn't have focus**: click in the window. Until then, only `cues.done` can play.
+
+#### Fix a missing speaker button
+
+If the session's title bar shows no speaker button, check your version, whether the mod loaded, and the `$.theme` calls in the session:
+
+* **Old version**: if `/status` in the Code tab shows a version before v2.1.329, [update the Desktop app](https://code.claude.com/docs/en/desktop.md#claude-code-version-in-the-code-tab) and start a new local session. On those versions, the call fails with an error such as `theme.set does not know the attribute "sound"`.
+* **Mod not loaded**: follow [Find out why a mod does nothing](https://code.claude.com/docs/en/plugins/mods/troubleshoot.md#find-out-why-a-mod-does-nothing).
+* **Value out of range**: the call fails, so with the example's `catch` block the theme loads without sound. Find the error that the example logs in the transcript, and fix the field it names, as in `sound.cues.done.layers[0].gain is a number, 0 to 1`.
+* **Another `$.theme` call**: when any mod makes a later `$.theme.set` call without `sound`, or calls `$.theme.clear()`, the sound and the button disappear. In your own mod, pass `sound` in the same call as the rest of the theme. Turn off any other mod that sets a theme.
 
 ## Build a tree from elements
 
@@ -613,6 +923,7 @@ The [interface gallery](https://code.claude.com/docs/en/plugins/mods/gallery.md)
 | `Button` | A control that calls `onPress` | Everywhere |
 | `Link`, `Code`, `Markdown` | A link with `href` and an optional `label`, a code block, and text formatted the way Claude's replies are. `Markdown` takes its content in a `text` prop, not in `children`, and needs a `key` when you pass `onLinkPress`. | Everywhere |
 | `Input`, `Select` | A text field and a dropdown | Terminal, Desktop, VS Code |
+| `Shader` | A [backdrop drawn on the GPU](#animate-a-backdrop-with-a-shader) over an `Svg` | Desktop |
 | `Svg` | An SVG document | Desktop, VS Code |
 | `Client` | A region drawn by a second file of yours, for animation and pointer input. That file gets no mods API. It reaches your hooks by posting data, which arrives as a `ui.message` event. If it fails to load, draw, or run, your hooks receive a [`ui.fault`](https://code.claude.com/docs/en/plugins/mods/reference#interface) event. | Terminal, Desktop |
 | `Raster`, `Image` | A [grid of colored cells](#draw-a-grid-of-colored-cells), and a picture | Terminal |

@@ -79,7 +79,7 @@ Your speech appears in the prompt as you speak, dimmed until the transcript is f
 
 By default, when you release the key, Claude Code inserts the transcript and waits for you to press `Enter`. Set `"autoSubmit": true` in the `voice` settings object to send the prompt automatically when you release the key, as long as the transcript is at least three words long.
 
-Holding or tapping `Space` starts dictation only where the keypress would otherwise type into the prompt. In the [transcript viewer](https://code.claude.com/docs/en/interactive-mode.md#transcript-viewer), `Space` pages through the conversation, and in [vim mode](https://code.claude.com/docs/en/interactive-mode.md#vim-editor-mode) outside INSERT it is a command. To dictate from either place, [rebind to a modifier combination](#rebind-the-dictation-key) like `meta+k`.
+Holding or tapping `Space` starts dictation only where the keypress would otherwise type into the prompt. In the [transcript viewer](https://code.claude.com/docs/en/interactive-mode.md#transcript-viewer), `Space` pages through the conversation, and in [vim mode](https://code.claude.com/docs/en/interactive-mode.md#vim-editor-mode) outside INSERT it is a command. To dictate outside INSERT, or in hold mode from the transcript viewer, [rebind to a modifier combination](#rebind-the-dictation-key) like `meta+k`.
 
 ## Tap to record and send
 
@@ -87,17 +87,42 @@ Tap mode toggles recording with a single keypress: tap once to start, speak, the
 
 Enable tap mode with `/voice tap`. With the prompt input empty, tap `Space` to start recording. The footer shows `● REC · tap to send` while recording. Tap `Space` again to stop.
 
-Claude Code inserts the transcript and submits the prompt automatically when the transcript is at least three words long. Shorter transcripts are inserted but not submitted, so an accidental tap does not send a stray word.
+After the second tap, Claude Code inserts the transcript and submits the prompt if the transcript is long enough:
+
+* **Three words or more**: Claude Code submits the prompt automatically.
+* **Fewer words**: the transcript is inserted but not submitted, so an accidental tap does not send a stray word.
 
 The three-word threshold counts words for languages written without spaces. Japanese, Chinese, and Thai transcripts count individual words, so they auto-submit in tap mode and in hold mode with `autoSubmit`.
 
-The first tap only starts recording when the prompt input is empty, so you can still type spaces normally while composing a message. The second tap stops recording regardless of input contents. Recording also stops automatically after 15 seconds of silence or two minutes total.
+You tap once to start or resume a recording, and it can stop without a second tap:
+
+* **Start**: the first tap starts recording when the prompt input is empty, so you can still type spaces normally while composing a message. To add to a recording that stopped by itself, [resume it](#resume-a-recording-that-stopped-by-itself).
+* **Stop**: recording also stops when you send or edit the prompt. It stops by itself after 60 seconds with no recognized words or after 10 minutes total.
+
+### Resume a recording that stopped by itself
+
+When a tap-mode recording stops by itself, your words stay in the prompt unsent and the footer says why. You can send the words, or add to them if you haven't edited them:
+
+* **Send the words**: press `Enter`.
+* **Add to the words**: put the cursor at the end of the words and tap `Space` to record again. When you tap again to stop, Claude Code sends all of the text if you added at least three words.
+
+To see what stopped the recording, find the part of the footer message that starts with `dictation stopped`:
+
+| Message | What stopped the recording |
+| :- | :- |
+| `dictation stopped after 1m with no new words` | No words were recognized for 60 seconds. If you were speaking, try the fixes for [`No speech detected`](#troubleshooting) |
+| `dictation stopped at its 10m limit` | The recording reached 10 minutes |
+| `dictation stopped: lost the connection` | The connection to the transcription service closed, or couldn't be opened again after it failed |
+| `dictation stopped: lost the microphone` | The program recording your microphone, such as SoX or `arecord`, exited or couldn't start |
+| `dictation stopped: the prompt lost focus` | A panel such as the model picker opened, or you opened the [transcript viewer](https://code.claude.com/docs/en/interactive-mode.md#transcript-viewer) |
+| `dictation stopped: the terminal detached` | The last remaining terminal detached from a [background session](https://code.claude.com/docs/en/agent-view.md) |
+| `dictation stopped: the prompt changed` | The prompt's text changed, for example because you typed in it. To dictate again, send or clear the prompt first |
 
 ## Cancel a recording
 
-Press `Esc` or `Ctrl+C` to cancel a dictation instead of finalizing it. Claude Code stops the microphone, discards the transcript, and restores the prompt to what it held before the recording started.
+With no panel, question, or permission prompt open, press `Esc` or `Ctrl+C` to cancel a dictation instead of finalizing it. Claude Code stops the microphone, discards the transcript, and restores the prompt to what it held before the recording started.
 
-Both keys also cancel while a finished recording's transcript is still processing. A prompt you edited or submitted during processing stays as you left it.
+At the prompt, both keys also cancel while a finished recording's transcript is still processing. A prompt you edited or submitted during processing stays as you left it.
 
 Neither key does anything else in the press that cancels: `Esc` doesn't interrupt Claude's response, and `Ctrl+C` doesn't clear the prompt or count as the first of the [two presses that exit Claude Code](https://code.claude.com/docs/en/interactive-mode.md#general-controls).
 
@@ -177,13 +202,20 @@ Common issues when voice dictation does not activate or record:
 * **`Voice mode could not find a working audio recorder in WSL`**: WSLg routes audio through PulseAudio rather than an ALSA device, so SoX needs its PulseAudio backend installed explicitly. Run `sudo apt install sox libsox-fmt-pulse`. Installing `sox` alone pulls in the ALSA backend, which cannot record on WSL because there is no `/dev/snd` device.
 * **`Voice input is failing repeatedly and has been paused`**: voice dictation hit three failures within 10 seconds. Claude Code pauses dictation until 10 seconds have passed since the first of those failures. This usually means the microphone or audio stack on this host can't capture audio, for example a headless server, a remote shell with no audio passthrough, or a denied microphone permission. Confirm a working input device, fix the underlying cause from the entries above, then trigger voice again. Before v2.1.202, only start-up failures counted toward the pause.
 * **Nothing happens when holding `Space` in hold mode**: watch the prompt input while you hold. If spaces keep accumulating, voice dictation is likely off; run `/voice hold` to enable it. If only one or two spaces appear and then nothing, voice dictation is on but hold detection is not triggering. Hold detection requires your terminal to send key-repeat events, so it can't detect a held key if key-repeat is disabled at the OS level. Switch to tap mode with `/voice tap` to avoid the key-repeat requirement.
-* **Tapping `Space` types a space instead of recording in tap mode**: the first tap only starts recording when the prompt input is empty. Clear the input first, or check that you are in tap mode by running `/voice tap`.
+* **Tapping `Space` types a space instead of recording in tap mode**: when the prompt has text and you aren't [resuming a recording](#resume-a-recording-that-stopped-by-itself), `Space` types a space. To record, send or clear the prompt first. If the prompt is already empty, run `/voice tap` to turn on tap mode.
 * **`No audio detected from microphone`**: recording started but captured silence. Confirm the correct input device is set as the system default and that its input level is not muted or near zero. On Windows, open Settings → System → Sound → Input and select your microphone. On macOS, open System Settings → Sound → Input.
 * **`Voice connection failed`**: your recording never reached the transcription service because the connection failed. Check your network and try again. A recording that captures no audio reports `No audio detected from microphone` instead of this message. Before v2.1.200, a silent microphone could report a connection failure, which suggested a network problem when the actual issue was the input device.
 * **`Dictation error: WebSocket error:` followed by a certificate error such as `unable to get local issuer certificate`**: see [Dictation or the Web tab fails behind a TLS-inspecting proxy](https://code.claude.com/docs/en/vs-code.md#dictation-or-the-web-tab-fails-behind-a-tls-inspecting-proxy) on the VS Code page.
 * **`Voice stream error: WebSocket upgrade rejected with HTTP <status>`**: a server refused your connection with the HTTP status shown, so this isn't a network outage. A status in the 400 range usually means a stale sign-in, or a proxy or bot-protection service answering in place of the transcription service. Run `/login` to refresh your sign-in, and check for a VPN or proxy on your network path if the status persists. If you're still recording when the rejection arrives, Claude Code retries a status outside the 400 range once before showing this message; it doesn't retry a status in the 400 range. In v2.1.229 through v2.1.231, native builds didn't show this message: Claude Code kept recording, the hold-mode footer still showed `listening…`, and it reported `Voice connection failed` after you stopped recording.
 * **`No speech detected`**: audio reached the transcription service but no words were recognized. Speak closer to the microphone, reduce background noise, and confirm your [dictation language](#change-the-dictation-language) matches the language you are speaking.
-* **`Dictation stopped: no speech recognized for 15 seconds` or `Dictation stopped at its 2-minute limit`**: in the VS Code extension, a recording ends after 15 seconds with no recognized words, or two minutes after it starts. If you were speaking during those 15 seconds, try the fixes for `No speech detected`. Words already recognized stay in the prompt box and aren't sent. To add more, click the microphone button again.
+* **`text kept, Enter to send` or `dictation stopped` in the terminal's footer**: your tap-mode recording stopped without a second tap. Words still in the prompt haven't been sent. Press `Enter` to send them, or [add to them](#resume-a-recording-that-stopped-by-itself). Before v2.1.332, recordings stopped after 15 seconds with no recognized words or after two minutes, and Claude Code then sent a transcript of three or more words.
+* **`Dictation stopped: no speech recognized for 60 seconds`, `Dictation stopped at its 10-minute limit`, or `Dictation stopped: this panel was hidden`**: the VS Code extension stopped your recording. Words already recognized stay in the prompt box and aren't sent. To add more, click the microphone button again. The limits are shorter while the panel is hidden:
+
+  * **Visible panel**: with a working connection and microphone, the recording ends after 60 seconds with no recognized words, or 10 minutes after it starts. If you were speaking during those 60 seconds, try the fixes for `No speech detected`.
+  * **Hidden panel**: after you hide the panel, the recording ends after 15 seconds with no recognized words, or two minutes after you hid it. Keep the panel visible while you dictate.
+
+  Before v2.1.332, the first two messages were `Dictation stopped: no speech recognized for 15 seconds` and `Dictation stopped at its 2-minute limit`.
+* **`Dictation error: The microphone stopped sending audio`**: words already recognized stay in the VS Code extension's prompt box and aren't sent. To try again, click the microphone button.
 * **Transcription is garbled or in the wrong language**: dictation defaults to English. If you are dictating in another language, set it in `/config` first. See [Change the dictation language](#change-the-dictation-language).
 
 ### Terminal not listed in macOS Microphone settings

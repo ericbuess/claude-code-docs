@@ -309,6 +309,7 @@ Match the message you see to a section below.
 | `Shell command failed for pattern "..."`, from `/security-review` or any skill that injects dynamic context | [Command-line errors](#security-review-fails-without-origin-head) |
 | `Shell command permission check failed for pattern "..."`, from a skill that injects dynamic context | [Command-line errors](#security-review-fails-without-origin-head) |
 | ``Couldn't run `<command>` for <name>. A file named HEAD or .git in this folder or one above it may not be yours``, from a skill that injects dynamic context | [Permission checks on injected commands](https://code.claude.com/docs/en/skills.md#permission-checks-on-injected-commands) |
+| `Not run in /<name>` / `Ran anyway in /<name>` / `[not run: blocked by hook`, from `/security-review` or a skill that injects dynamic context | [PreSkillShellCommand decision control](https://code.claude.com/docs/en/hooks.md#preskillshellcommand-decision-control) |
 | ``Skill <name> requires bash (`shell: bash` in frontmatter) but Git Bash was not found`` | [Command-line errors](#security-review-fails-without-origin-head) |
 | `No shell command in <name> was run, because the <tool> tool does not accept one of them` | [Command-line errors](#no-shell-command-was-run) |
 | `This skill, command or hook and the arguments filled into it add up to more than 4,000,000 characters` | [Command-line errors](#skill-command-or-hook-over-the-4000000-character-limit) |

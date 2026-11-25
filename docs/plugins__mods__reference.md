@@ -186,6 +186,7 @@ Interface events fire when Claude Code draws a render site and when the user use
 | [`ui.render`](https://code.claude.com/docs/en/plugins/mods/interface#pick-where-to-draw) | A [render site](#render-sites) is about to be drawn |
 | `ui.resolve` | Mods load, once for each app, render site, and mod. The result is the element table that `$.ui.resolve(e)` reads. |
 | [`ui.press`](https://code.claude.com/docs/en/plugins/mods/interface#respond-to-presses-and-typing), [`ui.input`](https://code.claude.com/docs/en/plugins/mods/interface#respond-to-presses-and-typing), [`ui.select`](https://code.claude.com/docs/en/plugins/mods/interface#respond-to-presses-and-typing) | A `Button`, `Input`, or `Select` a mod drew is used |
+| [`ui.pointer`](https://code.claude.com/docs/en/plugins/mods/interface#animate-a-backdrop-with-a-shader) | The user clicks a part of your mod's backdrop that the app doesn't cover. Requires Claude Code v2.1.326 or later. |
 | `ui.focus`, `ui.scroll` | The focused control or the scroll position of a pane or the band is about to change |
 | `ui.close` | A pane is about to close. `e.id` is the pane and `e.origin.kind` is `plugin`, `person`, or `unload`. |
 | [`ui.message`](https://code.claude.com/docs/en/plugins/mods/interface#build-a-tree-from-elements) | A `Client` element posts data to its mod |
@@ -241,7 +242,7 @@ The mods API is the `$` argument every hook receives. Its methods are grouped in
 | :- | :- |
 | `$.plugin` | `name`, `root`: this plugin's name and directory |
 | [`$.ui`](https://code.claude.com/docs/en/plugins/mods/interface#pick-where-to-draw) | `resolve`, `invalidate`, `open`, `close`, `panes`, [`place`](https://code.claude.com/docs/en/plugins/mods/interface#place-a-row-in-the-transcript), `focus`, `scroll`, `toast`, `notify`, `status`, `log`, `notice`, `ask`, `copy`, `selection`, `blit`, `view`. `view` requires Claude Code v2.1.300 or later and `place` v2.1.314 or later. |
-| [`$.theme`](https://code.claude.com/docs/en/plugins/mods/interface#put-a-backdrop-behind-the-conversation) | `set`, `clear`: set a backdrop for the Desktop or mobile app to draw, and take the backdrop off. Requires Claude Code v2.1.319 or later. |
+| [`$.theme`](https://code.claude.com/docs/en/plugins/mods/interface#put-a-backdrop-behind-the-conversation) | `set`, `clear`: set a backdrop for the Desktop or mobile app to draw, and take the backdrop off. Requires Claude Code v2.1.319 or later. [Message styles](https://code.claude.com/docs/en/plugins/mods/interface.md#style-messages-in-the-desktop-app) and [sound](https://code.claude.com/docs/en/plugins/mods/interface.md#add-sound-to-a-theme) require v2.1.329 or later. |
 | [`$.command`](https://code.claude.com/docs/en/plugins/mods/api#add-a-command) | `register`, `run`, `list` |
 | [`$.tool`](https://code.claude.com/docs/en/plugins/mods/api#add-a-tool) | `register`, `call`, `check`, `list` |
 | `$.agent` | `register`, `spawn`, `call`, `list`, `limits`. `call` and `limits` require Claude Code v2.1.326 or later. `list()` returns this session's subagents and teammates, each with a `status` of `pending`, `running`, `waiting`, `idle`, `completed`, `failed`, or `killed`, where `idle` and `waiting` require Claude Code v2.1.289 or later. |
@@ -319,6 +320,7 @@ Elements are the building blocks of a tree a `ui.render` hook returns, and you g
 | [`Input`](https://code.claude.com/docs/en/plugins/mods/interface#take-typed-input-and-draw-a-row-for-each-item) | `key`, `label`, `placeholder`, `value`, `submitLabel`, [`rows`](https://code.claude.com/docs/en/plugins/mods/gallery#input), `onSubmit`, `onInput`, `autoFocus` | ✓ | ✓ | ✓ |
 | `Select` | `key`, `label`, `options`, `value`, `onSelect`, `autoFocus` | ✓ | ✓ | ✓ |
 | `Svg` | a `source` of SVG markup up to 131,072 characters, `alt` text, `width`, `height`, and `isInteractive` | | ✓ | ✓ |
+| [`Shader`](https://code.claude.com/docs/en/plugins/mods/interface#animate-a-backdrop-with-a-shader) | `module`, `values`, and one `Svg` child. Draws in a [`Backdrop`](#render-sites) only. Requires Claude Code v2.1.326 or later. | | ✓ | |
 | [`Client`](https://code.claude.com/docs/en/plugins/mods/interface#build-a-tree-from-elements) | `module`, `key`, `props`, `width`, `height`, `flexGrow` | ✓ | ✓ | |
 | [`Raster`](https://code.claude.com/docs/en/plugins/mods/interface#draw-a-grid-of-colored-cells) | `key`, `columns` up to 512, `rows` up to 256, `cells`. See [Draw a grid of colored cells](https://code.claude.com/docs/en/plugins/mods/interface.md#draw-a-grid-of-colored-cells). | ✓ | | |
 | `Image` | `key`, a `source` such as PNG or RGBA bytes up to 2 MiB, or a file path, `columns` and `rows` up to 255, and `alt` text. See [which terminals draw it](https://code.claude.com/docs/en/plugins/mods/gallery.md#image-and-client). | ✓ | | |
@@ -442,6 +444,8 @@ Hooks and mods API calls run under time and size limits. Claude Code skips a hoo
 | `$.session.messages()` | The newest 4,096 entries |
 | Text passed to `$.session.redact` | 100,000 characters. A call with longer text rejects. |
 | `$.ui.invalidate('ui.render')` redraws | Throttled to 10 a second, or 30 in the terminal for the visible pane, the expanded band, and the hint line under the prompt. Calls that come sooner are coalesced. |
+| [`ui.pointer`](https://code.claude.com/docs/en/plugins/mods/interface#animate-a-backdrop-with-a-shader) clicks | Two a second. The app drops the rest. |
+| A [`Shader`](https://code.claude.com/docs/en/plugins/mods/interface#animate-a-backdrop-with-a-shader)'s `values` | Eight numbers |
 | `$.ui.toast` | Shown for 4 seconds unless you pass `{ timeoutMs }`. In the [classic renderer](https://code.claude.com/docs/en/fullscreen.md#enable-fullscreen-rendering), a mod's newer toast can [take the place of its older one](https://code.claude.com/docs/en/plugins/mods/troubleshoot.md#a-toast-doesn’t-appear) that's showing or waiting to show. |
 | A pane opened without the user asking | Placed from 144 terminal columns, 110 after they've opened it once |
 | Rows from `$.ui.place` that one mod has in a conversation at one time | 500. At the limit, a call with a new `id` resolves to `{ isPlaced: false, reason: 'a plugin holds at most 500 placed rows' }`. |
