@@ -67,7 +67,7 @@ Once the plugin is active, you're ready to [scan and fix your codebase](#scan-an
 
 ### Update the plugin
 
-If a command or option doesn't work, [check](https://code.claude.com/docs/en/plugins/install.md#install-a-plugin) that you have version 0.13.0 or later of the plugin.
+If a command or option doesn't work, [check](https://code.claude.com/docs/en/plugins/install.md#install-a-plugin) that you have version 0.13.1 or later of the plugin.
 
 To update the plugin yourself, see [Update plugins now](https://code.claude.com/docs/en/plugins/install.md#update-plugins-now). Claude Code also [updates the plugin automatically](https://code.claude.com/docs/en/plugins/install.md#keep-plugins-updated) unless auto-update is turned off.
 
@@ -290,11 +290,27 @@ The sandbox runs only on Linux:
 
 The plugin includes the command. To add it to your `PATH`, enter `/claude-security:install-cli` in Claude Code and follow what it prints.
 
-Then run it in your repository, with `--sudo` or `--no-sandbox` if your system needs it:
+For a scan in the sandbox, add `--provider` with the value for the provider that receives your code:
 
-* **Scan the codebase**: `claude-security`
-* **Scan this branch's changes**: `claude-security --changes`
-* **Scan with a full-screen view**: `claude-security --tui`, which needs Node.js 18 or later
+* `anthropic`: paid plan or Anthropic API
+* `bedrock`: [Amazon Bedrock](https://code.claude.com/docs/en/amazon-bedrock.md)
+* `vertex`: [Google Cloud's Agent Platform](https://code.claude.com/docs/en/google-vertex-ai.md), formerly Vertex AI
+* `foundry`: [Microsoft Foundry](https://code.claude.com/docs/en/microsoft-foundry.md)
+
+To find your value, run `claude` in your terminal, enter [`/status`](https://code.claude.com/docs/en/commands#all-commands), and look for an `API provider` row and a base URL row:
+
+* **`API provider` row**: use the matching value for `Amazon Bedrock`, `Google Vertex AI`, or `Microsoft Foundry`. For any other provider, such as `Amazon Bedrock (Mantle)`, [scan in a session](#scan-and-fix-your-codebase).
+* **Base URL row**: pass the URL too. For example, for `Anthropic base URL`, use `--provider anthropic --model-base-url https://models.example.com`. If the command refuses the URL, scan in a session.
+* **Both rows absent**: if you use Claude Code through your organization, ask your administrator which value to use. Otherwise, use `anthropic`.
+
+If you pass a base URL, your credential can go to that host. For `Anthropic base URL`, export a credential that the host issued: `ANTHROPIC_AUTH_TOKEN` for a bearer token or `ANTHROPIC_API_KEY` for an API key.
+
+Run one of these commands in your repository, with your value in place of `<provider>` and with `--model-base-url` or `--sudo` if you need them:
+
+* **Scan the codebase**: `claude-security --provider <provider>`
+* **Scan this branch's changes**: `claude-security --provider <provider> --changes`
+* **Scan with a full-screen view**: `claude-security --provider <provider> --tui`, which needs Node.js 18 or later
+* **Scan on Windows**: replace `--provider` and `--model-base-url` with `--no-sandbox`, such as `claude-security --no-sandbox --changes`
 * **List the other options**: `claude-security --help`
 
 The command runs in [auto mode](https://code.claude.com/docs/en/permission-modes.md#eliminate-prompts-with-auto-mode), and stops if auto mode isn't available. If your Claude Code model doesn't support it, add `--model` with one that does. For any other cause, [scan in a session](#scan-and-fix-your-codebase).

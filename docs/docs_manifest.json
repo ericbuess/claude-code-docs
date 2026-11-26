@@ -418,8 +418,8 @@
     "claude-security.md": {
       "original_url": "https://code.claude.com/docs/en/claude-security",
       "original_md_url": "https://code.claude.com/docs/en/claude-security.md",
-      "hash": "5b7324657a5045492c3be3097a95f55262051e1e53356c1cc09882258e1e8757",
-      "last_updated": "2026-11-25T03:51:32.943839"
+      "hash": "8cc2ed048d551f7f3e3e12e8b13e0c17562ff43b6e20da6d8d8c92023d03cbce",
+      "last_updated": "2026-11-26T11:39:28.373785"
     },
     "claude-ship.md": {
       "original_url": "https://code.claude.com/docs/en/claude-ship",
@@ -1323,8 +1323,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-11-26T01:16:59.807790",
-    "fetch_duration_seconds": 128.449317,
+    "last_fetch_completed": "2026-11-26T11:40:48.951162",
+    "fetch_duration_seconds": 117.933001,
     "total_pages_discovered": 220,
     "pages_fetched_successfully": 221,
     "pages_failed": 0,
@@ -1334,7 +1334,7 @@
     "total_files": 220,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-11-26T01:16:59.807818",
+  "last_updated": "2026-11-26T11:40:48.951197",
   "base_url": "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/docs/",
   "github_repository": "ericbuess/claude-code-docs",
   "github_ref": "main",
