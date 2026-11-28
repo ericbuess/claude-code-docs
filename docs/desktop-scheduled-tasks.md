@@ -146,6 +146,8 @@ Tasks only run while the desktop app is running and your computer is awake. If y
 >
 > For tasks that need to run even when your computer is off, or that should trigger on an API call or GitHub event, create a [cloud scheduled task](https://code.claude.com/docs/en/routines.md) instead.
 
+If a task's model [requires usage credits](https://code.claude.com/docs/en/model-config.md#fable-and-usage-credits) on your plan, Desktop can skip its runs, including **Run now**. To run the task again, open its [detail page](#manage-scheduled-tasks), then switch the model or choose to continue with usage credits.
+
 ### Find a run's session
 
 To open the session a run started, go to the task's [detail page](#manage-scheduled-tasks) and click that run's row in the **History** list.

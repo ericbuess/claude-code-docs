@@ -911,7 +911,7 @@ Unless the agent's [prompt is empty](#choose-the-subagent-scope), a custom subag
 
 The agent name appears as `@<name>` in the startup header so you can confirm it's active.
 
-This works with built-in and custom subagents, and the choice persists when you resume the session: Claude Code restores the agent's tool restrictions and model along with the conversation. If the agent no longer exists when you resume, the session continues with the default tools and shows a [warning naming the agent](https://code.claude.com/docs/en/errors.md#session-agent-no-longer-available). For the system prompt in either case, see [System prompt flags in resumed conversations](https://code.claude.com/docs/en/cli-reference.md#system-prompt-flags-in-resumed-conversations).
+You can also pass a built-in subagent, such as `Explore`.
 
 For a plugin-provided subagent, you can pass only the agent name and Claude Code finds it:
 
@@ -1172,7 +1172,7 @@ Continue that code review and now analyze the authorization logic
 
 When Claude sends a completed subagent a message with the `SendMessage` tool, the subagent can resume in the background without a new `Agent` invocation. The same applies to a subagent that Claude stopped with the `TaskStop` tool, once its stopped run has exited. The resumed run keeps the [tool set from where the subagent first ran](#run-subagents-in-foreground-or-background) and can keep reading the [prompt cache the original run warmed](https://code.claude.com/docs/en/prompt-caching.md#subagents-and-the-cache).
 
-A subagent that has the `SendMessage` tool can send that message too. In an interactive session, the resumed agent then reports back to the subagent that resumed it, not to your main conversation. That subagent waits for the result before finishing its own work. When a subagent messages an agent it reports to, such as its own launcher, Claude Code resumes that agent without redirecting its results.
+A subagent that has the `SendMessage` tool can send that message too. In an interactive terminal session, the resumed agent then reports back to the subagent that resumed it. That subagent waits for the result before finishing its own work. When a subagent messages an agent it reports to, such as its own launcher, Claude Code resumes that agent without redirecting its results.
 
 A subagent you stopped yourself, with `x` in `/tasks` or an SDK `stop_task` request, doesn't auto-resume. If Claude sends it a message, the message is refused and Claude is told the agent was cancelled.
 

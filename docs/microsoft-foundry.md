@@ -124,7 +124,9 @@ Set `ANTHROPIC_FOUNDRY_RESOURCE` to the resource name alone, such as `my-resourc
 
 Set the model variables to match the deployment names you created in step 1.
 
-Without `ANTHROPIC_DEFAULT_OPUS_MODEL`, the `opus` alias on Microsoft Foundry resolves to Opus 4.6. Set it to the ID of a newer Opus model, such as Opus 4.8:
+Without `ANTHROPIC_DEFAULT_OPUS_MODEL`, the `opus` alias on Microsoft Foundry resolves to Opus 5.5. Before v2.1.332 it resolves to Opus 4.6.
+
+Set the variable to the ID of the Opus model you deployed, such as Opus 4.8:
 
 ```bash theme={null}
 export ANTHROPIC_DEFAULT_OPUS_MODEL='claude-opus-4-8'

@@ -510,6 +510,10 @@ If the cause is your CLI sign-in or being inside a cloud session, you can still 
 
 Cloud scheduled tasks are off for your organization, and you can't change that from your local configuration. Ask your Team or Enterprise Owner whether they can turn on the **Scheduled tasks (Was Routines)** or **Routines** toggle at [**Organization settings > Capabilities > Remote sessions**](https://claude.ai/admin-settings/capabilities).
 
+### A scheduled task turned off with a usage credits notice
+
+If a task's model [requires usage credits](https://code.claude.com/docs/en/model-config.md#fable-and-usage-credits) on your plan, claude.ai can skip the next run and turn the task off. On the task's [detail page](#edit-and-control-scheduled-tasks), turn the task back on to use usage credits, or change its model before you turn it on.
+
 ### Warnings under History
 
 When a warning under **History** begins with "The last run" or "This didn't run", find it in the first column and do what its row says. The warning clears once a later run starts.

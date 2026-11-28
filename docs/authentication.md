@@ -340,6 +340,6 @@ The command opens the same browser authorization flow as `/login`, and the token
 > set CLAUDE_CODE_OAUTH_TOKEN=your-token
 > ```
 
-This token authenticates with your Claude subscription and requires a Pro, Max, Ultra, Team, or Enterprise plan. It can only make model requests, so it can't establish [Remote Control](https://code.claude.com/docs/en/remote-control.md) sessions or fetch [claude.ai connectors](https://code.claude.com/docs/en/mcp.md#use-mcp-servers-from-claude-ai). MCP servers you configure locally still work.
+This token authenticates with your Claude subscription and requires a Pro, Max, Ultra, Team, or Enterprise plan. It can't establish [Remote Control](https://code.claude.com/docs/en/remote-control.md) sessions or fetch [claude.ai connectors](https://code.claude.com/docs/en/mcp.md#use-mcp-servers-from-claude-ai). MCP servers you configure locally still work.
 
 [Bare mode](https://code.claude.com/docs/en/headless.md#start-faster-with-bare-mode) does not read `CLAUDE_CODE_OAUTH_TOKEN`. If your script passes `--bare`, authenticate with `ANTHROPIC_API_KEY` or an `apiKeyHelper` instead.

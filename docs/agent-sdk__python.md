@@ -900,7 +900,7 @@ class ClaudeAgentOptions:
 | `stderr` | `Callable[[str], None] \| None` | `None` | Callback function for stderr output from CLI |
 | `can_use_tool` | [`CanUseTool`](#canusetool) ` \| None` | `None` | Tool permission callback, invoked only when the [permission flow](https://code.claude.com/docs/en/agent-sdk/permissions.md#how-permissions-are-evaluated) falls through to a prompt. Not invoked for calls auto-approved by `allowed_tools`, allow rules, or `permission_mode`. An allow rule doesn't pre-approve the [actions no mode auto-approves](https://code.claude.com/docs/en/permission-modes.md#actions-no-mode-auto-approves). See [`CanUseTool`](#canusetool) for details |
 | `hooks` | `dict[HookEvent, list[HookMatcher]] \| None` | `None` | Hook configurations for intercepting events |
-| `user` | `str \| None` | `None` | On POSIX platforms, the OS user account the Claude Code subprocess runs as. Claude Code keeps the parent process's environment, including `HOME`, and runs in `cwd` |
+| `user` | `str \| None` | `None` | On POSIX platforms, the OS user account the Claude Code subprocess runs as. Claude Code keeps the parent process's groups and environment, including `HOME`, and runs in `cwd` |
 | `include_partial_messages` | `bool` | `False` | Include partial message streaming events. When enabled, [`StreamEvent`](#streamevent) messages are yielded |
 | `include_hook_events` | `bool` | `False` | Include hook lifecycle events in the message stream as `HookEventMessage` objects |
 | `forward_subagent_text` | `bool` | `False` | Forward subagent text and thinking blocks in the message stream. Without this option, Claude Code omits the text and thinking blocks of a subagent that runs in the [foreground](https://code.claude.com/docs/en/sub-agents.md#run-subagents-in-foreground-or-background). For nested subagents, skills with `context: fork`, and the Claude Code version each needs, see [Follow subagent messages](https://code.claude.com/docs/en/headless.md#follow-subagent-messages). Requires Python Agent SDK 0.2.140 or later |
@@ -2950,7 +2950,7 @@ The output takes one of the following shapes depending on what Claude read. Chec
 }
 ```
 
-**Output (type: `"file_unchanged"`):**
+**Output (type: `"file_unchanged"`), before Claude Code v2.1.317:**
 
 ```python theme={null}
 {

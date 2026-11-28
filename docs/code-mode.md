@@ -102,11 +102,21 @@ Set the [`CLAUDE_CODE_EXPERIMENTAL_CODE_MODE`](https://code.claude.com/docs/en/e
 
 **3. Confirm that you want Code Mode**
 
-Claude Code asks you to confirm before your first Code Mode session. Select **Yes, turn on Code Mode**. Claude Code restarts and shows this line near the top of the session:
+Claude Code asks you to confirm before your first Code Mode session. Select **Yes, turn on Code Mode**.
+
+This line near the top of the session means that Code Mode is on:
 
 ```text theme={null}
 Code Mode (experimental) is on · this session can be resumed only with Code Mode on
 ```
+
+If you see this line instead, Code Mode is off in this session:
+
+```text theme={null}
+Code Mode (experimental) will be on after you quit and start Claude Code again the same way. This session uses the ordinary tools.
+```
+
+To turn on Code Mode, exit Claude Code and start it again as you did in the previous step. Then look for the `is on` line.
 
 If you see a different line or none, see [Code Mode doesn't start](#code-mode-doesnt-start).
 

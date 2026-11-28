@@ -92,7 +92,7 @@ You can access Claude Code through the terminal, the [desktop app](https://code.
 
 ## Work with sessions
 
-Claude Code saves your conversation locally as you work. Each message, tool use, and result is written to a plaintext JSONL file under `~/.claude/projects/`, which enables [rewinding](#undo-changes-with-checkpoints), [resuming, and forking](#resume-or-fork-sessions) sessions. Before Claude makes code changes, it also snapshots the affected files so you can revert if needed. For paths, retention, and how to clear this data, see [application data in `~/.claude`](https://code.claude.com/docs/en/claude-directory#application-data).
+Claude Code saves your conversation locally as you work. Each message, tool use, and result is written to a plaintext JSONL file under `~/.claude/projects/`, which enables [rewinding](#undo-changes-with-checkpoints), [resuming, and forking](#resume-or-fork-sessions) sessions. Claude Code also snapshots the files Claude edits. For paths, retention, and how to clear this data, see [application data in `~/.claude`](https://code.claude.com/docs/en/claude-directory#application-data).
 
 **Sessions are independent.** Each new session starts with a fresh context window, without the conversation history from previous sessions. Claude can persist learnings across sessions using [auto memory](https://code.claude.com/docs/en/memory.md#auto-memory), and you can add your own persistent instructions in [CLAUDE.md](https://code.claude.com/docs/en/memory.md).
 
@@ -155,7 +155,7 @@ Claude has two safety mechanisms: checkpoints let you undo file changes, and per
 
 ### Undo changes with checkpoints
 
-**File edits are reversible.** Before Claude edits a file, it snapshots the current contents. If something goes wrong, press `Esc` twice to rewind to a previous state, or ask Claude to undo.
+Claude Code snapshots the files Claude edits so you can restore those files. See [checkpoint limitations](https://code.claude.com/docs/en/checkpointing.md#limitations). If something goes wrong, press `Esc` twice to rewind to a previous state, or ask Claude to undo.
 
 Checkpoints are separate from git and remain available when you resume a conversation. They only cover file changes, and a restore [skips symlinked and hard-linked files](https://code.claude.com/docs/en/checkpointing.md#symlinked-and-hard-linked-paths-not-restored). Actions that affect remote systems (databases, APIs, deployments) can't be checkpointed. You control those with your permission mode and permission rules.
 

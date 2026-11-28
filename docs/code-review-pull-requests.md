@@ -172,6 +172,8 @@ On a pull request from a fork, `@claude review always` works too, but doesn't su
 
 If the repository also runs the [Claude Code GitHub Action](https://code.claude.com/docs/en/github-actions.md) in interactive mode with its default `@claude` trigger phrase, an `@claude review` comment starts the Action as well. To keep the two apart, set the Action's `trigger_phrase` input to a different phrase.
 
+Also replace each `@claude` in your workflow's `if` condition with the new phrase, so that the Action starts on that phrase instead.
+
 ## Related resources
 
 * [Troubleshoot Code Review](https://code.claude.com/docs/en/code-review-troubleshooting.md): a review that didn't start, failed, or was skipped for budget

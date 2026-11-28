@@ -150,7 +150,7 @@ To cover the organization, click **Edit** on its row, select a **Review runs** o
 
 After you confirm, these changes take effect:
 
-* **Coverage**: each repository is covered from its next pull request. If the Claude GitHub App was installed on selected repositories rather than all of them, Claude reviews those repositories; change the app's repository access on GitHub to cover the rest.
+* **Selected repositories**: if the Claude GitHub App was installed on selected repositories rather than all of them, Claude reviews those repositories; change the app's repository access on GitHub to cover the rest.
 * **Existing settings**: every repository in that GitHub organization takes the option you select, including repositories you had set individually. Setting the row again does the same. Repositories you turned off on their own rows stay off.
 * **Individual changes afterward**: a repository you later set differently from its organization is marked **Custom** in the table.
 * **Review level**: an organization row has no review level of its own.

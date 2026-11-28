@@ -58,7 +58,7 @@ In bare mode Claude has access to the Bash, file read, and file edit tools. Pass
 | [Custom agents](https://code.claude.com/docs/en/sub-agents.md#choose-the-subagent-scope) | `--agents <file-or-json>` |
 | A plugin | `--plugin-dir <path>`, `--plugin-url <url>` |
 
-Hooks still don't run in bare mode when you pass them with `--settings`, or in the [`hooks/hooks.json`](https://code.claude.com/docs/en/plugins/components#hooks) or [`hooks` manifest key](https://code.claude.com/docs/en/plugins/manifest-reference#hooks) of a plugin you load with a flag. Don't use bare mode for a run that needs them.
+Hooks still don't run in bare mode when you pass them with `--settings`, or in the [`hooks/hooks.json`](https://code.claude.com/docs/en/plugins/components#hooks) or [`hooks` manifest key](https://code.claude.com/docs/en/plugins/manifest-reference#hooks) of a plugin you load with a flag. [Agent SDK hook callbacks](https://code.claude.com/docs/en/agent-sdk/hooks.md) don't run either. Don't use bare mode for a run that needs these hooks.
 
 Bare mode also limits what happens while the session runs:
 
@@ -70,7 +70,7 @@ Before v2.1.286, these limits held only partly: an interactive `--bare` session 
 
 > [!NOTE]
 >
-> `--bare` is the recommended mode for scripted and SDK calls, and will become the default for `-p` in a future release.
+> `--bare` is the recommended mode for scripted and SDK calls that don't need hooks, and will become the default for `-p` in a future release.
 
 ### Background tasks at exit
 

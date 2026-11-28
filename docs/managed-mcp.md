@@ -299,9 +299,11 @@ To turn off all the claude.ai connectors Claude Code fetches itself, see [`disab
 
 #### How `serverCommand` entries match
 
-A `serverCommand` entry holds the command and its arguments as one array, as in `{ "serverCommand": ["npx", "-y", "server"] }`. Claude Code compares that array with the command and arguments in the server's configuration:
+A `serverCommand` entry holds the command and its arguments as one array, as in `{ "serverCommand": ["npx", "-y", "@modelcontextprotocol/server-filesystem", "."] }`. Claude Code compares that array with the command and arguments in the server's configuration:
 
-* **Commands match exactly.** Every argument, in order. `["npx", "-y", "server"]` does not match `["npx", "server"]` or `["npx", "-y", "server", "--flag"]`.
+* **Commands match exactly.** Every argument, in order. The entry `["npx", "-y", "@modelcontextprotocol/server-filesystem", "."]` doesn't match either of these commands:
+  * `["npx", "@modelcontextprotocol/server-filesystem", "."]`, which drops `-y`
+  * `["npx", "-y", "@modelcontextprotocol/server-filesystem", ".", "--flag"]`, which adds an argument
 * **The `env` block isn't compared.** `["node", "server.js"]` matches a server that runs that command with any `env` values. Some environment variables change what `node` loads at startup. To set the `env` values yourself, define the server in [`managed-mcp.json`](#exclusive-control-with-managed-mcp-json).
 
 #### How `serverUrl` entries match
@@ -390,7 +392,7 @@ The configuration below sets up an allowlist with a denylist. The highlighted li
   ],
   "deniedMcpServers": [
     { "serverName": "dangerous-server" },
-    { "serverCommand": ["npx", "-y", "unapproved-package"] },
+    { "serverCommand": ["python", "/usr/local/bin/unapproved-server.py"] },
     { "serverUrl": "https://*.untrusted.example.com/*" }
   ]
 }
@@ -427,14 +429,14 @@ The accordions below walk through how a server is evaluated against other allowl
 > ```json theme={null}
 > {
 >   "allowedMcpServers": [
->     { "serverCommand": ["npx", "-y", "approved-package"] }
+>     { "serverCommand": ["npx", "-y", "@modelcontextprotocol/server-filesystem", "."] }
 >   ]
 > }
 > ```
 >
 > | Server | Result |
 > | :- | :- |
-> | Stdio server with `["npx", "-y", "approved-package"]` | Allowed: matches command |
+> | Stdio server with `["npx", "-y", "@modelcontextprotocol/server-filesystem", "."]` | Allowed: matches command |
 > | Stdio server with `["node", "server.js"]` | Blocked: doesn't match command |
 > | HTTP server named `my-api` | Blocked: no name entries to match |
 
@@ -444,14 +446,14 @@ The accordions below walk through how a server is evaluated against other allowl
 > {
 >   "allowedMcpServers": [
 >     { "serverName": "github" },
->     { "serverCommand": ["npx", "-y", "approved-package"] }
+>     { "serverCommand": ["npx", "-y", "@modelcontextprotocol/server-filesystem", "."] }
 >   ]
 > }
 > ```
 >
 > | Server | Result |
 > | :- | :- |
-> | Stdio server named `local-tool` with `["npx", "-y", "approved-package"]` | Allowed: matches command |
+> | Stdio server named `local-tool` with `["npx", "-y", "@modelcontextprotocol/server-filesystem", "."]` | Allowed: matches command |
 > | Stdio server named `local-tool` with `["node", "server.js"]` | Blocked: command entries exist but doesn't match |
 > | Stdio server named `github` with `["node", "server.js"]` | Blocked: stdio servers must match commands when command entries exist |
 > | HTTP server named `github` | Allowed: matches name |

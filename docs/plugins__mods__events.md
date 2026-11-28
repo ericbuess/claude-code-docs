@@ -286,6 +286,8 @@ on('prompt.submit', async ($, e, next) => {
 
 When you send a prompt such as `open a PR for this change`, your message looks the same in the transcript, and Claude also reads a line such as `Current branch: feature/auth` after it. A prompt that doesn't mention a pull request goes through unchanged, and `git` doesn't run.
 
+To change a `/command`'s arguments, return `next({ ...e, args: newArgs })` from a [`command.run`](https://code.claude.com/docs/en/plugins/mods/api#add-a-command) hook. After you add the `command.run` hook, have any `prompt.submit` hook that rewrites `text` skip the rewrite when `e.command` is set. `e.command` requires Claude Code v2.1.299 or later.
+
 To stop a prompt, return `{ drop: 'the reason' }` without calling `next`. The text goes back into the user's prompt input, and they see `Prompt dropped by a hook:` followed by your reason, so address the reason to them. Don't rely on `drop` to stop every prompt. For example, a prompt goes through in these cases:
 
 * **Your hook returns a `drop` after its `next(e)` call let the prompt through**: the turn still runs, and the hook [fails](#handle-a-hook-that-fails) with a message that includes `a drop after its next() was answered`

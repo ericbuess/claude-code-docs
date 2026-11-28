@@ -135,7 +135,7 @@ claude mcp add --env AIRTABLE_API_KEY=YOUR_KEY --transport stdio airtable \
 >
 > For example:
 >
-> * `claude mcp add --transport stdio myserver -- npx server` → runs `npx server`
+> * `claude mcp add --transport stdio myserver -- npx <MCP_SERVER_PACKAGE>` → runs `npx <MCP_SERVER_PACKAGE>`
 > * `claude mcp add --env KEY=value --transport stdio myserver -- python server.py --port 8080` → runs `python server.py --port 8080` with `KEY=value` in environment
 >
 > Without `--`, Claude Code would try to parse the server's flags, like `--port` above, as its own options.
@@ -169,7 +169,7 @@ The `type: "ws"` entry accepts the same `url`, `headers`, `headersHelper`, `time
 MCP servers aren't specific to Claude Code, so a server's setup instructions may be written for Claude Desktop, Cursor, or another MCP client and give no `claude mcp add` command. To add the server anyway, look in those instructions for a URL, a launch command, or a JSON block:
 
 * **A URL** such as `https://mcp.example.com/mcp`: the server is remote.
-* **A launch command** such as `npx -y @example/mcp-server`: the server runs on your machine.
+* **A launch command** such as `npx -y <MCP_SERVER_PACKAGE>`: the server runs on your machine.
 * **An `mcpServers` JSON block**: configuration written for another client's settings file.
 
 Each is one of the inputs the four options in [Installing MCP servers](#installing-mcp-servers) take. Find the shape you have below to turn it into the command Claude Code accepts. Each command writes to [local scope](#local-scope) unless you add `--scope project` or `--scope user`.
@@ -189,7 +189,7 @@ If the instructions also give an API key or token header, pass it with `--header
 A launch command means the server runs as a local stdio process. Put the whole command after `--`, so Claude Code passes flags such as `-y` to the command that starts the server instead of reading them as its own options. Pass any environment variables the instructions ask for with `--env`, after the server name and before `--`:
 
 ```bash theme={null}
-claude mcp add example --env API_KEY=your-key -- npx -y @example/mcp-server
+claude mcp add <name> --env <KEY>=<value> -- npx -y <MCP_SERVER_PACKAGE>
 ```
 
 [Option 3](#option-3-add-a-local-stdio-server) covers the `--` separator in full.
@@ -208,7 +208,7 @@ For example, this block:
   "mcpServers": {
     "example": {
       "command": "npx",
-      "args": ["-y", "@example/mcp-server"]
+      "args": ["-y", "<MCP_SERVER_PACKAGE>"]
     }
   }
 }
@@ -217,7 +217,7 @@ For example, this block:
 becomes this command:
 
 ```bash theme={null}
-claude mcp add-json example '{"command":"npx","args":["-y","@example/mcp-server"]}'
+claude mcp add-json example '{"command":"npx","args":["-y","<MCP_SERVER_PACKAGE>"]}'
 ```
 
 [Add MCP servers from JSON configuration](#add-mcp-servers-from-json-configuration) covers shell escaping and the `--scope` flag for `add-json`. To share the server with your team instead, add `--scope project`, or add the entry under `mcpServers` in `.mcp.json` at your project root and commit it. [Project scope](#project-scope) covers how Claude Code loads and approves that file.
@@ -1468,7 +1468,7 @@ Connectors from claude.ai are fetched only when your active [authentication meth
 * `ANTHROPIC_API_KEY`, `ANTHROPIC_AUTH_TOKEN`, or `apiKeyHelper` is active
 * A third-party provider such as Amazon Bedrock or Google Cloud's Agent Platform is active
 * `ANTHROPIC_PROFILE`, the federation variables, or an active [Anthropic profile](https://code.claude.com/docs/en/authentication.md#anthropic-profiles-and-federation-credentials) supplies the credential
-* `CLAUDE_CODE_OAUTH_TOKEN` holds a token from [`claude setup-token`](https://code.claude.com/docs/en/authentication#generate-a-long-lived-token), which can only make model requests
+* `CLAUDE_CODE_OAUTH_TOKEN` holds a token from [`claude setup-token`](https://code.claude.com/docs/en/authentication#generate-a-long-lived-token)
 
 If `/mcp` doesn't list a connector you added, run `/status` to confirm which authentication method is active. Unset that environment variable, remove the `apiKeyHelper` setting, or [switch off the profile](https://code.claude.com/docs/en/authentication.md#anthropic-profiles-and-federation-credentials), then run `/login` to select your claude.ai account.
 

@@ -2173,6 +2173,7 @@ The `capabilities` array names the protocol behaviors this CLI implements, so yo
 | - | - |
 | `interrupt_receipt_v1` | [`interrupt()`](#query-object) resolves with an [`SDKControlInterruptResponse`](#sdkcontrolinterruptresponse) receipt listing the messages that were pending when the interrupt arrived |
 | `interrupt_cancel_queued_v1` | The `interrupt` control request honors `cancel_queued: true`, cancelling the messages the receipt would otherwise list under `still_queued` and listing them under `cancelled` instead. See [`SDKControlInterruptResponse`](#sdkcontrolinterruptresponse). Requires Claude Code v2.1.219 or later |
+| `ask_user_question_unanswered_v1` | Your application can mark a skipped [`AskUserQuestion`](#askuserquestion) question with `unanswered`. Claude Code advertises this capability in v2.1.312 or later |
 | `sdk_mcp_manifests` | The `initialize` control request accepts `sdkMcpServerManifests`, MCP handshake results captured from your in-process [SDK MCP servers](https://code.claude.com/docs/en/agent-sdk/custom-tools.md). Claude Code advertises this capability in v2.1.286 or later |
 | `sdk_mcp_tools_list_changed` | A `tools/list_changed` notification from an [SDK MCP server](https://code.claude.com/docs/en/agent-sdk/custom-tools.md) makes Claude Code list that server's tools again, so a tool the server adds mid-session reaches Claude. Claude Code advertises this capability in v2.1.286 or later |
 
@@ -3408,6 +3409,21 @@ type AskUserQuestionInput = {
 
 Asks the user clarifying questions during execution. See [Handle approvals and user input](https://code.claude.com/docs/en/agent-sdk/user-input.md#handle-clarifying-questions) for usage details.
 
+When a user skips a question, describe the skip in `answers`, which Claude reads. To tell a skip from an answer in [`tool_use_result`](#sdkusermessage), also set [`unanswered`](#askuserquestion-2) on that question's entry in `updatedInput.annotations`. Set `unanswered` only when [`SDKSystemMessage.capabilities`](#sdksystemmessage) lists `ask_user_question_unanswered_v1`.
+
+This `canUseTool` return value sets `answers` and `unanswered`:
+
+```typescript theme={null}
+return {
+  behavior: "allow",
+  updatedInput: {
+    questions: input.questions,
+    answers: { "Which database should I use?": "The user skipped this question" },
+    annotations: { "Which database should I use?": { unanswered: "skipped" } }
+  }
+};
+```
+
 ### Bash
 
 **Tool name:** `Bash`
@@ -4203,12 +4219,14 @@ type AskUserQuestionOutput = {
   }>;
   answers: Record<string, string>;
   response?: string;
-  annotations?: Record<string, { preview?: string; notes?: string }>;
+  annotations?: Record<string, { preview?: string; notes?: string; unanswered?: "skipped" | "replied_in_chat" | "dismissed" }>;
   afkTimeoutMs?: number;
 };
 ```
 
 Returns the questions asked and the user's answers. `response` is set when the user typed a freeform reply instead of answering the structured questions; when present, Claude receives "The user responded: …" instead of the per-question answer list.
+
+When your app sets `unanswered`, use `skipped` if the user skipped the question, `replied_in_chat` if they sent a chat message instead, or `dismissed` if they closed the question.
 
 ### Bash
 
@@ -4372,18 +4390,32 @@ type FileReadOutput =
         mediaType: "image/jpeg" | "image/png" | "image/gif" | "image/webp";
         error?: string;
       }[];
-    }
-  | {
-      type: "file_unchanged";
-      file: {
-        filePath: string;
-      };
-      /** Set when the dedup matched a startup-seeded entry (CLAUDE.md / nested memory) rather than a prior Read tool_result. */
-      source?: "seeded";
     };
 ```
 
 Returns file contents in a format appropriate to the file type. Discriminated on the `type` field.
+
+Agent SDK v0.3.317 removes `"file_unchanged"` from `FileReadOutput`, so code that checks for it stops compiling. Match your fix to the [Claude Code version](#installation) that produced your Read results:
+
+* **Only v2.1.317 or later**: delete the check.
+* **An earlier version, saved results included**: declare the removed type and cast the Read call's [`tool_use_result`](#sdkusermessage).
+
+For an earlier version, pass this function the user message that carries the Read result, then check the `type` of what it returns:
+
+```typescript theme={null}
+import type { SDKUserMessage } from "@anthropic-ai/claude-agent-sdk";
+import type { FileReadOutput } from "@anthropic-ai/claude-agent-sdk/sdk-tools";
+
+type FileUnchanged = {
+  type: "file_unchanged";
+  file: { filePath: string };
+  source?: "seeded";
+};
+
+function readResult(message: SDKUserMessage) {
+  return message.tool_use_result as FileReadOutput | FileUnchanged;
+}
+```
 
 ### Write
 

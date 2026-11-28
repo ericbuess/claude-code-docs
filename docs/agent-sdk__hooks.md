@@ -817,7 +817,7 @@ const myHook: HookCallback = async (input, toolUseID, { signal }) => {
 
 Claude Code runs each callback with a timeout, which you set in seconds with the `timeout` field on its `HookMatcher`. When you don't set one, Claude Code uses the event's default: 600 seconds for most events, 30 seconds for `UserPromptSubmit`, `PreModelSwitch`, and `PostModelSwitch`, and 10 seconds for `MessageDisplay`. Claude Code runs `SessionEnd` callbacks during shutdown under the shorter [SessionEnd timeout budget](https://code.claude.com/docs/en/hooks.md#sessionend-input), 1.5 seconds by default.
 
-When a callback exceeds its timeout, Claude Code cancels it and discards its output, and the session continues rather than hanging. What happens next depends on the event:
+When a callback exceeds its timeout, Claude Code cancels it and discards its output. On the events below, Claude Code then blocks the action or continues without the callback:
 
 * `PreToolUse`: Claude Code blocks the tool call. If every other hook returned nothing or only an `allow` decision, the tool result tells Claude the hook didn't respond before its timeout, and the turn continues. If another of your hooks already denied the call, its deny still reaches Claude: the tool result includes that hook's reason, and the timeout text can follow it.
 
@@ -828,7 +828,7 @@ When a callback exceeds its timeout, Claude Code cancels it and discards its out
 * `SessionStart`: the timed-out callback counts as returning no output, and the session continues with the output of your other `SessionStart` hooks.
 * `PreModelSwitch`: Claude Code blocks the model switch. A hook that doesn't answer hasn't approved the switch.
 * `WorktreeCreate`: worktree creation fails with an error.
-* Other events, such as `Notification`, `PreCompact`, and `PostModelSwitch`: Claude Code logs the failure and continues. With [`onFailure: "block"`](#block-the-action-when-a-callback-fails), a timeout on `PreCompact` or `Elicitation` blocks the action.
+* `Notification`, `PreCompact`, and `PostModelSwitch`: Claude Code logs the failure and continues. To block compaction when a `PreCompact` callback times out, set [`onFailure: "block"`](#block-the-action-when-a-callback-fails).
 
 The first time a `Stop` or `SessionStart` callback times out in the main session, Claude Code also adds an [`SDKInformationalMessage`](https://code.claude.com/docs/en/agent-sdk/typescript#sdkinformationalmessage) to the message stream saying the app driving the session didn't respond. Later timeouts don't repeat that message while your app stays unresponsive.
 

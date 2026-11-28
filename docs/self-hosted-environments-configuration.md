@@ -820,9 +820,9 @@ The Stop hook checks which commit each submodule is on, not the files inside it:
 
 ### Replace an earlier copy of the Stop hook script
 
-Search your copy of `stop-hook-nudge.sh` for the text `checked out in the project directory`. If it's missing, you have an earlier copy. Replace it now with the [current script](#prompt-sessions-to-push-their-work) wherever you installed it, then restart the runners. Keep your Stop hook settings, except to raise `timeout` on a large checkout.
+Search your copy of `stop-hook-nudge.sh` for the text `checked out in the project directory`. If the text is missing, replace that earlier copy now with the [current script](#prompt-sessions-to-push-their-work) wherever you installed it, then restart the runners. Keep your Stop hook settings, except to raise `timeout` on a large checkout.
 
-After you replace the script, the prompt about unpushed commits no longer includes the branch name. If your earlier copy prompted Claude about uncommitted files in a submodule, that prompt stops. For how the current script treats submodules, see [Submodules and the Stop hook](#submodules-and-the-stop-hook).
+If your checkouts have submodules, check [how the current script treats them](#submodules-and-the-stop-hook). Any prompt about uncommitted files in a submodule stops after you replace the script.
 
 > [!WARNING]
 >

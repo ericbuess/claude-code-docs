@@ -378,6 +378,7 @@ Press `?` in agent view to see shortcuts in context. The table below summarizes 
 | `Esc` | Close the peek panel, clear the input, or exit. On Claude Code v2.1.323 or later, clearing a prompt takes two presses. When you opened agent view by backgrounding your session with `←`, the final `Esc` returns to that conversation instead of exiting. With [vim editor mode](https://code.claude.com/docs/en/interactive-mode.md#vim-editor-mode) on, pressing `Esc` in the input switches from INSERT to NORMAL mode and keeps your text, as in the main prompt |
 | `Ctrl+Y` | In the dispatch input, restore the text you last cleared, or removed with `Ctrl+K`, `Ctrl+U`, or `Ctrl+W`. When agent view exits, that text is gone |
 | `Ctrl+C` | Clear the input; press twice to exit. While text on screen is selected, the press clears the selection instead, copying it first unless [selecting already copied it](https://code.claude.com/docs/en/settings-reference.md#copyonselect) |
+| `Ctrl+D` | Delete the character after the cursor. On Claude Code v2.1.311 or later, press twice on an empty dispatch input to exit |
 | `?` | Show shortcuts |
 
 The shortcuts that have an action in the [`Agents` context](https://code.claude.com/docs/en/keybindings#agents-actions) follow your [`keybindings.json`](https://code.claude.com/docs/en/keybindings). So does `Ctrl+G`, through the `Chat` context's `chat:externalEditor` binding.

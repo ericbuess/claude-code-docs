@@ -2512,11 +2512,11 @@ This example turns off automatic compaction and routes API requests through a pr
 
 ### `fileCheckpointingEnabled`
 
-Have Claude Code snapshot files before each edit so [`/rewind`](https://code.claude.com/docs/en/checkpointing) can restore them. Appears in `/config` as **Rewind code (checkpoints)**, and toggling it there writes this key to your user settings.
+Have Claude Code snapshot the files Claude edits so [`/rewind`](https://code.claude.com/docs/en/checkpointing) can restore them. Appears in `/config` as **Rewind code (checkpoints)**, and toggling it there writes this key to your user settings.
 
 * **Scope**: [`Any file`](#scopes)
 * **Type**: Boolean
-  * `true`: Claude Code snapshots files before each edit so `/rewind` can restore them
+  * `true`: Claude Code snapshots the files Claude edits so `/rewind` can restore them
   * `false`: Claude Code doesn't snapshot files, so `/rewind` can't restore them
 * **Default**: `true`
 * **Per-session overrides**: [`CLAUDE_CODE_DISABLE_FILE_CHECKPOINTING`](https://code.claude.com/docs/en/env-vars) turns checkpointing off for one session; whichever of the two turns it off, the other can't turn it back on
@@ -2780,7 +2780,9 @@ If the shell you name isn't available, Claude Code uses the other one: `"powersh
 
 ### `dialogExpiry`
 
-Set the deadline for dialogs Claude Code [forwards to a remote client](https://code.claude.com/docs/en/remote-control.md#limitations), such as a Remote Control or SDK host, and for the approval dialog for a [held cross-session message](https://code.claude.com/docs/en/cross-session-messaging.md#control-inbound-messages). On Claude Code v2.1.236 or later, the same deadline bounds the mid-session [Fable usage-credits consent prompt](https://code.claude.com/docs/en/model-config.md#fable-and-usage-credits) in a session that may have nobody at the terminal. When no answer arrives before the deadline, Claude Code cancels the dialog and continues with its no-action default. Requires Claude Code v2.1.224 or later.
+Set the deadline for dialogs Claude Code [forwards to a remote client](https://code.claude.com/docs/en/remote-control.md#limitations), such as a Remote Control or SDK host, and for the approval dialog for a [held cross-session message](https://code.claude.com/docs/en/cross-session-messaging.md#control-inbound-messages). Requires Claude Code v2.1.224 or later. On Claude Code v2.1.236 or later, the same deadline applies to the mid-session [Fable usage-credits consent prompt](https://code.claude.com/docs/en/model-config.md#fable-and-usage-credits) in some sessions.
+
+When no answer arrives before the deadline, Claude Code cancels the dialog and continues with its no-action default, or ends the turn for the Fable prompt.
 
 * **Scope**: [`User or managed`](#scopes)
 * **Type**: string, one of `"60s"`, `"5m"`, `"10m"`, or `"never"`, which disables the deadline
@@ -5708,7 +5710,7 @@ The desktop app manages some plugins itself, including plugins synced from claud
 
 Block CLI startup until Claude Code has freshly fetched [server-managed settings](https://code.claude.com/docs/en/server-managed-settings.md). If the fetch fails, Claude Code exits instead of continuing with cached or no settings. Set it when your environment can't accept even a brief window in which a session runs without its managed policy.
 
-When the key is unset, Claude Code doesn't block startup on the fetch, though when the developer signs in at startup it waits up to five seconds for the fetch. [Anthropic can require the settings](https://code.claude.com/docs/en/server-managed-settings.md#fetch-and-caching-behavior), which does block a start without them. A Cloud gateway session waits, and exits if the gateway can't be reached.
+When the key is unset, Claude Code doesn't block startup on the fetch, though when the developer signs in at startup it waits up to five seconds for the fetch. On a saved Team or Enterprise claude.ai login, [Anthropic usually requires the settings](https://code.claude.com/docs/en/server-managed-settings.md#fetch-and-caching-behavior), and then a session with no recent cached copy can't start until they load. A Cloud gateway session waits, and exits if the gateway can't be reached.
 
 * **Scope**: [`Managed`](#scopes). Claude Code honors a `true` from any admin-controlled managed source, even one that isn't the highest-priority source.
 * **Type**: Boolean

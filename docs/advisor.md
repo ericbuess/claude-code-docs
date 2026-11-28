@@ -32,7 +32,7 @@ You can set the advisor model in three ways:
 
 Each of these enables the advisor for sessions whose main model [supports it](#choose-an-advisor-model). After the session starts, Claude Code shows an `Advisor Tool (experimental) is on and may use more tokens · /advisor` notification. To stop using the advisor, see [Turn the advisor off](#turn-the-advisor-off).
 
-On some plans, Fable as the advisor also needs your one-time [consent to bill Fable usage to usage credits](https://code.claude.com/docs/en/model-config.md#fable-and-usage-credits). For what happens before you have given that consent, see [Fable advisor and usage credits](#fable-advisor-and-usage-credits).
+On some plans, Fable as the advisor also needs your [consent to bill Fable usage to usage credits](https://code.claude.com/docs/en/model-config.md#fable-and-usage-credits). For what happens before you have given that consent, see [Fable advisor and usage credits](#fable-advisor-and-usage-credits).
 
 ### Use the `/advisor` command
 
@@ -53,8 +53,6 @@ The command also works where there is no terminal picker: in [non-interactive mo
 Claude Code doesn't invoke a saved advisor that an [`availableModels`](https://code.claude.com/docs/en/model-config#restrict-model-selection) allowlist in your settings excludes. To use the advisor, pick an allowed model with `/advisor`.
 
 Claude Code still saves an advisor that your current main model doesn't support. That advisor activates after you switch to a [compatible main model](#choose-an-advisor-model) with [`/model`](https://code.claude.com/docs/en/model-config#setting-your-model). If the API already refused the saved advisor in the current conversation, it stays off until `/clear` or `/compact`, even after you switch models.
-
-On some plans, Fable as the advisor also needs your one-time [consent to bill Fable usage to usage credits](https://code.claude.com/docs/en/model-config.md#fable-and-usage-credits). For what `/advisor fable` does before you have given that consent, see [Fable advisor and usage credits](#fable-advisor-and-usage-credits).
 
 ### Set `advisorModel` in settings
 
@@ -116,7 +114,7 @@ Claude Code validates the pairing before sending a request, and the API validate
 
 ### Fable advisor and usage credits
 
-On some plans, Fable usage bills to usage credits, and Fable as the advisor bills the same way. If your account requires the [one-time consent to bill Fable usage to usage credits](https://code.claude.com/docs/en/model-config.md#fable-and-usage-credits), Claude Code asks for it when you select a Fable model with `/model` and doesn't apply Fable as the advisor until you have accepted that consent.
+On some plans, Fable usage bills to usage credits, and Fable as the advisor bills the same way. If your account requires the [consent to bill Fable usage to usage credits](https://code.claude.com/docs/en/model-config.md#fable-and-usage-credits), accept it before you use Fable as the advisor.
 
 Before you have accepted it, Claude Code doesn't save Fable as the advisor when you type `/advisor fable` or pick Fable in the `/advisor` picker. It points you to `/model fable` instead. With `claude --advisor fable`, Claude Code exits at launch with a message that points to `/model fable`. In a [background session](#use-the-advisor-flag), it starts the session without the advisor instead of exiting. With Fable already saved as your `advisorModel`, Claude Code sends requests without the advisor. In an interactive session whose main model supports the advisor, it also shows a notification that points to `/model fable`.
 

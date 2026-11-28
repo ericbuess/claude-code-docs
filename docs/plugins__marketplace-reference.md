@@ -262,7 +262,7 @@ A bare name is a single directory name with no `/`, such as `"formatter"`. To wr
 
 An `npm` source takes these fields:
 
-* `package`: a registry package name such as `@your-org/formatter`, a name with a version appended such as `@your-org/formatter@2.0.0`, or an `https` link to the package's tarball file
+* `package`: a registry package name such as `@<SCOPE>/<NAME>`, a name with a version appended such as `@<SCOPE>/<NAME>@2.0.0`, or an `https` link to the package's tarball file
 * `version`: a version, a semver range, or a dist-tag, used when `package` is a package name with no version appended. Omit it to fetch `latest`
 * `registry`: a registry URL for a package that isn't on the default registry
 
@@ -281,7 +281,7 @@ The `registry` URL must use `https` unless it is the installing user's own defau
   "name": "formatter",
   "source": {
     "source": "npm",
-    "package": "@your-org/formatter",
+    "package": "@<SCOPE>/<NAME>",
     "version": "^2.0.0",
     "registry": "https://npm.example.com"
   }

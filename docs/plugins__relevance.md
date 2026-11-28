@@ -119,7 +119,7 @@ Each `manifestDeps` entry pairs two JavaScript `RegExp` source strings:
 * `file`: matched case-insensitively against the manifest file's path. The path is typically absolute, so anchor the pattern at the end rather than the start. Paths aren't separator-normalized for this signal, so Windows paths use backslashes.
 * `pattern`: matched case-sensitively against that file's contents.
 
-The following example uses `manifestDeps` to suggest your plugin once Claude has read a `package.json` that depends on your SDK's npm package, named `your-sdk` here.
+The following example uses `manifestDeps` to suggest your plugin once Claude has read a `package.json` that depends on your SDK's npm package, named `<SDK_PACKAGE>` here.
 
 ```json theme={null}
 {
@@ -130,7 +130,7 @@ The following example uses `manifestDeps` to suggest your plugin once Claude has
       "manifestDeps": [
         {
           "file": "[/\\\\]package\\.json$",
-          "pattern": "\"your-sdk\"\\s*:"
+          "pattern": "\"<SDK_PACKAGE>\"\\s*:"
         }
       ]
     }

@@ -394,7 +394,7 @@ Use the `env` field to pass API keys, tokens, and other credentials to the MCP s
 >     mcpServers: {
 >       "api-server": {
 >         command: "npx",
->         args: ["-y", "@your-org/api-mcp-server"],
+>         args: ["-y", "<MCP_SERVER_PACKAGE>"],
 >         env: {
 >           API_KEY: process.env.API_KEY
 >         }
@@ -410,7 +410,7 @@ Use the `env` field to pass API keys, tokens, and other credentials to the MCP s
 >     mcp_servers={
 >         "api-server": {
 >             "command": "npx",
->             "args": ["-y", "@your-org/api-mcp-server"],
+>             "args": ["-y", "<MCP_SERVER_PACKAGE>"],
 >             "env": {"API_KEY": os.environ["API_KEY"]},
 >         }
 >     },
@@ -425,7 +425,7 @@ Use the `env` field to pass API keys, tokens, and other credentials to the MCP s
 >   "mcpServers": {
 >     "api-server": {
 >       "command": "npx",
->       "args": ["-y", "@your-org/api-mcp-server"],
+>       "args": ["-y", "<MCP_SERVER_PACKAGE>"],
 >       "env": {
 >         "API_KEY": "${API_KEY}"
 >       }

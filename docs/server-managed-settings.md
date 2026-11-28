@@ -220,7 +220,7 @@ A client signed in through a [Claude apps gateway](#platform-availability) fetch
 
 > [!NOTE]
 >
-> On a Team or Enterprise claude.ai login stored on the machine, Anthropic can require your organization's settings before a session starts. When it does, whatever the lists below say, a developer [can't start a session](https://code.claude.com/docs/en/errors.md#couldnt-load-your-organizations-settings) in cases such as these:
+> On a Team or Enterprise claude.ai login saved by the CLI or the VS Code extension, Anthropic usually requires your organization's settings before a session starts. This requirement takes precedence over the launch behavior below. When it applies, a developer [can't start a session](https://code.claude.com/docs/en/errors.md#couldnt-load-your-organizations-settings) in cases such as these:
 >
 > * Their sign-in has expired, until they run `claude auth login`
 > * Claude Code has neither the settings nor a recent cached copy. Check that the machine can reach `api.anthropic.com`
@@ -231,7 +231,7 @@ A client signed in through a [Claude apps gateway](#platform-availability) fetch
 
 * When a developer signs in at startup, such as on a first run or after `/logout`, Claude Code waits up to five seconds for the fetch before it opens the session. When the policy arrives in time, Claude Code enforces it from the first screen and shows your [`companyAnnouncements`](https://code.claude.com/docs/en/settings-reference#companyannouncements) on it. When the payload needs [security approval](#security-approval-dialogs), Claude Code ends the wait and applies the payload once the developer approves
 * In any other startup, and when that five-second wait runs out, Claude Code opens the session while the fetch continues, so a brief window passes before the settings load and the restrictions take effect
-* If the fetch fails, Claude Code continues without server-managed settings and warns in interactive sessions and in [Claude Desktop's Code tab](https://code.claude.com/docs/en/desktop.md) that no remote policy applies; endpoint-managed settings still apply. If a managed source sets [`forceRemoteSettingsRefresh`](#enforce-fail-closed-startup), Claude Code exits instead
+* If the fetch fails, a session that does start runs without server-managed settings, and endpoint-managed settings still apply. Claude Code warns in interactive sessions and in [Claude Desktop's Code tab](https://code.claude.com/docs/en/desktop.md) that no remote policy applies. If a managed source sets [`forceRemoteSettingsRefresh`](#enforce-fail-closed-startup), Claude Code exits
 
 **Subsequent launches with cached settings:**
 
@@ -244,7 +244,7 @@ A client signed in through a [Claude apps gateway](#platform-availability) fetch
 * If a session's provider isn't on the cached [`allowedProviders`](https://code.claude.com/docs/en/settings-reference#allowedproviders) list, Claude Code can wait for that fetch and check again before refusing. If the fetch fails, the session is refused
 * Plan for cached settings to expire 24 hours after the last successful fetch
 * If the startup fetch fails before cached settings expire, Claude Code warns in interactive sessions and in the Code tab that the cached policy is in effect
-* If the startup fetch fails after cached settings expire, the session starts without server-managed settings, and the warning says that no remote policy applies. To have Claude Code exit instead, set [`forceRemoteSettingsRefresh`](#enforce-fail-closed-startup)
+* If the startup fetch fails after cached settings expire, a developer on a saved Team or Enterprise claude.ai login usually can't start a session. A session that does start can run without server-managed settings, and then the warning says that no remote policy applies. To have Claude Code exit instead, set [`forceRemoteSettingsRefresh`](#enforce-fail-closed-startup)
 * Until a fetch succeeds, the values withheld at startup stay withheld
 
 Claude Code withholds several categories of variables in the cached `env` block until the server confirms the payload for the session. This keeps a cached proxy, certificate authority, endpoint, or credential value from redirecting, intercepting, or re-authenticating the settings fetch that confirms the payload. The hardening applies only to the server-fetched settings cache: [endpoint-managed settings](https://code.claude.com/docs/en/managed-settings.md#delivery-mechanisms) deployed through MDM or `managed-settings.json` are unaffected. The withheld categories include:
@@ -292,9 +292,9 @@ To debug delivery issues, run `claude --debug-file <path>` and search the log fo
 
 ### Enforce fail-closed startup
 
-By default, if the remote settings fetch fails at startup, the CLI continues with the settings cached from the last successful fetch, unless they've [expired](#fetch-and-caching-behavior). The [values Claude Code withholds](#fetch-and-caching-behavior) stay withheld until a fetch succeeds. With expired or no cached settings, the CLI continues without server-managed settings and still applies any [endpoint-managed settings](https://code.claude.com/docs/en/managed-settings.md#delivery-mechanisms) on the device. [Anthropic can require the settings](#fetch-and-caching-behavior) instead.
+By default, if the remote settings fetch fails at startup, the CLI continues on unexpired cached settings, with [exceptions](#fetch-and-caching-behavior). The [values Claude Code withholds](#fetch-and-caching-behavior) stay withheld until a fetch succeeds.
 
-To stop clients from starting on cached or absent server-managed settings, set `forceRemoteSettingsRefresh: true` in your managed settings.
+If the fetch fails with expired or no cached settings, a developer on a saved Team or Enterprise claude.ai login [usually can't start a session](#fetch-and-caching-behavior). A session that does start can run without server-managed settings and still applies any [endpoint-managed settings](https://code.claude.com/docs/en/managed-settings.md#delivery-mechanisms) on the device. To stop clients from starting on cached or absent server-managed settings, set `forceRemoteSettingsRefresh: true` in your managed settings.
 
 Clients signed in through a [Claude apps gateway](#platform-availability) wait for the startup fetch whether or not you set this, and handle a failed fetch as follows:
 
@@ -434,7 +434,7 @@ Server-managed settings provide centralized policy enforcement, but they operate
 | User deletes the cached settings file | [First-launch behavior](#fetch-and-caching-behavior) occurs |
 | User runs a modified Claude Code binary | A user who can run a modified client can bypass any client-side control |
 | User runs an older Claude Code version | Versions that predate server-managed settings don't fetch or apply them |
-| API is unavailable | Cached settings apply if available and not [expired](#fetch-and-caching-behavior). Without them, Claude Code enforces no server-managed settings until the next successful fetch. [Fetch and caching behavior](#fetch-and-caching-behavior) lists the exceptions, including when Anthropic requires the settings. With `forceRemoteSettingsRefresh: true`, the CLI exits instead of continuing, except for [`claude auth` subcommands](#enforce-fail-closed-startup). Clients signed in through a [Claude apps gateway](#platform-availability) exit at startup without that setting, with the same `claude auth` exemption |
+| API is unavailable | Unexpired cached settings apply, with [exceptions](#fetch-and-caching-behavior). With expired or missing cached settings, a session on a saved Team or Enterprise claude.ai login [usually can't start](#fetch-and-caching-behavior). A session that does start can run without server-managed settings until a fetch succeeds. With `forceRemoteSettingsRefresh: true` or a [Claude apps gateway](#platform-availability) sign-in, the CLI exits at startup even with a cached copy, except for [`claude auth` subcommands](#enforce-fail-closed-startup) |
 | User authenticates with a different organization | Settings are not delivered for accounts outside the managed organization, including a session that authenticates with a [Console API key](#platform-availability) |
 | User configures a [third-party model provider](#platform-availability) | Server-managed settings are bypassed. This includes setting `CLAUDE_CODE_USE_BEDROCK`, `CLAUDE_CODE_USE_MANTLE`, `CLAUDE_CODE_USE_VERTEX`, `CLAUDE_CODE_USE_FOUNDRY`, `CLAUDE_CODE_USE_ANTHROPIC_AWS`, or a non-default `ANTHROPIC_BASE_URL` |
 | Network traffic is intercepted or redirected | Disabled TLS validation or intercepted traffic can alter the settings the client receives |

@@ -418,7 +418,7 @@ A mod reaches the file system, processes, and the network through the mods API, 
 | `$.fs` | `read(path)`, `write(path, text)`, `exists(path)`, `stat(path)`, and `list(path)` work on files and directories |
 | `$.process` | `run(['git', 'status'])` starts a command and resolves when it exits. `spawn` streams a long-running command's output. |
 | `$.http` | `fetch(url, init)` over `http` or `https`. It resolves to `{ status, ok, headers, text }` once the body is read. |
-| `$.store` | A JSON key-value store of your plugin's own, kept between sessions |
+| `$.store` | A JSON key-value store of your plugin's own, kept between local sessions on the same machine. For how long values last, locally and in Anthropic-hosted cloud sessions, see [Keep state](https://code.claude.com/docs/en/plugins/mods/interface.md#keep-state). |
 | `$.env` | `get` and `set` environment variables. Write the name as a string literal. |
 | `$.settings` | `read()` resolves to all settings, merged into one object. With `{ source }` or `{ key }`, it resolves to [one source's settings or one key's value](#read-one-source-or-one-key) instead. |
 | `$.session` | `messages()` returns the transcript as a list of `{ role, text, toolUses }`. Also the working directory, model, and more. [`usage()`](https://code.claude.com/docs/en/plugins/mods/reference#mods-api-methods) returns context window use and plan limits. |

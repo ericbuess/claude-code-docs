@@ -289,7 +289,8 @@ Most organizations allow the official marketplace and their own, and register bo
       "source": { "source": "github", "repo": "anthropics/claude-plugins-official" }
     },
     "your-marketplace": {
-      "source": { "source": "github", "repo": "your-org/your-marketplace" }
+      "source": { "source": "github", "repo": "your-org/your-marketplace" },
+      "autoUpdate": true
     }
   },
   "enabledPlugins": {
@@ -351,7 +352,8 @@ With any of these mechanisms, the stable group receives this setting:
 {
   "extraKnownMarketplaces": {
     "stable-tools": {
-      "source": { "source": "github", "repo": "your-org/stable-tools" }
+      "source": { "source": "github", "repo": "your-org/stable-tools" },
+      "autoUpdate": true
     }
   }
 }

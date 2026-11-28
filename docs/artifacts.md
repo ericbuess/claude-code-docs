@@ -353,6 +353,58 @@ Claude Docs reaches Claude Code as a claude.ai [connector](https://code.claude.c
 
 A document that belongs in the codebase, such as a README, stays a file. To get a file for something Claude would otherwise put in Claude Docs, name the format, such as `.docx` or a Markdown file in the repository. To turn off only the `claude.ai Claude Docs` connector, see [Disable claude.ai connectors](https://code.claude.com/docs/en/mcp.md#disable-claude-ai-connectors). Keep the connector on if you use the Sheets template, which needs it too.
 
+## Sync a design system from your repository
+
+[`/design-sync`](https://code.claude.com/docs/en/commands#all-commands) publishes the components in a React design system's repository to claude.ai as a [Design System artifact](https://support.claude.com/en/articles/14604397), so your designs use your real components.
+
+Run `/design-sync` at the Claude Code prompt in the repository, optionally with a hint such as the design system's name:
+
+```text wrap theme={null}
+/design-sync Acme DS
+```
+
+If the repository has no earlier sync, Claude asks you to confirm a name, creates a new artifact, and gives you its link. A first-time sync verifies every component and can take a few hours on a large repository. The new artifact is private to you until you [share it](#share-an-artifact). To keep syncing to the same artifact:
+
+* **Change the design system in the code**: the artifact's page is read-only after a sync, so edit the code and run `/design-sync` again.
+* **Commit `.design-sync/artifact.json`**: Claude records the artifact's link in this file, so you and your teammates update the same artifact on later syncs.
+* **Let teammates sync**: on Team and Enterprise plans, make them [editors](#let-someone-edit-with-you) of the artifact so their syncs can publish to it.
+
+### Move a design system from standalone Claude Design
+
+If your repository synced to standalone Claude Design, the separate site at claude.ai/design, move the design system to an artifact. The site closes by December 14, 2026. If the design system has already moved, `/design-sync` follows it without asking about the move, so go to step 4.
+
+**1. Get the design system's link**
+
+When `/design-sync` asks "Move this design system to Claude now?", select **Move it to Claude**. Claude gives you the link to the design system's page in standalone Claude Design and waits for you to say how the move went. To send this sync to standalone Claude Design and get the question again next time, select **Not now**.
+
+**2. Start the move**
+
+If you own the design system, open the link and [start the move](https://support.claude.com/en/articles/17440474-move-from-standalone-claude-design-to-claude). If someone else owns it, send them the link. Ask them to tell you when the move finishes and to make you an [editor](#let-someone-edit-with-you) of the artifact.
+
+**3. Sync to the moved design system**
+
+After the move finishes, tell Claude it's done or run `/design-sync` again.
+
+**4. Check the files and confirm**
+
+You can't undo this sync's changes to the artifact. When Claude shows the artifact's link and the files to replace or remove, decide whether you need the current versions of those files:
+
+* **You don't need them**: confirm.
+* **You need them or aren't sure**: decline, open the artifact's link, and select **Duplicate** in the title menu to keep a backup. If **Duplicate** is unavailable, ask the owner to duplicate the artifact. Then run `/design-sync` again and confirm.
+
+### Check why `/design-sync` didn't publish an artifact
+
+If `/design-sync` says it can't publish, offers only to build locally, or uploads to standalone Claude Design when you didn't choose that, check each of these requirements:
+
+* Claude Code v2.1.329 or later, with [feature-flag fetching](https://code.claude.com/docs/en/env-vars.md#features-that-need-feature-flag-fetching) on
+* A local session where [artifacts are available](#availability) for your plan and sign-in. [Cloud sessions](https://code.claude.com/docs/en/claude-code-on-the-web.md) and sessions served by [`claude remote-control`](https://code.claude.com/docs/en/remote-control) can't sync to an artifact.
+* On Team and Enterprise plans, **Design systems** turned on under [**Organization settings > Artifacts**](https://claude.ai/admin-settings/artifacts). It's on by default on Team plans and off on Enterprise plans. If your organization uses custom roles, your role also needs the [**Design systems** capability](https://support.claude.com/en/articles/16994751-artifacts-admin-guide-for-team-and-enterprise-plans#h_d830917488). If either is missing, ask an Owner to turn on the setting or add the capability to your role.
+* If the design system already has an artifact, permission to edit that artifact as the owner or an [editor](#let-someone-edit-with-you), and no [public link](#share-an-artifact) to it. Ask the owner to make you an editor or remove the public link.
+
+If the design system has no artifact yet and your version or session misses one of the first two requirements, `/design-sync` uploads to standalone Claude Design at claude.ai/design. That site closes by December 14, 2026.
+
+After you fix what's missing, start a new session and run `/design-sync` again.
+
 ## Page constraints
 
 Each artifact is served under a strict Content Security Policy (CSP) that limits what the page can do.

@@ -1379,7 +1379,7 @@ If your plugin's SessionStart hook supplies `initialUserMessage` or `sessionTitl
 
 To make skills that a SessionStart hook installs available in the same session, return `reloadSkills`. Skill discovery normally runs before SessionStart hooks finish, so without it, files a hook writes into `~/.claude/skills/` or `.claude/skills/` can be missing when the first prompt runs.
 
-This example syncs a shared skills repository and requests the re-scan:
+This example syncs a repository that has one `SKILL.md` at its root, then requests the re-scan:
 
 ```bash theme={null}
 #!/bin/bash
@@ -1390,7 +1390,7 @@ git -C ~/.claude/skills/team-skills pull --quiet 2>/dev/null || \
 echo '{"hookSpecificOutput": {"hookEventName": "SessionStart", "reloadSkills": true}}'
 ```
 
-The repository URL is a placeholder. Replace it with your skills repository's HTTPS or SSH URL. With `protocol.file.allow=never` in the command, you can't clone from a folder path.
+The repository URL is a placeholder. Replace it with your skill repository's HTTPS or SSH URL. With `protocol.file.allow=never` in the command, you can't clone from a folder path.
 
 #### Persist environment variables
 

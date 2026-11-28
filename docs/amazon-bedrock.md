@@ -234,7 +234,9 @@ When enabling Amazon Bedrock for Claude Code, keep the following in mind:
 
 Set these environment variables to specific Amazon Bedrock model IDs.
 
-Without `ANTHROPIC_DEFAULT_OPUS_MODEL`, the `opus` alias on Amazon Bedrock resolves to Opus 5.5, and without `ANTHROPIC_DEFAULT_SONNET_MODEL`, the `sonnet` alias resolves to Sonnet 4.5. This example pins each alias to a specific version:
+Without `ANTHROPIC_DEFAULT_OPUS_MODEL`, the `opus` alias on Amazon Bedrock resolves to Opus 5.5. Without `ANTHROPIC_DEFAULT_SONNET_MODEL`, the `sonnet` alias resolves to Sonnet 4.5, or to Sonnet 5 in a session that uses only [Mantle](#use-the-mantle-endpoint).
+
+This example pins each alias to a specific version:
 
 ```bash theme={null}
 export ANTHROPIC_DEFAULT_OPUS_MODEL='us.anthropic.claude-opus-4-8'
@@ -258,18 +260,18 @@ Claude Code uses these default models when no pinning variables are set:
 | Model type | Default model |
 | :- | :- |
 | Primary model | Opus 5.5, for example `us.anthropic.claude-opus-5-5` in a `us-*` region |
-| Small/fast model | Sonnet 4.5, for example `us.anthropic.claude-sonnet-4-5-20250929-v1:0` in a `us-*` region |
+| Small/fast model | Sonnet 4.5 on the Invoke API, for example `us.anthropic.claude-sonnet-4-5-20250929-v1:0` in a `us-*` region |
 
 Before v2.1.280, the primary model on Amazon Bedrock defaulted to Opus 5 and the `opus` alias resolved to Opus 5 from v2.1.219.
 
-Background tasks such as session title generation use the small/fast model, normally a Haiku-class model. On Amazon Bedrock, Claude Code uses the default Sonnet model for background tasks because Haiku may not be enabled in every account or region. Two selections change which model carries them:
+Background tasks such as session title generation use the small/fast model, normally a Haiku-class model. On the Invoke API, Claude Code uses the default Sonnet model for background tasks because Haiku may not be enabled in every account or region. In a session that uses only [Mantle](#use-the-mantle-endpoint), background tasks use the primary model. Two selections change which model carries them:
 
 * When you select a primary model with `--model`, `ANTHROPIC_MODEL`, or the `model` setting, background tasks use that model. When Claude Code starts the session on the model you set with [`ANTHROPIC_DEFAULT_MODEL`](https://code.claude.com/docs/en/model-config#set-a-default-model-for-new-sessions), background tasks use that model too. Setting `ANTHROPIC_DEFAULT_OPUS_MODEL` without `ANTHROPIC_DEFAULT_SONNET_MODEL` also counts as a selection, because the built-in Sonnet model may not be enabled in an account that steers its own Opus.
 * To use Haiku for background tasks, set `ANTHROPIC_DEFAULT_HAIKU_MODEL` to a model ID that is available in your account.
 
 > [!WARNING]
 >
-> Opus models have a higher per-token price than Sonnet models, so if you don't pin a primary model, you're billed at the Opus rate. To use Sonnet 4.5 as the primary model, set `ANTHROPIC_MODEL` to its full model ID. A deployment that steers the default with `ANTHROPIC_DEFAULT_SONNET_MODEL` and doesn't set `ANTHROPIC_DEFAULT_OPUS_MODEL` keeps its steered Sonnet model as the default.
+> Opus models have a higher per-token price than Sonnet models, so if you don't pin a primary model, you're billed at the Opus rate. To use Sonnet 4.5 as the primary model, set `ANTHROPIC_MODEL` to its full model ID. On the Invoke API, a deployment that steers the default with `ANTHROPIC_DEFAULT_SONNET_MODEL` and doesn't set `ANTHROPIC_DEFAULT_OPUS_MODEL` keeps its steered Sonnet model as the default, unless [`enforceAvailableModels`](https://code.claude.com/docs/en/model-config#enforce-the-allowlist-for-the-default-model) is on.
 
 To customize models further, use one of these methods:
 
@@ -345,7 +347,9 @@ When the startup model checks find a model your account can't invoke, Claude Cod
 
 If you set [`enforceAvailableModels`](https://code.claude.com/docs/en/model-config#enforce-the-allowlist-for-the-default-model) in managed settings, the startup model checks use only models your `availableModels` list permits. This applies on the Amazon Bedrock Invoke API and requires Claude Code v2.1.287 or later. A list without `enforceAvailableModels` doesn't restrict these checks.
 
-The checks compare each entry with the inference profile ID they would send, including its [region prefix](#cross-region-inference-profile-prefixes), so write the list in those IDs. This example permits Opus 4.8 and Sonnet 4.5 for a deployment whose models resolve to `us.` profiles:
+The checks compare each entry with the inference profile ID they would send, including its [region prefix](#cross-region-inference-profile-prefixes), so write the list in those IDs.
+
+This example permits Opus 4.8 and Sonnet 4.5 for a deployment whose models resolve to `us.` profiles:
 
 ```json theme={null}
 {

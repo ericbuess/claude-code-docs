@@ -85,7 +85,7 @@ Learn more: [Channels](https://code.claude.com/docs/en/channels.md)
 
 ### Checkpoint
 
-A restore point created at each prompt you send that starts a turn. Claude Code snapshots files before every edit so a checkpoint can revert them. Press `Esc` twice or run `/rewind` to restore code, conversation, or both to an earlier point, or to summarize part of the conversation from a selected message.
+A restore point created at each prompt you send that starts a turn. Claude Code snapshots the files Claude edits so you can restore those files. Press `Esc` twice or run `/rewind` to restore code, conversation, or both to an earlier point, or to summarize part of the conversation from a selected message.
 
 Checkpoints are saved with the conversation, so a resumed session can still `/rewind` to them. Rewinding doesn't undo a Bash command's changes to a file unless Claude had already used its file editing tools on that file in your conversation.
 

@@ -576,10 +576,10 @@ See [Use Claude Code in the cloud](https://code.claude.com/docs/en/claude-code-o
 
 ### Continue in another surface
 
-To continue a session somewhere else, open the session menu from the caret beside the session title or from the session's row in the sidebar, then select **Open in**:
+To continue a session somewhere else, open the session menu from the caret beside the session title or from the session's row in the sidebar:
 
-* Select **Cloud** to continue the session as a [cloud session](https://code.claude.com/docs/en/claude-code-on-the-web.md), with your conversation carried over as a summary. Before you confirm, the dialog states whether your files move too and whether this session is archived once the cloud one is ready. You can't move a session that runs over [SSH](#ssh-sessions) or in [WSL](https://code.claude.com/docs/en/desktop-wsl.md) this way.
-* Select an installed editor or your file manager to open the session's folder on disk there.
+* Select **Continue in cloud** to start a [cloud session](https://code.claude.com/docs/en/claude-code-on-the-web.md) with your conversation carried over as a summary. Before you confirm, the dialog states whether your files move too and whether this session is archived once the cloud one is ready. You can't move a session that runs over [SSH](#ssh-sessions) or in [WSL](https://code.claude.com/docs/en/desktop-wsl.md) this way.
+* Select **Open in**, then an installed editor or your file manager, to open the session's folder in that app
 
 ### Control which sessions appear on your other devices
 

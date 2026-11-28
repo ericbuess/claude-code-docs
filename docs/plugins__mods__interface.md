@@ -159,7 +159,7 @@ export function register(on) {
 
 Each hook also does something the code doesn't make plain:
 
-* **[`session.start`](https://code.claude.com/docs/en/plugins/mods/reference#session)** also reads the saved count from [`$.store`](#keep-state), a key-value store that persists between sessions.
+* **[`session.start`](https://code.claude.com/docs/en/plugins/mods/reference#session)** also reads the saved count from [`$.store`](#keep-state), a key-value store that persists between sessions on your machine.
 * **[`command.run`](https://code.claude.com/docs/en/plugins/mods/api#add-a-command)** only tells Claude Code the pane exists. Opening a pane draws nothing by itself: Claude Code then fires `ui.render` to ask what goes in it.
 * **`ui.render`** returns the element tree, a `Box` that holds other boxes, text, and buttons, and builds it again from `tab` and `count` each time it runs.
 
@@ -441,6 +441,8 @@ Check what `backdrop` takes, what the call's result tells you, and what other mo
 * **Whether the backdrop is drawn**: `$.theme.set` resolves with `isDrawn: true` when a Desktop or mobile app connected to the session says it draws backdrops. Otherwise `isDrawn` is `false` and `reason` says why.
 * **One theme for each session**: a mod that calls `$.theme.set` replaces the session's backdrop, [colors](#change-the-colors-of-the-desktop-app), [message style](#style-messages-in-the-desktop-app), and [sound](#add-sound-to-a-theme), and a mod that calls `$.theme.clear()` removes them, whichever mod set them. Call `$.theme.clear()` only when the user asks for it.
 
+If a backdrop you draw with an [`Svg`](https://code.claude.com/docs/en/plugins/mods/reference#elements) element is blank in the Desktop app, check its markup against the [backdrop `Svg` limits](https://code.claude.com/docs/en/plugins/mods/reference#limits).
+
 ### Animate a backdrop with a shader
 
 To make a [backdrop](#put-a-backdrop-behind-the-conversation) that moves and follows the user's pointer in the Desktop app's Code tab, wrap an `Svg` in a [`Shader`](https://code.claude.com/docs/en/plugins/mods/reference#elements) element. The element names a shader file, which is code that computes each pixel's color on the GPU. The app draws the result over the `Svg`. `Shader` requires Claude Code v2.1.326 or later in the Code tab, so [check the version there](https://code.claude.com/docs/en/desktop.md#claude-code-version-in-the-code-tab) first.
@@ -540,7 +542,9 @@ A CLI older than v2.1.326 reports `"ui.pointer" is not an event`. If yours does,
 
 Start a new local session in the Code tab by sending a message. The background turns dark blue. If it doesn't, turn off any other mod that sets a theme and start a new session, because a session has [one theme](#put-a-backdrop-behind-the-conversation). If the background still doesn't change, [find out why the mod does nothing](https://code.claude.com/docs/en/plugins/mods/troubleshoot.md#find-out-why-a-mod-does-nothing).
 
-Move the pointer. A blue light follows it, and fades when you stop. If no light appears, see [Fix a backdrop that shows only the `Svg`](#fix-a-backdrop-that-shows-only-the-svg). Click the empty space beside the conversation, then move the pointer again. The light is now orange. If it's still blue, answer any permission prompt or question from Claude, then click again quickly without dragging, away from messages and buttons.
+Move the pointer. A blue light follows it, and fades when you stop. If no light appears, see [Fix a backdrop that shows only the `Svg`](#fix-a-backdrop-that-shows-only-the-svg).
+
+Click the empty space beside the conversation, then move the pointer again. The light is now orange. If it's still blue, answer any permission prompt or question from Claude, then click once away from messages and buttons, without holding or dragging, and move the pointer.
 
 To try a change, save `glow.ts` or `register.js`, and the mod reloads in the running session. If the change doesn't show within a few seconds, send a message to load it. To turn the mod off, move `glow` out of `~/.claude/skills/` and start a new session.
 
@@ -1248,7 +1252,7 @@ Where a mod keeps a value decides how long the value lasts: until the module rel
 | `$.state` | The session ends, or the user runs `/clear`, `/resume`, or `/branch` | Values a drawing depends on that should survive a reload |
 | `$.store` | Your mod deletes it, or no session reads or writes the store for [`cleanupPeriodDays`](https://code.claude.com/docs/en/settings-reference#cleanupperioddays). The store is a key-value store, saved as a JSON file of your plugin's own under `~/.claude/plugins/store/`. | Settings, history, anything the user expects to find next time |
 
-`$.store.get(key)` resolves to the value or `undefined`, and `$.store.set(key, value)` takes any JSON value.
+`$.store.get(key)` resolves to the value or `undefined`, and `$.store.set(key, value)` takes any JSON value. Each new session a user starts in an Anthropic-hosted [cloud environment](https://code.claude.com/docs/en/cloud-environments.md) begins without the `$.store` values that earlier sessions saved, so give each value a default.
 
 ### Keep a value in `$.state`
 

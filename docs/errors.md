@@ -41,6 +41,7 @@ Match the message you see to a section below.
 | `Auto mode classifier transcript exceeded context window` | [Server errors](#auto-mode-cannot-determine-the-safety-of-an-action) |
 | `Agent aborted: auto mode classifier request refused by the safety safeguard` | [Server errors](#auto-mode-cannot-determine-the-safety-of-an-action) |
 | `The server-side auto mode classifier gave no verdict` | [Server errors](#the-server-returned-no-safety-verdict) |
+| `Auto mode fell back to billed classifier requests` | [What else `denyInsteadOfPrompting` stops](https://code.claude.com/docs/en/settings-reference#what-else-denyinsteadofprompting-stops) |
 | `<tool> was not reviewed and did not run: the conversation is too long for auto mode's classifier` | [Server errors](#was-not-reviewed-and-did-not-run) |
 | `Auto mode is unavailable — the server returned no safety verdict for the last 10 responses` | [Server errors](#the-server-returned-no-safety-verdict) |
 | `Agent terminated early due to an API error` | [Server errors](#agent-terminated-early-due-to-an-api-error) |
@@ -49,6 +50,7 @@ Match the message you see to a section below.
 | `Usage credits ran out before the response was finished.` | [Add usage credits](https://code.claude.com/docs/en/costs.md#add-usage-credits-to-your-subscription) |
 | `the prompt to confirm went unanswered · nothing was sent`, from v2.1.324 | [Usage limits](#the-prompt-to-confirm-went-unanswered) |
 | `Claude stopped here · send a message to be asked again` | [Usage limits](#the-prompt-to-confirm-went-unanswered) |
+| `Claude stopped here because <model> now requires usage credits` | [Usage limits](#the-prompt-to-confirm-went-unanswered) |
 | `Server is temporarily limiting requests` | [Usage limits](#server-is-temporarily-limiting-requests) |
 | `Request rejected (429)` | [Usage limits](#request-rejected-429) |
 | `Credit balance is too low` | [Usage limits](#credit-balance-is-too-low) |
@@ -159,6 +161,7 @@ Match the message you see to a section below.
 | `Microsoft Foundry authentication failed` | [Authentication](#microsoft-foundry-authentication-failed) |
 | `Gateway refused the request` | [Authentication](#gateway-refused-the-request) |
 | `Could not load AWS credentials` / `Could not load Google Cloud credentials` | [Authentication](#could-not-load-aws-or-google-cloud-credentials) |
+| `Could not load Azure credentials` | [Foundry credentials not loading](https://code.claude.com/docs/en/troubleshoot-install.md#bedrock-agent-platform-or-foundry-credentials-not-loading) |
 | `AWS default-chain credential resolve timed out` | [Authentication](#aws-default-chain-credential-resolve-timed-out) |
 | `Timed out after 60s waiting for AWS` | [Authentication](#bedrock-setup-verification-timed-out-waiting-for-aws) |
 | `A request to AWS timed out. Check your network and proxy settings, then try again.` | [Authentication](#bedrock-setup-verification-timed-out-waiting-for-aws) |
@@ -267,6 +270,7 @@ Match the message you see to a section below.
 | `Couldn't verify your organization's policy for cloud sessions` | [Command-line errors](#couldnt-verify-your-organizations-policy-for-cloud-sessions) |
 | `Cloud sessions aren't available:` followed by why your organization's policy couldn't be loaded | [Command-line errors](#couldnt-verify-your-organizations-policy-for-cloud-sessions) |
 | `Branch '<branch>' was not checked out` | [Teleport requirements](https://code.claude.com/docs/en/claude-code-on-the-web.md#teleport-requirements) |
+| `Loaded from the session's last compaction, so the messages it summarized aren't here.` | [Continue a cloud session in your terminal](https://code.claude.com/docs/en/claude-code-on-the-web.md#from-cloud-to-terminal) |
 | `Cloud sessions aren't available with this Console sign-in. They need a claude.ai sign-in.` | [Unable to get organization UUID](https://code.claude.com/docs/en/claude-code-on-the-web.md#unable-to-get-organization-uuid) |
 | `Cloud sessions need a claude.ai sign-in` | [Unable to get organization UUID](https://code.claude.com/docs/en/claude-code-on-the-web.md#unable-to-get-organization-uuid) |
 | `Nothing was stashed: "<path>" is now a folder in place of a tracked file or link` / `are now folders in place of tracked files or links` | [Command-line errors](#nothing-was-stashed-because-a-folder-replaced-a-tracked-file) |
@@ -402,6 +406,8 @@ Match the message you see to a section below.
 | `installed mods are off for now` | [Check whether mods can load](https://code.claude.com/docs/en/plugins/mods/troubleshoot.md#check-whether-mods-can-load) |
 | `the hooks worker was lost with <mod>'s <event> hook in flight` | Fix the named mod. For one cause, see [`it crashed the hooks worker`](https://code.claude.com/docs/en/plugins/mods/troubleshoot#it-crashed-the-hooks-worker). |
 | `dispatches in a row for fills by <mods>` | Change the named mods so they fill the prompt box at most eight times in a row. |
+| `changed a slash command's typed line` | [Rewrite or add to a prompt](https://code.claude.com/docs/en/plugins/mods/events.md#rewrite-or-add-to-a-prompt) |
+| `no prompt.submit in flight carries an attachment under that id` | Call `$.prompt.media` inside the `prompt.submit` hook whose `e.attachments` lists the `id` you pass. Look up `$.prompt.media` in [the types for your build](https://code.claude.com/docs/en/plugins/mods/create.md#get-the-types-for-your-build). |
 | `Error: No such tool available: <tool name>` | [Tool errors](#no-such-tool-available) |
 | `MCP server "<name>" connection closed before the tool call was answered` | [Tool errors](#connection-closed-before-the-tool-call-was-answered) |
 | `MCP server "<name>" is disabled — re-enable it via /mcp to use its tools` | [Tool errors](#mcp-server-is-disabled) |
@@ -458,7 +464,9 @@ Match the message you see to a section below.
 | `File is not valid UTF-8. It may use a legacy encoding such as Windows-1252, Shift-JIS or GBK, or be binary` | [Tool errors](#file-is-not-valid-utf-8) |
 | `git is not installed on this Mac. To install it, run xcode-select --install, then try again.` | [Tool errors](#git-is-not-installed-on-this-mac) |
 | `Refusing to apply edits to <path>: a hook is configured for file edits in this session` | [Tool errors](#a-hook-is-configured-for-file-edits) |
+| `no longer leads where it did` / `Could not confirm that working directory "<cwd>" is the directory that this command was permission-checked in` | Ask Claude to try again. |
 | `blocking because onFailure is "block"` | [Block the action when a hook fails](https://code.claude.com/docs/en/hooks.md#block-the-action-when-a-hook-fails) |
+| `in one call, so a Write could lose` | Ask Claude to read the whole file in one Read call, or to use Edit. |
 | `the source file is not valid UTF-8 text` / `the source file is not valid UTF-16 text` | [Tool errors](#the-source-file-is-not-valid-utf-8-text) |
 | `the source file has the replacement character U+FFFD` | [Tool errors](#the-source-file-is-not-valid-utf-8-text) |
 | `Not published: that file is on a network share` | [Tool errors](#not-published-that-file-is-on-a-network-share) |
@@ -550,6 +558,7 @@ Match the message you see to a section below.
 | `MCP server <name> is blocked by enterprise managed policy` | [Configuration warnings](#mcp-server-is-blocked-by-enterprise-managed-policy) |
 | `"<name>" is a reserved MCP server name and was not loaded` | [Configuration warnings](#mcp-server-name-is-reserved) |
 | `Managed settings document could not be parsed as a JSON object; none of its settings are in effect. Fix or remove it.` | [Configuration warnings](#managed-settings-document-could-not-be-parsed) |
+| `Your organization's policy could not be read, so this session cannot run a turn.` | Send the error to your administrator. |
 | `Managed settings drop-in directory could not be read` | [Configuration warnings](#managed-settings-document-could-not-be-parsed) |
 | `Unable to read managed policy settings` | [Configuration warnings](#unable-to-read-managed-policy-settings) |
 | `Managed settings contain invalid entries, including PreToolUse/PermissionRequest hooks that are NOT loaded; fix or remove each entry:` | [Configuration warnings](#managed-settings-hooks-not-loaded) |
@@ -1025,24 +1034,26 @@ Before v2.1.268, the message ended with `run /usage-credits to turn them on, or 
 
 ### The prompt to confirm went unanswered
 
-When the [Fable usage-credits consent prompt](https://code.claude.com/docs/en/model-config.md#fable-and-usage-credits) closes with nobody answering it, Claude Code ends the turn with one of these messages:
+When you dismiss the mid-session [Fable usage-credits consent prompt](https://code.claude.com/docs/en/model-config.md#fable-and-usage-credits) or it closes unanswered, Claude Code can end the turn with one of these messages:
 
 ```text theme={null}
 Fable limit reached · continuing on Fable 5.1 uses usage credits, and the prompt to confirm went unanswered · nothing was sent · answer it where this session is running, or /model to change
 Fable 5.1 now uses usage credits · the prompt to confirm went unanswered · nothing was sent · answer it where this session is running, or /model to change
+Claude stopped here because Fable 5.1 now requires usage credits.
 ```
 
-The messages name the session's Fable model, so on Fable 5.2 they read `continuing on Fable 5.2` and `Fable 5.2 now uses usage credits`. With [Remote Control](https://code.claude.com/docs/en/remote-control.md) connected, each message can instead end `Claude stopped here · send a message to be asked again, or switch models`. Before v2.1.257, the first message began `Fable 5 limit reached`.
+The messages name the session's Fable model, so on Fable 5.2 you see text such as `continuing on Fable 5.2` and `Fable 5.2 now uses usage credits`. With [Remote Control](https://code.claude.com/docs/en/remote-control.md) connected, the first two messages can instead end with `Claude stopped here · send a message to be asked again, or switch models`. Before v2.1.257, the first message began `Fable 5 limit reached`.
 
-This happens in [Remote Control](https://code.claude.com/docs/en/remote-control.md) sessions, [background sessions](https://code.claude.com/docs/en/agent-view.md), [agent team](https://code.claude.com/docs/en/agent-teams.md) teammate sessions, and sessions that another application hosts through the Agent SDK. For when Claude Code closes the prompt, see [Fable and usage credits](https://code.claude.com/docs/en/model-config.md#fable-and-usage-credits).
+For when Claude Code closes the prompt, see [Fable and usage credits](https://code.claude.com/docs/en/model-config.md#fable-and-usage-credits).
 
 **What to do:**
 
-* Where the session runs, at the terminal or in the application hosting it, send another prompt and answer the consent prompt when it reappears. For a background session, attach to it from the [agents view](https://code.claude.com/docs/en/agent-view.md) first. If the message says `Claude stopped here`, you can also reply from your connected device and answer the consent prompt there.
+* Where the session runs, at the terminal or in the application hosting it, send another prompt and answer the consent prompt when it reappears. For a background session, attach to it from the [agents view](https://code.claude.com/docs/en/agent-view.md) first.
+* With Remote Control connected to a terminal session, you can also reply from your device and answer the prompt if it appears there
 * Run `/model` to switch to a model that doesn't bill usage credits
 * To give yourself more time, set [`dialogExpiry`](https://code.claude.com/docs/en/settings-reference#dialogexpiry) to a longer value or `"never"`
 
-Before v2.1.236, this message didn't appear: while a Remote Control client was connected, Claude Code waited 60 seconds for an answer and then continued the turn on your default model.
+Before v2.1.236, these messages didn't appear. While a Remote Control client was connected, Claude Code waited 60 seconds for an answer and then continued the turn on your default model.
 
 ### Server is temporarily limiting requests
 
@@ -2813,7 +2824,7 @@ There's an issue with the selected model (claude-...). It may not exist or you m
 * **Interactive CLI**: run `/model` to pick from models available to your account.
 * **Non-interactive mode (`-p`)**: pass `--model` with a valid alias or ID, or set [`ANTHROPIC_MODEL`](https://code.claude.com/docs/en/env-vars). The error text shows `Run --model` on this surface.
 * **Agent SDK**: the error text omits the hint because the model is set programmatically. Set [`model` on `Options`](https://code.claude.com/docs/en/agent-sdk/typescript#options) in TypeScript or [`ClaudeAgentOptions(model=...)`](https://code.claude.com/docs/en/agent-sdk/python#claudeagentoptions) in Python, and handle the structured `model_not_found` error to surface your own retry or model picker.
-* Use an alias such as `sonnet` or `opus` instead of a full versioned ID. Aliases resolve to a maintained default so they don't go stale. See [Model configuration](https://code.claude.com/docs/en/model-config.md).
+* On the Anthropic API, use an alias such as `sonnet` or `opus` instead of a full versioned ID. An alias resolves to a default model that can change over time. On a third-party provider, [pin a current model version](https://code.claude.com/docs/en/model-config.md#pin-models-for-third-party-deployments).
 * If the wrong model keeps coming back in the CLI, a stale ID is set somewhere. Check the places you can set a model in [priority order](https://code.claude.com/docs/en/model-config.md#setting-your-model) and remove the stale value.
 * Before v2.1.206, an expired claude.ai login that could no longer be refreshed failed every model with this error. Run `/login` on those versions.
 * If [`ANTHROPIC_BASE_URL`](https://code.claude.com/docs/en/env-vars) points at an [LLM gateway](https://code.claude.com/docs/en/llm-gateway) and every model fails this way, check that your gateway and its upstream accept [tool search](https://code.claude.com/docs/en/mcp.md#tool-search-through-a-gateway) fields. By default, Claude Code sends `defer_loading` tool fields and `tool_reference` blocks, with the `anthropic-beta` header that enables them. Before v2.1.304, tool search was off behind a gateway unless you turned it on with `ENABLE_TOOL_SEARCH`.
@@ -2852,7 +2863,7 @@ On providers with provider-specific model IDs, the message may add a `Try '...' 
 
 **What to do:**
 
-* Run `/model` with no argument and pick from the models available to your account, or use a [model alias](https://code.claude.com/docs/en/model-config.md#model-aliases) such as `sonnet`, which resolves to a maintained default
+* Run `/model` with no argument and pick from the models available to your account, or on the Anthropic API use a [model alias](https://code.claude.com/docs/en/model-config.md#model-aliases) such as `sonnet`
 * If you typed a full ID, check it against your provider's model catalog. A newly launched model can be available on the Anthropic API before your provider or region offers it.
 * In the Agent SDK, `setModel()` fails with this message and the session keeps running on its previous model. In the TypeScript SDK, call [`supportedModels()`](https://code.claude.com/docs/en/agent-sdk/typescript#query-object) to list the models you can switch to.
 * Before v2.1.265, `/model` also rejected the `opusplan[1m]` alias spelling with this error. On those versions, update Claude Code, or set the model in [settings](https://code.claude.com/docs/en/model-config.md#setting-your-model) or with `--model` instead.
@@ -5083,7 +5094,7 @@ When Claude's write brings the file near a limit without crossing it, Claude Cod
 
 ### pkill pattern matches the Claude Code process
 
-A `pkill` command in a Bash tool call used a pattern, typically with `-f`, that matches the Claude Code process itself, so Claude Code refuses the command instead of letting it end the session. Claude Code tests the pattern with `pgrep` before running `pkill` and refuses when its own process ID is in the result. The check runs on Linux only; on macOS, `pkill` runs unmodified. Before v2.1.214, the command ran, and a matching pattern killed the Claude Code session mid-turn.
+Claude Code refused a `pkill` or `pkill -f` command in a Bash tool call because its pattern matches the Claude Code process itself. Claude Code refuses on Linux only, after testing the pattern with `pgrep` and finding its own process ID in the result. Before v2.1.214, the command ran on Linux, and a matching pattern killed the Claude Code session mid-turn.
 
 ```text theme={null}
 pkill: refusing to run — this pattern matches the Claude CLI process (PID 12345). Narrow the pattern, or target your own children with `pkill -P $$ ...`.
@@ -5725,7 +5736,7 @@ You resumed a session that was running a [custom agent](https://code.claude.com/
 This session was running agent 'code-reviewer', which is no longer available (no agent by that name in /home/you/project). Continuing with the default tools and system prompt — the agent's tool restrictions no longer apply. To restore it, re-create the agent, or resume with an explicit --agent <name>.
 ```
 
-The warning names only the directories Claude Code searched, and it appears in the resumed conversation whether you wake a [background session](https://code.claude.com/docs/en/agent-view.md), run `/resume` or `claude --resume`, or resume in [non-interactive mode](https://code.claude.com/docs/en/headless.md), where it also goes to stderr. Sessions using `--input-format stream-json` don't show it, because the Agent SDK supplies agents after startup.
+The warning names only the directories Claude Code searched. Sessions using `--input-format stream-json` don't show it, because the Agent SDK supplies agents after startup.
 
 Claude Code doesn't save the fallback to the session, so the warning repeats on each resume until you act. The built-in `claude` agent doesn't trigger the warning, since falling back to the default toolset changes nothing for it. Before v2.1.216, Claude Code silently continued as the default agent, and the lookup covered only the directory you resumed from, so a project-scoped agent was lost on any resume from another directory.
 

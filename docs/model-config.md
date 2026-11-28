@@ -46,8 +46,9 @@ The `opus`, `sonnet`, and `haiku` aliases resolve to the newest version on the A
 | Anthropic API | Opus 5.5 | Sonnet 5.5 | Haiku 5.5 |
 | [Claude Platform on AWS](https://code.claude.com/docs/en/claude-platform-on-aws.md) | Opus 5.5 | Sonnet 4.6 | Haiku 4.5 |
 | [Claude Models on Google Cloud (Anthropic managed)](https://code.claude.com/docs/en/claude-models-on-google-cloud-anthropic-managed.md) | Opus 5.5 | Sonnet 5.5 | Haiku 4.5 |
-| Amazon Bedrock, Google Cloud's Agent Platform | Opus 5.5 | Sonnet 4.5 | Haiku 4.5 |
-| Microsoft Foundry | Opus 4.6 | Sonnet 4.5 | Haiku 4.5 |
+| Amazon Bedrock | Opus 5.5 | Sonnet 4.5 | Haiku 4.5 |
+| [Mantle](https://code.claude.com/docs/en/amazon-bedrock.md#use-the-mantle-endpoint) alone | Opus 5.5 | Sonnet 5 | Haiku 4.5 |
+| Google Cloud's Agent Platform, Microsoft Foundry | Opus 5.5 | Sonnet 5.5 | Haiku 4.5 |
 
 Unless you set `ANTHROPIC_DEFAULT_FABLE_MODEL`, the `fable` alias resolves to Fable 5 in [Claude apps gateway](https://code.claude.com/docs/en/claude-apps-gateway) sessions and to Fable 5.2 everywhere else.
 
@@ -101,20 +102,16 @@ Depending on your plan and seat tier, Fable usage can bill to [usage credits](ht
 In interactive sessions, Claude Code can show a Fable usage-credits consent prompt. You can continue on Fable using usage credits or switch to your default model. You can also dismiss the prompt:
 
 * When you select a Fable model with `/model`, you keep your current model.
-* Mid-session, Claude Code continues the turn on your default model.
+* Mid-session, Claude Code either [ends the turn](https://code.claude.com/docs/en/errors.md#the-prompt-to-confirm-went-unanswered) or continues it on your default model.
 
-After you choose to continue on Fable using usage credits, Claude Code doesn't show the prompt again.
+When you're signed in with `/login` and continue on Fable at the terminal or in VS Code, Claude Code saves that choice for later sessions. With [Remote Control](https://code.claude.com/docs/en/remote-control.md) connected in an interactive terminal session, you can also answer the mid-session prompt on your device, and that answer lasts for that session. Answering on your device requires Claude Code v2.1.323 or later.
 
-In a session with [Remote Control](https://code.claude.com/docs/en/remote-control.md) connected, a [background session](https://code.claude.com/docs/en/agent-view.md), or an [agent team](https://code.claude.com/docs/en/agent-teams.md) teammate's session, nobody may be at the terminal, so Claude Code holds the mid-session consent prompt for the [`dialogExpiry`](https://code.claude.com/docs/en/settings-reference#dialogexpiry) deadline, five minutes by default. If nobody has answered by the deadline, Claude Code ends the turn without sending the request and adds a notice to the transcript, which the Remote Control client also shows. Your model selection is unchanged, and Claude Code asks for consent again on your next message.
+The mid-session prompt waits until you answer. It can instead close at the [`dialogExpiry`](https://code.claude.com/docs/en/settings-reference#dialogexpiry) deadline, five minutes by default, in these sessions:
 
-What you can do while the prompt is waiting depends on the session:
+* **Remote Control connected, or a [split-pane teammate](https://code.claude.com/docs/en/agent-teams.md#choose-a-display-mode)**: press the right arrow key at the terminal to cancel the deadline.
+* **[Background session](https://code.claude.com/docs/en/agent-view.md), or an [Agent SDK](https://code.claude.com/docs/en/agent-sdk/overview.md) application such as VS Code**: answer before the deadline, even with Remote Control connected.
 
-* With Remote Control connected or in a teammate's session, press any key at the terminal to cancel the deadline, and Claude Code waits for your answer.
-* With Remote Control connected in an interactive terminal session, you can also answer on your connected device, and that answer lasts for that session. Requires Claude Code v2.1.323 or later.
-* In a background session, answer before the deadline.
-* If you send a new message from the remote client before anyone has typed at the terminal, Claude Code ends the turn the same way, and your new message starts the next turn. After someone types at the terminal, Claude Code keeps waiting for the answer and queues your new message behind it.
-
-In a session another application hosts through the [Agent SDK](https://code.claude.com/docs/en/agent-sdk/overview.md), whether the prompt appears is up to that application. If it appears and nobody answers before the same [`dialogExpiry`](https://code.claude.com/docs/en/settings-reference#dialogexpiry) deadline, Claude Code ends the turn without sending the request.
+If the deadline passes, Claude Code ends the turn without sending the request and keeps your model. The prompt returns with your next message on Fable. If you send a message while the prompt is open, the turn can end the same way.
 
 In [non-interactive mode](https://code.claude.com/docs/en/headless.md) with the `-p` flag, and in an Agent SDK application that doesn't show the prompt, Claude Code never asks for consent. When a Fable request there would bill to usage credits, Claude Code bills it without asking.
 
@@ -263,6 +260,8 @@ Administrators can use `availableModels` in [managed or policy settings](https:/
 * A model family such as `sonnet`
 * A version prefix such as `claude-sonnet-4-5`. It also matches later model IDs that extend it with another segment. For example, `claude-fable-5` permits Fable 5, Fable 5.1, and Fable 5.2, while `claude-fable-5-1` permits Fable 5.1 only
 * A full model ID such as `claude-sonnet-4-5-20250929`
+
+A prefix-matched list that names `claude-sonnet-5` lets an unpinned `sonnet` run Sonnet 5.5, because that entry also matches the later version. This applies from v2.1.332 on Google Cloud's Agent Platform and Microsoft Foundry.
 
 To block a model the list permits, or to make each model ID entry permit only the version it names, see [Block specific models or versions](#block-specific-models-or-versions).
 
@@ -498,7 +497,7 @@ The behavior of `default` depends on your account type:
 
 * **Pro, Max, Ultra, Team, Enterprise, and Anthropic API**: defaults to Opus 5.5
 * **Claude Platform on AWS, Claude Models on Google Cloud (Anthropic managed), Amazon Bedrock, and Google Cloud's Agent Platform**: defaults to Opus 5.5
-* **Microsoft Foundry**: defaults to Sonnet 4.5
+* **Microsoft Foundry**: defaults to Sonnet 5.5
 
 Before v2.1.280, `default` resolved to Sonnet 5 on Pro and Team Standard, and to Opus 5 on Max, Ultra, Team Premium, Enterprise, the Anthropic API, Claude Platform on AWS, Amazon Bedrock, and Google Cloud's Agent Platform from v2.1.219. Before v2.1.219, `default` resolved to Opus 4.8 on the Anthropic API, Max, Ultra, Team Premium, and Enterprise pay-as-you-go from v2.1.154, and on Claude Platform on AWS, Amazon Bedrock, and Google Cloud's Agent Platform from v2.1.207. Before v2.1.207, `default` resolved to Opus 4.7 on Claude Platform on AWS and to Sonnet 4.5 on Amazon Bedrock and Google Cloud's Agent Platform.
 
@@ -630,13 +629,13 @@ On [Amazon Bedrock](https://code.claude.com/docs/en/amazon-bedrock.md), [Google 
 
 * Claude Code must recognize the current model as a fallback source. Fable models are recognized when the model ID contains `claude-fable-5`, matches the value of `ANTHROPIC_DEFAULT_FABLE_MODEL`, or is mapped with [`modelOverrides`](#override-model-ids-per-version). Opus 5.5, Sonnet 5.5, and Opus 5 are recognized by their provider model ID or a [`modelOverrides`](#override-model-ids-per-version) mapping.
 * An Opus target must resolve in your deployment, whichever model refused: set `ANTHROPIC_DEFAULT_OPUS_MODEL`, or keep an Opus 4.8 entry in the provider's model list. Without one, fallback stays off for every source model, including Sonnet 5.5, and flagged requests end with a refusal.
-* The flagged category's fallback model must resolve in your deployment. From a Fable model, Opus 5.5, or Opus 5, if you set `ANTHROPIC_DEFAULT_OPUS_MODEL`, flagged requests re-run on that model for every category that has a fallback; a biology flag on Opus 5 still ends with a refusal. If you don't set it, cybersecurity-flagged requests re-run on the Opus 4.8 entry, and biology-flagged requests from a Fable model or Opus 5.5 on an Opus 5 entry. From Sonnet 5.5, cybersecurity-flagged requests re-run on the model you set in `ANTHROPIC_DEFAULT_SONNET_MODEL`, or on a Sonnet 5 entry in the provider's model list if you don't set it.
+* The flagged category's fallback model must resolve in your deployment. If you set `ANTHROPIC_DEFAULT_OPUS_MODEL`, that model is the fallback for Fable models, Opus 5.5, and Opus 5 in each [category that has a fallback model](#automatic-model-fallback).
 
 If either model can't be identified, Claude Code doesn't switch. The flagged request ends with a refusal message, and you can switch models with [`/model`](#setting-your-model) and retry. To make both models identifiable, set the pins for your source model:
 
-* **Fable models**: set `ANTHROPIC_DEFAULT_FABLE_MODEL` to your Fable model ID so Claude Code recognizes it as a fallback source.
-* **Every source model**: set `ANTHROPIC_DEFAULT_OPUS_MODEL` to an Opus model ID to turn fallback on and give the flagged categories a target. A pin that names a model outside the Opus family, or the model that refused, leaves the refusal standing.
-* **Sonnet 5.5**: in addition to the Opus pin, set `ANTHROPIC_DEFAULT_SONNET_MODEL` or keep a Sonnet 5 entry in the provider's model list to supply the model the request re-runs on. A Sonnet pin that names a model outside the Sonnet family, or Sonnet 5.5 itself, leaves the refusal standing.
+* **Fable models**: set `ANTHROPIC_DEFAULT_FABLE_MODEL` to your Fable model ID, and set `ANTHROPIC_DEFAULT_OPUS_MODEL` to an Opus model ID.
+* **Opus 5.5 or Opus 5**: [start your session](#setting-your-model) with the full model ID, and set `ANTHROPIC_DEFAULT_OPUS_MODEL` to another Opus model ID. If Claude Code recognizes that ID as a non-Opus model or the model that refused, the request ends with the refusal.
+* **Sonnet 5.5**: start your session with the full model ID, and set `ANTHROPIC_DEFAULT_OPUS_MODEL` to an Opus model ID. Set `ANTHROPIC_DEFAULT_SONNET_MODEL` to the Sonnet model ID you want cybersecurity-flagged requests to re-run on. If Claude Code recognizes that ID as a non-Sonnet model or Sonnet 5.5, the request ends with the refusal.
 
 The fallback model must also have a context window at least as large as the session's, or Claude Code doesn't switch and the flagged request ends with the same refusal. On these providers the source models run with the [1M context window](#extended-context) by default. Pin a model that also does, such as Opus 4.8 in `ANTHROPIC_DEFAULT_OPUS_MODEL` or Sonnet 5 in `ANTHROPIC_DEFAULT_SONNET_MODEL`, by an ID Claude Code [can match to that model](#pin-models-for-third-party-deployments).
 
@@ -1029,6 +1028,14 @@ On Amazon Bedrock and Google Cloud's Agent Platform, a user who starts the sessi
 > [!WARNING]
 >
 > Set the model environment variables to specific version IDs as part of your initial setup. Pinning lets you control when your users move to a new model.
+>
+> On [Google Cloud's Agent Platform](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/partner-models/claude/sonnet-4-5) and [Microsoft Foundry](https://platform.claude.com/docs/en/about-claude/model-deprecations), move off Sonnet 4.5 before it retires there on November 30, 2026:
+>
+> * **On Claude Code before v2.1.332**: the `sonnet` alias resolves to Sonnet 4.5, and so does the default model on Microsoft Foundry. Set `ANTHROPIC_DEFAULT_SONNET_MODEL` to a newer model such as `claude-sonnet-5`, or on Microsoft Foundry to your deployment's name. Set `ANTHROPIC_DEFAULT_OPUS_MODEL` too, or the default model on Agent Platform can become the Sonnet model you set.
+>   * If an enforced `availableModels` list has `sonnet` and no Opus, put the newer model's ID there in its place.
+> * **On any version**: replace Sonnet 4.5 wherever your configuration names it, such as `ANTHROPIC_MODEL`, `--model`, or `availableModels`.
+>
+> After that date, requests to Sonnet 4.5 on those platforms stop working, including background tasks.
 
 Use the following environment variables with version-specific model IDs for your provider:
 
@@ -1165,6 +1172,7 @@ This table lists the Claude Code version at which each model alias changed the m
 
 | Version | Change |
 | :- | :- |
+| v2.1.332 | `sonnet` resolves to Sonnet 5.5 on Google Cloud's Agent Platform and Microsoft Foundry, and to Sonnet 5 on Mantle alone. `opus` and `default` on Foundry resolve to Opus 5.5 and Sonnet 5.5 |
 | v2.1.321 | `fable` resolves to Fable 5.2, except in Claude apps gateway sessions |
 | v2.1.321 | `best` resolves to the same model as `opus`. Earlier versions use the model `fable` resolves to, where Fable is available |
 | v2.1.293 | `haiku` resolves to Haiku 5.5 on the Anthropic API |

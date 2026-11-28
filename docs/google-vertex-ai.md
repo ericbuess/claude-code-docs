@@ -160,7 +160,9 @@ Set `ENABLE_TOOL_SEARCH=false` to disable tool search on every model.
 
 Set these environment variables to specific Google Cloud's Agent Platform model IDs.
 
-Without `ANTHROPIC_DEFAULT_OPUS_MODEL`, the `opus` alias on Google Cloud's Agent Platform resolves to Opus 5.5, and without `ANTHROPIC_DEFAULT_SONNET_MODEL`, the `sonnet` alias resolves to Sonnet 4.5. This example pins each alias to a specific version:
+Without `ANTHROPIC_DEFAULT_OPUS_MODEL`, the `opus` alias on Google Cloud's Agent Platform resolves to Opus 5.5, and without `ANTHROPIC_DEFAULT_SONNET_MODEL`, the `sonnet` alias resolves to Sonnet 5.5.
+
+This example pins each alias to a specific version:
 
 ```bash theme={null}
 export ANTHROPIC_DEFAULT_OPUS_MODEL='claude-opus-4-8'
@@ -175,9 +177,11 @@ Claude Code uses these default models when no pinning variables are set:
 | Model type | Default value |
 | :- | :- |
 | Primary model | `claude-opus-5-5` |
-| Small/fast model | `claude-sonnet-4-5@20250929` |
+| Small/fast model | `claude-sonnet-5-5` |
 
 Before v2.1.280, the primary model on Google Cloud's Agent Platform defaulted to Opus 5 and the `opus` alias resolved to Opus 5 from v2.1.219.
+
+Before v2.1.332, the `sonnet` alias and the small/fast model on Google Cloud's Agent Platform were Sonnet 4.5.
 
 Background tasks such as session title generation use the small/fast model, normally a Haiku-class model. On Google Cloud's Agent Platform, Claude Code uses the default Sonnet model for background tasks because Haiku may not be enabled in every project or region. Two selections change which model carries them:
 
@@ -186,7 +190,7 @@ Background tasks such as session title generation use the small/fast model, norm
 
 > [!WARNING]
 >
-> Opus models have a higher per-token price than Sonnet models, so if you don't pin a primary model, you're billed at the Opus rate. To use Sonnet 4.5 as the primary model, set `ANTHROPIC_MODEL` to its full model ID. A deployment that steers the default with `ANTHROPIC_DEFAULT_SONNET_MODEL` and doesn't set `ANTHROPIC_DEFAULT_OPUS_MODEL` keeps its steered Sonnet model as the default.
+> Opus models have a higher per-token price than Sonnet models, so if you don't pin a primary model, you're billed at the Opus rate. To use Sonnet 5 as the primary model, set `ANTHROPIC_MODEL` to its full model ID. A deployment that steers the default with `ANTHROPIC_DEFAULT_SONNET_MODEL` and doesn't set `ANTHROPIC_DEFAULT_OPUS_MODEL` keeps its steered Sonnet model as the default, unless [`enforceAvailableModels`](https://code.claude.com/docs/en/model-config#enforce-the-allowlist-for-the-default-model) is on.
 
 To customize models further:
 
@@ -226,11 +230,13 @@ When the startup model checks find a model your project can't invoke, Claude Cod
 
 If you set [`enforceAvailableModels`](https://code.claude.com/docs/en/model-config#enforce-the-allowlist-for-the-default-model) in managed settings, the startup model checks use only models your `availableModels` list permits. This requires Claude Code v2.1.287 or later. A list without `enforceAvailableModels` doesn't restrict these checks.
 
-The checks compare each entry with the model ID they would send to Agent Platform, so write the list in those IDs. This example permits Opus 4.8 and Sonnet 4.5:
+The checks compare each entry with the model ID they would send to Agent Platform, so write the list in those IDs.
+
+This example permits Opus 4.8 and Sonnet 4.6:
 
 ```json theme={null}
 {
-  "availableModels": ["claude-opus-4-8", "claude-sonnet-4-5@20250929"],
+  "availableModels": ["claude-opus-4-8", "claude-sonnet-4-6"],
   "enforceAvailableModels": true
 }
 ```

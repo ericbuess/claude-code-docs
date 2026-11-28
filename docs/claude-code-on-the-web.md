@@ -83,7 +83,9 @@ These workflows require the [Claude Code CLI](https://code.claude.com/docs/en/qu
 
 > [!NOTE]
 >
-> From the CLI, session handoff is one-way: you can pull cloud sessions into your terminal with `--teleport`, but you can't push an existing terminal session to the cloud. The `--cloud` flag with a task description creates a new cloud session for your current repository; with `-p` and a session ID or claude.ai/code URL it instead [queues a message into that existing session](https://code.claude.com/docs/en/claude-code-on-the-web.md#send-follow-ups-from-the-cli). The [Desktop app](https://code.claude.com/docs/en/desktop.md#continue-in-another-surface) can send a local session in its Code tab to the cloud from its **Open in** menu.
+> From the CLI, session handoff is one-way: you can pull cloud sessions into your terminal with `--teleport`, but you can't push an existing terminal session to the cloud. The `--cloud` flag with a task description creates a new cloud session for your current repository. With `-p` and a session ID or claude.ai/code URL it instead [queues a message into that existing session](https://code.claude.com/docs/en/claude-code-on-the-web.md#send-follow-ups-from-the-cli).
+>
+> To send a local session from the Code tab of the [Desktop app](https://code.claude.com/docs/en/desktop.md#continue-in-another-surface) to the cloud, select **Continue in cloud** in the session menu.
 
 ### Start a cloud session from your terminal
 

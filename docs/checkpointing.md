@@ -10,11 +10,11 @@ Claude Code automatically tracks Claude's file edits as you work. To undo edits,
 
 ## How checkpoints work
 
-As you work with Claude, checkpointing automatically captures the state of your code before each prompt you send that starts a turn.
+A checkpoint is a restore point for the files Claude edits.
 
 ### Automatic tracking
 
-Claude Code tracks all changes made by its file editing tools:
+Claude Code tracks changes made by its file editing tools:
 
 * Every prompt you send that starts a turn creates a new checkpoint
 * Claude Code keeps file snapshots for the 100 most recent checkpoints in a session. Discarding an older checkpoint deletes the snapshot files that no remaining checkpoint references, except each file's first snapshot.
@@ -38,7 +38,7 @@ The rewind menu lists the prompts you sent during the session. Select the point 
 * **Summarize up to here**: compress the conversation before this point into a summary, keeping later messages intact
 * **Never mind**: return to the message list without making changes
 
-The two code restore options appear only when the selected checkpoint has tracked file changes to revert. If no file edits were captured after that point, the menu offers only **Restore conversation**, the summarize options, and **Never mind**.
+The two code restore options appear only when the selected checkpoint has tracked file changes to revert.
 
 After restoring the conversation or choosing Summarize from here, the original prompt from the selected message is restored into the input field so you can re-send or edit it.
 
@@ -84,9 +84,9 @@ A [subagent](https://code.claude.com/docs/en/sub-agents.md) makes edits with Cla
 * **Foreground forked skill**: a [skill with `context: fork`](https://code.claude.com/docs/en/skills#run-skills-in-a-subagent) that runs in the foreground edits your working tree during your own turn, so rewinding restores its edits as usual. Set `background: false` to run a fork in the foreground; a few situations, [listed on the skills page](https://code.claude.com/docs/en/skills.md#run-skills-in-a-subagent), run it there regardless of the setting.
 * **Any other subagent**: rewinding restores only the files Claude had already edited in your conversation. The subagent's edits to other files stay, so use version control, such as Git, to revert them. This includes a forked skill that runs in the background, the default, and a background [`/code-review --fix`](https://code.claude.com/docs/en/code-review-local) run.
 
-### External changes not tracked
+### External changes can be lost
 
-Checkpointing only tracks files that have been edited within the current session. Manual changes you make to files outside of Claude Code and edits from other concurrent sessions are normally not captured, unless they happen to modify the same files as the current session.
+If Claude used its file editing tools on a file in your conversation, restoring code can discard changes you or another session made to that file after the selected checkpoint. Commit or copy the file yourself before you restore. Files that Claude's file editing tools didn't touch stay as they are.
 
 ### Messages sent mid-turn not checkpointed
 
