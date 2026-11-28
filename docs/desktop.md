@@ -1291,9 +1291,11 @@ If your SSH configuration sets no `ConnectTimeout` for the host, Desktop gives `
 
 | `ConnectTimeout` | Connection | Time that you have |
 | - | - | - |
-| Not set | You start a session through a jump host or a `ProxyCommand`, with Claude Desktop v4.4212.0 or later on macOS or Linux | 30 seconds, then a second try with 90 seconds. If Desktop showed you a prompt during the first try, you have no second try. Time at a login prompt that Desktop shows for a `ProxyJump` host doesn't count. Other waits on the route do. |
-| Not set | Desktop on Windows or an earlier version, a remote machine that sets `MaxSessions 1`, or a reconnect that Desktop starts on its own | 30 seconds. Every wait on the route counts. |
+| Not set | A connection through a jump host or a `ProxyCommand` that you start yourself, with a new session, a message, or a retry in Desktop | 30 seconds. If the 30 seconds run out, Desktop can try once more, with 90 seconds, on the versions below the table. If Desktop showed you a prompt during the first try, you have no second try. Count every wait on the route. |
+| Not set | Any other connection or reconnect, such as a reconnect that Desktop starts on its own | Plan for 30 seconds. Every wait on the route counts. |
 | Set | Every connection and reconnect | The value that you set. Every wait on the route counts. |
+
+The second try of 90 seconds needs a connection [through the OpenSSH client](#use-your-ssh-configuration). It also needs Claude Desktop v4.4212.0 or later for a new session, and v4.23118.0 or later for a message or a retry. If Desktop runs on Windows, or the remote machine [sets `MaxSessions 1`](#remote-machine-requirements-for-ssh-sessions), it needs v6.6395.0 or later.
 
 If the remote machine itself waits for an approval on your phone, approve within 45 seconds, whatever `ConnectTimeout` you set. You can't raise this limit, because Desktop sets `ServerAliveInterval` and `ServerAliveCountMax` itself, and `ssh` then closes a login in which the remote machine sends nothing for that long.
 
@@ -1349,7 +1351,7 @@ Expect these limits, among others, on a Windows remote machine:
 * **Terminal**: the [terminal](#run-commands-in-the-terminal) doesn't open in a session whose folder is a Windows path, such as `C:/projects/app`
 * **Sandbox**: Claude Code runs there on native Windows, where it runs commands unsandboxed. See [where the sandbox runs](https://code.claude.com/docs/en/sandboxing.md).
 * **Plugins**: Desktop doesn't copy a plugin that holds a file or folder name Windows can't store, such as a name with `:`. The session lists the plugins that Desktop left out.
-* **MCP servers**: on some Windows remote machines, Claude's calls to MCP servers from `claude_desktop_config.json` go through Desktop, so Claude can't call their tools [while Desktop is disconnected](#limits-while-desktop-is-disconnected). Before Claude Desktop v2.37337.0, this holds on every Windows remote machine.
+* **MCP servers while disconnected**: to use MCP servers from your computer's `claude_desktop_config.json` [while Desktop is disconnected](#limits-while-desktop-is-disconnected), [connect through the OpenSSH client](#use-your-ssh-configuration) with Claude Desktop v6.6395.0 or later. Otherwise, keep Desktop connected while a task uses those servers.
 * **Worktrees**: worktrees go in `<project-root>/.claude/worktrees/`. If you [choose another folder](#choose-where-ssh-session-worktrees-go), Desktop ignores it.
 * **Earlier messages**: if the SSH server's shell is `cmd.exe` or Windows PowerShell, you may have to connect before you see a session's earlier messages
 * **Forks**: if the SSH server's shell is `cmd.exe` or Windows PowerShell, you can fork a session only at its first message
@@ -1394,6 +1396,7 @@ When you come back and the task isn't done, check for Desktop's sign-in page, wo
 * **Reduce requests**: choose a permission mode, rules, or hooks that [make the task wait for you less often](#handle-requests-that-arrive-while-you-are-away)
 * **Check the jump host**: if your jump host asks for a sign-in, for example a push to a phone, switch to a login that works without a prompt. Otherwise Desktop can send another push each time it tries to reconnect.
 * **Test the remote machine**: start a short task, quit Desktop while the task is still running, and open the session again well after the task should be done. If the task isn't finished and the session shows no authentication error, check the remote machine for [what can end a task](#limits-while-desktop-is-disconnected).
+* **Test file work and workflows**: if the long task needs them, start a short task that edits a file or starts a workflow after a few minutes, and quit Desktop before then. Open the session again at least 20 minutes later. If a read, search, edit, or workflow failed, [keep Desktop connected](#limits-while-desktop-is-disconnected) during the long task.
 * **Keep commands out of Desktop's terminal**: if the remote machine [logs out idle terminals](#limits-while-desktop-is-disconnected), run your own commands from an SSH login outside Desktop
 
 ##### Limits while Desktop is disconnected
@@ -1409,9 +1412,15 @@ A task that you leave running can end when its sign-in expires, when the remote 
 File edits and some tools can fail while Desktop is disconnected. If the task needs them, keep Desktop connected:
 
 * **Worktrees**: in a session that uses a [worktree](#run-a-session-in-its-own-worktree), Desktop checks each file edit before Claude makes it. While Desktop is disconnected, each edit waits about 30 seconds and then fails. Shell commands still run. On a Linux or macOS remote machine, [edits can keep working](#worktree-edits-while-disconnected). If you aren't sure, start the session without a worktree.
-* **Folder restrictions**: if your organization restricts which folders sessions may use, Desktop checks each file read, search, and edit, with or without a worktree. While Desktop is disconnected, each one waits up to 10 minutes and then fails.
+* **Folder restrictions**: if your organization restricts which folders sessions may use, Desktop checks each file read, search, and edit, with or without a worktree. On a Linux or macOS remote machine, with Claude Desktop v6.6395.0 or later, all three can keep working while Desktop is disconnected. Keep the task's files in the session's worktree, or in the session's folder if it has no worktree, then [test the remote machine](#prepare-a-long-task).
+
+  On a Windows remote machine, or with an earlier version, keep Desktop connected: while it is disconnected, each of the three waits up to 10 minutes and then fails.
 * **Connectors**: [connectors](#connect-external-tools) and other tools that Desktop provides run through Desktop, so while it is disconnected each call fails after about 30 seconds
-* **Workflows**: Desktop checks each new [workflow](https://code.claude.com/docs/en/workflows.md) before it starts, so while Desktop is disconnected a new one waits up to 10 minutes and then fails
+* **Workflows**: Desktop checks each new [workflow](https://code.claude.com/docs/en/workflows.md) before it starts, so while Desktop is disconnected a new one waits up to 10 minutes and then fails.
+
+  Under folder restrictions, behind a [corporate launcher](https://code.claude.com/docs/en/corporate-launcher.md), or before Claude Desktop v5.11492.0, new workflows can't start while Desktop is disconnected.
+
+  Otherwise, approve a workflow before the long task: ask Claude for one in a session on the remote machine, and [approve it](https://code.claude.com/docs/en/workflows.md#approve-the-plan-before-it-runs) if Desktop asks. Then open a new session for the long task, because the approval takes effect only in sessions that you open afterward. In the new session, choose a [permission mode](#choose-a-permission-mode) that doesn't ask before each workflow, such as Auto, and [test the remote machine](#prepare-a-long-task) first.
 * **MCP servers**: MCP servers that Claude Code starts on the remote machine don't run through Desktop, so Claude can still call their tools. Servers from `claude_desktop_config.json` are among them only if Desktop doesn't use its [built-in SSH client](#worktree-edits-while-disconnected). Otherwise, and on [some Windows remote machines](#windows-remote-machines), Claude can't call their tools while Desktop is disconnected.
 
 > [accordion] When edits in a worktree keep working
@@ -1423,7 +1432,7 @@ File edits and some tools can fail while Desktop is disconnected. If the task ne
 > * **Built-in SSH client**: Desktop uses it, for example in a Microsoft Store install, or on a Windows computer without Microsoft's OpenSSH 9.4 or later
 > * **Repository location**: the repository is your home directory, a folder above it, or `~/.claude`
 > * **macOS paths**: on a macOS remote machine, the repository is under `/Volumes`, or a folder name in the path of the repository or the worktree has a `~` or a non-ASCII character
-> * **Folder restrictions**: your organization restricts which folders sessions may use
+> * **Folder restrictions**: your organization restricts which folders sessions may use, and Claude Desktop is earlier than v6.6395.0. Update Desktop.
 > * **Corporate launcher**: before Claude Desktop v2.37337.0, you sign in with a Claude account, and your organization starts Claude Code on the remote machine through a [corporate launcher](https://code.claude.com/docs/en/corporate-launcher.md)
 >
 > A session without a worktree has no such check, unless your organization restricts which folders sessions may use.
@@ -1944,9 +1953,7 @@ The following example allows connections to any host under `devboxes.example.com
 
 > [!WARNING]
 >
-> If your organization delivers [server-managed settings](https://code.claude.com/docs/en/server-managed-settings.md), set `sshHostAllowlist` there. By default, Desktop reads the key only from the [highest-ranked managed source that delivers a policy key](https://code.claude.com/docs/en/managed-settings.md#how-claude-code-combines-managed-sources). If that source leaves the key unset, Desktop ignores a list in a lower-ranked MDM policy or managed settings file and treats the key as [unset](https://code.claude.com/docs/en/settings-reference.md#sshhostallowlist). Desktop shows no warning.
->
-> Also keep the same list on each user's machine, in the highest-ranked MDM policy or managed settings file there. Desktop fetches server-managed settings at launch and keeps no cached copy, so until a fetch succeeds the machine's list is the one that applies.
+> If you deliver [server-managed settings](https://code.claude.com/docs/en/server-managed-settings.md), set the same `sshHostAllowlist` there and on each computer. On the computer, put it in Claude Code's MDM policy or, without one, its managed settings file, not in the desktop app's own [device management policy](#device-management-policies). With a list in only one place, Desktop can allow any host at times: see [Which SSH host allowlists apply](#which-ssh-host-allowlists-apply).
 
 Patterns are case-insensitive. `*` matches any host, and `*.example.com` matches `example.com` and any subdomain. Anything else is an exact match. The check runs against the hostname after `~/.ssh/config` resolution via `ssh -G`, so a `Host` alias is permitted as long as its resolved `HostName` matches. A session's [jump hosts](#allow-jump-hosts) have to match too.
 
@@ -2016,7 +2023,7 @@ When you adapt the example, check the hostnames, the Desktop version, and the fi
 * **Version**: `disableDesktopLocalSessions` requires Claude Desktop v1.37937.0 or later
 * **File permissions**: make sure that each developer's account on the computer can read the managed settings file. Desktop doesn't apply the keys in a file that the account can't read, and Claude Code [starts without them](https://code.claude.com/docs/en/managed-settings.md#find-entries-claude-code-dropped) too.
 
-Put the three keys in one [managed source](https://code.claude.com/docs/en/managed-settings.md#how-claude-code-combines-managed-sources), the highest-ranked one that you deliver. If you deliver [server-managed settings](https://code.claude.com/docs/en/server-managed-settings.md), also keep a copy of the three keys in the highest-ranked MDM policy or managed settings file on each computer. Desktop fetches server-managed settings at launch, and the copy on the computer applies until a fetch succeeds.
+If you deliver [server-managed settings](https://code.claude.com/docs/en/server-managed-settings.md), put the three keys [there and on each computer](#keys-that-apply-from-server-managed-settings-and-managed-settings-on-a-computer). On the computer, use Claude Code's MDM policy or, without one, its managed settings file, not the desktop app's own [device management policy](#device-management-policies). Without server-managed settings, use your highest-ranked [managed source](https://code.claude.com/docs/en/managed-settings.md#how-claude-code-combines-managed-sources).
 
 To confirm that the settings apply, check a developer's computer:
 
@@ -2068,15 +2075,16 @@ Managed settings override project and user settings and apply to Claude Code ses
 | `permissions.disableBypassPermissionsMode` | set to `"disable"` to prevent users from enabling Bypass permissions mode. |
 | `disableAutoMode` | set to `"disable"` to remove [Auto](https://code.claude.com/docs/en/permission-modes.md#eliminate-prompts-with-auto-mode) mode from the mode selector. Also accepted under `permissions`. |
 | `autoMode` | customize what the auto mode classifier trusts and blocks across your organization. See [Configure auto mode](https://code.claude.com/docs/en/auto-mode-config.md). |
+| `model` | set the model ID that [new local sessions start on](#set-the-model-that-new-sessions-start-on) |
 | `browserExternalPageTools` | set to `"disabled"` to prevent Claude from using tools to read or act on external pages in the [Browser pane](#browse-external-sites). Users can still navigate to external sites themselves, and local dev server previews are unaffected. |
 | `disableMobileSimulatorTools` | set to `true` to block Claude's tools for controlling and capturing devices in the [iOS Simulator pane](https://code.claude.com/docs/en/desktop-ios-simulator.md#turn-off-simulator-access). The pane stays usable for the user's own taps; only Claude's access is removed. The value must be the JSON boolean `true`; the string `"true"` is ignored. |
 | `disableBrowserExternalNavigation` | set to `true` to turn off external browsing in the [Browser pane](#browse-external-sites) entirely. Neither users nor Claude can go to external sites, and localhost dev server previews are unaffected. The Browser pane's HTML previews in SSH and WSL sessions [don't run scripts](#turn-off-scripts-in-ssh-and-wsl-previews-for-your-organization). The value must be the JSON boolean `true`; the string `"true"` is ignored. |
 | `disableRemotePreviewScripts` | set to `true` to [turn off scripts in the Browser pane's HTML previews](#turn-off-scripts-in-ssh-and-wsl-previews-for-your-organization) in SSH and WSL sessions, without turning off external browsing. Desktop doesn't read it from the remote machine or the WSL distribution. The value must be the JSON boolean `true`; the string `"true"` is ignored. Requires Claude Desktop v5.1231.0 or later. |
 | `sshConfigs` | pre-configure [SSH connections](#pre-configure-ssh-connections-for-your-team) that appear in the environment selector. Users can't delete managed connections or edit anything but their own **Worktree folder**. |
 | `sshHostCommands` | give users [SSH connections whose host comes from a command](#distribute-commands-to-your-team), alongside their own. Desktop reads it from the managed settings file or MDM policy on the computer, and ignores it in [server-managed settings](https://code.claude.com/docs/en/server-managed-settings.md). Requires Claude Desktop v3.6556.0 or later on macOS or Linux, or v4.16336.0 or later on Windows, signed in with a Claude account. On Windows, Desktop also has to [connect through the OpenSSH client](#use-your-ssh-configuration). |
-| `sshHostAllowlist` | restrict [SSH sessions](#restrict-which-ssh-hosts-users-can-connect-to) to hosts whose resolved hostname matches one of these patterns. Read from managed settings only. |
-| `disableDesktopLocalSessions` | set to `true` to turn off [Code sessions that run on the device](#local-sessions-on-managed-devices), leaving SSH sessions to other hosts and cloud sessions available. The value must be the JSON boolean `true`. Read from managed settings only. Requires Claude Desktop v1.37937.0 or later. |
-| `disableSshSavedPasswords` | set to `true` to stop Desktop from offering to remember SSH passwords and from using or showing the ones it saved earlier. Turning it on doesn't delete them. Read from managed settings only. Requires Claude Desktop v1.49585.0 or later. |
+| `sshHostAllowlist` | restrict [SSH sessions](#restrict-which-ssh-hosts-users-can-connect-to) to hosts whose resolved hostname matches one of these patterns. Read from managed settings only. With server-managed settings, [set the same list in both places](#which-ssh-host-allowlists-apply). |
+| `disableDesktopLocalSessions` | set to `true` to turn off [Code sessions that run on the device](#local-sessions-on-managed-devices), leaving SSH sessions to other hosts and cloud sessions available. Use the JSON boolean `true`. Read from managed settings only. Requires Claude Desktop v1.37937.0 or later. With server-managed settings, [set it in both places](#keys-that-apply-from-server-managed-settings-and-managed-settings-on-a-computer). |
+| `disableSshSavedPasswords` | set to the JSON boolean `true` to stop Desktop from offering to remember SSH passwords and from using or showing the ones it saved earlier. Turning it on doesn't delete them. Read from managed settings only. Requires Claude Desktop v1.49585.0 or later. With server-managed settings, [set it in both places](#keys-that-apply-from-server-managed-settings-and-managed-settings-on-a-computer). |
 | `managedMcpServers` | push MCP server configurations to all users. Available in third-party (3P) Desktop deployments only. In each entry, set a transport of `"http"`, `"sse"`, or `"stdio"`, connection details, and optionally a `toolPolicy` map to restrict which of that server's tools users can invoke. Deliver it through the managed settings file, MDM, or a Claude apps gateway policy's [`desktop` block](https://code.claude.com/docs/en/claude-apps-gateway-config#claude-desktop-overlay), since 3P deployments don't receive admin-console settings. To deliver it through the gateway, you need Claude Code v2.1.232 or later on the gateway server. This is the desktop app's own key; Claude Code reads a [same-named managed setting](https://code.claude.com/docs/en/managed-mcp.md#provide-servers-through-managed-settings) of its own, with a different entry shape. |
 
 If you turn a feature off with one of these four keys in a computer's [highest-ranked MDM policy or managed settings file](https://code.claude.com/docs/en/managed-settings.md#how-claude-code-combines-managed-sources), the feature stays off there:
@@ -2090,14 +2098,52 @@ Which managed settings reach a Desktop session depends on where that session run
 
 * **Local sessions on this machine**: a managed settings file deployed to disk applies. Managed settings pushed remotely through the admin console also reach these sessions on Anthropic's API when the session authenticates with an [eligible login](https://code.claude.com/docs/en/server-managed-settings.md#platform-availability), following the same [settings precedence](https://code.claude.com/docs/en/settings.md#settings-precedence) as the terminal CLI.
 * **[Cloud sessions](#cloud-sessions)**: receive [server-managed settings](https://code.claude.com/docs/en/server-managed-settings.md); device-deployed files don't reach them, because they run on Anthropic-managed VMs. Sessions routed to a [self-hosted environment](https://code.claude.com/docs/en/self-hosted-environments) also read the managed settings file in the runner image. [How Claude Code combines managed sources](https://code.claude.com/docs/en/managed-settings.md#how-claude-code-combines-managed-sources) says when that file applies.
-* **[SSH sessions](#ssh-sessions)**: the session reads the managed settings file from the remote host. Desktop itself reads `sshConfigs`, `sshHostAllowlist`, `disableSshSavedPasswords`, and `disableDesktopLocalSessions` on the local machine. If you deliver more than one managed source, it reads them from [one by default](https://code.claude.com/docs/en/managed-settings.md#how-claude-code-combines-managed-sources). If you set `permissions.disableBypassPermissionsMode` or `disableAutoMode` in the managed settings in force on the local machine, an SSH session's mode selector doesn't offer that mode, whatever the remote host sets.
+* **[SSH sessions](#ssh-sessions)**: the session reads the managed settings file from the remote host. Desktop itself reads `sshConfigs`, `sshHostAllowlist`, `disableSshSavedPasswords`, and `disableDesktopLocalSessions` on the local machine. If you deliver more than one managed source, see [`sshConfigs`](https://code.claude.com/docs/en/settings-reference#sshconfigs) for that key and [Keys that apply from server-managed settings and managed settings on a computer](#keys-that-apply-from-server-managed-settings-and-managed-settings-on-a-computer) for the other three.
 * **[Cowork](https://claude.com/docs/cowork/overview) sessions**: in a Cowork session on this machine, Claude Code never fetches admin-console settings, even when the user signs in with a Team or Enterprise account, and reads policy deployed to the machine unless your Claude Desktop configuration sets `requireCoworkFullVmSandbox`. Remote Cowork sessions receive neither. See [where and when a policy applies](https://code.claude.com/docs/en/managed-settings.md#where-and-when-a-policy-applies) for which device files reach Cowork, and [MCP permission rules](https://code.claude.com/docs/en/permissions.md#mcp) for how `Bash` and `WebFetch` rules apply to Cowork's tools.
 
 In local and SSH sessions, the desktop app delivers each user's connected claude.ai connectors to Claude Code directly. No MCP setting or `managed-mcp.json` reaches those connectors, whichever settings source or file location you use. To block a connector's tools in these sessions, use your organization's [connector tool controls](https://code.claude.com/docs/en/mcp.md#organization-controls-on-connector-tools). [How connectors reach Claude Code](https://code.claude.com/docs/en/mcp.md#how-connectors-reach-claude-code) shows which settings govern connectors in each kind of session.
 
-To keep users from overriding `permissions.disableBypassPermissionsMode` or `disableAutoMode`, set it in managed settings.
+To keep users from overriding `permissions.disableBypassPermissionsMode` or `disableAutoMode`, set it in managed settings. If you set `permissions.disableBypassPermissionsMode` or `disableAutoMode` in the managed settings in force on the local machine, an SSH session's mode selector doesn't offer that mode, whatever the remote host sets.
 
 For the permission, plugin, and delivery keys only a managed source can set, see [Keys only managed settings can set](https://code.claude.com/docs/en/managed-settings.md#managed-only-settings).
+
+#### Keys that apply from server-managed settings and managed settings on a computer
+
+Claude Desktop v3.1623.0 or later reads the keys below from both [server-managed settings](https://code.claude.com/docs/en/server-managed-settings.md) and Claude Code's [MDM policy or managed settings file](https://code.claude.com/docs/en/managed-settings.md#where-each-mechanism-stores-the-policy) on the computer. If you use an MDM policy, set them in Claude Code's, the `com.anthropic.claudecode` domain on macOS or `HKLM\SOFTWARE\Policies\ClaudeCode` on Windows, not in Desktop's own [device management policy](#device-management-policies).
+
+For users on a [third-party provider](https://code.claude.com/docs/en/third-party-integrations.md), who don't sign in with a Claude account, see [SSH remote sessions in Claude Desktop on 3P](https://claude.com/docs/third-party/claude-desktop/ssh-remote-sessions).
+
+| Key | What applies | To loosen it |
+| - | - | - |
+| `sshHostAllowlist` | a host must match each list that you set, with the exceptions under [Which SSH host allowlists apply](#which-ssh-host-allowlists-apply) | add the host to each list that you set |
+| `disableDesktopLocalSessions` | `true` on the computer, or in server-managed settings once Desktop has fetched them, turns off local sessions, even when the other says `false` | remove `true` wherever you set it |
+| `disableSshSavedPasswords` | `true` on the computer, or in server-managed settings once Desktop has fetched them, turns off saved passwords, even when the other says `false` | remove `true` wherever you set it |
+
+* **An MDM policy for Claude Code and a managed settings file on one computer**: set these keys in the policy. Where the policy sets any policy key, Desktop [by default](https://code.claude.com/docs/en/settings-reference.md#managedsourcesbehavior) [ignores these keys in the file](https://code.claude.com/docs/en/managed-settings.md#how-claude-code-combines-managed-sources).
+* **Versions before v3.1623.0**: set each key in server-managed settings too. [By default](https://code.claude.com/docs/en/settings-reference.md#managedsourcesbehavior), once Desktop has fetched them, these keys apply from there alone.
+* **The two `disable` keys**: set `true` in server-managed settings and on each computer, so that the key still applies while Desktop has only one source.
+
+##### Which SSH host allowlists apply
+
+Set the same list in server-managed settings and on each computer, because users aren't held to both lists in cases such as these:
+
+* **After each launch, until Desktop has fetched server-managed settings**: keep a list on the computer, because without one Desktop can allow any host. Claude Desktop v4.16336.0 or later also checks hosts against a copy of the server-managed list from an earlier fetch, if it has one under 30 days old. Don't rely on that copy, because users can delete or edit it.
+* **A user signs in to another organization or a personal account**: keep a list on the computer, because Desktop doesn't get your server-managed list then.
+* **You set [`managedSourcesBehavior`](https://code.claude.com/docs/en/settings-reference#managedsourcesbehavior) to `"merge"` in your [highest-ranked source](https://code.claude.com/docs/en/managed-settings.md#compose-every-managed-source)**: give every source the same list. Desktop [combines the server-managed list with the computer's](https://code.claude.com/docs/en/settings-reference.md#sshhostallowlist) and can allow a host that only one of them has.
+
+An empty array counts as a list that no host matches, unlike an unset key, which restricts nothing. To turn SSH sessions off, set an empty array in every source.
+
+#### Set the model that new sessions start on
+
+**Set by admin** next to a model in the model picker means that your managed settings set it as [`model`](https://code.claude.com/docs/en/model-config#control-the-model-users-run-on). If the label shows, that model comes ahead of the user's last pick when a new local session starts, if they can select it. Users can still pick another model for a session.
+
+To stop setting the starting model:
+
+1. Open **Settings > Code** or **Settings > Claude Code** on a user's computer and look under **Starting values from your organization** to see which managed source applies.
+2. Remove `model` from each managed source that sets it, and have users restart Desktop.
+3. Have each user pick a model before they send a session's first message, in each folder they use. Until then, new sessions can still start on the model you removed.
+
+If your [organization default model](https://code.claude.com/docs/en/model-config.md#organization-default-model) overrides user selection, these sessions start on that default when the user can select it, even though your `model` takes precedence in the terminal. To let users choose, also turn off **Always start with the default model and effort level** in [**Organization settings > Models**](https://claude.ai/admin-settings/models) and in each custom role with its own default.
 
 #### Deploy skills for all users
 
@@ -2299,7 +2345,7 @@ Desktop and CLI read the same configuration files, so your setup carries over:
 * **[MCP servers](https://code.claude.com/docs/en/mcp.md)** configured in `~/.claude.json` or `.mcp.json` work in both
 * **[Hooks](https://code.claude.com/docs/en/hooks.md)** and **[skills](https://code.claude.com/docs/en/skills.md)** defined in settings apply to both
 * **[Settings](https://code.claude.com/docs/en/settings.md)** in `~/.claude.json` and `~/.claude/settings.json` are shared. Permission rules, allowed tools, and other settings in `settings.json` apply to Desktop sessions. Some keys [behave differently in the Code tab](#claude-code-settings-that-behave-differently-in-the-code-tab).
-* **Models**: the same [models](https://code.claude.com/docs/en/model-config.md#available-models) are available in both. In Desktop, select the model from the model picker in the row under the prompt box. You can change the model mid-session from the same picker.
+* **Models**: in Desktop, select the model from the model picker in the row under the prompt box. You can change the model mid-session from the same picker.
 
 #### MCP servers from the Claude Desktop chat app
 

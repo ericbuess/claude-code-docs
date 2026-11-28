@@ -459,7 +459,7 @@ The organization default is a starting point, not a restriction. These selection
 
 Admins can also configure the organization default to override user selection. With override on, it takes precedence over the `model` value in user, project, and local settings. A model you save with `/model` then applies for the current session, and the organization default returns in new sessions. When your selection differs, `/model` shows `Your organization's default (<model>) applies on restart`.
 
-The `--model` flag, `ANTHROPIC_MODEL`, managed settings, and `--settings` still take precedence even with override on. To limit which models members can select, use [organization model restrictions](#organization-model-restrictions) or [`availableModels`](#restrict-model-selection) instead.
+In the terminal, a new session still starts on the model that the `--model` flag, `ANTHROPIC_MODEL`, managed settings, or `--settings` sets, even with override on. To limit which models members can select, use [organization model restrictions](#organization-model-restrictions) or [`availableModels`](#restrict-model-selection).
 
 Claude Code reads the organization default once at startup, so a default the admin changes mid-session takes effect on the next launch.
 
